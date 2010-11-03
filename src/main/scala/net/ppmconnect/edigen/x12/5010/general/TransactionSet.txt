@@ -1,0 +1,315 @@
+package net.ppmconnect.edigen.x12.general
+package transactionset
+
+/**
+ * HIERARCHY OF SEMANTIC LEVELS
+ *
+ * The following graph is a summary of the levels outlined in the rest of this file, and the
+ * annotation in the right column indicates which attributes uniquely identify each instance
+ * in adjacent levels.  Note that in the case of multiple detail areas, and with respect to loops
+ * and segments, the transaction set must allow a means of uniquely identifying each instance.
+ *                 __________________
+ *                (__EDI_Interchange_)                              Interchange Sender/Receiver IDs (ISA06, ISA08) and Interchange Control Number
+ *                   |          |
+ *     _____________ |___    ___|___________________________
+ *    (_Functional_Group_)  (__Interchange_Control_Segment__)       Application Sender/Receiver Codes (GS02, GS03) and Group Control Number (GS06)
+ *              |
+ *       _______|___________________
+ *      (_______Transaction_Set_____)                               Transaction Set Code (ST01) and Control Number (ST02)
+ *                |               |
+ *       _________|__________    _|____________
+ *      (_____Heading_Area___)  (_Summary_Area_)                    Table designator
+ *        |                 |     |       |
+ *        |  _____________  |     |       |
+ *        | (_Detail_Area_) |     |       |                         Table designator
+ *        |   |     |       |     |       |
+ *        |   |    _|_______|_____|_      |
+ *        |   |   (______Loop_______)     |                         Loop name
+ *        |   |           |        |      |
+ *        |   |     ______|______  |      |
+ *        |   |    (_Nested_Loop_) |      |                         Loop name
+ *        |   |           |        |      |
+ *       _|___|___________|________|______|_
+ *      (______________Segment______________)                       Segment position number
+ *                   |            |
+ *         __________|__________  |
+ *        (__Composite_Element__) |
+ *                        |       |
+ *                   _____|_______|____
+ *                  (__Simple Element__)
+ */
+
+sealed case class SegmentUsage(
+  val position: Int,
+  val segmentDefinition: segments.definitions.SegmentDefinition,
+  val requirement: designations.requirement.Requirement,
+  val repeat: designations.repeat.Repeat)
+
+sealed case class LoopUsage(
+  val loopDefinition: LoopDefinition,
+  val repeat: designations.repeat.Repeat)
+
+/**
+ * The functional identifier GS01 defines the collection of transaction sets that may be
+ * included within the functional group.
+ *
+ * <functionalGroup> ::= <headerSegment(GS)> <transactionSet> {<transactionSet}> <trailerSegment(GE)>
+ *
+ * The functional group control number (GS06/GE02) in the header and trailer segments shall be
+ * the same for any given group. In order to provide sufficient discrimination for the
+ * acknowledgement process to operate reliably and to ensure that audit trails are not
+ * ambiguous, the combination of GS01, GS02, GS03, GS06/GE02 shall, by themselves, be unique
+ * within a reasonably extended time frame whose boundaries shall be defined by trading
+ * partner agreement. Because at some point it may be necessary to reuse a sequence of
+ * control numbers, the functional group date and time (GS04 and GS05) elements may serve as
+ * an additional discriminant only to differentiate functional group identity over the longest
+ * possible time frame.
+ *
+ * @note: Security and assurance functionality (X12.58) is not currently implemented.
+ */
+abstract class FunctionalGroupDefinition
+
+/**
+ * Each instance of the transaction set shall be considered the parent structure
+ * of the heading an summary areas enclosed within the boundaries of the transaction
+ * set.
+ */
+sealed abstract class Area extends SegmentGroup
+
+/**
+ * Information in the heading area pertains to the entire transaction set:
+ * - Every transaction set definition will have one (and only one) heading
+ *     area, composed of at least one segment
+ * - The heading area typically contains elements that identify each instance
+ *     of a transaction set and its date. These are included to prevent replay
+ *     of transaction set instances in a secure EDI environment
+ * - If the transaction set definition does not include a mandatory segment
+ *     in the heading area, then it is possible for an instance of the transaction
+ *     set to have no heading area.
+ * - The entire heading area comprises a segment group which is not repeated.
+ */
+abstract class HeaderDefinition extends Area
+
+/**
+ * A detail area is any looping structure between the heading area and the
+ * summary area (or the SE, if no summary exists). Detail areas encompass the
+ * actual body of the business transaction.
+ * - There can be multiple detail areas in a transaction set definition
+ * - There is no requirement for a detail area in a transaction set
+ * 
+ * Each instance of the transaction set and the contents of its heading area
+ * shall be considered the parent structure of any and all detail areas that
+ * follow the last segment of the heading area (or the ST segment if no heading
+ * area exists), and preceed the first segment of the summary area (or the SE
+ * segment if no summary area exists).
+ *
+ * The summary area is NOT defined as a parent structure to the detail area.
+ */
+abstract class DetailDefinition extends Area
+
+/**
+ * Information in the summary area addresses the results of summarizations of
+ * information in the detail area, or additional information about the entire
+ * transaction that cannot be expressed until the heading and detail areas
+ * have been generated. The summary area contains information such as control
+ * totals, balance totals, hash totals, etc.
+ * - The summary area is not required in a transaction set definition
+ * - The entire summary area comprises a segment group which is not repeated.
+ */
+abstract class SummaryDefinition extends Area
+
+/**
+ * A segment group may be repeated in a transaction set instance, if permitted by the
+ * transaction set definition. Such an ordered group is called a loop. Note that each
+ * instance of a loop is a segment group
+ *
+ * Loops are groups of two or more semantically related segments. In use, in the actual
+ * data stream, a loop may appear as only the loop beginning segment. Segment loops
+ * may be bounded or unbounded.
+ *
+ * A loop may contain a loop. This condition is referred to as nesting. In a transaction
+ * set definition, a loop whose first segment appears after the first segment of an
+ * immediately preceeding loop and whose last segment appears no later than the last
+ * segment of that preceeding loop is a nested loop within that preceeding loop.
+ *
+ * HL-INITIATED LOOPS: A looping structure in a transaction set definition may begin
+ * with an HL segment. When used in any transaction set instance, successive occurrences
+ * of the HL structure could indicate a parent-child relationship among the occurrences.
+ * the HL segment therefore allows the identification of an explicit nested loop in a
+ * transaction set. This nesting is not identified in the transaction set definition, but
+ * rather in the instance of the loop, in the data of the HL segment. All semantic
+ * relationships that apply to nested loops will apply equally to relationships between
+ * an HL-initiated parent loop and its HL-initiated child loops.
+ *
+ * Each instance of an area shall be considered the parent structure of any looping
+ * structures enclosed within the boundaries (the first and last segments, per the
+ * transaction set definition) of that area.
+ *
+ * Any loop that contains a nested loop shall be conidered the parent structure of that
+ * nested loop.
+ *
+ * If and only if the beginning segment of a loop is Mandatory (M), then
+ * the loop is also mandatory.
+ *
+ * The beginning segment in the loop may not occur in another position within
+ * the loop, nor may it occur within a child loop.
+ */
+abstract class LoopDefinition(name: String) extends SegmentGroup {
+
+  /**
+   * Calculates the loop ID, like Loop1000, based on the singleton name. It
+   * doesn't work if `this` is not a singleton instance (object).
+   */
+  def loopId: String = {
+    var name = this.getClass.getName
+    if (name endsWith "$")
+      name = name.substring(0, name.length - 1)
+
+    val m = name.lastIndexOf('.': Int)
+    if (m >= 0)
+      name = name.substring(m + 1)
+
+    val n = name.lastIndexOf('$': Int)
+    if (n >= 0)
+      name = name.substring(n + 1)
+
+    name
+  }
+
+  override def toString = loopId
+}
+
+/**
+ * Delimited by LS and LE segments
+ */
+abstract class DelimitedLoopDefinition(name: String) extends LoopDefinition(name)
+
+abstract class UndelimitedLoopDefinition(name: String) extends LoopDefinition(name) {
+  // @todo remove no-arg constructor
+  def this() = this("UNKNOWN")
+}
+
+/**
+ * SEGMENTS WITHIN A LOOP
+ * 
+ * Each instance of a loop (ie, a segment group; note that the header and summary areas
+ * are segment groups as well) contains one or more segments.
+ *
+ * - Each segment within a loop structure is identified by its ordinal positioning within
+ *   the complete transaction set definition. Each segment's order within the loop, relative
+ *   to other segments within the loop, is defined by the sequential order of the ordinal
+ *   positioning identfiers.
+ *
+ * - The beginning segment of a loop defines an instance of a loop. For any instance of a
+ *   transaction set, for any loop with any area of that transaction set, the first occurence
+ *   of the beginning segment of the loop will identify the first instance of the loop, the
+ *   second will identify the second instance, etc.
+ *
+ * Each instance of a loop shall be considered the parent structure of any segments
+ * enclosed within the boundaries of the loop (the first and last segments, inclusive,
+ * of the loop, per the transaction set definitions).
+ *
+ * Each instance of a segment shall be considered the parent structure of any elements used
+ * in that segment, as allowed by the segment definition.
+ */
+
+/**
+ * An ordered group of segments (more than one) within a transaction set is identified as
+ * a segment group. In the definition of a transaction set, segment groups are identified
+ * by the following: the entire transaction set, each area of the transaction set, the segments
+ * in an area not inside the loops in that area, all of the segments of a loop or nested
+ * loop, and those segments in a loop not inside nested loops within that loop.
+ *
+ * Segments in a transaction set may be repeated as individual segments or as undelimited
+ * or delimited loops.
+ *
+ * <segmentGroup> ::= {<segment>} | <segmentLoop> | <boundedLoop>
+ * <segmentLoop>  ::= <beginningSegment> {<segment> | <segmentGroup>}
+ * <boundedLoop>  ::= <loopStartSegment(LS)> <segmentLoop> {<segmentLoop>} <loopEndSegment(LE)>
+ *
+ * When segments are combined to form a transaction set, three characteristics shall be
+ * applied to each segment in that usage: a requirement designator, a position in the
+ * transaction set definition, and a maximum occurence. The ordinal positions of the segments
+ * in a transaction set are explicitly specified for that transaction set. The positioning
+ * shall be maintained during transmission.
+ *
+ * A transaction set's segment order shall be defined such that sequential processing of
+ * any legitimate instance of the transaction set will result in positive identification
+ * of each segment in terms of its ordinal position in the standard. Positive identification
+ * shall accordingly be made on the basis of segment identifiers alone, with the exception
+ * of the LS and LE segments, where the identification is made using the segment identifier
+ * in conjunction with the loop ID.
+ *
+ * Positive identification shall not depend on a segment's requirement designator or maximum
+ * occurrences.
+ */
+trait SegmentGroup {
+  import _root_.net.ppmconnect.edigen.x12.segments.definitions.SegmentDefinition
+  import _root_.net.ppmconnect.edigen.x12.designations.repeat.Repeat
+  import _root_.net.ppmconnect.edigen.x12.designations.requirement.Requirement
+
+  private var segmentDefinitions: Map[SegmentDefinition, SegmentUsage] = Map()
+  private var segmentPositions: Map[Int, SegmentDefinition] = Map()
+
+  private var loopDefinitions: List[LoopUsage] = List()
+
+  /** Returns a list of segments and their usage attributes */
+  def segments: List[SegmentUsage] = segmentDefinitions.values.toList.sortBy(_.position)
+
+  /** Returns a list of loops and their usage attributes */
+  def loops: List[LoopUsage] = loopDefinitions.toList
+
+  protected final def Segment(position: Int, segmentDefinition: SegmentDefinition, requirement: Requirement, repeat: Repeat): SegmentUsage = {
+    if (segmentPositions.contains(position))
+      throw new RuntimeException("Position " + position + " is already defined as "
+                                             + segmentPositions(position))
+
+    if (segmentDefinitions.contains(segmentDefinition))
+      throw new RuntimeException("Segment " + segmentDefinition + " is already defined in position "
+                                            + segmentDefinitions(segmentDefinition).position)
+
+    val usage = new SegmentUsage(position, segmentDefinition, requirement, repeat)
+      segmentPositions   += position -> segmentDefinition
+      segmentDefinitions += segmentDefinition -> usage
+    usage
+  }
+
+  /**
+   * @todo: Ensure that every LoopDefinition has at least one SegmentDefinition. This could be
+   * enforced here, by checking that Segment(...) was called first. But it might be better to
+   * just make it a compile-time error by requiring a SegmentDefinition argument in the call to
+   * LoopDefinition's constructor?
+   */
+  protected final def Loop(loopDefinition: LoopDefinition, repeat: Repeat): LoopUsage = {
+    val usage = LoopUsage(loopDefinition, repeat)
+      loopDefinitions ::= usage
+    usage
+  }
+}
+
+
+/**
+ * The transaction set is a semantically meaningful unit of information exchanged between
+ * trading partners. The transaction set shall consist of a transaction set header segment,
+ * optionally one or more transaction security header segments, optionally one or more
+ * transaction assurance header segments, one or more data segments and loop control
+ * segments (if bounded loops exist) in a specified order, one transaction security value
+ * for each assurance header present, one transaction security trailer segment for each
+ * security header segment present, and a transaction set trailer segment.
+ *
+ * <transactionSet> ::= <headerSegment(ST)> <segmentGroup> {<segmentGroup>} <trailerSegment(SE)>
+ *
+ * The transaction set identifier (ST01) uniquely identifies the transaction set. The
+ * value for the transaction set control number in the header and trailer (ST02 and SE02)
+ * must be identical for any given transaction. The value of SE01 is the total number of
+ * segments in the transaction set, including the ST and SE segments. The implementation
+ * convention identification string identifies which implementation convention is in use
+ * for the transaction set.
+ *
+ * @note: Security and assurance functionality (X12.58) is not currently implemented.
+ */
+abstract class TransactionSetDefinition {
+  val header: HeaderDefinition
+  val detail: DetailDefinition
+  val summary: SummaryDefinition
+}

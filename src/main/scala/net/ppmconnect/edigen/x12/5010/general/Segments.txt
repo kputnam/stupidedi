@@ -1,0 +1,1012 @@
+/**
+ * The "X12.22 Segment Directory" encoded in Scala
+ */
+package net.ppmconnect.edigen.x12
+package v5010
+package general
+package segments
+
+/**
+ * DATA ELEMENTS IN A SEGMENT
+ *
+ * In defining a segment, each element within the segment is further characterized by a
+ * reference designator and an element reference number. Elements have additional attributes.
+ * They shall have a reference designator, a condition designator, and a repitition
+ * designator -- they may also have a semenatic note designator.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * These are objects (singletons) to make it possible to reference member elements without
+ * and instance of the segment (eg: REF.E01).  Since Scala identifiers cannot start with a
+ * number, the documentation's nomenclature "REF01" corresponds to REF.E01
+ */
+package definitions {
+
+  import elements.definitions._
+  import elements.definitions.composite._
+  import designations.repeat._
+  import designations.requirement.aliases._
+  import designations.syntax.aliases._
+
+  /**
+   * The segment is an intermediate unit of information in a transaction set (think struct). A
+   * segment consists of an identifier and one or more elements, each of which may be permitted
+   * to repeat when so indicated in the segment specification. Adjacent non-repeating elements
+   * shall be separated by an element separator. Adjacent occurrences of the same repeating
+   * element shall be separated by a repitition separator. The segment shall end with a segment
+   * terminator. Trailing element separators and trailing repitition separators shall be suppressed.
+   * Segments are defined in a directory. The directory defines each segment include the segment's
+   * name, purpose, and identifier. The directory also defines elements that a segment contains
+   * in a specified order
+   *
+   * <segment>     ::= <segmentId> {<elementSeparator> [<segmentUnit>]} <gs> <segmentUnit> <segmentTerminator>
+   * <segmentUnit> ::= <repeatingSimpleElement> | <repeatingCompositeElement>
+   * <repeatingSimpleElement>    ::= {[<simpleElement>] <repeatSeparator>} <simpleElement>
+   * <repeatingCompositeElement> ::= {[<compositeElement>] <repeatSeparator>} <compositeElement>
+   */
+  abstract class SegmentDefinition(description: String) extends net.ppmconnect.edigen.x12.elements.ElementGroup {
+
+    /**
+     * Calculates the segment ID, like BPR, based on the singleton name. It
+     * doesn't work if `this` is not a singleton instance (object).
+     */
+    def segmentId: String = {
+      var name = this.getClass.getName
+      if (name endsWith "$")
+        name = name.substring(0, name.length - 1)
+
+      val m = name.lastIndexOf('.': Int)
+      if (m >= 0)
+        name = name.substring(m + 1)
+
+      val n = name.indexOf('$': Int)
+      if (n >= 0)
+        name = name.substring(n + 1)
+
+      name
+    }
+
+    override def toString = segmentId + ": " + description
+
+    def elementGroupId = segmentId
+  }
+
+  /**
+   * Purpose: To indicate the start of a transaction and to assign a control number
+   */
+  object ST extends SegmentDefinition("Transaction Set Header") {
+    val E01 = Element( DE143, repeat = Once, requirement = M)
+    val E02 = Element( DE329, repeat = Once, requirement = M)
+    val E03 = Element(DE1705, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To indicate the end of the transaction set and provide the count of the transmitted segments,
+   *   including the beginning ST and ending SE segments.
+   */
+  object SE extends SegmentDefinition("Transaction Set Trailer") {
+    val E01 = Element( DE96, repeat = Once, requirement = M)
+    val E02 = Element(DE329, repeat = Once, requirement = M)
+  }
+
+  /**
+   * Purpose: To indicate the total monetary amount
+   */
+  object AMT extends SegmentDefinition("Monetary Amount Information") {
+    val E01 = Element(DE522, repeat = Once, requirement = M)
+    val E02 = Element(DE782, repeat = Once, requirement = M)
+    val E03 = Element(DE478, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To define the business hierarchical structure of the transaction set and identify
+   *   the business application purpose and reference data, i.e., number, date, and time
+   */
+  object BHT extends SegmentDefinition("Beginning of Hierarchical Transaction") {
+    val E01 = Element(DE1005, repeat = Once, requirement = M)
+    val E02 = Element( DE353, repeat = Once, requirement = M)
+    val E03 = Element( DE127, repeat = Once, requirement = O)
+    val E04 = Element( DE373, repeat = Once, requirement = O)
+    val E05 = Element( DE337, repeat = Once, requirement = O)
+    val E06 = Element( DE640, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To indicate the beginning of a Payment Order/Remittance Advice Transaction
+   * Set and total payment amount, or to enable related transfer of funds and/or information
+   * set from payer to payee to occur
+   */
+  object BPR extends SegmentDefinition("Financial Information") {
+    Syntax(P(E06, E07), C(E08, E09), P(E12, E13), C(E14, E15), P(E18, E19), C(E20, E21))
+
+    val E01 = Element( DE305, repeat = Once, requirement = M)
+    val E02 = Element( DE782, repeat = Once, requirement = M)
+    val E03 = Element( DE478, repeat = Once, requirement = M)
+    val E04 = Element( DE591, repeat = Once, requirement = M)
+    val E05 = Element( DE812, repeat = Once, requirement = O)
+    val E06 = Element( DE506, repeat = Once, requirement = X)
+    val E07 = Element( DE507, repeat = Once, requirement = X)
+    val E08 = Element( DE569, repeat = Once, requirement = X)
+    val E09 = Element( DE508, repeat = Once, requirement = X)
+    val E10 = Element( DE509, repeat = Once, requirement = O)
+    val E11 = Element( DE510, repeat = Once, requirement = O)
+    val E12 = Element( DE506, repeat = Once, requirement = X)
+    val E13 = Element( DE507, repeat = Once, requirement = X)
+    val E14 = Element( DE569, repeat = Once, requirement = O)
+    val E15 = Element( DE508, repeat = Once, requirement = X)
+    val E16 = Element( DE373, repeat = Once, requirement = O)
+    val E17 = Element(DE1048, repeat = Once, requirement = O)
+    val E18 = Element( DE506, repeat = Once, requirement = X)
+    val E19 = Element( DE507, repeat = Once, requirement = X)
+    val E20 = Element( DE569, repeat = Once, requirement = O)
+    val E21 = Element( DE508, repeat = Once, requirement = X)
+  }
+
+  /**
+   * Purpose: To supply adjustment reason codes and amounts as needed for an entire claim or
+   *   for a particular service within the claim being paid
+   */
+  object CAS extends SegmentDefinition("Claims Adjustment") {
+    Syntax(L(E05, E06, E07), C(E06, E05), C(E07, E05),
+           L(E08, E09, E10), C(E09, E08), C(E10, E08),
+           L(E11, E12, E13), C(E12, E11), C(E13, E11),
+           L(E14, E15, E16), C(E15, E14), C(E16, E14),
+           L(E17, E18, E19), C(E18, E17), C(E19, E17))
+
+    val E01 = Element(DE1033, repeat = Once, requirement = M)
+    val E02 = Element(DE1034, repeat = Once, requirement = M)
+    val E03 = Element( DE782, repeat = Once, requirement = M)
+    val E04 = Element( DE380, repeat = Once, requirement = O)
+    val E05 = Element(DE1034, repeat = Once, requirement = X)
+    val E06 = Element( DE782, repeat = Once, requirement = X)
+    val E07 = Element( DE380, repeat = Once, requirement = X)
+    val E08 = Element(DE1034, repeat = Once, requirement = X)
+    val E09 = Element( DE782, repeat = Once, requirement = X)
+    val E10 = Element( DE380, repeat = Once, requirement = X)
+    val E11 = Element(DE1034, repeat = Once, requirement = X)
+    val E12 = Element( DE782, repeat = Once, requirement = X)
+    val E13 = Element( DE380, repeat = Once, requirement = X)
+    val E14 = Element(DE1034, repeat = Once, requirement = X)
+    val E15 = Element( DE782, repeat = Once, requirement = X)
+    val E16 = Element( DE380, repeat = Once, requirement = X)
+    val E17 = Element(DE1034, repeat = Once, requirement = X)
+    val E18 = Element( DE782, repeat = Once, requirement = X)
+    val E19 = Element( DE380, repeat = Once, requirement = X)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object CL1 extends SegmentDefinition("Claim Codes")
+
+  /**
+   * Purpose: To specify basic data about the claim
+   */
+  object CLM extends SegmentDefinition("Health Claim") {
+    val E01 = Element(DE1028, repeat = Once, requirement = M)
+    val E02 = Element( DE782, repeat = Once, requirement = O)
+    val E03 = Element(DE1032, repeat = Once, requirement = O)
+    val E04 = Element(DE1343, repeat = Once, requirement = O)
+    val C05 = Element( CE023, repeat = Once, requirement = O)
+    val E06 = Element(DE1073, repeat = Once, requirement = O)
+    val E07 = Element(DE1359, repeat = Once, requirement = O)
+    val E08 = Element(DE1073, repeat = Once, requirement = O)
+    val E09 = Element(DE1363, repeat = Once, requirement = O)
+    val E10 = Element(DE1351, repeat = Once, requirement = O)
+    val C11 = Element( CE024, repeat = Once, requirement = O)
+    val E12 = Element(DE1366, repeat = Once, requirement = O)
+    val E13 = Element(DE1073, repeat = Once, requirement = O)
+    val E14 = Element(DE1338, repeat = Once, requirement = O)
+    val E15 = Element(DE1073, repeat = Once, requirement = O)
+    val E16 = Element(DE1360, repeat = Once, requirement = O)
+    val E17 = Element(DE1029, repeat = Once, requirement = O)
+    val E18 = Element(DE1073, repeat = Once, requirement = O)
+    val E19 = Element(DE1383, repeat = Once, requirement = O)
+    val E20 = Element(DE1514, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply information common to all services of a claim
+   */
+  object CLP extends SegmentDefinition("Claim Level Data") {
+    val E01 = Element(DE1028, repeat = Once, requirement = M)
+    val E02 = Element(DE1029, repeat = Once, requirement = M)
+    val E03 = Element( DE782, repeat = Once, requirement = M)
+    val E04 = Element( DE782, repeat = Once, requirement = M)
+    val E05 = Element( DE782, repeat = Once, requirement = O)
+    val E06 = Element(DE1032, repeat = Once, requirement = O)
+    val E07 = Element( DE127, repeat = Once, requirement = O)
+    val E08 = Element(DE1331, repeat = Once, requirement = O)
+    val E09 = Element(DE1325, repeat = Once, requirement = O)
+    val E10 = Element(DE1352, repeat = Once, requirement = O)
+    val E11 = Element(DE1354, repeat = Once, requirement = O)
+    val E12 = Element( DE380, repeat = Once, requirement = O)
+    val E13 = Element( DE954, repeat = Once, requirement = O)
+    val E14 = Element(DE1073, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify basic data about the contract or contract line item
+   */
+  object CN1 extends SegmentDefinition("Contract Information") {
+    val E01 = Element(DE1166, repeat = Once, requirement = M)
+    val E02 = Element( DE782, repeat = Once, requirement = O)
+    val E03 = Element( DE332, repeat = Once, requirement = O)
+    val E04 = Element( DE127, repeat = Once, requirement = O)
+    val E05 = Element( DE338, repeat = Once, requirement = O)
+    val E06 = Element( DE799, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply information related to the ambulance service rendered to a patient
+   */
+  object CR1 extends SegmentDefinition("Ambulance Certification") {
+    val E01 = Element( DE355, repeat = Once, requirement = X)
+    val E02 = Element(  DE81, repeat = Once, requirement = X)
+    val E03 = Element(DE1316, repeat = Once, requirement = O)
+    val E04 = Element(DE1317, repeat = Once, requirement = O)
+    val E05 = Element( DE355, repeat = Once, requirement = X)
+    val E06 = Element( DE380, repeat = Once, requirement = X)
+    val E07 = Element( DE166, repeat = Once, requirement = O)
+    val E08 = Element( DE166, repeat = Once, requirement = O)
+    val E09 = Element( DE352, repeat = Once, requirement = O)
+    val E10 = Element( DE352, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply information related to the chiropractic service rendered to a patient
+   */
+  object CR2 extends SegmentDefinition("Chiropractic Certification") {
+    val E01 = Element( DE609, repeat = Once, requirement = X)
+    val E02 = Element( DE380, repeat = Once, requirement = X)
+    val E03 = Element(DE1367, repeat = Once, requirement = X)
+    val E04 = Element(DE1367, repeat = Once, requirement = O)
+    val E05 = Element( DE355, repeat = Once, requirement = X)
+    val E06 = Element( DE380, repeat = Once, requirement = X)
+    val E07 = Element( DE380, repeat = Once, requirement = O)
+    val E08 = Element(DE1342, repeat = Once, requirement = O)
+    val E09 = Element(DE1073, repeat = Once, requirement = O)
+    val E10 = Element( DE352, repeat = Once, requirement = O)
+    val E11 = Element( DE352, repeat = Once, requirement = O)
+    val E12 = Element(DE1073, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply information regarding a physician's ceritfication for durable medical equipment
+   */
+  object CR3 extends SegmentDefinition("Durable Medical Equipment Certification") {
+    val E01 = Element(DE1322, repeat = Once, requirement = O)
+    val E02 = Element( DE355, repeat = Once, requirement = X)
+    val E03 = Element( DE380, repeat = Once, requirement = X)
+    val E04 = Element(DE1335, repeat = Once, requirement = O)
+    val E05 = Element( DE352, repeat = Once, requirement = O)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object CR4 extends SegmentDefinition("Enteral or Parenteral Therapy Certification")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object CR5 extends SegmentDefinition("Oxygen Therapy Certification")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object CR6 extends SegmentDefinition("Home Health Care Certification")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object CR7 extends SegmentDefinition("Home Health Treatment Plan Certification")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object CR8 extends SegmentDefinition("Pacemaker Certification")
+
+  /**
+   * Purpose: To supply information on requirement
+   */
+  object CRC extends SegmentDefinition("Conditions Indicator") {
+    val E01 = Element(DE1136, repeat = Once, requirement = M)
+    val E02 = Element(DE1073, repeat = Once, requirement = M)
+    val E03 = Element(DE1321, repeat = Once, requirement = M)
+    val E04 = Element(DE1321, repeat = Once, requirement = O)
+    val E05 = Element(DE1321, repeat = Once, requirement = O)
+    val E06 = Element(DE1321, repeat = Once, requirement = O)
+    val E07 = Element(DE1321, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify pricing information
+   */
+  object CTP extends SegmentDefinition("Pricing Information") {
+    val E01 = Element(DE687, repeat = Once, requirement = O)
+    val E02 = Element(DE236, repeat = Once, requirement = X)
+    val E03 = Element(DE212, repeat = Once, requirement = X)
+    val E04 = Element(DE380, repeat = Once, requirement = X)
+    val C05 = Element(CE001, repeat = Once, requirement = X)
+    val E06 = Element(DE648, repeat = Once, requirement = O)
+    val E07 = Element(DE649, repeat = Once, requirement = X)
+    val E08 = Element(DE782, repeat = Once, requirement = O)
+    val E09 = Element(DE639, repeat = Once, requirement = O)
+    val E10 = Element(DE499, repeat = Once, requirement = O)
+    val E11 = Element(DE289, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify the currency (dollars, pounds, francs, etc.) used in a transaction
+   */
+  object CUR extends SegmentDefinition("Currency") {
+    Syntax(C(E08, E07), C(E09, E07),
+           L(E10, E11, E12), C(E11, E10), C(E12, E10),
+           L(E13, E14, E15), C(E14, E13), C(E15, E13),
+           L(E16, E17, E18), C(E17, E16), C(E18, E16),
+           L(E19, E20, E21), C(E20, E19), C(E21, E19))
+
+    val E01 = Element( DE98, repeat = Once, requirement = M)
+    val E02 = Element(DE100, repeat = Once, requirement = M)
+    val E03 = Element(DE280, repeat = Once, requirement = O)
+    val E04 = Element( DE98, repeat = Once, requirement = O)
+    val E05 = Element(DE100, repeat = Once, requirement = O)
+    val E06 = Element(DE669, repeat = Once, requirement = O)
+    val E07 = Element(DE374, repeat = Once, requirement = X)
+    val E08 = Element(DE373, repeat = Once, requirement = O)
+    val E09 = Element(DE337, repeat = Once, requirement = O)
+    val E10 = Element(DE374, repeat = Once, requirement = X)
+    val E11 = Element(DE373, repeat = Once, requirement = X)
+    val E12 = Element(DE337, repeat = Once, requirement = X)
+    val E13 = Element(DE374, repeat = Once, requirement = X)
+    val E14 = Element(DE373, repeat = Once, requirement = X)
+    val E15 = Element(DE337, repeat = Once, requirement = X)
+    val E16 = Element(DE374, repeat = Once, requirement = X)
+    val E17 = Element(DE373, repeat = Once, requirement = X)
+    val E18 = Element(DE337, repeat = Once, requirement = X)
+    val E19 = Element(DE374, repeat = Once, requirement = X)
+    val E20 = Element(DE373, repeat = Once, requirement = X)
+    val E21 = Element(DE337, repeat = Once, requirement = X)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object DN1 extends SegmentDefinition("Orthodontic Information")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object DN2 extends SegmentDefinition("Tooth Summary")
+
+  /**
+   * Purpose: To supply demographic information
+   */
+  object DMG extends SegmentDefinition("Demographic Information") {
+    val E01 = Element(DE1250, repeat = Once, requirement = X)
+    val E02 = Element(DE1251, repeat = Once, requirement = X)
+    val E03 = Element(DE1068, repeat = Once, requirement = O)
+    val E04 = Element(DE1067, repeat = Once, requirement = O)
+    val C05 = Element( CE056, repeat = Maximum(10), requirement = X)
+    val E06 = Element(DE1066, repeat = Once, requirement = O)
+    val E07 = Element(  DE26, repeat = Once, requirement = O)
+    val E08 = Element( DE380, repeat = Once, requirement = O)
+    val E09 = Element(DE1270, repeat = Once, requirement = X)
+    val E10 = Element(DE1271, repeat = Once, requirement = X)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object DSB extends SegmentDefinition("Disability Information")
+
+  /**
+   * Purpose: To specify pertinent dates and times
+   */
+  object DTM extends SegmentDefinition("Date/Time Reference") {
+    Syntax(R(E02, E03, E05), C(E04, E03), P(E05, E06))
+
+    val E01 = Element( DE374, repeat = Once, requirement = M)
+    val E02 = Element( DE373, repeat = Once, requirement = X)
+    val E03 = Element( DE337, repeat = Once, requirement = X)
+    val E04 = Element( DE623, repeat = Once, requirement = O)
+    val E05 = Element(DE1250, repeat = Once, requirement = X)
+    val E06 = Element(DE1251, repeat = Once, requirement = X)
+  }
+
+  /**
+   * Purpose: To specify any or all of a date, time, or a time period
+   */
+  object DTP extends SegmentDefinition("Date or Time Period") {
+    val E01 = Element( DE374, repeat = Once, requirement = M)
+    val E02 = Element(DE1250, repeat = Once, requirement = M)
+    val E03 = Element(DE1251, repeat = Once, requirement = M)
+  }
+
+  /**
+   * Purpose: To specify information in response to a codified questionnaire content
+   */
+  object FRM extends SegmentDefinition("Supporting Documentation") {
+    val E01 = Element( DE350, repeat = Once, requirement = M)
+    val E02 = Element(DE1073, repeat = Once, requirement = X)
+    val E03 = Element( DE127, repeat = Once, requirement = X)
+    val E04 = Element( DE373, repeat = Once, requirement = X)
+    val E05 = Element( DE332, repeat = Once, requirement = X)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object IMM extends SegmentDefinition("Immunization Status")
+
+  /**
+   * Purpose: To specify pricing or repricing information about a health care claim or line item
+   */
+  object HCP extends SegmentDefinition("Health Care Pricing") {
+    val E01 = Element(DE1473, repeat = Once, requirement = X)
+    val E02 = Element( DE782, repeat = Once, requirement = O)
+    val E03 = Element( DE782, repeat = Once, requirement = O)
+    val E04 = Element( DE127, repeat = Once, requirement = O)
+    val E05 = Element( DE118, repeat = Once, requirement = O)
+    val E06 = Element( DE127, repeat = Once, requirement = O)
+    val E07 = Element( DE782, repeat = Once, requirement = O)
+    val E08 = Element( DE234, repeat = Once, requirement = O)
+    val E09 = Element( DE235, repeat = Once, requirement = X)
+    val E10 = Element( DE234, repeat = Once, requirement = X)
+    val E11 = Element( DE355, repeat = Once, requirement = X)
+    val E12 = Element( DE380, repeat = Once, requirement = X)
+    val E13 = Element( DE901, repeat = Once, requirement = X)
+    val E14 = Element(DE1526, repeat = Once, requirement = O)
+    val E15 = Element(DE1527, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply information related to the delivery of health care
+   */
+  object HI extends SegmentDefinition("Health Care Information Codes") {
+    val C01 = Element(CE022, repeat = Once, requirement = M)
+    val C02 = Element(CE022, repeat = Once, requirement = O)
+    val C03 = Element(CE022, repeat = Once, requirement = O)
+    val C04 = Element(CE022, repeat = Once, requirement = M)
+    val C05 = Element(CE022, repeat = Once, requirement = O)
+    val C06 = Element(CE022, repeat = Once, requirement = O)
+    val C07 = Element(CE022, repeat = Once, requirement = M)
+    val C08 = Element(CE022, repeat = Once, requirement = O)
+    val C09 = Element(CE022, repeat = Once, requirement = O)
+    val C10 = Element(CE022, repeat = Once, requirement = O)
+    val C11 = Element(CE022, repeat = Once, requirement = O)
+    val C12 = Element(CE022, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To identify dependencies among and the content of hierarchically related groups of segments
+   */
+  object HL extends SegmentDefinition("Hierarchical Level") {
+    val E01 = Element(DE628, repeat = Once, requirement = M)
+    val E02 = Element(DE734, repeat = Once, requirement = O)
+    val E03 = Element(DE735, repeat = Once, requirement = M)
+    val E04 = Element(DE736, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To transmit a fixed-format or matrix contents
+   */
+  object K3 extends SegmentDefinition("File Information") {
+    val E01 = Element( DE449, repeat = Once, requirement = M)
+    val E02 = Element(DE1333, repeat = Once, requirement = O)
+    val C03 = Element( CE001, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To reference a line number in a transaction set
+   */
+  object LDE extends SegmentDefinition("Transaction Set Line Number") {
+    val E01 = Element(DE554, repeat = Once, requirement = M)
+  }
+
+  /**
+   * Purpose: To specify basic item identification data
+   */
+  object LIN extends SegmentDefinition("Item Identification") {
+    val E01 = Element(DE350, repeat = Once, requirement = O)
+    val E02 = Element(DE235, repeat = Once, requirement = M)
+    val E03 = Element(DE234, repeat = Once, requirement = M)
+    val E04 = Element(DE235, repeat = Once, requirement = X)
+    val E05 = Element(DE234, repeat = Once, requirement = X)
+    val E06 = Element(DE235, repeat = Once, requirement = X)
+    val E07 = Element(DE234, repeat = Once, requirement = X)
+    val E08 = Element(DE235, repeat = Once, requirement = X)
+    val E09 = Element(DE234, repeat = Once, requirement = X)
+    val E10 = Element(DE235, repeat = Once, requirement = X)
+    val E11 = Element(DE234, repeat = Once, requirement = X)
+    val E12 = Element(DE235, repeat = Once, requirement = X)
+    val E13 = Element(DE234, repeat = Once, requirement = X)
+    val E14 = Element(DE235, repeat = Once, requirement = X)
+    val E15 = Element(DE234, repeat = Once, requirement = X)
+    val E16 = Element(DE235, repeat = Once, requirement = X)
+    val E17 = Element(DE234, repeat = Once, requirement = X)
+    val E18 = Element(DE235, repeat = Once, requirement = X)
+    val E19 = Element(DE234, repeat = Once, requirement = X)
+    val E20 = Element(DE235, repeat = Once, requirement = X)
+    val E21 = Element(DE234, repeat = Once, requirement = X)
+    val E22 = Element(DE235, repeat = Once, requirement = X)
+    val E23 = Element(DE234, repeat = Once, requirement = X)
+    val E24 = Element(DE235, repeat = Once, requirement = X)
+    val E25 = Element(DE234, repeat = Once, requirement = X)
+    val E26 = Element(DE235, repeat = Once, requirement = X)
+    val E27 = Element(DE234, repeat = Once, requirement = X)
+    val E28 = Element(DE235, repeat = Once, requirement = X)
+    val E29 = Element(DE234, repeat = Once, requirement = X)
+    val E30 = Element(DE235, repeat = Once, requirement = X)
+    val E31 = Element(DE234, repeat = Once, requirement = X)
+  }
+
+  /**
+   * Purpose: To identify standard industry codes
+   */
+  object LQ extends SegmentDefinition("Industry Code Identification") {
+    Syntax(C(E01, E02))
+
+    val E01 = Element(DE1270, repeat = Once, requirement = O)
+    val E02 = Element(DE1271, repeat = Once, requirement = X)
+  }
+
+  object LX extends SegmentDefinition("Transaction Set Line Number") {
+    val E01 = Element(DE554, repeat = Once, requirement = M)
+  }
+
+  /**
+   * Purpose: To specify physical measurements or counts, including demensions, tolerences
+   *   variances, and weights
+   */
+  object MEA extends SegmentDefinition("Measurements") {
+    val E01 = Element( DE737, repeat = Once, requirement = O)
+    val E02 = Element( DE738, repeat = Once, requirement = O)
+    val E03 = Element( DE739, repeat = Once, requirement = X)
+    val C04 = Element( CE001, repeat = Once, requirement = X)
+    val E05 = Element( DE740, repeat = Once, requirement = X)
+    val E06 = Element( DE741, repeat = Once, requirement = X)
+    val E07 = Element( DE935, repeat = Once, requirement = O)
+    val E08 = Element( DE936, repeat = Once, requirement = X)
+    val E09 = Element( DE752, repeat = Once, requirement = O)
+    val E10 = Element( DE753, repeat = Once, requirement = O)
+    val E11 = Element(DE1270, repeat = Once, requirement = X)
+    val E12 = Element(DE1271, repeat = Once, requirement = X)
+  }
+
+  object MIA extends SegmentDefinition("Medicare Inpatient Adjudication") {
+    val E01 = Element(DE380, repeat = Once, requirement = M)
+    val E02 = Element(DE782, repeat = Once, requirement = O)
+    val E03 = Element(DE380, repeat = Once, requirement = O)
+    val E04 = Element(DE782, repeat = Once, requirement = O)
+    val E05 = Element(DE127, repeat = Once, requirement = O)
+    val E06 = Element(DE782, repeat = Once, requirement = O)
+    val E07 = Element(DE782, repeat = Once, requirement = O)
+    val E08 = Element(DE782, repeat = Once, requirement = O)
+    val E09 = Element(DE782, repeat = Once, requirement = O)
+    val E10 = Element(DE782, repeat = Once, requirement = O)
+    val E11 = Element(DE782, repeat = Once, requirement = O)
+    val E12 = Element(DE782, repeat = Once, requirement = O)
+    val E13 = Element(DE782, repeat = Once, requirement = O)
+    val E14 = Element(DE782, repeat = Once, requirement = O)
+    val E15 = Element(DE380, repeat = Once, requirement = O)
+    val E16 = Element(DE782, repeat = Once, requirement = O)
+    val E17 = Element(DE782, repeat = Once, requirement = O)
+    val E18 = Element(DE782, repeat = Once, requirement = O)
+    val E19 = Element(DE782, repeat = Once, requirement = O)
+    val E20 = Element(DE127, repeat = Once, requirement = O)
+    val E21 = Element(DE127, repeat = Once, requirement = O)
+    val E22 = Element(DE127, repeat = Once, requirement = O)
+    val E23 = Element(DE127, repeat = Once, requirement = O)
+    val E24 = Element(DE782, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To convey claim-level data related to the adjudication of Medicare claims not
+   *   related to an inpatient setting
+   */
+  object MOA extends SegmentDefinition("Medicare Outpatient Adjudication") {
+    val E01 = Element(DE954, repeat = Once, requirement = O)
+    val E02 = Element(DE782, repeat = Once, requirement = O)
+    val E03 = Element(DE127, repeat = Once, requirement = O)
+    val E04 = Element(DE127, repeat = Once, requirement = O)
+    val E05 = Element(DE127, repeat = Once, requirement = O)
+    val E06 = Element(DE127, repeat = Once, requirement = O)
+    val E07 = Element(DE127, repeat = Once, requirement = O)
+    val E08 = Element(DE782, repeat = Once, requirement = O)
+    val E09 = Element(DE782, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To identify a party by type of organization, name, and code
+   */
+  object N1 extends SegmentDefinition("Party Identification") {
+    Syntax(R(E02, E03), P(E03, E04))
+
+    val E01 = Element( DE98, repeat = Once, requirement = M)
+    val E02 = Element( DE93, repeat = Once, requirement = X)
+    val E03 = Element( DE66, repeat = Once, requirement = X)
+    val E04 = Element( DE67, repeat = Once, requirement = X)
+    val E05 = Element(DE706, repeat = Once, requirement = O)
+    val E06 = Element( DE98, repeat = Once, requirement = O)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object N2 extends SegmentDefinition("Additional Name Information")
+
+  /**
+   * Purpose: To specify the location of the named party
+   */
+  object N3 extends SegmentDefinition("Party Location") {
+    val E01 = Element(DE166, repeat = Once, requirement = M)
+    val E02 = Element(DE166, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify the geographic location of the named party
+   */
+  object N4 extends SegmentDefinition("Geographic Location") {
+    Syntax(E(E02, E07), C(E06, E05), C(E07, E04))
+
+    val E01 = Element(  DE19, repeat = Once, requirement = O)
+    val E02 = Element( DE156, repeat = Once, requirement = X)
+    val E03 = Element( DE116, repeat = Once, requirement = O)
+    val E04 = Element(  DE26, repeat = Once, requirement = X)
+    val E05 = Element( DE309, repeat = Once, requirement = X)
+    val E06 = Element( DE310, repeat = Once, requirement = O)
+    val E07 = Element(DE1715, repeat = Once, requirement = X)
+  }
+
+  /**
+   * Purpose: To supply the full name of an individual or organizational entity
+   */
+  object NM1 extends SegmentDefinition("Individual or Organizational Name") {
+    Syntax(P(E08, E09), C(E11, E10), C(E12, E03))
+
+    val E01 = Element(  DE98, repeat = Once, requirement = M)
+    val E02 = Element(DE1065, repeat = Once, requirement = M)
+    val E03 = Element(DE1035, repeat = Once, requirement = X)
+    val E04 = Element(DE1036, repeat = Once, requirement = O)
+    val E05 = Element(DE1037, repeat = Once, requirement = O)
+    val E06 = Element(DE1038, repeat = Once, requirement = O)
+    val E07 = Element(DE1039, repeat = Once, requirement = O)
+    val E08 = Element(  DE66, repeat = Once, requirement = X)
+    val E09 = Element(  DE67, repeat = Once, requirement = X)
+    val E10 = Element( DE706, repeat = Once, requirement = X)
+    val E11 = Element(  DE98, repeat = Once, requirement = O)
+    val E12 = Element(DE1035, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To transmit information in a free-form format, if necessary, for comment
+   *   or special instruction
+   */
+  object NTE extends SegmentDefinition("Note/Special Instruction") {
+    val E01 = Element(DE363, repeat = Once, requirement = O)
+    val E02 = Element(DE352, repeat = Once, requirement = M)
+  }
+
+  /**
+   * Purpose: To specify information associated with other health insurance coverage
+   */
+  object OI extends SegmentDefinition("Other Health Insurance Information") {
+    val E01 = Element(DE1032, repeat = Once, requirement = O)
+    val E02 = Element(DE1383, repeat = Once, requirement = O)
+    val E03 = Element(DE1073, repeat = Once, requirement = O)
+    val E04 = Element(DE1351, repeat = Once, requirement = O)
+    val E05 = Element(DE1360, repeat = Once, requirement = O)
+    val E06 = Element(DE1363, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply patient information
+   */
+  object PAT extends SegmentDefinition("Patient Information") {
+    val E01 = Element(DE1069, repeat = Once, requirement = O)
+    val E02 = Element(DE1384, repeat = Once, requirement = O)
+    val E03 = Element( DE584, repeat = Once, requirement = O)
+    val E04 = Element(DE1220, repeat = Once, requirement = O)
+    val E05 = Element(DE1250, repeat = Once, requirement = X)
+    val E06 = Element(DE1251, repeat = Once, requirement = X)
+    val E07 = Element( DE355, repeat = Once, requirement = X)
+    val E08 = Element(  DE81, repeat = Once, requirement = X)
+    val E09 = Element(DE1073, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To identify a person or office to whom administrative communications
+   *   should be directed
+   */
+  object PER extends SegmentDefinition("Administrative Communications Contact") {
+    Syntax(P(E03, E04), P(E05, E06), P(E07, E08))
+
+    val E01 = Element(DE366, repeat = Once, requirement = M)
+    val E02 = Element( DE93, repeat = Once, requirement = O)
+    val E03 = Element(DE365, repeat = Once, requirement = X)
+    val E04 = Element(DE364, repeat = Once, requirement = X)
+    val E05 = Element(DE365, repeat = Once, requirement = X)
+    val E06 = Element(DE364, repeat = Once, requirement = X)
+    val E07 = Element(DE365, repeat = Once, requirement = X)
+    val E08 = Element(DE364, repeat = Once, requirement = X)
+    val E09 = Element(DE443, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To convey provider level adjustment information for debit or credit transactions
+   *   such as accelerated payments, cost report settlements for a fiscal year, and timeliness
+   *   report penalties unrelated to a specific claim or service
+   */
+  object PLB extends SegmentDefinition("Provider Level Adjustment") {
+    Syntax(P(E05, E06), P(E07, E08), P(E09, E10), P(E11, E12), P(E13, E14))
+
+    val E01 = Element(DE127, repeat = Once, requirement = M)
+    val E02 = Element(DE373, repeat = Once, requirement = M)
+    val E03 = Element(CE042, repeat = Once, requirement = M)
+    val E04 = Element(DE782, repeat = Once, requirement = M)
+    val E05 = Element(CE042, repeat = Once, requirement = X)
+    val E06 = Element(DE782, repeat = Once, requirement = X)
+    val E07 = Element(CE042, repeat = Once, requirement = X)
+    val E08 = Element(DE782, repeat = Once, requirement = X)
+    val E09 = Element(CE042, repeat = Once, requirement = X)
+    val E10 = Element(DE782, repeat = Once, requirement = X)
+    val E11 = Element(CE042, repeat = Once, requirement = X)
+    val E12 = Element(DE782, repeat = Once, requirement = X)
+    val E13 = Element(CE042, repeat = Once, requirement = X)
+    val E14 = Element(DE782, repeat = Once, requirement = X)
+  }
+
+  /**
+   * Purpose: To specify the identifying characteristics of a provider
+   */
+  object PRV extends SegmentDefinition("Provider Information") {
+    val E01 = Element(DE1221, repeat = Once, requirement = M)
+    val E02 = Element( DE128, repeat = Once, requirement = X)
+    val E03 = Element( DE127, repeat = Once, requirement = X)
+    val E04 = Element( DE156, repeat = Once, requirement = O)
+    val C05 = Element( CE035, repeat = Once, requirement = O)
+    val E06 = Element(DE1223, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify the information about services that are purchased
+   */
+  object PS1 extends SegmentDefinition("Purchase Service") {
+    val E01 = Element(DE127, repeat = Once, requirement = M)
+    val E02 = Element(DE782, repeat = Once, requirement = M)
+    val E03 = Element(DE156, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To identify the type or transmission (or both) of paperwork or supporting information
+   */
+  object PWK extends SegmentDefinition("Paperwork") {
+    val E01 = Element( DE755, repeat = Once, requirement = M)
+    val E02 = Element( DE756, repeat = Once, requirement = O)
+    val E03 = Element( DE757, repeat = Once, requirement = O)
+    val E04 = Element(  DE98, repeat = Once, requirement = O)
+    val E05 = Element(  DE66, repeat = Once, requirement = O)
+    val E06 = Element(  DE67, repeat = Once, requirement = O)
+    val E07 = Element( DE352, repeat = Once, requirement = O)
+    val C08 = Element( CE002, repeat = Once, requirement = O)
+    val E09 = Element(DE1525, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify quantity information
+   */
+  object QTY extends SegmentDefinition("Quantity Information") {
+    Syntax(R(E02, E04), E(E02, E04))
+
+    val E01 = Element(DE673, repeat = Once, requirement = M)
+    val E02 = Element(DE380, repeat = Once, requirement = X)
+    val C03 = Element(CE001, repeat = Once, requirement = O)
+    val E04 = Element( DE61, repeat = Once, requirement = X)
+  }
+
+  /**
+   * Purpose: To identify remittance delivery when remittance is separate from payment
+   */
+  object RDM extends SegmentDefinition("Remittance Delivery Method") {
+    val E01 = Element(DE756, repeat = Once, requirement = M)
+    val E02 = Element( DE93, repeat = Once, requirement = O)
+    val E03 = Element(DE364, repeat = Once, requirement = O)
+    val C04 = Element(CE040, repeat = Once, requirement = O)
+    val C05 = Element(CE040, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify identifying information
+   */
+  object REF extends SegmentDefinition("Reference Information") {
+    Syntax(R(E02, E03))
+
+    val E01 = Element(DE128, repeat = Once, requirement = M)
+    val E02 = Element(DE127, repeat = Once, requirement = X)
+    val E03 = Element(DE352, repeat = Once, requirement = X)
+    val C04 = Element(CE040, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To record information specific to the primary insured and the insurance
+   *   carrier for that insured
+   */
+  object SBR extends SegmentDefinition("Subscriber Information") {
+    val E01 = Element(DE1138, repeat = Once, requirement = M)
+    val E02 = Element(DE1069, repeat = Once, requirement = O)
+    val E03 = Element( DE127, repeat = Once, requirement = O)
+    val E04 = Element(  DE93, repeat = Once, requirement = O)
+    val E05 = Element(DE1336, repeat = Once, requirement = O)
+    val E06 = Element(DE1143, repeat = Once, requirement = O)
+    val E07 = Element(DE1073, repeat = Once, requirement = O)
+    val E08 = Element( DE584, repeat = Once, requirement = O)
+    val E09 = Element(DE1032, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To specify the service line item detail for a health care professional
+   */
+  object SV1 extends SegmentDefinition("Professional Service") {
+    val C01 = Element( CE003, repeat = Once, requirement = M)
+    val E02 = Element( DE782, repeat = Once, requirement = O)
+    val E03 = Element( DE355, repeat = Once, requirement = X)
+    val E04 = Element( DE380, repeat = Once, requirement = X)
+    val E05 = Element(DE1331, repeat = Once, requirement = O)
+    val E06 = Element(DE1365, repeat = Once, requirement = O)
+    val C07 = Element( CE004, repeat = Once, requirement = O)
+    val E08 = Element( DE782, repeat = Once, requirement = O)
+    val E09 = Element(DE1073, repeat = Once, requirement = O)
+    val E10 = Element(DE1340, repeat = Once, requirement = O)
+    val E11 = Element(DE1073, repeat = Once, requirement = O)
+    val E12 = Element(DE1073, repeat = Once, requirement = O)
+    val E13 = Element(DE1364, repeat = Once, requirement = O)
+    val E14 = Element(DE1341, repeat = Once, requirement = O)
+    val E15 = Element(DE1327, repeat = Once, requirement = O)
+    val E16 = Element(DE1334, repeat = Once, requirement = O)
+    val E17 = Element( DE127, repeat = Once, requirement = O)
+    val E18 = Element( DE116, repeat = Once, requirement = O)
+    val E19 = Element( DE782, repeat = Once, requirement = O)
+    val E20 = Element(DE1337, repeat = Once, requirement = O)
+    val E21 = Element(DE1360, repeat = Once, requirement = O)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object SV2 extends SegmentDefinition("Institutional Service")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object SV3 extends SegmentDefinition("Dental Service")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object SV4 extends SegmentDefinition("Drug Service")
+
+  /**
+   * Purpose: To specify the claim service detail for durable medical equipment
+   */
+  object SV5 extends SegmentDefinition("Durable Medical Equipment Service") {
+    val C01 = Element(CE003, repeat = Once, requirement = M)
+    val E02 = Element(DE355, repeat = Once, requirement = M)
+    val E03 = Element(DE380, repeat = Once, requirement = X)
+    val E04 = Element(DE782, repeat = Once, requirement = X)
+    val E05 = Element(DE782, repeat = Once, requirement = O)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object SV6 extends SegmentDefinition("Anesthesia Service")
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object SV7 extends SegmentDefinition("Drug Adjudcation")
+
+  /**
+   * Purpose: To supply payment and control information to a provider for a particular service
+   */
+  object SVC extends SegmentDefinition("Service Payment Information") {
+    val E01 = Element(CE003, repeat = Once, requirement = M)
+    val E02 = Element(DE782, repeat = Once, requirement = M)
+    val E03 = Element(DE782, repeat = Once, requirement = O)
+    val E04 = Element(DE234, repeat = Once, requirement = O)
+    val E05 = Element(DE380, repeat = Once, requirement = O)
+    val E06 = Element(CE003, repeat = Once, requirement = O)
+    val E07 = Element(DE380, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To convey service line adjudication information for coordination of beneifts
+   *   between the initial payers of a health care claim and all subsequent payers
+   */
+  object SVD extends SegmentDefinition("Service Line Adjustment") {
+    val E01 = Element( DE67, repeat = Once, requirement = M)
+    val E02 = Element(DE782, repeat = Once, requirement = X)
+    val C03 = Element(CE003, repeat = Once, requirement = O)
+    val E04 = Element(DE234, repeat = Once, requirement = O)
+    val E05 = Element(DE380, repeat = Once, requirement = O)
+    val E06 = Element(DE554, repeat = Once, requirement = O)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object TOO extends SegmentDefinition("Tooth Identification")
+
+  /**
+   * Purpose: To uniquely identify a transaction to an application
+   */
+  object TRN extends SegmentDefinition("Trace") {
+    val E01 = Element(DE481, repeat = Once, requirement = M)
+    val E02 = Element(DE127, repeat = Once, requirement = M)
+    val E03 = Element(DE509, repeat = Once, requirement = O)
+    val E04 = Element(DE127, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To provider supplemental summary control information by
+   *   provider fiscal year and bill type
+   */
+  object TS2 extends SegmentDefinition("Transaction Supplemental Statistics") {
+    val E01 = Element(DE782, repeat = Once, requirement = O)
+    val E02 = Element(DE782, repeat = Once, requirement = O)
+    val E03 = Element(DE782, repeat = Once, requirement = O)
+    val E04 = Element(DE782, repeat = Once, requirement = O)
+    val E05 = Element(DE782, repeat = Once, requirement = O)
+    val E06 = Element(DE782, repeat = Once, requirement = O)
+    val E07 = Element(DE380, repeat = Once, requirement = O)
+    val E08 = Element(DE782, repeat = Once, requirement = O)
+    val E09 = Element(DE782, repeat = Once, requirement = O)
+    val E10 = Element(DE380, repeat = Once, requirement = O)
+    val E11 = Element(DE380, repeat = Once, requirement = O)
+    val E12 = Element(DE380, repeat = Once, requirement = O)
+    val E13 = Element(DE380, repeat = Once, requirement = O)
+    val E14 = Element(DE380, repeat = Once, requirement = O)
+    val E15 = Element(DE782, repeat = Once, requirement = O)
+    val E16 = Element(DE380, repeat = Once, requirement = O)
+    val E17 = Element(DE782, repeat = Once, requirement = O)
+    val E18 = Element(DE782, repeat = Once, requirement = O)
+    val E19 = Element(DE782, repeat = Once, requirement = O)
+  }
+
+  /**
+   * Purpose: To supply provider-level control information
+   */
+  object TS3 extends SegmentDefinition("Transaction Statistics") {
+    val E01 = Element( DE127, repeat = Once, requirement = M)
+    val E02 = Element(DE1331, repeat = Once, requirement = M)
+    val E03 = Element( DE373, repeat = Once, requirement = M)
+    val E04 = Element( DE380, repeat = Once, requirement = M)
+    val E05 = Element( DE782, repeat = Once, requirement = M)
+    val E06 = Element( DE782, repeat = Once, requirement = O)
+    val E07 = Element( DE782, repeat = Once, requirement = O)
+    val E08 = Element( DE782, repeat = Once, requirement = O)
+    val E09 = Element( DE782, repeat = Once, requirement = O)
+    val E10 = Element( DE782, repeat = Once, requirement = O)
+    val E11 = Element( DE782, repeat = Once, requirement = O)
+    val E12 = Element( DE782, repeat = Once, requirement = O)
+    val E13 = Element( DE782, repeat = Once, requirement = O)
+    val E14 = Element( DE782, repeat = Once, requirement = O)
+    val E15 = Element( DE782, repeat = Once, requirement = O)
+    val E16 = Element( DE782, repeat = Once, requirement = O)
+    val E17 = Element( DE782, repeat = Once, requirement = O)
+    val E18 = Element( DE782, repeat = Once, requirement = O)
+    val E19 = Element( DE782, repeat = Once, requirement = O)
+    val E20 = Element( DE782, repeat = Once, requirement = O)
+    val E21 = Element( DE782, repeat = Once, requirement = O)
+    val E22 = Element( DE782, repeat = Once, requirement = O)
+    val E23 = Element( DE380, repeat = Once, requirement = O)
+    val E24 = Element( DE782, repeat = Once, requirement = O)
+  }
+
+  /**
+   * @note This is referenced but not defined in the 837 X12 standard
+   */
+  object UR extends SegmentDefinition("Peer Review Organization or Utilization Review")
+}

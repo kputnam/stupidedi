@@ -1,0 +1,32 @@
+package net.ppmconnect.edigen.x12.industry.hipaa
+package designations
+
+/**
+ * Industry Usage (x222.pdf 2.2.1)
+ */
+package usage {
+  abstract class Usage
+  object Required extends Usage
+  object NotUsed extends Usage
+
+  abstract class Situational extends Usage
+
+  /**
+   * Declares that the segment must be sent if the condition holds true, otherwise
+   * it *may* or may not be sent at the sender's disgression.
+   */
+  case class OptionalUnless(condtion: String) extends Situational
+
+  /**
+   * Declares that the segment should be sent if the condition holds true, otherwise
+   * it *must not* be sent.
+   */
+  case class NotUsedUnless(condition: String) extends Situational
+
+  object aliases {
+    def N = NotUsed   // related to X12's "Optional"
+    def R = Required  // related to X12's "Mandatory"
+    def So(condition: String) = OptionalUnless(condition)
+    def Sn(condition: String) = NotUsedUnless(condition)
+  }
+}

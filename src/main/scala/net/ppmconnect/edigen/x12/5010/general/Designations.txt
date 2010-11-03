@@ -1,0 +1,127 @@
+package net.ppmconnect.edigen.x12.general
+package designations
+
+package repeat {
+  sealed abstract class Repeat
+  object Unbounded extends Repeat { override def toString = "Unbounded" }
+  object Once extends Repeat      { override def toString = "Once" }
+  case class Maximum(n: Int) extends Repeat
+}
+
+/* Segment unit or element conditions are of three types: mandatory, optional, and relational,
+ * and they define the circumstances under which an element may be required to be present or
+ * absent in a particular segment or composite element.
+ */
+package requirement {
+  import syntax.Syntax
+
+  sealed abstract class Requirement
+
+  /**
+   * The designated element, whether allowed to repeat or not, must be present in the segment
+   * or composite element (presence means an element shall not be empty). If the designation
+   * applies to a composite element, then at least one component element in that structure
+   * shall be included. If the segment applies to a repeating element, then at  least one
+   * element value shall be present.
+   *   Denoted by "M" in the ANSI guides
+   */
+  object Mandatory extends Requirement { override def toString = "Mandatory" }
+
+  /**
+   * The presence of a value for an element (any of the component elements if the designation
+   * applies to a composite element) is at the option of the sender.
+   *   Denoted by "O" in the ANSI guides
+   */
+  object Optional extends Requirement { override def toString = "Optional" }
+
+  /**
+   * Relational conditions may exist among two or more segment units within the same segment, or
+   * among two or more component elements within the same composite element, based on the absence
+   * or presence of one of those elements. Relational conditions are specified by a condition code
+   * and the identity of the of the subject elements. Relational conditions may not exist between
+   * a component element and anything outside its parent composite element.
+   *   Denoted by "X" in the ANSI guides
+   *
+   * @todo: Does it make sense to declare a segment with a relational requirement?  It seems
+   * that it should be prevented
+   */
+  case class Relational(syntax: Syntax*) extends Requirement
+
+  object aliases {
+    def M = Mandatory
+    def O = Optional
+    def X = Relational() // @todo remove
+    def X(syntax: Syntax*) = Relational(syntax: _*)
+  }
+}
+
+package syntax {
+  import elements.ElementUsage
+  import elements.definitions.ElementDefinition
+
+  /**
+   * Weird workaround for "implementation restriction: package object syntax cannot contain case class ..."
+   * meaning we can't make `syntax` a package object, but we want a local typedef so we don't have to keep
+   * typing ElementUsage[ElementDefinition].
+   */
+  package object types { type E = ElementUsage[ElementDefinition] }
+  import types.E
+
+  sealed abstract class Syntax(symbol: Char, elements: E*) {
+    import requirement.Mandatory
+
+    override def toString = symbol + elements.map(x => "%02d".format(x.index)).mkString
+  }
+
+  /**
+   * If any one of the specified elements is present, then all of the specified elements must be present
+   *   Denoted by "P" in the ANSI guides
+   */
+  case class PairedOrMultiple(first: E, second: E, rest: E*) extends Syntax('P', first +: second +: rest: _*) {
+    // @todo if (elements.exists(_.requirement == Mandatory)) all elements are mandatory
+  }
+
+  /**
+   * At least one of the elements specified must be present
+   *   Denoted by "R" in the ANSI guides
+   */
+  case class Required(first: E, second: E, rest: E*) extends Syntax('R', first +: second +: rest: _*) {
+    // @todo if (elements.exists(_.requirement == Mandatory)) this syntax is redundant
+  }
+
+  /**
+   * Not more than one of the specified elements may be present
+   *   Denoted by "E" in the ANSI guides
+   */
+  case class Exclusion(first: E, second: E, rest: E*) extends Syntax('E', first +: second +: rest: _*) {
+    // @todo if (elements.count(_requirement == Mandatory) > 1) this syntax is contradictory
+  }
+
+  /**
+   * If the first specified element is present, then all other elements must be present. However, any or
+   * all of the elements not specified as the first element may be present without requiring the first
+   * specified element to be present
+   *   Denoted by "C" in the ANSI guides
+   */
+  case class Conditional(first: E, second: E, rest: E*) extends Syntax('C', first +: second +: rest: _*) {
+    // @todo if (elements(0).requirement == Mandatory) then all elements are mandatory
+  }
+
+  /**
+   * If the first specified element is present, then one of the other elements must be present. However,
+   * any or all of the elements no specified as the first element may be present without requiring the first
+   * specified element to be present
+   *   Denoted by "L" in the ANSI guides
+   */
+  case class ListConditional(first: E, second: E, rest: E*) extends Syntax('L', first +: second +: rest: _*) {
+    // @todo if (elements(0).requirement == Mandatory && elements.tail.exists(_.requirement == Mandatory)) then this rule is redundant
+  }
+
+  object aliases {
+    def P(first: E, second: E, rest: E*) = PairedOrMultiple(first, second, rest: _*)
+    def R(first: E, second: E, rest: E*) = Required(first, second, rest: _*)
+    def E(first: E, second: E, rest: E*) = Exclusion(first, second, rest: _*)
+    def C(first: E, second: E, rest: E*) = Conditional(first, second, rest: _*)
+    def L(first: E, second: E, rest: E*) = ListConditional(first, second, rest: _*)
+  }
+}

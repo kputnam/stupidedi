@@ -1,0 +1,30 @@
+
+
+  Based on the 820 transaction set, altered to create an ambiguity
+
+  SEG NAME                                           REQUIREMENT | REPEAT
+  ---------------------------------------------------------------+--------+
+  ADX Adjustment                                               O | >1     |
+  NTE Note/Special Instruction                                 O |        |
+  PER Administrative Communications Contact                    O |        |
+  DTM Date/Time Reference                                      O |        |
+  ---------------------------------------------------------------+------+ |
+  IT1 Baseline Item Data (Invoice)                             O | >1   | |
+  ---------------------------------------------------------------+----+ | |
+*   REF Reference Numbers                                      O | >1 | | |
+    DTM Date/Time Reference                                    O |    | | |
+  ---------------------------------------------------------------+----+-+ |
+  ---------------------------------------------------------------+------+ |
+* REF Reference Numbers                                        O | >1   | |
+  DTM Date/Time Reference                                      O |      | |
+  ---------------------------------------------------------------+------+-+
+
+  Because the IT1 loop's REF loop has no required segments after the REF,
+  the sequence {IT1,REF,DTM} could be interpreted as:
+    1. An IT1 loop with no children, followed by a REF loop with the DTM child
+    2. An IT1 loop with two children REF and DTM
+
+  I haven't found any transaction sets that have nested loops positioned before
+  the last child in the parent loop. For instance, if the NTE located between
+  the IT1 and REF lops. It might be that doing so would introduce ambiguity if
+  the adjacent loop (or any of its nested loops) contained an instance of NTE.

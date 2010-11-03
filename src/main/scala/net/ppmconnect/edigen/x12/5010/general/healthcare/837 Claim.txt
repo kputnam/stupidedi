@@ -1,0 +1,212 @@
+package net.ppmconnect.edigen.x12
+package v5010
+package general
+package healthcare
+
+/**
+Header
+===============================================================================
+   50 ST  M Once
+  100 BHT M Once
+  150 REF O Maximum(3)
+
+  /**
+   * Contains submitter and receiver information. If any intermediary receivers change or add
+   * data in any way, then they add an occurence to the loop as a form of identification. The
+   * added loop occurrence must be the last occurrence of the loop.
+   */
+  UndelimitedLoop "1000" Maximum(10)
+    200 NM1 O Once
+    250 N2  O Maximum(2)
+    300 N3  O Maximum(2)
+    350 N4  O Once
+    400 REF O Maximum(2)
+    450 PER O Maximum(2)
+
+Detail
+===============================================================================
+UndelimitedLoop "2000" Unbounded
+   10 HL  M Once
+   30 PRV O Once
+   50 SBR O Once
+   70 PAT O Once
+   90 DTP O Maximum(5)
+  100 CUR O Once
+
+  /**
+   * Contains information about entities that apply to all claims in Loop 2300. For example,
+   * these entities may include billing provider, pay-to provider, insurer, primary administrator,
+   * contract holder, or claimant.
+   */
+  UndelimitedLoop "2010" Maximum(10)
+    150 NM1 O Once
+    200 N2  O Maximum(2)
+    250 N3  O Maximum(2)
+    300 N4  O Once
+    320 DMG O Once
+    350 REF O Maximum(20)
+    400 PER O Maximum(2)
+
+  UndelimitedLoop "2300" Maximum(100)
+   1300 CLM O Once
+   1350 DTP O Maximum(150)
+   1400 CL1 O Once
+   1450 DN1 O Once
+   1500 DN2 O Maximum(35)
+   1550 PWK O Maximum(10)
+   1600 CN1 O Once
+   1650 DSB O Once
+   1700 UR  O Once
+   1750 AMT O Maximum(40)
+   1800 REF O Maximum(30)
+   1850 K3  O Maximum(10)
+   1900 NTE O Maximum(20)
+   /**
+    * The CR1 through CR5 and CRC certification segments appear on both the claim level and
+    * the service line because certifications can be submitted for all services on a claim
+    * or for individual services. Certification information at the claim level applies to
+    * all service lines of a claim, unless overriden by certifications information at the
+    * service line level
+    */
+   1950 CR1 O Once
+   2000 CR2 O Once
+   2050 CR3 O Once
+   2100 CR4 O Maximum(3)
+   2150 CR5 O Once
+   2160 CR6 O Once
+   2190 CR8 O Maximum(9)
+   2200 CRC O Maximum(100)
+   2310 HI  O Maximum(25)
+   2400 QTY O Maximum(10)
+   2410 HCP O Once
+
+    UndelimitedLoop "2305" Maximum(6)
+     2420 CR7 O Once
+     2430 HSD O Maximum(12)
+
+    /**
+     * Contains information about the rendering, referring, or attending provider
+     */
+    UndelimitedLoop "2310" Maximum(9)
+     2500 NM1 O Once
+     2550 PRV O Once
+     2600 N2  O Maximum(2)
+     2650 N3  O Maximum(3)
+     2700 N4  O Once
+     2710 REF O Maximum(20)
+     2750 PER O Maximum(2)
+
+    /**
+     * Contains insurance information about: paying and other insurance carriers for that
+     * subscriber.
+     */
+    UndelimitedLoop "2320" Maximum(10)
+     2900 SBR O Once
+     2950 CAS O Maximum(99)
+     3000 AMT O Maximum(15)
+     3050 DMG O Once
+     3100 OI  O Once
+     3150 MIA O Once
+     3200 MOA O Once
+
+      /**
+       * Segments NM1 through N4 contain name and address of the insurance carriers
+       * referenced in Loop 2320
+       */
+      UndelimitedLoop "2330" Maximum(10)
+       3250 NM1 O Once
+       3300 N2  O Maximum(2)
+       3320 N3  O Maximum(3)
+       3400 N4  O Once
+       3450 PER O Maximum(2)
+       3500 DTP O Maximum(9)
+       3550 REF O Unbounded
+    
+    /**
+     * Contains service line information
+     */
+    UndelimitedLoop "2400" Unbounded
+     3650 LX  O Once
+     3700 SV1 O Once
+     3750 SV2 O Once
+     3800 SV3 O Once
+     3820 TOO O Maximum(32)
+     3850 SV4 O Once
+     4000 SV5 O Once
+     4050 SV6 O Once
+     4100 SV7 O Once
+     4150 HI  O Maximum(25)
+     4200 PWK O Maximum(10)
+     /**
+      * The CR1 through CR5 and CRC certification segments appear on both the claim level and
+      * the service line because certifications can be submitted for all services on a claim
+      * or for individual services. Certification information at the claim level applies to
+      * all service lines of a claim, unless overriden by certifications information at the
+      * service line level
+      */
+     4250 CR1 O Once
+     4300 CR2 O Maximum(5)
+     4350 CR3 O Once
+     4400 CR4 O Maximum(3)
+     4450 CR5 O Once
+     4500 CRC O Maximum(3)
+     4550 DTP O Maximum(15)
+     4600 QTY O Maximum(5)
+     4620 MEA O Maximum(20)
+     4650 CN1 O Once
+     4700 REF O Maximum(30)
+     4750 AMT O Maximum(15)
+     4800 K3  O Maximum(10
+     4850 NTE O Maximum(10
+     4880 PS1 O Once
+     4900 IMM O Unbounded
+     4910 HSD O Once
+     4920 HCP O Once
+      
+      /**
+       * Contains compound drug components, quantities, and prices
+       */
+      UndelimitedLoop "2410" Unbounded
+       4930 LIN O Once
+       4940 CTP O Once
+       4950 REF O Once
+
+      /**
+       * Contains information about rendering, referring, or attending provider on a service
+       * line level. These segments override the information in the claim-level segments if
+       * the entity identifier codes in each NM1 are the same
+       */
+      UndelimitedLoop "2420" Maximum(10)
+       5000 NM1 O Once
+       5050 PRV O Once
+       5100 N2  O Maximum(2)
+       5140 N3  O Maximum(2)
+       5200 N4  O Once
+       5250 REF O Maximum(20)
+       5300 PER O Maximum(2)
+
+      UndelimitedLoop "2430" Unbounded
+        /**
+         * SVD01 identifies the payer which adjudicated the corresponding service line and must
+         * match DE67 in the NM109 (position 325) for the payer
+         */
+       5400 SVD O Once
+       5450 CAS O Maximum(99)
+       5500 DTP O Maximum(9)
+       5505 AMT O Maximum(20)
+
+      /**
+       * Provides certificate of medical necessity information for the procedure identified
+       * in SV101 (position 3700)
+       */
+      UndelimitedLoop "2440" Unbounded
+       5510 LQ  O Once
+        /**
+         * Provides question numbers and responses for the questions on the medical necessity
+         * information form identified in LQ (position 5510)
+         */
+       5520 FRM M Maximum(99)
+
+Summary
+===============================================================================
+ 5550 ST  M Once

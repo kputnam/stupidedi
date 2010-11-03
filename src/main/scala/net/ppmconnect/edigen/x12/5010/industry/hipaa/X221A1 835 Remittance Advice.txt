@@ -1,0 +1,176 @@
+package net.ppmconnect.edigen.x12.industry.hipaa
+
+class RemittanceAdvice extends TransactionSetDefinition {
+
+  object header extends HeaderDefinition {
+    Segment(100, ST , R, Once, "Transaction Set Header")
+      // R, R, N
+    Segment(200, BPR, R, Once, "Financial Information")
+      // R, R, R, R, S, S
+      // S, S, S, S, S, S
+      // S, S, S, R, N, N
+      // N, N, N
+    Segment(400, TRN, R, Once, "Reassociation Trace Number")
+      // R, R, R, S
+    Segment(500, CUR, S, Once, "Foreign Currency Information")
+      // R, R, N, N, N, N
+      // N, N, N, N, N, N
+      // N, N, N, N, N, N
+      // N, N, N
+    Segment(600, REF, S, Once, "Receiver Identification")
+      // R, R, N, N
+    Segment(600, REF, S, Once, "Version Identification")
+      // R, R, N, N
+    Segment(700, DTM, S, Once, "Production Date")
+      // R, R, N, N, N, N
+
+    object Loop1000A extends UndelimitedLoopDefinition("1000A PAYER IDENTIFICATION", Once) {
+      Segment( 800, N1 , R, Once, "Payer Identification")
+        // R, R, S, S, N, N
+      Segment(1000, N3 , R, Once, "Payer Address")
+        // R, S
+      Segment(1100, N4 , R, Once, "Payer City, State, ZIP Code")
+        // R, S, S, S, N, N
+        // S
+      Segment(1200, REF, S, Maximum(4), "Payer Additional Identification")
+        // R, R, N, N
+      Segment(1300, PER, S, Once, "Payer Business Contact Information")
+        // R, S, S, S, S, S
+        // S, S, N
+      Segment(1300, PER, R, Unbounded, "Payer Technical Contact Information")
+        // R, S, S, S, S, S
+        // S, S, N
+      Segment(1300, PER, S, Once, "Payer Web Site")
+        // R, S, S, S, S, S
+        // S, S, N
+    }
+
+    object Loop1000B extends UndelimitedLoopDefinition("1000B PAYEE IDENTIFICATION", Once) {
+      Segment( 800, N1 , R, Once, "Payee Identification")
+        // R, R, R, R, N, N
+      Segment(1000, N3 , S, Once, "Payee Address")
+        // R, S
+      Segment(1100, N4 , R, Once, "Payee City, State, ZIP Code")
+        // R, S, S, S, N, N
+        // S
+      Segment(1200, REF, S, Unbounded, "Payee Additional Identification")
+        // R, R, N, N
+      Segment(1300, PER, S, Once, "Payer Business Contact Information")
+        // R, S, S, S, S, S
+        // S, S, N
+      Segment(1400, RDM, S, Once, "Remittance Delivery Method")
+        // R, S, S, N, N
+    }
+  }
+
+  object detail extends DetailDefinition {
+    object Loop2000 extends UndelimitedLoopDefinition("2000 HEADER NUMBER", Unbounded) {
+      Segment(30,  LX, S, Once, "Header Number")
+        // R
+      Segment(50, TS3, S, Once, "Provider Summary Information")
+        // R, R, R, R, R, N
+        // N, N, N, N, N, N
+        // S, N, S, N, S, S
+        // N, S, S, S, S, S
+      Segment(70, TS2, S, Once, "Provider Supplemental Summary Information")
+        // S, S, S, S, S, S
+        // S, S, S, S, S, S
+        // S, S, S, S, S, S
+        // S
+
+      object Loop2100 extends UndelimitedLoopDefinition("2100 CLAIM PAYMENT INFORMATION", Unbounded) {
+        Segment(100, CLP, R, Once, "Claim Payment Information")
+          // R, R, R, R, S, R
+          // R, S, S, S, S, S
+          // S, N
+        Segment(200, CAS, S, Maximum(99), "Claim Adjustment")
+          // R, R, R, S, S, S
+          // S, S, S, S, S, S
+          // S, S, S, S, S, S
+          // S
+        Segment(300, NM1, R, Once, "Patient Name")
+          // R, R, S, S, S, S
+          // S, S, S, N, N, N
+        Segment(300, NM1, S, Once, "Insured Name")
+          // R, R, S, S, S, S
+          // S, R, R, N, N, N
+        Segment(300, NM1, S, Once, "Corrected Patient/Insured Name")
+          // R, R, S, S, S, S
+          // S, S, S, N, N, N
+        Segment(300, NM1, S, Once, "Service Provider Name")
+          // R, R, S, S, S, S
+          // S, R, R, N, N, N
+        Segment(300, NM1, S, Once, "Crossover Carrier Name")
+          // R, R, R, N, N, N
+          // N, R, R, N, N, N
+        Segment(300, NM1, S, Once, "Corrected Priority Payer Name")
+          // R, R, R, N, N, N
+          // N, R, R, N, N, N
+        Segment(300, NM1, S, Once, "Other Subscriber Name")
+          // R, R, S, S, S, N
+          // S, S, S, N, N, N
+        Segment(330, MIA, S, Once, "Inpatient Adjudication Information")
+          // R, S, S, S, S, S
+          // S, S, S, S, S, S
+          // S, S, S, S, S, S
+          // S, S, S, S, S, S
+        Segment(350, MOA, S, Once, "Outpatient Adjudication Information")
+          // S, S, S, S, S, S
+          // S, S, S
+        Segment(400, REF, S, Maximum(5),  "Other Claim Related Identification")
+          // R, R, N, N
+        Segment(400, REF, S, Maximum(10), "Rendering Provider Identification")
+          // R, R, N, N
+        Segment(500, DTM, S, Maximum(2),  "Statement From or To Date")
+          // R, R, N, N, N, N
+        Segment(500, DTM, S, Once, "Coverage Expiration Date")
+          // R, R, N, N, N, N
+        Segment(500, DTM, S, Once, "Claim Received Date")
+          // R, R, N, N, N, N
+        Segment(600, PER, S, Maximum(2),  "Claim Contact Information")
+          // R, S, R, R, S, S
+          // S, S, N
+        Segment(620, AMT, S, Maximum(13), "Claim Supplemental Information")
+          // R, R, N
+        Segment(640, QTY, S, Maximum(14), "Claim Supplemental Information Quantity")
+          // R, R, N, N
+
+        object Loop2110 extends UndelimitedLoopDefinition("2110 SERVICE PAYMENT INFORMATION", Maximum(999)) {
+          Segment( 700, SVC, S, Once, "Service Payment Information")
+            // R, R, R, S, S, S
+            // S
+          Segment( 800, DTM, S, Maximum(2),  "Service Date")
+            // R, R, N, N, N, N
+          Segment( 900, CAS, S, Maximum(99), "Service Adjustment")
+            // R, R, R, S, S, S
+            // S, S, S, S, S, S
+            // S, S, S, S, S, S
+            // S
+          Segment(1000, REF, S, Maximum(8),  "Service Identification")
+            // R, R, N, N
+          Segment(1000, REF, S, Once, "Line Item Control Number")
+            // R, R, N, N
+          Segment(1000, REF, S, Maximum(10), "Rendering Provider Information")
+            // R, R, N, N
+          Segment(1000, REF, S, Maximum(5),  "Healthcare Policy Identification")
+            // R, R, N, N
+          Segment(1100, AMT, S, Maximum(9),  "Service Supplemental Amount")
+            // R, R, N
+          Segment(1200, QTY, S, Maximum(6),  "Service Supplemental Quantity")
+            // R, R, N, N
+          Segment(1300,  LQ, S, Maximum(99), "Healthcare Remark Codes")
+            // R, R
+        }
+      }
+    }
+  }
+
+  object summary extends SummaryDefinition {
+    Segment(100, PLB, S, Unbounded)
+      // R, R, R, R, S, S
+      // S, S, S, S, S, S
+      // S, S
+    Segment(200,  SE, R, Once)
+      // R, R
+  }
+}

@@ -1,0 +1,64 @@
+
+  ANSI ASC X12 has the following subcommittes
+    X12A Education Administration
+    X12C Communications and Controls
+    X12F Finance
+    X12G Government
+    X12H Materials Management
+    X12I Transportation
+    X12J Technical Assesment
+    X12M Procurement/Distribution
+    X12N Insurance
+
+  X12 STANDARD
+    element dictionary
+      id number
+      name
+      description
+      dataType
+      minLength (if applicable)
+      maxLength (if applicable)
+      codes
+    segment dictionary
+      name
+      purpose
+      identifier
+      syntax
+      element
+        order
+        usage
+        repeat
+
+  X12 STANDARD TR3
+    loops
+      segments
+        elements
+
+  INDUSTRY IMPLEMENTATION GUIDELINES (TR3)
+    header:  list[context]
+    detail:  list[context]
+    trailer: list[context]
+
+    context
+      segment
+        name
+        position
+        usage
+        repeat
+        element
+          name
+          description
+          usage (if X12 STANDARD was "Optional")
+          codes (subset of X12 STANDARD)
+
+  TRADING PARTNER GUIDELINES
+    context
+      segment
+        name
+        purpose
+        usage
+        element
+          name
+          description
+          usage (if X12 STANDARD was "Optional")
+          codes (subset of INDUSTRY IMPLEMENTATION GUIDELINES)

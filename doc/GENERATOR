@@ -1,0 +1,36 @@
+
+  One way to structure the API of the EDI string generation. This is NOT ideal
+    val document = new Document
+
+    val isa = document.createInterchange("X", "004010")
+    isa.segmentTerminator   = "~"
+    isa.elementTerminator   = "*"
+    isa.compositeTerminator = ":"
+    isa.repeatSeparator     = "^"
+    isa.receiverId          = Qualified("12", "...."
+    isa.senderId            = Qualified("12", "....")
+    
+    // gs should be tied to the TransactionSetDefinition
+    val gs = isa.createGroup("004010X091")
+    gs.transactionSet = "837"
+    gs.controlNumber  = "00001"
+
+    // bht should be tied to the usage definition of segments.BHT
+    val bht = gs.createSegment("BHT")
+    bht.elements(0) = "..."
+    bht.elements(1) = "..."
+
+    // should also be typed more strongly
+    val loop = gs.createLoop("1000A")
+    val n1   = loop.createSegment("N1")   // could force type safety like
+                                          //   createSegment(Detail.L2000A.L2010AA.REF)
+                                          //   createSegment(L2010AA.REF)
+                                          //   createSegment(HL.NM1.REF)
+    n1(N1.E01) = ...
+    n1(N1.E02) = ...
+
+    // alternatively
+    n1.entityIdentifierCode = "TJ"        // could be an enum value instead
+    n1.name                 = "ANTIOCH PFLUMM METCALF"
+
+    ... etc
