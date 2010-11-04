@@ -1,19 +1,19 @@
 package net.ppmconnect.edigen.x12
 package interchange
 
-object InterchangeHeader00501 extends InterchangeHeaderParser {
+object InterchangeFiveOhOne extends InterchangeHeaderParser {
   /** Construct a reader capable of iterating X12 segments in a rudimentary fashion */
-  def readInterchangeHeader(segmentTerminator: Char, elementSeparator: Char, unparsedInput: String, elements: T16) =
+  def readHeader(segmentTerminator: Char, elementSeparator: Char, unparsedInput: String, elements: T16) =
     /** @todo: This is where we would parse segments like TA1, TA3, ISB, IEA... or at least consume them */
-    InterchangeHeader00501(elementSeparator,
+    InterchangeFiveOhOne(elementSeparator,
       elements._1,  elements._2,  elements._3,  elements._4,  elements._5, elements._6,
       elements._7,  elements._8,  elements._9,  elements._10, elements._11.head, elements._12,
       elements._13, elements._14, elements._15, elements._16, segmentTerminator).
-      functionalGroupHeaderParser(unparsedInput)
+      readFunctionalGroupHeader(unparsedInput)
 }
 
 /** Models the ISA segment and potentially TA1, TA3, ISE, ISB, etc for interchange version 00501 */
-case class InterchangeHeader00501(
+case class InterchangeFiveOhOne(
   val elementSeparator: Char,
   val authorizationInfoQualifier: String,
   val authorizationInfo: String,
@@ -45,16 +45,17 @@ extends InterchangeHeader {
           """.stripMargin.format(elementSeparator, componentSeparator, repetitionSeparator, segmentTerminator))
           
 
-  def functionalGroupHeaderParser(input: String) = FunctionalGroupHeaderParser00501(input, this)
+  def readfunctionalGroupHeader(input: String) = FunctionalGroupHeaderParserFiveOhOne(input, this).readHeader
 
-  case class FunctionalGroupHeaderParser00501(val input: String, val interchangeHeader: InterchangeHeader00501)
+  case class FunctionalGroupHeaderParserFiveOhOne(val input: String, val interchangeHeader: InterchangeFiveOhOne)
   extends FunctionalGroupHeaderParser {
 
     def advance(n: Int) = copy(input = input.substring(n))
 
     /** Read the GS segment and return something that can read the ST segment */
-    def readFunctionalGroupHeader: Option[TransactionSetHeaderParser] = {
-     (for (rest <- consumePrefix("GS" + interchangeHeader.elementSeparator);
+    def readHeader: Option[TransactionSetHeaderParser] = {
+     (for (rest <- consumePrefix("GS");
+           rest <- consumePrefix(interchangeHeader.elementSeparator);
            (gs01, rest) <- rest.readElement; rest <- rest.consumePrefix(interchangeHeader.elementSeparator);
            (gs02, rest) <- rest.readElement; rest <- rest.consumePrefix(interchangeHeader.elementSeparator);
            (gs03, rest) <- rest.readElement; rest <- rest.consumePrefix(interchangeHeader.elementSeparator);
@@ -104,7 +105,7 @@ extends InterchangeHeader {
         None
 
     /** Delegate further parsing based on the agencyCode and versionCode (ie 4010, 5010) */
-    def transactionSetHeaderParser(input: String, interchangeHeader: InterchangeHeader00501) =
+    def transactionSetHeaderParser(input: String, interchangeHeader: InterchangeFiveOhOne) =
       asc.flatMap(TransactionSetHeaderParser.fromVersion(_))
   }
 

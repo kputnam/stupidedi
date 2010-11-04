@@ -17,8 +17,8 @@ case class StreamReader(input: String) {
     if (input.nonEmpty) Some(Pair(input.head, StreamReader(input.substring(1)))) else None
 
   /** Construct a reader capable of iterating X12 segments in a rudimentary fashion */
-  def readInterchangeHeader: Option[FunctionalGroupHeaderParser] = {
-    import interchange.InterchangeHeader00501
+  def readHeader: Option[FunctionalGroupHeaderParser] = {
+    import interchange.InterchangeFiveOhOne
 
     /** @todo: improve data validation and error handling here */
     for (rest                     <- consumeISA;
@@ -40,9 +40,9 @@ case class StreamReader(input: String) {
          (isa15, rest) <- rest.readElement(elementSeparator);
          (isa16, rest) <- rest.readChar;
          (segmentTerminator, rest) <- rest.readChar)
-      yield (isa12 match { case "00501" => InterchangeHeader00501 }).
-                         //case "00401" => InterchangeHeader00401 }).
-        readInterchangeHeader(segmentTerminator, elementSeparator, rest.input,
+      yield (isa12 match { case "00501" => InterchangeFiveOhOne }).
+                         //case "00401" => InterchangeFourOhOne }).
+        readHeader(segmentTerminator, elementSeparator, rest.input,
           (isa01, isa02, isa03, isa04, isa05, isa06, isa07, isa08,
            isa09, isa10, isa11, isa12, isa13, isa14, isa15, isa16))
  }

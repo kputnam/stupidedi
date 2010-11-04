@@ -18,7 +18,7 @@ trait InterchangeHeaderParser {
                      String, String, String, String, String, String, String, Char]
 
   /** Construct a reader capable of iterating X12 segments in a rudimentary fashion */
-  def readInterchangeHeader(segmentTerminator: Char, elementSeparator: Char, unparsedInput: String, elements: T16): FunctionalGroupHeaderParser
+  def readHeader(segmentTerminator: Char, elementSeparator: Char, unparsedInput: String, elements: T16): FunctionalGroupHeaderParser
 }
 
 /** Reader that can parse the functional group header */
@@ -41,5 +41,5 @@ trait InterchangeHeaderParser {
  * @note: Security and assurance functionality (X12.58) is not currently implemented.
  */
 trait FunctionalGroupHeaderParser extends TokenReader[FunctionalGroupHeaderParser] {
-  def readFunctionalGroupHeader: Option[TransactionSetHeaderParser]
+  def readHeader: Option[TransactionSetHeaderParser]
 }

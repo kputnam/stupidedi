@@ -162,7 +162,7 @@ trait TokenReader[+T] { this: T =>
       position += 1
     }
 
-    (position < input.length && input(position).isDelimiter) asOption Pair(buffer, advance(position))
+    (position < input.length) asOption Pair(buffer, advance(position))
   }
 
   /**
@@ -182,23 +182,23 @@ trait TokenReader[+T] { this: T =>
       position += 1
     }
 
-    (buffer.length > 1 && position < input.length && input(position).isDelimiter) asOption Pair(buffer, advance(position))
+    (buffer.length >= 2 && position < input.length && input(position).isDelimiter) asOption Pair(buffer, advance(position))
   }
 
   /** Consume input up to and including the IEA's segmentTerminator */
   final def consumeInterchange: Option[StreamReader] = {
-    for ((segmentId, rest) <- readSegmentId; rest <- consume(interchangeHeader.segmentTerminator))
+    for ((segmentId, rest) <- readSegmentId; rest <- rest.consume(interchangeHeader.segmentTerminator))
       return if (segmentId == "IEA")
-        Some(StreamReader(rest.input))
-      else
-        advance(input.length - rest.input.length).consumeInterchange
+               Some(StreamReader(rest.input))
+             else
+               rest.consumeInterchange
 
     /** No more segments */
     return None
   }
 
   /**
-   * Read the entire segment's raw string representation, and consume the delimeter.
+   * Read the entire segment's raw string representation, and consume the segmentTerminator.
    *  @return Pair("ST*837*0021*005010X222", T("BHT*0019*..."))
    *
    * Note that without a given segment definition, it isn't possible to unambiguously parse an

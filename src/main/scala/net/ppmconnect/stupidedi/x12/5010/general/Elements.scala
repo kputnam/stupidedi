@@ -1,5 +1,6 @@
 package net.ppmconnect.edigen.x12
-package v5010.general.elements
+package fiftyten.general
+package elements
 
 import net.ppmconnect.edigen.x12.{general => g}
 
