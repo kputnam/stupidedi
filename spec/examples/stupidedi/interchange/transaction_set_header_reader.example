@@ -1,0 +1,176 @@
+require "spec_helper"
+
+describe Stupidedi::Interchange::TransactionSetHeaderReader do
+  let(:reader) { Stupidedi::Interchange::TransactionSetHeaderReader }
+  let(:isa)    { Stupidedi::Interchange::FiveOhOne::InterchangeHeader.default }
+
+  describe ".from_version" do
+
+    # This is a mock of the GS08 Version Code field from the functional group header,
+    # which selects the appropriate implementation convention. It specifies both the
+    # version of X12 (4010, 5010, etc) and the implementation guide (X222).
+    let(:version) { Hash.new }
+
+    context "when version is 5010" do
+      before do
+        version[:number]     = "005"
+        version[:release]    = "0"
+        version[:subrelease] = "1"
+        version[:level]      = "0"
+      end
+
+      context "and industry id is X212" do
+        before { version[:industry_id] = "X212" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X212A1" do
+        before { version[:industry_id] = "X212A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X221" do
+        before { version[:industry_id] = "X221" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X221A1" do
+        before { version[:industry_id] = "X221A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X222" do
+        before { version[:industry_id] = "X222" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X222A1" do
+        before { version[:industry_id] = "X222A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X223" do
+        before { version[:industry_id] = "X223" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X223A1" do
+        before { version[:industry_id] = "X223A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X224" do
+        before { version[:industry_id] = "X224" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X224A1" do
+        before { version[:industry_id] = "X224A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X230" do
+        before { version[:industry_id] = "X230" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X230A1" do
+        before { version[:industry_id] = "X230A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X231" do
+        before { version[:industry_id] = "X231" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X231A1" do
+        before { version[:industry_id] = "X231A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X279" do
+        before { version[:industry_id] = "X279" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+
+      context "and industry id is X279A1" do
+        before { version[:industry_id] = "X279A1" }
+
+        specify { reader.from_version(version, "", isa).should be_defined }
+        specify { reader.from_version(version, "", isa).map{|r| r.should be_a(reader) }}
+      end
+    end
+
+    context "when version is 4010" do
+      before do
+        version[:number]     = "004"
+        version[:release]    = "0"
+        version[:subrelease] = "1"
+        version[:level]      = "0"
+      end
+
+      specify { reader.from_version(version, "", isa).should_not be_defined }
+
+      it "produces an error message" do
+        reader.from_version(version, "", isa).explanation.
+          should == "Version 4010 is not supported"
+      end
+
+      it "encodes the error offset"
+    end
+
+    context "when version is neither 4010 nor 5010" do
+      before do
+        version[:number]     = "003"
+        version[:release]    = "0"
+        version[:subrelease] = "1"
+        version[:level]      = "0"
+      end
+
+      specify { reader.from_version(version, "", isa).should_not be_defined }
+
+      it "produces an error message" do
+        reader.from_version(version, "", isa).explanation.
+          should == %[Unrecognized X12 version "003010"]
+      end
+
+      it "encodes the error offset"
+    end
+  end
+
+  describe "#read_transaction_header" do
+    pending
+  end
+
+end

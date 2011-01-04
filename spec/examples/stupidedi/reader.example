@@ -1,0 +1,168 @@
+# encoding: ISO-8859-1
+require "spec_helper"
+
+describe Stupidedi::Reader do
+
+  describe "basic_characters" do
+    def is_basic?(c)
+      Stupidedi::Reader.is_basic_character?(c)
+    end
+
+    it "exclude extended characters" do
+      b = Stupidedi::Reader.basic_characters
+      e = Stupidedi::Reader.extended_characters
+      (b - (b - e)).should == []
+    end
+
+    it "exclude control characters" do
+      b = Stupidedi::Reader.basic_characters
+      c = Stupidedi::Reader.control_characters
+      (b - (b - c)).should == []
+    end
+
+    it "include uppercase letters" do
+      ('A'..'Z').each{|c| is_basic?(c).should be_true }
+    end
+
+    it "include digits 0-9" do
+      is_basic?('0').should be_true
+      is_basic?('1').should be_true
+      is_basic?('2').should be_true
+      is_basic?('3').should be_true
+      is_basic?('4').should be_true
+      is_basic?('5').should be_true
+      is_basic?('6').should be_true
+      is_basic?('7').should be_true
+      is_basic?('8').should be_true
+      is_basic?('9').should be_true
+    end
+
+    it "include special characters" do
+      is_basic?('!').should be_true
+      is_basic?('"').should be_true
+      is_basic?('&').should be_true
+      is_basic?("'").should be_true
+      is_basic?('(').should be_true
+      is_basic?(')').should be_true
+      is_basic?('*').should be_true
+      is_basic?('+').should be_true
+      is_basic?(',').should be_true
+      is_basic?('-').should be_true
+      is_basic?('.').should be_true
+      is_basic?('/').should be_true
+      is_basic?(':').should be_true
+      is_basic?(';').should be_true
+      is_basic?('?').should be_true
+      is_basic?('=').should be_true
+    end
+
+    it "include the space character" do
+      is_basic?(' ').should be_true
+    end
+  end
+
+  describe "extended characters" do
+    def is_extended?(c)
+      Stupidedi::Reader.is_extended_character?(c)
+    end
+
+    it "exclude basic characters" do
+      e = Stupidedi::Reader.extended_characters
+      b = Stupidedi::Reader.basic_characters
+      (e - (e - b)).should == []
+    end
+
+    it "exclude control characters" do
+      e = Stupidedi::Reader.extended_characters
+      c = Stupidedi::Reader.control_characters
+      (e - (e - c)).should == []
+    end
+
+    it "include lowercase letters" do
+      ('a'..'z').each{|c| is_extended?(c).should be_true }
+    end
+
+    it "include other special characters" do
+      is_extended?('%').should be_true
+      is_extended?('@').should be_true
+      is_extended?('[').should be_true
+      is_extended?(']').should be_true
+      is_extended?('_').should be_true
+      is_extended?('{').should be_true
+      is_extended?('}').should be_true
+      is_extended?('\\').should be_true
+      is_extended?('|').should be_true
+      is_extended?('<').should be_true
+      is_extended?('>').should be_true
+      is_extended?('~').should be_true
+      is_extended?('^').should be_true
+      is_extended?('`').should be_true
+    end
+
+    it "include national characters" do
+      is_extended?('#').should be_true
+      is_extended?('$').should be_true
+    end
+
+    it "include select language characters" do
+      is_extended?('À')
+      is_extended?('Á')
+      is_extended?('Â')
+      is_extended?('Ä')
+      is_extended?('à')
+      is_extended?('á')
+      is_extended?('â')
+      is_extended?('ä')
+      is_extended?('È')
+      is_extended?('É')
+      is_extended?('Ê')
+      is_extended?('è')
+      is_extended?('é')
+      is_extended?('ê')
+      is_extended?('ë')
+      is_extended?('Ì')
+      is_extended?('Í')
+      is_extended?('Î')
+      is_extended?('ì')
+      is_extended?('í')
+      is_extended?('î')
+      is_extended?('ï')
+      is_extended?('Ò')
+      is_extended?('Ó')
+      is_extended?('Ô')
+      is_extended?('Ö')
+      is_extended?('ò')
+      is_extended?('ó')
+      is_extended?('ô')
+      is_extended?('ö')
+      is_extended?('Ù')
+      is_extended?('Ú')
+      is_extended?('Û')
+      is_extended?('Ü')
+      is_extended?('ù')
+      is_extended?('ú')
+      is_extended?('û')
+      is_extended?('ü')
+      is_extended?('Ç')
+      is_extended?('ç')
+      is_extended?('Ñ')
+      is_extended?('ñ')
+      is_extended?('¿')
+      is_extended?('¡')
+    end
+  end
+
+  describe "control characters" do
+    it "exclude basic characters" do
+      c = Stupidedi::Reader.control_characters
+      b = Stupidedi::Reader.basic_characters
+      (c - (c - b)).should == []
+    end
+
+    it "exclude extended characters" do
+      c = Stupidedi::Reader.control_characters
+      e = Stupidedi::Reader.extended_characters
+      (c - (c - e)).should == []
+    end
+  end
+end

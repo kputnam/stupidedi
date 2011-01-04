@@ -1,55 +1,69 @@
-desc "Clean, update, test, package project"
-task :build do
-  sh './sbt/sbt.sh', 'clean', 'update', 'test', 'package'
+
+task :default => :spec
+
+task :console do
+  sh *%w(irb -I lib -r stupidedi)
 end
 
-namespace :build do
-  desc "Remove build artifacts"
-  task :clean do
-    sh './sbt/sbt.sh', 'clean', 'reload'
+begin
+  require "rspec/core/rake_task"
+  RSpec::Core::RakeTask.new do |t|
+    t.verbose = false
+    t.pattern = "spec/examples/**/*.example"
+    t.rspec_opts  = %w(--color)
+    t.rspec_opts << "--format=p"
   end
-
-  desc "Update dependencies"
-  task :update do
-    sh './sbt/sbt.sh', 'update'
-  end
-
-  desc "Compile source"
-  task :compile do
-    if ENV.include?('CI')
-      sh './sbt/sbt.sh', '~compile'
-    else
-      sh './sbt/sbt.sh', 'compile'
+rescue LoadError => first
+  begin
+    require "spec/rake/spectask"
+    Spec::Rake::SpecTask.new do |t|
+      t.pattern = "spec/examples/**/*.example"
+      t.spec_opts << "--color"
+      t.spec_opts << "--format=p"
+    end
+  rescue LoadError => second
+    task :spec do
+      warn "couldn't load rspec version 1 or 2:"
+      warn "  #{first}"
+      warn "  #{second}"
     end
   end
+end
 
-  desc "Check specifications"
-  task :test do
-    if ENV.include?('CI')
-      sh './sbt/sbt.sh', '~test'
-    else
-      sh './sbt/sbt.sh', 'test'
+begin
+  require "rcov"
+
+  begin
+    require "rspec/core/rake_task"
+    RSpec::Core::RakeTask.new(:rcov) do |t|
+      t.verbose = false
+      t.pattern = "spec/examples/**/*.example"
+      t.rspec_opts  = %w(--color)
+      t.rspec_opts << "--format=p"
+      t.rcov = true
+      t.rcov_opts = "--exclude spec/,gems/"
+    end
+  rescue LoadError => first
+    begin
+      require "spec/rake/spectask"
+      Spec::Rake::SpecTask.new(:rcov) do |t|
+        t.pattern = "spec/examples/**/*.example"
+        t.spec_opts << "--color"
+        t.spec_opts << "--format=p"
+        t.rcov = true
+        t.rcov_opts = %w(--exclude spec/,gems/)
+      end
+    rescue LoadError => second
+      task :rcov do
+        warn "couldn't load rspec version 1 or 2:"
+        warn "  #{first}"
+        warn "  #{second}"
+      end
     end
   end
-
-  desc "Create runnable package"
-  task :package do
-    sh './sbt/sbt.sh', 'package'
-  end
-
-  desc "Start an interactive Scala console"
-  task :console do
-    sh './sbt/sbt.sh', 'console-quick'
-  end
-
-  desc 'Start codefellow daemon for Vim intellisense'
-  task :codefellow do
-    sh './sbt/sbt.sh', 'codefellow'
-
-    dir = '/home/kputnam/wd/codefellow'
-    sh 'java', '-cp', "#{dir}/project/boot/scala-2.8.0.RC5/lib/scala-library.jar:" +
-                      "#{dir}/project/boot/scala-2.8.0.RC5/lib/scala-compiler.jar:" +
-                      "#{dir}/codefellow-core/target/scala_2.8.0.RC5/classes",
-                      'de.tuxed.codefellow.Launch'
+rescue LoadError => e
+  task :rcov do
+    warn "couldn't load rcov:"
+    warn "  #{e}"
   end
 end

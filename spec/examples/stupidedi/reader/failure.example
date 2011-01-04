@@ -1,0 +1,63 @@
+require "spec_helper"
+
+describe Stupidedi::Reader::Failure do
+  include QuickCheck::Macro
+
+  def failure(message, remainder)
+    Stupidedi::Reader::Failure.new(message, remainder)
+  end
+
+  describe "#message" do
+    it "is the value given to the constructor", :random => true do
+      property { string }.check {|s| failure(s, "remainder").message.should eq(s) }
+    end
+  end
+
+  describe "#remainder" do
+    it "is the value given to the constructor", :random => true do
+      property { string }.check {|s| failure("message", s).remainder.should eq(s) }
+    end
+  end
+
+  shared_examples_for "wrapped input delegator method" do
+    context "when remainder is wrapped" do
+      let(:input) { mock("input", :offset => 400, :line => 90, :column => 10) }
+
+      it "returns input.method" do
+        failure("message", input).__send__(method).should ==
+          input.__send__(method)
+      end
+    end
+
+    context "when remainder is not wrapped" do
+      it "should return nil" do
+        failure("message", "remainder").__send__(method).should be_nil
+      end
+    end
+
+    context "when remainder is nil" do
+      it "should return nil" do
+        failure("message", nil).__send__(method).should be_nil
+      end
+    end
+  end
+
+  describe "#offset" do
+    it_should_behave_like "wrapped input delegator method" do
+      let(:method) { :offset }
+    end
+  end
+
+  describe "#line" do
+    it_should_behave_like "wrapped input delegator method" do
+      let(:method) { :line }
+    end
+  end
+
+  describe "#column" do
+    it_should_behave_like "wrapped input delegator method" do
+      let(:method) { :column }
+    end
+  end
+
+end

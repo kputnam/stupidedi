@@ -1,1 +1,0 @@
-package net.ppmconnect.edigen.x12.industry.hipaa

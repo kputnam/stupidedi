@@ -1,0 +1,456 @@
+require 'spec_helper'
+
+describe List do
+  include QuickCheck::Macro
+
+  module LocalMacros
+    def self.mkarray(n)
+      (1..n).to_a.bind{|as| as.concat(as.init.reverse) }
+    end
+  end
+
+  describe "#head" do
+    context "of an empty array" do
+      it "is an error" do
+        lambda { [].head }.should raise_error
+      end
+    end
+
+    context "of a one-element array" do
+      it "is the first element" do
+        [1].head.should == 1
+      end
+
+      it "is the first element", :random => true do
+        property { integer }.check{|x| [x].head.should == x }
+      end
+    end
+
+    context "of a two-element array" do
+      it "is the first element" do
+        [1, 2].head.should == 1
+      end
+
+      it "is the first element", :random => true do
+        property { [integer, integer] }.check{|x,y| [x,y].head.should == x }
+      end
+    end
+  end
+
+  describe "#tail" do
+    context "of an empty array" do
+      it "is an empty array" do
+        [].tail.should == []
+      end
+    end
+
+    context "of a one-element array" do
+      it "is an empty array" do
+        [1].tail.should == []
+      end
+
+      it "is an empty array", :random => true do
+        property { integer }.check{|x| [x].tail.should == [] }
+      end
+    end
+
+    context "of a two-element array" do
+      it "contains only the second element" do
+        [1, 2].tail.should == [2]
+      end
+
+      it "contains only the second element", :random => true do
+        property { [integer, integer] }.check{|x,y| [x,y].tail.should == [y] }
+      end
+    end
+  end
+
+  describe "#init" do
+    context "of an empty array" do
+      it "is an empty array" do
+        [].init.should == []
+      end
+    end
+
+    context "of a one-element array" do
+      it "is an empty array" do
+        [1].init.should == []
+      end
+
+      it "is an empty array", :random => true do
+        property { integer }.check{|x| [x].init.should == [] }
+      end
+    end
+
+    context "of a two-element array" do
+      it "contains only the first element" do
+        [1, 2].init.should == [1]
+      end
+
+      it "contains only the first element", :random => true do
+        property { [integer, integer] }.check{|x,y| [x,y].init.should == [x] }
+      end
+    end
+  end
+
+  describe "#drop" do
+    context "of an empty array" do
+      it "is an empty array" do
+        [].drop(10).should == []
+      end
+
+      it "is an empty array", :random => true do
+        property { integer.abs }.check{|n| [].drop(n).should == [] }
+      end
+    end
+
+    context "a negative number of elements" do
+      it "raises an error", :random => true do
+        property { integer.abs }.check do |n|
+          lambda { %w(a b).drop(-n) }.should raise_error
+        end
+      end
+    end
+
+    context "zero elements" do
+      it "returns the original array" do
+        %w(a b).drop(0).should == %w(a b)
+      end
+
+      it "returns the original array" do
+        property { with(:size, between(0, 25)) { array { integer }}}.check do |as|
+          as.drop(0).should == as
+        end
+      end
+    end
+
+    context "one element" do
+      context "from a one-element array" do
+        it "is an empty array" do
+          %w(a).drop(1).should == []
+        end
+
+        it "is an empty array", :random => true do
+          property { integer }.check{|x| [x].drop(1).should == [] }
+        end
+      end
+
+      context "from a two-element array" do
+        it "contains only the second element" do
+          %w(a b).drop(1).should == %w(b)
+        end
+
+        it "contains only the second element", :random => true do
+          property { [integer, integer] }.check{|x,y| [x,y].drop(1).should == [y] }
+        end
+      end
+    end
+
+    context "two elements" do
+      context "from a one-element array" do
+        it "is an empty array" do
+          %w(a).drop(2).should == []
+        end
+
+        it "is an empty array", :random => true do
+          property { integer }.check{|x| [x].drop(2).should == [] }
+        end
+      end
+
+      context "from a two-element array" do
+        it "is an empty array" do
+          %w(a b).drop(2).should == []
+        end
+
+        it "is an empty array", :random => true do
+          property { [integer, integer] }.check{|x,y| [x,y].drop(2).should == [] }
+        end
+      end
+    end
+  end
+
+  describe "#drop_while" do
+    context "when predicate is always satisfied" do
+      it "is an empty array" do
+        [1, 2, 3, 2, 1].drop_while{|x| x >= 1 }.should == []
+      end
+
+      it "is an empty array", :random => true do
+        property { LocalMacros.mkarray(between(0, 10)) }.check do |as|
+          as.drop_while { true }.should == []
+        end
+      end
+    end
+
+    context "when the first element does not satisfy the predicate" do
+      it "is the original array" do
+        [1, 2, 3, 2, 1].drop_while{|x| x <= 0 }.should == [1, 2, 3, 2, 1]
+      end
+
+      it "is the original array", :random => true do
+        property { LocalMacros.mkarray(between(0, 10)) }.check do |as|
+          as.drop_while { false }.should == as
+        end
+      end
+    end
+
+    context "when the second element does not satisfy the predicate" do
+      it "contains all except the first element" do
+        [1, 2, 3, 2, 1].drop_while{|x| x <= 1 }.should == [2, 3, 2, 1]
+      end
+
+      it "contains all except the first element", :random => true do
+        property { LocalMacros.mkarray(between(2, 10)) }.check do |as|
+          as.drop_while{|x| x <= 1 }.should == as.tail
+        end
+      end
+    end
+
+    context "when the third element does not satisfy the predicate" do
+      it "contains all except the first two elements" do
+        [1, 2, 3, 2, 1].drop_while{|x| x <= 2 }.should == [3, 2, 1]
+      end
+
+      it "contains all except the first two elements", :random => true do
+        property { LocalMacros.mkarray(between(3, 10)) }.check do |as|
+          as.drop_while {|x| x <= 2 }.should == as.tail.tail
+        end
+      end
+    end
+  end
+
+  describe "#drop_until" do
+    pending
+  end
+
+  describe "#take" do
+    context "of an empty array" do
+      it "is an empty array" do
+        [].take(10).should == []
+      end
+
+      it "is an empty array", :random => true do
+        property { integer.abs }.check{|n| [].take(n).should == [] }
+      end
+    end
+
+    context "a negative number of elements" do
+      it "raises an error" do
+        property { integer.abs }.check do |n|
+          lambda { %w(a b).take(-n) }.should raise_error
+        end
+      end
+    end
+
+    context "zero elements" do
+      context "from a one-element array" do
+        it "is an empty array" do
+          %w(a).take(0).should == []
+        end
+
+        it "is an empty array", :random => true do
+          property { integer }.check{|x| [x].take(0).should == [] }
+        end
+      end
+
+      context "from a two-element array" do
+        it "is an empty array" do
+          %w(a b).take(0).should == []
+        end
+
+        it "is an empty array", :random => true do
+          property { [integer, integer] }.check{|x,y| [x,y].take(0).should == [] }
+        end
+      end
+    end
+
+    context "one element" do
+      context "from a one-element array" do
+        it "contains only the first element" do
+          %w(a).take(1).should == %w(a)
+        end
+
+        it "contains only the first element", :random => true do
+          property { integer }.check{|x| [x].take(1).should == [x] }
+        end
+      end
+
+      context "from a two-element array" do
+        it "contains only the first element" do
+          %w(a b).take(1).should == %w(a)
+        end
+
+        it "contains only the first element", :random => true do
+          property { [integer, integer] }.check{|x,y| [x,y].take(1).should == [x] }
+        end
+      end
+    end
+
+    context "two elements" do
+      context "from a one-element array" do
+        it "contains only the first element" do
+          %w(a).take(2).should == %w(a)
+        end
+
+        it "contains only the first element", :random => true do
+          property { integer }.check{|x| [x].take(2).should == [x] }
+        end
+      end
+
+      context "from a two-element array" do
+        it "contains only both the elements" do
+          %w(a b).take(2).should == %w(a b)
+        end
+
+        it "contains only both the elements", :random => true do
+          property { [integer, integer] }.check{|x,y| [x,y].take(2).should == [x,y] }
+        end
+      end
+    end
+  end
+
+  describe "#take_while" do
+    context "when predicate is always satisfied" do
+      it "is the original array" do
+        [1, 2, 3, 2, 1].take_while{|x| x >= 1 }.should == [1, 2, 3, 2, 1]
+      end
+
+      it "is the original array", :random => true do
+        property { LocalMacros.mkarray(between(0, 10)) }.check do |as|
+          as.take_while { true }.should == as
+        end
+      end
+    end
+
+    context "when the first element does not satisfy the predicate" do
+      it "is the empty array" do
+        [1, 2, 3, 2, 1].take_while{|x| x <= 0 }.should == []
+      end
+
+      it "is the empty array", :random => true do
+        property { LocalMacros.mkarray(between(1, 10)) }.check do |as|
+          as.take_while { false }.should == []
+        end
+      end
+    end
+
+    context "when the second element does not satisfy the predicate" do
+      it "contains only the first element" do
+        [1, 2, 3, 2, 1].take_while{|x| x <= 1 }.should == [1]
+      end
+
+      it "contains only the first element", :random => true do
+        property { LocalMacros.mkarray(between(2, 10)) }.check do |as|
+          as.take_while{|x| x <= 1 }.should == as[0, 1]
+        end
+      end
+    end
+
+    context "when the third element does not satisfy the predicate" do
+      it "contains only the first two elements" do
+        [1, 2, 3, 2, 1].take_while{|x| x <= 2 }.should == [1, 2]
+      end
+
+      it "contains only the first two elements", :random => true do
+        property { LocalMacros.mkarray(between(3, 10)) }.check do |as|
+          as.take_while {|x| x <= 2 }.should == as[0, 2]
+        end
+      end
+    end
+  end
+
+  describe "#take_until" do
+    pending
+  end
+
+  describe "#split_at" do
+    context "index zero" do
+      context "of an empty array" do
+        it "returns [], []" do
+          [].split_at(0).should == [[], []]
+        end
+      end
+
+      context "of a one-element array" do
+        it "returns [], [a]" do
+          %w(a).split_at(0).should == [[], %w(a)]
+        end
+      end
+
+      context "of a two-element array" do
+        it "returns [], [a, b]" do
+          %w(a b).split_at(0).should == [[], %w(a b)]
+        end
+      end
+    end
+
+    context "index one" do
+      context "at a negative index" do
+        it "is an error", :random => true do
+          property { integer.abs }.check do |n|
+            lambda { [].split_at(-n) }.should raise_error
+          end
+        end
+      end
+
+      context "of an empty array" do
+        it "returns [], []" do
+          [].split_at(1).should == [[], []]
+        end
+      end
+
+      context "of a one-element array" do
+        it "returns [a], []" do
+          %w(a).split_at(1).should == [%w(a), []]
+        end
+      end
+
+      context "of a two-element array" do
+        it "returns [a], [b]" do
+          %w(a b).split_at(1).should == [%w(a), %w(b)]
+        end
+      end
+    end
+
+    context "index two" do
+      context "of an empty array" do
+        it "returns [], []" do
+          [].split_at(2).should == [[], []]
+        end
+      end
+
+      context "of a one-element array" do
+        it "returns [a], []" do
+          %w(a).split_at(2).should == [%w(a), []]
+        end
+      end
+
+      context "of a two-element array" do
+        it "returns [a, b], []" do
+          %w(a b).split_at(2).should == [%w(a b), []]
+        end
+      end
+    end
+
+    context "at a a non-negative index" do
+      it "is equal to [take(n), drop(n)]", :random => true do
+        property do
+          with(:size, between(0, 25)) do
+            [array { integer }, integer.abs]
+          end
+        end.check do |as, n|
+          as.split_at(n).should == [as.take(n), as.drop(n)]
+        end
+      end
+    end
+  end
+
+  describe "#span" do
+    pending
+  end
+
+  describe "#split_when" do
+    pending
+  end
+
+end
