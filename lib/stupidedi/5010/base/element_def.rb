@@ -109,7 +109,7 @@ module Stupidedi
           self.class.new(id, name, purpose, *@component_element_uses.tail)
         end
 
-        # NOTE: composite_element_use is not implemented, because composite elements
+        # NOTE: method component_use is not implemented, because composite elements
         # cannot be nested within other composite elements. It is however, implemented
         # in SimpleElementDef, because components of a composite element are indeed
         # merely simple elements.

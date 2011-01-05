@@ -16,10 +16,6 @@ module Stupidedi
           self.class.new(@id, @name, @element_uses.tail)
         end
 
-        def empty?
-          @element_uses.empty?
-        end
-
         def empty
           Values::SegmentVal.blank(self)
         end
