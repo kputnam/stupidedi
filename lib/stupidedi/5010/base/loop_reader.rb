@@ -45,7 +45,7 @@ module Stupidedi
             rest.read_segments.map{|s| s.map{|ss| r.value.cons(ss) }}
           end.or do
             rest = self.class.from_reader(self, @loop_def.tail)
-            rest.read_segments.tap{|x| pp [:S, x] }
+            rest.read_segments
           end
         end
 

@@ -20,11 +20,11 @@ module Stupidedi
               case r.value
               when @interchange_header.element_separator
                 # Start parsing each element
-                r.remainder.read_elements.map{|result| result.map{|es| Values::SegmentVal.new(segment_def, es) }}
+                r.remainder.read_elements.map{|result| result.map{|es| Values::SegmentVal.new(@segment_def, es) }}
 
               when @interchange_header.segment_terminator
                 # No elements present
-                result(Values::SegmentVal.empty(segment_def), r.remainder)
+                result(Values::SegmentVal.empty(@segment_def), r.remainder)
 
               when @interchange_header.component_separator
                 # Only component elements are separated with the component separator
@@ -56,7 +56,7 @@ module Stupidedi
                   failure("Found a repetition separator following a non-repeatable element")
                 else
                   # Read the same element def again, and append it onto the RepeatedElementVal
-                  rest = self.class.from_reader(d.remainder, segment_def)
+                  rest = self.class.from_reader(d.remainder, @segment_def)
                   rest.read_elements.map{|x| x.map{|es| es.head.prepend(r.value).cons(es.tail) }}
                 end
 
@@ -66,7 +66,7 @@ module Stupidedi
                   failure("Found an element separator #{@interchange_header.element_separator.inspect} instead of a segment terminator")
                 else
                   # Parse next element
-                  rest = self.class.from_reader(d.remainder, segment_def.tail)
+                  rest = self.class.from_reader(d.remainder, @segment_def.tail)
 
                   # Prepend the parsed element onto the next elements
                   if head.repetition_count == Designations::ElementRepetition::Once

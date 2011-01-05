@@ -13,7 +13,7 @@ module Stupidedi
         end
 
         def tail
-          self.class.new(@id, @name, @element_uses.tail)
+          self.class.new(@id, @name, *@element_uses.tail)
         end
 
         def empty
