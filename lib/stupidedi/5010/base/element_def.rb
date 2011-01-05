@@ -31,6 +31,14 @@ module Stupidedi
           raise NoMethodError, "Method empty must be implemented in subclass"
         end
 
+        def simple?
+          raise NoMethodError, "Method simple? must be implemented in subclass"
+        end
+
+        def composite?
+          not simple?
+        end
+
         def inspect
           "#<ElementDef #{id} #{self.class.name.split('::').last}>"
         end
@@ -64,6 +72,10 @@ module Stupidedi
 
         def empty
           self.class.empty(self)
+        end
+
+        def simple?
+          true
         end
 
         def parse(string)
@@ -110,8 +122,12 @@ module Stupidedi
           @component_element_uses.map{|e| e.element_def.empty }
         end
 
+        def simple?
+          false
+        end
+
         def inspect
-          "#<CompositeElementDef #{id.inspect} #{self.class.name.split('::').last}>"
+          "#<CompositeElementDef #{id.inspect}>"
         end
 
       end

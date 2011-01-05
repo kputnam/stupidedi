@@ -90,13 +90,24 @@ module Stupidedi
         failure("Reached end of input without finding a delimiter")
       end
 
+      ##
+      # If a simple element definition is given, this returns an Either[Result[SimpleElementVal]].
+      # If a composite element definition is given, this returns an Either[Result[CompositeElementVal]].
+      # Otherwise, this returns an "unparsed" Either[Result[String]]. In any case, the delimeter
+      # immediately following the element is present in the remaining input.
       def read_element(element_def = nil)
-        # TODO
+        if element_def.try(&:simple?)
+          read_simple_element(element_def)
+        else FiftyTen::Base::CompositeElementDef
+          read_composite_element(element_def)
+        end
       end
 
       ##
-      # When no argument is given, this returns Either[Result[String]]. If a simple
-      # element definition is given, this returns an Either[Result[SimpleElementVal]].
+      # When no argument is given, this returns an "unparsed" Either[Result[String]]. If a
+      # simple element definition is given, this returns an Either[Result[SimpleElementVal]].
+      # In both cases, the delimeter immediately following the element is present in the
+      # remaining input.
       def read_simple_element(simple_element_def = nil)
         position = 0
         buffer   = ""
@@ -138,9 +149,10 @@ module Stupidedi
       end
 
       ##
-      # When no argument is given, this returns Either[Result[String]]. If a composite
-      # element definition is given, this returns an Either[Result[CompositeElementVal]].
-      # In both cases, the final delimeter is present in the remaining input.
+      # When no argument is given, this returns an "unparsed" Either[Result[String]]. If a
+      # composite element definition is given, this returns an Either[Result[CompositeElementVal]].
+      # In both cases, the delimeter immediately following the element is present in the
+      # remaining input.
       def read_composite_element(composite_element_def = nil)
         if composite_element_def.nil?
           position = 0
