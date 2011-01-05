@@ -180,7 +180,7 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
         end
       end
 
-      context "decimal R input validation" do
+      context "decimal R validation" do
         it "does not parse 'E'" do
           r.reader("E*", isa.default).read.should_not be_defined
         end
@@ -271,14 +271,19 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
         end
       end
 
-      context "numeric N0 input validation" do
-        it "does not parse explicit decimal point" do
-          n0.reader("0~...", isa.default).read.map do |result|
-            result.value.should == 0
-          end.should be_defined
+      context "numeric N0 validation" do
+        it "does not allow an explicit decimal point" do
+          n0.reader(".1~...", isa.default).read.should_not be_defined
         end
 
-        it "produces an error message"
+        it "does not allow an explicit decimal point" do
+          n0.reader("0.1~...", isa.default).read.should_not be_defined
+        end
+
+        it "produces an error message" do
+          n0.reader("0.1~...", isa.default).read.explanation.
+            should == %[Not a valid numeric (Nn) "0.1"]
+        end
 
         it "encodes the error position"
       end
@@ -491,7 +496,7 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
         end
       end
 
-      context "date DT input validation" do
+      context "date DT validation" do
         it "validates MM is from 01 to 12" do
           dt.reader("20101301*", isa.default).read.should_not be_defined
           dt.reader("101301*", isa.default).read.should_not be_defined

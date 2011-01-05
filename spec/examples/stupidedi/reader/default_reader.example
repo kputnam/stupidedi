@@ -7,6 +7,10 @@ describe Stupidedi::Reader::DefaultReader do
     Stupidedi::Reader::DefaultReader.new(input, isa)
   end
 
+  def mkinput(string, offset = 0)
+    Stupidedi::Input.from_string(string, offset)
+  end
+
   describe ".from_reader" do
     it "copies reader#input and reader#interchange_header" do
       input  = mock("input")
@@ -90,7 +94,23 @@ describe Stupidedi::Reader::DefaultReader do
         end
       end
 
-      it "updates the input offset"
+      it "updates the input offset" do
+        reader = mkreader(mkinput("abc", 512))
+        reader.consume_prefix("ab").
+          map{|remainder| remainder.input.offset.should == 514 }
+      end
+
+      it "updates the input offset", :random => true do
+        property do
+          with(:size, between(1, 25)) do
+            string.bind{|s| [integer.abs, s, *s.split_at(between(0, s.length - 1))] }
+          end
+        end.check do |offset, input, prefix, suffix|
+          reader = mkreader(mkinput(input, offset))
+          reader.consume_prefix(prefix).
+            map{|remainder| remainder.input.offset.should == offset + prefix.length }
+        end
+      end
     end
 
     context "when the search string and input are equal" do
@@ -120,7 +140,21 @@ describe Stupidedi::Reader::DefaultReader do
         end
       end
 
-      it "updates the input offset"
+      it "updates the input offset" do
+        reader = mkreader(mkinput("abc", 256))
+        reader.consume_prefix("abc").
+          map{|remainder| remainder.input.offset.should == 259 }
+      end
+
+      it "updates the input offset", :random => true do
+        property do
+          with(:size, between(0, 25)) { [string, integer.abs] }
+        end.check do |input, offset|
+          reader = mkreader(mkinput(input, offset))
+          reader.consume_prefix(input).
+            map{|remainder| remainder.input.offset == offset + input.length }
+        end
+      end
     end
 
     context "when the search string is not a prefix of the input" do
@@ -144,7 +178,11 @@ describe Stupidedi::Reader::DefaultReader do
           explanation.should == %[Found "abc" instead of "abd"]
       end
 
-      it "encodes the error position"
+      it "encodes the error position" do
+        reader = mkreader(mkinput("abc", 2048))
+        reader.consume_prefix("abd").
+          explanation.offset.should == 2048
+      end
     end
 
     context "when the input is a suffix of the search string" do
@@ -168,7 +206,13 @@ describe Stupidedi::Reader::DefaultReader do
         end
       end
 
-      it "encodes the error position"
+      it "encodes the error position" do
+        reader = mkreader(mkinput("bc", 2056))
+        reader.consume_prefix("abc").
+          explanation.offset.should == 2056
+      end
+
+      it "encodes the error position", :random => true
     end
 
     context "when the input is a prefix of the search string" do
@@ -192,7 +236,13 @@ describe Stupidedi::Reader::DefaultReader do
         end
       end
 
-      it "encodes the error position"
+      it "encodes the error position" do
+        reader = mkreader(mkinput("ab", 512))
+        reader.consume_prefix("abc").
+          explanation.offset.should == 512
+      end
+
+      it "encodes the error position", :random => true
     end
 
     context "when the search string is empty" do
@@ -206,37 +256,111 @@ describe Stupidedi::Reader::DefaultReader do
           map{|remainder| remainder.should eq(reader) }
       end
 
-      it "does not update the input offset"
+      it "does not update the input offset" do
+        reader = mkreader(mkinput("abc", 999))
+        reader.consume_prefix("").
+          map{|remainder| remainder.input.offset.should == 999 }
+      end
+
+      it "does not update the input offset", :random => true
     end
   end
 
   describe "#consume" do
     context "when input contains the search string" do
-      it "is defined"
+      it "is defined" do
+        mkreader("abc def").consume("c d").should be_defined
+      end
 
-      it "updates the input offset"
+      it "is defined", :random => true
 
-      it "consumes input up to and including the search string"
+      it "updates the input offset" do
+        mkreader(mkinput("abc def", 16)).consume("c d").
+          map{|remainder| remainder.input.offset.should == 21 }
+      end
+
+      it "updates the input offset", :random => true
+
+      it "consumes input up to and including the search string" do
+        mkreader("abc def").consume("c d").
+          map{|remainder| remainder.input.should == "ef" }
+      end
+
+      it "consumes input up to and including the search string", :random => true
     end
 
     context "when input does not contain the search string" do
-      it "is not defined"
+      it "is not defined" do
+        mkreader("abc def").consume("bcd").should_not be_defined
+      end
 
-      it "produces an error message"
+      it "is not defined", :random => true
 
-      it "encodes the error position"
+      it "produces an error message" do
+        mkreader("abc def").consume("bcd").
+          explanation.should == %[Reached end of input without finding "bcd"]
+      end
+
+      it "encodes the error position" do
+        reader = mkreader(mkinput("abc def", 4096))
+        reader.consume("bcd").
+          explanation.offset.should == 4096
+      end
+
+      it "encodes the error position", :random => true
     end
   end
 
   describe "#read_delimiter" do
-    pending
+    context "when the input begins with a delimiter" do
+      it "is defined", :random => true do
+        property { stream.agitate(char.delimiter) }.check do |input|
+          mkreader("#{input}...").read_delimiter.should be_defined
+        end
+      end
+
+      it "reads the delimiter", :random => true do
+        property { char.delimiter.bind{|s| [stream.agitate(s), s] }}.check do |input, delim|
+          mkreader("#{input}...").read_delimiter.map do |result|
+            result.value.should == delim
+            Stupidedi::Reader.strip(result.remainder.input).should == "..."
+          end
+        end
+      end
+
+      it "updates the input offset", :random => true
+    end
+
+    context "when the input does not begin with a delimiter" do
+      it "is not defined" do
+        mkreader("abc").read_delimiter.should_not be_defined
+      end
+
+      it "is not defined", :random => true
+
+      it "produces an error message" do
+        mkreader("abc").read_delimiter.
+          explanation.should == %[Found "a" instead of a delimiter]
+      end
+
+      it "encodes the error offset" do
+        reader = mkreader(mkinput("abc", 5000))
+        reader.read_delimiter.explanation.offset.should == 5000
+      end
+
+      it "encodes the error offset", :random => true
+    end
   end
 
-  describe "#read_element" do
+  describe "#read_simple_element" do
     pending
   end
 
   describe "#read_segment_id" do
+    pending
+  end
+
+  describe "#read_segment" do
     pending
   end
 
