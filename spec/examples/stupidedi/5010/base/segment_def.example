@@ -104,7 +104,7 @@ describe Stupidedi::FiftyTen::Base::SegmentDef do
 
         it "produces an error message" do
           result = segment_def("N1", dt).reader("N1*INVALID DATE~...", isa).read
-          result.explanation.should == %(Expected numeric characters for date (DT) "INVALID DATE")
+          result.explanation.should == %(Expected either 6 or 8 numeric characters for date (DT) "INVALID DATE")
         end
 
         it "encodes the error offset"

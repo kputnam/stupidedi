@@ -13,7 +13,7 @@ module Stupidedi
           def parse(string, instance = nil)
             filtered = Reader.strip(string).strip
 
-            if filtered =~ /^ *$/
+            if filtered !~ /[^ ]/
               success(Values::NumericVal.empty(instance))
             elsif filtered =~ /^[+-]?\d*$/
               success(Values::NumericVal.value(filtered, instance) / (10 ** positions))
@@ -75,7 +75,7 @@ module Stupidedi
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
-            if filtered =~ /^ *$/
+            if filtered !~ /[^ ]/
               success(Values::IdentifierVal.empty(instance))
             else
               # Trailing spaces must be supressed unless they are necessary to satisfy a minimum
@@ -99,7 +99,7 @@ module Stupidedi
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
-            if filtered =~ /^ *$/
+            if filtered !~ /[^ ]/
               # The string element must contain at least one non-space character
               success(Values::StringVal.empty(instance))
             else
@@ -136,34 +136,30 @@ module Stupidedi
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
-            if filtered =~ /^ *$/
+            if filtered !~ /[^ ]/
               Either.success(Values::DateVal.empty(instance))
             else
               # Ignore whitespace
               filtered = filtered.gsub(/ */, "")
 
-              if filtered =~ /^\d+/
-                if filtered.length == 6
-                  # Two-digit year
-                  year  = filtered.slice(0, 2)
-                  month = filtered.slice(2, 2)
-                  day   = filtered.slice(4, 2)
-                elsif filtered.length == 8
-                  # Four-digit year
-                  year  = filtered.slice(0, 4)
-                  month = filtered.slice(4, 2)
-                  day   = filtered.slice(6, 2)
-                else
-                  return failure("Expected either 6 or 8 characters for date (DT) #{string.inspect}")
-                end
-
-                begin
-                  success(Values::DateVal.value(year, month, day, instance))
-                rescue ArgumentError
-                  failure("Not a valid year(#{year}) month(#{month}) day(#{day}) for date (DT) #{string.inspect}")
-                end
+              if filtered =~ /^\d{6}$/
+                # Two-digit year
+                year  = filtered.slice(0, 2)
+                month = filtered.slice(2, 2)
+                day   = filtered.slice(4, 2)
+              elsif filtered =~ /^\d{8}$/
+                # Four-digit year
+                year  = filtered.slice(0, 4)
+                month = filtered.slice(4, 2)
+                day   = filtered.slice(6, 2)
               else
-                failure("Expected numeric characters for date (DT) #{string.inspect}")
+                return failure("Expected either 6 or 8 numeric characters for date (DT) #{string.inspect}")
+              end
+
+              begin
+                success(Values::DateVal.value(year, month, day, instance))
+              rescue ArgumentError
+                failure("Not a valid year(#{year}) month(#{month}) day(#{day}) for date (DT) #{string.inspect}")
               end
             end
           end
