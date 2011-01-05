@@ -403,8 +403,9 @@ module Stupidedi
           E::E98 .simple_use(O, R::Once)
 
         N2 = SegmentDef.new \
-          "N2", "Additional Name Information"
-          # TODO
+          "N2", "Additional Name Information",
+          E::E93 .simple_use(M, R::Once),
+          E::E93 .simple_use(O, R::Once)
 
         N3 = SegmentDef.new \
           "N3", "Party Location",

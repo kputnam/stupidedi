@@ -10,72 +10,63 @@ module Stupidedi
         # remittance advice only from a health insurer to a health care provider either directly or via a
         # financial institution.
 
+        S = SegmentDictionary
+        L = Designations::LoopRepetition
+        R = Designations::SegmentRepetition
+        M = Designations::SegmentRequirement::M
+        O = Designations::SegmentRequirement::O
+
         def header
-          # Table 1
-          # =================================
-          #
-          # 0100 ST   M   Once
-          # 0200 BPR  M   Once
-          # 0300 NTE  O   Unbounded
-          # 0400 TRN  O   Once                ; 1/0400 TRN is used to uniquely identify a claim payment and advice
-          # 0500 CUR  O   Once                ; 1/0500 CUR does not initiate a foreign exchange transaction
-          # 0600 REF  O   Unbounded
-          # 0700 DTM  O   Unbounded
-          #
-          # Loop 1000     Max(200)
-          # --------------------------------+
-          # 0800 N1   O   Once              | ; 1/800 N1 loop allows name/address information for the payer and payee
-          # 0900 N2   O   Unbounded         | ;   which would be utilzed to address remittance(s) for delivery
-          # 1000 N3   O   Unbounded         |
-          # 1100 N4   O   Once              |
-          # 1200 REF  O   Unbounded         |
-          # 1300 PER  O   Unbounded         |
-          # 1400 RDM  O   Once              |
-          # 1500 DTM  O   Once              |
-          # --------------------------------+
+          TableDef.new("Table 1",
+            S::ST .segment_use( 100, M, R::Once),
+            S::BPR.segment_use( 200, M, R::Once),
+            S::NTE.segment_use( 300, O, R::Unbounded),
+            S::TRN.segment_use( 400, O, R::Once),         # 1/0400 TRN is used to uniquely identify a claim payment and advice
+            S::CUR.segment_use( 500, O, R::Once),
+            S::REF.segment_use( 600, O, R::Unbounded),
+            S::DTM.segment_use( 700, O, R::Unbounded),
+            LoopDef.new("1000", L::Max(200),
+              S::N1 .segment_use( 800, O, R::Once),       # 1/800 N1 loop allows name/address information for the payer and payee
+              S::N2 .segment_use( 900, O, R::Unbounded),  #   which would be utilzed to address remittance(s) for delivery
+              S::N3 .segment_use(1000, O, R::Unbounded),
+              S::N4 .segment_use(1100, O, R::Once),
+              S::REF.segment_use(1200, O, R::Unbounded),
+              S::PER.segment_use(1300, O, R::Unbounded),
+              S::RDM.segment_use(1400, O, R::Once),
+              S::DTM.segment_use(1500, O, R::Once)))
         end
 
         def details
-          # Table 2
-          # =================================
-          #
-          # Loop 2000     Unbounded
-          # --------------------------------+
-          # 0030 LX   O   Once              | ; 2/0030 LX is used to provide a looping structure and logical grouping
-          # 0050 TS3  O   Once              | ;          of claim payment information
-          # 0070 TS2  O   Once              |
-          #                                 |
-          # Loop 2100     Unbounded         |
-          # ------------------------------+ |
-          # 0100 CLP  M   Once            | |
-          # 0200 CAS  O   Max(99)         | | ; 2/0200 CAS is used to reflect changes to amounts within Table 2
-          # 0300 NM1  M   Max(9)          | |
-          # 0330 MIA  O   Once            | |
-          # 0350 MOA  O   Once            | |
-          # 0400 REF  O   Max(99)         | |
-          # 0500 DTM  O   Max(9)          | |
-          # 0600 PER  O   Max(3)          | |
-          # 0620 AMT  O   Max(20)         | |
-          # 0640 QTY  O   Max(20)         | |
-          #                               | |
-          # Loop 2110     Max(999)        | |
-          # ----------------------------+ | |
-          # 0700 SVC  O   Once          | | |
-          # 0800 DTM  O   Max(9)        | | | ; 2/0800 DTM is used to express dates and ranges specifically related
-          # 0900 CAS  O   Max(99)       | | | ;          to the service identified in the SVC segment
-          # 1000 REF  O   Max(99)       | | | ; 2/0900 CAS is used to reflect changes to amounts within Table 2
-          # 1100 AMT  O   Max(20)       | | |
-          # 1200 QTY  O   Max(20)       | | |
-          # 1300 LQ   O   Max(99)       | | |
-          # ----------------------------+-+-+
+          TableDef.new("Table 2",
+            LoopDef.new("2000", L::Unbounded,
+              S::LX .segment_use(  30, O, R::Once),       # 2/0030 LX is used to provide a looping structure and logical grouping
+              S::TS3,segment_use(  50, O, R::Once),       #          of claim payment information
+              S::TS2.segment_use(  70, O, R::Once),
+              LoopDef.new("2100", L::Unbounded,
+                S::CLP.segment_use( 100, M, R::Once),
+                S::CAS.segment_use( 200, O, R::Max(99)),  # 2/0200 CAS is used to reflect changes to amounts within Table 2
+                S::NM1.segment_use( 300, M, R::Max(9)),
+                S::MIA.segment_use( 330, O, R::Once),
+                S::MOA.segment_use( 350, O, R::Once),
+                S::REF.segment_use( 400, O, R::Max(99)),
+                S::DTM.segment_use( 500, O, R::Max(9)),
+                S::PER.segment_use( 600, O, R::Max(3)),
+                S::AMT.segment_use( 620, O, R::Max(20)),
+                S::QTY.segment_use( 640, O, R::Max(20)),
+                LoopDef.new("2110", L::Max(999),
+                  S::SVC.segment_use( 700, O, R::Once),
+                  S::DTM.segment_use( 800, O, R::Max(9)),  # 2/0800 DTM is used to express dates and ranges specifically related
+                  S::CAS.segment_use( 900, O, R::Max(99)), #          to the service identified in the SVC segment
+                  S::REF.segment_use(1000, O, R::Max(99)), # 2/0900 CAS is used to reflect changes to amounts within Table 2
+                  S::AMT.segment_use(1100, O, R::Max(20)),
+                  S::QTY.segment_use(1200, O, R::Max(20)),
+                  S::LQ .segment_use(1300, O, R::Max(99))))))
         end
 
         def summary
-          # Table 3
-          # =================================
-          #
-          # 0100 PLB  O   Unbounded
-          # 0200 SE   M   Once
+          TableDef.new "Table 3",
+            S::PLB.segment_use( 100, O, R::Unbounded)
+            S::SE .segment_use( 200, M, R::Once)
         end
 
       end
