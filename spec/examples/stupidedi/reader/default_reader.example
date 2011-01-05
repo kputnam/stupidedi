@@ -1,5 +1,6 @@
 require "spec_helper"
 
+
 describe Stupidedi::Reader::DefaultReader do
   include QuickCheck::SerializedEdi::Macro
 
