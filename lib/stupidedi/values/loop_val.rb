@@ -2,6 +2,9 @@ module Stupidedi
   module Values
 
     class LoopVal
+      attr_reader \
+        :loop_def,
+        :segment_vals
 
       def initialize(loop_def, *segment_vals)
         @loop_def, @segment_vals = loop_def, segment_vals
@@ -17,6 +20,20 @@ module Stupidedi
 
       def [](n)
         @segment_vals[n]
+      end
+
+      def pretty_print(q)
+        q.text("LoopVal[#]")
+        q.group(1, "(", ")") do
+          q.breakable ""
+          @segment_vals.each do |e|
+            unless q.current_group.first?
+              q.text ", "
+              q.breakable
+            end
+            q.pp e
+          end
+        end
       end
     end
 

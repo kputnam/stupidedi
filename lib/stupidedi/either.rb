@@ -55,8 +55,12 @@ module Stupidedi
         self.class === other and other.select{|x| x == @value }.defined?
       end
 
-      def inspect
-        "Either.success(#{@value.inspect})"
+      def pretty_print(q)
+        q.text("Either.success")
+        q.group(1, "(", ")") do
+          q.breakable
+          q.pp @value
+        end
       end
     end
 
@@ -107,8 +111,12 @@ module Stupidedi
         self.class === other and other.explanation == @explanation
       end
 
-      def inspect
-        "Either.failure(#{@explanation.inspect})"
+      def pretty_print(q)
+        q.text("Either.failure")
+        q.group(1, "(", ")") do
+          q.breakable
+          q.pp @explanation
+        end
       end
 
       def fatal
