@@ -3,6 +3,10 @@ module Stupidedi
 
     class DateVal < SimpleElementVal
 
+      #
+      # Empty date value. Shouldn't be directly instantiated -- instead,
+      # use the DateVal.empty and DateVal.value constructors.
+      #
       class Empty < DateVal
         def empty?
           true
@@ -22,7 +26,9 @@ module Stupidedi
       end
 
       #
-      # Date with a fully-specified year (with century)
+      # Date with a fully-specified year (with century). Shouldn't be
+      # directly instantiated -- instead use the DateVal.value,
+      # DateVal.from_date and DateVal.from_time constructors.
       #
       class Proper < DateVal
         attr_reader :year, :month, :day
@@ -56,23 +62,15 @@ module Stupidedi
           ::Date.civil(year.to_i, month.to_i, day.to_i)
         end
 
-        def to_time(time)
-          # TODO
-          raise NoMethodError, "Not yet implemented"
-        end
-
-        def to_datetime(time)
-          # TODO
-          raise NoMethodError, "Not yet implemented"
-        end
-
         def ==(other)
           year == other.year and month == other.month and day == other.day
         end
       end
 
       #
-      # Date with a partially-specified year (missing century)
+      # Date with a partially-specified year (two digits, missing century).
+      # Shouldn't be directly instantiated -- instead, use the DateVal.value
+      # constructor.
       #
       class Improper < DateVal
         attr_reader :year, :month, :day
@@ -100,6 +98,7 @@ module Stupidedi
           false
         end
 
+        ##
         # Converts this to a proper date
         def cutoff(yy, century = ::Date.today.year / 100)
           raise ArgumentError, "Y must be between 0 and 99, inclusive but was #{yy}" unless yy.between?(0, 99)
@@ -111,6 +110,7 @@ module Stupidedi
           end
         end
 
+        ##
         # Converts this to a proper date
         def delta(nn, century = ::Date.today.year / 100)
           raise ArgumentError, "N must be between 0 and 99, inclusive but was #{nn}" unless nn.between?(0, 99)
@@ -124,12 +124,18 @@ module Stupidedi
 
     end
 
+    #
     # Constructors
+    #
     class << DateVal
+      ##
+      # Create an empty date value
       def empty(element_def = nil)
         DateVal::Empty.new(element_def)
       end
 
+      ##
+      # Intended for use by ElementReader.
       def value(year, month, day, element_def = nil)
         begin
           if year.length == 2
@@ -142,19 +148,31 @@ module Stupidedi
         end
       end
 
+      ##
+      # Convert a ruby Date value.
       def from_date(date, element_def = nil)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+        DateVal::Proper.new("%04d" % date.year,
+                            "%02d" % date.month,
+                            "%02d" % date.day,
+                            element_def)
       end
 
+      ##
+      # Convert a ruby Time value.
       def from_time(time, element_def = nil)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+        DateVal::Proper.new("%04d" % time.year,
+                            "%02d" % time.month,
+                            "%02d" % time.day,
+                            element_def)
       end
 
-      def from_datetime(datetime, element_def = nil)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+      ##
+      # Convert a ruby DateTime value.
+      def from_datetime(dt, element_def = nil)
+        DateVal::Proper.new("%04d" % dt.year,
+                            "%02d" % dt.month,
+                            "%02d" % dt.day,
+                            element_def)
       end
     end
 

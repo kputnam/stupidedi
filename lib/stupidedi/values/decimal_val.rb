@@ -2,7 +2,7 @@ module Stupidedi
   module Values
 
     #
-    # Mostly an alias of Numeric
+    # Mostly an alias of Numeric.
     #
     class DecimalVal < SimpleElementVal
       PATTERN = /\A[+-]?            (?# optional leading sign             )
@@ -13,12 +13,18 @@ module Stupidedi
                 \Z/ix
     end
 
+    #
     # Constructors
+    #
     class << DecimalVal
+      ##
+      # Create an empty decimal value.
       def empty(element_def = nil)
         NumericVal.empty(element_def)
       end
 
+      ##
+      # Intended for use by ElementReader.
       def value(string, element_def)
         if string =~ DecimalVal::PATTERN
           NumericVal::NonEmpty.new(BigDecimal.new(string), element_def)
@@ -27,9 +33,10 @@ module Stupidedi
         end
       end
 
+      ##
+      # Convert a ruby Numeric value (BigDecimal, Integer, Float, Double, etc).
       def from_numeric(numeric, element_def = nil)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+        value(numeric.to_s, element_def)
       end
     end
 

@@ -10,6 +10,10 @@ module Stupidedi
 
         def initialize(id, name, *element_uses)
           @id, @name, @element_uses = id, name, element_uses
+
+          unless @element_uses.all?{|e| e.is_a?(ElementUse) }
+            raise TypeError, "Each element use must be a kind of ElementUse"
+          end
         end
 
         def tail

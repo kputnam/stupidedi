@@ -3,6 +3,10 @@ module Stupidedi
 
     class IdentifierVal < SimpleElementVal
 
+      #
+      # Empty identifier value. Shouldn't be directly instantiated -- instead,
+      # use the IdentifierVal.empty and Identifier.value constructors
+      #
       class Empty < IdentifierVal
         def empty?
           true
@@ -22,6 +26,10 @@ module Stupidedi
         end
       end
 
+      #
+      # Non-empty identifier value. Shouldn't be directly instantiated -- instead,
+      # use the IdentifierVal.value and Identifier.from_string constructors
+      #
       class NonEmpty < IdentifierVal
         attr_reader :delegate
 
@@ -43,9 +51,10 @@ module Stupidedi
           true
         end
 
-        # Beware, not commutative
-        #   String.value('XX') == 'XX'
-        #                 'XX' != String.value('XX')
+        ##
+        # NOTE: not commutative
+        #   String.value("XX") == "XX"
+        #                "XX" != String.value("XX")
         def ==(other)
           if other.is_a?(self.class)
             delegate == other.delegate
@@ -57,18 +66,24 @@ module Stupidedi
 
     end
 
+    #
     # Constructors
+    #
     class << IdentifierVal
+      ##
+      # Create an empty identifier value.
       def empty(element_def = nil)
         IdentifierVal::Empty.new(element_def)
       end
 
-      # Convert data read from ElementReader
+      ##
+      # Intended for use by ElementReader.
       def value(string, element_def)
         IdentifierVal::NonEmpty.new(string, element_def)
       end
 
-      # Convert a ruby String value
+      ##
+      # Convert a ruby String value.
       def from_string(string, element_def = nil)
         value(string, element_def)
       end

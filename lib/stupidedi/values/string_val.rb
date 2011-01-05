@@ -3,6 +3,10 @@ module Stupidedi
 
     class StringVal < SimpleElementVal
 
+      #
+      # Empty string value. Shouldn't be directly instantiated -- instead,
+      # use the StringVal.empty and StringVal.value constructors.
+      #
       class Empty < StringVal
         def empty?
           true
@@ -22,6 +26,10 @@ module Stupidedi
         end
       end
 
+      #
+      # Non-empty string value. Shouldn't be directly instantiated -- instead,
+      # use the StringVal.value and StringVal.from_string constructors.
+      #
       class NonEmpty < StringVal
         attr_reader :delegate
 

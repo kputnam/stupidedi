@@ -15,10 +15,24 @@ module Stupidedi
         attr_reader \
           :name,
           :repetition_count,
-          :segment_uses
+          :segment_uses,
+          :loop_defs
 
-        def initialize(name, repetition_count, *segment_uses)
-          @name, @repetition_count, @segment_uses = name, repetition_count, segment_uses
+        def initialize(name, repetition_count, *children)
+          @name, @repetition_count  = name, repetition_count
+          @segment_uses, @loop_defs = children.split_when{|c| c.is_a?(LoopDef) }
+
+          unless @repetition_count.is_a?(Designations::LoopRepetition)
+            raise TypeError, "Second argument must be a kind of LoopRepetition"
+          end
+
+          unless @segment_uses.all?{|c| c.is_a?(SegmentUse) }
+            raise TypeError, "Only SegmentUse values may preceed LoopDef values"
+          end
+
+          unless @loop_defs.all?{|c| c.is_a?(LoopDef) }
+            raise TypeError, "Only LoopDef values may follow LoopDef values"
+          end
         end
 
         def tail
@@ -27,14 +41,6 @@ module Stupidedi
 
         def reader(input, interchange_header)
           LoopReader.new(input, interchange_header, self)
-        end
-
-        def at(offset)
-          # TODO
-        end
-
-        def replace(offset, segment_use)
-          # TODO
         end
       end
 

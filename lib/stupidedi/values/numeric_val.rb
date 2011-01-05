@@ -3,6 +3,10 @@ module Stupidedi
 
     class NumericVal < SimpleElementVal
 
+      #
+      # Empty numeric value. Shouldn't be directly instantiated -- instead,
+      # use the NumericVal.value and NumericVal.empty constructors.
+      #
       class Empty < NumericVal
         def empty?
           true
@@ -22,6 +26,10 @@ module Stupidedi
         end
       end
 
+      #
+      # Non-empty numeric value. Shouldn't be directly instantiated -- instead,
+      # use the NumericVal.value and NumericVal.from_numeric constructors.
+      #
       class NonEmpty < NumericVal
         attr_reader :delegate
 
@@ -115,13 +123,18 @@ module Stupidedi
 
     end
 
+    #
     # Constructors
+    #
     class << NumericVal
+      ##
+      # Create an empty numeric value.
       def empty(element_def = nil)
         NumericVal::Empty.new(element_def)
       end
 
-      # Convert data read from ElementReader
+      ##
+      # Intended for use by ElementReader.
       def value(string, element_def)
         if string =~ /^[+-]?\d+$/
           NumericVal::NonEmpty.new(BigDecimal.new(string), element_def)
@@ -130,7 +143,8 @@ module Stupidedi
         end
       end
 
-      # Convert a ruby Numeric value
+      ##
+      # Convert a ruby Numeric value.
       def from_numeric(numeric, element_def = nil)
         # TODO
         raise NoMethodError, "Not yet implemented"

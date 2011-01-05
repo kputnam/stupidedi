@@ -12,6 +12,14 @@ module Stupidedi
 
         def initialize(element_def, requirement_designator)
           @element_def, @requirement_designator = element_def, requirement_designator
+
+          unless element_def.is_a?(ElementDef)
+            raise TypeError, "First argument must be a kind of ElementDef"
+          end
+
+          unless requirement_designator.is_a?(Designations::ElementRequirement)
+            raise TypeError, "Second argument must be a kind of ElementRequirement"
+          end
         end
 
         def required?
@@ -29,6 +37,10 @@ module Stupidedi
         def initialize(element_def, requirement_designator, repetition_count)
           super(element_def, requirement_designator)
           @repetition_count = repetition_count
+
+          unless @repetition_count.is_a?(Designations::ElementRepetition)
+            raise TypeError, "Third argument must be a kind of ElementRepetition"
+          end
         end
       end
 

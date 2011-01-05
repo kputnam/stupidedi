@@ -3,6 +3,10 @@ module Stupidedi
 
     class TimeVal < SimpleElementVal
 
+      #
+      # Empty time value. Shouldn't be directly instantiated -- instead, use
+      # the TimeVal.empty constructor.
+      #
       class Empty < TimeVal
         def empty?
           true
@@ -22,6 +26,12 @@ module Stupidedi
         end
       end
 
+      #
+      # Non-empty time value. Unlike common models of "time", this encapsulates only
+      # an hour, minute, and second (with fractional seconds) but not a date. Shouldn't
+      # be directly instantiated -- instead, use TimeVal.value and TimeVal.from_time
+      # constructors.
+      #
       class NonEmpty < TimeVal
         attr_reader :hour, :minute, :second
 
@@ -44,13 +54,10 @@ module Stupidedi
         end
 
         def to_time(date)
-          # TODO
-          raise NoMethodError, "Not yet implemented"
-        end
-
-        def to_datetime(date)
-          # TODO
-          raise NoMethodError, "Not yet implemented"
+          Time.utc(date.year.to_i,
+                   date.month.to_i,
+                   date.day.to_i,
+                   *[hour, minute, second].take_until(&:nil?).map(&:to_f))
         end
 
         def ==(other)
@@ -60,13 +67,18 @@ module Stupidedi
 
     end
 
+    #
     # Constructors
+    #
     class << TimeVal
+      ##
+      # Creates an empty time value.
       def empty(element_def = nil)
         TimeVal::Empty.new(element_def)
       end
 
-      # Convert data read from ElementReader
+      ##
+      # Intended for use by ElementReader.
       def value(hour, minute, second, element_def)
         # NOTE: string !~ /\S/ returns false if string contains any non-blank chars
 
@@ -83,7 +95,7 @@ module Stupidedi
             raise ArgumentError, "Second must be between 0 and 60, got #{second}"
           end
 
-          unless second.slice(0, 2) != '60' or second.slice(2..-1) =~ /^0*$/
+          unless second.slice(0, 2) != "60" or second.slice(2..-1) =~ /^0*$/
             raise ArgumentError, "Second must be between 0 and 60, got #{second}"
           end
         end
@@ -93,15 +105,13 @@ module Stupidedi
       end
 
       # Convert a ruby Time value
-      def from_time(time)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+      def from_time(time, element_def = nil)
+        TimeVal::NonEmpty.new(time.hour, time.min, time.sec + (time.usec / 1000000.0), element_def)
       end
 
       # Convert a ruby DateTime value
       def from_datetime(datetime)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+        TimeVal::NonEmpty.new(time.hour, time.min, time.sec + time.sec_fraction.to_f, element_def)
       end
     end
 
