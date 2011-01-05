@@ -2,9 +2,6 @@ module Stupidedi
   module FiftyTen
     module Base
 
-      class LoopDef
-      end
-
       #
       # Loops are defined by a sequence of segments. The first SegmentUse
       # in the loop's definition is more significant than any others. Its
@@ -14,7 +11,7 @@ module Stupidedi
       # of the loop is mandatory.
       #   See X12.6 Section 3.8.3.2.1 "Unbounded Loops"
       #
-      class UnboundedLoopDef < LoopDef
+      class LoopDef
         attr_reader \
           :name,
           :repetition_count,
@@ -29,7 +26,15 @@ module Stupidedi
         end
 
         def reader(input, interchange_header)
-          UnboundedLoopReader.new(input, interchange_header, self)
+          LoopReader.new(input, interchange_header, self)
+        end
+
+        def at(offset)
+          # TODO
+        end
+
+        def replace(offset, segment_use)
+          # TODO
         end
       end
 

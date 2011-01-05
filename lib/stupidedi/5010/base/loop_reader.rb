@@ -2,11 +2,9 @@ module Stupidedi
   module FiftyTen
     module Base
 
-      class LoopReader
+      class LoopReader < LoopReader
         include Reader::TokenReader
-      end
 
-      class UnboundedLoopReader < LoopReader
         attr_reader \
           :input,
           :interchange_header,
@@ -60,9 +58,9 @@ module Stupidedi
         end
       end
 
-      class << UnboundedLoopReader
+      class << LoopReader
         def from_reader(reader, loop_def)
-          UnboundedLoopReader.new(reader.input, reader.interchange_header, loop_def)
+          LoopReader.new(reader.input, reader.interchange_header, loop_def)
         end
       end
 

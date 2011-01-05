@@ -24,10 +24,7 @@ module Stupidedi
       autoload :SegmentDictionary,      "stupidedi/5010/base/segment_dictionary"
 
       autoload :LoopDef,                "stupidedi/5010/base/loop_def"
-      autoload :UnboundedLoopDef,       "stupidedi/5010/base/loop_def"
-
       autoload :LoopReader,             "stupidedi/5010/base/loop_reader"
-      autoload :UnboundedLoopReader,    "stupidedi/5010/base/loop_reader"
 
       autoload :TransactionSets,        "stupidedi/5010/base/transaction_sets"
     end
