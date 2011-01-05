@@ -24,7 +24,7 @@ module Stupidedi
 
               when @interchange_header.segment_terminator
                 # No elements present
-                result(Values::SegmentVal.blank(segment_def), r.remainder)
+                result(Values::SegmentVal.empty(segment_def), r.remainder)
 
               when @interchange_header.component_separator
                 # Only component elements are separated with the component separator

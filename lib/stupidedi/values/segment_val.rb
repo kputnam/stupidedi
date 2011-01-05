@@ -13,7 +13,7 @@ module Stupidedi
       end
 
       def present?
-        @element.vals.any?(&:present?)
+        @element_vals.any?(&:present?)
       end
 
       def [](n)
@@ -45,7 +45,7 @@ module Stupidedi
 
     # Constructors
     class << SegmentVal
-      def blank(segment_def)
+      def empty(segment_def)
         new(segment_def, segment_def.element_uses.map{|e| e.element_def.empty })
       end
     end

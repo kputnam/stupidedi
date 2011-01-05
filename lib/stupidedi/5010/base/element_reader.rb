@@ -45,6 +45,10 @@ module Stupidedi
           read_components.map{|result| result.map{|cs| Values::CompositeElementVal.new(@composite_element_def, cs) }}
         end
 
+        alias read read_composite_element
+
+      protected
+
         def read_components
           head, *tail = @composite_element_def.component_element_uses
 
@@ -69,8 +73,6 @@ module Stupidedi
             end
           end
         end
-
-        alias read read_composite_element
 
       private
 

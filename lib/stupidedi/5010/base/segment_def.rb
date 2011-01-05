@@ -17,7 +17,7 @@ module Stupidedi
         end
 
         def empty
-          Values::SegmentVal.blank(self)
+          Values::SegmentVal.empty(self)
         end
 
         def writer(interchange_header)
