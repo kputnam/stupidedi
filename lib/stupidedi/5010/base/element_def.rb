@@ -70,6 +70,8 @@ module Stupidedi
           SimpleElementReader.new(input, interchange_header, self)
         end
 
+        ##
+        # Create an empty SimpleElementVal from this definition
         def empty
           self.class.empty(self)
         end
@@ -118,8 +120,10 @@ module Stupidedi
           CompositeElementReader.new(input, interchange_header, self)
         end
 
+        ##
+        # Create an empty CompositeElementVal from this definition
         def empty
-          @component_element_uses.map{|e| e.element_def.empty }
+          Values::CompositeElementVal.new(self, @component_element_uses.map{|e| e.element_def.empty })
         end
 
         def simple?
