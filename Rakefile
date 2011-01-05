@@ -1,3 +1,10 @@
+begin
+  require "rubygems"
+  require "bundler/setup"
+rescue LoadError
+  warn "couldn't load bundler:"
+  warn "  #{$!}"
+end
 
 task :default => :spec
 
@@ -63,10 +70,10 @@ begin
       end
     end
   end
-rescue LoadError => e
+rescue LoadError
   task :rcov do
     warn "couldn't load rcov:"
-    warn "  #{e}"
+    warn "  #{$!}"
     exit 1
   end
 end
@@ -78,10 +85,10 @@ begin
     t.files   = %w(lib/**/*.rb)
     t.options = %w(--no-private)
   end
-rescue LoadError => e
+rescue LoadError
   task :yard do
     warn "couldn't load yard:"
-    warn "  #{e}"
+    warn "  #{$!}"
     exit 1
   end
 end
