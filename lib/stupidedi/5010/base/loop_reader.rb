@@ -25,28 +25,27 @@ module Stupidedi
       protected
 
         def read_first
-          head, *tail = loop_def.segment_uses
-          read_segment(head.segment_def).map do |r|
-            r.remainder.read_segments.map do |s|
-              s.map{|ss| Values::LoopVal.value(self, r.value.cons(ss)) }
+          head, *tail = @loop_def.segment_uses
+          read_segment(head.segment_def).flatmap do |r|
+            rest = self.class.from_reader(r.remainder, @loop_def.tail)
+            rest.read_segments.map do |s|
+              s.map{|ss| Values::LoopVal.new(self, r.value.cons(ss)) }
             end
           end
-          #.or do
-          # result(Values::LoopVal.empty(self))
-          #end
         end
 
         def read_segments
           if loop_def.segment_uses.empty?
-            return result([])
+            return result([], @input)
           end
 
-          head, *tail = loop_def.segment_uses
-          read_segment(head.segment_def).map do |r|
-            r.remainder.read_segments.map{|s| s.map{|ss| s.value.cons(ss) }}
+          head, *tail = @loop_def.segment_uses
+          read_segment(head.segment_def).flatmap do |r|
+            rest = self.class.from_reader(r.remainder, @loop_def)
+            rest.read_segments.map{|s| s.map{|ss| r.value.cons(ss) }}
           end.or do
-            rest = self.class.from_reader(self, loop_def.tail)
-            rest.read_segments.map{|s| s.map{|ss| head.segment_def.empty.cons(ss) }}
+            rest = self.class.from_reader(self, @loop_def.tail)
+            rest.read_segments.tap{|x| pp [:S, x] }
           end
         end
 
@@ -58,6 +57,12 @@ module Stupidedi
           else
             self.class.new(@input.drop(n), @interchange_header, @simple_element_def)
           end
+        end
+      end
+
+      class << UnboundedLoopReader
+        def from_reader(reader, loop_def)
+          UnboundedLoopReader.new(reader.input, reader.interchange_header, loop_def)
         end
       end
 

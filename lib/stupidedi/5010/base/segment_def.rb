@@ -27,6 +27,10 @@ module Stupidedi
         def reader(input, interchange_header)
           SegmentReader.new(input, interchange_header, self)
         end
+
+        def segment_use(offset, requirement_designator, repetition_count)
+          SegmentUse.new(offset, self, requirement_designator, repetition_count)
+        end
       end
 
     end

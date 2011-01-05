@@ -21,7 +21,7 @@ module Stupidedi
       end
 
       def prepend(element_val)
-        self.class.new(segment_def, element_val.cons(element_vals))
+        self.class.new(segment_def, @element_val.cons(element_vals))
       end
 
       def append(element_val)

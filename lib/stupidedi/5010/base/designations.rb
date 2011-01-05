@@ -15,6 +15,7 @@ module Stupidedi
 
         class ElementRepetition
           Once = ElementRepetition.new
+          Unbounded = ElementRepetition.new
 
           class Max < ElementRepetition
             attr_reader :value
@@ -41,6 +42,7 @@ module Stupidedi
 
         class SegmentRepetition
           Once = SegmentRepetition.new
+          Unbounded = SegmentRepetition.new
 
           class Max < SegmentRepetition
             attr_reader :value
@@ -59,6 +61,7 @@ module Stupidedi
 
         class LoopRepetition
           Once = LoopRepetition.new
+          Unbounded = LoopRepetition.new
 
           class Max < LoopRepetition
             attr_reader :value

@@ -98,7 +98,7 @@ module Stupidedi
       def read_element(element_def = nil)
         if element_def.try(&:simple?)
           read_simple_element(element_def)
-        else FiftyTen::Base::CompositeElementDef
+        else
           read_composite_element(element_def)
         end
       end
@@ -186,7 +186,7 @@ module Stupidedi
             failure("Reached end of input before finding a segment terminator, element separator, or repetition separator")
           end
         else
-          composite_element_def.reader(interchange_header, input).read
+          composite_element_def.reader(input, interchange_header).read
         end
       end
 
@@ -231,8 +231,14 @@ module Stupidedi
         end
       end
 
+      ##
+      # TODO
       def read_segment(segment_def = nil)
-        # TODO
+        if segment_def.nil?
+          # TODO.. read_segment_id, then read up to and including segment_terminator
+        else
+          segment_def.reader(input, interchange_header).read
+        end
       end
 
       ##
