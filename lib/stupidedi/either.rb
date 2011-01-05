@@ -110,6 +110,20 @@ module Stupidedi
       def inspect
         "Either.failure(#{@explanation.inspect})"
       end
+
+      def fatal
+        Fatal.new(@explanation)
+      end
+    end
+
+    class Fatal < Failure
+      def or
+        self
+      end
+
+      def fatal
+        self
+      end
     end
 
   end
