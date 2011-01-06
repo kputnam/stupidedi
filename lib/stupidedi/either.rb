@@ -1,3 +1,4 @@
+
 module Stupidedi
   class Either
 
