@@ -1,10 +1,9 @@
 require "spec_helper"
 
-describe Stupidedi::FiftyTen::Base::ElementDef do
+describe Stupidedi::FiftyTen::Definitions::ElementDef do
   include QuickCheck::SerializedEdi::Macro
 
-  let(:elements)   { Stupidedi::FiftyTen::Base::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Base::ElementDictionary }
+  let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
   let(:values)     { Stupidedi::Values }
 
   let(:r)  { elements::R .new("R" , "Decimal Thing",  "Purpose", 1, 1) }
@@ -130,7 +129,7 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
 
         it "produces an error message" do
           r.reader("1.2.3*", isa.default).read.explanation.should ==
-            %[Not a valid decimal (R) "1.2.3"]
+            %[Not a valid decimal "1.2.3"]
         end
 
         it "encodes the error position"

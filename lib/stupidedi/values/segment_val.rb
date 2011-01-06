@@ -3,7 +3,7 @@ module Stupidedi
 
     class SegmentVal
       attr_reader :segment_def
-      
+
       attr_reader :element_vals
 
       def initialize(segment_def, element_vals)

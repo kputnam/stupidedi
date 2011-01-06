@@ -1,10 +1,9 @@
 require "spec_helper"
 
-describe Stupidedi::FiftyTen::Base::ElementDef do
+describe Stupidedi::FiftyTen::Definitions::ElementDef do
   include QuickCheck::SerializedEdi::Macro
 
-  let(:elements)   { Stupidedi::FiftyTen::Base::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Base::ElementDictionary }
+  let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
   let(:values)     { Stupidedi::Values }
 
   let(:n0) { elements::N0.new("N0", "Whole Number",   "Purpose", 1, 1) }
@@ -95,7 +94,7 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
 
         it "produces an error message" do
           n0.reader("0.1~...", isa.default).read.explanation.
-            should == %[Not a valid numeric (Nn) "0.1"]
+            should == %[Not a valid numeric "0.1"]
         end
 
         it "encodes the error position"

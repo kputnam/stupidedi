@@ -1,6 +1,6 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Readers
 
       class TableReader
       end

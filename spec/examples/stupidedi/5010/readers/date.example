@@ -1,13 +1,12 @@
 require "spec_helper"
 
-describe Stupidedi::FiftyTen::Base::ElementDef do
+describe Stupidedi::FiftyTen::Definitions::ElementDef do
   include QuickCheck::SerializedEdi::Macro
 
-  let(:elements)   { Stupidedi::FiftyTen::Base::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Base::ElementDictionary }
+  let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
   let(:values)     { Stupidedi::Values }
 
-  let(:dt) { elements::DT.new("DT", "Date",           "Purpose", 8, 8) }
+  let(:dt) { elements::DT.new("DT", "Date", "Purpose", 8, 8) }
 
   describe "#reader" do
     let(:isa) { Stupidedi::Interchange::FiveOhOne::InterchangeHeader }
@@ -108,12 +107,12 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
 
         it "produces an error message" do
           dt.reader("19990229*", isa.default).read.explanation.should ==
-            %[Not a valid year(1999) month(02) day(29) for date (DT) "19990229"]
+            %[Not a valid date '1999-02-29' from input "19990229"]
         end
 
         it "produces an error message" do
           dt.reader("19990229*", isa.default).read.explanation.should ==
-            %[Not a valid year(1999) month(02) day(29) for date (DT) "19990229"]
+            %[Not a valid date '1999-02-29' from input "19990229"]
         end
 
         it "encodes the error position"

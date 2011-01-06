@@ -1,13 +1,12 @@
 require "spec_helper"
 
-describe Stupidedi::FiftyTen::Base::ElementDef do
+describe Stupidedi::FiftyTen::Definitions::ElementDef do
   include QuickCheck::SerializedEdi::Macro
 
-  let(:elements)   { Stupidedi::FiftyTen::Base::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Base::ElementDictionary }
+  let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
   let(:values)     { Stupidedi::Values }
 
-  let(:tm) { elements::TM.new("TM", "Time",           "Purpose", 4, 6) }
+  let(:tm) { elements::TM.new("TM", "Time", "Purpose", 4, 6) }
 
   describe "#reader" do
     let(:isa) { Stupidedi::Interchange::FiveOhOne::InterchangeHeader }
@@ -166,7 +165,7 @@ describe Stupidedi::FiftyTen::Base::ElementDef do
 
         it "produces an error message" do
           tm.reader("12306099*", isa.default).read.explanation.should ==
-            %[Not a valid hour(12) minute(30) second(6099) for time (TM) "12306099"]
+            %[Not a valid time '12:30:6099' from input "12306099"]
         end
 
         it "encodes the error position"

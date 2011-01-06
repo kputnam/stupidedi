@@ -1,6 +1,6 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Readers
 
       class LoopReader < LoopReader
         include Reader::TokenReader
@@ -10,7 +10,8 @@ module Stupidedi
         attr_reader :loop_def
 
         def initialize(input, interchange_header, loop_def)
-          @input, @interchange_header, @loop_def = input, interchange_header, loop_def
+          @input, @interchange_header, @loop_def =
+            input, interchange_header, loop_def
         end
 
         def read_loop
@@ -25,8 +26,8 @@ module Stupidedi
           head, *tail = @loop_def.segment_uses
           read_segment(head.segment_def).flatmap do |r|
             rest = self.class.from_reader(r.remainder, @loop_def.tail)
-            rest.read_segments.map do |s|
-              s.map{|ss| Values::LoopVal.new(self, r.value.cons(ss)) }
+            rest.read_segments.map do |result|
+              result.map{|ss| Values::LoopVal.new(self, r.value.cons(ss)) }
             end
           end
         end

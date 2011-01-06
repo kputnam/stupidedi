@@ -1,6 +1,6 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Definitions
 
       class SegmentUse
         attr_reader :offset
@@ -23,12 +23,14 @@ module Stupidedi
             raise TypeError, "Second argument must be a kind of SegmentDef"
           end
 
-          unless @requirement_designator.is_a?(Designations::SegmentRequirement)
-            raise TypeError, "Third argument must be a kind of SegmentRequirement"
+          unless @requirement_designator.is_a?(SegmentRequirement)
+            raise TypeError,
+              "Third argument must be a kind of SegmentRequirement"
           end
 
-          unless @repetition_count.is_a?(Designations::SegmentRepetition)
-            raise TypeError, "Fourth argument must be a kind of SegmentRepetition"
+          unless @repetition_count.is_a?(SegmentRepetition)
+            raise TypeError,
+              "Fourth argument must be a kind of SegmentRepetition"
           end
         end
       end

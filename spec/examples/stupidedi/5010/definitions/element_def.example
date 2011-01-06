@@ -1,0 +1,101 @@
+require "spec_helper"
+
+describe Stupidedi::FiftyTen::Definitions::ElementDef do
+  describe "#empty" do
+    pending
+  end
+
+  describe "#simple_use" do
+    pending
+  end
+
+  describe "#reader" do
+    pending
+  end
+
+  describe "#writer" do
+    pending
+  end
+
+  describe "#simple?" do
+    pending
+  end
+
+  describe "#composite?" do
+    pending
+  end
+
+  describe "#inspect" do
+    pending
+  end
+end
+
+describe Stupidedi::FiftyTen::Definitions::SimpleElementDef do
+  describe ".parse" do
+    pending
+  end
+
+  describe "#simple_use" do
+    pending
+  end
+
+  describe "#component_use" do
+    pending
+  end
+
+  describe "#reader" do
+    pending
+  end
+
+  describe "#writer" do
+    pending
+  end
+
+  describe "#simple?" do
+    pending
+  end
+
+  describe "#composite?" do
+    pending
+  end
+
+  describe "#empty" do
+    pending
+  end
+
+  describe "#parse" do
+  end
+end
+
+describe Stupidedi::FiftyTen::Definitions::CompositeElementDef do
+  describe ".parse" do
+    pending
+  end
+
+  describe "#simple_use" do
+    pending
+  end
+
+  describe "#reader" do
+    pending
+  end
+
+  describe "#writer" do
+    pending
+  end
+
+  describe "#simple?" do
+    pending
+  end
+
+  describe "#composite?" do
+    pending
+  end
+
+  describe "#empty" do
+    pending
+  end
+
+  describe "#parse" do
+  end
+end

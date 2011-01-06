@@ -1,13 +1,12 @@
 require "spec_helper"
 
-describe Stupidedi::FiftyTen::Base::ElementDef do
+describe Stupidedi::FiftyTen::Definitions::ElementDef do
   include QuickCheck::SerializedEdi::Macro
 
-  let(:elements)   { Stupidedi::FiftyTen::Base::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Base::ElementDictionary }
+  let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
   let(:values)     { Stupidedi::Values }
 
-  let(:id) { elements::ID.new("ID", "Qualifier",      "Purpose", 1, 1) }
+  let(:id) { elements::ID.new("ID", "Qualifier", "Purpose", 1, 1) }
 
   describe "#reader" do
     let(:isa) { Stupidedi::Interchange::FiveOhOne::InterchangeHeader }

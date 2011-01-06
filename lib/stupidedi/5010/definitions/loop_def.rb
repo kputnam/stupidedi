@@ -1,15 +1,9 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Definitions
 
       #
-      # Loops are defined by a sequence of segments. The first SegmentUse
-      # in the loop's definition is more significant than any others. Its
-      # segment type (eg REF) may not appear elsewhere in the loop, because
-      # that would ambiguously signal the start of a new loop. The requirement
-      # designator of the first segment indicates if at least one occurence
-      # of the loop is mandatory.
-      #   See X12.6 Section 3.8.3.2.1 "Unbounded Loops"
+      # See X12.6 Section 3.8.3.2.1 "Unbounded Loops"
       #
       class LoopDef
         attr_reader :name,
@@ -24,7 +18,7 @@ module Stupidedi
           @name, @repetition_count  = name, repetition_count
           @segment_uses, @loop_defs = children.split_when{|c| c.is_a?(LoopDef) }
 
-          unless @repetition_count.is_a?(Designations::LoopRepetition)
+          unless @repetition_count.is_a?(LoopRepetition)
             raise TypeError, "Second argument must be a kind of LoopRepetition"
           end
 
@@ -42,7 +36,7 @@ module Stupidedi
         end
 
         def reader(input, interchange_header)
-          LoopReader.new(input, interchange_header, self)
+          Readers::LoopReader.new(input, interchange_header, self)
         end
       end
 

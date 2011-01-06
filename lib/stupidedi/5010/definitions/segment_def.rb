@@ -1,6 +1,6 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Definitions
 
       class SegmentDef
         attr_reader :id
@@ -25,12 +25,12 @@ module Stupidedi
           Values::SegmentVal.empty(self)
         end
 
+        # @todo
         def writer(interchange_header)
-          # TODO
         end
 
         def reader(input, interchange_header)
-          SegmentReader.new(input, interchange_header, self)
+          Readers::SegmentReader.new(input, interchange_header, self)
         end
 
         def segment_use(offset, requirement_designator, repetition_count)

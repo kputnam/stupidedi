@@ -1,0 +1,513 @@
+require "spec_helper"
+
+describe Stupidedi::FiftyTen::Readers::SimpleElementReader do
+  include QuickCheck::SerializedEdi::Macro
+
+  describe "#read" do
+    pending
+  end
+end
+
+describe Stupidedi::FiftyTen::Readers::CompositeElementReader do
+  include QuickCheck::SerializedEdi::Macro
+
+  let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
+  let(:dictionary) { Stupidedi::FiftyTen::Dictionaries::ElementDictionary }
+  let(:values)     { Stupidedi::Values }
+  let(:req)        { Stupidedi::FiftyTen::Definitions::ElementRequirement }
+
+  let(:r)  { elements::R .new("R" , "Decimal Thing",  "Purpose", 1, 1) }
+  let(:n0) { elements::N0.new("N0", "Whole Number",   "Purpose", 1, 1) }
+  let(:n1) { elements::N1.new("N1", "Tenths Place",   "Purpose", 1, 1) }
+  let(:n2) { elements::N2.new("N2", "Money",          "Purpose", 1, 1) }
+  let(:n3) { elements::N3.new("N3", "N.nnn",          "Purpose", 1, 1) }
+  let(:n4) { elements::N4.new("N4", "N.nnnn",         "Purpose", 1, 1) }
+  let(:n5) { elements::N5.new("N5", "N.nnnnn",        "Purpose", 1, 1) }
+  let(:n6) { elements::N6.new("N6", "N.nnnnnn",       "Purpose", 1, 1) }
+  let(:n7) { elements::N7.new("N7", "N.nnnnnnn",      "Purpose", 1, 1) }
+  let(:n8) { elements::N8.new("N8", "N.nnnnnnnnn",    "Purpose", 1, 1) }
+  let(:n9) { elements::N9.new("N9", "N.nnnnnnnnnn",   "Purpose", 1, 1) }
+  let(:id) { elements::ID.new("ID", "Qualifier",      "Purpose", 1, 1) }
+  let(:an) { elements::AN.new("AN", "Free Text",      "Purpose", 1, 1) }
+  let(:dt) { elements::DT.new("DT", "Date",           "Purpose", 8, 8) }
+  let(:tm) { elements::TM.new("TM", "Time",           "Purpose", 4, 6) }
+
+  let(:component_defs) do
+    [n0, n1, n2, n3, n4, n5, n6, n7, n8, n9,  r, id, an, dt, tm]
+  end
+
+  def mk_composite(*element_defs)
+    Stupidedi::FiftyTen::Definitions::CompositeElementDef.new \
+      "ID", "Name", "Purpose", *element_defs.map{|e| e.component_use(req::M) }
+  end
+
+  describe "#read" do
+    let(:isa) { Stupidedi::Interchange::FiveOhOne::InterchangeHeader }
+
+    def composite_val(composite_def, *component_vals)
+      Stupidedi::Values::CompositeElementVal.new(composite_def, component_vals)
+    end
+
+    context "defined with a single component element" do
+      it "parses empty" do
+        mk_composite(dt).reader("~...", isa.default).read.map do |result|
+          result.value.should be_empty
+          result.value.component_element_vals.length.should == 1
+          result.value[0].should == values::DateVal.empty
+          result.remainder.input.should == "~..."
+        end.should be_defined
+      end
+
+      it "parses empty", :random => true do
+        # Note we cannot lookup these methods from within property { ... }, but
+        # accessing local variables declared outside the closure (like so) does
+        _component_defs = component_defs
+
+        property do
+          # Create an interchange header with random delimiters
+          with(document.delimiters) do
+            # Choose a random simple element definition
+            ce = choose(_component_defs)
+
+            # Choose a random delimiter to terminate the composite element. We
+            # can't use the component_separator because that is expected within
+            # the contents of a component element.
+            delim = char.delimiter
+            guard delim != component_separator
+
+            # Generate a sequence of spaces of random length, and then insert
+            # control characters into it at random positions
+            space = stream.agitate(stream.space(between(0, 16)))
+
+            # Pass this value to the block given to check below
+            [space, delim, stream.string, ce, current.isa]
+          end
+        end.check do |space, delim, rest, ce, isa|
+          input = "#{space}#{delim}#{rest}"
+
+          # Convert the simple element definition ce into a one-component
+          # composite element definition, then use it to read the input
+          mk_composite(ce).reader(input, isa).read.map do |result|
+            # Invariably, the result.value is a CompositeElementVal
+            result.value.should be_empty
+
+            # Only a single component was parsed
+            result.value.component_element_vals.length.should == 1
+
+            # The delimiter and anything after it was not parsed
+            result.remainder.input.should == "#{delim}#{rest}"
+          end.should be_defined
+        end
+      end
+
+      it "parses no more than the defined number of elements" do
+        input  = "20001231:0030:XYZ..."
+
+        result = mk_composite(dt).reader(input, isa.default).read
+        result.should_not be_defined
+        result.explanation.should == %[Found a component separator ":" instead of an element separator, segment terminator, or repetition separator]
+      end
+
+      it "parses non-empty input"
+
+      it "parses non-empty input", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            component = choose(_component_defs)
+            delim     = char.delimiter
+            guard delim != component_separator
+
+            data = stream.pad(stream.agitate(element(component)))
+
+            [data, delim, stream.string, component, current.isa]
+          end
+        end.check do |data, delim, rest, component, isa|
+          input = "#{data}#{delim}#{rest}"
+
+          composite = mk_composite(component)
+          composite.reader(input, isa).read.tap do |result|
+            # Check that parsing the input directly with SimpleElementDef
+            # produces the same value wrapped in a CompositeVal.
+            alt = component.reader(input, isa).read
+            alt = alt.map{|x| x.map{|y| composite_val(composite, y) }}
+
+            # Note we're comparing Either to Either, unlike the block below
+            result.should == alt
+          end.map do |result|
+            result.value.should have(1).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+          end.should be_defined
+        end
+      end
+    end
+
+    context "defined with more than one component element" do
+      it "parses empty" do
+        dictionary::C023.reader("*...", isa.default).read.map do |result|
+          result.value.should be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value.should have(3).component_element_vals
+
+          result.value[0].should be_empty
+          result.value[1].should be_empty
+          result.value[2].should be_empty
+
+          result.value[0].should == values::StringVal.empty
+          result.value[1].should == values::IdentifierVal.empty
+          result.value[2].should == values::IdentifierVal.empty
+
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses empty", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(2, 8)) do
+              delim = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+              blanks = array { stream.agitate(stream.space(between(0, 16))) }
+
+              [blanks, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |blanks, delim, rest, components, isa|
+          input = "#{blanks.join(isa.component_separator)}#{delim}#{rest}"
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should be_empty
+            result.value.should have(components.length).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+          end.should be_defined
+        end
+      end
+
+      it "parses no more than the defined number of elements" do
+        input  = "20001231:0030:XYZ..."
+        result = mk_composite(dt, tm).reader(input, isa.default).read
+        result.should_not be_defined
+      end
+
+      it "parses input with first few elements not present" do
+        dictionary::C023.reader("::8*...", isa.default).read.map do |result|
+          result.value.should_not be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value[0].should be_empty
+          result.value[1].should be_empty
+          result.value[2].should == "8"
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses input with first few elements not present", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(2, 16)) do
+              delim  = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+
+              blanks = map(between(1, components.length-1)) do
+                stream.agitate(stream.space(between(0, 16)))
+              end
+
+              values = components.last(size - blanks.length).map do |component|
+                stream.agitate(element(component))
+              end
+
+              [blanks, values, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |front, back, delim, rest, components, isa|
+          input = "#{(front + back).join(isa.component_separator)}#{delim}#{rest}"
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should_not be_empty
+            result.remainder.input.should == "#{delim}#{rest}"
+
+            result.value.should have(components.length).component_element_vals
+
+            # The first few components should be blank
+            result.value.component_element_vals.
+              take(front.length).
+              all?(&:empty?).should be_true
+
+            # The remaining components should not be blank
+            result.value.component_element_vals.
+              drop(front.length).
+              any?(&:empty?).should be_false
+          end.should be_defined
+        end
+      end
+
+      it "parses input with middle elements not present" do
+        dictionary::C023.reader("11::8*...", isa.default).read.map do |result|
+          result.value.should_not be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value[0].should == "11"
+          result.value[1].should be_empty
+          result.value[2].should == "8"
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses input with middle elements not present", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(3, 16)) do
+              delim  = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+
+              front  = components.take(between(1, components.length - 2)).
+                         map{|c| stream.agitate(element(c)) }
+
+              middle = map(between(1, components.length - front.length - 1)) do
+                         stream.agitate(stream.space(between(0, 16)))
+                       end
+
+              back   = components.drop(front.length + middle.length).
+                         map{|c| stream.agitate(element(c)) }
+
+              [front, middle, back, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |head, blanks, tail, delim, rest, components, isa|
+          input = [head, blanks, tail].map{|x| x.join(isa.component_separator) }.
+                    join(isa.component_separator) + delim + rest
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should_not be_empty
+            result.value.should have(components.length).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+
+            # The first few components should be blank
+            result.value.component_element_vals.
+              take(head.length).
+              any?(&:empty?).should be_false
+
+            # The remaining components should not be blank
+            result.value.component_element_vals.
+              drop(head.length).
+              take(blanks.length).
+              all?(&:empty?).should be_true
+
+            # The remaining components should not be blank
+            result.value.component_element_vals.
+              drop(head.length).
+              drop(blanks.length).
+              any?(&:empty?).should be_false
+          end.should be_defined
+        end
+      end
+
+      it "parses input with last few elements not present (whitespace)" do
+        input = "11:  :  *..."
+        dictionary::C023.reader(input, isa.default).read.map do |result|
+          result.value.should_not be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value[0].should == "11"
+          result.value[1].should be_empty
+          result.value[2].should be_empty
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses input with last few elements not present (whitespace)", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(3, 16)) do
+              delim  = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+
+              values = components.take(between(1, components.length - 1)).
+                         map{|c| stream.agitate(element(c)) }
+
+              blanks = map(size - values.length) do
+                         stream.agitate(stream.space(between(0, 16)))
+                       end
+
+              [values, blanks, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |front, back, delim, rest, components, isa|
+          input = "#{(front + back).join(isa.component_separator)}#{delim}#{rest}"
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should_not be_empty
+            result.value.should have(components.length).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+
+            # The first few components should be blank
+            result.value.component_element_vals.
+              take(front.length).
+              any?(&:empty?).should be_false
+
+            # The remaining components should not be blank
+            result.value.component_element_vals.
+              drop(front.length).
+              all?(&:empty?).should be_true
+          end.should be_defined
+        end
+      end
+
+      it "parses input with last few elements not present (delimiters)" do
+        dictionary::C023.reader("11::*...", isa.default).read.map do |result|
+          result.value.should_not be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value[0].should == "11"
+          result.value[1].should be_empty
+          result.value[2].should be_empty
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses input with last few elements not present (delimiters)", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(3, 16)) do
+              delim   = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+
+              values = components.take(between(1, components.length - 1)).
+                         map{|c| stream.agitate(element(c)) }
+
+              blanks = [''] * (size - values.length)
+
+              [values, blanks, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |front, back, delim, rest, components, isa|
+          input = "#{(front + back).join(isa.component_separator)}#{delim}#{rest}"
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should_not be_empty
+            result.value.should have(components.length).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+
+            # The first few components should be blank
+            result.value.component_element_vals.
+              take(front.length).
+              any?(&:empty?).should be_false
+
+            # The remaining components should not be blank
+            result.value.component_element_vals.
+              drop(front.length).
+              all?(&:empty?).should be_true
+          end.should be_defined
+        end
+      end
+
+      it "parses input with last few elements not present (truncated)" do
+        dictionary::C023.reader("11*...", isa.default).read.map do |result|
+          result.value.should_not be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value[0].should == "11"
+          result.value[1].should be_empty
+          result.value[2].should be_empty
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses input with last few elements not present (truncated)", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(3, 16)) do
+              delim = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+
+              values = components.take(between(1, components.length - 1)).
+                         map{|c| stream.agitate(element(c)) }
+
+              [values, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |values, delim, rest, components, isa|
+          input = "#{values.join(isa.component_separator)}#{delim}#{rest}"
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should_not be_empty
+            result.value.should have(components.length).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+
+            # The first few components should be blank
+            result.value.component_element_vals.
+              take(values.length).
+              any?(&:empty?).should be_false
+
+            # The remaining components should not be blank
+            result.value.component_element_vals.
+              drop(values.length).
+              all?(&:empty?).should be_true
+          end.should be_defined
+        end
+      end
+
+      it "parses input with all elements present" do
+        dictionary::C023.reader("11:B:8*...", isa.default).read.map do |result|
+          result.value.should_not be_empty
+          result.value.element_def.should == dictionary::C023
+          result.value[0].should == "11"
+          result.value[1].should == "B"
+          result.value[2].should == "8"
+          result.remainder.input.should == "*..."
+        end.should be_defined
+      end
+
+      it "parses input with all elements present", :random => true do
+        _component_defs = component_defs
+
+        property do
+          with(document.delimiters) do
+            with(:size, between(3, 16)) do
+              delim  = char.delimiter
+              guard delim != component_separator
+
+              components = array { choose(_component_defs) }
+
+              values = components.map{|c| stream.agitate(element(c)) }
+
+              [values, delim, stream.string, components, current.isa]
+            end
+          end
+        end.check do |values, delim, rest, components, isa|
+          input = "#{values.join(isa.component_separator)}#{delim}#{rest}"
+
+          mk_composite(*components).reader(input, isa).read.map do |result|
+            result.value.should_not be_empty
+            result.value.should have(components.length).component_element_vals
+            result.remainder.input.should == "#{delim}#{rest}"
+
+            # None of the components should be blank
+            result.value.component_element_vals.any?(&:empty?).should be_false
+          end.should be_defined
+        end
+      end
+
+    end
+  end
+end

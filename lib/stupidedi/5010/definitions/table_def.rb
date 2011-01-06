@@ -1,6 +1,6 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Definitions
 
       class TableDef
         attr_reader :name

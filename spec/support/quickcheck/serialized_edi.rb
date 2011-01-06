@@ -35,13 +35,13 @@ class QuickCheck
 
       case element_def
       when nil then delegator
-      when Stupidedi::FiftyTen::Base::ElementTypes::Nn then delegator.nn
-      when Stupidedi::FiftyTen::Base::ElementTypes::R  then delegator.r
-      when Stupidedi::FiftyTen::Base::ElementTypes::ID then delegator.id
-      when Stupidedi::FiftyTen::Base::ElementTypes::AN then delegator.an
-      when Stupidedi::FiftyTen::Base::ElementTypes::DT then with(:size, choose([element_def.min_length, element_def.max_length])) { delegator.dt }
-      when Stupidedi::FiftyTen::Base::ElementTypes::TM then with(:size, choose([element_def.min_length, element_def.max_length])) { delegator.tm }
-      when Stupidedi::FiftyTen::Base::ElementTypes::CompositeElementDef then composite(element_def)
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::Nn then delegator.nn
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::R  then delegator.r
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::ID then delegator.id
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::AN then delegator.an
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::DT then with(:size, choose([element_def.min_length, element_def.max_length])) { delegator.dt }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::TM then with(:size, choose([element_def.min_length, element_def.max_length])) { delegator.tm }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::CompositeElementDef then composite(element_def)
       else raise ArgumentError, "Expected nil or certain SimpleElementDefs but got #{element_def.inspect}"
       end
     end
@@ -50,7 +50,7 @@ class QuickCheck
       case element_def
       when nil
         Delegators::CompositeElement.new(self)
-      when Stupidedi::FiftyTen::Base::ElementTypes::CompositeElementDef
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::CompositeElementDef
         # Generate each component element
         es = element_def.component_element_uses.map do |eu|
           if eu.required?

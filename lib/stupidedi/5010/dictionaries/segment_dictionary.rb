@@ -1,6 +1,6 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Dictionaries
       module SegmentDictionary
 
         E = ElementDictionary

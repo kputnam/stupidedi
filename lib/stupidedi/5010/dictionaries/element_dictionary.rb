@@ -1,25 +1,25 @@
 module Stupidedi
   module FiftyTen
-    module Base
+    module Dictionaries
       module ElementDictionary
 
-        AN = ElementTypes::AN
-        ID = ElementTypes::ID
-        DT = ElementTypes::DT
-        TM = ElementTypes::TM
-        R  = ElementTypes::R
-        N  = ElementTypes::N
-        Nn = ElementTypes::Nn
-        N0 = ElementTypes::N0
-        N1 = ElementTypes::N1
-        N2 = ElementTypes::N2
-        N3 = ElementTypes::N3
-        N4 = ElementTypes::N4
-        N5 = ElementTypes::N5
-        N6 = ElementTypes::N6
-        N7 = ElementTypes::N7
-        N8 = ElementTypes::N8
-        N9 = ElementTypes::N9
+        AN = Definitions::ElementTypes::AN
+        ID = Definitions::ElementTypes::ID
+        DT = Definitions::ElementTypes::DT
+        TM = Definitions::ElementTypes::TM
+        R  = Definitions::ElementTypes::R
+        N  = Definitions::ElementTypes::N
+        Nn = Definitions::ElementTypes::Nn
+        N0 = Definitions::ElementTypes::N0
+        N1 = Definitions::ElementTypes::N1
+        N2 = Definitions::ElementTypes::N2
+        N3 = Definitions::ElementTypes::N3
+        N4 = Definitions::ElementTypes::N4
+        N5 = Definitions::ElementTypes::N5
+        N6 = Definitions::ElementTypes::N6
+        N7 = Definitions::ElementTypes::N7
+        N8 = Definitions::ElementTypes::N8
+        N9 = Definitions::ElementTypes::N9
 
         E19   = AN.new("E19"  , "City Name"                            , "", 2, 30)
         E26   = ID.new("E26"  , "Country Code"                         , "", 2, 3)
@@ -82,7 +82,7 @@ module Stupidedi
         E510  = AN.new("E510" , "Originating Company Supplemental Code", "", 9, 9)
         E522  = ID.new("E522" , "Amount Qualifier Code"                , "", 1, 3)
         E554  =  N.new("E554" , "Assigned Number"                      , "", 1, 6)
-        E559  = ID.new("E559" , "Agency Qualifier Code"                , "", 2, 2) # NOTE: Copied from an unverified 4010 internet source
+        E559  = ID.new("E559" , "Agency Qualifier Code"                , "", 2, 2) # @note Copied from an unverified 4010 internet source
         E569  = ID.new("E569" , "Account Number Qualifier"             , "", 1, 3)
         E584  = ID.new("E584" , "Employment Status Code"               , "", 2, 2)
         E591  = ID.new("E591" , "Payment Method Code"                  , "", 3, 3)
@@ -97,7 +97,7 @@ module Stupidedi
         E669  = ID.new("E669" , "Currency Market/Exchnage Code"        , "", 3, 3)
         E673  = ID.new("E673" , "Quantity Qualifier"                   , "", 2, 2)
         E687  = ID.new("E687" , "Class of Trade Code"                  , "", 2, 2)
-        E704  = ID.new("E704" , "Paperwork/Report Action Code"         , "", 1, 2) # NOTE: Copied from an unverified 4010 internet source
+        E704  = ID.new("E704" , "Paperwork/Report Action Code"         , "", 1, 2) # @note Copied from an unverified 4010 internet source
         E706  = ID.new("E706" , "Entity Relation Code"                 , "", 2, 2)
         E734  = AN.new("E734" , "Hierarchical Parent ID Number"        , "", 1, 12)
         E735  = ID.new("E735" , "Hierarchical Level Code"              , "", 1, 2)
@@ -145,7 +145,7 @@ module Stupidedi
         E1166 = ID.new("E1166", "Contract Type Code"                   , "", 2, 2)
         E1220 = ID.new("E1220", "Student Status Code"                  , "", 1, 1)
         E1221 = ID.new("E1221", "Provider Code"                        , "", 1, 3)
-        E1222 = AN.new("E1222", "Provider Specialty Code"              , "", 1, 3) # NOTE: Copied from an unverified 4010 internet source
+        E1222 = AN.new("E1222", "Provider Specialty Code"              , "", 1, 3) # @note Copied from an unverified 4010 internet source
         E1223 = ID.new("E1223", "Provider Organization Code"           , "", 3, 3)
         E1250 = ID.new("E1250", "Date Time Period Format Qualifier"    , "", 2, 3)
         E1251 = AN.new("E1251", "Date Time Period"                     , "", 1, 35)
@@ -192,9 +192,11 @@ module Stupidedi
         E1705 = AN.new("E1705", "Implementation Convention Reference"  , "", 1, 35)
         E1715 = ID.new("E1715", "Country Subdivision Code"             , "", 1, 3)
 
-        M = Designations::ElementRequirement::M
-        O = Designations::ElementRequirement::O
-        X = Designations::ElementRequirement::X
+        M = Definitions::ElementRequirement::M
+        O = Definitions::ElementRequirement::O
+        X = Definitions::ElementRequirement::X
+
+        CompositeElementDef = Definitions::CompositeElementDef
 
         C001 = CompositeElementDef.new \
           "C001", "Composite Unit of Measure", "",
@@ -214,7 +216,7 @@ module Stupidedi
           E1018.component_use(O),
           E649 .component_use(O)
 
-        # NOTE: Copied from an unverified 4010 internet source
+        # @note Copied from an unverified 4010 internet source
         C002 = CompositeElementDef.new \
           "C002", "Actions Indicated", "",
           E704.component_use(M),
@@ -267,15 +269,14 @@ module Stupidedi
           E156 .component_use(O),
           E26  .component_use(O)
 
-        # NOTE: Copied from an unverified 4010 internet source
+        # @note Copied from an unverified 4010 internet source
         C035 = CompositeElementDef.new \
           "C035", "Provider Specialty Information", "",
           E1222.component_use(M),
           E559 .component_use(O),
           E1073.component_use(O)
 
-        # NOTE: Copied from an unverified 4010 internet source
-          # P0304, P0506
+        # @note Copied from an unverified 4010 internet source
         C040 = CompositeElementDef.new \
           "C040", "Reference Identifier", "",
           E128.component_use(M),
@@ -290,7 +291,6 @@ module Stupidedi
           E426.component_use(M),
           E127.component_use(O)
 
-          # P0203
         C056 = CompositeElementDef.new \
           "C056", "Composite Race or Ethnicity Information", "",
           E1109.component_use(O),

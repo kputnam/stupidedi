@@ -122,7 +122,7 @@ module Stupidedi
 
       # @return [Either]
       # @yieldparam explanation
-      # @yieldvalue [Either]
+      # @yieldreturn [Either]
       def or
         if Either === (result = yield(@explanation))
           result
@@ -170,7 +170,7 @@ module Stupidedi
     end
 
   end
-  
+
   #
   # Constructors
   #
