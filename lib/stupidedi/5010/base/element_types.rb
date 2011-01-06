@@ -4,12 +4,15 @@ module Stupidedi
       module ElementTypes
 
         #
-        # Numeric
+        # Numeric element definition
+        # @see Values::NumericVal
+        # @abstract
         #
         class Nn < SimpleElementDef
         end
 
         class << Nn
+          # @return [Either::Success<Values::NumericVal>, Either::Failure<String>]
           def parse(string, instance = nil)
             filtered = Reader.strip(string).strip
 
@@ -22,8 +25,15 @@ module Stupidedi
             end
           end
 
+          # @return [Values::NumericVal::Empty]
           def empty(instance = nil)
             Values::NumericVal.empty(instance)
+          end
+
+          # @abstract
+          # @return [Integer]
+          def positions
+            raise NoMethodError, "#{self.class} must implement positions"
           end
         end
 
@@ -40,12 +50,14 @@ module Stupidedi
         class N9 < Nn; end; class << N9; def positions; 9; end end
 
         #
-        # Decimal
+        # Decimal element definition
+        # @see Values::DecimalVal
         #
         class R < SimpleElementDef
         end
 
         class << R
+          # @return [Either::Success<Values::DecimalVal>, Either::Failure<String>]
           def parse(string, instance = nil)
             filtered = Reader.strip(string).strip
 
@@ -60,18 +72,21 @@ module Stupidedi
             end
           end
 
+          # @return [Values::DecimalVal::Empty]
           def empty(instance = nil)
             Values::DecimalVal.empty(instance)
           end
         end
 
         #
-        # Identifier
+        # Identifier element definition
+        # @see Values::IdentifierVal
         #
         class ID < SimpleElementDef
         end
 
         class << ID
+          # @return [Either::Success<Values::IdentifierVal>, Either::Failure<String>]
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
@@ -84,18 +99,21 @@ module Stupidedi
             end
           end
 
+          # @return [Values::IdentifierVal::Empty]
           def empty(instance = nil)
             Values::IdentifierVal.empty(instance)
           end
         end
 
         #
-        # String
+        # String element definition
+        # @see Values::StringVal
         #
         class AN < SimpleElementDef
         end
 
         class << AN
+          # @return [Either::Success<Values::StringVal>, Either::Failure<String>]
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
@@ -110,13 +128,15 @@ module Stupidedi
             end
           end
 
+          # @return [Values::StringVal::Empty]
           def empty(instance = nil)
             Values::StringVal.empty(instance)
           end
         end
 
         #
-        # Date
+        # Date element definition
+        # @see Values::DateVal
         #
         class DT < SimpleElementDef
           def initialize(*args)
@@ -133,6 +153,7 @@ module Stupidedi
         end
 
         class << DT
+          # @return [Either::Success<Values::DateVal>, Either::Failure<String>]
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
@@ -164,18 +185,21 @@ module Stupidedi
             end
           end
 
+          # @returns [Values::DateVal::Empty]
           def empty(instance = nil)
             Values::DateVal.empty(instance)
           end
         end
 
         #
-        # Time
+        # Time element definition
+        # @see Values::TimeVal
         #
         class TM < SimpleElementDef
         end
 
         class << TM
+          # @return [Either::Success<Values::TimeVal>, Either::Failure<String>]
           def parse(string, instance = nil)
             filtered = Reader.strip(string)
 
@@ -201,6 +225,7 @@ module Stupidedi
             end
           end
 
+          # @returns [Values::TimeVal::Empty]
           def empty(instance = nil)
             Values::TimeVal.empty(instance)
           end
