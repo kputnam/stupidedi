@@ -3,11 +3,13 @@ module Stupidedi
     module Base
 
       class SegmentUse
-        attr_reader \
-          :offset,
-          :segment_def,
-          :requirement_designator,
-          :repetition_count
+        attr_reader :offset
+
+        attr_reader :segment_def
+
+        attr_reader :requirement_designator
+
+        attr_reader :repetition_count
 
         def initialize(offset, segment_def, requirement_designator, repetition_count)
           @offset, @segment_def, @requirement_designator, @repetition_count =

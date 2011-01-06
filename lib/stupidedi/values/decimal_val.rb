@@ -17,13 +17,11 @@ module Stupidedi
     # Constructors
     #
     class << DecimalVal
-      ##
       # Create an empty decimal value.
       def empty(element_def = nil)
         NumericVal.empty(element_def)
       end
 
-      ##
       # Intended for use by ElementReader.
       def value(string, element_def)
         if string =~ DecimalVal::PATTERN
@@ -33,7 +31,6 @@ module Stupidedi
         end
       end
 
-      ##
       # Convert a ruby Numeric value (BigDecimal, Integer, Float, Double, etc).
       def from_numeric(numeric, element_def = nil)
         value(numeric.to_s, element_def)

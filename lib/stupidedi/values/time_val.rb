@@ -71,13 +71,11 @@ module Stupidedi
     # Constructors
     #
     class << TimeVal
-      ##
       # Creates an empty time value.
       def empty(element_def = nil)
         TimeVal::Empty.new(element_def)
       end
 
-      ##
       # Intended for use by ElementReader.
       def value(hour, minute, second, element_def)
         # NOTE: string !~ /\S/ returns false if string contains any non-blank chars

@@ -4,9 +4,7 @@ module Stupidedi
     class DefaultReader
       include TokenReader
 
-      attr_reader \
-        :input,
-        :interchange_header
+      attr_reader :input, :interchange_header
 
       def initialize(input, interchange_header)
         @input, @interchange_header = input, interchange_header

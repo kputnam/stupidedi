@@ -65,7 +65,9 @@ module Stupidedi
 
     end
 
+    #
     # Constructors
+    #
     class << StringVal
       def empty(element_def = nil)
         StringVal::Empty.new(element_def)

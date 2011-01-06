@@ -133,7 +133,6 @@ module Stupidedi
         NumericVal::Empty.new(element_def)
       end
 
-      ##
       # Intended for use by ElementReader.
       def value(string, element_def)
         if string =~ /^[+-]?\d+$/
@@ -143,11 +142,9 @@ module Stupidedi
         end
       end
 
-      ##
       # Convert a ruby Numeric value.
       def from_numeric(numeric, element_def = nil)
-        # TODO
-        raise NoMethodError, "Not yet implemented"
+        NumericVal::NonEmpty.new(BigDecimal.new(numeric.to_s), element_def)
       end
     end
 

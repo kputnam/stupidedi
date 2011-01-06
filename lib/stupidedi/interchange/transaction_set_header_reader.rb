@@ -26,7 +26,6 @@ module Stupidedi
         GenericTransactionSetHeaderReader.new(input, interchange_header)
       end
 
-      ##
       # Returns either a Either.success(Module) if the given +version+ is
       # recognized and supported or a Either.failure(String) otherwise.
       #   TODO: Move this to a base ImplementationGuide class that tracks
@@ -76,7 +75,6 @@ module Stupidedi
         end
       end
 
-      ##
       # Dispatches to the appropriate implementation guide, based on
       # the version from the functional group header's GS08. Note that
       # the value in ST03, which hasn't yet been parsed, takes precedence

@@ -15,19 +15,16 @@ module Stupidedi
     EITHER   = Regexp.union(BASIC, EXTENDED)
     BYTES    = (0..255).inject("") {|string, c| string << c }
 
-    ##
     # Returns non-nil if c belongs to the basic character set
     def self.is_basic_character?(c)
       c =~ BASIC
     end
 
-    ##
     # Returns non-nil if c belongs to the extended character set
     def self.is_extended_character?(c)
       c =~ EXTENDED
     end
 
-    ##
     # Returns non-nil if c does not belong to the extended or basic character set.
     # NOTE: This does not match the specification of control characters given in X12.5,
     # but I haven't seen the actual usage of control characters. So for our purposes,
@@ -36,7 +33,6 @@ module Stupidedi
       c !~ EITHER
     end
 
-    ##
     # Strips control characters from the string, leaving only basic and extended characters
     def self.strip(string)
       string.scan(EITHER).join

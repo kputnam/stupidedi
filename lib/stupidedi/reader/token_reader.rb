@@ -18,7 +18,6 @@ module Stupidedi
         input.empty?
       end
 
-      ##
       # Consume s if it is directly in front of the cursor
       def consume_prefix(s)
         return success(self) if s.empty?
@@ -47,7 +46,6 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
-      ##
       # Consume input, including s, from here to the next occurrence of s
       def consume(s)
         position = 0
@@ -78,19 +76,16 @@ module Stupidedi
           character = input.at(position)
           position += 1
 
-          if is_delimiter?(character)
-            return result(character, advance(position))
-          end
+          next if is_control?(character)
 
-          unless is_control?(character)
-            return failure("Found #{character.inspect} instead of a delimiter")
-          end
+          return is_delimiter?(character) ?
+            result(character, advance(position)) :
+            failure("Found #{character.inspect} instead of a delimiter")
         end
 
         failure("Reached end of input without finding a delimiter")
       end
 
-      ##
       # If a simple element definition is given, this returns an Either[Result[SimpleElementVal]].
       # If a composite element definition is given, this returns an Either[Result[CompositeElementVal]].
       # Otherwise, this returns an "unparsed" Either[Result[String]]. In any case, the delimeter
@@ -103,7 +98,6 @@ module Stupidedi
         end
       end
 
-      ##
       # When no argument is given, this returns an "unparsed" Either[Result[String]]. If a
       # simple element definition is given, this returns an Either[Result[SimpleElementVal]].
       # In both cases, the delimeter immediately following the element is present in the
@@ -148,7 +142,6 @@ module Stupidedi
         end
       end
 
-      ##
       # When no argument is given, this returns an "unparsed" Either[Result[String]]. If a
       # composite element definition is given, this returns an Either[Result[CompositeElementVal]].
       # In both cases, the delimeter immediately following the element is present in the
@@ -190,7 +183,6 @@ module Stupidedi
         end
       end
 
-      ##
       # Read the next segment id and don't consume the delimiter
       def read_segment_id
         position = 0
@@ -231,8 +223,6 @@ module Stupidedi
         end
       end
 
-      ##
-      # TODO
       def read_segment(segment_def = nil)
         if segment_def.nil?
           # TODO.. read_segment_id, then read up to and including segment_terminator
@@ -241,9 +231,8 @@ module Stupidedi
         end
       end
 
-      ##
       # Consume, up to and including, the next iea's segment terminator
-      #   OPTIMIZE: I think this is probably in tail call form
+      # @todo Optimize if this is in tail call form
       def consume_interchange
         read_segment_id.flatmap do |result|
           id, rest = *result
@@ -268,8 +257,8 @@ module Stupidedi
 
     private
 
-      ##
       # Returns a new TokenReader with n characters consumed from input
+      # @abstract
       def advance(n)
         raise NoMethodError, "Method advance(n) must be implemented in subclass"
       end

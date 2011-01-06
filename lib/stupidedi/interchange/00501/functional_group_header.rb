@@ -4,15 +4,14 @@ module Stupidedi
 
       # Comprises the GS segment
       class FunctionalGroupHeader
-        attr_reader \
-          :functional_id_code,
-          :sender_code,
-          :receiver_code,
-          :date,
-          :time,
-          :control_number,
-          :agency_code,
-          :version_code
+        attr_reader :functional_id_code
+        attr_reader :sender_code
+        attr_reader :receiver_code
+        attr_reader :date
+        attr_reader :time
+        attr_reader :control_number
+        attr_reader :agency_code
+        attr_reader :version_code
 
         def initialize(gs01, gs02, gs03, gs04, gs05, gs06, gs07, gs08)
           @functional_id_code = gs01
@@ -25,7 +24,6 @@ module Stupidedi
           @version_code       = gs08
         end
 
-        ##
         # Decodes the GS08 version code
         def asc
           if agency_code == "X" and version_code.length > 5

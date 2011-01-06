@@ -9,9 +9,9 @@ module Stupidedi
     # of each component element.
     #
     class CompositeElementVal
-      attr_reader \
-        :element_def,
-        :component_element_vals
+      attr_reader :element_def
+
+      attr_reader :component_element_vals
 
       def initialize(element_def, component_element_vals)
         @element_def, @component_element_vals = element_def, component_element_vals
@@ -24,13 +24,11 @@ module Stupidedi
       # end
       end
 
-      ##
       # True if all component elements are empty (or if there are no component elements).
       def empty?
         @component_element_vals.all?(&:empty?)
       end
 
-      ##
       # True if at least one of the component elements is present.
       def present?
         @component_element_vals.any?(&:present?)
@@ -40,28 +38,24 @@ module Stupidedi
         @component_element_vals.length
       end
 
-      ##
       # Returns the component element value (some kind of SimpleElementVal) at the given
       # index, with numbering starting at zero.
       def [](n)
         @component_element_vals[n]
       end
 
-      ##
       # Create a new CompositeElementVal with the given component appended to the
       # list of component elements. NOTE: Intended for use by CompositeElementReader.
       def append(component)
         self.class.new(element_def, @component_element_vals + [component])
       end
 
-      ##
       # Create a new CompositeElementVal with the given component prepended to the
       # list of component elements. NOTE: Intended for use by CompositeElementReader.
       def prepend(component)
         self.class.new(element_def, component.cons(@component_element_vals))
       end
 
-      ##
       # Construct a RepeatedElementVal with this element as its sole element. NOTE:
       # Intended for use by SegmentReader
       def repeated
@@ -72,6 +66,7 @@ module Stupidedi
         other.component_element_vals == @component_element_vals
       end
 
+      # @private
       def pretty_print(q)
         q.text("CompositeElementVal[#{element_def.try(:id)}]")
         q.group(1, "(", ")") do

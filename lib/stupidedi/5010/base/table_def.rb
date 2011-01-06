@@ -3,10 +3,11 @@ module Stupidedi
     module Base
 
       class TableDef
-        attr_reader \
-          :name,
-          :segment_uses,
-          :loop_defs
+        attr_reader :name
+
+        attr_reader :segment_uses
+
+        attr_reader :loop_defs
 
         def initialize(name, *children)
           @name = name

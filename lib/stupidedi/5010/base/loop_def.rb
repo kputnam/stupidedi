@@ -12,11 +12,13 @@ module Stupidedi
       #   See X12.6 Section 3.8.3.2.1 "Unbounded Loops"
       #
       class LoopDef
-        attr_reader \
-          :name,
-          :repetition_count,
-          :segment_uses,
-          :loop_defs
+        attr_reader :name,
+
+        attr_reader :repetition_count
+
+        attr_reader :segment_uses
+
+        attr_reader :loop_defs
 
         def initialize(name, repetition_count, *children)
           @name, @repetition_count  = name, repetition_count

@@ -3,10 +3,11 @@ module Stupidedi
     module Base
 
       class SegmentDef
-        attr_reader \
-          :id,
-          :name,
-          :element_uses
+        attr_reader :id
+
+        attr_reader :name
+
+        attr_reader :element_uses
 
         def initialize(id, name, *element_uses)
           @id, @name, @element_uses = id, name, element_uses

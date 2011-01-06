@@ -8,9 +8,9 @@ module Stupidedi
     # same definition.
     #
     class RepeatedElementVal
-      attr_reader \
-        :element_def,
-        :element_vals
+      attr_reader :element_def
+
+      attr_reader :element_vals
 
       def initialize(element_vals, element_def)
         @element_vals, @element_def = element_vals, element_def
@@ -24,25 +24,21 @@ module Stupidedi
         @element_vals.length
       end
 
-      ##
       # Returns the occurence at the given index. Numbering begins at zero.
       def [](n)
         @element_vals[n]
       end
 
-      ##
       # True if there are no occurences (or every occurence is empty)
       def empty?
         @element_vals.all?(&:empty?)
       end
 
-      ##
       # True if any occurences are present
       def present?
         @element_vals.any?(&:present?)
       end
 
-      ##
       # Creates a new RepeatedElementVal with the given element appended
       # to the end of the list of occurences. NOTE: Intended for use by
       # SegmentReader.
@@ -50,7 +46,6 @@ module Stupidedi
         self.class.new(@element_vals + [element], element_def)
       end
 
-      ##
       # Creates a new RepeatedElementVal with the given element prepended
       # to the end of the list of occurences. NOTE: Intended for use by
       # SegmentReader.
@@ -62,6 +57,7 @@ module Stupidedi
         other.element_vals == @element_vals
       end
 
+      # @private
       def pretty_print(q)
         q.text("RepeatedElementVal[#{element_def.try(:id)}]")
         q.group(1, "(", ")") do

@@ -5,7 +5,9 @@ module Stupidedi
       class SegmentReader
         include Reader::TokenReader
 
-        attr_reader :input, :interchange_header, :segment_def
+        attr_reader :input, :interchange_header
+        
+        attr_reader :segment_def
 
         def initialize(input, interchange_header, segment_def)
           @input, @interchange_header, @segment_def = input, interchange_header, segment_def

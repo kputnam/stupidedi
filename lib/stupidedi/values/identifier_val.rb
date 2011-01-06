@@ -51,10 +51,9 @@ module Stupidedi
           true
         end
 
-        ##
         # NOTE: not commutative
         #   String.value("XX") == "XX"
-        #                "XX" != String.value("XX")
+        #                "XX"  != String.value("XX")
         def ==(other)
           if other.is_a?(self.class)
             delegate == other.delegate
@@ -70,19 +69,16 @@ module Stupidedi
     # Constructors
     #
     class << IdentifierVal
-      ##
       # Create an empty identifier value.
       def empty(element_def = nil)
         IdentifierVal::Empty.new(element_def)
       end
 
-      ##
       # Intended for use by ElementReader.
       def value(string, element_def)
         IdentifierVal::NonEmpty.new(string, element_def)
       end
 
-      ##
       # Convert a ruby String value.
       def from_string(string, element_def = nil)
         value(string, element_def)

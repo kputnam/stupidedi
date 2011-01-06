@@ -2,27 +2,28 @@ module Stupidedi
   module Interchange
     module FiveOhOne
 
+      #
       # Comprises ISA, ISB, ISE, TA1, TA3 segments. Currently, only ISA is supported
+      #
       class InterchangeHeader
-        attr_reader \
-          :element_separator,
-          :authorization_info_qualifier,
-          :authorization_info,
-          :security_info_qualifier,
-          :security_info,
-          :sender_id_qualifier,
-          :sender_id,
-          :receiver_id_qualifier,
-          :receiver_id,
-          :date,
-          :time,
-          :repetition_separator,
-          :version_number,
-          :control_number,
-          :acknowledgment_requested,
-          :usage_indicator,
-          :component_separator,
-          :segment_terminator
+        attr_reader :element_separator
+        attr_reader :authorization_info_qualifier
+        attr_reader :authorization_info
+        attr_reader :security_info_qualifier
+        attr_reader :security_info
+        attr_reader :sender_id_qualifier
+        attr_reader :sender_id
+        attr_reader :receiver_id_qualifier
+        attr_reader :receiver_id
+        attr_reader :date
+        attr_reader :time
+        attr_reader :repetition_separator
+        attr_reader :version_number
+        attr_reader :control_number
+        attr_reader :acknowledgment_requested
+        attr_reader :usage_indicator
+        attr_reader :component_separator
+        attr_reader :segment_terminator
 
         def initialize(element_separator, segment_terminator, isa01, isa02, isa03, isa04, isa05, isa06, isa07, isa08, isa09, isa10, isa11, isa12, isa13, isa14, isa15, isa16)
           @element_separator            = element_separator
@@ -45,14 +46,14 @@ module Stupidedi
           @segment_terminator           = segment_terminator
         end
 
-        ##
-        #
         def reader(input)
           Either.success(FunctionalGroupHeaderReader.new(input, self))
         end
       end
 
+      #
       # Constructors
+      #
       class << InterchangeHeader
         def default(*fields)
           defaults = Hash[:element_separator            => "*",

@@ -2,8 +2,8 @@ module Stupidedi
   module Reader
 
     #
-    # This is not the same thing as Either.success, but it is likely to be
-    # wrapped by Either.success. This simply wraps two values -- one is the
+    # This is not the same thing as {Either::Success}, but it is likely to be
+    # wrapped by {Either::Success}. This simply wraps two values -- one is the
     # parsed value (which was constructed from some string input), the other
     # is the remaining input that hasn't yet been parsed. The remainder is
     # typically a TokenReader, but among other data types, it might also be
@@ -15,7 +15,7 @@ module Stupidedi
     # parse the rest of the URI as the remainder. We might have UriHttpReader,
     # UriMailtoReader, etc. But when we don't recognize the scheme, we can't
     # parse the rest of the URI. We *did* parse the scheme, so it doesn't make
-    # sense to return an Either.failure, but it *does* make sense for the
+    # sense to return an {Either::Failure}, but it *does* make sense for the
     # remainder to then be an Either.failure. This does result in some confusing
     # client code though:
     #

@@ -6,9 +6,9 @@ module Stupidedi
       # Abstract parent of SimpleElementUse and ComponentElementUse
       #
       class ElementUse
-        attr_reader \
-          :element_def,
-          :requirement_designator
+        attr_reader :element_def
+
+        attr_reader :requirement_designator
 
         def initialize(element_def, requirement_designator)
           @element_def, @requirement_designator = element_def, requirement_designator

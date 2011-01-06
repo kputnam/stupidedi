@@ -37,38 +37,32 @@ module Stupidedi
 
       ###################################################################
 
-      ##
       #
       def defined_at?(n)
         raise NoMethodError, "Method defined_at?(n) must be implemented in subclass"
       end
 
-      ##
       # Returns true if no elements remain
       def empty?
         raise NoMethodError, "Method empty? must be implemented in subclass"
       end
 
-      ##
       # Returns an instance of Input with the first +n+
       # elements have been removed
       def drop(n)
         raise NoMethodError, "Method drop(n) must be implemented in subclass"
       end
 
-      ##
       # Returns the first +n+ elements
       def take(n)
         raise NoMethodError, "Method take(n) must be implemented in subclass"
       end
 
-      ##
       # Returns an element at index +n+
       def at(n)
         raise NoMethodError, "Method at(n) must be implemented in subclass"
       end
 
-      ##
       # Returns the smallest n, where self.at(n) == +value+
       # or nil if no such value exists
       def index(value)

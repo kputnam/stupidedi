@@ -8,13 +8,11 @@ module Stupidedi
         @input = input
       end
 
-      ##
       # Returns true if there is no remaining input
       def empty?
         @input.empty?
       end
 
-      ##
       # Read a single character
       def read_character
         unless @input.empty?
@@ -24,8 +22,6 @@ module Stupidedi
         end
       end
 
-      ##
-      #
       def read_interchange_header
         consume_isa.flatmap{|rest|
         rest.read_character.flatmap{|r|      element_separator, rest = *r
@@ -63,7 +59,6 @@ module Stupidedi
 
     protected
 
-      ##
       # Consume the next occurence of "ISA"
       def consume_isa
         position = 0
@@ -86,7 +81,6 @@ module Stupidedi
         return failure("Reached end of input before finding ISA segment id")
       end
 
-      ##
       # Read up to the next occurrence of element_separator and consume the separator
       def read_element(element_separator)
         if position = @input.index(element_separator)

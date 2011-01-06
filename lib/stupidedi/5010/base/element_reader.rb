@@ -7,9 +7,7 @@ module Stupidedi
       end
 
       class SimpleElementReader < ElementReader
-        attr_reader \
-          :input,
-          :interchange_header
+        attr_reader :input, :interchange_header
 
         def initialize(input, interchange_header, simple_element_def)
           @input, @interchange_header, @simple_element_def = input, interchange_header, simple_element_def
@@ -33,9 +31,7 @@ module Stupidedi
       end
 
       class CompositeElementReader < ElementReader
-        attr_reader \
-          :input,
-          :interchange_header
+        attr_reader :input, :interchange_header
 
         def initialize(input, interchange_header, composite_element_def)
           @input, @interchange_header, @composite_element_def = input, interchange_header, composite_element_def

@@ -134,7 +134,6 @@ module Stupidedi
         DateVal::Empty.new(element_def)
       end
 
-      ##
       # Intended for use by ElementReader.
       def value(year, month, day, element_def = nil)
         begin
@@ -148,7 +147,6 @@ module Stupidedi
         end
       end
 
-      ##
       # Convert a ruby Date value.
       def from_date(date, element_def = nil)
         DateVal::Proper.new("%04d" % date.year,
@@ -157,7 +155,6 @@ module Stupidedi
                             element_def)
       end
 
-      ##
       # Convert a ruby Time value.
       def from_time(time, element_def = nil)
         DateVal::Proper.new("%04d" % time.year,
@@ -166,7 +163,6 @@ module Stupidedi
                             element_def)
       end
 
-      ##
       # Convert a ruby DateTime value.
       def from_datetime(dt, element_def = nil)
         DateVal::Proper.new("%04d" % dt.year,
