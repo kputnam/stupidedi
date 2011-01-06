@@ -223,6 +223,8 @@ module Stupidedi
         end
       end
 
+      ##
+      # TODO
       def read_segment(segment_def = nil)
         if segment_def.nil?
           # TODO.. read_segment_id, then read up to and including segment_terminator

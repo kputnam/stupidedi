@@ -2,6 +2,9 @@ module Stupidedi
   module FiftyTen
     module Base
 
+      class LoopDef
+      end
+
       #
       # Loops are defined by a sequence of segments. The first SegmentUse
       # in the loop's definition is more significant than any others. Its
