@@ -19,7 +19,7 @@ module Stupidedi
           # an implied decimal point. Validates the format of +string+ according
           # to the X12 specification, and returns a failure on invalid input.
           #
-          # @input [String] string
+          # @param [String] string
           #
           # @return [Either::Success<Values::NumericVal>,
           #          Either::Failure<String>]
@@ -185,7 +185,7 @@ module Stupidedi
           # is performed. Trailing whitespace is stripped, but leading
           # whitespace is preserved according to the X12 specification.
           #
-          # @input [String] string
+          # @param [String] string
           #
           # @return [Either::Success<Values::StringVal>]
           def parse(string, instance = nil)
@@ -234,7 +234,7 @@ module Stupidedi
           # The input validation is delegated to {Values::DateVal.value} to
           # ensure the date is valid.
           #
-          # @input [String] string
+          # @param [String] string
           #
           # @return [Either::Success<Values::DateVal>, Either::Failure<String>]
           def parse(string, instance = nil)
@@ -289,7 +289,7 @@ module Stupidedi
           # numeric characters, delegates further validation to
           # #{Values::TimeVal.value}.
           #
-          # @input [String] string
+          # @param [String] string
           #
           # @return [Either::Success<Values::TimeVal>, Either::Failure<String>]
           def parse(string, instance = nil)

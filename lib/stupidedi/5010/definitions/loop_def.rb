@@ -6,7 +6,7 @@ module Stupidedi
       # See X12.6 Section 3.8.3.2.1 "Unbounded Loops"
       #
       class LoopDef
-        attr_reader :name,
+        attr_reader :name
 
         attr_reader :repetition_count
 

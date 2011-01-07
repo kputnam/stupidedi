@@ -41,7 +41,7 @@ describe "Object#try" do
   end
 end
 
-describe "nil.try" do
+describe "NilClass#try" do
   specify { nil.try{ whatever }.should be_nil }
   specify { nil.try(:a).should be_nil }
   specify { nil.try(:a) { whatever }.should be_nil }

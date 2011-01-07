@@ -3,7 +3,7 @@ require "spec_helper"
 
 describe Stupidedi::Reader do
 
-  describe "basic_characters" do
+  describe "#basic_characters" do
     def is_basic?(c)
       Stupidedi::Reader.is_basic_character?(c)
     end
@@ -61,7 +61,7 @@ describe Stupidedi::Reader do
     end
   end
 
-  describe "extended characters" do
+  describe "#extended_characters" do
     def is_extended?(c)
       Stupidedi::Reader.is_extended_character?(c)
     end
@@ -152,7 +152,7 @@ describe Stupidedi::Reader do
     end
   end
 
-  describe "control characters" do
+  describe "#control_characters" do
     it "exclude basic characters" do
       c = Stupidedi::Reader.control_characters
       b = Stupidedi::Reader.basic_characters
