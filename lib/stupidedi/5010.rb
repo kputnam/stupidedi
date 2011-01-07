@@ -4,30 +4,30 @@ module Stupidedi
     autoload :Partners, "stupidedi/5010/partners"
 
     module Definitions
-      autoload :ElementDef,           "stupidedi/5010/definitions/element_def"
-      autoload :ElementUse,           "stupidedi/5010/definitions/element_use"
-      autoload :ElementTypes,         "stupidedi/5010/definitions/element_types"
+      autoload :ElementDef,   "stupidedi/5010/definitions/element_def"
+      autoload :ElementUse,   "stupidedi/5010/definitions/element_use"
+      autoload :ElementTypes, "stupidedi/5010/definitions/element_types"
 
-      autoload :SimpleElementDef,     "stupidedi/5010/definitions/element_def"
-      autoload :SimpleElementUse,     "stupidedi/5010/definitions/element_use"
+      autoload :SimpleElementDef, "stupidedi/5010/definitions/element_def"
+      autoload :SimpleElementUse, "stupidedi/5010/definitions/element_use"
 
       autoload :CompositeElementDef,  "stupidedi/5010/definitions/element_def"
       autoload :ComponentElementUse,  "stupidedi/5010/definitions/element_use"
 
-      autoload :SegmentDef,           "stupidedi/5010/definitions/segment_def"
-      autoload :SegmentUse,           "stupidedi/5010/definitions/segment_use"
-      autoload :LoopDef,              "stupidedi/5010/definitions/loop_def"
+      autoload :SegmentDef, "stupidedi/5010/definitions/segment_def"
+      autoload :SegmentUse, "stupidedi/5010/definitions/segment_use"
+      autoload :LoopDef,    "stupidedi/5010/definitions/loop_def"
 
-      autoload :ElementRequirement,   "stupidedi/5010/definitions/designations"
-      autoload :ElementRepetition,    "stupidedi/5010/definitions/designations"
-      autoload :SegmentRequirement,   "stupidedi/5010/definitions/designations"
-      autoload :SegmentRepetition,    "stupidedi/5010/definitions/designations"
-      autoload :LoopRepetition,       "stupidedi/5010/definitions/designations"
+      autoload :ElementRequirement, "stupidedi/5010/definitions/designations"
+      autoload :ElementRepetition,  "stupidedi/5010/definitions/designations"
+      autoload :SegmentRequirement, "stupidedi/5010/definitions/designations"
+      autoload :SegmentRepetition,  "stupidedi/5010/definitions/designations"
+      autoload :LoopRepetition,     "stupidedi/5010/definitions/designations"
     end
 
     module Dictionaries
-      autoload :ElementDictionary,    "stupidedi/5010/dictionaries/element_dictionary"
-      autoload :SegmentDictionary,    "stupidedi/5010/dictionaries/segment_dictionary"
+      autoload :ElementDict,  "stupidedi/5010/dictionaries/element_dictionary"
+      autoload :SegmentDict,  "stupidedi/5010/dictionaries/segment_dictionary"
     end
 
     module Readers

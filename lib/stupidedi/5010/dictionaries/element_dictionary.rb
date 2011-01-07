@@ -1,7 +1,7 @@
 module Stupidedi
   module FiftyTen
     module Dictionaries
-      module ElementDictionary
+      module ElementDict
 
         AN = Definitions::ElementTypes::AN
         ID = Definitions::ElementTypes::ID

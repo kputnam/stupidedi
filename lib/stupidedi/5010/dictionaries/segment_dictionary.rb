@@ -1,9 +1,9 @@
 module Stupidedi
   module FiftyTen
     module Dictionaries
-      module SegmentDictionary
+      module SegmentDict
 
-        E = ElementDictionary
+        E = ElementDict
         R = Designations::ElementRepetition
         M = Designations::ElementRequirement::M
         O = Designations::ElementRequirement::O

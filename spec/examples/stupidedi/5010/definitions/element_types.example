@@ -4,7 +4,6 @@ describe Stupidedi::FiftyTen::Definitions::ElementTypes do
   include QuickCheck::SerializedEdi::Macro
 
   let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Dictionaries::ElementDictionary }
   let(:values)     { Stupidedi::Values }
 
   let(:r)  { elements::R .new("R" , "Decimal Thing",  "Purpose", 1, 1) }

@@ -12,7 +12,7 @@ module Stupidedi
         end
 
         # Parses the GS segment
-        #   TODO: Replace nested flatmaps with read_segment(FiftyTen::Base::SegmenDictionary::GS)
+        #   TODO: Replace nested flatmaps with read_segment(FiftyTen::Dictionaries::SegmenDict::GS)
         def read_functional_group_header
           consume_prefix("GS").flatmap{|rest|      rest.consume_prefix(interchange_header.element_separator).flatmap{|rest|
           rest.read_simple_element.flatmap{|r| gs01, c = *r; c.consume_prefix(interchange_header.element_separator).flatmap{|rest|

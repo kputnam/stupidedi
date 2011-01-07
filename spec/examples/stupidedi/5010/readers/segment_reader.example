@@ -4,7 +4,7 @@ describe Stupidedi::FiftyTen::Readers::SegmentReader do
   include QuickCheck::SerializedEdi::Macro
 
   let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Dictionaries::SegmentDictionary }
+  let(:dictionary) { Stupidedi::FiftyTen::Dictionaries::SegmentDict }
 
   let(:r)  { elements::R .new("R" , "Decimal Thing",  "Purpose", 1, 1) }
   let(:n0) { elements::N0.new("N0", "Whole Number",   "Purpose", 1, 1) }
@@ -115,7 +115,7 @@ describe Stupidedi::FiftyTen::Readers::SegmentReader do
       it { should_not be_defined }
 
       it "produces an error message" do
-        subject.explanation.should == %(Expected either 6 or 8 numeric characters from date "INVALID")
+        subject.explanation.should == %(Expected either 6 or 8 numeric characters for date "INVALID")
       end
 
       it "encodes the error offset"

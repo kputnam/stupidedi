@@ -1,0 +1,145 @@
+require "spec_helper"
+
+describe Stupidedi::FiftyTen::Definitions::ElementTypes::R do
+  describe "#reader" do
+    include QuickCheck::SerializedEdi::Macro
+
+    let(:values) { Stupidedi::Values }
+    let(:isa)    { Stupidedi::Interchange::FiveOhOne::InterchangeHeader }
+
+    let(:r) do
+      Stupidedi::FiftyTen::Definitions::ElementTypes::R.new \
+        "R", "Decimal Thing", "Purpose", 1, 1
+    end
+
+    it "parses explicit decimal point" do
+      r.reader("12.34*...", isa.default).read.map do |result|
+        result.value.should == 12.34
+        result.value.element_def.should == r
+        result.remainder.input.should == "*..."
+      end.should be_defined
+    end
+
+    it "parses implicit decimal point" do
+      r.reader("1234:...", isa.default).read.map do |result|
+        result.value.should == 1234
+      end.should be_defined
+    end
+
+    it "parses leading minus sign" do
+      r.reader("-1.234~...", isa.default).read.map do |result|
+        result.value.should == -1.234
+      end.should be_defined
+    end
+
+    it "parses leading plus sign" do
+      r.reader("+1234.~...", isa.default).read.map do |result|
+        result.value.should == 1234
+      end.should be_defined
+    end
+
+    it "parses leading zeros" do
+      r.reader("0012.34*...", isa.default).read.map do |result|
+        result.value.should == 12.34
+      end.should be_defined
+    end
+
+    it "parses trailing zeros" do
+      r.reader("1234.0000~...", isa.default).read.map do |result|
+        result.value.should == 1234
+      end.should be_defined
+    end
+
+    it "parses base 10 exponent" do
+      r.reader("3.1E2^...", isa.default).read.map do |result|
+        result.value.should == 310
+      end.should be_defined
+    end
+
+    it "parses negative base 10 exponent" do
+      r.reader("3.1E-2*...", isa.default).read.map do |result|
+        result.value.should == 0.031
+      end.should be_defined
+    end
+
+    it "parses positive base 10 exponent" do
+      r.reader("3.1E+2~...", isa.default).read.map do |result|
+        result.value.should == 310
+      end.should be_defined
+    end
+
+    it "parses empty" do
+      r.reader("~...", isa.default).read.map do |result|
+        result.value.should be_empty
+        result.value.should == values::NumericVal.empty
+        result.remainder.input.should == "~..."
+      end.should be_defined
+    end
+
+    it "parses empty", :random => true do
+      property do
+        with(document.delimiters) do
+          [ stream.agitate(stream.space(between(0, 16))),
+            char.delimiter,
+            stream.string,
+            current.isa ]
+        end
+      end.check do |space, delim, rest, isa|
+        r.reader("#{space}#{delim}#{rest}", isa).read.map do |result|
+          result.value.should be_empty
+          result.value.should == values::NumericVal.empty
+          result.remainder.input.should == "#{delim}#{rest}"
+        end.should be_defined
+      end
+    end
+
+    it "parses non-empty input", :random => true do
+      property do
+        with(document.delimiters) do
+          [element.r, char.delimiter, stream.string, current.isa].
+            try{|xs| stream.pad(stream.agitate(xs.head)).cons(xs) }
+        end
+      end.check do |agitated, data, delim, rest, isa|
+        r.reader("#{agitated}#{delim}#{rest}", isa).read.map do |result|
+          result.value.should == BigDecimal(data)
+          result.remainder.input.should == "#{delim}#{rest}"
+        end.should be_defined
+      end
+    end
+
+    # @error-handling
+    it "does not parse 'E'" do
+      r.reader("E*", isa.default).read.should_not be_defined
+    end
+
+    # @error-handling
+    it "does not parse 'E0'" do
+      r.reader("E0*", isa.default).read.should_not be_defined
+    end
+
+    # @error-handling
+    it "does not parse '0E'" do
+      r.reader("0E*", isa.default).read.should_not be_defined
+    end
+
+    # @error-handling
+    it "does not parse '1E1.1'" do
+      r.reader("1E1.1*", isa.default).read.should_not be_defined
+    end
+
+    # @error-handling
+    it "does not parse '1.2.3'" do
+      r.reader("1.2.3*", isa.default).read.should_not be_defined
+    end
+
+    # @error-handling
+    it "produces an error message" do
+      r.reader("1.2.3*", isa.default).read.explanation.should ==
+        %[Not a valid decimal "1.2.3"]
+    end
+
+    # @error-handling
+    it "encodes the error position"
+
+  end
+end

@@ -257,7 +257,7 @@ module Stupidedi
                 month = filtered.slice(4, 2)
                 day   = filtered.slice(6, 2)
               else
-                return failure("Expected either 6 or 8 numeric characters from date #{string.inspect}")
+                return failure("Expected either 6 or 8 numeric characters for date #{string.inspect}")
               end
 
               begin

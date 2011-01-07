@@ -12,7 +12,7 @@ describe Stupidedi::FiftyTen::Readers::CompositeElementReader do
   include QuickCheck::SerializedEdi::Macro
 
   let(:elements)   { Stupidedi::FiftyTen::Definitions::ElementTypes }
-  let(:dictionary) { Stupidedi::FiftyTen::Dictionaries::ElementDictionary }
+  let(:dictionary) { Stupidedi::FiftyTen::Dictionaries::ElementDict }
   let(:values)     { Stupidedi::Values }
   let(:req)        { Stupidedi::FiftyTen::Definitions::ElementRequirement }
 
