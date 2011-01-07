@@ -31,6 +31,8 @@ module Stupidedi
       # use the NumericVal.value and NumericVal.from_numeric constructors.
       #
       class NonEmpty < NumericVal
+        include Comparable
+
         attr_reader :delegate
 
         def initialize(delegate, element_def)
@@ -112,11 +114,11 @@ module Stupidedi
           end
         end
 
-        def ==(other)
+        def <=>(other)
           if other.is_a?(self.class)
-            delegate == other.delegate
+            delegate <=> other.delegate
           else
-            delegate == other
+            delegate <=> other
           end
         end
       end
