@@ -4,7 +4,8 @@ source "http://rubygems.org"
 gem "rake", "~> 0.8.7"
 
 group :development do
-  gem "rcov",  "~> 0.9.9"
-  gem "rspec", "~> 2.3.0"
-  gem "yard",  "~> 0.6.4"
+  gem "rcov",       "~> 0.9.9"
+  gem "rspec",      "~> 2.3.0"
+  gem "yard",       "~> 0.6.4"
+# gem "yard-rspec", "~> 0.1"
 end

@@ -1,0 +1,30 @@
+<% if object[:specifications] %>
+<div class="tags">
+  <h3>Specifications:</h3>
+  <ul class="specs">
+    <% for spec in object[:specifications] %>
+      <li><%= spec[:name] %>
+        <div class="source_code">
+          <table>
+            <tr>
+              <td>
+                <pre class="lines">
+
+
+<%= (1..spec[:source].split("\n").size).map {|i| spec[:line] + i }.join("\n") %></pre>
+              </td>
+              <td>
+                <pre class="code"><span class="info file"># File '<%= h spec[:file] %>', line <%= spec[:line] %></span>
+
+<% if spec[:source] =~ /\S/ %>
+<%= html_syntax_highlight format_source(spec[:source]) %></pre>
+<% end %>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
