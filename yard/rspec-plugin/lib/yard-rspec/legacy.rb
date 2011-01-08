@@ -1,4 +1,5 @@
 class LegacyRSpecDescribeHandler < YARD::Handlers::Ruby::Legacy::Base
+  # @todo deal with rspec metadata hash params
   MATCH = /\Adescribe\s+(.+?)\s+(?:do|\{)/
   handles MATCH
   
@@ -23,7 +24,7 @@ class LegacyRSpecDescribeHandler < YARD::Handlers::Ruby::Legacy::Base
 end
 
 class LegacySpecContextHandler < YARD::Handlers::Ruby::Legacy::Base
-  MATCH = /\Acontext\s+(['"])(.+?)\1\s+(?:do|\{)/
+  MATCH = /\Acontext\s+(['"])(.+?)\1(?:.*?)\s+(?:do|\{)/
   handles MATCH
 
   def process
@@ -37,7 +38,7 @@ class LegacySpecContextHandler < YARD::Handlers::Ruby::Legacy::Base
 end
 
 class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
-  MATCH = /\A(?:its?|specify)\s+(['"])(.+?)\1\s+(?:do|\{)/
+  MATCH = /\A(?:its?|specify)\s+(['"])(.+?)\1(?:.*?)\s+(?:do|\{)/
 
   handles MATCH
   handles /\A(?:its?|specify)\s+(?:do|\{)/
@@ -57,7 +58,7 @@ class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
       return
     end
 
-    source = statement.block.to_s
+    source = statement.block.to_s.strip
 
     (node[:specifications] ||= []) << \
       Hash[ :name => owner[:context] + spec,

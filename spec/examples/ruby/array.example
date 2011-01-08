@@ -224,7 +224,7 @@ describe Array do
   end
 
   describe "#take" do
-    context "of an empty array" do
+    context "from an empty array" do
       it "is an empty array" do
         [].take(10).should == []
       end
@@ -365,19 +365,19 @@ describe Array do
 
   describe "#split_at" do
     context "index zero" do
-      context "of an empty array" do
+      context "on an empty array" do
         it "returns [], []" do
           [].split_at(0).should == [[], []]
         end
       end
 
-      context "of a one-element array" do
+      context "on a one-element array" do
         it "returns [], [a]" do
           %w(a).split_at(0).should == [[], %w(a)]
         end
       end
 
-      context "of a two-element array" do
+      context "on a two-element array" do
         it "returns [], [a, b]" do
           %w(a b).split_at(0).should == [[], %w(a b)]
         end
@@ -393,19 +393,19 @@ describe Array do
         end
       end
 
-      context "of an empty array" do
+      context "on an empty array" do
         it "returns [], []" do
           [].split_at(1).should == [[], []]
         end
       end
 
-      context "of a one-element array" do
+      context "on a one-element array" do
         it "returns [a], []" do
           %w(a).split_at(1).should == [%w(a), []]
         end
       end
 
-      context "of a two-element array" do
+      context "on a two-element array" do
         it "returns [a], [b]" do
           %w(a b).split_at(1).should == [%w(a), %w(b)]
         end
@@ -413,19 +413,19 @@ describe Array do
     end
 
     context "index two" do
-      context "of an empty array" do
+      context "on an empty array" do
         it "returns [], []" do
           [].split_at(2).should == [[], []]
         end
       end
 
-      context "of a one-element array" do
+      context "on a one-element array" do
         it "returns [a], []" do
           %w(a).split_at(2).should == [%w(a), []]
         end
       end
 
-      context "of a two-element array" do
+      context "on a two-element array" do
         it "returns [a, b], []" do
           %w(a b).split_at(2).should == [%w(a b), []]
         end

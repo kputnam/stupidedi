@@ -60,7 +60,7 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
     end
 
     if last = statement.last.last
-      source = last.source.chomp
+      source = last.source.strip
     else
       source = ""
     end

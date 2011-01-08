@@ -1,7 +1,8 @@
 module Enumerable
 
-  ##
   # Count the number of elements that satisfy the predicate
+  #
+  # @return [Integer]
   def count(*args)
     if block_given?
       inject(0){|n, e| yield(e) ? n + 1 : n }
