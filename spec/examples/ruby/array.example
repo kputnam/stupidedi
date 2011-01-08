@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe List do
+describe Array do
   include QuickCheck::Macro
 
   module LocalMacros

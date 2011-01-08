@@ -5,7 +5,7 @@ module Stupidedi
 
       #
       # Empty string value. Shouldn't be directly instantiated -- instead,
-      # use the StringVal.empty and StringVal.value constructors.
+      # use the {StringVal.empty} and {StringVal.value} constructors.
       #
       class Empty < StringVal
         def empty?
@@ -16,11 +16,13 @@ module Stupidedi
           false
         end
 
+        # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
           "StringVal.empty#{def_id}"
         end
 
+        # @private
         def ==(other)
           other.is_a?(self.class)
         end
@@ -28,7 +30,7 @@ module Stupidedi
 
       #
       # Non-empty string value. Shouldn't be directly instantiated -- instead,
-      # use the StringVal.value and StringVal.from_string constructors.
+      # use the {StringVal.value} and StringVal.from_string constructors.
       #
       class NonEmpty < StringVal
         attr_reader :delegate
@@ -51,9 +53,8 @@ module Stupidedi
           true
         end
 
-        # Beware, not commutative
-        #   StringVal.value('XX') == 'XX'
-        #                   'XX' != StringVal.value('XX')
+        # @note Not commutative
+        # @private
         def ==(other)
           if other.is_a?(self.class)
             delegate == other.delegate

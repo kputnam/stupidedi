@@ -22,10 +22,12 @@ module Stupidedi
         @element_vals[n]
       end
 
+      # @private
       def prepend(element_val)
         self.class.new(segment_def, @element_val.cons(element_vals))
       end
 
+      # @private
       def append(element_val)
         self.class.new(segment_def, @element_vals + [element_val])
       end

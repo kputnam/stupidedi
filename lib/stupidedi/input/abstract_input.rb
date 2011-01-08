@@ -108,7 +108,7 @@ module Stupidedi
       ##########################################################################
 
       # Advance the cursor forward +n+ elements
-      # 
+      #
       # @param [Integer] n the number of elements to advance (+n >= 0+)
       #
       # @return [AbstractInput] new object with advanced cursor

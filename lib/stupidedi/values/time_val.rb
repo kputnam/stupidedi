@@ -5,7 +5,7 @@ module Stupidedi
 
       #
       # Empty time value. Shouldn't be directly instantiated -- instead, use
-      # the TimeVal.empty constructor.
+      # the {TimeVal.empty} constructor.
       #
       class Empty < TimeVal
         def empty?
@@ -16,21 +16,23 @@ module Stupidedi
           false
         end
 
+        # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
           "TimeVal.empty#{def_id}"
         end
 
+        # @private
         def ==(other)
           other.is_a?(self.class)
         end
       end
 
       #
-      # Non-empty time value. Unlike common models of "time", this encapsulates only
-      # an hour, minute, and second (with fractional seconds) but not a date. Shouldn't
-      # be directly instantiated -- instead, use TimeVal.value and TimeVal.from_time
-      # constructors.
+      # Non-empty time value. Unlike common models of "time", this encapsulates
+      # only an hour, minute, and second (with fractional seconds) but not a
+      # date. Shouldn't be directly instantiated -- instead, use {TimeVal.value}
+      # and {TimeVal.from_time} constructors.
       #
       class NonEmpty < TimeVal
         attr_reader :hour, :minute, :second
@@ -38,11 +40,6 @@ module Stupidedi
         def initialize(hour, minute, second, element_def)
           @hour, @minute, @second = hour, minute, second
           super(element_def)
-        end
-
-        def inspect
-          def_id = element_def.try{|d| "[#{d.id}]" }
-          "TimeVal.value#{def_id}(#{hour}:#{minute}:#{second})"
         end
 
         def empty?
@@ -53,6 +50,7 @@ module Stupidedi
           true
         end
 
+        # @return [Time]
         def to_time(date)
           Time.utc(date.year.to_i,
                    date.month.to_i,
@@ -60,8 +58,17 @@ module Stupidedi
                    *[hour, minute, second].take_until(&:nil?).map(&:to_f))
         end
 
+        # @private
+        def inspect
+          def_id = element_def.try{|d| "[#{d.id}]" }
+          "TimeVal.value#{def_id}(#{hour}:#{minute}:#{second})"
+        end
+
+        # @private
         def ==(other)
-          other.hour == hour and other.minute == minute and other.second == second
+          other.hour   == hour   and
+          other.minute == minute and
+          other.second == second
         end
       end
 
@@ -77,8 +84,10 @@ module Stupidedi
       end
 
       # Intended for use by ElementReader.
+      #
+      # @return [TimeVal::NonEmpty]
       def value(hour, minute, second, element_def)
-        # NOTE: string !~ /\S/ returns false if string contains any non-blank chars
+        # NOTE: string !~ /\S/ returns false if string has any non-blank chars
 
         unless hour.to_s !~ /\S/ or hour.to_i.between?(0, 24)
           raise ArgumentError, "Hour must be between 0 and 24, got #{hour}"
@@ -90,26 +99,35 @@ module Stupidedi
 
         unless second.to_s !~ /\S/
           unless second.slice(0, 2).to_i.between?(0, 60)
-            raise ArgumentError, "Second must be between 0 and 60, got #{second}"
+            raise ArgumentError,
+              "Second must be between 0 and 60, got #{second}"
           end
 
           unless second.slice(0, 2) != "60" or second.slice(2..-1) =~ /^0*$/
-            raise ArgumentError, "Second must be between 0 and 60, got #{second}"
+            raise ArgumentError,
+              "Second must be between 0 and 60, got #{second}"
           end
         end
 
         # Convert blank strings to nil with (x =~ /\S/ and x)
-        TimeVal::NonEmpty.new(hour, (minute.to_s =~ /\S/ and minute), (second.to_s =~ /\S/ and second), element_def)
+        TimeVal::NonEmpty.new(hour, (minute.to_s =~ /\S/ and minute),
+                              (second.to_s =~ /\S/ and second), element_def)
       end
 
       # Convert a ruby Time value
+      #
+      # @return [TimeVal::NonEmpty]
       def from_time(time, element_def = nil)
-        TimeVal::NonEmpty.new(time.hour, time.min, time.sec + (time.usec / 1000000.0), element_def)
+        TimeVal::NonEmpty.new(time.hour, time.min,
+                              time.sec + (time.usec / 1000000.0), element_def)
       end
 
       # Convert a ruby DateTime value
+      #
+      # @return [TimeVal::NonEmpty]
       def from_datetime(datetime)
-        TimeVal::NonEmpty.new(time.hour, time.min, time.sec + time.sec_fraction.to_f, element_def)
+        TimeVal::NonEmpty.new(time.hour, time.min,
+                              time.sec + time.sec_fraction.to_f, element_def)
       end
     end
 

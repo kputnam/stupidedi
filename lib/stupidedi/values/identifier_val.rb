@@ -5,7 +5,7 @@ module Stupidedi
 
       #
       # Empty identifier value. Shouldn't be directly instantiated -- instead,
-      # use the IdentifierVal.empty and Identifier.value constructors
+      # use the {IdentifierVal.empty} and {IdentifierVal.value} constructors
       #
       class Empty < IdentifierVal
         def empty?
@@ -16,19 +16,22 @@ module Stupidedi
           false
         end
 
+        # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
           "IdentifierVal.empty#{def_id}"
         end
 
+        # @private
         def ==(other)
           other.is_a?(self.class)
         end
       end
 
       #
-      # Non-empty identifier value. Shouldn't be directly instantiated -- instead,
-      # use the IdentifierVal.value and Identifier.from_string constructors
+      # Non-empty identifier value. Shouldn't be directly instantiated --
+      # instead, use the {IdentifierVal.value} and {IdentifierVal.from_string}
+      # constructors
       #
       class NonEmpty < IdentifierVal
         attr_reader :delegate
@@ -36,11 +39,6 @@ module Stupidedi
         def initialize(delegate, element_def)
           @delegate = delegate
           super(element_def)
-        end
-
-        def inspect
-          def_id = element_def.try{|d| "[#{d.id}]" }
-          "IdentifierVal.value#{def_id}(#{@delegate})"
         end
 
         def empty?
@@ -51,9 +49,14 @@ module Stupidedi
           true
         end
 
-        # NOTE: not commutative
-        #   String.value("XX") == "XX"
-        #                "XX"  != String.value("XX")
+        # @private
+        def inspect
+          def_id = element_def.try{|d| "[#{d.id}]" }
+          "IdentifierVal.value#{def_id}(#{@delegate})"
+        end
+
+        # @note Not commutative
+        # @private
         def ==(other)
           if other.is_a?(self.class)
             delegate == other.delegate
@@ -70,16 +73,24 @@ module Stupidedi
     #
     class << IdentifierVal
       # Create an empty identifier value.
+      #
+      # @return [IdentifierVal::Empty]
       def empty(element_def = nil)
         IdentifierVal::Empty.new(element_def)
       end
 
       # Intended for use by ElementReader.
+      #
+      # @return [IdentifierVal::Empty]
+      # @return [IdentifierVal::NonEmpty]
       def value(string, element_def)
         IdentifierVal::NonEmpty.new(string, element_def)
       end
 
       # Convert a ruby String value.
+      #
+      # @return [IdentifierVal::Empty]
+      # @return [IdentifierVal::NonEmpty]
       def from_string(string, element_def = nil)
         value(string, element_def)
       end

@@ -2,10 +2,10 @@ module Stupidedi
   module Values
 
     #
-    # Represents multiple occurences of an element. If a segment definition allows an
-    # element to repeat, its parsed into this structure, even if there's only a single
-    # occurrence. This is essentialy a homogenous list of element values that have the
-    # same definition.
+    # Represents multiple occurences of an element. If a segment definition
+    # allows an element to repeat, its parsed into this structure, even if
+    # there's only a single occurrence. This is essentialy a homogenous list of
+    # element values that have the same definition.
     #
     class RepeatedElementVal
       attr_reader :element_def
@@ -39,20 +39,25 @@ module Stupidedi
         @element_vals.any?(&:present?)
       end
 
-      # Creates a new RepeatedElementVal with the given element appended
-      # to the end of the list of occurences. NOTE: Intended for use by
-      # SegmentReader.
+      # Creates a new {RepeatedElementVal} with the given element appended
+      # to the end of the list of occurences
+      #
+      # @note Intended for use by {SegmentReader}
+      # @private
       def append(element)
         self.class.new(@element_vals + [element], element_def)
       end
 
-      # Creates a new RepeatedElementVal with the given element prepended
-      # to the end of the list of occurences. NOTE: Intended for use by
-      # SegmentReader.
+      # Creates a new {RepeatedElementVal} with the given element prepended to
+      # the end of the list of occurences
+      #
+      # @note Intended for use by {SegmentReader}
+      # @private
       def prepend(element)
         self.class.new(element.cons(@element_vals), element_def)
       end
 
+      # @private
       def ==(other)
         other.element_vals == @element_vals
       end

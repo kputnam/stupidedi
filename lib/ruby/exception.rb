@@ -13,6 +13,7 @@ class Exception
 end
 
 class Object
+  # @private
   def raise(type = RuntimeError, message = nil, from = caller)
     exception = case type
                 when String

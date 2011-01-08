@@ -1,12 +1,14 @@
 class Object
   ##
   # Prepend the item to the front of a new list
+  # @return [Array]
   def cons(array = [])
     [self] + array
   end
 
   ##
   # Append the item to rear of a new list
+  # @return [Array]
   def snoc(array = [])
     array + [self]
   end

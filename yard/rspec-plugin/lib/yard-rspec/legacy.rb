@@ -50,7 +50,7 @@ class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
     spec = statement.tokens.to_s[MATCH, 2] || "untitled spec"
 
     unless node
-      log.debug "Unknown node #{owner[:describes]} for spec defined in #{statement.file} near line #{statement.line}"
+      log.debug "Unknown node #{owner[:describes]} for spec defined in #{parser.file} near line #{statement.line}"
       # parser.file
       # statement.line
       # owner[:describes]

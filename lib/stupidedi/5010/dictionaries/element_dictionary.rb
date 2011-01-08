@@ -3,23 +3,23 @@ module Stupidedi
     module Dictionaries
       module ElementDict
 
+        # @private
         AN = Definitions::ElementTypes::AN
+
+        # @private
         ID = Definitions::ElementTypes::ID
+
+        # @private
         DT = Definitions::ElementTypes::DT
+
+        # @private
         TM = Definitions::ElementTypes::TM
+
+        # @private
         R  = Definitions::ElementTypes::R
+
+        # @private
         N  = Definitions::ElementTypes::N
-        Nn = Definitions::ElementTypes::Nn
-        N0 = Definitions::ElementTypes::N0
-        N1 = Definitions::ElementTypes::N1
-        N2 = Definitions::ElementTypes::N2
-        N3 = Definitions::ElementTypes::N3
-        N4 = Definitions::ElementTypes::N4
-        N5 = Definitions::ElementTypes::N5
-        N6 = Definitions::ElementTypes::N6
-        N7 = Definitions::ElementTypes::N7
-        N8 = Definitions::ElementTypes::N8
-        N9 = Definitions::ElementTypes::N9
 
         E19   = AN.new("E19"  , "City Name"                            , "", 2, 30)
         E26   = ID.new("E26"  , "Country Code"                         , "", 2, 3)
@@ -192,10 +192,17 @@ module Stupidedi
         E1705 = AN.new("E1705", "Implementation Convention Reference"  , "", 1, 35)
         E1715 = ID.new("E1715", "Country Subdivision Code"             , "", 1, 3)
 
+
+        # @private
         M = Definitions::ElementRequirement::M
+
+        # @private
         O = Definitions::ElementRequirement::O
+
+        # @private
         X = Definitions::ElementRequirement::X
 
+        # @private
         CompositeElementDef = Definitions::CompositeElementDef
 
         C001 = CompositeElementDef.new \

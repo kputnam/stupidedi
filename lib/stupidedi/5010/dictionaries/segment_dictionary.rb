@@ -3,10 +3,19 @@ module Stupidedi
     module Dictionaries
       module SegmentDict
 
+        # @private
         E = ElementDict
+
+        # @private
         R = Designations::ElementRepetition
+
+        # @private
         M = Designations::ElementRequirement::M
+
+        # @private
         O = Designations::ElementRequirement::O
+
+        # @private
         X = Designations::ElementRequirement::X
 
         ST = SegmentDef.new \

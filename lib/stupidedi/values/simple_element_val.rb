@@ -2,8 +2,8 @@ module Stupidedi
   module Values
 
     #
-    # This is an abstract class that serves as a common parent to StringVal,
-    # IdentifierVal, DateVal, DecimalVal, TimeVal, and NumericVal.
+    # This is an abstract class that serves as a common parent to {StringVal},
+    # {IdentifierVal}, {DateVal}, {DecimalVal}, {TimeVal}, and {NumericVal}.
     #
     class SimpleElementVal
       attr_reader :element_def
@@ -12,9 +12,10 @@ module Stupidedi
         @element_def = element_def
       end
 
-      ##
       # Construct a RepeatedElementVal with this element as its sole element.
-      # NOTE: Intended for use by SegmentReader
+      #
+      # @note Intended for use by {SegmentReader}
+      # @private
       def repeated
         RepeatedElementVal.new([self], element_def)
       end

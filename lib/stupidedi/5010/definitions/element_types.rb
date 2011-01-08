@@ -15,6 +15,8 @@ module Stupidedi
         end
 
         class << Nn
+          # @group Constructing a NumericVal
+
           # Parses the +string+ assuming {positions} digits are to the right of
           # an implied decimal point. Validates the format of +string+ according
           # to the X12 specification, and returns a failure on invalid input.
@@ -41,6 +43,8 @@ module Stupidedi
           def empty(instance = nil)
             Values::NumericVal.empty(instance)
           end
+
+          # @endgroup
 
           # Subclasses declare the number of implied decimal places by
           # implementing this method
@@ -104,6 +108,8 @@ module Stupidedi
         end
 
         class << R
+          # @group Constructing a DecimalVal
+
           # Parses the given +string+. Delegates the validation to
           # {Values::DecimalVal.value} and returns a failure on invalid input
           #
@@ -147,6 +153,8 @@ module Stupidedi
         end
 
         class << ID
+          # @group Constructing an IdentifierVal
+
           # Parses the given +string+, which always succeeds since no validation
           # is performed. Trailing whitespace is stripped, but leading
           # whitespace is preserved according to the X12 specification.
@@ -181,6 +189,8 @@ module Stupidedi
         end
 
         class << AN
+          # @group Constructing a StringVal
+
           # Parses the given +string+, which always succeeds since no validation
           # is performed. Trailing whitespace is stripped, but leading
           # whitespace is preserved according to the X12 specification.
@@ -226,6 +236,8 @@ module Stupidedi
         end
 
         class << DT
+          # @group Constructing a DateVal
+
           # Parses the given +string+, *without* respect to the declared length
           # given by the element definition. When the +string+ is eight digits,
           # the format is assumed to be "CCYYMMDD". When the +string+ is six
@@ -285,6 +297,8 @@ module Stupidedi
         end
 
         class << TM
+          # @group Constructing a TimeVal
+
           # Parses the given +string+, and if it consists only of two or more
           # numeric characters, delegates further validation to
           # #{Values::TimeVal.value}.

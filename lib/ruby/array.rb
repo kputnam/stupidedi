@@ -1,5 +1,4 @@
-# Mixin applied to Array
-module List
+class Array
 
   ##
   # Return the first item
@@ -100,5 +99,3 @@ module List
     [take(n), drop(n)]
   end
 end
-
-Array.send(:include, List)
