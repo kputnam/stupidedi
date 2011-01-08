@@ -52,6 +52,7 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
            end
 
     unless node
+      log.debug "Unknown node #{owner[:describes]} for spec defined in #{statement.file} near line #{statement.line}"
       # statement.file
       # statement.line
       # owner[:describes]

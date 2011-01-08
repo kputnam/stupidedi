@@ -82,9 +82,9 @@ end
 begin
   require "yard"
 
+  # Note options are loaded from .yardopts
   YARD::Rake::YardocTask.new do |t|
     t.files   = %w(lib/**/*.rb spec/examples/**/*.example)
-    t.options = %w(--no-private --load ./yard/rspec-plugin/lib/yard-rspec.rb)
   end
 rescue LoadError
   task :yard do

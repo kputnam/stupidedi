@@ -7,19 +7,23 @@ module Stupidedi
   end
 
   class << Input
+    # @return [Input::AbstractInput]
     def from_string(*args)
       from_delegate(*args)
     end
 
+    # @return [Input::AbstractInput]
     def from_array(*args)
       from_delegate(*args)
     end
 
-    def from_file(io, offset = 0, line = 0, column = 0)
-      Input::FileInput.new(io, offset = 0, line = 0, column = 0)
+    # @return [Input::AbstractInput]
+    def from_file(io, offset = 0, line = 1, column = 1)
+      Input::FileInput.new(io, offset, line, column)
     end
 
-    def from_delegate(s, offset = 0, line = 0, column = 0)
+    # @return [Input::AbstractInput]
+    def from_delegate(s, offset = 0, line = 1, column = 1)
       Input::DelegatedInput.new(s, offset, line, column)
     end
   end

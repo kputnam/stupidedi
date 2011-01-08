@@ -22,7 +22,16 @@ module Stupidedi
         suffix = delegate.drop(n)
         prefix = delegate.take(n)
 
-        self.class.new(suffix, @offset + prefix.length, @line + prefix.count("\n"), 0)
+        if start = prefix.rindex("\n")
+          column = prefix.length - start
+        else
+          column = @column + prefix.length
+        end
+
+        self.class.new(suffix,
+                       @offset + prefix.length,
+                       @line   + prefix.count("\n"),
+                       column)
       end
 
       def take(n)

@@ -2,10 +2,10 @@ module Stupidedi
   module Input
 
     #
-    # This class isn't thread safe, meaning if more than one thread has access
-    # to the same instance and they simultaneously call methods on that instance,
-    # the methods may produce incorrect results and the object might be left in
-    # an inconsistent state.
+    # @note This class is not thread-safe. If more than one +Thread+ has access
+    #   to the same instance, and they simultaneously call methods on that
+    #   instance, the methods may produce incorrect results and the object might
+    #   be left in an inconsistent state.
     #
     class FileInput < AbstractInput
       attr_reader :io, :offset, :line, :column
@@ -29,7 +29,17 @@ module Stupidedi
         prefix = @io.read(n)
         suffix = @io
 
-        self.class.new(suffix, @offset + prefix.length, line + prefix.count("\n"), 0, @size)
+        if start = prefix.rindex("\n")
+          column = prefix.length - start
+        else
+          column = @column + prefix.length
+        end
+
+        self.class.new(suffix,
+                       @offset + prefix.length,
+                       @line   + prefix.count("\n"),
+                       column,
+                       @size)
       end
 
       def take(n)
@@ -47,6 +57,8 @@ module Stupidedi
       def index(value)
         @io.seek(@offset)
         length = value.length
+
+        # We need to start with value != buffer, and this is a reasonable guess
         buffer = "\377" * length
 
         until @io.eof?

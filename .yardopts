@@ -1,1 +1,2 @@
 --no-private
+--load ./yard/rspec-plugin/lib/yard-rspec.rb
