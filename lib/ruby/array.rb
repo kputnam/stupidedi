@@ -64,7 +64,7 @@ class Array
   def take_until(accumulator = [], &block)
     # This is in tail call form
     unless empty? or yield(head)
-      tail.take_until(head.cons(accumulator), &block)
+      tail.take_until(head.snoc(accumulator), &block)
     else
       accumulator
     end
