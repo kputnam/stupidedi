@@ -39,7 +39,6 @@ end
 
 class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
   MATCH = /\A(?:its?|specify)\s+(['"])(.+?)\1(?:.*?)\s+(?:do|\{)/
-
   handles MATCH
   handles /\A(?:its?|specify)\s+(?:do|\{)/
   
