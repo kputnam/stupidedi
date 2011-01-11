@@ -43,19 +43,25 @@ module Stupidedi
         "stupidedi/5010/standards/999_FA_implementation_acknowledgment"
 
       # @private
-      S = SegmentDict
+      S = Dictionaries::SegmentDict
 
       # @private
-      L = Designations::LoopRepetition
+      L = Definitions::LoopRepetition
 
       # @private
-      R = Designations::SegmentRepetition
+      R = Definitions::SegmentRepetition
 
       # @private
-      M = Designations::SegmentRequirement::M
+      M = Definitions::SegmentRequirement::M
 
       # @private
-      O = Designations::SegmentRequirement::O
+      O = Definitions::SegmentRequirement::O
+
+      # @private
+      TableDef = Definitions::TableDef
+
+      # @private
+      LoopDef = Definitions::LoopDef
 
     end
 

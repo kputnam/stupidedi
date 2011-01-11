@@ -7,16 +7,19 @@ module Stupidedi
         E = ElementDict
 
         # @private
-        R = Designations::ElementRepetition
+        R = Definitions::ElementRepetition
 
         # @private
-        M = Designations::ElementRequirement::M
+        M = Definitions::ElementRequirement::M
 
         # @private
-        O = Designations::ElementRequirement::O
+        O = Definitions::ElementRequirement::O
 
         # @private
-        X = Designations::ElementRequirement::X
+        X = Definitions::ElementRequirement::X
+
+        # @private
+        SegmentDef = Definitions::SegmentDef
 
         ST = SegmentDef.new \
           "ST", "Transaction Set Header",

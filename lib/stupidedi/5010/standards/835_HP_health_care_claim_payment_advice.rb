@@ -12,7 +12,7 @@ module Stupidedi
       # to a health care provider either directly or via a financial
       # institution.
       #
-      module HealthCareClaimPayment
+      module HealthCareClaimPaymentAdvice
 
         def header
           TableDef.new("Table 1",

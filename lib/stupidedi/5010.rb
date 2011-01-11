@@ -1,7 +1,8 @@
 module Stupidedi
   module FiftyTen
-    autoload :Industry, "stupidedi/5010/industry"
-    autoload :Partners, "stupidedi/5010/partners"
+    autoload :TR3s,       "stupidedi/5010/tr3s"
+    autoload :Standards,  "stupidedi/5010/standards"
+    autoload :Partners,   "stupidedi/5010/partners"
 
     module Definitions
       autoload :ElementDef,   "stupidedi/5010/definitions/element_def"
@@ -16,7 +17,9 @@ module Stupidedi
 
       autoload :SegmentDef, "stupidedi/5010/definitions/segment_def"
       autoload :SegmentUse, "stupidedi/5010/definitions/segment_use"
-      autoload :LoopDef,    "stupidedi/5010/definitions/loop_def"
+
+      autoload :LoopDef,  "stupidedi/5010/definitions/loop_def"
+      autoload :TableDef, "stupidedi/5010/definitions/table_def"
 
       autoload :ElementRequirement, "stupidedi/5010/definitions/designations"
       autoload :ElementRepetition,  "stupidedi/5010/definitions/designations"

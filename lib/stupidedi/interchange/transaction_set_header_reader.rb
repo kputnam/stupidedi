@@ -40,31 +40,21 @@ module Stupidedi
         when "005010"
           case version[:industry_id]
           when "X212", "X212A1"
-            # 276 Status Request
-            # 277 Status Notification
-            Either.success(FiftyTen::Industry::Hipaa::X212)
+            Either.success(FiftyTen::TR3s::X212)
           when "X221", "X221A1"
-            # 835 Remittance Advice
-            Either.success(FiftyTen::Industry::Hipaa::X221)
+            Either.success(FiftyTen::TR3s::X221)
           when "X222", "X222A1"
-            # 837 Claim Professional
-            Either.success(FiftyTen::Industry::Hipaa::X222)
+            Either.success(FiftyTen::TR3s::X222)
           when "X223", "X223A1"
-            # 837 Claim Institutional
-            Either.success(FiftyTen::Industry::Hipaa::X223)
+            Either.success(FiftyTen::TR3s::X223)
           when "X224", "X224A1"
-            # 837 Claim Detal
-            Either.success(FiftyTen::Industry::Hipaa::X224)
+            Either.success(FiftyTen::TR3s::X224)
           when "X230", "X230A1"
-            # 997 Functional Acknowledgment
-            Either.success(FiftyTen::Industry::Hipaa::X230)
+            Either.success(FiftyTen::TR3s::X230)
           when "X231", "X231A1"
-            # 999 Implementation Acknowledgment
-            Either.success(FiftyTen::Industry::Hipaa::X231)
+            Either.success(FiftyTen::TR3s::X231)
           when "X279", "X279A1"
-            # 270 Eligibility Inquiry
-            # 271 Eligibility Response
-            Either.success(FiftyTen::Industry::Hipaa::X279)
+            Either.success(FiftyTen::TR3s::X279)
           else
             Either.failure("Unrecognized industry identifier #{version[:industry_id].inspect}", input)
           end
