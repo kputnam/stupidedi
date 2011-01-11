@@ -6,12 +6,15 @@ module Stupidedi
         DefaultReader.new(input, interchange_header)
       end
 
+      # @abstract
       def input
         raise NoMethodError, "Method input must be implemented in subclass"
       end
 
+      # @abstract
       def interchange_header
-        raise NoMethodError, "Method interchange_header must be implemented in subclass"
+        raise NoMethodError,
+          "Method interchange_header must be implemented in subclass"
       end
 
       def empty?
@@ -33,7 +36,7 @@ module Stupidedi
             buffer << character
 
             if s.length == buffer.length
-              # Written without ternary to track code coverage more granularly... gnulryngnuu
+              # Written without ternary to track code coverage
               if s == buffer
                 return success(advance(position))
               else
@@ -86,10 +89,16 @@ module Stupidedi
         failure("Reached end of input without finding a delimiter")
       end
 
-      # If a simple element definition is given, this returns an Either[Result[SimpleElementVal]].
-      # If a composite element definition is given, this returns an Either[Result[CompositeElementVal]].
-      # Otherwise, this returns an "unparsed" Either[Result[String]]. In any case, the delimeter
-      # immediately following the element is present in the remaining input.
+      # If a simple element definition is given, this returns an
+      # Either<Result<SimpleElementVal>>.
+      #
+      # If a composite element definition is given, this returns an
+      # Either<Result<CompositeElementVal>>.
+      #
+      # Otherwise, this returns an "unparsed" Either<Result<String>>.
+      #
+      # In any case, the delimeter immediately following the element is
+      # not consumed and will be present in the remaining input.
       def read_element(element_def = nil)
         if element_def.try(&:simple?)
           read_simple_element(element_def)
@@ -98,10 +107,14 @@ module Stupidedi
         end
       end
 
-      # When no argument is given, this returns an "unparsed" Either[Result[String]]. If a
-      # simple element definition is given, this returns an Either[Result[SimpleElementVal]].
-      # In both cases, the delimeter immediately following the element is present in the
-      # remaining input.
+      # When no argument is given, this returns an "unparsed"
+      # Either<Result<String>>.
+      #
+      # If a simple element definition is given, this returns an
+      # Either<Result<SimpleElementVal>>.
+      #
+      # In both cases, the delimeter immediately following the element is
+      # not consumed and will be present in the remaining input.
       def read_simple_element(simple_element_def = nil)
         position = 0
         buffer   = ""
@@ -127,7 +140,9 @@ module Stupidedi
                     end
 
         # Just return a plain unparsed string
-        return remainder.flatmap{|r| result(buffer, r) } if simple_element_def.nil?
+        if simple_element_def.nil?
+          return remainder.flatmap{|r| result(buffer, r) }
+        end
 
         # Let the element definition attempt to parse the string
         remainder.flatmap do |r|
@@ -135,17 +150,21 @@ module Stupidedi
             # Wrap this in a result
             result(value, r)
           end.or do |message|
-            # Roundabout way to report the offset from self.input, where self who
+            # Roundabout way to report the offset from self.input, where self
             # received the read_simple_element message.
             failure(message)
           end
         end
       end
 
-      # When no argument is given, this returns an "unparsed" Either[Result[String]]. If a
-      # composite element definition is given, this returns an Either[Result[CompositeElementVal]].
-      # In both cases, the delimeter immediately following the element is present in the
-      # remaining input.
+      # When no argument is given, this returns an "unparsed"
+      # Either<Result<String>>.
+      #
+      # If a composite element definition is given, this returns an
+      # Either<Result<CompositeElementVal>>.
+      #
+      # In both cases, the delimeter immediately following the element is
+      # not consumed and will be present in the remaining input.
       def read_composite_element(composite_element_def = nil)
         if composite_element_def.nil?
           position = 0
@@ -158,13 +177,13 @@ module Stupidedi
             when interchange_header.segment_terminator,
                  interchange_header.element_separator,
                  interchange_header.repetition_separator
-              # These all effectively terminate the composite element. In fact, they are
-              # terminals for simple elements too.
+              # These all effectively terminate the composite element. In fact,
+              # they are terminals for simple elements too.
               break
             when interchange_header.component_separator
-              # This terminates a component element, but we don't have any component element
-              # definitions to actually parse this. So we don't bother splitting up the
-              # component elements at all.
+              # This terminates a component element, but we don't have any
+              # component element definitions to actually parse this. So we
+              # don't bother splitting up the component elements at all.
               buffer << character
             else
               buffer << character unless is_control?
@@ -203,13 +222,13 @@ module Stupidedi
         end
 
         if input.defined_at?(position)
-          # Not sure if this is in the X12 specs, but it seems reasonable for now
+          # Not sure if this is in the X12 specs, but seems reasonable for now
           if buffer =~ /\A[A-Z][A-Z0-9]{1,2}\Z/
             allowed = [interchange_header.segment_terminator,
                        interchange_header.element_separator]
 
-            # We're cheating a bit, but we know that segment IDs must be directly
-            # followed by the segment_terminator or element_separator
+            # We're cheating a bit, but we know that segment IDs must be
+            # directly followed by the segment_terminator or element_separator
             if allowed.include?(input.at(position))
               result(buffer, advance(position))
             else
@@ -223,7 +242,6 @@ module Stupidedi
         end
       end
 
-      ##
       # TODO
       def read_segment(segment_def = nil)
         if segment_def.nil?
@@ -260,7 +278,9 @@ module Stupidedi
     private
 
       # Returns a new TokenReader with n characters consumed from input
+      #
       # @abstract
+      # @return [TokenReader]
       def advance(n)
         raise NoMethodError, "Method advance(n) must be implemented in subclass"
       end

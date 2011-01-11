@@ -19,7 +19,7 @@ module Stupidedi
     # remainder to then be an Either.failure. This does result in some confusing
     # client code though:
     #
-    #   x = UriSchemeReader.new("jabber://user@example.com").read.map do |result|
+    #   x = UriSchemeReader.new("xmpp://user@example.com").read.map do |result|
     #     # assuming UriSchemeReader#read returns Success[String, String]
     #     remainder = case result.value
     #                 when "http"
@@ -33,43 +33,42 @@ module Stupidedi
     #   end #=> Either[Success[String, Reader]]
     #
     #   x.map do |result|
-    #     # Given that x wasn't a Failure, then result is an instance of Success,
-    #     # since that was the return type of the block written above.
+    #     # Given that x wasn't Either.failure, then result is an instance of
+    #     # Success, since that was the return type of the block written above.
     #
     #     result.remainder.flatmap do |remainder|
     #       # Now if result.remainder wasn't a Failure we arrive here
     #       # with remainder being an instance of HttpUriReader, et al
     #       remainder.read
     #     end
-    #   end #=> Either[ whatever-the-return-type-of-HttpUriReader#read is ]
+    #   end #=> Either< whatever-the-return-type-of-HttpUriReader#read is >
     #       #
-    #       # Failure can happen as a result of the first call UriSchemeReader#read not
-    #       # being able to parse the scheme, or because the first block wasn't able to
-    #       # recognize the scheme (it wasn't "http" or "mailto"), or finally because the
-    #       # call to HttpUriReader#read in the second block failed.
+    #       # Failure can happen as a result of the first call
+    #       # UriSchemeReader#read not being able to parse the scheme, or
+    #       # because the first block wasn't able to recognize the scheme (it
+    #       # wasn't "http" or "mailto"), or finally because the call to
+    #       # HttpUriReader#read in the second block failed.
     #
-    #   # More breifly (the confusing to read part)
+    #   # More breifly
     #   y = x.map{|r| r.remainder.flatmap{|s| s.read }}
-    #       # Looking at this you can guess that x is an Either of something with
-    #       # a #remainder method. That #remainder method is also an Either, this
-    #       # time of something with a #read method.
+    #       # Looking at this you can guess that x is an Either of something
+    #       # with a #remainder method. That #remainder method is also an
+    #       # Either, this time of something with a #read method.
     #
     class Success
-      attr_reader \
-        :value,
-        :remainder
+      attr_reader :value
+
+      attr_reader :remainder
 
       def initialize(value, remainder)
         @value, @remainder = value, remainder
       end
 
-      ##
       # Transforms the value using the given block parameter
       def map
         self.class.new(yield(value), remainder)
       end
 
-      ##
       # Compares two Success instances, or directly compares the value to
       # the given the argument
       def ==(other)
@@ -83,6 +82,7 @@ module Stupidedi
     private
 
       # This is only to enable splat assignments.
+      #   value, remainder = *success
       include Enumerable
 
       def each

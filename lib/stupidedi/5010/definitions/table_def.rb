@@ -21,6 +21,10 @@ module Stupidedi
             raise TypeError, "Only LoopDef values may follow LoopDef values"
           end
         end
+
+        def reader(input, interchange_header)
+          # TODO
+        end
       end
 
     end

@@ -1,22 +1,18 @@
 module Stupidedi
   module FiftyTen
-    module Base
-      module TransactionSets
+    module Standards
 
-        # This X12 Transaction Set contains the format and establishes the data
-        # contents of the Health Care Claim Payment/Advice Transaction Set (835)
-        # for use within the context of the Electronic Data Interchange (EDI)
-        # environment. This transaction set can be used to make a payment, send
-        # # an Explanation of Benefits (EOB) remittance advice, or make a
-        # payment and send an EOB remittance advice only from a health insurer
-        # to a health care provider either directly or via a financial
-        # institution.
-
-        S = SegmentDict
-        L = Designations::LoopRepetition
-        R = Designations::SegmentRepetition
-        M = Designations::SegmentRequirement::M
-        O = Designations::SegmentRequirement::O
+      #
+      # This X12 Transaction Set contains the format and establishes the data
+      # contents of the Health Care Claim Payment/Advice Transaction Set (835)
+      # for use within the context of the Electronic Data Interchange (EDI)
+      # environment. This transaction set can be used to make a payment, send
+      # # an Explanation of Benefits (EOB) remittance advice, or make a
+      # payment and send an EOB remittance advice only from a health insurer
+      # to a health care provider either directly or via a financial
+      # institution.
+      #
+      module HealthCareClaimPayment
 
         def header
           TableDef.new("Table 1",
@@ -30,12 +26,12 @@ module Stupidedi
             S::CUR.segment_use( 500, O, R::Once),
             S::REF.segment_use( 600, O, R::Unbounded),
             S::DTM.segment_use( 700, O, R::Unbounded),
+
             LoopDef.new("1000", L::Max(200),
               # 1/800 N1 loop allows name/address information for the payer and
               # payee which would be utilzed to address remittance(s) for
               # delivery
               S::N1 .segment_use( 800, O, R::Once),
-
               S::N2 .segment_use( 900, O, R::Unbounded),
               S::N3 .segment_use(1000, O, R::Unbounded),
               S::N4 .segment_use(1100, O, R::Once),
@@ -89,8 +85,8 @@ module Stupidedi
             S::PLB.segment_use( 100, O, R::Unbounded)
             S::SE .segment_use( 200, M, R::Once)
         end
-
       end
+
     end
   end
 end
