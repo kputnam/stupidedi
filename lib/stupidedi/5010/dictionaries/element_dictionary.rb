@@ -22,34 +22,34 @@ module Stupidedi
         N  = Definitions::ElementTypes::N
 
         E19   = AN.new("E19"  , "City Name"                            , "", 2, 30)
-        E26   = ID.new("E26"  , "Country Code"                         , "", 2, 3)
+        E26   = ID.new("E26"  , "Country Code"                         , "", 2, 3)  # S5
         E28   = ID.new("E28"  , "Group Control Number"                 , "", 1, 9)
         E61   = AN.new("E61"  , "Free-form Information"                , "", 1, 30)
-        E66   = ID.new("E66"  , "Identification Code Qualifier"        , "", 1, 2)
+        E66   = ID.new("E66"  , "Identification Code Qualifier"        , "", 1, 2)  # 38=S5; SJ=S22; 16=SJ; XX=S537; XV=S540; SJ=S22
         E67   = AN.new("E67"  , "Identification Code"                  , "", 2, 80)
         E81   =  R.new("E81"  , "Weight"                               , "", 1, 10)
         E93   = AN.new("E93"  , "Name"                                 , "", 1, 60)
         E96   =  N.new("E96"  , "Number of Included Segments"          , "", 1, 10)
         E97   =  N.new("E97"  , "Number of Transaction Sets Included"  , "", 1, 6)
         E98   = ID.new("E98"  , "Entity Identifier Code"               , "", 2, 3)
-        E100  = ID.new("E100" , "Currency Code"                        , "", 3, 3)
-        E116  = ID.new("E116" , "Postal Code"                          , "", 3, 15)
+        E100  = ID.new("E100" , "Currency Code"                        , "", 3, 3)  # S5
+        E116  = ID.new("E116" , "Postal Code"                          , "", 3, 15) # S51, S932
         E118  =  R.new("E118" , "Rate"                                 , "", 1, 9)
         E124  = AN.new("E124" , "Application Receiver's Code"          , "", 2, 15)
         E127  = AN.new("E127" , "Reference Identification"             , "", 1, 50)
-        E128  = ID.new("E128" , "Reference Identification Qualifier"   , "", 2, 3)
+        E128  = ID.new("E128" , "Reference Identification Qualifier"   , "", 2, 3)  # ICD=S131; NF=S245; HPI=S537; ABY=S540; PXC=S682; D3=E307; ICMB=ICMB; MRC=S844
         E142  = AN.new("E142" , "Application's Sender Code"            , "", 2, 3)
         E143  = ID.new("E143" , "Transaction Set Identifier Number"    , "", 3, 3)
-        E156  = ID.new("E156" , "State or Province Code"               , "", 2, 2)
+        E156  = ID.new("E156" , "State or Province Code"               , "", 2, 2)  # S22
         E166  = AN.new("E166" , "Address Information"                  , "", 1, 55)
         E212  =  R.new("E212" , "Unit Price"                           , "", 1, 17)
         E234  = AN.new("E234" , "Product/Service ID"                   , "", 1, 48)
-        E235  = ID.new("E235" , "Product/Service ID Qualifier"         , "", 2, 2)
+        E235  = ID.new("E235" , "Product/Service ID Qualifier"         , "", 2, 2)  # CH=S5; A5=S22; DX,ID=S131; AD=S135; ER=S576; DC=S897; HC=S130; NU,RB=S132; N1,N2,N3,N4,N5,N6=S240; IV=S513; HP=S716; WK=S843; IP=S896
         E236  = ID.new("E236" , "Price Identifier Code"                , "", 3, 3)
         E280  =  R.new("E280" , "Exchange Rate"                        , "", 4, 10)
         E289  =  N.new("E289" , "Multiple Price Quantity"              , "", 1, 2)
         E305  = ID.new("E305" , "Transaction Handling Code"            , "", 1, 2)
-        E309  = ID.new("E309" , "Location Qualifier"                   , "", 1, 2)
+        E309  = ID.new("E309" , "Location Qualifier"                   , "", 1, 2)  # PQ=S51; PR,PS=S51
         E310  = ID.new("E310" , "Location Identifier"                  , "", 1, 30)
         E329  = ID.new("E329" , "Transaction Set Control Number"       , "", 4, 9)
         E332  =  R.new("E332" , "Percent, Decimal Format"              , "", 1, 6)
@@ -78,11 +78,11 @@ module Stupidedi
         E506  = ID.new("E506" , "DFI Identification Number Qualifier"  , "", 2, 2)
         E507  = AN.new("E507" , "DFI Identification Number"            , "", 3, 12)
         E508  = AN.new("E508" , "Account Number"                       , "", 1, 35)
-        E509  = AN.new("E509" , "Originating Company Identifier"       , "", 10, 10)
+        E509  = AN.new("E509" , "Originating Company Identifier"       , "", 10,10)
         E510  = AN.new("E510" , "Originating Company Supplemental Code", "", 9, 9)
         E522  = ID.new("E522" , "Amount Qualifier Code"                , "", 1, 3)
         E554  =  N.new("E554" , "Assigned Number"                      , "", 1, 6)
-        E559  = ID.new("E559" , "Agency Qualifier Code"                , "", 2, 2) # @note Copied from an unverified 4010 internet source
+        E559  = ID.new("E559" , "Agency Qualifier Code"                , "", 2, 2) # LB=S407 @note Copied from an unverified 4010 internet source
         E569  = ID.new("E569" , "Account Number Qualifier"             , "", 1, 3)
         E584  = ID.new("E584" , "Employment Status Code"               , "", 2, 2)
         E591  = ID.new("E591" , "Payment Method Code"                  , "", 3, 3)
@@ -125,7 +125,7 @@ module Stupidedi
         E1029 = ID.new("E1029", "Claim Status Code"                    , "", 1, 2)
         E1032 = ID.new("E1032", "Claim Filing Indicator Code"          , "", 1, 2)
         E1033 = ID.new("E1033", "Claim Adjustment Group Code"          , "", 1, 12)
-        E1034 = ID.new("E1034", "Claim Adjustment Reason Code"         , "", 1, 5)
+        E1034 = ID.new("E1034", "Claim Adjustment Reason Code"         , "", 1, 5)  # S139
         E1035 = AN.new("E1035", "Name Last or Organization Code"       , "", 1, 60)
         E1036 = AN.new("E1036", "Name First"                           , "", 1, 35)
         E1037 = AN.new("E1037", "Name Middle"                          , "", 1, 25)
@@ -149,19 +149,19 @@ module Stupidedi
         E1223 = ID.new("E1223", "Provider Organization Code"           , "", 3, 3)
         E1250 = ID.new("E1250", "Date Time Period Format Qualifier"    , "", 2, 3)
         E1251 = AN.new("E1251", "Date Time Period"                     , "", 1, 35)
-        E1270 = ID.new("E1270", "Code List Qualifier Code"             , "", 1, 3)
+        E1270 = ID.new("E1270", "Code List Qualifier Code"             , "", 1, 3)  # BO,BP=S130; BF,BJ,BK,BN,BQ,BR,DD,PR,SD,TD,AAU,AAV,AAX=S131; JO,JP,TQ,AAY=S135; HE=S411; 68=S682; ABF,ABJ,ABK,APR,ASD,ATD=S897; BE,BG,BH,BI,NUB=S132; DR=S229; NDC=S240; HO=S513; CAH=S843; BBQ,BBR=S896; UT=S582; AS=S1270; GR=S284; BT,BU,EK,GS,GU,GW,NI,PB,SJ,SL 
         E1271 = AN.new("E1271", "Industry Code"                        , "", 1, 30)
-        E1314 = ID.new("E1314", "Admission Source Code"                , "", 1, 1)
-        E1315 = ID.new("E1315", "Admission Type Code"                  , "", 1, 1)
+        E1314 = ID.new("E1314", "Admission Source Code"                , "", 1, 1)  # S230
+        E1315 = ID.new("E1315", "Admission Type Code"                  , "", 1, 1)  # S231
         E1316 = ID.new("E1316", "Ambulance Transport Code"             , "", 1, 1)
         E1317 = ID.new("E1317", "Ambulance Transport Reason Code"      , "", 1, 1)
         E1321 = ID.new("E1321", "Condition Indicator"                  , "", 2, 3)
         E1322 = ID.new("E1322", "Certification Type Code"              , "", 1, 1)
-        E1325 = ID.new("E1325", "Claim Frequency Type Code"            , "", 1, 1)
+        E1325 = ID.new("E1325", "Claim Frequency Type Code"            , "", 1, 1)  # S235
         E1327 = ID.new("E1327", "Copay Status Code"                    , "", 1, 1)
         E1328 =  N.new("E1328", "Diagnosis Code Pointer"               , "", 1, 2)
         E1331 = AN.new("E1331", "Facility Code Value"                  , "", 1, 2)
-        E1332 = ID.new("E1332", "Facility Code Identifier"             , "", 1, 2)
+        E1332 = ID.new("E1332", "Facility Code Qualifier"              , "", 1, 2)  # B=S237
         E1333 = ID.new("E1333", "Record Format Code"                   , "", 1, 2)
         E1334 = ID.new("E1334", "Professional Shortage Area Code"      , "", 1, 1)
         E1335 = ID.new("E1335", "Insulin Type Code"                    , "", 1, 3)
@@ -175,12 +175,12 @@ module Stupidedi
         E1343 = ID.new("E1343", "Non-Institutional Claim Type Code"    , "", 1, 2)
         E1345 = ID.new("E1345", "Nursing Home Residential Status Code" , "", 1, 1)
         E1351 = ID.new("E1351", "Patient Signature Source Code"        , "", 1, 1)
-        E1352 = ID.new("E1352", "Patient Status Code"                  , "", 1, 2)
-        E1354 = ID.new("E1354", "Diagnosis Related Group (DRG) Code"   , "", 1, 4)
+        E1352 = ID.new("E1352", "Patient Status Code"                  , "", 1, 2) # S239
+        E1354 = ID.new("E1354", "Diagnosis Related Group (DRG) Code"   , "", 1, 4) # S229
         E1358 = ID.new("E1358", "Prosthesis, Crown, or Inlay Code"     , "", 1, 1)
         E1359 = ID.new("E1359", "Provider Accept Assignment Code"      , "", 1, 1)
         E1360 = ID.new("E1360", "Provider Agreement Code"              , "", 1, 1)
-        E1361 = ID.new("E1361", "Oral Cavity Designation Code"         , "", 1, 3) # Code source 135 Americal Dental Association
+        E1361 = ID.new("E1361", "Oral Cavity Designation Code"         , "", 1, 3) # S135
         E1362 = ID.new("E1362", "Related-Causes Code"                  , "", 2, 3)
         E1363 = ID.new("E1363", "Release of Information Code"          , "", 1, 1)
         E1364 = ID.new("E1364", "Review Code"                          , "", 1, 2)
@@ -198,7 +198,7 @@ module Stupidedi
         E1526 = ID.new("E1526", "Policy Compliance Code"               , "", 1, 2)
         E1527 = ID.new("E1527", "Exception Code"                       , "", 1, 2)
         E1705 = AN.new("E1705", "Implementation Convention Reference"  , "", 1, 35)
-        E1715 = ID.new("E1715", "Country Subdivision Code"             , "", 1, 3)
+        E1715 = ID.new("E1715", "Country Subdivision Code"             , "", 1, 3)  # S5
 
 
         # @private
@@ -215,7 +215,7 @@ module Stupidedi
 
         C001 = CompositeElementDef.new \
           "C001", "Composite Unit of Measure",
-          "",
+          "To identify a composite unit of measure",
           E355 .component_use(M),
           E1018.component_use(O),
           E649 .component_use(O),
@@ -226,11 +226,11 @@ module Stupidedi
           E1018.component_use(O),
           E649 .component_use(O),
           E355 .component_use(O),
-          E1018.component_use(O),
-          E649 .component_use(O),
+          E1018.component_use(O), # If not used, value is interpreted as 1
+          E649 .component_use(O), # If not used, value is interpreted as 1
           E355 .component_use(O),
-          E1018.component_use(O),
-          E649 .component_use(O)
+          E1018.component_use(O), # If not used, value is interpreted as 1
+          E649 .component_use(O)  # If not used, value is interpreted as 1
 
         # @note Copied from an unverified 4010 internet source
         C002 = CompositeElementDef.new \
@@ -244,19 +244,19 @@ module Stupidedi
 
         C003 = CompositeElementDef.new \
           "C003", "Composite Medical Procedure Identifier",
-          "",
+          "To identify a procedure by its standardized codes and applicable modifiers",
           E235 .component_use(M),
-          E234 .component_use(M),
+          E234 .component_use(M), # Qualified by C003-01
           E1339.component_use(O),
           E1339.component_use(O),
           E1339.component_use(O),
           E1339.component_use(O),
           E352 .component_use(O),
-          E234 .component_use(O)
+          E234 .component_use(O)  # Qualified by C003-01
 
         C004 = CompositeElementDef.new \
           "C004", "Composite Diagnosis Code Pointer",
-          "",
+          "To identify one or more diagnosis code pointers",
           E1328.component_use(M),
           E1328.component_use(O),
           E1328.component_use(O),
@@ -281,7 +281,9 @@ module Stupidedi
           E1361.component_use(O)
 
         C022 = CompositeElementDef.new \
-          "C022", "Health Care Code Information", "",
+          "C022", "Health Care Code Information",
+          "To send health care codes and their associated dates, amounts and quantities",
+          # P0304; E0809
           E1270.component_use(M),
           E1271.component_use(M),
           E1250.component_use(X),
@@ -293,13 +295,15 @@ module Stupidedi
           E1073.component_use(X)
 
         C023 = CompositeElementDef.new \
-          "C023", "Health Care Service Location Information", "",
+          "C023", "Health Care Service Location Information",
+          "To provide information that identifies the place of service or the type of bill related to the location at which a health care service was rendered",
           E1331.component_use(M),
           E1332.component_use(O),
           E1325.component_use(O)
 
         C024 = CompositeElementDef.new \
-          "C024", "Related Causes Information", "",
+          "C024", "Related Causes Information",
+          "To identify one or more related causes and associated state or country information",
           E1362.component_use(O),
           E1362.component_use(M),
           E1362.component_use(O),
@@ -308,23 +312,26 @@ module Stupidedi
 
         # @note Copied from an unverified 4010 internet source
         C035 = CompositeElementDef.new \
-          "C035", "Provider Specialty Information", "",
+          "C035", "Provider Specialty Information",
+          ""
           E1222.component_use(M),
           E559 .component_use(O),
           E1073.component_use(O)
 
-        # @note Copied from an unverified 4010 internet source
         C040 = CompositeElementDef.new \
-          "C040", "Reference Identifier", "",
+          "C040", "Reference Identifier",
+          "To identify one or more reference numbers or identification numbers as specified by the Reference Qualifier",
+          # P0304; P0506
           E128.component_use(M),
           E127.component_use(M),
-          E128.component_use(O),
-          E127.component_use(O),
-          E128.component_use(O),
-          E127.component_use(O)
+          E128.component_use(X),
+          E127.component_use(X),
+          E128.component_use(X),
+          E127.component_use(X)
 
         C042 = CompositeElementDef.new \
-          "C042", "Adjustment Identifier", "",
+          "C042", "Adjustment Identifier",
+          "To provide the category and identifying reference information for an adjustment",
           E426.component_use(M),
           E127.component_use(O)
 

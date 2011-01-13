@@ -14,6 +14,9 @@ module Stupidedi
             input, interchange_header, loop_def
         end
 
+        # Reads only the "shallow" loop structure. That is, all the
+        # segment_uses from the {loop_def} are read into a LoopVal,
+        # but any nested loops are left remaining
         def read_loop
           read_first
         end
