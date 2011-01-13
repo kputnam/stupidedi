@@ -313,7 +313,7 @@ module Stupidedi
         # @note Copied from an unverified 4010 internet source
         C035 = CompositeElementDef.new \
           "C035", "Provider Specialty Information",
-          ""
+          "",
           E1222.component_use(M),
           E559 .component_use(O),
           E1073.component_use(O)

@@ -2,7 +2,7 @@ module Stupidedi
   module FiftyTen
     module TR3s
 
-      module X230
+      module X218
         class TransactionSetHeaderReader < Interchange::TransactionSetHeaderReader
           attr_reader :input, :interchange_header
 
@@ -13,7 +13,7 @@ module Stupidedi
 
         class << TransactionSetHeaderReader
           def versions
-            /^005010X230(A\d*)?$/
+            /^005010X218(A\d*)?$/
           end
         end
       end

@@ -29,8 +29,8 @@ module Stupidedi
     #     '---'             '---'
     #
     module TR3s
-      autoload :Designations,
-        "stupidedi/5010/industry/hipaa/designations"
+    # autoload :Designations,
+    #   "stupidedi/5010/tr3s/designations"
 
       # @group TR3s adopted by HIPAA
 

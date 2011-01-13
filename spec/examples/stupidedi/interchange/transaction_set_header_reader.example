@@ -4,6 +4,11 @@ describe Stupidedi::Interchange::TransactionSetHeaderReader do
   let(:reader) { Stupidedi::Interchange::TransactionSetHeaderReader }
   let(:isa)    { Stupidedi::Interchange::FiveOhOne::InterchangeHeader.default }
 
+  before do
+    ns = Stupidedi::FiftyTen::TR3s
+    ns.constants.each{|c| ns.const_get(c) }
+  end
+
   describe ".from_version" do
 
     # This is a mock of the GS08 Version Code field from the functional group header,
@@ -144,7 +149,7 @@ describe Stupidedi::Interchange::TransactionSetHeaderReader do
 
       it "produces an error message" do
         reader.from_version(version, "", isa).explanation.
-          should == "Version 4010 is not supported"
+          should == %[Unrecognized implementation version "004010"]
       end
 
       it "encodes the error offset"
@@ -162,7 +167,7 @@ describe Stupidedi::Interchange::TransactionSetHeaderReader do
 
       it "produces an error message" do
         reader.from_version(version, "", isa).explanation.
-          should == %[Unrecognized X12 version "003010"]
+          should == %[Unrecognized implementation version "003010"]
       end
 
       it "encodes the error offset"

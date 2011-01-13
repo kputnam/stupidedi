@@ -11,12 +11,10 @@ module Stupidedi
           end
         end
 
-        TransactionSetHeaderReader.eigenclass.send(:public, :new)
-      end
-
-      class << X224
-        def transaction_set_header_reader(input, interchange_header)
-          X224::TransactionSetHeaderReader.new(input, interchange_header)
+        class << TransactionSetHeaderReader
+          def versions
+            /^005010X224(A\d*)?$/
+          end
         end
       end
 
