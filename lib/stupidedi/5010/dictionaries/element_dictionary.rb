@@ -341,6 +341,7 @@ module Stupidedi
           E1109.component_use(O),
           E1270.component_use(X),
           E1271.component_use(X)
+
       end
     end
   end
