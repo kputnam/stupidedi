@@ -336,7 +336,8 @@ module Stupidedi
           E127.component_use(O)
 
         C056 = CompositeElementDef.new \
-          "C056", "Composite Race or Ethnicity Information", "",
+          "C056", "Composite Race or Ethnicity Information",
+          "",
           E1109.component_use(O),
           E1270.component_use(X),
           E1271.component_use(X)
