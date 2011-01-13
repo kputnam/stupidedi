@@ -20,7 +20,7 @@ module Stupidedi
             S::BPR.segment_use( 200, M, R::Once),
             S::NTE.segment_use( 300, O, R::Unbounded),
 
-            # 1/0400 TRN is used to uniquely identify a claim payment and advice
+            # TRN used to uniquely identify a claim payment and advice
             S::TRN.segment_use( 400, O, R::Once),
 
             S::CUR.segment_use( 500, O, R::Once),
@@ -28,7 +28,7 @@ module Stupidedi
             S::DTM.segment_use( 700, O, R::Unbounded),
 
             LoopDef.new("1000", L::Max(200),
-              # 1/800 N1 loop allows name/address information for the payer and
+              # N1 loop allows name/address information for the payer and
               # payee which would be utilzed to address remittance(s) for
               # delivery
               S::N1 .segment_use( 800, O, R::Once),
@@ -44,16 +44,15 @@ module Stupidedi
         def details
           TableDef.new("Table 2",
             LoopDef.new("2000", L::Unbounded,
-              # 2/0030 LX is used to provide a looping structure and logical
+              # LX is used to provide a looping structure and logical
               # grouping of claim payment information
               S::LX .segment_use(  30, O, R::Once),
 
-              S::TS3,segment_use(  50, O, R::Once),
+              S::TS3.segment_use(  50, O, R::Once),
               S::TS2.segment_use(  70, O, R::Once),
               LoopDef.new("2100", L::Unbounded,
                 S::CLP.segment_use( 100, M, R::Once),
-
-                # 2/0200 CAS used to reflect changes to amounts within Table 2
+                # CAS used to reflect changes to amounts within Table 2
                 S::CAS.segment_use( 200, O, R::Max(99)),
 
                 S::NM1.segment_use( 300, M, R::Max(9)),
@@ -67,11 +66,11 @@ module Stupidedi
                 LoopDef.new("2110", L::Max(999),
                   S::SVC.segment_use( 700, O, R::Once),
 
-                  # 2/0800 DTM is used to express dates and ranges specifically
+                  # DTM is used to express dates and ranges specifically
                   # related to the service identified in the SVC segment
                   S::DTM.segment_use( 800, O, R::Max(9)),
 
-                  # 2/0900 CAS used to reflect changes to amounts within Table 2
+                  # CAS used to reflect changes to amounts within Table 2
                   S::CAS.segment_use( 900, O, R::Max(99)),
 
                   S::REF.segment_use(1000, O, R::Max(99)),

@@ -151,6 +151,8 @@ module Stupidedi
         E1251 = AN.new("E1251", "Date Time Period"                     , "", 1, 35)
         E1270 = ID.new("E1270", "Code List Qualifier Code"             , "", 1, 3)
         E1271 = AN.new("E1271", "Industry Code"                        , "", 1, 30)
+        E1314 = ID.new("E1314", "Admission Source Code"                , "", 1, 1)
+        E1315 = ID.new("E1315", "Admission Type Code"                  , "", 1, 1)
         E1316 = ID.new("E1316", "Ambulance Transport Code"             , "", 1, 1)
         E1317 = ID.new("E1317", "Ambulance Transport Reason Code"      , "", 1, 1)
         E1321 = ID.new("E1321", "Condition Indicator"                  , "", 2, 3)
@@ -171,17 +173,23 @@ module Stupidedi
         E1341 = AN.new("E1341", "National or Local Assigned Review"    , "", 1, 2)
         E1342 = ID.new("E1342", "Nature of Condition Code"             , "", 1, 1)
         E1343 = ID.new("E1343", "Non-Institutional Claim Type Code"    , "", 1, 2)
+        E1345 = ID.new("E1345", "Nursing Home Residential Status Code" , "", 1, 1)
         E1351 = ID.new("E1351", "Patient Signature Source Code"        , "", 1, 1)
         E1352 = ID.new("E1352", "Patient Status Code"                  , "", 1, 2)
         E1354 = ID.new("E1354", "Diagnosis Related Group (DRG) Code"   , "", 1, 4)
+        E1358 = ID.new("E1358", "Prosthesis, Crown, or Inlay Code"     , "", 1, 1)
         E1359 = ID.new("E1359", "Provider Accept Assignment Code"      , "", 1, 1)
         E1360 = ID.new("E1360", "Provider Agreement Code"              , "", 1, 1)
+        E1361 = ID.new("E1361", "Oral Cavity Designation Code"         , "", 1, 3) # Code source 135 Americal Dental Association
         E1362 = ID.new("E1362", "Related-Causes Code"                  , "", 2, 3)
         E1363 = ID.new("E1363", "Release of Information Code"          , "", 1, 1)
         E1364 = ID.new("E1364", "Review Code"                          , "", 1, 2)
         E1365 = ID.new("E1365", "Service Type Code"                    , "", 1, 2)
         E1366 = ID.new("E1366", "Special Program Code"                 , "", 2, 3)
         E1367 = ID.new("E1367", "Sublaxation Level Code"               , "", 2, 3)
+        E1368 = ID.new("E1368", "Tooth Status Code"                    , "", 1, 2)
+        E1369 = ID.new("E1369", "Tooth Surface Code"                   , "", 1, 2)
+        E1371 = R .new("E1371", "Unit Rate"                            , "", 1, 10)
         E1383 = ID.new("E1383", "Claim Submission Reason Code"         , "", 2, 2)
         E1384 = ID.new("E1384", "Patient Location Code"                , "", 1, 1)
         E1473 = ID.new("E1473", "Pricing Methodology"                  , "", 2, 2)
@@ -206,7 +214,8 @@ module Stupidedi
         CompositeElementDef = Definitions::CompositeElementDef
 
         C001 = CompositeElementDef.new \
-          "C001", "Composite Unit of Measure", "",
+          "C001", "Composite Unit of Measure",
+          "",
           E355 .component_use(M),
           E1018.component_use(O),
           E649 .component_use(O),
@@ -225,7 +234,8 @@ module Stupidedi
 
         # @note Copied from an unverified 4010 internet source
         C002 = CompositeElementDef.new \
-          "C002", "Actions Indicated", "",
+          "C002", "Actions Indicated",
+          "",
           E704.component_use(M),
           E704.component_use(O),
           E704.component_use(O),
@@ -233,7 +243,8 @@ module Stupidedi
           E704.component_use(O)
 
         C003 = CompositeElementDef.new \
-          "C003", "Composite Medical Procedure Identifier", "",
+          "C003", "Composite Medical Procedure Identifier",
+          "",
           E235 .component_use(M),
           E234 .component_use(M),
           E1339.component_use(O),
@@ -244,11 +255,30 @@ module Stupidedi
           E234 .component_use(O)
 
         C004 = CompositeElementDef.new \
-          "C004", "Composite Diagnosis Code Pointer", "",
+          "C004", "Composite Diagnosis Code Pointer",
+          "",
           E1328.component_use(M),
           E1328.component_use(O),
           E1328.component_use(O),
           E1328.component_use(O)
+
+        C005 = CompositeElementDef.new \
+          "C005", "Tooth Surface",
+          "To identify one or more tooth surface codes",
+          E1369.component_use(M),
+          E1369.component_use(O),
+          E1369.component_use(O),
+          E1369.component_use(O),
+          E1369.component_use(O)
+
+        C006 = CompositeElementDef.new \
+          "C006", "Oral Cavity Designation",
+          "To identify one or more areas of oral cavity",
+          E1361.component_use(M),
+          E1361.component_use(O),
+          E1361.component_use(O),
+          E1361.component_use(O),
+          E1361.component_use(O)
 
         C022 = CompositeElementDef.new \
           "C022", "Health Care Code Information", "",

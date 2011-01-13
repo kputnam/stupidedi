@@ -1,3 +1,9 @@
 require "spec_helper"
 
-# TODO
+describe Stupidedi::FiftyTen::Readers::LoopReader do
+
+  describe "#read" do
+    pending
+  end
+
+end

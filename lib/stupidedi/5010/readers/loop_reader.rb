@@ -2,7 +2,7 @@ module Stupidedi
   module FiftyTen
     module Readers
 
-      class LoopReader < LoopReader
+      class LoopReader
         include Reader::TokenReader
 
         attr_reader :input, :interchange_header

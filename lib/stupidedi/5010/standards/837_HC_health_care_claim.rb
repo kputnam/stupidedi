@@ -36,7 +36,7 @@ module Stupidedi
         def header
           TableDef.new("Table 1",
             S::ST .segment_use(  50, M, R::Once),
-            S::BHT.segment_Use( 100, M, R::Once),
+            S::BHT.segment_use( 100, M, R::Once),
             S::REF.segment_use( 150, O, R::Max(3)),
             LoopDef.new("1000", L::Max(10),
               # Loop 1000 contains submittend and receiver information. If any
@@ -80,8 +80,10 @@ module Stupidedi
                 S::DN2.segment_use(1500, O, R::Max(35)),
                 S::PWK.segment_use(1550, O, R::Max(10)),
                 S::CN1.segment_use(1600, O, R::Once),
-                S::DSB.segment_use(1650, O, R::Once),
-                S::UR .segment_use(1700, O, R::Once),
+                # Can't find a definition for these segments because
+                # they aren't used in 837D, 837I, or 837P
+                # S::DSB.segment_use(1650, O, R::Once),
+                # S::UR .segment_use(1700, O, R::Once),
                 S::AMT.segment_use(1750, O, R::Max(40)),
                 S::REF.segment_use(1800, O, R::Max(30)),
                 S::K3 .segment_use(1850, O, R::Max(10)),
@@ -96,17 +98,23 @@ module Stupidedi
                 S::CR1.segment_use(1950, O, R::Once),
                 S::CR2.segment_use(2000, O, R::Once),
                 S::CR3.segment_use(2050, O, R::Once),
-                S::CR4.segment_use(2100, O, R::Max(3)),
-                S::CR5.segment_use(2150, O, R::Once),
-                S::CR6.segment_use(2160, O, R::Once),
-                S::CR8.segment_use(2190, O, R::Max(9)),
+                # Can't find a definition for these segments because
+                # they are not used in 837D, 837I, or 837P
+                # S::CR4.segment_use(2100, O, R::Max(3)),
+                # S::CR5.segment_use(2150, O, R::Once),
+                # S::CR6.segment_use(2160, O, R::Once),
+                # S::CR8.segment_use(2190, O, R::Max(9)),
                 S::CRC.segment_use(2200, O, R::Max(100)),
                 S::HI .segment_use(2310, O, R::Max(25)),
                 S::QTY.segment_use(2400, O, R::Max(10)),
                 S::HCP.segment_use(2410, O, R::Once),
-                LoopDef.new("2305", L::Max(6),
-                  S::CR7.segment_use(2420, O, R::Once),
-                  S::HSD.segment_use(2430, O, R::Max(12))),
+
+                # Can't find definitions for these segments because
+                # they are not used in 837D, 837I, or 837P
+                # LoopDef.new("2305", L::Max(6),
+                  # S::CR7.segment_use(2420, O, R::Once),
+                  # S::HSD.segment_use(2430, O, R::Max(12))),
+
                 LoopDef.new("2310", L::Max(9),
                   # Loop 2310 contains information about the rendering,
                   # referring, or attending provider.
@@ -146,10 +154,12 @@ module Stupidedi
                   S::SV2.segment_use(3750, O, R::Once),
                   S::SV3.segment_use(3800, O, R::Once),
                   S::TOO.segment_use(3820, O, R::Max(32)),
-                  S::SV4.segment_use(3850, O, R::Once),
-                  S::SV5,segment_use(4000, O, R::Once),
-                  S::SV6.segment_use(4050, O, R::Once),
-                  S::SV7.segment_use(4100, O, R::Once),
+                  # Can't find a definition for this segment because
+                  # they aren't not used in 837D, 837I, or 837P
+                  # S::SV4.segment_use(3850, O, R::Once),
+                  S::SV5.segment_use(4000, O, R::Once),
+                  # S::SV6.segment_use(4050, O, R::Once),
+                  # S::SV7.segment_use(4100, O, R::Once),
                   S::HI .segment_use(4150, O, R::Max(25)),
                   S::PWK.segment_use(4200, O, R::Max(10)),
                   # The CR1 through CR5 and CRC certification segments appear
@@ -162,8 +172,8 @@ module Stupidedi
                   S::CR1.segment_use(4250, O, R::Once),
                   S::CR2.segment_use(4300, O, R::Max(5)),
                   S::CR3.segment_use(4350, O, R::Once),
-                  S::CR4.segment_use(4400, O, R::Max(3)),
-                  S::CR5.segment_use(4450, O, R::Once),
+                  # S::CR4.segment_use(4400, O, R::Max(3)),
+                  # S::CR5.segment_use(4450, O, R::Once),
                   S::CRC.segment_use(4500, O, R::Max(3)),
                   S::DTP.segment_use(4550, O, R::Max(15)),
                   S::QTY.segment_use(4600, O, R::Max(5)),
@@ -174,8 +184,8 @@ module Stupidedi
                   S::K3 .segment_use(4800, O, R::Max(10)),
                   S::NTE.segment_use(4850, O, R::Max(10)),
                   S::PS1.segment_use(4880, O, R::Once),
-                  S::IMM.segment_use(4900, O, R::Unbounded),
-                  S::HSD.segment_use(4910, O, R::Once),
+                  # S::IMM.segment_use(4900, O, R::Unbounded),
+                  # S::HSD.segment_use(4910, O, R::Once),
                   S::HCP.segment_use(4920, O, R::Once),
                   LoopDef.new("2410", L::Unbounded,
                     # Loop 2410 contains compound drug components, quantities,

@@ -23,7 +23,12 @@ module Stupidedi
         end
 
         def reader(input, interchange_header)
-          # TODO
+          Readers::TableReader.new(input, interchange_header, self)
+        end
+
+        # @private
+        def tail
+          self.class.new(@name, *(@segment_uses + @loop_defs).tail)
         end
       end
 

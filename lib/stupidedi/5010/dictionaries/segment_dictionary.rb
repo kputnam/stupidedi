@@ -93,6 +93,13 @@ module Stupidedi
           E::E782 .simple_use(X, R::Once),
           E::E380 .simple_use(X, R::Once)
 
+        CL1 = SegmentDef.new \
+          "CL1", "Claim Codes",
+          E::E1315.simple_use(O, R::Once),
+          E::E1314.simple_use(O, R::Once),
+          E::E1352.simple_use(O, R::Once),
+          E::E1345.simple_use(O, R::Once)
+
         CLM = SegmentDef.new \
           "CLM", "Health Claim",
           E::E1028.simple_use(M, R::Once),
@@ -238,6 +245,22 @@ module Stupidedi
           E::E380 .simple_use(O, R::Once),
           E::E1270.simple_use(X, R::Once),
           E::E1271.simple_use(X, R::Once)
+
+        DN1 = SegmentDef.new \
+          "DN1", "Orthodontic Information",
+          E::E380 .simple_use(O, R::Once),
+          E::E380 .simple_use(O, R::Once),
+          E::E1073.simple_use(O, R::Once),
+          E::E352 .simple_use(O, R::Once)
+
+        DN2 = SegmentDef.new \
+          "DN2", "Tooth Summary",
+          E::E127 .simple_use(M, R::Once),
+          E::E1368.simple_use(O, R::Once),
+          E::E380 .simple_use(O, R::Once),
+          E::E1250.simple_use(X, R::Once),
+          E::E1251.simple_use(X, R::Once),
+          E::E1270.simple_use(M, R::Once)
 
         DTM = SegmentDef.new \
           "DTM", "Date/Time Reference",
@@ -589,6 +612,35 @@ module Stupidedi
           E::E1337.simple_use(O, R::Once),
           E::E1360.simple_use(O, R::Once)
 
+        SV2 = SegmentDef.new \
+          "SV2", "Institutional Service",
+        # "To specify the service line item detail for a health care institution",
+          E::E234 .simple_use(X, R::Once),
+          E::C003 .simple_use(X, R::Once),
+          E::E782 .simple_use(X, R::Once),
+          E::E355 .simple_use(X, R::Once),
+          E::E380 .simple_use(X, R::Once),
+          E::E1371.simple_use(O, R::Once),
+          E::E782 .simple_use(O, R::Once),
+          E::E1073.simple_use(O, R::Once),
+          E::E1345.simple_use(O, R::Once),
+          E::E1337.simple_use(O, R::Once)
+
+        SV3 = SegmentDef.new \
+          "SV3", "Dental Service",
+        # "To specify the service line item detail for dental work",
+          E::C003 .simple_use(M, R::Once),
+          E::E782 .simple_use(O, R::Once),
+          E::E1331.simple_use(O, R::Once),
+          E::C006 .simple_use(O, R::Once),
+          E::E1358.simple_use(O, R::Once),
+          E::E380 .simple_use(O, R::Once),
+          E::E352 .simple_use(O, R::Once),
+          E::E1327.simple_use(O, R::Once),
+          E::E1360.simple_use(O, R::Once),
+          E::E1073.simple_use(O, R::Once),
+          E::C004 .simple_use(O, R::Once)
+
         SV5 = SegmentDef.new \
           "SV5", "Durable Medical Equipment Service",
           E::C003.simple_use(M, R::Once),
@@ -615,6 +667,13 @@ module Stupidedi
           E::E234.simple_use(O, R::Once),
           E::E380.simple_use(O, R::Once),
           E::E554.simple_use(O, R::Once)
+
+        TOO = SegmentDef.new \
+          "TOO", "Tooth Identification",
+        # "To identify a tooth by number and, if applicable, one or more tooth surfaces",
+          E::E1270.simple_use(X, R::Once),
+          E::E1271.simple_use(X, R::Once),
+          E::C005 .simple_use(O, R::Once)
 
         TRN = SegmentDef.new \
           "TRN", "Trace",
