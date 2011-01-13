@@ -65,6 +65,7 @@ module Stupidedi
       end
 
       # Construct a RepeatedElementVal with this element as its sole element.
+      #
       # @note Intended for use by SegmentReader
       # @private
       def repeated

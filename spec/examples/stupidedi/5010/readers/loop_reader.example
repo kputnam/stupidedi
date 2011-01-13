@@ -1,9 +1,146 @@
 require "spec_helper"
 
 describe Stupidedi::FiftyTen::Readers::LoopReader do
-
   describe "#read" do
-    pending
-  end
+    let(:definitions) { Stupidedi::FiftyTen::Definitions }
 
+    def mk_loopdef(id, *segments)
+      definitions::LoopDef.new(id, definitions::LoopRepetition::Once, *segments)
+    end
+
+    def mk_segment(position, id, name, *elements)
+      definitions::SegmentDef.new(id, name, *elements).
+        segment_use(position,
+                    definitions::SegmentRequirement::M,
+                    definitions::SegmentRepetition::Once)
+    end
+
+    def mk_element(type, id, name, min = 1, max = 1)
+      definitions::ElementTypes.const_get(type).
+        new(id, name, "", min, max).
+        simple_use(definitions::ElementRequirement::M,
+                   definitions::ElementRepetition::Once)
+    end
+
+    context "when loop def has three segments" do
+      let(:isa) { Stupidedi::Interchange::FiveOhOne::InterchangeHeader }
+
+      let(:loop_def) do
+        mk_loopdef("LOOP-EX",
+          mk_segment(100, "XXX", "First segment",
+            mk_element(:ID, "XXX-1", "XXX-1"),
+            mk_element(:AN, "XXX-2", "XXX-2"),
+            mk_element(:R , "XXX-3", "XXX-3")),
+          mk_segment(200, "YYY", "Second segment",
+            mk_element(:AN, "YYY-1", "YYY-1"),
+            mk_element(:N1, "YYY-2", "YYY-2"),
+            mk_element(:ID, "YYY-3", "YYY-3")),
+          mk_segment(300, "ZZZ", "Third segment",
+            mk_element(:N0, "ZZZ-1", "ZZZ-1"),
+            mk_element(:DT, "ZZZ-2", "ZZZ-2", 8, 8),
+            mk_element(:TM, "ZZZ-3", "ZZZ-3")))
+      end
+
+      context "and only the first segment is present" do
+        let(:input) { "XXX*..*..*12.34~" }
+
+        it "reads the first segment" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+
+      context "and only the first two segments are present" do
+        let(:input) { "XXX*..*..*12.34~YYY*..*39*..~" }
+
+        it "reads the first two segments" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+
+      context "and all three segments are present" do
+        let(:input) { "XXX*..*..*12.34~YYY*..*1234*..~ZZZ*1234*20111213*1415~" }
+
+        it "reads all three segments" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+
+      # @error-handling
+      context "and only the last two segments are present" do
+        let(:input) { "YYY*..*1234*..~ZZZ*1234*20111213*1415~" }
+
+        it "is not defined" do
+          loop_def.reader(input, isa.default).read.should_not be_defined
+        end
+      end
+
+      # @error-handling
+      context "and only the second segment is present" do
+        let(:input) { "YYY*..*1234*..~..." }
+
+        it "is not defined" do
+          loop_def.reader(input, isa.default).read.should_not be_defined
+        end
+      end
+
+      # @error-handling
+      context "and only the last segment is present" do
+        let(:input) { "ZZZ*1234*20111213*1415~..." }
+
+        it "is not defined" do
+          loop_def.reader(input, isa.default).read.should_not be_defined
+        end
+      end
+
+      # @error-handling
+      context "and the first segment occurs out of order" do
+        let(:input) { "YYY*..*1234*..~XXX*..*..*12.34~ZZZ*1234*20111213*1415~" }
+
+        it "is not defined" do
+          loop_def.reader(input, isa.default).read.should_not be_defined
+        end
+      end
+
+      context "and the second segment occurs after the third" do
+        let(:input) { "XXX*..*..*12.34~ZZZ*1234*20111213*1415~YYY*..*1234*..~" }
+
+        it "is defined" do
+          loop_def.reader(input, isa.default).read.should be_defined
+        end
+
+        it "reads the first and third segment" do
+          loop_def.reader(input, isa.default).read
+        end
+
+        it "stops reading before the second segment" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+
+      context "and the first segment is repeated twice" do
+        let(:input) { "XXX*..*..*12.34~XXX*--*--*43.21~YYY*..*1234*..~ZZZ*1234*20111213*1415~" }
+
+        it "stops reading before the second occurrence" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+
+      context "and the second segment is repeated twice" do
+        let(:input) { "XXX*..*..*12.34~YYY*..*1234*..~YYY*--*4321*--~ZZZ*1234*20111213*1415~" }
+
+        it "reads both occurrences of the second segment" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+
+      context "and the third segment is repeated twice" do
+        let(:input) { "XXX*..*..*12.34~YYY*..*1234*..~ZZZ*1234*20111213*1415~ZZZ*4444**0000~" }
+
+        it "reads both occurrences of the third segment" do
+          loop_def.reader(input, isa.default).read
+        end
+      end
+    end
+
+  end
 end

@@ -31,6 +31,14 @@ module Stupidedi
       # administering and monitoring a statutory benefits program or a specific
       # health care/insurance industry segment
       #
+      # Known TR3s (these may have addendums)
+      #   {TR3s::X222} 005010XX22 Health Care Claim - Professional
+      #   {TR3s::X223} 005010X223 Health Care Claim - Institutional
+      #   {TR3s::X224} 005010X224 Health Care Claim - Dental
+      #   {TR3s::X225} 005010X225 Health Care Services Data Reporting
+      #   {TR3s::X291} 005010X291 Health Care Predetermination: Professional
+      #   {TR3s::X292} 005010X292 Health Care Predetermination: Institutional
+      #
       module HealthCareClaim
 
         def header

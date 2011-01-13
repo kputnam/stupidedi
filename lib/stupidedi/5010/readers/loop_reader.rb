@@ -36,11 +36,12 @@ module Stupidedi
         end
 
         def read_segments
-          if loop_def.segment_uses.empty?
+          if @loop_def.segment_uses.empty?
             return result([], @input)
           end
 
-          head, *tail = @loop_def.segment_uses
+          head = @loop_def.segment_uses.head
+
           read_segment(head.segment_def).flatmap do |r|
             rest = self.class.from_reader(r.remainder, @loop_def)
             rest.read_segments.map{|s| s.map{|ss| r.value.cons(ss) }}

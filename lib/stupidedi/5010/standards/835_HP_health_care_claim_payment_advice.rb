@@ -12,6 +12,9 @@ module Stupidedi
       # to a health care provider either directly or via a financial
       # institution.
       #
+      # Known TR3s
+      #   {TR3s::X221} 005010X221 Health Care Claim Payment / Advice
+      #
       module HealthCareClaimPaymentAdvice
 
         def header
