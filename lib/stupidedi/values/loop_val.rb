@@ -27,7 +27,7 @@ module Stupidedi
         unless parent.nil?
           @header_segment_vals  = @header_segment_vals.map{|x| x.copy(:parent => self) }
           @loop_vals            = @loop_vals.map{|x| x.copy(:parent => self) }
-          @trailer_segment_vals = @header_segment_vals.map{|x| x.copy(:parent => self) }
+          @trailer_segment_vals = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
         end
       end
 

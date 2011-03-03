@@ -18,7 +18,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "StringVal.empty#{def_id}"
+                "AN.empty#{def_id}"
               end
 
               # @private
@@ -51,7 +51,7 @@ module Stupidedi
 
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "StringVal.value#{def_id}(#{@value})"
+                "AN.value#{def_id}(#{@value})"
               end
 
               def empty?

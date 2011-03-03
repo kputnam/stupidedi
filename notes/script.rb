@@ -1,3 +1,5 @@
+require 'stupidedi'
+
 config = Stupidedi::Configuration.new;nil
 config.interchange.register(Stupidedi::Dictionaries::Interchanges::FiveOhOne::InterchangeDef, "00501");nil
 config.functional_group.register(Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::FunctionalGroupDef, "005010");nil

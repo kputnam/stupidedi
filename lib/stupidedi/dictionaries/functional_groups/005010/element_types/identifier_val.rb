@@ -19,7 +19,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "IdentifierVal.empty#{def_id}"
+                "ID.empty#{def_id}"
               end
 
               # @private
@@ -58,7 +58,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "IdentifierVal.value#{def_id}(#{@value})"
+                "ID.value#{def_id}(#{@value})"
               end
 
               # @note Not commutative, because String doesn't call coerce

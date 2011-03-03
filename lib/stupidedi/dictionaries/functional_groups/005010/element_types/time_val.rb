@@ -18,7 +18,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "TimeVal.empty#{def_id}"
+                "TM.empty#{def_id}"
               end
 
               # @private
@@ -80,7 +80,7 @@ module Stupidedi
                 hh =   @hour.try{|h| '%02d' % h } || 'hh'
                 mm = @minute.try{|m| '%02d' % m } || 'mm'
                 ss = @second.try(:to_s) || 'ss'
-                "TimeVal.value#{def_id}(#{hh}:#{mm}:#{ss})"
+                "TM.value#{def_id}(#{hh}:#{mm}:#{ss})"
               end
 
               # @private

@@ -18,7 +18,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "NumericVal.empty#{def_id}"
+                "Nn.empty#{def_id}"
               end
 
               # @private
@@ -57,9 +57,12 @@ module Stupidedi
 
               # @private
               def coerce(other)
-                if other.is_a?(Numeric)
+                if other.is_a?(::Numeric)
                   # Re-evaluate other.call(self) as self.op(other)
                   return self, other
+                elsif other.is_a?(DecimalVal)
+                  # Re-evaluate other.call(self) as self.op(other)
+                  return self, other.to_d
                 else
                   # Fail, other.call(self) is still other.call(self)
                   raise TypeError, "#{other.class} can't be coerced into #{self.class}"
@@ -69,7 +72,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "NumericVal.value#{def_id}(#{@value.to_s('F')})"
+                "Nn.value#{def_id}(#{@value.to_s('F')})"
               end
 
               # @group Mathematical Operators
@@ -144,7 +147,7 @@ module Stupidedi
 
               # @return [-1, 0, +1]
               def <=>(other)
-                if other.is_a?(self.class)
+                if other.is_a?(NumericVal) or other.is_a?(DecimalVal)
                   @value <=> other.value
                 else
                   @value <=> other

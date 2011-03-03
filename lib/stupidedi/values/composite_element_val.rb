@@ -66,14 +66,19 @@ module Stupidedi
       def pretty_print(q)
         id = @definition.try{|e| "[#{e.id}]" }
         q.text("CompositeElementVal#{id}")
-        q.group(2, "(", ")") do
-          q.breakable ""
-          @component_element_vals.each do |e|
-            unless q.current_group.first?
-              q.text ", "
-              q.breakable
+
+        if empty?
+          q.text ".empty"
+        else
+          q.group(2, "(", ")") do
+            q.breakable ""
+            @component_element_vals.each do |e|
+              unless q.current_group.first?
+                q.text ", "
+                q.breakable
+              end
+              q.pp e
             end
-            q.pp e
           end
         end
       end
