@@ -1,13 +1,7 @@
 module Stupidedi
   module Values
 
-    #
-    # Represents an occurence of a composite element. Composite elements are
-    # somewhat analagous to "struct" values in C -- except their members must
-    # be native types (ie SimpleElementVal), so they cannot be nested
-    # recursively. The composite definition (CompositeElementDef) dictates the
-    # specific type of each component element.
-    #
+    # @see X222 B.1.1.3.3 Composite Data Structure
     class CompositeElementVal < AbstractVal
       attr_reader :element_def
       alias_method :definition, :element_def
@@ -21,7 +15,7 @@ module Stupidedi
       # Type check disabled as an optimization, no "client code" is expected to
       # directly construct CompositeElementVal values anyways.
       #
-      # unless element_def.is_a?(CompositeElementDef)
+      # unless element_def.is_a?(Definitions::CompositeElementDef)
       #   raise TypeError,
       #     "First argument must be a kind of CompositeElementDef"
       # end
@@ -61,12 +55,12 @@ module Stupidedi
 
       # @private
       def append(element_val)
-        self.class.new(element_def, element_val.snoc(@component_element_vals))
+        CompositeElementVal.new(element_def, element_val.snoc(@component_element_vals))
       end
 
       # @private
       def prepend(element_val)
-        self.class.new(element_def, element_val.cons(@component_element_vals))
+        CompositeElementVal.new(element_def, element_val.cons(@component_element_vals))
       end
 
       # @private

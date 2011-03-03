@@ -12,10 +12,6 @@ module Stupidedi
           true
         end
 
-        def present?
-          false
-        end
-
         # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
@@ -49,17 +45,13 @@ module Stupidedi
           false
         end
 
-        def present?
-          true
-        end
-
         # @note Not commutative
         # @private
         def ==(other)
           if other.is_a?(self.class)
-            delegate == other.delegate
+            @delegate == other.delegate
           else
-            delegate == other
+            @delegate == other
           end
         end
       end

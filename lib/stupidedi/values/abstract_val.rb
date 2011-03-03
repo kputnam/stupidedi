@@ -2,11 +2,16 @@ module Stupidedi
   module Values
 
     class AbstractVal
-      def definition
-      end
+      # @return [SimpleElementDef,
+      #          CompositeElementDef,
+      #          LoopDef,
+      #          SegmentDef,
+      #          TableDef]
+      abstract :definition
 
-      def empty?
-      end
+      # @see X222 B.1.3.10 Absence of Data
+      # @return [Boolean]
+      abstract :empty?
 
       def present?
         not empty?

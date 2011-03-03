@@ -12,10 +12,6 @@ module Stupidedi
           true
         end
 
-        def present?
-          false
-        end
-
         # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
@@ -44,10 +40,6 @@ module Stupidedi
 
         def empty?
           false
-        end
-
-        def present?
-          true
         end
 
         # @return [Time]

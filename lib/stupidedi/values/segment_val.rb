@@ -1,7 +1,8 @@
 module Stupidedi
   module Values
 
-    class SegmentVal
+    # @see X222 B.1.1.3.4 Data Segment
+    class SegmentVal < AbstractVal
       attr_reader :segment_def
       alias_method :definition, :segment_def
 
@@ -15,16 +16,12 @@ module Stupidedi
         @element_vals.all?(&:empty?)
       end
 
-      def present?
-        not empty?
-      end
-
       def [](n)
         @element_vals[n]
       end
 
       # @private
-      def pretty_print(q)
+      def prtty_print(q)
         q.text("SegmentVal[#{segment_def.try(:id)}]")
         q.group(1, "(", ")") do
           q.breakable ""
