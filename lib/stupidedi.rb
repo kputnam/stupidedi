@@ -14,6 +14,7 @@ require "ruby/enumerable"
 require "ruby/string"
 require "ruby/try"
 require "ruby/to_d"
+require "ruby/threadlocal"
 
 module Stupidedi
   autoload :Either,       "stupidedi/either"
