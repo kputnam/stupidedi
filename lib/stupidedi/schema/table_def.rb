@@ -14,13 +14,15 @@ module Stupidedi
       # @return [Array<LoopDef>]
       attr_reader :loop_defs
 
-      # @todo
       # @return [TransactionSetDef]
       attr_reader :parent
 
-      def initialize(id, header_segment_uses, loop_defs, trailer_segment_uses)
-        @id, @header_segment_uses, @loop_defs, @trailer_segment_uses =
-          id, header_segment_uses, loop_defs, trailer_segment_uses
+      # @todo: Is this temporary?
+      attr_reader :position
+
+      def initialize(id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent)
+        @id, @position, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
+          id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent
 
         @header_segment_uses  = @header_segment_uses.map{|x| x.copy(:parent => self) }
         @loop_defs            = @loop_defs.map{|x| x.copy(:parent => self) }
@@ -30,9 +32,25 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),
+          changes.fetch(:position, @position),
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:loop_defs, @loop_defs),
-          changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
+          changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
+          changes.fetch(:parent, @parent)
+      end
+
+      def start_segment_use
+        @header_segment_uses.first or @loop_defs.first.start_segment_use
+      end
+
+      # @return [Values::TableVal]
+      def value(header_segment_vals, loop_vals, trailer_segment_vals, parent = nil)
+        Values::TableVal.new(self, header_segment_vals, loop_vals, trailer_segment_vals, parent)
+      end
+
+      # @return [Values::TableVal]
+      def empty(parent = nil)
+        Values::TableVal.new(self, [], [], [], parent)
       end
 
       # @private
@@ -69,7 +87,7 @@ module Stupidedi
       def build(id, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, header, loop_defs, trailer, nil)
+        new(id, nil, header, loop_defs, trailer, nil)
       end
     end
 

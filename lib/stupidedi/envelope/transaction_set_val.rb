@@ -6,11 +6,15 @@ module Stupidedi
       # @return [TransactionSetDef]
       attr_reader :definition
 
+      # @return [Array<TableVal>]
+      attr_reader :table_vals
+
       # @return [FunctionalGroupVal]
       attr_reader :parent
 
       def initialize(definition, table_vals, parent)
-        @definition, @table_vals, @parent = definition, table_vals, parent
+        @definition, @table_vals, @parent =
+          definition, table_vals, parent
 
         @table_vals = table_vals.map{|x| x.copy(:parent => self) }
       end

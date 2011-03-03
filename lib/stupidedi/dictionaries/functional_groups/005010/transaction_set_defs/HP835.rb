@@ -11,6 +11,7 @@ module Stupidedi
 
           HP835 = e::TransactionSetDef.build("HP", "835",
             d::TableDef.build("Table 1 - Header",
+              s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::BPR.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
               s::NTE.use(300, r::Mandatory, d::RepeatCount.unbounded),
               s::TRN.use(400, r::Optional,  d::RepeatCount.bounded(1)),
@@ -51,7 +52,8 @@ module Stupidedi
                     s::QTY.use(1200, r::Optional,  d::RepeatCount.bounded(20)),
                     s:: LQ.use(1300, r::Optional,  d::RepeatCount.bounded(99))))),
             d::TableDef.build("Table 3 - Summary",
-              s::PLB.use(100, r::Optional,  d::RepeatCount.unbounded)))
+              s::PLB.use(100, r::Optional,  d::RepeatCount.unbounded),
+              s:: SE.use(200, r::Mandatory, d::RepeatCount.bounded(1))))
         
         end
       end

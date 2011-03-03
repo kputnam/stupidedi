@@ -56,6 +56,10 @@ module Stupidedi
         @header_segment_uses.head.definition.id == :HL
       end
 
+      def start_segment_use
+        @header_segment_uses.head
+      end
+
       def value(header_segment_vals, loop_vals, trailer_segment_vals, parent = nil)
         LoopVal.new(self, header_segment_vals, loop_vals, trailer_segment_vals, parent)
       end
@@ -98,6 +102,8 @@ module Stupidedi
       def build(id, repeat_count, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
+
+        # @todo: Ensure there is at least one SegmentUse in header
         new(id, repeat_count, header, loop_defs, trailer, nil)
       end
     end

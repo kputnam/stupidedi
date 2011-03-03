@@ -11,6 +11,7 @@ module Stupidedi
 
           HC837 = e::TransactionSetDef.build("HC", "837",
             d::TableDef.build("Table 1 - Header",
+              s:: ST.use( 50, r::Mandatory, d::RepeatCount.bounded(1)),
               s::BHT.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::REF.use(150, r::Optional,  d::RepeatCount.bounded(3)),
               d::LoopDef.build("1000", d::RepeatCount.bounded(10),
@@ -137,7 +138,8 @@ module Stupidedi
                       s::AMT.use(5505, r::Optional,  d::RepeatCount.bounded(20))),
                     d::LoopDef.build("2440", d::RepeatCount.unbounded,
                       s:: LQ.use(5510, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::FRM.use(5520, r::Mandatory, d::RepeatCount.bounded(99))))))))
+                      s::FRM.use(5520, r::Mandatory, d::RepeatCount.bounded(99)))))),
+              s:: SE.use(5550, r::Mandatory, d::RepeatCount.bounded(1))))
 
         end
       end

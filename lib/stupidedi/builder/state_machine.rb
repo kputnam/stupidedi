@@ -27,6 +27,12 @@ module Stupidedi
         # states, failures = successors.patition(&:stuck?)
         self.class.new(successors)
       end
+
+      def value
+        if @states.length == 1
+          @states.first.value
+        end
+      end
     end
 
     class << StateMachine

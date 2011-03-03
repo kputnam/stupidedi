@@ -15,7 +15,12 @@ module Stupidedi
         @functional_group, @id, @table_defs =
           functional_group, id, table_defs
 
-        @table_defs = table_defs.map{|x| x.copy(:parent => self) }
+        # @todo: This assigns an implied parsing order, but depending on the
+        # order in which tables can occur, either the user should assign these
+        # when calling TableDef.build or the parser should implicitly order the
+        # tables on its own. This is temporary
+        position    = 0
+        @table_defs = table_defs.map{|x| x.copy(:parent => self, :position => (position += 1)) }
       end
 
       def copy(changes = {})
@@ -23,6 +28,24 @@ module Stupidedi
           changes.fetch(:functional_group, @functional_group),
           changes.fetch(:id, @id),
           changes.fetch(:table_defs, @table_defs)
+      end
+
+      def value(header_segment_vals, parent = nil)
+        TransactionSetVal.new(self, @table_defs.head.value(header_segment_vals, [], []).cons, parent)
+      end
+
+      def empty(parent = nil)
+        TransactionSetVal.new(self, [], parent)
+      end
+
+      # @return [SegmentUse]
+      def first_segment_use
+        @table_defs.head.header_segment_uses.head
+      end
+
+      # @return [SegmentUse]
+      def last_segment_use
+        @table_defs.last.trailer_segment_uses.last
       end
 
       # @private

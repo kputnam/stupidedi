@@ -2,30 +2,31 @@ module Stupidedi
   module Builder
 
     class TransmissionBuilder < AbstractState
+
       # @return [Array<InterchangeVal>]
-      attr_reader :interchange_vals
+      attr_reader :value
 
       # @return [Envelope::Router]
       attr_reader :router
 
       def initialize(router, interchange_vals)
-        @router, @interchange_vals = router, interchange_vals
-      end
-
-      def stuck?
-        false
+        @router, @value = router, interchange_vals
       end
 
       # @return [TransmissionBuilder]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:router, @router),
-          changes.fetch(:interchange_vals, @interchange_vals)
+          changes.fetch(:value, @value)
       end
 
       # @return [TransmissionBuilder]
-      def append(interchange_val)
-        copy(:interchange_vals => interchange_val.snoc(@interchange_vals))
+      def merge(interchange_val)
+        copy(:value => interchange_val.snoc(@value))
+      end
+
+      def stuck?
+        false
       end
 
       def segment(name, elements)
@@ -42,6 +43,8 @@ module Stupidedi
           # Construct an ISA segment
           segment_use = envelope_def.header_segment_uses.head
           segment_val = construct(segment_use, elements)
+
+          # Construct an InterchangeVal containing the ISA segment
           interchange_val = envelope_def.value(segment_val.cons, [], [])
 
           step(InterchangeBuilder.start(interchange_val, self))
@@ -54,7 +57,7 @@ module Stupidedi
         q.text("TransmissionBuilder")
         q.group(2, "(", ")") do
           q.breakable ""
-          @interchange_vals.each do |e|
+          @value.each do |e|
             unless q.current_group.first?
               q.text ","
               q.breakable

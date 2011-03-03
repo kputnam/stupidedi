@@ -40,12 +40,12 @@ module Stupidedi
       end
 
       # @return [TableVal]
-      def append_header(segment_val)
+      def append_header_segment(segment_val)
         copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
       end
 
       # @return [TableVal]
-      def append_trailer(segment_val)
+      def append_trailer_segment(segment_val)
         copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
       end
 

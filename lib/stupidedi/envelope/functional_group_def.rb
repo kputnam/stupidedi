@@ -30,6 +30,9 @@ module Stupidedi
       attr_reader :header_segment_uses
 
       # @return [Array<SegmentUses>]
+      attr_reader :trailer_segment_uses
+
+      # @return [Array<SegmentUses>]
       attr_reader :transaction_set_uses
 
       def initialize(id, header_segment_uses, trailer_segment_uses)
@@ -47,6 +50,10 @@ module Stupidedi
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
           changes.fetch(:parent, @parent)
+      end
+
+      def segment_uses
+        @header_segment_uses + @trailer_segment_uses
       end
 
       # @return [FunctionalGroupVal]

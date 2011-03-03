@@ -163,37 +163,37 @@ module Stupidedi
         # @example
         #   table = TransactionSetRouter.new(functional_group_implementation)
         #
-        #   table.register(Hipaa::X212::HR276, "X212", "HR", "276")
-        #   table.register(Hipaa::X212::HN277, "X212", "HN", "277")
+        #   table.register(Hipaa::X212::HR276, "005010X212")#, "HR", "276")
+        #   table.register(Hipaa::X212::HN277, "005010X212")#, "HN", "277")
         #
-        #   table.register(Hipaa::X217::HI278, "X217", "HI", "278")
-        #   table.register(Hipaa::X218::820RA, "X218", "RA", "820")
-        #   table.register(Hipaa::X220::BE834, "X220", "BE", "834")
-        #   table.register(Hipaa::X221::HP835, "X221", "HP", "835")
+        #   table.register(Hipaa::X217::HI278, "005010X217")#, "HI", "278")
+        #   table.register(Hipaa::X218::820RA, "005010X218")#, "RA", "820")
+        #   table.register(Hipaa::X220::BE834, "005010X220")#, "BE", "834")
+        #   table.register(Hipaa::X221::HP835, "005010X221")#, "HP", "835")
         #
-        #   table.register(Hipaa::X222::HC837, "X222", "HC", "837")
-        #   table.register(Hipaa::X223::HC837, "X223", "HC", "837")
-        #   table.register(Hipaa::X224::HC837, "X224", "HC", "837")
+        #   table.register(Hipaa::X222::HC837, "005010X222")#, "HC", "837")
+        #   table.register(Hipaa::X223::HC837, "005010X223")#, "HC", "837")
+        #   table.register(Hipaa::X224::HC837, "005010X224")#, "HC", "837")
         #
-        #   table.register(Hipaa::X230::FA997, "X230", "FA", "997")
-        #   table.register(Hipaa::X231::FA999, "X231", "FA", "999")
+        #   table.register(Hipaa::X230::FA997, "005010X230")#, "FA", "997")
+        #   table.register(Hipaa::X231::FA999, "005010X231")#, "FA", "999")
         #
-        #   table.register(Hipaa::X279::HS270, "X279", "HS", "270")
-        #   table.register(Hipaa::X279::HB271, "X279", "HB", "271")
+        #   table.register(Hipaa::X279::HS270, "005010X279")#, "HS", "270")
+        #   table.register(Hipaa::X279::HB271, "005010X279")#, "HB", "271")
         #
-        #   table.register(Standards::HR276, nil, "HR", "276")
-        #   table.register(Standards::HS270, nil, "HS", "270")
-        #   table.register(Standards::HB271, nil, "HB", "271")
-        #   table.register(Standards::HN277, nil, "HN", "277")
-        #   table.register(Standards::HI278, nil, "HI", "278")
-        #   table.register(Standards::820RA, nil, "RA", "820")
-        #   table.register(Standards::BE834, nil, "BE", "834")
-        #   table.register(Standards::HP835, nil, "HP", "835")
-        #   table.register(Standards::HC837, nil, "HC", "837")
-        #   table.register(Standards::FA997, nil, "FA", "997")
-        #   table.register(Standards::FA999, nil, "FA", "999")
+        #   table.register(Standards::HR276, "005010")#, "HR", "276")
+        #   table.register(Standards::HS270, "005010")#, "HS", "270")
+        #   table.register(Standards::HB271, "005010")#, "HB", "271")
+        #   table.register(Standards::HN277, "005010")#, "HN", "277")
+        #   table.register(Standards::HI278, "005010")#, "HI", "278")
+        #   table.register(Standards::820RA, "005010")#, "RA", "820")
+        #   table.register(Standards::BE834, "005010")#, "BE", "834")
+        #   table.register(Standards::HP835, "005010")#, "HP", "835")
+        #   table.register(Standards::HC837, "005010")#, "HC", "837")
+        #   table.register(Standards::FA997, "005010")#, "FA", "997")
+        #   table.register(Standards::FA999, "005010")#, "FA", "999")
         #
-        def register(definition, version, function = definition.functional_group, transaction = function.id)
+        def register(definition, version, function = definition.functional_group, transaction = definition.id)
           @table[Array[version, function, transaction]] = definition
         end
 

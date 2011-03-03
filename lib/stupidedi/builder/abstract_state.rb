@@ -6,15 +6,18 @@ module Stupidedi
       # @return [AbstractState]
       abstract :predecessor
 
+      # @return [InterchangeVal, FunctionalGroupVal, TransactionSetVal, TableVal, LoopVal, SegmentVal]
+      abstract :value
+
       # @return [Boolean]
       abstract :stuck?
-
-    private
 
       # @return [Envelope::Router]
       def router
         predecessor.router
       end
+
+    private
 
       # @return [Array<AbstractState>]
       def branches(successors)
@@ -37,19 +40,20 @@ module Stupidedi
 
       # @return [SegmentVal]
       def construct(segment_use, elements)
-        segment = segment_use.definition.empty
+        segment_def = segment_use.definition
+        segment_val = segment_use.definition.empty
 
-        if elements.length < segment.definition.element_uses.length
-          segment.definition.element_uses.zip(elements) do |use, value|
-            segment = segment.append(use.definition.value(value))
+        if elements.length < segment_def.element_uses.length
+          segment_def.element_uses.zip(elements) do |use, value|
+            segment_val = segment_val.append(use.definition.value(value))
           end
         else
-          elements.zip(segment.definition.element_uses) do |value, use|
-            segment = segment.append(use.definition.value(value))
+          elements.zip(segment_def.element_uses) do |value, use|
+            segment_val = segment_val.append(use.definition.value(value))
           end
         end
 
-        segment
+        segment_val
       end
 
     end

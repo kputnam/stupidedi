@@ -52,17 +52,17 @@ module Stupidedi
       end
 
       # @return [InterchangeVal]
-      def append_header(segment_val)
+      def append_header_segment(segment_val)
         copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
       end
 
       # @return [InterchangeVal]
-      def append_group(functional_group_val)
+      def append_functional_group(functional_group_val)
         copy(:functional_group_vals => functional_group_val.snoc(@functional_group_vals))
       end
 
       # @return [InterchangeVal]
-      def append_trailer(segment_val)
+      def append_trailer_segment(segment_val)
         copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
       end
 
