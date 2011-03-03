@@ -22,6 +22,7 @@ module Stupidedi
           id, header_segment_uses, trailer_segment_uses
       end
 
+      # @return [InterchangeDef]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),

@@ -55,7 +55,7 @@ module Stupidedi
       def pretty_print(q)
         id = @definition.try{|s| "[#{s.id}]" }
         q.text("SegmentVal#{id}")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable ""
           @element_vals.each do |e|
             unless q.current_group.first?

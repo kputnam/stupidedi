@@ -4,7 +4,7 @@ module Stupidedi
     #
     # @see X12.5 3.2.1 Basic Interchange Service Request
     #
-    class InterchangeVal
+    class InterchangeVal < Values::AbstractVal
       include Values::SegmentValGroup
 
       # @return [InterchangeDef]
@@ -26,9 +26,9 @@ module Stupidedi
         @definition, @header_segment_vals, @functional_group_vals, @trailer_segment_vals =
           definition, header_segment_vals, functional_group_vals, trailer_segment_vals
 
-        @header_segment_vals   = @header_segment_vals.map{|x| x.copy(:parent => self) }
-        @functional_group_vals = @functional_group_vals.map{|x| x.copy(:parent => self) }
-        @trailer_segment_vals  = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
+        @header_segment_vals   = header_segment_vals.map{|x| x.copy(:parent => self) }
+        @trailer_segment_vals  = trailer_segment_vals.map{|x| x.copy(:parent => self) }
+        @functional_group_vals = functional_group_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [InterchangeVal]

@@ -12,6 +12,12 @@ module Stupidedi
         autoload :ElementReqs,
           "stupidedi/dictionaries/functional_groups/005010/element_reqs"
 
+        autoload :FunctionalGroupDef,
+          "stupidedi/dictionaries/functional_groups/005010/functional_group_def"
+
+        autoload :FunctionalGroupVal,
+          "stupidedi/dictionaries/functional_groups/005010/functional_group_val"
+
         autoload :SegmentDefs,
           "stupidedi/dictionaries/functional_groups/005010/segment_defs"
 

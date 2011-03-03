@@ -64,12 +64,10 @@ module Stupidedi
         LoopVal.new(self, [], [], [], parent)
       end
 
-      abstract :reader, :args => %w(input, context)
-
       # @private
       def pretty_print(q)
         q.text("LoopDef[#{@id}]")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable ""
           @header_segment_uses.each do |e|
             unless q.current_group.first?

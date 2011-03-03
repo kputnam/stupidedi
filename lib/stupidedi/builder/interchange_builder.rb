@@ -30,12 +30,12 @@ module Stupidedi
         case name
         when :GS
           # GS08 Version / Release / Industry Identifier Code
-          version = elements.at(7)
+          version = elements.at(7).slice(0, 6)
           envelope_def = router.functional_group.lookup(version)
 
           if envelope_def
-            segment_def = envelope_def.header_segment_uses.head.definition
-            segment_val = construct(segment_def, element)
+            segment_use = envelope_def.header_segment_uses.head
+            segment_val = construct(segment_use, elements)
             functional_group_val = envelope_def.value(segment_val.cons, [], [])
 
             step(FunctionalGroupBuilder.start(functional_group_val, self))
@@ -88,6 +88,7 @@ module Stupidedi
         end
       end
 
+      # @private
       def pretty_print(q)
         q.text("InterchangeBuilder[@#{@position}]")
         q.group(2, "(", ")") do

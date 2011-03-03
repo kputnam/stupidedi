@@ -15,7 +15,7 @@ module Stupidedi
         @functional_group, @id, @table_defs =
           functional_group, id, table_defs
 
-        @table_defs = @table_defs.map{|x| x.copy(:parent => self) }
+        @table_defs = table_defs.map{|x| x.copy(:parent => self) }
       end
 
       def copy(changes = {})
@@ -42,8 +42,8 @@ module Stupidedi
     end
 
     class << TransactionSetDef
-      def build(functional_group, id, *args)
-        new(functional_group, id, args)
+      def build(functional_group, id, *table_defs)
+        new(functional_group, id, table_defs)
       end
     end
 

@@ -53,7 +53,7 @@ module Stupidedi
       def pretty_print(q)
         id = @definition.try{|e| "[#{e.id}]" }
         q.text("RepeatedElementVal#{id}")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable ""
           @element_vals.each do |e|
             unless q.current_group.first?

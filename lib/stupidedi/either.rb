@@ -98,7 +98,7 @@ module Stupidedi
       # @private
       def pretty_print(q)
         q.text("Either.success")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable
           q.pp @value
         end

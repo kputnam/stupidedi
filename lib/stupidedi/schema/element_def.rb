@@ -21,8 +21,6 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :value, :args => %w(object)
 
-      abstract :reader, :args => %w(input context)
-
       def simple?
         true
       end
@@ -99,8 +97,6 @@ module Stupidedi
       def empty(parent = nil)
         CompositeElementVal.new(self, [], parent)
       end
-
-      abstract :reader, :args => %w(input context)
 
       # @private
       def pretty_print(q)

@@ -51,8 +51,6 @@ module Stupidedi
         Values::SegmentVal.new(self, element_vals, parent)
       end
 
-      abstract :reader, :args => %w(input context)
-
       # @private
       def pretty_print(q)
         q.text("SegmentDef[#{@id}]")

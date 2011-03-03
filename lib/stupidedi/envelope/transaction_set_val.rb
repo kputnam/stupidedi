@@ -1,7 +1,7 @@
 module Stupidedi
   module Envelope
 
-    class TransactionSetVal
+    class TransactionSetVal < Values::AbstractVal
 
       # @return [TransactionSetDef]
       attr_reader :definition
@@ -12,7 +12,7 @@ module Stupidedi
       def initialize(definition, table_vals, parent)
         @definition, @table_vals, @parent = definition, table_vals, parent
 
-        @table_vals = @table_vals.map{|x| x.copy(:parent => self) }
+        @table_vals = table_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [TransactionSetVal]

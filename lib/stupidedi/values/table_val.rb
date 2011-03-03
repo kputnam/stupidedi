@@ -34,6 +34,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [Array<SegmentVal>]
+      def segment_vals
+        @header_segment_vals + @trailer_segment_vals
+      end
+
       # @return [TableVal]
       def append_header(segment_val)
         copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
@@ -53,7 +58,7 @@ module Stupidedi
       def pretty_print(q)
         id = @definition.try{|t| "[#{t.id}]" }
         q.text("TableVal#{id}")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable ""
           @header_segment_vals.each do |e|
             unless q.current_group.first?
