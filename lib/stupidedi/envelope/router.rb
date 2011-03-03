@@ -46,9 +46,10 @@ module Stupidedi
         # @example
         #   table = InterchangeRouter.new
         #
-        #   table.register(FiveOhOne,   "00501")
-        #   table.register(FourOhOne,   "00401")
-        #   table.register(ThreeOhFour, "00304")
+        #   table.register(SixOhTwo::InterchangeDef,    "00602")
+        #   table.register(FiveOhOne::InterchangeDef,   "00501")
+        #   table.register(FourOhOne::InterchangeDef,   "00401")
+        #   table.register(ThreeOhFour::InterchangeDef, "00304")
         #
         def register(definition, version = interchange.id)
           @table[version] = definition

@@ -3,36 +3,27 @@ module Stupidedi
     module Interchanges
       module FiveOhOne
 
-        InterchangeDef = Class.new(Schema::InterchangeDef) do
-          def copy(changes = {})
-            raise NoMethodError, "@todo"
-          end
+        s = Schema
+        r = FunctionalGroups::FiftyTen::ElementReqs
 
-          def id
-            "00501"
-          end
-
-          def segment_uses
-            @segment_uses ||=
-              [ SegmentDefs::ISA.use(Mandatory, Schema::RepeatCount.bounded(1)),
-                SegmentDefs::ISB.use(Optional,  Schema::RepeatCount.bounded(1)),
-                SegmentDefs::ISE.use(Optional,  Schema::RepeatCount.bounded(1)),
-                SegmentDefs::TA1.use(Optional,  Schema::RepeatCount.unbound),
-                SegmentDefs::IEA.use(Mandatory, Schema::RepeatCount.bounded(1)) ]
-          end
-
+        InterchangeDef = Class.new(Envelope::InterchangeDef) do
           def empty
-            Envelope::InterchangeVal.new([], [], self)
+            FiveOhOne::InterchangeVal.new(self, [], [], [])
           end
 
-          def value(segment_vals, functional_group_vals = [])
-            Envelope::InterchangeVal.new(segment_vals, functional_group_vals, self)
+          def value(header_segment_vals, functional_group_vals, trailer_segment_vals)
+            FiveOhOne::InterchangeVal.new(self, header_segment_vals, functional_group_vals, trailer_segment_vals)
           end
+        end.new "00501",
+          # Header segment uses
+          [ SegmentDefs::ISA.use(-900, r::Mandatory, s::RepeatCount.bounded(1)),
+            SegmentDefs::ISB.use(-950, r::Optional,  s::RepeatCount.bounded(1)),
+            SegmentDefs::ISE.use(-800, r::Optional,  s::RepeatCount.bounded(1)),
+            SegmentDefs::TA1.use(-850, r::Optional,  s::RepeatCount.unbounded)
+          ],
 
-          def reader(input, context)
-            raise NoMethodError, "@todo"
-          end
-        end.new
+          # Trailer segment uses
+          [ SegmentDefs::IEA.use(900, r::Mandatory, s::RepeatCount.bounded(1)) ]
 
       end
     end

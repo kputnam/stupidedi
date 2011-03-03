@@ -6,29 +6,33 @@ module Stupidedi
       attr_reader :id
 
       # @return [Array<SegmentUse>]
-      attr_reader :segment_uses
+      attr_reader :header_segment_uses
 
-      def initialize(id, segment_uses)
-        @id, @segment_uses = id, segment_uses
+      # @return [Array<SegmentUse>]
+      attr_reader :footer_segment_uses
+
+      # @return [InterchangeVal]
+      abstract :empty
+
+      # @return [InterchangeVal]
+      abstract :value, :args => %w(header_segment_vals functional_group_vals trailer_segment_vals)
+
+      def initialize(id, header_segment_uses, trailer_segment_uses)
+        @id, @header_segment_uses, @trailer_segment_uses =
+          id, header_segment_uses, trailer_segment_uses
       end
 
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),
-          changes.fetch(:segment_uses, @segment_uses)
+          changes.fetch(:header_segment_uses, @header_segment_uses),
+          changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
       end
 
-      # @return [InterchangeVal]
-      def value(segment_vals, functional_group_vals)
-        InterchangeVal.new(self, segment_vals, functional_group_vals)
+      # @return [Array<SegmentUse>]
+      def segment_uses
+        @header_segment_uses + @trailer_segment_uses
       end
-
-      # @return [InterchangeVal]
-      def empty
-        InterchangeVal.new(self, [], [])
-      end
-
-      abstract :reader, :args => %w(input context)
     end
 
   end

@@ -38,11 +38,11 @@ module Stupidedi
                 changes.fetch(:parent, @parent)
             end
 
-            def value(object, parent)
+            def value(object, parent = nil)
               companion.value(object, self, parent)
             end
 
-            def empty(parent)
+            def empty(parent = nil)
               companion.empty(self, parent)
             end
 

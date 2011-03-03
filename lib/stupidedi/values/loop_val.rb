@@ -7,7 +7,10 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<SegmentVal>]
-      attr_reader :segment_vals
+      attr_reader :header_segment_vals
+
+      # @return [Array<SegmentVal>]
+      attr_reader :trailer_segment_vals
 
       # @return [Array<LoopVal>]
       attr_reader :loop_vals
@@ -15,29 +18,40 @@ module Stupidedi
       # @return [LoopVal, TableVal]
       attr_reader :parent
 
-      def initialize(definition, segment_vals, loop_vals, parent)
-        @definition, @segment_vals, @loop_vals, @parent =
-          definition, segment_vals, loop_vals, parent
+      def initialize(definition, header_segment_vals, loop_vals, trailer_segment_vals, parent)
+        @definition, @header_segment_vals, @loop_vals, @trailer_segment_vals, @parent =
+          definition, header_segment_vals, loop_vals, trailer_segment_vals, parent
       end
 
       # @return [LoopVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:segment_vals, @segment_vals),
+          changes.fetch(:header_segment_vals, @header_segment_vals),
           changes.fetch(:loop_vals, @loop_vals),
+          changes.fetch(:trailer_segment_vals, @trailer_segment_vals),
           changes.fetch(:parent, @parent)
       end
 
+      def segment_vals
+        @header_segment_vals + @trailer_segment_vals
+      end
+
       def empty?
-        @segment_vals.all?(&:empty?) and @loop_vals.all(&:empty?)
+        @header_segment_vals.all?(&:empty?) and
+        @loop_vals.all(&:empty?)
+        @trailer_segment_vals.all?(&:empty?) and
       end
 
       def append(val)
         if val.is_a?(LoopVal)
           copy(:loop_vals => val.snoc(@loop_vals))
         else
-          copy(:segment_vals => val.snoc(@segment_vals))
+          if @loop_vals.empty?
+            copy(:header_segment_vals => val.snoc(@header_segment_vals))
+          else
+            copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
+          end
         end
       end
 
@@ -45,7 +59,11 @@ module Stupidedi
         if val.is_a?(LoopVal)
           copy(:loop_vals => val.snoc(@loop_vals))
         else
-          copy(:segment_vals => val.snoc(@segment_vals))
+          if @loop_vals.empty?
+            copy(:header_segment_vals => val.snoc(@header_segment_vals))
+          else
+            copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
+          end
         end
       end
 
@@ -55,7 +73,21 @@ module Stupidedi
         q.text("LoopVal#{id}")
         q.group(1, "(", ")") do
           q.breakable ""
-          @segment_vals.each do |e|
+          @header_segment_vals.each do |e|
+            unless q.current_group.first?
+              q.text ", "
+              q.breakable
+            end
+            q.pp e
+          end
+          @loop_vals.each do |e|
+            unless q.current_group.first?
+              q.text ", "
+              q.breakable
+            end
+            q.pp e
+          end
+          @trailer_segment_vals.each do |e|
             unless q.current_group.first?
               q.text ", "
               q.breakable
@@ -67,8 +99,10 @@ module Stupidedi
 
       # @private
       def ==(other)
-        other.definition == @definition and
-        other.segment_vals == @segment_vals
+        other.definition           == @definition and
+        other.header_segment_vals  == @header_segment_vals and
+        other.trailer_segment_vals == @trailer_segment_vals and
+        other.loop_vals            == @loop_vals
       end
     end
 

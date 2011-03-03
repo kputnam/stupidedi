@@ -21,6 +21,11 @@ module Stupidedi
                 changes.fetch(:definition, definition),
                 changes.fetch(:parent, parent)
             end
+
+            def inspect
+              id = definition.try{|d| "[#{d.id}]" }
+              "SeparatorElementVal.value#{id}(#{@value})"
+            end
           end
 
           class << SeparatorElementVal
@@ -28,8 +33,8 @@ module Stupidedi
               raise NoMethodError, "@todo"
             end
 
-            def value(object, definition, parent)
-              raise NoMethodError, "@todo"
+            def value(character, definition, parent)
+              SeparatorElementVal.new(character, definition, parent)
             end
 
             def reader(input, context)

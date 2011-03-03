@@ -42,13 +42,13 @@ module Stupidedi
         SegmentUse.new(self, position, requirement, repeat_count, nil)
       end
 
-      # @return [SegmentVal]
-      def empty(parent)
-        SegmentVal.new(self, [], parent)
+      # @return [Values::SegmentVal]
+      def empty(parent = nil)
+        Values::SegmentVal.new(self, [], parent)
       end
 
-      def value(element_vals, parent)
-        SegmentVal.new(self, element_vals, parent)
+      def value(element_vals, parent = nil)
+        Values::SegmentVal.new(self, element_vals, parent)
       end
 
       abstract :reader, :args => %w(input context)

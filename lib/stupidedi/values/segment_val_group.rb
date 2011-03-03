@@ -14,15 +14,17 @@ module Stupidedi
 
       # @return [Array<SegmentVal>]
       def at(n)
-        raise IndexError unless definiton.nil? or defined_at?(n)
+        raise IndexError unless definition.nil? or defined_at?(n)
 
         case n
         when Symbol, String
-          segment_vals.select{|s| s.segment_use.definition.id == n.to_sym }
+          segment_vals.select{|s| s.definition.id == n.to_sym }
         when Integer
+          # @todo s.segment_use
           segment_vals.select{|s| s.segment_use.position == n }
         when SegmentDef
-          segment_vals.select{|s| s.segment_use == n }
+          # @todo s.segment_use
+          segment_vals.select{|s| s.segment_use.definition == n }
         end or []
       end
 
@@ -35,7 +37,7 @@ module Stupidedi
         when Integer
           definition.segment_uses.any?{|s| s.position == n }
         when SegmentDef
-          definition.segment_uses.any?{|s| s == n }
+          definition.segment_uses.any?{|s| s.definiton == n }
         else
           raise TypeError
         end

@@ -52,7 +52,7 @@ module Stupidedi
       end
 
       # @private
-      def prtty_print(q)
+      def pretty_print(q)
         id = @definition.try{|s| "[#{s.id}]" }
         q.text("SegmentVal#{id}")
         q.group(1, "(", ")") do

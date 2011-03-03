@@ -3,7 +3,7 @@ module Stupidedi
     module Interchanges
       module FiveOhOne
 
-        class InterchangeVal < Values::InterchangeVal
+        class InterchangeVal < Envelope::InterchangeVal
           class Separators
             attr_reader :component  # :
             attr_reader :repetition # ^
@@ -24,18 +24,28 @@ module Stupidedi
                 changes.fetch(:segment, @segment),
                 changes.fetch(:parent, @parent)
             end
+
+            def inspect
+              "Separators(#{@component.inspect}, #{@repetition.inspect}, #{@element.inspect}, #{@segment.inspect})"
+            end
           end
 
-          def initialize(segment_vals, functional_group_vals, definition, separators = nil)
-            super(definition, segment_vals, functional_group_vals)
+          attr_reader :separators
+
+          def initialize(definition, header_segment_vals, functional_group_vals, trailer_segment_vals, separators = nil)
+            super(definition, header_segment_vals, functional_group_vals, trailer_segment_vals)
 
             @separators =
               if separators.nil?
-                if isa = at(:isa).first
-                  Separators.new(isa.at(16).to_s, isa.at(11).to_s, nil, nil, self)
-                else
-                  Separators.new(nil, nil, nil, nil, self)
+                component  = nil
+                repetition = nil
+
+                if isa = at(:ISA).first
+                  component  = isa.at(15).to_s
+                  repetition = isa.at(10).to_s
                 end
+
+                Separators.new(component, repetition, nil, nil, self)
               else
                 separators.copy(:parent => self)
               end
