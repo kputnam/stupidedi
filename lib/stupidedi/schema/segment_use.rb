@@ -25,7 +25,11 @@ module Stupidedi
         @definition, @position, @requirement, @repeat_count, @parent =
           definition, position, requirement, repeat_count, parent
 
-        @definition = @definition.copy(:parent => self)
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @definition = @definition.copy(:parent => self)
+        end
       end
 
       # @return [SegmentUse]

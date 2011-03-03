@@ -20,7 +20,9 @@ require "ruby/to_d"
 require "ruby/threadlocal"
 
 module Stupidedi
-  autoload :Either,       "stupidedi/either"
+  autoload :Either,         "stupidedi/either"
+  autoload :BitmaskSubset,  "stupidedi/subset"
+  autoload :SetSubset,      "stupidedi/subset"
 
   autoload :Builder,      "stupidedi/builder"
   autoload :Dictionaries, "stupidedi/dictionaries"

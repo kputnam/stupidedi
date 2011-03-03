@@ -19,6 +19,12 @@ module Stupidedi
     #
     # @see X222 2.2.1 Industry Usage
     class ElementReq
+      abstract :required?
+      abstract :forbidden?
+
+      def optional?
+        not (required? or forbidden?)
+      end
     end
 
   end

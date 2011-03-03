@@ -11,6 +11,12 @@ module Stupidedi
     #   SITUATIONAL
     #   REQUIRED
     class SegmentReq
+      abstract :required?
+      abstract :forbidden?
+
+      def optional?
+        not (required? or forbidden?)
+      end
     end
 
   end

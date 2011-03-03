@@ -25,11 +25,16 @@ module Stupidedi
         @id, @repeat_count, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
           id, repeat_count, header_segment_uses, loop_defs, trailer_segment_uses, parent
 
-        @header_segment_uses  = @header_segment_uses.map{|x| x.copy(:parent => self) }
-        @loop_defs            = @loop_defs.map{|x| x.copy(:parent => self) }
-        @trailer_segment_uses = @trailer_segment_uses.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @header_segment_uses  = @header_segment_uses.map{|x| x.copy(:parent => self) }
+          @loop_defs            = @loop_defs.map{|x| x.copy(:parent => self) }
+          @trailer_segment_uses = @trailer_segment_uses.map{|x| x.copy(:parent => self) }
+        end
       end
 
+      # @return [LoopDef]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),
@@ -40,6 +45,7 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [Array<SegmentUse>]
       def segment_uses
         @header_segment_uses + @trailer_segment_uses
       end
@@ -47,8 +53,8 @@ module Stupidedi
       # @see X222 B.1.1.3.11.1 Loop Control Segments
       # @see X222 B.1.1.3.12.4 Loops of Data Segments Bounded Loops
       def bounded?
-        segment_uses.head.definition.id == :LS and
-        segment_uses.last.definition.id == :LE
+        @header_segment_uses.head.definition.id == :LS and
+        @trailer_segment_uses.last.definition.id == :LE
       end
 
       # @see X12.59 5.6 HL-initiated Loop
@@ -56,14 +62,17 @@ module Stupidedi
         @header_segment_uses.head.definition.id == :HL
       end
 
+      # @return [SegmentUse]
       def start_segment_use
         @header_segment_uses.head
       end
 
+      # @return [LoopVal]
       def value(segment_val, parent = nil)
         Values::LoopVal.new(self, segment_val.cons, [], [], parent)
       end
 
+      # @return [LoopVal]
       def empty(parent = nil)
         Values::LoopVal.new(self, [], [], [], parent)
       end
@@ -99,11 +108,19 @@ module Stupidedi
     end
 
     class << LoopDef
+      # @return [LoopDef]
       def build(id, repeat_count, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
 
         # @todo: Ensure there is at least one SegmentUse in header
+        if header.empty?
+          raise Exceptions::InvalidSchemaError,
+            "LoopDef must start with a SegmentUse"
+        elsif header.repeat_count.include?(0)
+          "First SegmentUse in LoopDef must have RepeatCount.bounded(1)"
+        end
+
         new(id, repeat_count, header, loop_defs, trailer, nil)
       end
     end

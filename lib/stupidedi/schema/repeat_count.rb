@@ -16,7 +16,14 @@ module Stupidedi
         end
       end
 
-      # Singleton
+      # Using an immutable singleton instance for efficiency
+      Once = Class.new(Bounded) do
+        def initialize
+          @max = 1
+        end
+      end.new
+
+      # Using an immutable singleton instance for efficiency
       Unbounded = Class.new(RepeatCount) do
         def include?(n)
           true
@@ -32,7 +39,14 @@ module Stupidedi
       # @group Constructors
 
       def bounded(n)
-        RepeatCount::Bounded.new(n)
+        if n < 1
+          raise Exception::InvalidSchemaError,
+            "RepeatCount cannot be less than 1"
+        elsif n == 1
+          RepeatCount::Once
+        else
+          RepeatCount::Bounded.new(n)
+        end
       end
 
       def unbounded

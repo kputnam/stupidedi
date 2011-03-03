@@ -29,10 +29,12 @@ module Stupidedi
         false
       end
 
+      # @return [SimpleElementUse]
       def simple_use(requirement, repeat_count, parent = nil)
         SimpleElementUse.new(self, requirement, repeat_count, parent)
       end
 
+      # @return [ComponentElementUse]
       def component_use(requirement, parent = nil)
         ComponentElementUse.new(self, requirement, parent)
       end
@@ -58,14 +60,19 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :parent
 
-      def initialize(id, name, description, element_uses, syntax_notes, parent = nil)
+      def initialize(id, name, description, element_uses, syntax_notes, parent)
         @id, @name, @description, @element_uses, @syntax_notes, @parent =
           id, name, description, element_uses, syntax_notes, parent
 
-        @element_uses = @element_uses.map{|x| x.copy(:parent => self) }
-        @syntax_notes = @syntax_notes.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @element_uses = @element_uses.map{|x| x.copy(:parent => self) }
+          @syntax_notes = @syntax_notes.map{|x| x.copy(:parent => self) }
+        end
       end
 
+      # @return [ElementDef]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),
@@ -84,6 +91,7 @@ module Stupidedi
         true
       end
 
+      # @return [CompositeElementUse]
       def simple_use(requirement, repeat_count, parent = nil)
         CompositeElementUse.new(self, requirement, repeat_count, parent)
       end
@@ -115,6 +123,7 @@ module Stupidedi
     end
 
     class << CompositeElementDef
+      # @return [CompositeElementDef]
       def build(id, name, description, *args)
         element_uses = args.take_while{|x| x.is_a?(ElementUse) }
         syntax_notes = args.drop(element_uses.length)

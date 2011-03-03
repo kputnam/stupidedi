@@ -24,10 +24,15 @@ module Stupidedi
         @id, @name, @purpose, @element_uses, @syntax_notes, @parent =
           id, name, purpose, element_uses, syntax_notes, parent
 
-        @element_uses = @element_uses.map{|x| x.copy(:parent => self) }
-        @syntax_notes = @syntax_notes.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @element_uses = @element_uses.map{|x| x.copy(:parent => self) }
+          @syntax_notes = @syntax_notes.map{|x| x.copy(:parent => self) }
+        end
       end
 
+      # @return [SegmentDef]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),
@@ -78,10 +83,12 @@ module Stupidedi
     end
 
     class << SegmentDef
+      # @return [SegmentDef]
       def build(id, name, purpose, *args)
         element_uses = args.take_while{|x| x.is_a?(ElementUse) }
         syntax_notes = args.drop(element_uses.length)
 
+        # @todo: Validate SyntaxNotes
         new(id, name, purpose, element_uses, syntax_notes, nil)
       end
     end

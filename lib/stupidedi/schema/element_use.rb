@@ -27,6 +27,9 @@ module Stupidedi
       # @return [RepeatCount]
       attr_reader :repeat_count
 
+      # @return [ValueSet]
+      attr_reader :allowed_values
+
       # @return [SegmentDef]
       attr_reader :parent
 
@@ -34,7 +37,11 @@ module Stupidedi
         @definition, @requirement, @repeat_count, @parent =
           definition, requirement, repeat_count, parent
 
-        @definition = @definition.copy(:parent => self)
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @definition = @definition.copy(:parent => self)
+        end
       end
 
       # @return [SimpleElementUse]
@@ -82,7 +89,11 @@ module Stupidedi
         @definition, @requirement, @parent =
           definition, requirement, parent
 
-        @definition = @definition.copy(:parent => self)
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @definition = @definition.copy(:parent => self)
+        end
       end
 
       # @return [ComponentElementUse]
@@ -127,7 +138,11 @@ module Stupidedi
         @definition, @requirement, @repeat_count, @parent =
           definition, requirement, repeat_count, parent
 
-        @definition = @definition.copy(:parent => self)
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @definition = @definition.copy(:parent => self)
+        end
       end
 
       # @return [CompositeElementUse]

@@ -24,11 +24,16 @@ module Stupidedi
         @id, @position, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
           id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent
 
-        @header_segment_uses  = @header_segment_uses.map{|x| x.copy(:parent => self) }
-        @loop_defs            = @loop_defs.map{|x| x.copy(:parent => self) }
-        @trailer_segment_uses = @trailer_segment_uses.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @header_segment_uses  = @header_segment_uses.map{|x| x.copy(:parent => self) }
+          @loop_defs            = @loop_defs.map{|x| x.copy(:parent => self) }
+          @trailer_segment_uses = @trailer_segment_uses.map{|x| x.copy(:parent => self) }
+        end
       end
 
+      # @return [TableDef]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:id, @id),
@@ -39,6 +44,7 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [SegmentDef]
       def start_segment_use
         @header_segment_uses.first or @loop_defs.first.start_segment_use
       end
@@ -84,6 +90,7 @@ module Stupidedi
     end
 
     class << TableDef
+      # @return [TableDef]
       def build(id, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
