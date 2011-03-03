@@ -1,5 +1,4 @@
 require 'support/quickcheck'
-require 'support/blankslate'
 
 class QuickCheck
   class SerializedEdi < ::QuickCheck
