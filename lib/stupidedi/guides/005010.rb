@@ -2,6 +2,9 @@ module Stupidedi
   module Guides
     module FiftyTen
 
+      autoload :SegmentReqs,  "stupidedi/guides/005010/segment_reqs"
+      autoload :ElementReqs,  "stupidedi/guides/005010/element_reqs"
+
       module X221
         autoload :HP835,  "stupidedi/guides/005010/X221/HP835"
       end

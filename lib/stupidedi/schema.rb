@@ -1,6 +1,8 @@
 module Stupidedi
   module Schema
 
+    autoload :CodeList,             "stupidedi/schema/code_list"
+
     autoload :ElementReq,           "stupidedi/schema/element_req"
     autoload :SimpleElementDef,     "stupidedi/schema/element_def"
     autoload :SimpleElementUse,     "stupidedi/schema/element_use"
