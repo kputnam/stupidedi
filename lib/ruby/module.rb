@@ -6,14 +6,20 @@ class Module
       params = params.last[:args]
     end
 
+    file, line = caller.first.split(':')
+
     if params.empty?
-      define_method(name) do |*args|
-        raise NoMethodError, "Method #{name} is abstract"
-      end
+      class_eval(<<-RUBY, file, line.to_i - 1)
+        def #{name}(*args)
+          raise NoMethodError, "Method #{name} is declared abstract"
+        end
+      RUBY
     else
-      define_method(name) do |*args|
-        raise NoMethodError, "Method #{name}(#{params.join(', ')}) is abstract"
-      end
+      class_eval(<<-RUBY, file, line.to_i - 1)
+        def #{name}(*args)
+          raise NoMethodError, "Method #{name}(#{params.join(', ')}) is declared abstract"
+        end
+      RUBY
     end
   end
 
@@ -26,15 +32,17 @@ class Module
     target  = params.last.fetch(:to) or
       raise ArgumentError, ":to cannot be nil"
 
+    file, line = caller.first.split(':')
+
     for m in methods
       if m.to_s =~ /=$/
-        class_eval <<-RUBY
+        class_eval(<<-RUBY, file, line.to_i - 1)
           def #{m}(value)
             #{target}.#{m}(value)
           end
         RUBY
       else
-        class_eval <<-RUBY
+        class_eval(<<-RUBY, file, line.to_i - 1)
           def #{m}(*args, &block)
             #{target}.#{m}(*args, &block)
           end
