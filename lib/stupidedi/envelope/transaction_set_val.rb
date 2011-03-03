@@ -16,7 +16,11 @@ module Stupidedi
         @definition, @table_vals, @parent =
           definition, table_vals, parent
 
-        @table_vals = table_vals.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @table_vals = table_vals.map{|x| x.copy(:parent => self) }
+        end
       end
 
       # @return [TransactionSetVal]

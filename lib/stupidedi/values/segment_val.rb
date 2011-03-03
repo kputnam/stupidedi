@@ -19,7 +19,11 @@ module Stupidedi
         @definition, @element_vals, @parent, @usage =
           definition, element_vals, parent, usage
 
-        @element_vals = element_vals.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @element_vals = element_vals.map{|x| x.copy(:parent => self) }
+        end
       end
 
       # @return [SegmentVal]
@@ -61,6 +65,13 @@ module Stupidedi
         q.text("SegmentVal#{id}")
         q.group(2, "(", ")") do
           q.breakable ""
+
+          @definition.try do |s|
+            q.pp s.name
+            q.text ", "
+            q.breakable
+          end
+
           @element_vals.each do |e|
             unless q.current_group.first?
               q.text ", "

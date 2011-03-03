@@ -21,6 +21,14 @@ module Stupidedi
       def initialize(definition, header_segment_vals, loop_vals, trailer_segment_vals, parent)
         @definition, @header_segment_vals, @loop_vals, @trailer_segment_vals, @parent =
           definition, header_segment_vals, loop_vals, trailer_segment_vals, parent
+
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @header_segment_vals  = @header_segment_vals.map{|x| x.copy(:parent => self) }
+          @loop_vals            = @loop_vals.map{|x| x.copy(:parent => self) }
+          @trailer_segment_vals = @header_segment_vals.map{|x| x.copy(:parent => self) }
+        end
       end
 
       # @return [LoopVal]

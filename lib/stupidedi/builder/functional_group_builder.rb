@@ -77,7 +77,7 @@ module Stupidedi
             end
           end
 
-          d.trailer_segment_uses do |u|
+          d.trailer_segment_uses.each do |u|
             if @position <= u.position and match?(u, name, elements)
               value = @value.append_trailer_segment(mksegment(u, elements))
               states.push(copy(:position => u.position, :value => value))

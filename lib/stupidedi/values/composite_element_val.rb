@@ -18,6 +18,12 @@ module Stupidedi
       def initialize(definition, component_element_vals, parent, usage)
         @definition, @component_element_vals, @parent, @usage =
           definition, component_element_vals, parent, usage
+
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @component_element_vals = @component_element_vals.map{|x| x.copy(:parent => self) }
+        end
       end
 
       # @return [CompositeElementVal]

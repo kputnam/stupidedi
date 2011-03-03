@@ -6,6 +6,9 @@ module Stupidedi
       # @return [TransactionSetVal]
       attr_reader :value
 
+      # @return [FunctionalGroupBuilder]
+      attr_reader :predecessor
+
       def initialize(position, transaction_set_val, predecessor)
         @position, @value, @predecessor =
           position, transaction_set_val, predecessor

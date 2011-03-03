@@ -14,6 +14,12 @@ module Stupidedi
 
       def initialize(definition, element_vals, parent)
         @definition, @element_vals, @parent = definition, element_vals, parent
+
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @element_vals = @element_vals.map{|x| x.copy(:parent => self) }
+        end
       end
 
       # @return [RepeatedElementVal]

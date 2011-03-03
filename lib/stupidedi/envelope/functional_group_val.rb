@@ -23,9 +23,13 @@ module Stupidedi
         @definition, @header_segment_vals, @transaction_set_vals, @trailer_segment_vals, @parent =
           definition, header_segment_vals, transaction_set_vals, trailer_segment_vals, parent
 
-        @header_segment_vals  = header_segment_vals.map{|x| x.copy(:parent => self) }
-        @trailer_segment_vals = trailer_segment_vals.map{|x| x.copy(:parent => self) }
-        @transaction_set_vals = transaction_set_vals.map{|x| x.copy(:parent => self) }
+        # Delay re-parenting until the entire definition tree has a root
+        # to prevent unnecessarily copying objects
+        unless parent.nil?
+          @header_segment_vals  = @header_segment_vals.map{|x| x.copy(:parent => self) }
+          @trailer_segment_vals = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
+          @transaction_set_vals = @transaction_set_vals.map{|x| x.copy(:parent => self) }
+        end
       end
 
       # @return [FunctionalGroupVal]
@@ -54,11 +58,11 @@ module Stupidedi
       end
 
       def append_transaction_set(transaction_set_val)
-        copy(:transaction_set_val => transaction_set_val.snoc(@transaction_set_vals))
+        copy(:transaction_set_vals => transaction_set_val.snoc(@transaction_set_vals))
       end
 
       def append_trailer_segment(segment_val)
-        copy(:transaction_set_vals => segment_val.snoc(@transaction_set_vals))
+        copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
       end
 
       def version
