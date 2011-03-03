@@ -56,27 +56,10 @@ module Stupidedi
           Readers::LoopReader.new(input, interchange_header, self)
         end
 
-        # @note Intended for use by LoopReader
         # @private
         def tail
-          # This is a tricky way to avoid all the validations done if we called
-          # the #initialize constructor. We create an empty instance and do the
-          # initialization here instead.
-          self.class.allocate.tap do |tail|
-            tail.instance_variable_set(:@name, @name)
-            tail.instance_variable_set(:@repetition_count, @repetition_count)
-
-            if @segment_uses.empty?
-              segment_uses = @segment_uses
-              loop_defs    = @loop_defs.tail
-            else
-              segment_uses = @segment_uses.tail
-              loop_defs    = @loop_defs
-            end
-
-            tail.instance_variable_set(:@segment_uses, segment_uses)
-            tail.instance_variable_set(:@loop_defs, loop_defs)
-          end
+          self.class.new(@name, @repetition_count,
+                         *(@segment_uses + @loop_defs).tail)
         end
 
         def flatten

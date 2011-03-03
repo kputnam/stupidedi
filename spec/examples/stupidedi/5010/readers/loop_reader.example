@@ -1,6 +1,7 @@
 require "spec_helper"
 
 describe Stupidedi::FiftyTen::Readers::LoopReader do
+
   describe "#read" do
     let(:definitions) { Stupidedi::FiftyTen::Definitions }
 
