@@ -1,6 +1,28 @@
-
 module Stupidedi
   class Either
+
+    abstract :each, "&block"
+
+    # @return [Either]
+    abstract :select, "explanation = 'select'", "&block"
+
+    # @return [Either]
+    abstract :reject, "explanation = 'reject'", "&block"
+
+    # @return [Boolean]
+    abstract :defined?
+
+    # @return [Either]
+    abstract :map, "&block"
+
+    # @return [Either]
+    abstract :flatmap, "&block"
+
+    # @return [Either]
+    abstract :or, "&block"
+
+    # @return [Either]
+    abstract :explain, "&block"
 
     class Success < Either
       def initialize(value)
@@ -175,8 +197,6 @@ module Stupidedi
   # Constructors
   #
   class << Either
-    private :new
-
     # @return [Success]
     def success(value)
       Either::Success.new(value)
@@ -188,12 +208,8 @@ module Stupidedi
     end
   end
 
-  class << Either::Success
-    public :new
-  end
-
-  class << Either::Failure
-    public :new
-  end
+  Either.eigenclass.send(:protected, :new)
+  Either::Success.eigenclass.send(:public, :new)
+  Either::Failure.eigenclass.send(:public, :new)
 
 end

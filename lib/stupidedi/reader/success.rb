@@ -16,7 +16,7 @@ module Stupidedi
     # UriMailtoReader, etc. But when we don't recognize the scheme, we can't
     # parse the rest of the URI. We *did* parse the scheme, so it doesn't make
     # sense to return an {Either::Failure}, but it *does* make sense for the
-    # remainder to then be an Either.failure. This does result in some confusing
+    # remainder to then be an Either.failure. This can result in some confusing
     # client code though:
     #
     #   x = UriSchemeReader.new("xmpp://user@example.com").read.map do |result|

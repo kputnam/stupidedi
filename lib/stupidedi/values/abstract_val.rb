@@ -16,6 +16,12 @@ module Stupidedi
       def present?
         not empty?
       end
+
+      # @return [AbstractVal]
+      abstract :parent
+
+      # @return [AbstractVal]
+      abstract :copy, "changes = {}"
     end
 
   end

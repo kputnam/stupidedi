@@ -27,7 +27,7 @@ module Stupidedi
 
     class << DefaultReader
       def from_reader(reader)
-        DefaultReader.new(reader.input, reader.interchange_header)
+        new(reader.input, reader.interchange_header)
       end
     end
 

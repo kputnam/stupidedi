@@ -1,9 +1,9 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     class TransactionSetDef
       # @return [Array<TableDef>]
-      abstract :tables
+      abstract :table_defs
     end
 
   end

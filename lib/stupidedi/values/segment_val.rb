@@ -3,26 +3,58 @@ module Stupidedi
 
     # @see X222 B.1.1.3.4 Data Segment
     class SegmentVal < AbstractVal
-      attr_reader :segment_def
-      alias_method :definition, :segment_def
+      # @return [SegmentDef]
+      attr_reader :definition
 
+      # @return [Array<ElementVal>]
       attr_reader :element_vals
 
-      def initialize(segment_def, element_vals)
-        @segment_def, @element_vals = segment_def, element_vals
+      # @return [LoopVal, TableVal, FunctionalGroupVal, InterchangeVal]
+      attr_reader :parent
+
+      def initialize(definition, element_vals, parent)
+        @definition, @element_vals, @parent = definition, element_vals, parent
+      end
+
+      # @return [SegmentVal]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:definition, @definition),
+          changes.fetch(:element_vals, @element_vals),
+          changes.fetch(:parent, @parent)
       end
 
       def empty?
         @element_vals.all?(&:empty?)
       end
 
-      def [](n)
-        @element_vals[n]
+      # @return [SimpleElementVal, CompositeElementVal, RepeatedElementVal]
+      def at(n)
+        raise IndexError unless @definition.nil? or defined_at?(n)
+
+        if @element_vals.defined_at?(n)
+          @element_vals.at(n)
+        else
+          @definition.element_uses.at(n).element_def.blank
+        end
+      end
+
+      def prepend(element_val)
+        copy(:element_vals => element_val.cons(@element_vals))
+      end
+
+      def append(element_val)
+        copy(:element_vals => element_val.snoc(@element_vals))
+      end
+
+      def defined_at?(n)
+        @definition.try{|d| d.element_uses.defined_at?(n) }
       end
 
       # @private
       def prtty_print(q)
-        q.text("SegmentVal[#{segment_def.try(:id)}]")
+        id = @definition.try{|s| "[#{s.id}]" }
+        q.text("SegmentVal#{id}")
         q.group(1, "(", ")") do
           q.breakable ""
           @element_vals.each do |e|
@@ -35,23 +67,9 @@ module Stupidedi
         end
       end
 
-      # @private
-      def prepend(element_val)
-        self.class.new(segment_def, @element_val.cons(element_vals))
-      end
-
-      # @private
-      def append(element_val)
-        self.class.new(segment_def, @element_vals.snoc(element_val))
-      end
-    end
-
-    #
-    # Constructors
-    #
-    class << SegmentVal
-      def empty(segment_def)
-        new(segment_def, segment_def.element_uses.map{|e| e.element_def.empty })
+      def ==(other)
+        other.definition == @definition and
+        other.element_vals == @element_vals
       end
     end
 

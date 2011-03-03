@@ -10,6 +10,10 @@ module Stupidedi
     autoload :StreamReader,  "stupidedi/reader/stream_reader"
     autoload :TokenReader,   "stupidedi/reader/token_reader"
 
+    autoload :Input,          "stupidedi/reader/input"
+    autoload :DelegatedInput, "stupidedi/reader/delegated_input"
+    autoload :FileInput,      "stupidedi/reader/file_input"
+
     BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
     EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
     EITHER   = Regexp.union(BASIC, EXTENDED)

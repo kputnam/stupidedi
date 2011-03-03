@@ -1,5 +1,5 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     class SegmentUse
       # @see X222 B.1.1.3.12.7 Data Segment Position

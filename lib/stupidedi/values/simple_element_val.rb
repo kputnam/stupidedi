@@ -3,16 +3,26 @@ module Stupidedi
 
     # @see X222 B.1.1.3.1 Data Element
     class SimpleElementVal < AbstractVal
-      attr_reader :element_def
-      alias_method :definition, :segment_def
+      # @return [SimpleElementDef]
+      attr_reader :definition
 
-      def initialize(element_def)
-        @element_def = element_def
+      # @return [SegmentVal, CompositeElementVal]
+      attr_reader :parent
+
+      def initialize(definition, parent)
+        @definition, @parent = definition, parent
       end
 
-      # @private
+      # @return [SimpleElementVal]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:definition, @definition),
+          changes.fetch(:parent, @parent)
+      end
+
+      # @return [RepeatedElementVal]
       def repeated
-        RepeatedElementVal.new([self], element_def)
+        RepeatedElementVal.new(@definition, [self], @parent)
       end
     end
 

@@ -35,7 +35,7 @@ module Stupidedi
       end
 
       def ==(other)
-        if self.class === other
+        if other.is_a?(self.class)
           @message == other.message
         else
           @message == other

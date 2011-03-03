@@ -2,32 +2,57 @@ module Stupidedi
   module Values
 
     class LoopVal < AbstractVal
-      attr_reader :loop_def
-      alias_method :definition, :loop_def
+      include SegmentValGroup
 
+      attr_reader :definition
+
+      # @return [Array<SegmentVal>]
       attr_reader :segment_vals
 
-      def initialize(loop_def, *segment_vals)
-        @loop_def, @segment_vals = loop_def, segment_vals
+      # @return [Array<LoopVal>]
+      attr_reader :loop_vals
+
+      # @return [LoopVal, TableVal]
+      attr_reader :parent
+
+      def initialize(definition, segment_vals, loop_vals, parent)
+        @definition, @segment_vals, @loop_vals, @parent =
+          definition, segment_vals, loop_vals, parent
+      end
+
+      # @return [LoopVal]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:definition, @definition),
+          changes.fetch(:segment_vals, @segment_vals),
+          changes.fetch(:loop_vals, @loop_vals),
+          changes.fetch(:parent, @parent)
       end
 
       def empty?
-        @segment_vals.all?(&:empty?)
+        @segment_vals.all?(&:empty?) and @loop_vals.all(&:empty?)
       end
 
-      def [](n)
-        @segment_vals[n]
+      def append(val)
+        if val.is_a?(LoopVal)
+          copy(:loop_vals => val.snoc(@loop_vals))
+        else
+          copy(:segment_vals => val.snoc(@segment_vals))
+        end
       end
 
-      # @private
-      def ==(other)
-        other.definition == @loop_def and
-        other.segment_vals == @segment_vals
+      def prepend(val)
+        if val.is_a?(LoopVal)
+          copy(:loop_vals => val.snoc(@loop_vals))
+        else
+          copy(:segment_vals => val.snoc(@segment_vals))
+        end
       end
 
       # @private
       def pretty_print(q)
-        q.text("LoopVal[#]")
+        id = @definition.try{|l| "[#{l.id}]" }
+        q.text("LoopVal#{id}")
         q.group(1, "(", ")") do
           q.breakable ""
           @segment_vals.each do |e|
@@ -38,6 +63,12 @@ module Stupidedi
             q.pp e
           end
         end
+      end
+
+      # @private
+      def ==(other)
+        other.definition == @definition and
+        other.segment_vals == @segment_vals
       end
     end
 

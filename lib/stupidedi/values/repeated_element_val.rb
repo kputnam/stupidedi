@@ -3,13 +3,25 @@ module Stupidedi
 
     # @see X222 B.1.1.3.2 Repeating Data Elements
     class RepeatedElementVal < AbstractVal
-      attr_reader :element_def
-      alias_method :definition, :element_def
+      # @return [CompositeElementDef, SimpleElementDef]
+      attr_reader :definition
 
+      # @return [Array<ElementVal>]
       attr_reader :element_vals
 
-      def initialize(element_vals, element_def)
-        @element_vals, @element_def = element_vals, element_def
+      # @return [SegmentVal]
+      attr_reader :parent
+
+      def initialize(definition, element_vals, parent)
+        @definition, @element_vals, @parent = definition, element_vals, parent
+      end
+
+      # @return [RepeatedElementVal]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:definition, @definition),
+          changes.fetch(:element_vals, @element_vals),
+          changes.fetch(:parent, @parent)
       end
 
       def length
@@ -17,23 +29,30 @@ module Stupidedi
       end
 
       # Returns the occurence at the given index. Numbering begins at zero.
-      def [](n)
-        @element_vals[n]
+      def at(n)
+        @element_vals.at(n)
+      end
+
+      def defined_at?(n)
+        @element_vals.defined_at?(n)
       end
 
       def empty?
-        @element_vals.all?(&:empty?)
+        @element_vals.empty?
       end
 
-      # @private
-      def ==(other)
-        other.element_def == @element_def and
-        other.element_vals == @element_vals
+      def append(element_val)
+        RepeatedElementVal.new(@definition, element_val.snoc(@element_vals), @parent)
+      end
+
+      def prepend(element_val)
+        RepeatedElementVal.new(@definition, element_val.cons(@element_vals), @parent)
       end
 
       # @private
       def pretty_print(q)
-        q.text("RepeatedElementVal[#{element_def.try(:id)}]")
+        id = @definition.try{|e| "[#{e.id}]" }
+        q.text("RepeatedElementVal#{id}")
         q.group(1, "(", ")") do
           q.breakable ""
           @element_vals.each do |e|
@@ -46,22 +65,10 @@ module Stupidedi
         end
       end
 
-      # Creates a new {RepeatedElementVal} with the given element value
-      # appended to the end of the list of occurences
-      #
-      # @note Intended for use by {SegmentReader}
       # @private
-      def append(element_val)
-        RepeatedElementVal.new(element_val.snoc(@element_vals), element_def)
-      end
-
-      # Creates a new {RepeatedElementVal} with the given element value
-      # prepended to the end of the list of occurences
-      #
-      # @note Intended for use by {SegmentReader}
-      # @private
-      def prepend(element_val)
-        RepeatedElementVal.new(element_val.cons(@element_vals), element_def)
+      def ==(other)
+        other.definition == @definition and
+        other.element_vals == @element_vals
       end
     end
 

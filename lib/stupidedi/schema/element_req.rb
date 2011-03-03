@@ -1,5 +1,5 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     # The 5010 X12 "condition designator"s include
     #   M - Mandatory

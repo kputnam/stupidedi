@@ -1,8 +1,8 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     class SegmentDef
-      # @return [String]
+      # @return [Symbol]
       abstract :id
 
       # @return [String]
@@ -19,6 +19,15 @@ module Stupidedi
 
       # @return [SegmentUse]
       abstract :usage
+
+      # @return [SegmentVal]
+      def empty(parent)
+        SegmentVal.new(self, [], parent)
+      end
+
+      def value(element_vals, parent)
+        SegmentVal.new(self, element_vals, parent)
+      end
     end
 
   end

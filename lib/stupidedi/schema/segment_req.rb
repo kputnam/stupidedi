@@ -1,5 +1,5 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     # The 5010 X12 "data segment requirement designator"s include
     #   M - Mandatory

@@ -1,5 +1,5 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     class SimpleElementUse
       # @return [SimpleElementDef]

@@ -3,44 +3,64 @@ module Stupidedi
 
     # @see X222 B.1.1.3.3 Composite Data Structure
     class CompositeElementVal < AbstractVal
-      attr_reader :element_def
-      alias_method :definition, :element_def
+      # @return [CompositeElementDef]
+      attr_reader :definition
 
+      # @return [Array<SimpleElementVal>]
       attr_reader :component_element_vals
 
-      def initialize(element_def, component_element_vals)
-        @element_def, @component_element_vals =
-          element_def, component_element_vals
+      # @return [SegmentVal]
+      attr_reader :parent
 
-      # Type check disabled as an optimization, no "client code" is expected to
-      # directly construct CompositeElementVal values anyways.
-      #
-      # unless element_def.is_a?(Definitions::CompositeElementDef)
-      #   raise TypeError,
-      #     "First argument must be a kind of CompositeElementDef"
-      # end
+      def initialize(definition, component_element_vals, parent)
+        @definition, @component_element_vals, @parent =
+          definition, component_element_vals, parent
       end
 
-      # True if all component elements are empty
+      # @return [CompositeElementVal]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:definition, @definition),
+          changes.fetch(:component_element_vals, @component_element_vals),
+          changes.fetch(:parent, @parent)
+      end
+
       def empty?
         @component_element_vals.all?(&:empty?)
       end
 
-      # Returns the component element value (some kind of {SimpleElementVal}) at
-      # the given index +n+, with numbering starting at zero
-      def [](n)
-        @component_element_vals[n]
+      # @return [SimpleElementVal]
+      def at(n)
+        if @definition.component_element_uses.defined_at?(n)
+          if @component_element_vals.defined_at?(n)
+            @component_element_vals.at(n)
+          else
+            @definition.component_element_uses.at(n).empty
+          end
+        else
+          raise IndexError
+        end
       end
 
-      # @private
-      def ==(other)
-        other.definition == @element_def and
-        other.component_element_vals == @component_element_vals
+      # @return [CompositeElementVal]
+      def append(component_val)
+        copy(:component_element_vals => component_val.snoc(@component_element_vals))
+      end
+
+      # @return [CompositeElementVal]
+      def prepend(component_val)
+        copy(:component_element_vals => component_val.cons(@component_element_vals))
+      end
+
+      # @return [RepeatedElementVal]
+      def repeated
+        RepeatedElementVal.new(@definition, [self], @parent)
       end
 
       # @private
       def pretty_print(q)
-        q.text("CompositeElementVal[#{element_def.try(:id)}]")
+        id = @definition.try{|e| "[#{e.id}]" }
+        q.text("CompositeElementVal#{id}")
         q.group(1, "(", ")") do
           q.breakable ""
           @component_element_vals.each do |e|
@@ -54,18 +74,9 @@ module Stupidedi
       end
 
       # @private
-      def append(element_val)
-        CompositeElementVal.new(element_def, element_val.snoc(@component_element_vals))
-      end
-
-      # @private
-      def prepend(element_val)
-        CompositeElementVal.new(element_def, element_val.cons(@component_element_vals))
-      end
-
-      # @private
-      def repeated
-        RepeatedElementVal.new([self], element_def)
+      def ==(other)
+        other.definition == @definition and
+        other.component_element_vals == @component_element_vals
       end
     end
 

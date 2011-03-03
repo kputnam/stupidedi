@@ -1,5 +1,5 @@
 module Stupidedi
-  module Definitions
+  module Schema
 
     # The 5010 X12 "condition code"s include
     #   P - Paired or Multiple (if one then all)

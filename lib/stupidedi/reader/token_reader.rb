@@ -6,16 +6,10 @@ module Stupidedi
         DefaultReader.new(input, interchange_header)
       end
 
-      # @abstract
-      def input
-        raise NoMethodError, "Method input must be implemented in subclass"
-      end
+      # @return [Reader]
+      abstract :input
 
-      # @abstract
-      def interchange_header
-        raise NoMethodError,
-          "Method interchange_header must be implemented in subclass"
-      end
+      abstract :interchange_header
 
       def empty?
         input.empty?
@@ -100,7 +94,7 @@ module Stupidedi
       # In any case, the delimeter immediately following the element is
       # not consumed and will be present in the remaining input.
       def read_element(element_def = nil)
-        if element_def.try(&:simple?)
+        if element_def.simple?
           read_simple_element(element_def)
         else
           read_composite_element(element_def)
@@ -252,7 +246,6 @@ module Stupidedi
       end
 
       # Consume, up to and including, the next iea's segment terminator
-      # @todo Optimize if this is in tail call form
       def consume_interchange
         read_segment_id.flatmap do |result|
           id, rest = *result
@@ -278,12 +271,8 @@ module Stupidedi
     private
 
       # Returns a new TokenReader with n characters consumed from input
-      #
-      # @abstract
       # @return [TokenReader]
-      def advance(n)
-        raise NoMethodError, "Method advance(n) must be implemented in subclass"
-      end
+      abstract :advance, "n"
 
       def failure(message)
         Either.failure(Reader::Failure.new(message, input))

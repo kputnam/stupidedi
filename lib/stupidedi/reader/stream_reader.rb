@@ -23,36 +23,15 @@ module Stupidedi
       end
 
       def read_interchange_header
-        consume_isa.flatmap{|rest|
-        rest.read_character.flatmap{|r|      element_separator, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa01, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa02, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa03, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa04, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa05, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa06, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa07, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa08, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa09, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa10, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa11, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa12, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa13, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa14, rest = *r
-        rest.read_element(element_separator).flatmap{|r| isa15, rest = *r
-        rest.read_character.flatmap{|r| isa16, rest                  = *r
-        rest.read_character.flatmap{|r| segment_terminator, rest     = *r
-          case isa12
-          when "00501" then success(Interchange::FiveOhOne)
-          when "00401" then success(Interchange::FourOhOne)
-          else              failure("Unrecognized value in ISA12 #{isa12.inspect}")
-          end.map do |version|
-            header = version.interchange_header(element_separator, segment_terminator,
-                                                isa01, isa02, isa03, isa04, isa05, isa06, isa07, isa08,
-                                                isa09, isa10, isa11, isa12, isa13, isa14, isa15, isa16)
-            Success.new(header, header.reader(rest.input))
+        consume_isa.flatmap do |rest|
+          rest.read_character.flatmap do |es, rest|
+            rest.read_nth_element(es, 12).flatmap do |version, _|
+              router.lookup(version)
+            end
           end
-        }}}}}}}}}}}}}}}}}}}
+        end.flatmap do |implementation|
+          # @todo Now properly parse the interchange header
+        end
       end
 
       alias read read_interchange_header
@@ -78,7 +57,7 @@ module Stupidedi
           end
         end
 
-        return failure("Reached end of input before finding ISA segment id")
+        failure("Reached end of input before finding ISA segment id")
       end
 
       # Read up to the next occurrence of element_separator and consume the separator
@@ -87,6 +66,16 @@ module Stupidedi
           result(@input.take(position), advance(position + 1))
         else
           failure("Reached end of input before finding an element separator")
+        end
+      end
+
+      def read_nth_element(element_separator, n, value = nil)
+        if n.zero?
+          result(value, self)
+        else
+          read_element(element_separator).flatmap do |value, rest|
+            read_nth_element(element_separator, n - 1, value)
+          end
         end
       end
 
