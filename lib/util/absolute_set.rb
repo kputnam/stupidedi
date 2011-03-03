@@ -32,11 +32,13 @@ module Stupidedi
     # @return [Array]
     def to_a
       elements = []
-      @universe.each do |(value, n)|
+
+      @universe.each do |value, n|
         unless @mask[n].zero?
           elements << value
         end
       end
+
       elements
     end
 
@@ -44,7 +46,7 @@ module Stupidedi
     def map
       mask = 0
 
-      @universe.each do |(value, n)|
+      @universe.each do |value, n|
         unless @mask[n].zero?
           if m = @universe.at(yield(value))
             mask |= (1 << m)
@@ -59,7 +61,7 @@ module Stupidedi
     def select
       mask = 0
 
-      @universe.each do |(value, n)|
+      @universe.each do |value, n|
         unless @mask[n].zero? or not yield(value)
           mask |= (1 << n)
         end
@@ -72,7 +74,7 @@ module Stupidedi
     def reject
       mask = 0
 
-      @universe.each do |(value, n)|
+      @universe.each do |value, n|
         unless @mask[n].zero? or yield(value)
           mask |= (1 << n)
         end
@@ -112,121 +114,86 @@ module Stupidedi
 
     # @return [AbsoluteSet]
     def union(other)
-      if other.is_a?(self.class)
-        if other.universe.eql?(@universe)
-          return self.class.new(@mask | other.mask, @universe)
-        else
-          other = other.to_a
-        end
+      if other.is_a?(self.class) and other.universe.eql?(@universe)
+        return self.class.new(@mask | other.mask, @universe)
+      else
+        self.class.new(@mask | as_mask(other), @universe)
       end
-
-      mask = 0
-
-      other.each do |x|
-        if n = @universe.at(x)
-          mask |= (1 << n)
-        end
-      end
-
-      self.class.new(mask | @mask, @universe)
     end
 
     # @return [AbsoluteSet]
     def intersection(other)
-      if other.is_a?(self.class)
-        if other.universe.eql?(@universe)
-          return self.class.new(@mask & other.mask, @universe)
-        else
-          other = other.to_a
-        end
+      if other.is_a?(self.class) and other.universe.eql?(@universe)
+        self.class.new(@mask & other.mask, @universe)
+      else
+        self.class.new(@mask & as_mask(other), @universe)
       end
-
-      mask = 0
-
-      other.each do |x|
-        if n = @universe.at(x)
-          mask |= (1 << n)
-        end
-      end
-
-      self.class.new(@mask & mask, @universe)
     end
 
     # @return [AbsoluteSet]
     def difference(other)
-      if other.is_a?(self.class)
-        if other.universe.eql?(@universe)
-          return self.class.new(@mask & ~other.mask, @universe)
-        else
-          other = other.to_a
-        end
+      if other.is_a?(self.class) and other.universe.eql?(@universe)
+        self.class.new(@mask & ~other.mask, @universe)
+      else
+        self.class.new(@mask & ~as_mask(other), @universe)
       end
-
-      mask = 0
-
-      other.each do |x|
-        if n = @universe.at(x)
-          mask |= (1 << n)
-        end
-      end
-
-      self.class.new(@mask & ~mask, @universe)
     end
 
     # @return [AbsoluteSet]
     def symmetric_difference(other)
-      if other.is_a?(self.class)
-        if other.universe.eql?(@universe)
-          return self.class.new(@mask ^ other.mask, @universe)
-        else
-          other = other.to_a
-        end
+      if other.is_a?(self.class) and other.universe.eql?(@universe)
+        self.class.new(@mask ^ other.mask, @universe)
+      else
+        self.class.new(@mask ^ as_mask(other), @universe)
       end
-
-      mask = 0
-
-      other.each do |x|
-        if n = @universe.at(x)
-          mask |= (1 << n)
-        end
-      end
-
-      self.class.new(@mask ^ mask, @universe)
     end
 
     # @return [AbsoluteSet]
     def replace(other)
-      if other.is_a?(self.class)
-        if other.universe.eql?(@universe)
-          return other
-        else
-          other = other.to_a
-        end
+      if other.is_a?(self.class) and other.universe.eql?(@universe)
+        other
+      else
+        self.class.new(as_mask(other), @universe)
       end
-
-      mask = 0
-
-      other.each do |x|
-        if n = @universe.at(x)
-          mask |= (1 << n)
-        end
-      end
-
-      self.class.new(mask, @universe)
     end
 
     # @return [Boolean]
     def ==(other)
-      if other.is_a?(self.class)
-        if other.universe.eql?(@universe)
-          return other.mask == @mask
-        else
-          other = other.to_a
+      if other.is_a?(self.class) and other.universe.eql?(@universe)
+        @mask == other.mask
+      else
+        @mask == as_mask(other)
+      end
+    end
+
+  private
+
+    # @return [Integer]
+    def as_mask(other)
+      mask = 0
+
+      # Unfortunately, computing our size is O(|U|) and other.size
+      # might be O(|V|) so this is O(2*|U| + |V|) or O(2*|V| + |U|)
+      if other.is_a?(AbstractSet) and (other.infinite? or size < other.size)
+        @universe.each do |value, n|
+          if other.include?(value)
+            mask |= (1 << n)
+          end
+        end
+      else
+        # We might land here if other is an Array, since its probably
+        # much worse to repeatedly call Array#include? than it is to
+        # iterate the entire Array only once
+        other.each do |x|
+          if n = @universe.at(x)
+            mask |= (1 << n)
+          end
         end
       end
 
-      to_a == other
+      mask
     end
+
   end
 
   class << AbsoluteSet

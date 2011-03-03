@@ -112,14 +112,14 @@ module Stupidedi
 
     def difference(other)
       if other.is_a?(self.class)
-        # A - B
+        # A - B = A & ~B
         if other.empty?
           self
         else
           self.class.new(@hash.clone.delete_if{|o,_| other.include?(o) })
         end
       elsif other.is_a?(Array)
-        # A - B
+        # A - B = A & ~B
         if other.empty?
           self
         else

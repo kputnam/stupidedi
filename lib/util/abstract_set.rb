@@ -6,6 +6,10 @@ module Stupidedi
     abstract :empty?
     abstract :size
 
+    def infinite?
+      not finite?
+    end
+
     abstract :complement
     abstract :union, :args => %w(other)
     abstract :difference, :args => %w(other)
