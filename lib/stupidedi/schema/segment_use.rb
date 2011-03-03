@@ -42,15 +42,19 @@ module Stupidedi
         q.text "SegmentUse"
         q.group(2, "(", ")") do
           q.breakable ""
-          q.pp definition
+          q.pp @position
           q.text ","
 
           q.breakable
-          q.pp requirement
+          q.pp @definition
           q.text ","
 
           q.breakable
-          q.pp repeat_count
+          q.pp @requirement
+          q.text ","
+
+          q.breakable
+          q.pp @repeat_count
         end
       end
     end

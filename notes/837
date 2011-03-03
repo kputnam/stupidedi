@@ -1,289 +1,291 @@
-ST*837
-BHT*0019
+ST
+BHT
 
-1000A SUBMITTER NAME
-NM1*41
+1000A SUBMITTER NAME (1)
+NM1*[IL]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
 PER
 
-1000B RECEIVER NAME
-NM1*40*2
+1000B RECEIVER NAME (1)
+NM1*[40]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
 
-2000A BILLING PROVIDER
-HL
+=====================================================================
+
+2000A BILLING PROVIDER (>1)
+HL*..*..*[20]*[  ]
 PRV
 CUR
 
-  2010AA BILLING PROVIDER NAME
-  NM1*85
+  2010AA BILLING PROVIDER NAME (1)
+  NM1*[85]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
   N3
   N4
-  REF*EI,SY
-  REF*0B,1G
+  REF*[EI,SY]*..*..*..
+  REF*[0B,1G]*..*..*..
   PER
 
-  2010AB PAY-TO ADDRESS NAME
-  NM1*87
+  2010AB PAY-TO ADDRESS NAME (1)
+  NM1*[87]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
   N3
   N4
 
-  2010AC PAY-TO PLAN NAME
-  NM1*PE
+  2010AC PAY-TO PLAN NAME (1)
+  NM1*[PE]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
   N3
   N4
-  REF*2U,FY,NF
-  REF*EI
+  REF*[2U,FY,NF]*..*..*..
+  REF*[EI]*..*..*..
 
-2000B SUBSCRIBER
-HL
+2000B SUBSCRIBER (>1)
+HL*..*..*[22]*[  ]
 SBR
 PAT
 
-  2010BA SUBSCRIBER NAME
-  NM1*IL
+  2010BA SUBSCRIBER NAME (1)
+  NM1*[IL]*[  ]*..*..*..*..*..*[  ]*..*..*(..)*..
   N3
   N4
   DMG
-  REF*SY
-  REF*Y4
+  REF*[SY]*..*..
+  REF*[Y4]*..*..
   PER
 
-  2010BB PAYER NAME
-  NM1*PR
+  2010BB PAYER NAME (1)
+  NM1*[PR]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
   N3
   N4
-  REF*2U,EI,FY,NF
-  REF*G2,LU
+  REF*[2U,EI,FY,NF]*..*..*..
+  REF*[G2,LU]*..*..*..
 
-2000C PATIENT
-HL
+2000C PATIENT (>1)
+HL*..*..*[23]*[  ]
 PAT
 
-  2010CA PATIENT NAME
-  NM1*QC
+  2010CA PATIENT NAME (1)
+  NM1*[QC]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
   N3
   N4
   DMG
-  REF*Y4
-  REF*1W,SY
+  REF
   PER
 
-  2300 CLAIM INFORMATION
+  2300 CLAIM INFORMATION (100)
   CLM
-  DTP*431
-  DTP*454
-  DTP*304
-  DTP*453
-  DTP*439
-  DTP*484
-  DTP*455
-  DTP*471
-  DTP*314,360,361
-  DTP*297
-  DTP*296
-  DTP*435
-  DTP*096
-  DTP*090,091
-  DTP*444
-  DTP*050
+  DTP*[431]*[  ]*..
+  DTP*[454]*[  ]*..
+  DTP*[304]*[  ]*..
+  DTP*[453]*[  ]*..
+  DTP*[439]*[  ]*..
+  DTP*[484]*[  ]*..
+  DTP*[455]*[  ]*..
+  DTP*[471]*[  ]*..
+  DTP*[361,360,361]*[  ]*..
+  DTP*[297]*[  ]*..
+  DTP*[296]*[  ]*..
+  DTP*[435]*[  ]*..
+  DTP*[096]*[  ]*..
+  DTP*[090]*[  ]*..
+  DTP*[444]*[  ]*..
+  DTP*[050]*[  ]*..
   PWK
   CN1
-  AMT*F5
-  REF*4N
-  REF*F5
-  REF*EW
-  REF*9F
-  REF*G1
-  REF*F8
-  REF*X4
-  REF*9A
-  REF*9C
-  REF*LX
-  REF*D9
-  REF*EA
-  REF*P4
-  REF*1J
+  AMT
+  REF*[4N]*..*..
+  REF*[F5]*..*..
+  REF*[EW]*..*..
+  REF*[9F]*..*..
+  REF*[G1]*..*..
+  REF*[F8]*..*..
+  REF*[X4]*..*..
+  REF*[9A]*..*..
+  REF*[9C]*..*..
+  REF*[LX]*..*..
+  REF*[D9]*..*..
+  REF*[EA]*..*..
+  REF*[P4]*..*..
+  REF*[1J]*..*..
   K3
   NTE
   CR1
   CR2
-  CRC*07
-  CRC*E1,E2,E3
-  CRC*75
-  CRC*ZZ
-  HI*BK:...
-  HI*BP:...
-  HI*BG:...
+  CRC*[07]*[  ]*[  ]*(..)*(..)*(..)*(..)
+  CRC*[E1,E2,E3]*[  ]*[  ]*(..)*(..)*(..)*(..)
+  CRC*[75]*[  ]*[  ]*{..}*{..}*{..}*{..}
+  CRC*[ZZ]*[  ]*[  ]*(..)*(..)*(..)*{..}
+  HI*[ABK,BK]:..:..:(..):..:..:..:..:(..)*..*..*..*..*..*..*..*..*..*..*..
+  HI*[BP]:..:..:(..):..:..:..:..:(..)*..*..*..*..*..*..*..*..*..*..*..
+  HI*[BG]:..:..:(..):..:..:..:..:(..)*..*..*..*..*..*..*..*..*..*..*..
   HCP
 
-    2310A REFERRING PROVIDER NAME
-    NM1*DN,P3
+    2310A REFERRING PROVIDER NAME (2)
+    NM1*[DN,P3]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
     REF
 
-    2310B RENDERING PROVIDER NAME
-    NM1*82
+    2310B RENDERING PROVIDER NAME (1)
+    NM1*[82]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
     PRV
     REF
 
-    2310C SERVICE FACILITY LOCATION
-    NM1*77
+    2310C SERVICE FACILITY LOCATION (1)
+    NM1*[77]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
     N3
     N4
     REF
     PER
 
-    2310D SUPERVISING PROVIDER NAME
-    NM1*DQ
+    2310D SUPERVISING PROVIDER NAME (1)
+    NM1*[DQ]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
     REF
 
-    2310E AMBULANCE PICK-UP LOCATION
-    NM1*PW
+    2310E AMBULANCE PICK-UP LOCATION (1)
+    NM1*[PW]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
     N3
     N4
 
-    2310F AMBULANCE DROP-OFF LOCATION
-    NM1*45
+    2310F AMBULANCE DROP-OFF LOCATION (1)
+    NM1*[45]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
     N3
     N4
 
-    2320 OTHER SUBSCRIBER INFORMATION
+    2320 OTHER SUBSCRIBER INFORMATION (10)
     SBR
     CAS
-    AMT*D
-    AMT*A8
-    AMT*EAF
+    AMT*[D]*..*{..}
+    AMT*[A8]*..*{..}
+    AMT*[EAF]*..*{..}
     OI
     MOA
 
-      2330A OTHER SUBSCRIBER NAME
-      NM1*IL
+      2330A OTHER SUBSCRIBER NAME (1)
+      NM1*[IL]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
       N3
       N4
       REF
 
-      2330B OTHER PAYER NAME
-      NM1*PR
+      2330B OTHER PAYER NAME (1)
+      NM1*[PR]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
       N3
       N4
-      DTP*573
-      REF*2U,EI,FY,NF
-      REF*G1
-      REF*9F
-      REF*T4
-      REF*F8
+      DTP
+      REF*[2U,EI,FY,NF]*..*..
+      REF*[G1]*..*..
+      REF*[9F]*..*..
+      REF*[T4]*..*..
+      REF*[F8]*..*..
 
-      2330C OTHER PAYER REFERRING PROVIDER
-      NM1*DN,P3
+      2330C OTHER PAYER REFERRING PROVIDER (2)
+      NM1*[DN,P3]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
       REF
 
-      2330D OTHER PAYER RENDERING PROVIDER
-      NM1*82
+      2330D OTHER PAYER RENDERING PROVIDER (1)
+      NM1*[82]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
       REF
 
-      2330E OTHER PAYER SERVICE FALICITY LOCATION
-      NM1*77
+      2330E OTHER PAYER SERVICE FALICITY LOCATION (1)
+      NM1*[77]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
       REF
 
-      2330F OTHER PAYER SUPERVISING PROVIDER
-      NM1*DQ
+      2330F OTHER PAYER SUPERVISING PROVIDER (1)
+      NM1*[DQ]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
       REF
 
-      2330G OTHER PAYER BILLING PROVIDER
-      NM1*85
+      2330G OTHER PAYER BILLING PROVIDER (1)
+      NM1*[85]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
       REF
 
-      2400 SERVICE LINE NUMBER
+      2400 SERVICE LINE NUMBER (50)
       LX
       SV1
       SV5
-      PWK*..*AA,BM,EL,EM,FT,FX
-      PWK*..*AB,AD,AF,AG,NS
+      PWK*[  ]*[AA,BM,EL,EM,FT,FX]*..*{..}*{..}*..*..*..*{..}
+      PWK*[CT]*[AB,AD,AF,AG,NS]*..*{..}*{..}*..*..*..*{..}
       CR1
       CR3
-      CRC*07
-      CRC*70
-      CRC*09
-      DTP*472
-      DTP*471
-      DTP*607
-      DTP*463
-      DTP*461
-      DTP*304
-      DTP*738,739
-      DTP*011
-      DTP*455
-      DTP*454
-      QTY*PT
-      QTY*FL
+      CRC*[07]*[  ]*[  ]*(..)*(..)*(..)*(..)
+      CRC*[70]*[  ]*[  ]*{..}*{..}*{..}*{..}
+      CRC*[09]*[  ]*[  ]*(..)*{..}*{..}*{..}
+      DTP*[472]*[  ]*..
+      DTP*[471]*[  ]*..
+      DTP*[607]*[  ]*..
+      DTP*[463]*[  ]*..
+      DTP*[461]*[  ]*..
+      DTP*[304]*[  ]*..
+      DTP*[738,739]*[  ]*..
+      DTP*[011]*[  ]*..
+      DTP*[455]*[  ]*..
+      DTP*[454]*[  ]*..
+      QTY*[PT]*..*..*..
+      QTY*[FL]*..*..*..
       MEA
       CN1
-      REF*9B
-      REF*9D
-      REF*G1
-      REF*6R
-      REF*EW
-      REF*X4
-      REF*F4
-      REF*BT
-      REF*9F
-      AMT*T
-      AMT*F4
+      REF*[9B]*..*..*..
+      REF*[9D]*..*..*..
+      REF*[G1]*..*..*..
+      REF*[6R]*..*..*..
+      REF*[EW]*..*..*..
+      REF*[X4]*..*..*..
+      REF*[F4]*..*..*..
+      REF*[BT]*..*..*..
+      REF*[9F]*..*..*..
+      AMT*[T]*..*{..}
+      AMT*[F4]*..*{..}
       K3
-      NTE*ADD,DCP
-      NTE*TPO
+      NTE*[ADD,DCP]*..
+      NTE*[TPO]*..
       PS1
       HCP
 
-        2410 DRUG IDENTIFICATION
+        2410 DRUG IDENTIFICATION (1)
         LIN
         CTP
         REF
 
-        2420A RENDERING PROVIDER NAME
-        NM1*82
+        2420A RENDERING PROVIDER NAME (1)
+        NM1*[82]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
         PRV
         REF
 
-        2420B PURCHASED SERVICE PROVIDER NAME
+        2420B PURCHASED SERVICE PROVIDER NAME (1)
+        NM1*[QB]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
         NM1*QB
         REF
 
-        2420C SERVICE FACILITY LOCATION NAME
-        NM1*77
+        2420C SERVICE FACILITY LOCATION NAME (1)
+        NM1*[77]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
         N3
         N4
         REF
 
-        2420D SUPERVISING PROVIDER NAME
-        NM1*DQ
+        2420D SUPERVISING PROVIDER NAME (1)
+        NM1*[DQ]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
         REF
 
-        2420E ORDERING PROVIDER NAME
-        NM1*DK
+        2420E ORDERING PROVIDER NAME (1)
+        NM1*[DK]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
         N3
         N4
         REF
         PER
 
-        2420F REFERRING PROVIDER NAME
-        NM1*DN,P3
+        2420F REFERRING PROVIDER NAME (2)
+        NM1*[DN,PS]*[  ]*..*..*..*..*..*(..)*..*..*{..}*..
         REF
 
-        2420G AMBULANCE PICK-UP LOCATION
-        NM1*PW
+        2420G AMBULANCE PICK-UP LOCATION (1)
+        NM1*[PW]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
         N3
         N4
 
-        2420H AMBULANCE DROP-OFF LOCATION
-        NM1*45
+        2420H AMBULANCE DROP-OFF LOCATION (1)
+        NM1*[45]*[  ]*..*..*..*..*..*{..}*..*..*{..}*..
         N3
         N4
 
-        2430 LINE ADJUDICATION INFORMATION
+        2430 LINE ADJUDICATION INFORMATION (15)
         SVD
         CAS
         DTP
         AMT
 
-        2440 FORM IDENTIFICATION CODE
+        2440 FORM IDENTIFICATION CODE (>1)
         LQ
         FRM
