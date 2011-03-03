@@ -9,6 +9,7 @@
 # t.get           #=> "value"
 #
 class ThreadLocalVar
+
   def initialize(value)
     @value   = value
     @threads = Hash.new
@@ -17,7 +18,7 @@ class ThreadLocalVar
   def get
     @threads.fetch(Thread.current) do
       case @value
-      when Numeric, nil
+      when Numeric, Symbol, nil
         @value
       else
         @threads[Thread.current] = @value
@@ -38,6 +39,7 @@ class ThreadLocalVar
       end
     end
   end
+
 end
 
 #
@@ -59,13 +61,14 @@ end
 # counter.current #=> 50
 #
 class ThreadLocalHash
+
   def initialize(defaults = {})
-    @defaults = defaults
+    @defaults = defaults.clone
     @clones   = Hash.new
 
     defaults.keys.each do |name|
       case defaults[name]
-      when Numeric, nil
+      when Numeric, Symbol, nil
         instance_eval <<-RUBY
           def #{name}
             @clones.fetch([Thread.current, :#{name}]) do
@@ -95,7 +98,7 @@ class ThreadLocalHash
   def [](name)
     @clones.fetch([Thread.current, name]) do
       case value = @defaults[name]
-      when Numeric, nil
+      when Numeric, Symbol, nil
         value
       else
         @clones[[Thread.current, name]] = value.clone
@@ -124,8 +127,9 @@ class ThreadLocalHash
       if name.to_s =~ /^(.+)=$/
         self[$1.to_sym] = value
       else
-        raise ArgumentError
+        super
       end
     end
   end
+
 end
