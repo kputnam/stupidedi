@@ -16,6 +16,7 @@ module Stupidedi
       end
 
       # Consume s if it is directly in front of the cursor
+      # @return [Either<TokenReader>]
       def consume_prefix(s)
         return success(self) if s.empty?
 
@@ -44,6 +45,7 @@ module Stupidedi
       end
 
       # Consume input, including s, from here to the next occurrence of s
+      # @return [Either<TokenReader>]
       def consume(s)
         position = 0
         buffer   = " " * s.length
@@ -66,6 +68,7 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
+      # @return [Either<Result<String>>]
       def read_delimiter
         position = 0
 

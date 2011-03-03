@@ -23,15 +23,21 @@ module Stupidedi
       end
 
       def offset
-        @remainder.offset if @remainder and @remainder.respond_to?(:offset)
+        unless @remainder.nil? or not @remainder.respond_to?(:offset)
+          @remainder.offset
+        end
       end
 
       def line
-        @remainder.line if @remainder and @remainder.respond_to?(:line)
+        unless @remainder.nil? or not @remainder.respond_to?(:line)
+          @remainder.line
+        end
       end
 
       def column
-        @remainder.column if @remainder and @remainder.respond_to?(:column)
+        unless @remainder.nil? or not @remainder.respond_to?(:column)
+          @remainder.column
+        end
       end
 
       def ==(other)
