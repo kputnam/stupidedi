@@ -27,11 +27,19 @@ class Module
       raise ArgumentError, ":to cannot be nil"
 
     for m in methods
-      class_eval <<-RUBY
-        def #{m}(*args, &block)
-          #{target}.#{m}(*args, &block)
-        end
-      RUBY
+      if m.to_s =~ /=$/
+        class_eval <<-RUBY
+          def #{m}(value)
+            #{target}.#{m}(value)
+          end
+        RUBY
+      else
+        class_eval <<-RUBY
+          def #{m}(*args, &block)
+            #{target}.#{m}(*args, &block)
+          end
+        RUBY
+      end
     end
   end
 end
