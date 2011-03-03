@@ -16,6 +16,9 @@ module Stupidedi
 
       # @return [Array<SyntaxNote>]
       abstract :syntax_notes
+
+      # @return [SegmentUse]
+      abstract :usage
     end
 
   end

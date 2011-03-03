@@ -10,6 +10,9 @@ module Stupidedi
 
       # @return [Array<LoopDef>]
       abstract :loop_defs
+
+      # @return [TransactionSetDef]
+      abstract :parent
     end
 
   end

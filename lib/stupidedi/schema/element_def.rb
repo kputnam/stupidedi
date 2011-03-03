@@ -11,6 +11,9 @@ module Stupidedi
 
       # @return [String]
       abstract :purpose
+
+      # @return [SimpleElementUse, ComponentElementUse]
+      abstract :usage
     end
 
     # @see X222 B.1.1.3.3 Composite Data Structure
@@ -29,6 +32,9 @@ module Stupidedi
 
       # @return [Array<SyntaxNote>]
       abstract :syntax_notes
+
+      # @return [CompositeElementUse]
+      abstract :usage
     end
 
   end

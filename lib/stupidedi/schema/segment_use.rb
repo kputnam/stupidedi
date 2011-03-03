@@ -17,6 +17,9 @@ module Stupidedi
       # @see X222 B.1.3.12.8 Data Segment Occurrence
       # @return [RepetitionMax]
       abstract :repetition_max
+
+      # @return [LoopDef, TableDef]
+      abstract :parent
     end
 
   end
