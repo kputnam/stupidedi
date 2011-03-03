@@ -1,0 +1,106 @@
+
+  Appending to Syntax Tree
+    b = Stupidedi::Builder::Transmission.new
+
+    b = b.isa("00", b.blank,
+              "01", "SECRET",
+              "ZZ", "SUBMITTERS ID",
+              "ZZ", "RECEIVERS ID",
+              Date.current, Time.current,
+              "U", "00401",
+              "000000905", "1", "T", b.default)
+
+    b = b.gs("HC",
+             "SENDER CODE",
+             "RECEIVER CODE",
+             Date.current, Time.current,
+             b.default,
+             "X", "004010X098")
+
+    b = b.st("837", b.default).
+          bht("0019", "00", "0123", Date.current, Time.current, "CH").
+          nm1("41", "2", "CRAMMER, DOLE, PALMER, AND JOHANSON",
+              b.blank, b.blank, b.blank, b.blank, "46", "W7933THU").
+          n2("N ASSOCIATES, INC").
+          per("IC", "JANE DOE", "TE", "9005555555")
+
+    ...
+
+    b.clm("A37YH556", 500, b.blank, b.blank,
+          b.composite(11, b.blank, 1),
+          "Y", "A", "Y", "Y", "C")
+
+    ...
+
+    b.iea(b.default, b.default)
+
+  Shorthand
+    b.segment
+    b.element
+    b.composite
+    b.repeated
+    b.blank
+    b.default
+      # Proxy/Thunk
+      #   x = b.default
+      #   x.class   #=> DefaultVal
+      #   ...
+      #   x.force!
+      #   x.to_s    #=> "ABCDEF"
+      #   x.class   #=> StringVal
+
+  Current State
+    b.current.interchange       #=> InterchangeVal
+    b.current.functional_group  #=> FunctionalGroupVal
+    b.current.transaction_set   #=> TransactionSetVal
+    b.current.table             #=> TableVal
+    b.current.loop              #=> LoopVal
+    b.current.segment           #=> SegmentVal
+
+    b.current.position #=> interchange no
+                       #   functional group no
+                       #   transaction set no
+                       #   segment no
+
+  Syntax Tree Iteration
+    o.interchanges
+    o.functional_groups
+    o.transaction_sets
+    o.tables
+    o.loops
+    o.segments
+
+  Reader Interface
+    b.read(input)
+
+  Writer Interface
+    o.used_chars #=> "ABC...abc...123"
+    o.write(delimiters, settings)
+
+  Writers
+    X12
+    XML
+    Annotated HTML
+    Annotated Text
+
+  Error Handling
+    b.xxx
+    o.errors    #=> [Error("Invalid segment 'XXX'",
+                            severity,
+                            SegmentVal[XXX](..),
+                            ["test.rb:30", ...]),
+
+                     Error("Invalid segment 'XXX'",
+                            severity,
+                            Failure)]
+      interchange.errors
+      functional_group.errors
+      transaction_set.errors
+      table.errors
+      loop.errors
+      segment.errors
+      element.errors
+
+    interchange.generate_interchange_acknowledgment
+    functional_group.generate_functional_acknowledgment
+    functional_group.generate_implementation_acknowledgment

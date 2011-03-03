@@ -1,0 +1,67 @@
+
+
+  Schema Walking & Callbacks
+  -----------------------------------------------------------------------------
+  Like the 4010 EDI Generation code, where the transaction set definition is
+  iterated and some dispatch method is called to render each segment as its
+  visited.
+
+  Upsides:
+  - Reordering sibling nodes requires only changing the definition, and not the
+    client code.
+
+  - Validation is simple, because we can compare the current segment definition
+    to the return value of the callback at each point.
+
+  Downsides:
+  - While the iteration is performed from the transaction set itself, the client
+    code needs to control the iteration to some extent, based on the appropriate
+    number of loop iterations.
+
+  - It's awkward for the callback must maintain state across multiple invocations.
+    There are no "closing tags" with EDI and the client code doesn't know when
+    items in the state can be discarded.
+
+  - Validating the maximum number of loop iterations is also awkward. Should the
+    number of calls be limited, potentially truncating loop iterations without
+    the client knowing? Should we allow the callback to be called one more time,
+    tempting the client code to violate the standard?
+
+
+  Unrestricted
+  -----------------------------------------------------------------------------
+  The client code generates the full X12 transaction as a string, without any
+  guidance from the transaction set definition.
+
+  Upsides:
+  - It's simple to implement. The client code has full control of iterating the
+    objects that need to be serialized (claims, claim lines, eg).
+
+  Downsides:
+  - Validation can happen only when the generation is complete, meaning there is
+    no way to tell which part of the code (eg stacktrace) created invalid output
+    without walking through the code base.
+
+  - Without significant effort, code written to concatenate strings based on all
+    kinds of conditions can become very unreadable. Using a DSL would probably
+    alleviate readability problems.
+
+
+  Incremental Parse Tree
+  -----------------------------------------------------------------------------
+  The client code *incrementally* generates the X12, yielding it to a parser
+  which incrementally builds the syntax tree. Alternatively, the client calls a
+  DSL which is a state machine, which builds the AST 
+
+  Upsides:
+  - Validation happens as the X12 data is being generated, and invalid X12 can
+    be tagged with a stack trace, cause an exception, etc.
+
+  - Constructing the parse tree is less costly, as its being built directly from
+    the DSL instead of being reconstituted from the serialized string.
+
+  - The client code retains control flow, avoiding the awkwardness of callbacks
+    and event-driven X12 generation.
+
+  Downsides:
+  - Difficult to implement the state machine

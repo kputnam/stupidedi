@@ -1,0 +1,28 @@
+
+
+  (1) sent
+        837 claim / encounter
+        270 eligibility inquiry
+        276 claim status request
+        834 plan enrollment
+        820 premium payments
+
+  (2) received
+        TA1 interchange acknowledgment
+        TA3
+
+  (3) syntax passed
+        997 
+
+  (4) semantics passed
+        999 implementation guide conformance
+
+  (5) acknowledged
+        277 claim acknowledgment
+        824 application acknowledgment
+
+  (6) completed
+        835 claim payment
+        271 eligibility response
+        277 claim status response
+        278 request authorization

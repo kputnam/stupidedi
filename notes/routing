@@ -1,0 +1,22 @@
+
+  /
+    var
+      spool
+        stupidedi
+
+          incoming
+            archived
+            active
+
+          outgoing
+            archived
+            active
+
+  route/
+    configuration.yml
+      connection
+        username
+        password
+        protocol
+      submitter (ISA05/ISA06)
+      receiver (ISA07/ISA08)
