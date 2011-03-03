@@ -4,12 +4,16 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          HL = SegmentDef.build :HL, "Hierarchical Level",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          HL = s::SegmentDef.build(:HL, "Hierarchical Level",
             "To identify dependencies among the content of hierarchically related groups of data segments",
-            E::E628 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E734 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E735 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E736 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E628 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E734 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E735 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E736 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

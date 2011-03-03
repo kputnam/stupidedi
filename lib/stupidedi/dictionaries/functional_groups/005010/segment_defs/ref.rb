@@ -4,13 +4,17 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          REF = SegmentDef.build :REF, "Reference Information",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          REF = s::SegmentDef.build(:REF, "Reference Information",
             "To specify identifying information",
-            E::E128 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E127 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E352 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::C040 .simple_use(Optional,   RepeatCount.bounded(1)),
-            SyntaxNote.build(2, 3)
+            e::E128 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E352 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::C040 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            SyntaxNotes::R.build(2, 3))
 
         end
       end

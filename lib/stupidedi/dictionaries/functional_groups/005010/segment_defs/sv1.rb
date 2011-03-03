@@ -4,34 +4,38 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV1 = SegmentDef.build :SV1, "Professional Service",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          SV1 = s::SegmentDef.build(:SV1, "Professional Service",
             "To specify the service line item detail for a health care professional",
-            E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E355 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E380 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E1331.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1365.simple_use(Optional,   RepeatCount.bounded(1)),
+            e::C003 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E355 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E1331.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1365.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            E::C004 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1340.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
+            e::C004 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1340.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            E::E1364.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1341.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1327.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1334.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E127 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E116 .simple_use(Optional,   RepeatCount.bounded(1)),
+            e::E1364.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1341.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1327.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1334.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E116 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1337.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1360.simple_use(Optional,   RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1337.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1360.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            SyntaxNote::P.build(3, 4)
+            SyntaxNotes::P.build(3, 4))
 
         end
       end

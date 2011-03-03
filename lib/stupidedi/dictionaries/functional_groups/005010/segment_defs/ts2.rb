@@ -4,27 +4,34 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          TS2 = SegmentDef.build :TS2, "Transaction Supplemental Statistics",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          TS2 = s::SegmentDef.build(:TS2, "Transaction Supplemental Statistics",
             "To supply supplemental summary control information by provider fiscal year and bill type",
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

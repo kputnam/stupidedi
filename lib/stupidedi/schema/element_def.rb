@@ -23,19 +23,6 @@ module Stupidedi
 
       abstract :reader, :args => %w(input context)
 
-      def initialize(id, name, description, parent = nil)
-        @id, @name, @description, @parent =
-          id, name, description, parent
-      end
-
-      def copy(changes = {})
-        self.class.new \
-          changes.fetch(:id, @id),
-          changes.fetch(:name, @name),
-          changes.fetch(:description, @description),
-          changes.fetch(:parent, @parent)
-      end
-
       def simple?
         true
       end
@@ -99,7 +86,7 @@ module Stupidedi
         true
       end
 
-      def use(requirement, repeat_count, parent = nil)
+      def simple_use(requirement, repeat_count, parent = nil)
         CompositeElementUse.new(self, requirement, repeat_count, parent)
       end
 
@@ -114,6 +101,30 @@ module Stupidedi
       end
 
       abstract :reader, :args => %w(input context)
+
+      # @private
+      def pretty_print(q)
+        q.text("CompositeElementDef[#{@id}]")
+        q.group(2, "(", ")") do
+          q.breakable ""
+          @element_uses.each do |e|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp e
+          end
+        end
+      end
+    end
+
+    class << CompositeElementDef
+      def build(id, name, description, *args)
+        element_uses = args.take_while{|x| x.is_a?(ElementUse) }
+        syntax_notes = args.drop(element_uses.length)
+
+        new(id, name, description, element_uses, syntax_notes, parent = nil)
+      end
     end
 
   end

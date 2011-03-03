@@ -4,15 +4,19 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          CR3 = SegmentDef.build :CR3, "Durable Medical Equipment Certification",
-            "To supply information regarding a physician's certification for durable medical equipment",
-            E::E1322.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E355 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E380 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E1335.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E352 .simple_use(Optional,   RepeatCount.bounded(1)),
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
 
-            SyntaxNote::P.build(2, 3)
+          CR3 = s::SegmentDef.build(:CR3, "Durable Medical Equipment Certification",
+            "To supply information regarding a physician's certification for durable medical equipment",
+            e::E1322.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E355 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E1335.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E352 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            SyntaxNotes::P.build(2, 3))
 
         end
       end

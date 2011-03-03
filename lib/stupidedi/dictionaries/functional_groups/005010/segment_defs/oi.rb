@@ -4,14 +4,18 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          OI = SegmentDef.build :OI, "Other Health Insurance Information",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          OI = s::SegmentDef.build(:OI, "Other Health Insurance Information",
             "To specify information associated with other health insurance coverage",
-            E::E1032.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1383.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1351.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1360.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1363.simple_use(Optional,   RepeatCount.bounded(1))
+            e::E1032.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1383.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1351.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1360.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1363.simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

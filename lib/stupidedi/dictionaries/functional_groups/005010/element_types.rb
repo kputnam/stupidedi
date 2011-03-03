@@ -15,16 +15,17 @@ module Stupidedi
 
             attr_reader :max_length
 
+            attr_reader :parent
+
             abstract :companion
 
             def initialize(id, name, min_length, max_length, description = nil, parent = nil)
-              super(id, name, description, parent)
+              @id, @name, @min_length, @max_length, @description, @parent =
+                id, name, min_length, max_length, description, parent
 
               if min_length > max_length
                 raise ArgumentError, "Minimum length cannot be greater than maximum length"
               end
-
-              @min_length, @max_length = min_length, max_length
             end
 
             def copy(changes = {})

@@ -4,20 +4,24 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          N4 = SegmentDef.build :N4, "Geographic Location",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          N4 = s::SegmentDef.build(:N4, "Geographic Location",
             "To specify the geographic place of the named party",
-            E::E19  .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E156 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E116 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E26  .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E309 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E310 .simple_use(Optional,   RepeatCount.bounded(1)),
+            e::E19  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E156 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E116 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E26  .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E309 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E310 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            E::E1715.simple_use(Relational, RepeatCount.bounded(1)),
+            e::E1715.simple_use(r::Relational, s::RepeatCount.bounded(1)),
 
-            SyntaxNote::E.build(2, 7),
-            SyntaxNote::C.build(6, 5),
-            SyntaxNote::C.build(7, 4)
+            SyntaxNotes::E.build(2, 7),
+            SyntaxNotes::C.build(6, 5),
+            SyntaxNotes::C.build(7, 4))
 
         end
       end

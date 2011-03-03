@@ -1,38 +1,85 @@
 module Stupidedi
-  module FunctionalGroups
-    module FiftyTen
-      module SyntaxNotes
+  module Dictionaries
+    module FunctionalGroups
+      module FiftyTen
+        module SyntaxNotes
 
-        #
-        # Paired or Multiple
-        #
-        class P < Schema::SyntaxNote
+          #
+          # Paired or Multiple
+          #
+          class P < Schema::SyntaxNote
+            def copy(changes = {})
+              self
+            end
+          end
+
+          class << P
+            def build(*args)
+              new
+            end
+          end
+
+          #
+          # Required
+          #
+          class R < Schema::SyntaxNote
+            def copy(changes = {})
+              self
+            end
+          end
+
+          class << R
+            def build(*args)
+              new
+            end
+          end
+
+          #
+          # Exclusion
+          #
+          class E < Schema::SyntaxNote
+            def copy(changes = {})
+              self
+            end
+          end
+
+          class << E
+            def build(*args)
+              new
+            end
+          end
+
+          #
+          # Conditional
+          #
+          class C < Schema::SyntaxNote
+            def copy(changes = {})
+              self
+            end
+          end
+
+          class << C
+            def build(*args)
+              new
+            end
+          end
+
+          #
+          # List Conditional
+          #
+          class L < Schema::SyntaxNote
+            def copy(changes = {})
+              self
+            end
+          end
+
+          class << L
+            def build(*args)
+              new
+            end
+          end
+
         end
-
-        #
-        # Required
-        #
-        class R < Schema::SyntaxNote
-        end
-
-        #
-        # Exclusion
-        #
-        class E < Schema::SyntaxNote
-        end
-
-        #
-        # Conditional
-        #
-        class C < Schema::SyntaxNote
-        end
-
-        #
-        # List Conditional
-        #
-        class L < Schema::SyntaxNote
-        end
-
       end
     end
   end

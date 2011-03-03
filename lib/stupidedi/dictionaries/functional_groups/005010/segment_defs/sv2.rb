@@ -4,18 +4,23 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV2 = SegmentDef.build :SV2, "Institutional Service",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          SV2 = s::SegmentDef.build(:SV2, "Institutional Service",
             "To specify the service line item detail for a health care institution",
-            E::E234 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::C003 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E782 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E355 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E380 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E1371.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1345.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1337.simple_use(Optional,   RepeatCount.bounded(1))
+            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::C003 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E355 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E1371.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1345.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1337.simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

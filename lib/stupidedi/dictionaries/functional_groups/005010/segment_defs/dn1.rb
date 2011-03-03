@@ -4,12 +4,16 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          DN1 = SegmentDef.build :DN1, "Orthodontic Information",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          DN1 = s::SegmentDef.build(:DN1, "Orthodontic Information",
             "To supply orthodontic information",
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E352 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E352 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

@@ -4,11 +4,15 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          AMT = SegmentDef.build :AMT, "Monetary Amount Information",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          AMT = s::SegmentDef.build(:AMT, "Monetary Amount Information",
             "To indicate the total monetary amount",
-            E::E522 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E782 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E478 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E522 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E478 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

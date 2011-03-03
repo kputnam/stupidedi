@@ -4,13 +4,17 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          RDM = SegmentDef.build :RDM, "Remittance Delivery Method",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          RDM = s::SegmentDef.build(:RDM, "Remittance Delivery Method",
             "To identify remittance delivery when remittance is separate from payment",
-            E::E756 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E93  .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E364 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C040 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C040 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E756 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E93  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E364 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C040 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C040 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

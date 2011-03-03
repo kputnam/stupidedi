@@ -4,15 +4,19 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          QTY = SegmentDef.build :QTY, "Quantity Information",
-            "To specify quantity information",
-            E::E673.simple_use(Mandatory,   RepeatCount.bounded(1)),
-            E::E380.simple_use(Relational,  RepeatCount.bounded(1)),
-            E::C001.simple_use(Optional,    RepeatCount.bounded(1)),
-            E::E61 .simple_use(Relational,  RepeatCount.bounded(1)),
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
 
-            SyntaxNote::R.build(2, 4),
-            SyntaxNote::E.build(2, 5)
+          QTY = s::SegmentDef.build(:QTY, "Quantity Information",
+            "To specify quantity information",
+            e::E673.simple_use(r::Mandatory,   s::RepeatCount.bounded(1)),
+            e::E380.simple_use(r::Relational,  s::RepeatCount.bounded(1)),
+            e::C001.simple_use(r::Optional,    s::RepeatCount.bounded(1)),
+            e::E61 .simple_use(r::Relational,  s::RepeatCount.bounded(1)),
+
+            SyntaxNotes::R.build(2, 4),
+            SyntaxNotes::E.build(2, 5))
 
         end
       end

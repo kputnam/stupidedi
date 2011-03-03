@@ -4,11 +4,15 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PS1 = SegmentDef.build :PS1, "Purchase Service",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          PS1 = s::SegmentDef.build(:PS1, "Purchase Service",
             "To specify the information about services that are purchased",
-            E::E127 .simple_use(Mandatory,  RepeatCount.bounded(1))
-            E::E782 .simple_use(Mandatory,  RepeatCount.bounded(1))
-            E::E156 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E127 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E156 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

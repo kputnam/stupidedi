@@ -847,7 +847,7 @@ module Stupidedi
           E1715 = t::ID.new(:E1715, "Country Subdivision Code"             , 1, 3)
             # S5
 
-          C001 = Schema::CompositeElementDef.new \
+          C001 = Schema::CompositeElementDef.build \
             :C001, "Composite Unit of Measure",
             "To identify a composite unit of measure",
             E355 .component_use(r::Mandatory),
@@ -867,7 +867,7 @@ module Stupidedi
             E649 .component_use(r::Optional)  # If not used, value is interpreted as 1
 
           # @note Copied from an unverified 4010 internet source
-          C002 = Schema::CompositeElementDef.new \
+          C002 = Schema::CompositeElementDef.build \
             :C002, "Actions Indicated",
             "",
             E704.component_use(r::Mandatory),
@@ -876,7 +876,7 @@ module Stupidedi
             E704.component_use(r::Optional),
             E704.component_use(r::Optional)
 
-          C003 = Schema::CompositeElementDef.new \
+          C003 = Schema::CompositeElementDef.build \
             :C003, "Composite Medical Procedure Identifier",
             "To identify a procedure by its standardized codes and applicable modifiers",
             E235 .component_use(r::Mandatory),
@@ -888,7 +888,7 @@ module Stupidedi
             E352 .component_use(r::Optional),
             E234 .component_use(r::Optional)  # Qualified by C003-01
 
-          C004 = Schema::CompositeElementDef.new \
+          C004 = Schema::CompositeElementDef.build \
             :C004, "Composite Diagnosis Code Pointer",
             "To identify one or more diagnosis code pointers",
             E1328.component_use(r::Mandatory),
@@ -896,7 +896,7 @@ module Stupidedi
             E1328.component_use(r::Optional),
             E1328.component_use(r::Optional)
 
-          C005 = Schema::CompositeElementDef.new \
+          C005 = Schema::CompositeElementDef.build \
             :C005, "Tooth Surface",
             "To identify one or more tooth surface codes",
             E1369.component_use(r::Mandatory),
@@ -905,7 +905,7 @@ module Stupidedi
             E1369.component_use(r::Optional),
             E1369.component_use(r::Optional)
 
-          C006 = Schema::CompositeElementDef.new \
+          C006 = Schema::CompositeElementDef.build \
             :C006, "Oral Cavity Designation",
             "To identify one or more areas of oral cavity",
             E1361.component_use(r::Mandatory),
@@ -914,7 +914,7 @@ module Stupidedi
             E1361.component_use(r::Optional),
             E1361.component_use(r::Optional)
 
-          C022 = Schema::CompositeElementDef.new \
+          C022 = Schema::CompositeElementDef.build \
             :C022, "Health Care Code Information",
             "To send health care codes and their associated dates, amounts and quantities",
             E1270.component_use(r::Mandatory),
@@ -926,17 +926,17 @@ module Stupidedi
             E799 .component_use(r::Optional),
             E1271.component_use(r::Relational),
             E1073.component_use(r::Relational),
-            SyntaxNote::P(3, 4),
-            SyntaxNote::E(8, 9)
+            SyntaxNotes::P.build(3, 4),
+            SyntaxNotes::E.build(8, 9)
 
-          C023 = Schema::CompositeElementDef.new \
+          C023 = Schema::CompositeElementDef.build \
             :C023, "Health Care Service Location Information",
             "To provide information that identifies the place of service or the type of bill related to the location at which a health care service was rendered",
             E1331 .component_use(r::Mandatory),
             E1332 .component_use(r::Optional),
             E1325 .component_use(r::Optional)
 
-          C024 = Schema::CompositeElementDef.new \
+          C024 = Schema::CompositeElementDef.build \
             :C024, "Related Causes Information",
             "To identify one or more related causes and associated state or country information",
             E1362.component_use(r::Optional),
@@ -946,14 +946,14 @@ module Stupidedi
             E26  .component_use(r::Optional)
 
           # @note Copied from an unverified 4010 internet source
-          C035 = Schema::CompositeElementDef.new \
+          C035 = Schema::CompositeElementDef.build \
             :C035, "Provider Specialty Information",
             "",
             E1222.component_use(r::Mandatory),
             E559 .component_use(r::Optional),
             E1073.component_use(r::Optional)
 
-          C040 = Schema::CompositeElementDef.new \
+          C040 = Schema::CompositeElementDef.build \
             :C040, "Reference Identifier",
             "To identify one or more reference numbers or identification numbers as specified by the Reference Qualifier",
             E128 .component_use(r::Mandatory),
@@ -962,16 +962,16 @@ module Stupidedi
             E127 .component_use(r::Relational),
             E128 .component_use(r::Relational),
             E127 .component_use(r::Relational),
-            SyntaxNote::P.new(3, 4),
-            SyntaxNote::P.new(5, 6)
+            SyntaxNotes::P.build(3, 4),
+            SyntaxNotes::P.build(5, 6)
 
-          C042 = Schema::CompositeElementDef.new \
+          C042 = Schema::CompositeElementDef.build \
             :C042, "Adjustment Identifier",
             "To provide the category and identifying reference information for an adjustment",
             E426 .component_use(r::Mandatory),
             E127 .component_use(r::Optional)
 
-          C056 = Schema::CompositeElementDef.new \
+          C056 = Schema::CompositeElementDef.build \
             :C056, "Composite Race or Ethnicity Information",
             "",
             E1109.component_use(r::Optional),

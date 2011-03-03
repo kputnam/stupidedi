@@ -4,19 +4,23 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV5 = SegmentDef.build :SV5, "Durable Medical Equipment Service",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          SV5 = s::SegmentDef.build(:SV5, "Durable Medical Equipment Service",
             "To specify the claim service detail for durable medical equipment",
-            E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E355 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E380 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E782 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E594 .simple_use(Optional,   RepeatCount.bounded(1)),
+            e::C003 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E355 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E594 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            E::E923 .simple_use(Optional,   RepeatCount.bounded(1)),
+            e::E923 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            SyntaxNote::R.build(4, 5),
-            SyntaxNote::C.build(6, 5)
+            SyntaxNotes::R.build(4, 5),
+            SyntaxNotes::C.build(6, 5))
 
         end
       end

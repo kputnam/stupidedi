@@ -4,21 +4,25 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          HI = SegmentDef.build :HI, "Health Care Information Codes",
-            "To supply information related to the delivery of health care",
-            E::C022 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
 
-            E::C022 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C022 .simple_use(Optional,   RepeatCount.bounded(1))
+          HI = s::SegmentDef.build(:HI, "Health Care Information Codes",
+            "To supply information related to the delivery of health care",
+            e::C022 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::C022 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C022 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

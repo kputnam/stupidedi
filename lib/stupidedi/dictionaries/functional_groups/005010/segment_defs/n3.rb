@@ -4,10 +4,14 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          N3 = SegmentDef.build :N3, "Party Location",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          N3 = s::SegmentDef.build(:N3, "Party Location",
             "To specify the location of the named party",
-            E::E166 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E166 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E166 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E166 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

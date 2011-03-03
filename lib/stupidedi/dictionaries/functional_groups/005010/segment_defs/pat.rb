@@ -4,21 +4,25 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PAT = SegmentDef.build :PAT, "Patient Information",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          PAT = s::SegmentDef.build(:PAT, "Patient Information",
             "To supply patient information",
-            E::E1069.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1384.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E584 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1220.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1250.simple_use(Relational, RepeatCount.bounded(1)),
-            E::E1251.simple_use(Relational, RepeatCount.bounded(1)),
+            e::E1069.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1384.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E584 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1220.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1250.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E1251.simple_use(r::Relational, s::RepeatCount.bounded(1)),
 
-            E::E355 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E81  .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
+            e::E355 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E81  .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            SyntaxNote::P.build(5, 6),
-            SyntaxNote::P.build(7, 8)
+            SyntaxNotes::P.build(5, 6),
+            SyntaxNotes::P.build(7, 8))
 
         end
       end

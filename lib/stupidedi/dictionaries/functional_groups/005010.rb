@@ -18,6 +18,9 @@ module Stupidedi
         autoload :SegmentReqs,
           "stupidedi/dictionaries/functional_groups/005010/segment_reqs"
 
+        autoload :SyntaxNotes,
+          "stupidedi/dictionaries/functional_groups/005010/syntax_notes"
+
         autoload :TransactionSets,
           "stupidedi/dictionaries/functional_groups/005010/transaction_sets"
 

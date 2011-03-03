@@ -4,11 +4,15 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          K3 = SegmentDef.build :K3, "File Information",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          K3 = s::SegmentDef.build(:K3, "File Information",
             "To transmit a fixed-format record or matrix contents",
-            E::E449 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E1333.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C001 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E449 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E1333.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C001 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

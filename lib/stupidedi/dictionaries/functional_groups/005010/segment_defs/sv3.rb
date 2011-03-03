@@ -4,19 +4,24 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV3 = SegmentDef.build :SV3, "Dental Service",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          SV3 = s::SegmentDef.build(:SV3, "Dental Service",
             "To specify the service line item detail for dental work",
-            E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1331.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C006 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1358.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E380 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E352 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1327.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1360.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C004 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::C003 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1331.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C006 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1358.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::E352 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1327.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1360.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C004 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

@@ -4,12 +4,16 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          LQ = SegmentDef.build :LQ, "Industry Code Identification",
-            "To identify standard industry codes",
-            E::E1270.simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1271.simple_use(Relational, RepeatCount.bounded(1)),
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
 
-            SyntaxNote::C.build(1, 2)
+          LQ = s::SegmentDef.build(:LQ, "Industry Code Identification",
+            "To identify standard industry codes",
+            e::E1270.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1271.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+
+            SyntaxNotes::C.build(1, 2))
 
         end
       end

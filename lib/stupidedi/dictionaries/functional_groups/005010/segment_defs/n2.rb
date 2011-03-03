@@ -4,9 +4,14 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          N2 = SegmentDef.build :N2, "Additional Name Information",
-            E::E93  .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E93  .simple_use(Optional,   RepeatCount.bounded(1))
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          N2 = s::SegmentDef.build(:N2, "Additional Name Information",
+            "To specify additional names",
+            e::E93  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E93  .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

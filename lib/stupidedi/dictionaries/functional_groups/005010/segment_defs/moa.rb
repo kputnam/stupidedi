@@ -4,17 +4,22 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          MOA = SegmentDef.build :MOA, "Medicare Outpatient Adjudication",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          MOA = s::SegmentDef.build(:MOA, "Medicare Outpatient Adjudication",
             "To convey claim-level data related to the adjudication of Medicare claims not related to an inpatient setting",
-            E::E954 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E127 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E127 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E127 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E127 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E127 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E782 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E954 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E782 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

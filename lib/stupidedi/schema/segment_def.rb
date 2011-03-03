@@ -49,6 +49,7 @@ module Stupidedi
 
       abstract :reader, :args => %w(input context)
 
+      # @private
       def pretty_print(q)
         q.text("SegmentDef[#{@id}]")
         q.group(2, "(", ")") do

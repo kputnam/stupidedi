@@ -4,22 +4,26 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PER = SegmentDef.build :PER, "Administrative Communications Contact",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          PER = s::SegmentDef.build(:PER, "Administrative Communications Contact",
             "To identify a person or office to whom administrative communications should be directed",
-            E::E366 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E93  .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E365 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E364 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E365 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E364 .simple_use(Relational, RepeatCount.bounded(1)),
+            e::E366 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E93  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E365 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E364 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E365 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E364 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
 
-            E::E365 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E364 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E443 .simple_use(Optional,   RepeatCount.bounded(1)),
+            e::E365 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E364 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E443 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            SyntaxNote::P.build(3, 4),
-            SyntaxNote::P.build(5, 6),
-            SyntaxNote::P.build(7, 8)
+            SyntaxNotes::P.build(3, 4),
+            SyntaxNotes::P.build(5, 6),
+            SyntaxNotes::P.build(7, 8))
 
         end
       end

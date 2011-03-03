@@ -4,19 +4,24 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PWK = SegmentDef.build :PWK, "Paperwork",
-            E::E755 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E756 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E757 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E98  .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E66  .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E67  .simple_use(Optional,   RepeatCount.bounded(1)),
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
 
-            E::E352 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::C002 .simple_use(Optional,   RepeatCount.bounded(1)),
-            E::E1525.simple_use(Optional,   RepeatCount.bounded(1)),
+          PWK = s::SegmentDef.build(:PWK, "Paperwork",
+            "To identify the type or transmission or both of paperwork or support information",
+            e::E755 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E756 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E757 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E98  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E66  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E67  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            SyntaxNote::P.build(5, 6)
+            e::E352 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::C002 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1525.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+
+            SyntaxNotes::P.build(5, 6))
 
         end
       end

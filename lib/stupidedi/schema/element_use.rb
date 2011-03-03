@@ -134,7 +134,8 @@ module Stupidedi
         q.group(2, "(", ")") do
           q.breakable ""
           q.pp @definition
-          q.breakable ","
+          q.text ","
+          q.breakable
           q.pp @requirement
         end
       end

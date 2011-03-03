@@ -4,11 +4,15 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          TOO = SegmentDef.build :TOO, "Tooth Identification",
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
+
+          TOO = s::SegmentDef.build(:TOO, "Tooth Identification",
             "To identify a tooth by number and, if applicable, one or more tooth surfaces",
-            E::E1270.simple_use(Relational, RepeatCount.bounded(1)),
-            E::E1271.simple_use(Relational, RepeatCount.bounded(1)),
-            E::C005 .simple_use(Optional,   RepeatCount.bounded(1))
+            e::E1270.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E1271.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::C005 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

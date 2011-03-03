@@ -4,15 +4,19 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          FRM = SegmentDef.build :FRM, "Supporting Documentation",
-            "To specify information in response to a codified questionnaire document",
-            E::E350 .simple_use(Mandatory,  RepeatCount.bounded(1)),
-            E::E1073.simple_use(Relational, RepeatCount.bounded(1)),
-            E::E127 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E373 .simple_use(Relational, RepeatCount.bounded(1)),
-            E::E332 .simple_use(Relational, RepeatCount.bounded(1)),
+          s = Schema
+          e = ElementDefs
+          r = ElementReqs
 
-            SyntaxNote::R.build(2, 3, 4, 5)
+          FRM = s::SegmentDef.build(:FRM, "Supporting Documentation",
+            "To specify information in response to a codified questionnaire document",
+            e::E350 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E1073.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E127 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E373 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E332 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+
+            SyntaxNotes::R.build(2, 3, 4, 5))
 
         end
       end
