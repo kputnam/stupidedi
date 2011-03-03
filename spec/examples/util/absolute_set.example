@@ -1,0 +1,223 @@
+require "spec_helper"
+
+describe Stupidedi::AbsoluteSet do
+
+  context "singleton methods" do
+
+    describe ".build" do
+    end
+
+  end
+
+  context "instance methods" do
+
+    before do
+      @items  = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z)
+      @full   = Stupidedi::AbsoluteSet.build(@items)
+
+      @subset = @full.copy(:mask => 0b10101010101010101010101010)
+      @empty  = @full.copy(:mask => 0b00000000000000000000000000)
+    end
+
+    describe "#to_a" do
+    end
+
+    describe "#map(&block)" do
+      # A.map{|a| a } = A
+      # A.map{|a| b } = ∅, given b ∉ U
+      # A.map{|a| b } = {b}, given b ∈ U
+    end
+
+    describe "#select(&block)" do
+      # A.select{|a| true   } = A
+      # A.select{|a| false  } = ∅
+      # A.select{|a| a == b } = {b}, given b ∈ U
+    end
+
+    describe "#include?(element)" do
+      # x ∉ ∅, for all x
+      # x ∉ A, for all x ∉ U
+      # a ∈ {a}, for all x
+      # a ∈ A, for all {a} ⊆ A
+    end
+
+    describe "#finite?" do
+    end
+
+    describe "#empty?" do
+    end
+
+    describe "#size" do
+    end
+
+    describe "#complement" do
+      # ∅ = A ∩ ¬A
+      # U = A ∪ ¬A
+      # U = A ⊖ ¬A
+      # A = A ∖ ¬A
+
+      # x ∉ ¬A, for all x ∉ U
+      # x ∈ ¬A, for all x ∈ U and x ∉ A
+      # x ∉ ¬A, for all x ∈ U and x ∈ A
+
+      # ∅ = ¬U
+      # U = ¬∅
+
+      # Identity
+      # A = ¬(¬A)
+
+      # De Morgan's Laws
+      # ¬(A ∪ B) = ¬A ∩ ¬B
+      # ¬(A ∩ B) = ¬A ∪ ¬B
+
+      # Uniqueness of Complements
+      # B = ¬A, given A ∪ B = U and A ∩ B = ∅
+    end
+
+    describe "#union(other)" do
+      # x ∈ A ∪ B, for all x ∈ A
+      # x ∈ A ∪ B, for all x ∈ B
+      # x ∉ A ∪ B, for all x ∉ A and x ∉ B
+
+      # A ∪ B = B, given B ⊂ A
+      # A ∪ B = A, given B ⊃ A
+      # A ∪ B ⊇ A
+      # A ∪ B ⊇ B
+      # A ∪ B ⊃ A, given A ∩ B = ∅
+
+      # Absorption
+      # A ∪ (A ∩ B) = A
+
+      # Idempotent
+      # A ∪ A = A
+
+      # Domination
+      # A ∪ U = U
+
+      # Complement
+      # A ∪ ¬A = U
+
+      # Identity
+      # A ∪ ∅ = A
+
+      # Distributive
+      # A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)
+
+      # Commutative
+      # A ∪ B = B ∪ A
+
+      # Associative
+      # (A ∪ B) ∪ C = A ∪ (B ∪ C)
+    end
+
+    describe "#intersection(other)" do
+      # x ∈ A ∩ B, for all x ∈ A and x ∈ B
+      # x ∉ A ∩ B, for all x ∉ A
+      # x ∉ A ∩ B, for all x ∉ B
+
+      # A ∩ U = A
+      # A ∩ B = B, given B ⊇ A
+      # A ∩ B = A, given B ⊂= A
+
+      # Absorption
+      # A ∩ (A ∪ B) = A
+
+      # Idempotent
+      # A ∩ A = A
+
+      # Domination
+      # A ∩ ∅ = ∅
+
+      # Complement
+      # A ∩ ¬A = ∅
+
+      # Distributive
+      # A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)
+
+      # Commutative
+      # A ∩ B = B ∩ A
+
+      # Associative
+      # (A ∩ B) ∩ C = A ∩ (B ∩ C)
+    end
+
+    describe "#difference(other)" do
+      # x ∈ A ∖ B, for all x ∈ A and x ∉ B
+      # x ∉ A ∖ B, for all x ∉ A
+      # x ∉ A ∖ B, for all x ∈ B
+
+      # U ∖ A = ¬A
+      # ∅ ∖ A = ∅
+      # A ∖ A = ∅
+      # A ∖ ∅ = A
+      # A ∖ U = ∅
+      # A ∖ B = A, given A ∩ B = ∅
+      # A ∖ B ⊂ A, given A ∩ B ≠ ∅
+      # A ∖ B ≠ B ∖ A, given A ≠ B
+
+      # C ∖ (A ∩ B) = (C ∖ A) ∪ (C ∖ B)
+      # C ∖ (A ∪ B) = (C ∖ A) ∩ (C ∖ B)
+      # C ∖ (B ∖ A) = (A ∩ C) ∪ (C ∖ B)
+      # (B ∖ A) ∩ C = (B ∩ C) ∖ A = B ∩ (C ∖ A)
+      # (B ∖ A) ∪ C = (B ∪ C) ∖ (A ∖ C)
+
+      # A ∖ A = ∅
+      # ∅ ∖ A = ∅
+      # A ∖ ∅ = A
+
+      # B ∖ A = ¬A ∩ B
+      # ¬(B ∖ A) = A ∪ ¬B
+      # U ∖ A = ¬A
+      # A ∖ U = ∅
+    end
+
+    describe "#symmetric_difference(other)" do
+      # ∅ ⊖ U = U
+      # A ⊖ A = ∅
+      # A ⊖ U = ∅
+      # A ⊖ ∅ = A
+      # A ⊖ B = (A ∖ B) ∪ (B ∖ A)
+      # A ⊖ B = (A ∪ B) ∖ (A ∩ B)
+      # A ⊖ B = B ⊖ A
+      # (A ⊖ B) ⊖ C = A ⊖ (B ⊖ C)
+      # (A ⊖ B) ⊖ (B ⊖ C) = A ⊖ C
+      # A ∩ (B ⊖ C) = (A ∩ B) ⊖ (A ∩ C)
+    end
+
+    describe "#subset?(other)" do
+      # Reflexivity
+      # A ⊆ A
+
+      # Antisymmetry
+      # A ⊆ B and B ⊆ A, given A = B
+      # A = B, given A ⊆ B and B ⊆ A
+
+      # Transitivity
+      # A ⊆ B, given A ⊆ B and B ⊆ C
+
+      # Existence of a Least Element
+      # ∅ ⊆ A
+
+      # Existence of a Greatest Element
+      # A ⊆ U
+
+      # Existence of Joins
+      # A ⊆ A ∪ B
+      # A ∪ B ⊆ C, given C ⊆ A and C ⊆ B
+
+      # Equivalent Statements
+      # A ⊆ B
+      # A ∩ B = A
+      # A ∪ B = B
+      # A ∖ B = ∅
+      # ¬B ⊆ ¬A
+    end
+
+    describe "#==(other)" do
+    end
+
+    describe "#replace(other)" do
+    end
+  end
+
+end
