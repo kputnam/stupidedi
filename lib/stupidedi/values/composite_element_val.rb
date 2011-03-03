@@ -55,12 +55,12 @@ module Stupidedi
 
       # @private
       def append(element_val)
-        self.class.new(element_def, element_val.snoc(@component_element_vals))
+        CompositeElementVal.new(element_def, element_val.snoc(@component_element_vals))
       end
 
       # @private
       def prepend(element_val)
-        self.class.new(element_def, element_val.cons(@component_element_vals))
+        CompositeElementVal.new(element_def, element_val.cons(@component_element_vals))
       end
 
       # @private

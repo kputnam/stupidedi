@@ -15,10 +15,6 @@ module Stupidedi
         @segment_vals.all?(&:empty?)
       end
 
-      def present?
-        not empty?
-      end
-
       def [](n)
         @segment_vals[n]
       end
@@ -42,15 +38,6 @@ module Stupidedi
             q.pp e
           end
         end
-      end
-    end
-
-    #
-    # Constructors
-    #
-    class << LoopVal
-      def empty(loop_def)
-        LoopVal.new(loop_def, loop_def.segment_uses.map{|u| u.segment_def.empty })
       end
     end
 

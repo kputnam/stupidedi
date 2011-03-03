@@ -14,10 +14,6 @@ module Stupidedi
       def repeated
         RepeatedElementVal.new([self], element_def)
       end
-
-      def present?
-        not empty?
-      end
     end
 
   end
