@@ -1,5 +1,9 @@
 module Stupidedi
 
+  #
+  # This data type encodes the complement of a RelativeSet, which is an infinite
+  # and non-enumerable set of values.
+  #
   class RelativeComplement < AbstractSet
     def initialize(complement)
       @complement = complement

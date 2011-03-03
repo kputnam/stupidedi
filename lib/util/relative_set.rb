@@ -1,5 +1,17 @@
 module Stupidedi
 
+  #
+  # This data type encodes a set of unique values that belong to an infinite
+  # universe of possible values. Set operations generally perform worse than
+  # AbsoluteSet, as they operate on Hash tables and require copying before
+  # mutating and most operations require traversing the Hash table of at least
+  # of of the sets in O(n) time.
+  #
+  # This is suitable for sets that don't have an inherently restricted universe
+  # of allowed values (eg a Set of arbitrary String values), including where the
+  # universe is significantly large compared to the typical size of sets built
+  # from those values.
+  #
   class RelativeSet < AbstractSet
     include Enumerable
 

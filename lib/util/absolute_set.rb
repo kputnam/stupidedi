@@ -1,7 +1,21 @@
 module Stupidedi
 
   #
+  # AbsoluteSets are subsets of a finite, fully-enumerated universe set. This
+  # means every possible value that can belong to the AbsoluteSet must already
+  # belong to the universe set, which is a finite collection (Hash).
   #
+  # This implementation is fairly efficient when computing set operations on two
+  # sets from the same universe, especially compared to RelativeSet. Efficiency
+  # is achieved by encoding which elements from the universe belong to the set
+  # as a bitmask. Set operations can then be performed using bitwise operations,
+  # instead of using operations on a Hash table.
+  #
+  # This data type is not suitable for sets whose elements belong to an infinite
+  # universe of values, as each set requires 2**|U| bits of storage, where |U|
+  # is the size of the universe. Operations on sets that belong to different
+  # universes do not currently attempt to merge the two universe sets, as this
+  # probably a better use case for RelativeSet.
   #
   class AbsoluteSet < AbstractSet
 
