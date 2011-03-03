@@ -16,7 +16,7 @@
 # end
 #
 # class Optimized
-#   include Tailcall
+#   include TailCall
 #
 #   def fact(n, accumulator = 1)
 #     (n < 2) ? accumulator : fact(n-1, n * accumulator)
@@ -57,13 +57,12 @@
 #
 # See http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/145593
 #
-module Tailcall
+module TailCall
   def self.included(base)
     base.extend(ClassMethods)
   end
 
   module ClassMethods
-
     def optimize_tailcall(*names)
       @__tc ||= Hash.new
 
@@ -96,6 +95,6 @@ module Tailcall
         RUBY
       end
     end
-
   end
+
 end

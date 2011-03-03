@@ -19,9 +19,10 @@ class ThreadLocalVar
     @threads.fetch(Thread.current) do
       case @value
       when Numeric, Symbol, nil
+        # These are immutable values and can't be cloned
         @value
       else
-        @threads[Thread.current] = @value
+        @threads[Thread.current] = @value.clone
       end
     end
   end
@@ -69,6 +70,7 @@ class ThreadLocalHash
     defaults.keys.each do |name|
       case defaults[name]
       when Numeric, Symbol, nil
+        # These are immutable values and can't be cloned
         instance_eval <<-RUBY
           def #{name}
             @clones.fetch([Thread.current, :#{name}]) do
@@ -99,6 +101,7 @@ class ThreadLocalHash
     @clones.fetch([Thread.current, name]) do
       case value = @defaults[name]
       when Numeric, Symbol, nil
+        # These are immutable values and can't be cloned
         value
       else
         @clones[[Thread.current, name]] = value.clone
