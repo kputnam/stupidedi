@@ -132,6 +132,10 @@ module Stupidedi
               end
             end
 
+            def reader(input, context)
+              raise NoMethodError, "@todo"
+            end
+
             # @endgroup
           end
 

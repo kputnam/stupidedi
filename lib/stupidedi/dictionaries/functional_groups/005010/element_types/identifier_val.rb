@@ -34,18 +34,18 @@ module Stupidedi
             # {IdentifierVal.from_string} constructors
             #
             class NonEmpty < IdentifierVal
-              attr_reader :delegate
+              attr_reader :value
 
-              delegate :to_s, :length, :=~, :match, :include?, :to => :@delegate
+              delegate :to_s, :length, :=~, :match, :include?, :to => :@value
 
-              def initialize(delegate, definition, parent)
-                @delegate = delegate
+              def initialize(value, definition, parent)
+                @value = value
                 super(definition, parent)
               end
 
               def copy(changes = {})
                 self.class.new \
-                  changes.fetch(:delegate, @delegate),
+                  changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
                   changes.fetch(:parent, parent)
               end
@@ -57,16 +57,16 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "IdentifierVal.value#{def_id}(#{@delegate})"
+                "IdentifierVal.value#{def_id}(#{@value})"
               end
 
               # @note Not commutative, because String doesn't call coerce
               # @private
               def ==(other)
                 if other.is_a?(self.class)
-                  @delegate == other.delegate
+                  @value == other.value
                 else
-                  @delegate == other
+                  @value == other
                 end
               end
             end
@@ -96,6 +96,10 @@ module Stupidedi
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
+            end
+
+            def reader(input, context)
+              raise NoMethodError, "@todo"
             end
 
             # @endgroup

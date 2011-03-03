@@ -28,6 +28,10 @@ module Stupidedi
               NumericVal.value(object, definition, parent)
             end
 
+            def reader(input, context)
+              raise NoMethodError, "@todo"
+            end
+
             # @endgroup
           end
 

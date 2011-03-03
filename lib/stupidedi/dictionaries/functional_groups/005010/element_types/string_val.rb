@@ -32,18 +32,25 @@ module Stupidedi
             # instead, use the {StringVal.value} constructor.
             #
             class NonEmpty < StringVal
-              attr_reader :delegate
+              attr_reader :value
 
-              delegate :to_d, :to_s, :to_f, :length, :to => :@delegate
+              delegate :to_d, :to_s, :to_f, :length, :to => :@value
 
               def initialize(string, definition, parent)
-                @delegate = string
+                @value = string
                 super(definition, parent)
+              end
+
+              def copy(changes = {})
+                self.class.new \
+                  changes.fetch(:value, @value),
+                  changes.fetch(:definition, definition),
+                  changes.fetch(:parent, parent)
               end
 
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "StringVal.value#{def_id}(#{@delegate})"
+                "StringVal.value#{def_id}(#{@value})"
               end
 
               def empty?
@@ -54,9 +61,9 @@ module Stupidedi
               # @private
               def ==(other)
                 if other.is_a?(self.class)
-                  @delegate == other.delegate
+                  @value == other.value
                 else
-                  @delegate == other
+                  @value == other
                 end
               end
             end
@@ -82,6 +89,10 @@ module Stupidedi
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
+            end
+
+            def reader(input, context)
+              raise NoMethodError, "@todo"
             end
 
             # @endgroup

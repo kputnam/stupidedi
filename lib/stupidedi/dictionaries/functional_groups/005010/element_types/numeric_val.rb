@@ -34,18 +34,18 @@ module Stupidedi
             class NonEmpty < NumericVal
               include Comparable
 
-              attr_reader :delegate
+              attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to_s, :to => :@delegate
+              delegate :to_i, :to_d, :to_f, :to_s, :to => :@value
 
               def initialize(value, definition, parent)
-                @delegate = value
+                @value = value
                 super(definition, parent)
               end
 
               def copy(changes = {})
                 self.class.new \
-                  changes.fetch(:delegate, @delegate),
+                  changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
                   changes.fetch(:parent, parent)
               end
@@ -68,7 +68,7 @@ module Stupidedi
               # @private
               def inspect
                 def_id = definition.try{|d| "[#{d.id}]" }
-                "NumericVal.value#{def_id}(#{@delegate.to_s('F')})"
+                "NumericVal.value#{def_id}(#{@value.to_s('F')})"
               end
 
               # @group Mathematical Operators
@@ -76,60 +76,60 @@ module Stupidedi
               # @return [NumericVal::NonEmpty]
               def /(other)
                 if other.is_a?(self.class)
-                  copy(:delegate => @delegate / other.delegate)
+                  copy(:value => @value / other.value)
                 else
-                  copy(:delegate => (@delegate / other).to_d)
+                  copy(:value => (@value / other).to_d)
                 end
               end
 
               # @return [NumericVal::NonEmpty]
               def +(other)
                 if other.is_a?(self.class)
-                  copy(:delegate => @delegate + other.delegate)
+                  copy(:value => @value + other.value)
                 else
-                  copy(:delegate => (@delegate + other).to_d)
+                  copy(:value => (@value + other).to_d)
                 end
               end
 
               # @return [NumericVal::NonEmpty]
               def -(other)
                 if other.is_a?(self.class)
-                  copy(:delegate => @delegate - other.delegate)
+                  copy(:value => @value - other.value)
                 else
-                  copy(:delegate => (@delegate - other).to_d)
+                  copy(:value => (@value - other).to_d)
                 end
               end
 
               # @return [NumericVal::NonEmpty]
               def **(other)
                 if other.is_a?(self.class)
-                  copy(:delegate => @delegate ** other.delegate)
+                  copy(:value => @value ** other.value)
                 else
-                  copy(:delegate => (@delegate ** other).to_d)
+                  copy(:value => (@value ** other).to_d)
                 end
               end
 
               # @return [NumericVal::NonEmpty]
               def *(other)
                 if other.is_a?(self.class)
-                  copy(:delegate => @delegate * other.delegate)
+                  copy(:value => @value * other.value)
                 else
-                  copy(:delegate => (@delegate * other).to_d)
+                  copy(:value => (@value * other).to_d)
                 end
               end
 
               # @return [NumericVal::NonEmpty]
               def %(other)
                 if other.is_a?(self.class)
-                  copy(:delegate => @delegate % other.delegate)
+                  copy(:value => @value % other.value)
                 else
-                  copy(:delegate => (@delegate % other).to_d)
+                  copy(:value => (@value % other).to_d)
                 end
               end
 
               # @return [NumericVal::NonEmpty]
               def -@
-                copy(:delegate => -@delegate)
+                copy(:value => -@value)
               end
 
               # @return [NumericVal::NonEmpty]
@@ -138,15 +138,15 @@ module Stupidedi
               end
 
               def abs
-                copy(:delegate => @delegate.abs)
+                copy(:value => @value.abs)
               end
 
               # @return [-1, 0, +1]
               def <=>(other)
                 if other.is_a?(self.class)
-                  @delegate <=> other.delegate
+                  @value <=> other.value
                 else
-                  @delegate <=> other
+                  @value <=> other
                 end
               end
 
@@ -173,6 +173,10 @@ module Stupidedi
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
+            end
+
+            def reader(input, context)
+              raise NoMethodError, "@todo"
             end
 
             # @endgroup
