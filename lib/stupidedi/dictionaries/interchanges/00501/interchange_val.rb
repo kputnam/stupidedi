@@ -30,6 +30,7 @@ module Stupidedi
             end
           end
 
+          # @return [Separators]
           attr_reader :separators
 
           def initialize(definition, header_segment_vals, functional_group_vals, trailer_segment_vals, separators = nil)
@@ -54,9 +55,10 @@ module Stupidedi
           # @return [InterchangeVal]
           def copy(changes = {})
             self.class.new \
-              changes.fetch(:segment_vals, segment_vals),
-              changes.fetch(:functional_group_vals, functional_group_vals),
               changes.fetch(:definition, definition),
+              changes.fetch(:header_segment_vals, header_segment_vals),
+              changes.fetch(:functional_group_vals, functional_group_vals),
+              changes.fetch(:trailer_segment_vals, trailer_segment_vals),
               changes.fetch(:separators, @separators)
           end
         end

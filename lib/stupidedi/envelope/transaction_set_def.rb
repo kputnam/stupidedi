@@ -14,6 +14,8 @@ module Stupidedi
       def initialize(functional_group, id, table_defs)
         @functional_group, @id, @table_defs =
           functional_group, id, table_defs
+
+        @table_defs = @table_defs.map{|x| x.copy(:parent => self) }
       end
 
       def copy(changes = {})

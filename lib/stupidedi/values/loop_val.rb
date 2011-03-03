@@ -43,46 +43,34 @@ module Stupidedi
         @trailer_segment_vals.all?(&:empty?) and
       end
 
-      def append(val)
-        if val.is_a?(LoopVal)
-          copy(:loop_vals => val.snoc(@loop_vals))
-        else
-          if @loop_vals.empty?
-            copy(:header_segment_vals => val.snoc(@header_segment_vals))
-          else
-            copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
-          end
-        end
+      def append_header(segment_val)
+        copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
       end
 
-      def prepend(val)
-        if val.is_a?(LoopVal)
-          copy(:loop_vals => val.snoc(@loop_vals))
-        else
-          if @loop_vals.empty?
-            copy(:header_segment_vals => val.snoc(@header_segment_vals))
-          else
-            copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
-          end
-        end
+      def append_trailer(segment_val)
+        copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
+      end
+
+      def append_loop(loop_val)
+        copy(:loop_vals => loop_val.snoc(@loop_vals))
       end
 
       # @private
       def pretty_print(q)
         id = @definition.try{|l| "[#{l.id}]" }
         q.text("LoopVal#{id}")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable ""
           @header_segment_vals.each do |e|
             unless q.current_group.first?
-              q.text ", "
+              q.text ","
               q.breakable
             end
             q.pp e
           end
           @loop_vals.each do |e|
             unless q.current_group.first?
-              q.text ", "
+              q.text ","
               q.breakable
             end
             q.pp e

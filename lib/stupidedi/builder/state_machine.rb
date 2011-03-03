@@ -1,24 +1,38 @@
 module Stupidedi
   module Builder
 
+    #
+    # @see http://en.wikipedia.org/wiki/GLR_parser
+    #
     class StateMachine
-      def initialize(router)
-        @leaves = [TransmissionBuilder.start(router)]
+      attr_reader :states
+
+      def initialize(states)
+        @states = states
       end
 
-      def successors(input)
-        if @leaves.length == 1
-          @leaves.first.successors(input)
-        else
-          @leaves.inject([]) do |list, s|
-            list.concat(s.successors(input))
+      # @return [NonDeterministicStateMachine]
+      def segment(name, elements)
+        successors =
+          case @states.length
+          when 0 then []
+          when 1 then @states.head.segment(name, elements)
+          else
+            @states.inject([]) do |list, s|
+              list.concat(s.segment(name, elements))
+            end
           end
-        end
-      end
 
-      def read(input)
-        successes, failures = successors(input).partition(&:success?)
-        @leaves = successes
+        #
+        # states, failures = successors.patition(&:stuck?)
+        self.class.new(successors)
+      end
+    end
+
+    class << StateMachine
+      def start(router)
+        start = TransmissionBuilder.start(router)
+        StateMachine.new(start.cons)
       end
     end
 

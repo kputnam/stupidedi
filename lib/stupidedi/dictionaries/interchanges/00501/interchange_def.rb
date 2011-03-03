@@ -16,10 +16,10 @@ module Stupidedi
           end
         end.new "00501",
           # Header segment uses
-          [ SegmentDefs::ISA.use(-900, r::Mandatory, s::RepeatCount.bounded(1)),
-            SegmentDefs::ISB.use(-950, r::Optional,  s::RepeatCount.bounded(1)),
-            SegmentDefs::ISE.use(-800, r::Optional,  s::RepeatCount.bounded(1)),
-            SegmentDefs::TA1.use(-850, r::Optional,  s::RepeatCount.unbounded)
+          [ SegmentDefs::ISA.use(-950, r::Mandatory, s::RepeatCount.bounded(1)),
+            SegmentDefs::ISB.use(-900, r::Optional,  s::RepeatCount.bounded(1)),
+            SegmentDefs::ISE.use(-850, r::Optional,  s::RepeatCount.bounded(1)),
+            SegmentDefs::TA1.use(-800, r::Optional,  s::RepeatCount.unbounded)
           ],
 
           # Trailer segment uses

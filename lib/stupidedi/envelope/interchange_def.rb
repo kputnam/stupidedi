@@ -9,7 +9,7 @@ module Stupidedi
       attr_reader :header_segment_uses
 
       # @return [Array<SegmentUse>]
-      attr_reader :footer_segment_uses
+      attr_reader :trailer_segment_uses
 
       # @return [InterchangeVal]
       abstract :empty

@@ -56,6 +56,8 @@ module Stupidedi
       # Then the grammar can specify which elements specify delimiters and all the
       # other parts of the interchange header, like the TA1 segment.
       #
+      # @see http://x12.org/rfis/ "Relations Between the ISA and GS Segments.PDF"
+      #
       class InterchangeRouter
         def initialize
           @table = Hash.new
@@ -105,6 +107,8 @@ module Stupidedi
       # Because the interchange and functional group are versioned independently,
       # it may be possible, for instance, to send a 4010 transaction set within a
       # 5010 envelope, depending on forward- and backward-comatibility.
+      #
+      # @see http://x12.org/rfis/ "Relations Between the ISA and GS Segments.PDF"
       #
       class FunctionalGroupRouter
         def initialize

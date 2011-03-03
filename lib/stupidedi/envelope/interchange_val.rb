@@ -23,12 +23,12 @@ module Stupidedi
       abstract :separators
 
       def initialize(definition, header_segment_vals, functional_group_vals, trailer_segment_vals)
-        @definition, @segment_vals, @functional_group_vals, @trailer_segment_vals =
+        @definition, @header_segment_vals, @functional_group_vals, @trailer_segment_vals =
           definition, header_segment_vals, functional_group_vals, trailer_segment_vals
 
-        @header_segment_vals   = header_segment_vals.map{|x| x.copy(:parent => self) }
-        @functional_group_vals = functional_group_vals.map{|x| x.copy(:parent => self) }
-        @trailer_segment_vals  = trailer_segment_vals.map{|x| x.copy(:parent => self) }
+        @header_segment_vals   = @header_segment_vals.map{|x| x.copy(:parent => self) }
+        @functional_group_vals = @functional_group_vals.map{|x| x.copy(:parent => self) }
+        @trailer_segment_vals  = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [InterchangeVal]
@@ -40,6 +40,7 @@ module Stupidedi
           changes.fetch(:trailer_segment_vals, @trailer_segment_vals)
       end
 
+      # @return [Array<SegmentVal>]
       def segment_vals
         @header_segment_vals + @trailer_segment_vals
       end
@@ -50,16 +51,19 @@ module Stupidedi
         @trailer_segment_vals.all(&:empty?)
       end
 
-      def append_header(segment)
-        copy(:header_segment_vals => val.snoc(@header_segment_vals))
+      # @return [InterchangeVal]
+      def append_header(segment_val)
+        copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
       end
 
+      # @return [InterchangeVal]
       def append_group(functional_group_val)
-        copy(:functional_group_vals => val.snoc(@functional_group_vals))
+        copy(:functional_group_vals => functional_group_val.snoc(@functional_group_vals))
       end
 
-      def append_trailer(segment)
-        copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
+      # @return [InterchangeVal]
+      def append_trailer(segment_val)
+        copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
       end
 
       # @private
