@@ -20,7 +20,7 @@ module Stupidedi
 
       def initialize(id, repeat_count, segment_uses, loop_defs, parent)
         @id, @repeat_count, @segment_uses, @loop_defs, @parent =
-          id, repeat_count, segment_uses, loop_defs parent
+          id, repeat_count, segment_uses, loop_defs, parent
 
         @segment_uses = @segment_uses.map{|x| x.copy(:parent => self) }
         @loop_defs    =    @loop_defs.map{|x| x.copy(:parent => self) }
@@ -86,7 +86,7 @@ module Stupidedi
         segment_uses = args.take_while{|x| x.is_a?(SegmentUse) }
         loop_defs    = args.drop(segment_uses.length)
 
-        new(id, repeat_count, segment_uses, loop_defs)
+        new(id, repeat_count, segment_uses, loop_defs, nil)
       end
     end
 

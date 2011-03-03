@@ -4,8 +4,19 @@ module Stupidedi
       module FiftyTen
         module SegmentReqs
 
-          Mandatory = Schema::ElementReq.new
-          Optional  = Schema::ElementReq.new
+          Mandatory = Class.new(Schema::SegmentReq) do
+            # @private
+            def pretty_print(q)
+              q.text("M")
+            end
+          end.new
+
+          Optional = Class.new(Schema::SegmentReq) do
+            # @private
+            def pretty_print(q)
+              q.text("O")
+            end
+          end.new
 
         end
       end

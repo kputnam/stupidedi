@@ -1,5 +1,5 @@
 module Stupidedi
-  module Schema
+  module Envelope
 
     class InterchangeDef
       # @return [String]

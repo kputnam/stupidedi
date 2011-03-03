@@ -6,6 +6,7 @@ module Stupidedi
         #   5: "Countries, Currencies and Funds"
         #  22: "States and Provinces"
         #  51: "ZIP Code"
+        #  77: "X12 Directories"
         # 130: "Healthcare Common Procedure Coding System"
         # 131: "International Classification of Diseases, 9th Revision, Clinical Modification (ICD-9-CM)"
         # 132: "National Uniform Billing Commitee (NUBC) Codes"
@@ -32,6 +33,7 @@ module Stupidedi
         # 716: "Health Insurance Prospective Payment System (HIPPS) Rate Code for Skilled Nursing Facilities"
         # 843: "Advanced Billing Concepts (ABC) Codes")
         # 844: "Eligibility Category"
+        # 881: "Version / Release / Industry Identifier Code"
         # 896: "International Classification of Diseases, 10th Revision, Procedure Coding System (ICD-10-PCS)"
         # 897: "International Classification of Diseases, 10th Revision, Clinical Modification (ICD-10-CM)"
         # 932: "Universal Postal Codes"

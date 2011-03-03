@@ -4,6 +4,15 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
+          autoload :AK1,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ak1"
+
+          autoload :AK2,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ak2"
+
+          autoload :AK9,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ak9"
+
           autoload :AMT,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/amt"
 
@@ -43,6 +52,9 @@ module Stupidedi
           autoload :CTP,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/ctp"
 
+          autoload :CTX,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ctx"
+
           autoload :CUR,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/cur"
 
@@ -63,6 +75,21 @@ module Stupidedi
 
           autoload :FRM,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/frm"
+
+          autoload :GE,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ge"
+
+          autoload :GS,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/gs"
+
+          autoload :IK3,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ik3"
+
+          autoload :IK4,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ik4"
+
+          autoload :IK5,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/ik5"
 
           autoload :HCP,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/hcp"

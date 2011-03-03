@@ -50,7 +50,7 @@ module Stupidedi
       end
     end
 
-    class TableDef
+    class << TableDef
       def build(id, *args)
         segment_uses = args.take_while{|x| x.is_a?(SegmentUse) }
         loop_defs    = args.drop(segment_uses.length)

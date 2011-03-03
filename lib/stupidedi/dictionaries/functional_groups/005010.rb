@@ -21,8 +21,8 @@ module Stupidedi
         autoload :SyntaxNotes,
           "stupidedi/dictionaries/functional_groups/005010/syntax_notes"
 
-        autoload :TransactionSets,
-          "stupidedi/dictionaries/functional_groups/005010/transaction_sets"
+        autoload :TransactionSetDefs,
+          "stupidedi/dictionaries/functional_groups/005010/transaction_set_defs"
 
       end
     end

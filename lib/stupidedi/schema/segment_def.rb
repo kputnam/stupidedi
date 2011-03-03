@@ -38,6 +38,10 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def use(position, requirement, repeat_count)
+        SegmentUse.new(self, position, requirement, repeat_count, nil)
+      end
+
       # @return [SegmentVal]
       def empty(parent)
         SegmentVal.new(self, [], parent)
@@ -62,13 +66,13 @@ module Stupidedi
             q.pp e
           end
 
-          @syntax_notes.each do |e|
-            unless q.current_group.first?
-              q.text ","
-              q.breakable
-            end
-            q.pp e
-          end
+        # @syntax_notes.each do |e|
+        #   unless q.current_group.first?
+        #     q.text ","
+        #     q.breakable
+        #   end
+        #   q.pp e
+        # end
         end
       end
     end

@@ -10,6 +10,7 @@ module Stupidedi
           # Szz:    ID element is linked to a code source "zz"
           # QQ=Szz: When qualifier element value is "QQ", the qualified element code source is zz
 
+          E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E26   = t::ID.new(:E26  , "Country Code"                         , 2, 3)
             # S5
@@ -41,7 +42,7 @@ module Stupidedi
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
           E93   = t::AN.new(:E93  , "Name"                                 , 1, 60)
           E96   = t::Nn.new(:E96  , "Number of Included Segments"          , 1, 10, 0)
-          E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6,  0)
+          E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 3)
             # 41 Submitter
             # 45 Drop-off Location
@@ -71,6 +72,7 @@ module Stupidedi
             # S51, S932
 
           E118  = t:: R.new(:E118 , "Rate"                                 , 1, 9)
+          E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)
           E124  = t::AN.new(:E124 , "Application Receiver's Code"          , 2, 15)
           E127  = t::AN.new(:E127 , "Reference Identification"             , 1, 50)
           E128  = t::ID.new(:E128 , "Reference Identification Qualifier"   , 2, 3)
@@ -298,6 +300,7 @@ module Stupidedi
             # WU Unspecified Recovery
 
           E443  = t::AN.new(:E443 , "Contract Inquiry Reference"           , 1, 20)
+          E447  = t::AN.new(:E447 , "Loop Identifier Code"                 , 1, 4)
           E449  = t::AN.new(:E449 , "Fixed Format Information"             , 1, 80)
           E478  = t::ID.new(:E478 , "Credit/Debit Flag Code"               , 1, 1)
             # C   Credit
@@ -309,7 +312,11 @@ module Stupidedi
             # NON Non-Payment Data
 
           E479  = t::ID.new(:E479 , "Functional Identifier Code"           , 2, 2)
-          E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 12)
+            # FA Functional or Implementation Acknowledgment Transaction Sets (997, 999)
+
+          E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2)
+            # X Accredited Standards Committee X12
+
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12)
           E481  = t::ID.new(:E481 , "Trace Type Code"                      , 1, 2)
             # 1 Current Transaction Trace Numbers
@@ -358,6 +365,68 @@ module Stupidedi
             # 6 Daily
 
           E609  = t::Nn.new(:E609 , "Count"                                , 1, 9, 0)
+          E618  = t::ID.new(:E618 , "Implementation Transaction Set Syntax Error Code", 1, 3)
+            # 1  Transaction Set Not Supported
+            # 2  Transaction Set Trailer Missing
+            # 3  Transaction Set Control Number in Header and Trailer Do Not Match
+            # 4  Number of Included Segments Does Not Match Actual Content
+            # 5  One or More Segments in Error
+            # 6  Missing or Invalid Transaction Set Identifier
+            # 7  Missing or Invalid Transaction Set Control Number
+            # 8  Authentication Key Name Unknown
+            # 9  Encryption Key Name Unknown
+            # 10 Requested Service (Authentication or Encrypted) Not Available
+            # 11 Unknown Security Recipient
+            # 12 Incorrect Message Length (Encryption Only)
+            # 13 Message Authentication Code Failed
+            # 15 Unknown Security Originator
+            # 16 Syntax Error in Decrypted Text
+            # 17 Security Not Supported
+            # 18 Transaction Set not in Functional Group
+            # 19 Invalid Transaction Set Implementation Convention Reference
+            # 23 Transaction Set Control Number Not Unique within the Functional Group
+            # 24 S3E Security End Segment Missing for S3S Security Start Segment
+            # 25 S3S Security Start Segment Missing for S3E Security End Segment
+            # 26 S4E Security End Segment Missing for S4S Security Start Segment
+            # 27 S4S Security Start Segment Missing for S4E Security End Segment
+            # I6 Implementation Convention Not Supported
+
+
+          E620  = t::ID.new(:E620 , "Implementation Segment Syntax Error Code", 1, 3)
+            # 1  Unrecognized segment ID
+            # 2  Unexpected segment
+            # 3  Required Segment Missing
+            # 4  Loop Occurs Over Maximum Times
+            # 5  Segment Exceeds Maximum Use
+            # 6  Segment Not in Defined Transaction Set
+            # 7  Segment Not in Proper Sequence
+            # 8  Segment Has Data Element Errors
+            # I4 Implementation "Not Used" Segment Present
+            # I6 Implementation Dependent Segment Missing
+            # I7 Implementation Loop Occurs Under Minimum Times
+            # I8 Implementation Segment Below Minimum Use
+            # I9 Implementation Dependent "Not Used" Segment Present
+
+          E621  = t::ID.new(:E621 , "Implementation Data Element Syntax Error Code", 1, 3)
+            # 1   Required Data Element Missing
+            # 2   Conditional Required Data Element Missing
+            # 3   Too Many Data Elements
+            # 4   Data Element Too Short
+            # 5   Data Element Too Long
+            # 6   Invalid Character In Data Element
+            # 7   Invalid Code Value
+            # 8   Invalid Date
+            # 9   Invalid Time
+            # 10  Exclusion Conditional Violated
+            # 12  Too Many Repetitions
+            # 13  Too Many Components
+            # I10 Implementation "Not Used" Data Element Present
+            # I11 Implementation Too Few Repetitions
+            # I12 Implementation Pattern Match Failure
+            # I13 Implementation Dependent "Not Used" Data Element Present
+            # I6  Code Value Not Used in Implementation
+            # I9  Implementation Dependent Data Element Missing
+
           E623  = t::ID.new(:E623 , "Time Code"                            , 2, 2)
           E628  = t::AN.new(:E628 , "Hierachical ID Number"                , 1, 12)
           E639  = t::ID.new(:E639 , "Basis of Unit Price Code"             , 2, 2)
@@ -393,6 +462,52 @@ module Stupidedi
             # @note Copied from an unverified 4010 internet source
 
           E706  = t::ID.new(:E706 , "Entity Relation Code"                 , 2, 2)
+          E715  = t::ID.new(:E715 , "Functional Group Acknowledgment Code" , 1, 1)
+            # A Accepted
+            # E Accepted, But Errors Were Noted
+            # M Rejected, Message Authentication Code (MAC) Failed
+            # P Partially Accepted, At Least One Transaction Set Was Rejected
+            # R Rejected
+
+          E716  = t::ID.new(:E716 , "Functional Group Syntax Error Code"   , 1, 3)
+            # 1  Functional Group Not Supported
+            # 2  Functional Group Version Not Supported
+            # 3  Functional Group Trailer Missing
+            # 4  Group Control Number in the Functional Group Header and Trailer Do Not Agree
+            # 5  Number of Included Transaction Sets Does Not Match Actual Count
+            # 6  Group Control Number Violates Syntax
+            # 10 Authentication Key Name Unknown
+            # 11 Encryption Key Name Unknown
+            # 12 Requested Service (Authentication or Encryption) Not Available
+            # 13 Unknown Security Recipient
+            # 14 Unknown Security Originator
+            # 15 Syntax Error in Decrypted Text
+            # 16 Security Not Supported
+            # 17 Incorrect Message Length (Encryption Only)
+            # 18 Message Authentication Code Failed
+            # 19 Functional Group Control Number not Unique within Interchange
+            # 23 S3E Security End Segment Missing for S3S Security Start Segment
+            # 24 S3S Security Start Segment Missing for S3E Security End Segment
+            # 25 S4E Security End Segment Missing for S4S Security Start Segment
+            # 26 S4S Security Start Segment Missing for S4E Security End Segment
+
+          E717  = t::ID.new(:E717 , "Transaction Set Acknowledgment Code"  , 1, 1)
+            # A Accepted
+            # E Accepted But Errors Were Reported
+            # M Rejected, Message Authentication Code (MAC) Failed
+            # R Rejected
+            # W Rejected, Assurance Failed Validity Tests
+            # X Rejected, Content After Decryption Could Not Be Analyzed
+
+          E719  = t::Nn.new(:E719 , "Segment Position in Transaction Set"  , 1, 10, 0)
+          E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3)
+            # S77
+
+          E722  = t::Nn.new(:E722 , "Element Position in Segment"          , 1, 2, 0)
+          E724  = t::AN.new(:E724 , "Copy of Bad Data Element"             , 1, 99)
+          E725  = t::Nn.new(:E725 , "Data Element Reference Number"        , 1, 4, 0)
+            # S77
+
           E734  = t::AN.new(:E734 , "Hierarchical Parent ID Number"        , 1, 12)
           E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 2)
             # 20 Information Source
@@ -843,9 +958,14 @@ module Stupidedi
             # 5 State Mandates
             # 6 Other
 
+          E1528 = t::Nn.new(:E1528, "Component Data Element Position in Composite", 1, 2, 0)
+          E1686 = t::Nn.new(:E1686, "Repeating Data Element Position"      , 1, 4, 0)
           E1705 = t::AN.new(:E1705, "Implementation Convention Reference"  , 1, 35)
           E1715 = t::ID.new(:E1715, "Country Subdivision Code"             , 1, 3)
             # S5
+
+          E9998 = t::AN.new(:E9998, "Context Reference"                    , 1, 35)
+          E9999 = t::AN.new(:E9998, "Context Name"                         , 1, 35)
 
           C001 = Schema::CompositeElementDef.build \
             :C001, "Composite Unit of Measure",
@@ -945,6 +1065,13 @@ module Stupidedi
             E156 .component_use(r::Optional),
             E26  .component_use(r::Optional)
 
+          C030 = Schema::CompositeElementDef.build \
+            :C030, "Position in Segment",
+            "Code indicating the relative position of the simple data element or composite data structure in error within a segment, count beginning with 1 for the position immediately following the segment ID; additionally, indicating the relative position of a repeating structure in error, count beginning with 1 for the position immediately following the preceding element separator; additionally indicating the relative position of a component of a composite data structure in error, count beginning with 1 for the position following the preceding element or repetition separator",
+            E722 .component_use(r::Mandatory),
+            E1528.component_use(r::Optional),
+            E1686.component_use(r::Optional)
+
           # @note Copied from an unverified 4010 internet source
           C035 = Schema::CompositeElementDef.build \
             :C035, "Provider Specialty Information",
@@ -978,6 +1105,17 @@ module Stupidedi
             E1270.component_use(r::Relational),
             E1271.component_use(r::Relational)
 
+          C998 = Schema::CompositeElementDef.build \
+            :C998, "Context Identification",
+            "Holds information to identify a context",
+            E9999.component_use(r::Mandatory),
+            E9998.component_use(r::Optional)
+
+          C999 = Schema::CompositeElementDef.build \
+            :C999, "Reference in Segment",
+            "To hold the reference number of a data element and optionally component data element within a composite",
+            E725.component_use(r::Mandatory),
+            E725.component_use(r::Mandatory)
 
         end
       end

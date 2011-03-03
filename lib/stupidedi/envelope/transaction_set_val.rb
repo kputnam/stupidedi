@@ -1,5 +1,5 @@
 module Stupidedi
-  module Values
+  module Envelope
 
     class TransactionSetVal
       attr_reader :definition

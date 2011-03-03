@@ -52,11 +52,12 @@ module Stupidedi
 
             # @private
             def pretty_print(q)
-              q.text @id.to_s
-
               type = self.class.name.split('::').last
-              unless type.blank?
-                q.text "[#{type}]"
+
+              if type.blank?
+                q.text @id.to_s
+              else
+                q.text "#{type}[#{@id}]"
               end
             end
           end
@@ -141,8 +142,7 @@ module Stupidedi
 
             # @private
             def pretty_print(q)
-              q.text @id.to_s
-              q.text "[N#{@precision}]"
+              q.text "N#{@precision}[#{@id}]"
             end
 
             def companion

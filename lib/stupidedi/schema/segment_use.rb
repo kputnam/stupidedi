@@ -4,22 +4,38 @@ module Stupidedi
     class SegmentUse
       # @see X222 B.1.1.3.12.7 Data Segment Position
       # @return [Integer]
-      abstract :position
+      attr_reader :position
 
       # @return [SegmentDef]
-      abstract :definition
+      attr_reader :definition
 
       # @see X222 B.1.1.3.12.6 Data Segment Requirement Designators
       # @return [SegmentReq]
-      abstract :requirement
+      attr_reader :requirement
 
       # @see X222 B.1.3.12.3 Repeated Occurrences of Single Data Segments
       # @see X222 B.1.3.12.8 Data Segment Occurrence
       # @return [RepeatCount]
-      abstract :repeat_count
+      attr_reader :repeat_count
 
       # @return [LoopDef, TableDef]
-      abstract :parent
+      attr_reader :parent
+
+      def initialize(definition, position, requirement, repeat_count, parent)
+        @definition, @position, @requirement, @repeat_count, @parent =
+          definition, position, requirement, repeat_count, parent
+
+        @definition = @definition.copy(:parent => self)
+      end
+
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:definition, @definition),
+          changes.fetch(:position, @position),
+          changes.fetch(:requirement, @requirement),
+          changes.fetch(:repeat_count, @repeat_count),
+          changes.fetch(:parent, @parent)
+      end
 
       # @private
       def pretty_print(q)

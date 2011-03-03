@@ -4,21 +4,24 @@ module Stupidedi
       module FiftyTen
         module ElementReqs
 
-          Mandatory  = Class.new(Schema::ElementReq) do
-            def inspect
-              "M"
+          Mandatory = Class.new(Schema::ElementReq) do
+            # @private
+            def pretty_print(q)
+              q.text "M"
             end
           end.new
 
-          Optional   = Class.new(Schema::ElementReq) do
-            def inspect
-              "O"
+          Optional = Class.new(Schema::ElementReq) do
+            # @private
+            def pretty_print(q)
+              q.text "O"
             end
           end.new
 
           Relational = Class.new(Schema::ElementReq) do
-            def inspect
-              "X"
+            # @private
+            def pretty_print(q)
+              q.text "X"
             end
           end.new
 
