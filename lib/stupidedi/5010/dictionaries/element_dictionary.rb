@@ -3,7 +3,6 @@ module Stupidedi
     module Dictionaries
       module ElementDict
 
-
         # @private
         AN = Definitions::ElementTypes::AN
 
