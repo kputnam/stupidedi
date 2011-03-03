@@ -60,12 +60,12 @@ module Stupidedi
         @header_segment_uses.head
       end
 
-      def value(header_segment_vals, loop_vals, trailer_segment_vals, parent = nil)
-        LoopVal.new(self, header_segment_vals, loop_vals, trailer_segment_vals, parent)
+      def value(segment_val, parent = nil)
+        Values::LoopVal.new(self, segment_val.cons, [], [], parent)
       end
 
       def empty(parent = nil)
-        LoopVal.new(self, [], [], [], parent)
+        Values::LoopVal.new(self, [], [], [], parent)
       end
 
       # @private

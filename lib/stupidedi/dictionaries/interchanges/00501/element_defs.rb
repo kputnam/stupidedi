@@ -10,16 +10,17 @@ module Stupidedi
           class SeparatorElementVal < Values::SimpleElementVal
             delegate :to_s, :to => :@value
 
-            def initialize(value, definition, parent)
+            def initialize(value, definition, parent, usage)
               @value = value
-              super(definition, parent)
+              super(definition, parent, usage)
             end
 
             def copy(changes = {})
               self.class.new \
                 changes.fetch(:value, @value),
                 changes.fetch(:definition, definition),
-                changes.fetch(:parent, parent)
+                changes.fetch(:parent, parent),
+                changes.fetch(:usage, usage)
             end
 
             def inspect
@@ -29,16 +30,12 @@ module Stupidedi
           end
 
           class << SeparatorElementVal
-            def empty(definition, parent)
+            def empty(definition, parent, usage)
               raise NoMethodError, "@todo"
             end
 
-            def value(character, definition, parent)
-              SeparatorElementVal.new(character, definition, parent)
-            end
-
-            def reader(input, context)
-              raise NoMethodError, "@todo"
+            def value(character, definition, parent, usage)
+              SeparatorElementVal.new(character, definition, parent, usage)
             end
           end
 

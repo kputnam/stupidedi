@@ -9,15 +9,19 @@ module Stupidedi
       # @return [SegmentVal, CompositeElementVal]
       attr_reader :parent
 
-      def initialize(definition, parent)
-        @definition, @parent = definition, parent
+      # @return [SimpleElementUse, ComponentElementUse
+      attr_reader :usage
+
+      def initialize(definition, parent, usage)
+        @definition, @parent, @usage = definition, parent, usage
       end
 
       # @return [SimpleElementVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:parent, @parent),
+          changes.fetch(:usage, @usage)
       end
 
       # @return [RepeatedElementVal]

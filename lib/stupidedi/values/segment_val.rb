@@ -12,8 +12,14 @@ module Stupidedi
       # @return [LoopVal, TableVal, FunctionalGroupVal, InterchangeVal]
       attr_reader :parent
 
-      def initialize(definition, element_vals, parent)
-        @definition, @element_vals, @parent = definition, element_vals, parent
+      # @return [SegmentUse]
+      attr_reader :usage
+
+      def initialize(definition, element_vals, parent, usage)
+        @definition, @element_vals, @parent, @usage =
+          definition, element_vals, parent, usage
+
+        @element_vals = element_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [SegmentVal]
@@ -21,11 +27,16 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:element_vals, @element_vals),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:parent, @parent),
+          changes.fetch(:usage, @usage)
       end
 
       def empty?
         @element_vals.all?(&:empty?)
+      end
+
+      def defined_at?(n)
+        @definition.try{|d| d.element_uses.defined_at?(n) }
       end
 
       # @return [SimpleElementVal, CompositeElementVal, RepeatedElementVal]
@@ -39,16 +50,9 @@ module Stupidedi
         end
       end
 
-      def prepend(element_val)
-        copy(:element_vals => element_val.cons(@element_vals))
-      end
-
-      def append(element_val)
+      # @return [SegmentVal]
+      def append_element(element_val)
         copy(:element_vals => element_val.snoc(@element_vals))
-      end
-
-      def defined_at?(n)
-        @definition.try{|d| d.element_uses.defined_at?(n) }
       end
 
       # @private

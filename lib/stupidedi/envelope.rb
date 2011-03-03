@@ -1,4 +1,8 @@
 module Stupidedi
+
+  #
+  #
+  #
   module Envelope
     autoload :Router,             "stupidedi/envelope/router"
 

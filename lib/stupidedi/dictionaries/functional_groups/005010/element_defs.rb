@@ -838,6 +838,8 @@ module Stupidedi
 
           E1328 = t::Nn.new(:E1328, "Diagnosis Code Pointer"               , 1, 2, 0)
           E1331 = t::AN.new(:E1331, "Facility Code Value"                  , 1, 2)
+            # S237
+
           E1332 = t::ID.new(:E1332, "Facility Code Qualifier"              , 1, 2)
             # B=S237
             # B Place of Service Codes for Professional or Dental Services

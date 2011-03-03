@@ -39,15 +39,15 @@ module Stupidedi
 
       def empty?
         @header_segment_vals.all?(&:empty?) and
-        @loop_vals.all(&:empty?)
         @trailer_segment_vals.all?(&:empty?) and
+        @loop_vals.all(&:empty?)
       end
 
-      def append_header(segment_val)
+      def append_header_segment(segment_val)
         copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
       end
 
-      def append_trailer(segment_val)
+      def append_trailer_segment(segment_val)
         copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
       end
 

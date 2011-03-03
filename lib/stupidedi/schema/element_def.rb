@@ -89,13 +89,13 @@ module Stupidedi
       end
 
       # @return [CompositeElementVal]
-      def value(component_element_vals, parent = nil)
-        CompositeElementVal.new(self, component_element_vals, parent)
+      def value(component_element_vals, parent = nil, usage = nil)
+        Values::CompositeElementVal.new(self, (component_element_vals || []), parent, usage)
       end
 
       # @return [CompositeElementVal]
-      def empty(parent = nil)
-        CompositeElementVal.new(self, [], parent)
+      def empty(parent = nil, usage = nil)
+        Values::CompositeElementVal.new(self, [], parent, usage)
       end
 
       # @private

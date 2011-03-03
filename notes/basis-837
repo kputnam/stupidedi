@@ -1,3 +1,20 @@
+
+  Notation
+    [  ] an ID segment declared MANDATORY
+    (..) an ID segment declared SITUATIONAL
+    {..} an ID segment declared NOT USED
+     ..  a non-ID segment
+
+  constraints[SegmentUse] =
+    SyntaxConstraints(
+      ElementUse  => Values("A", "B", "C", "X"), 
+      ElementUse  => Values("9J", "ZO", "3F"))
+
+    #include?(SegmentVal)
+    #at(ElementUse)
+    
+=====================================================================
+
 ST
 BHT
 

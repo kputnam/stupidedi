@@ -38,16 +38,17 @@ module Stupidedi
 
               delegate :to_s, :length, :=~, :match, :include?, :to => :@value
 
-              def initialize(value, definition, parent)
+              def initialize(value, definition, parent, usage)
                 @value = value
-                super(definition, parent)
+                super(definition, parent, usage)
               end
 
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent)
+                  changes.fetch(:parent, parent),
+                  changes.fetch(:usage, usage)
               end
 
               def empty?
@@ -79,27 +80,23 @@ module Stupidedi
             # Create an empty identifier value.
             #
             # @return [IdentifierVal::Empty]
-            def empty(definition, parent)
-              IdentifierVal::Empty.new(definition, parent)
+            def empty(definition, parent, usage)
+              IdentifierVal::Empty.new(definition, parent, usage)
             end
 
             # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
-            def value(object, definition, parent)
+            def value(object, definition, parent, usage)
               if object.nil?
-                IdentifierVal::Empty.new(definition, parent)
+                IdentifierVal::Empty.new(definition, parent, usage)
               elsif object.is_a?(String) or object.is_a?(StringVal) or object.is_a?(IdentifierVal)
                 if object.empty?
-                  IdentifierVal::Empty.new(definition, parent)
+                  IdentifierVal::Empty.new(definition, parent, usage)
                 else
-                  IdentifierVal::NonEmpty.new(object.to_s, definition, parent)
+                  IdentifierVal::NonEmpty.new(object.to_s, definition, parent, usage)
                 end
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            def reader(input, context)
-              raise NoMethodError, "@todo"
             end
 
             # @endgroup

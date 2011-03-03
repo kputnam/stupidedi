@@ -38,17 +38,19 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [SegmentUse]
       def use(position, requirement, repeat_count)
         SegmentUse.new(self, position, requirement, repeat_count, nil)
       end
 
       # @return [Values::SegmentVal]
-      def empty(parent = nil)
-        Values::SegmentVal.new(self, [], parent)
+      def empty(parent = nil, usage = nil)
+        Values::SegmentVal.new(self, [], parent, usage)
       end
 
-      def value(element_vals, parent = nil)
-        Values::SegmentVal.new(self, element_vals, parent)
+      # @return [Values::SegmentVal]
+      def value(element_vals, parent = nil, usage = nil)
+        Values::SegmentVal.new(self, element_vals, parent, usage)
       end
 
       # @private

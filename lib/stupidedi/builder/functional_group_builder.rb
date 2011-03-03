@@ -22,6 +22,7 @@ module Stupidedi
           changes.fetch(:predecessor, @predecessor)
       end
 
+      # @return [FunctionalGroupBuilder]
       def merge(transaction_set_val)
         copy(:value => @value.append_transaction_set(transaction_set_val))
       end
@@ -52,38 +53,46 @@ module Stupidedi
             transaction_builder = TransactionSetBuilder.start(transaction_set_val, self)
 
             # Let the TransactionSetBuilder figure out parsing the ST segment
-            branches(transaction_builder.segment(name, elements, false))
+            children = transaction_builder.segment(name, elements, false)
+            states   = children.reject(&:stuck?)
+
+            if states.empty?
+              failure("Unexpected segment ST")
+            else
+              branches(states)
+            end
           else
             failure("Unrecognized transaction set #{group.inspect} #{transaction.inspect} #{version.inspect}")
           end
         else
           d = @value.definition
 
-          # @todo
-          # We add one to the position to ensure if we read the start segment
-          # again, it always creates a new InterchangeVal. Otherwise, the left
-          # recursion would force branching -- one with the start segment in a
-          # new InterchangeVal, the other with the segment repeated in the same
-          # InterchangeVal.
+          # @todo: Explain use of #tail
           states = d.header_segment_uses.tail.inject([]) do |list, u|
             if @position <= u.position and name == u.definition.id
-              value = @value.append_header_segment(construct(u, elements))
+              value = @value.append_header_segment(mksegment(u, elements))
               list.push(copy(:position => u.position, :value => value))
             else
               list
             end
           end
 
-          states = d.trailer_segment_uses.inject(states) do |list, u|
+          d.trailer_segment_uses do |u|
             if @position <= u.position and name == u.definition.id
-              value = @value.append_trailer_segment(construct(u, elements))
-              list.push(copy(:position => u.position, :value => value))
-            else
-              list
+              value = @value.append_trailer_segment(mksegment(u, elements))
+              states.push(copy(:position => u.position, :value => value))
             end
           end
 
-          states.concat(@predecessor.merge(@value).segment(name, elements))
+          # Terminate this functional group and try parsing segemnt as a sibling
+          # of @value's parent. Supress any stuck "uncle" states because they
+          # won't say anything more than the single stuck state we create below.
+          uncles = @predecessor.merge(@value).segment(name, elements)
+          states.concat(uncles.reject(&:stuck?))
+
+          if states.empty?
+            return failure("Unexpected segment #{name}")
+          end
 
           branches(states)
         end
@@ -100,6 +109,7 @@ module Stupidedi
     end
 
     class << FunctionalGroupBuilder
+      # @return [FunctionalGroupBuilder]
       def start(functional_group_val, predecessor)
         position = functional_group_val.definition.header_segment_uses.head.position
         new(position, functional_group_val, predecessor)

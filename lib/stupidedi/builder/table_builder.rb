@@ -33,35 +33,34 @@ module Stupidedi
 
         states = d.header_segment_uses.inject([]) do |list, u|
           if @position <= u.position and name == u.definition.id
-            value = @value.append_trailer_segment(construct(u, elements))
+            value = @value.append_header_segment(mksegment(u, elements))
             list.push(copy(:position => u.position, :value => value))
           else
             list
           end
         end
 
-        states = d.trailer_segment_uses.inject(states) do |list, u|
+        d.loop_defs.map(&:start_segment_use).each do |u|
           if @position <= u.position and name == u.definition.id
-            value = @value.append_trailer_segment(construct(u, elements))
-            list.push(copy(:position => u.position, :value => value))
-          else
-            list
+            states.push(LoopBuilder.start(mksegment(u, elements),
+                                          copy(:position => u.position)))
           end
         end
 
-        states = d.loop_defs.inject(states) do |list, l|
-          u = l.start_segment_use
-
+        d.trailer_segment_uses do |u|
           if @position <= u.position and name == u.definition.id
-            loop_builder = LoopBuilder.start(l, copy(:position => u.position))
-            list.concat(loop_builder.segment(name, elements, false))
-          else
-            list
+            value = @value.append_trailer_segment(mksegment(u, elements))
+            states.push(copy(:position => u.position, :value => value))
           end
         end
 
         if upward
-          states.concat(@predecessor.merge(@value).segment(name, elements))
+          uncles = @predecessor.merge(@value).segment(name, elements)
+          states.concat(uncles.reject(&:stuck?))
+        end
+
+        if states.empty?
+          return failure("Unexpected segment #{name}")
         end
 
         branches(states)
@@ -69,7 +68,7 @@ module Stupidedi
 
       # @private
       def pretty_print(q)
-        q.text("TableBuilder[#{@position}]")
+        q.text("TableBuilder[@#{@position}]")
         q.group(2, "(", ")") do
           q.breakable ""
           q.pp @value

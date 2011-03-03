@@ -11,8 +11,8 @@ module Stupidedi
             FiveOhOne::InterchangeVal.new(self, [], [], [])
           end
 
-          def value(header_segment_vals, functional_group_vals, trailer_segment_vals)
-            FiveOhOne::InterchangeVal.new(self, header_segment_vals, functional_group_vals, trailer_segment_vals)
+          def value(segment_val)
+            FiveOhOne::InterchangeVal.new(self, segment_val.cons, [], [])
           end
         end.new "00501",
           # Interchange header

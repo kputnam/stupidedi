@@ -1,4 +1,8 @@
 module Stupidedi
+
+  #
+  #
+  #
   class Either
 
     abstract :each, "&block"

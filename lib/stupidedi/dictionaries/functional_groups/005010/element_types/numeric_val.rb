@@ -38,16 +38,17 @@ module Stupidedi
 
               delegate :to_i, :to_d, :to_f, :to_s, :to => :@value
 
-              def initialize(value, definition, parent)
+              def initialize(value, definition, parent, usage)
                 @value = value
-                super(definition, parent)
+                super(definition, parent, usage)
               end
 
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent)
+                  changes.fetch(:parent, parent),
+                  changes.fetch(:usage, usage)
               end
 
               def empty?
@@ -161,22 +162,18 @@ module Stupidedi
             # Create an empty numeric value.
             #
             # @return [NumericVal::Empty]
-            def empty(definition, parent)
-              NumericVal::Empty.new(definition, parent)
+            def empty(definition, parent, usage)
+              NumericVal::Empty.new(definition, parent, usage)
             end
 
-            def value(object, definition, parent)
+            def value(object, definition, parent, usage)
               if object.nil? or object.is_a?(NumericVal::Empty)
-                NumericVal::Empty.new(definition, parent)
+                NumericVal::Empty.new(definition, parent, usage)
               elsif object.respond_to?(:to_d)
-                NumericVal::NonEmpty.new(object.to_d, definition, parent)
+                NumericVal::NonEmpty.new(object.to_d, definition, parent, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            def reader(input, context)
-              raise NoMethodError, "@todo"
             end
 
             # @endgroup

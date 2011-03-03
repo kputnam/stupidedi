@@ -36,7 +36,12 @@ module Stupidedi
         end
 
         if upward
-          states.concat(@predecessor.merge(@value).segment(name, elements))
+          uncles = @predecessor.merge(@value).segment(name, elements)
+          states.concat(uncles.reject(&:stuck?))
+        end
+
+        if states.empty?
+          return failure("Unexpected segment #{name}")
         end
 
         branches(states)

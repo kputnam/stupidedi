@@ -38,16 +38,12 @@ module Stupidedi
                 changes.fetch(:parent, @parent)
             end
 
-            def value(object, parent = nil)
-              companion.value(object, self, parent)
+            def value(object, parent = nil, usage = nil)
+              companion.value(object, self, parent, usage)
             end
 
-            def empty(parent = nil)
-              companion.empty(self, parent)
-            end
-
-            def reader(input, context)
-              companion.reader(input, context)
+            def empty(parent = nil, usage = nil)
+              companion.empty(self, parent, usage)
             end
 
             # @private

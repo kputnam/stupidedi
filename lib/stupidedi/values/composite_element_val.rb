@@ -12,9 +12,12 @@ module Stupidedi
       # @return [SegmentVal]
       attr_reader :parent
 
-      def initialize(definition, component_element_vals, parent)
-        @definition, @component_element_vals, @parent =
-          definition, component_element_vals, parent
+      # @return [CompositeElementUse]
+      attr_reader :usage
+
+      def initialize(definition, component_element_vals, parent, usage)
+        @definition, @component_element_vals, @parent, @usage =
+          definition, component_element_vals, parent, usage
       end
 
       # @return [CompositeElementVal]
@@ -22,7 +25,8 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:component_element_vals, @component_element_vals),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:parent, @parent),
+          changes.fetch(:usage, @parent)
       end
 
       def empty?
@@ -43,13 +47,8 @@ module Stupidedi
       end
 
       # @return [CompositeElementVal]
-      def append(component_val)
+      def append_component(component_val)
         copy(:component_element_vals => component_val.snoc(@component_element_vals))
-      end
-
-      # @return [CompositeElementVal]
-      def prepend(component_val)
-        copy(:component_element_vals => component_val.cons(@component_element_vals))
       end
 
       # @return [RepeatedElementVal]

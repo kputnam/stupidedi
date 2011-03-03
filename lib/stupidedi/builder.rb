@@ -1,4 +1,8 @@
 module Stupidedi
+
+  #
+  #
+  #
   module Builder
     autoload :AbstractState,          "stupidedi/builder/abstract_state"
     autoload :FailureState,           "stupidedi/builder/failure_state"

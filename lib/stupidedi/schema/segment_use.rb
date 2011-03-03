@@ -28,6 +28,7 @@ module Stupidedi
         @definition = @definition.copy(:parent => self)
       end
 
+      # @return [SegmentUse]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
@@ -35,6 +36,11 @@ module Stupidedi
           changes.fetch(:requirement, @requirement),
           changes.fetch(:repeat_count, @repeat_count),
           changes.fetch(:parent, @parent)
+      end
+
+      # @return [SegmentVal]
+      def empty(parent = nil)
+        definition.empty(parent, self)
       end
 
       # @private

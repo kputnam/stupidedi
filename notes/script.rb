@@ -11,4 +11,5 @@ pp s1 = s0.segment(:ISA, ["00", "", "00", "", "ZZ", "SUBMITTER", "ZZ", "RECEIVER
 pp s2 = s1.segment(:GS, ["HC", "SENDER", "RECEIVER", "20110223", "1245", "333666999", "X", "005010"])
 pp s3 = s2.segment(:ST, ["837", "333666999"])
 pp s4 = s3.segment(:HL, ["1", "", "20", "1"])
+pp s5 = s4.segment(:CLM, ["CLIENT-KS 123456", 500, "", "", ["11", "B", "1"]])
 

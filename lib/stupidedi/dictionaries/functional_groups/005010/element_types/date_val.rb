@@ -34,7 +34,7 @@ module Stupidedi
             class Proper < DateVal
               attr_reader :year, :month, :day
 
-              def initialize(year, month, day, definition, parent)
+              def initialize(year, month, day, definition, parent, usage)
                 @year, @month, @day = year.to_i, month.to_i, day.to_i
 
                 begin
@@ -45,7 +45,7 @@ module Stupidedi
                     "Invalid date year(#{year}) month(#{month}) day(#{day})"
                 end
 
-                super(definition, parent)
+                super(definition, parent, usage)
               end
 
               # @return [Proper]
@@ -55,7 +55,8 @@ module Stupidedi
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent)
+                  changes.fetch(:parent, parent),
+                  changes.fetch(:usage, usage)
               end
 
               def empty?
@@ -114,7 +115,7 @@ module Stupidedi
             class Improper < DateVal
               attr_reader :year, :month, :day
 
-              def initialize(year, month, day, definition, parent)
+              def initialize(year, month, day, definition, parent, usage)
                 @year, @month, @day = year.to_i, month.to_i, day.to_i
 
                 # Check that date is reasonably valid
@@ -123,7 +124,7 @@ module Stupidedi
                     "Invalid date year(#{year}) month(#{month}) day(#{day})"
                 end
 
-                super(definition, parent)
+                super(definition, parent, usage)
               end
 
               # @return [Improper]
@@ -133,7 +134,8 @@ module Stupidedi
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent)
+                  changes.fetch(:parent, parent),
+                  changes.fetch(:usage, usage)
               end
 
               def empty?
@@ -157,7 +159,7 @@ module Stupidedi
                   century -= 1
                 end
 
-                Proper.new(100*century + @year, @month, @day, definition, parent)
+                Proper.new(100*century + @year, @month, @day, definition, parent, usage)
               end
 
               # Converts this to a proper date
@@ -195,44 +197,40 @@ module Stupidedi
             # Create an empty date value
             #
             # @return [DateVal::Empty]
-            def empty(definition, parent)
-              DateVal::Empty.new(definition, parent)
+            def empty(definition, parent, usage)
+              DateVal::Empty.new(definition, parent, usage)
             end
 
             # @return [DateVal::Empty,  DateVal::Proper, DateVal::Improper]
-            def value(object, definition, parent)
+            def value(object, definition, parent, usage)
               if object.nil?
-                DateVal::Empty.new(definition, parent)
+                DateVal::Empty.new(definition, parent, usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
-                return DateVal::Empty.new(definition, parent) if object.empty?
+                return DateVal::Empty.new(definition, parent, usage) if object.empty?
 
                 day   = object.to_s.slice(-2, 2)
                 month = object.to_s.slice(-4, 2)
                 year  = object.to_s.slice( 0..-5)
 
                 if year.length < 4
-                  DateVal::Improper.new(year, month, day, definition, parent)
+                  DateVal::Improper.new(year, month, day, definition, parent, usage)
                 else
-                  DateVal::Proper.new(year, month, day, definition, parent)
+                  DateVal::Proper.new(year, month, day, definition, parent, usage)
                 end
 
               elsif object.is_a?(DateVal::Improper)
-                DateVal::Improper.new(object.year, object.month, object.day, definition, parent)
+                DateVal::Improper.new(object.year, object.month, object.day, definition, parent, usage)
 
               elsif object.is_a?(DateVal::Empty)
-                DateVal::Empty.new(definition, parent)
+                DateVal::Empty.new(definition, parent, usage)
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-                DateVal::Proper.new(object.year, object.month, object.day, definition, parent)
+                DateVal::Proper.new(object.year, object.month, object.day, definition, parent, usage)
 
               else
                 raise ArgumentError, "Cannot convert #{object.class} to DateVal"
               end
-            end
-
-            def reader(input, context)
-              raise NoMethodError, "@todo"
             end
 
             # @endgroup

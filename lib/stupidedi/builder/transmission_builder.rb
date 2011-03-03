@@ -25,10 +25,7 @@ module Stupidedi
         copy(:value => interchange_val.snoc(@value))
       end
 
-      def stuck?
-        false
-      end
-
+      # @return [InterchangeBuilder, FailureState]
       def segment(name, elements)
         case name
         when :ISA
@@ -42,10 +39,10 @@ module Stupidedi
 
           # Construct an ISA segment
           segment_use = envelope_def.header_segment_uses.head
-          segment_val = construct(segment_use, elements)
+          segment_val = mksegment(segment_use, elements)
 
           # Construct an InterchangeVal containing the ISA segment
-          interchange_val = envelope_def.value(segment_val.cons, [], [])
+          interchange_val = envelope_def.value(segment_val)
 
           step(InterchangeBuilder.start(interchange_val, self))
         else
@@ -53,6 +50,7 @@ module Stupidedi
         end
       end
 
+      # @private
       def pretty_print(q)
         q.text("TransmissionBuilder")
         q.group(2, "(", ")") do

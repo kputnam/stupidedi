@@ -36,7 +36,7 @@ module Stupidedi
             class NonEmpty < TimeVal
               attr_reader :hour, :minute, :second
 
-              def initialize(hour, minute, second, definition, parent)
+              def initialize(hour, minute, second, definition, parent, usage)
                 @hour, @minute, @second = hour, minute, second
 
                 valid   = (  hour.nil? or hour.between?(0, 24))
@@ -49,7 +49,7 @@ module Stupidedi
                   raise ArgumentError, "Invalid time #{inspect}"
                 end
 
-                super(definition, parent)
+                super(definition, parent, usage)
               end
 
               def copy(changes = {})
@@ -58,7 +58,8 @@ module Stupidedi
                   changes.fetch(:minute, @minute),
                   changes.fetch(:second, @second),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent)
+                  changes.fetch(:parent, parent),
+                  changes.fetch(:usage, usage)
               end
 
               def empty?
@@ -96,26 +97,26 @@ module Stupidedi
             # @group Constructors
 
             # Creates an empty time value.
-            def empty(definition, parent)
-              TimeVal::Empty.new(definition, parent)
+            def empty(definition, parent, usage)
+              TimeVal::Empty.new(definition, parent, usage)
             end
 
             # @return [TimeVal::NonEmpty, TimeVal::Empty]
-            def value(object, definition, parent)
+            def value(object, definition, parent, usage)
               if object.nil?
-                TimeVal::Empty.new(definition, parent)
+                TimeVal::Empty.new(definition, parent, usage)
 
               elsif object.is_a?(Time)
                 TimeVal::NonEmpty.new(object.hour, object.min, object.sec + (object.usec / 1000000.0),
-                                      definition, parent)
+                                      definition, parent, usage)
 
               elsif object.is_a?(DateTime)
                 TimeVal::NonEmpty.new(object.hour, object.min, object.sec + object.sec_fraction.to_f,
-                                      definition, parent)
+                                      definition, parent, usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 if object.blank?
-                  TimeVal::Empty.new(definition, parent)
+                  TimeVal::Empty.new(definition, parent, usage)
                 else
                   hour   = object.to_s.slice(0, 2).to_i
                   minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
@@ -125,15 +126,11 @@ module Stupidedi
                     second += "0.#{decimal}".to_f
                   end
 
-                  TimeVal::NonEmpty.new(hour, minute, second, definition, parent)
+                  TimeVal::NonEmpty.new(hour, minute, second, definition, parent, usage)
                 end
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            def reader(input, context)
-              raise NoMethodError, "@todo"
             end
 
             # @endgroup

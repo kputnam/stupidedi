@@ -36,16 +36,17 @@ module Stupidedi
 
               delegate :to_d, :to_s, :to_f, :length, :to => :@value
 
-              def initialize(string, definition, parent)
+              def initialize(string, definition, parent, usage)
                 @value = string
-                super(definition, parent)
+                super(definition, parent, usage)
               end
 
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent)
+                  changes.fetch(:parent, parent),
+                  changes.fetch(:usage, usage)
               end
 
               def inspect
@@ -73,26 +74,22 @@ module Stupidedi
           class << StringVal
             # @group Constructors
 
-            def empty(definition, parent)
-              StringVal::Empty.new(definition, parent)
+            def empty(definition, parent, usage)
+              StringVal::Empty.new(definition, parent, usage)
             end
 
-            def value(object, definition, parent)
+            def value(object, definition, parent, usage)
               if object.respond_to?(:to_s)
                 s = object.to_s
 
                 if s.empty?
-                  StringVal::Empty.new(definition, parent)
+                  StringVal::Empty.new(definition, parent, usage)
                 else
-                  StringVal::NonEmpty.new(s, definition, parent)
+                  StringVal::NonEmpty.new(s, definition, parent, usage)
                 end
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            def reader(input, context)
-              raise NoMethodError, "@todo"
             end
 
             # @endgroup

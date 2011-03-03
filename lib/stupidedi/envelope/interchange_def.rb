@@ -15,7 +15,7 @@ module Stupidedi
       abstract :empty
 
       # @return [InterchangeVal]
-      abstract :value, :args => %w(header_segment_vals functional_group_vals trailer_segment_vals)
+      abstract :value, :args => %w(segment_val)
 
       def initialize(id, header_segment_uses, trailer_segment_uses)
         @id, @header_segment_uses, @trailer_segment_uses =

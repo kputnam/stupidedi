@@ -5,6 +5,7 @@ module Stupidedi
         module ElementTypes
 
           class BinaryVal < Values::SimpleElementVal
+            # @todo
           end
 
           class << BinaryVal
@@ -13,10 +14,6 @@ module Stupidedi
             end
 
             def value(object, definition, parent)
-              raise NoMethodError, "@todo"
-            end
-
-            def reader(input, context)
               raise NoMethodError, "@todo"
             end
           end
