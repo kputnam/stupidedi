@@ -12,10 +12,6 @@ module Stupidedi
           true
         end
 
-        def present?
-          false
-        end
-
         # @private
         def inspect
           "DateVal.empty[#{element_def.try(:id)}]"
@@ -47,28 +43,24 @@ module Stupidedi
           false
         end
 
-        def present?
-          true
-        end
-
         def proper?
           true
         end
 
         # @return [Date]
         def to_date
-          Date.civil(year.to_i, month.to_i, day.to_i)
+          Date.civil(@year.to_i, @month.to_i, @day.to_i)
         end
 
         # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
-          "DateVal.value#{def_id}(#{year}-#{month}-#{day})"
+          "DateVal.value#{def_id}(#{@year}-#{@month}-#{@day})"
         end
 
         # @private
         def ==(other)
-          year == other.year and month == other.month and day == other.day
+          @year == other.year and @month == other.month and @day == other.day
         end
       end
 
@@ -107,10 +99,10 @@ module Stupidedi
               "Y must be between 0 and 99, inclusive but was #{yy}"
           end
 
-          if year.to_i < yy
-            Proper.new("%d%02d" % [century - 1, year], month, day, element_def)
+          if @year.to_i < yy
+            Proper.new("%d%02d" % [century - 1, @year], @month, @day, element_def)
           else
-            Proper.new("%d%02d" % [century, year], month, day, element_def)
+            Proper.new("%d%02d" % [century, @year], @month, @day, element_def)
           end
         end
 
@@ -129,12 +121,12 @@ module Stupidedi
         # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
-          "DateVal.value#{def_id}(XX#{year}-#{month}-#{day})"
+          "DateVal.value#{def_id}(XX#{@year}-#{@month}-#{@day})"
         end
 
         # @private
         def ==(other)
-          year == other.year and month == other.month and day == other.day
+          @year == other.year and @month == other.month and @day == other.day
         end
       end
 

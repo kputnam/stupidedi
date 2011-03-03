@@ -3,6 +3,7 @@ module Stupidedi
 
     class LoopVal
       attr_reader :loop_def
+      alias_method :definition, :loop_def
 
       attr_reader :segment_vals
 
@@ -15,11 +16,17 @@ module Stupidedi
       end
 
       def present?
-        @segment_vals.any?(&:present?)
+        not empty?
       end
 
       def [](n)
         @segment_vals[n]
+      end
+
+      # @private
+      def ==(other)
+        other.definition == @loop_def and
+        other.segment_vals == @segment_vals
       end
 
       # @private
@@ -38,6 +45,9 @@ module Stupidedi
       end
     end
 
+    #
+    # Constructors
+    #
     class << LoopVal
       def empty(loop_def)
         LoopVal.new(loop_def, loop_def.segment_uses.map{|u| u.segment_def.empty })

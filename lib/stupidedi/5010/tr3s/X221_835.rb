@@ -45,7 +45,7 @@ module Stupidedi
         # --------------------------------+
         # 0800 N1   R   Once              | ; Payee Identification
         # 1000 N3   S   Once              | ; Payee Address
-        # 1100 N4   R   Once              | ; Payee City, State, and ZIP Code
+        # 1100 N4   S   Once              | ; Payee City, State, and ZIP Code
         # 1200 REF  S   Unbounded         | ; Payee Aditional Identificaiton
         # 1400 RDM  S   Once              | ; Remittance Delivery Method
         # --------------------------------+

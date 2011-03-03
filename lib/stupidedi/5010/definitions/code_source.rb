@@ -9,7 +9,7 @@ module Stupidedi
 
       module CodeSources
       end
-      
+
     end
   end
 end

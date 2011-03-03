@@ -6,10 +6,11 @@ module Stupidedi
     # somewhat analagous to "struct" values in C -- except their members must
     # be native types (ie SimpleElementVal), so they cannot be nested
     # recursively. The composite definition (CompositeElementDef) dictates the
-    # specific types of each component element.
+    # specific type of each component element.
     #
-    class CompositeElementVal
+    class CompositeElementVal < AbstractVal
       attr_reader :element_def
+      alias_method :definition, :element_def
 
       attr_reader :component_element_vals
 
@@ -31,49 +32,15 @@ module Stupidedi
         @component_element_vals.all?(&:empty?)
       end
 
-      # True if at least one of the component elements is present.
-      def present?
-        @component_element_vals.any?(&:present?)
-      end
-
-      def length
-        @component_element_vals.length
-      end
-
       # Returns the component element value (some kind of {SimpleElementVal}) at
       # the given index +n+, with numbering starting at zero
       def [](n)
         @component_element_vals[n]
       end
 
-      # Create a new CompositeElementVal with the given component appended to
-      # the list of component elements
-      #
-      # @note Intended for use by {CompositeElementReader}
-      # @private
-      def append(component)
-        self.class.new(element_def, @component_element_vals + [component])
-      end
-
-      # Create a new CompositeElementVal with the given component prepended to
-      # the list of component elements.
-      #
-      # @note Intended for use by {CompositeElementReader}
-      # @private
-      def prepend(component)
-        self.class.new(element_def, component.cons(@component_element_vals))
-      end
-
-      # Construct a RepeatedElementVal with this element as its sole element.
-      #
-      # @note Intended for use by SegmentReader
-      # @private
-      def repeated
-        RepeatedElementVal.new([self], element_def)
-      end
-
       # @private
       def ==(other)
+        other.definition == @element_def and
         other.component_element_vals == @component_element_vals
       end
 
@@ -90,6 +57,21 @@ module Stupidedi
             q.pp e
           end
         end
+      end
+
+      # @private
+      def append(element_val)
+        self.class.new(element_def, element_val.snoc(@component_element_vals))
+      end
+
+      # @private
+      def prepend(element_val)
+        self.class.new(element_def, element_val.cons(@component_element_vals))
+      end
+
+      # @private
+      def repeated
+        RepeatedElementVal.new([self], element_def)
       end
     end
 

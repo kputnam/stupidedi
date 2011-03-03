@@ -4,7 +4,7 @@
 #   REQUIRED
 #     This structure must always be sent when the parent structure is sent
 #
-#   NOT_USED
+#   NOT USED
 #     This structure must never be sent
 #
 #   SITUATIONAL

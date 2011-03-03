@@ -12,10 +12,6 @@ module Stupidedi
           true
         end
 
-        def present?
-          false
-        end
-
         # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
@@ -46,15 +42,6 @@ module Stupidedi
           false
         end
 
-        def present?
-          true
-        end
-
-        # @private
-        def to_s(*args)
-          delegate.to_s(*args)
-        end
-
         # @private
         def coerce(other)
           case other
@@ -68,61 +55,73 @@ module Stupidedi
         # @private
         def inspect
           def_id = element_def.try{|d| "[#{d.id}]" }
-          "NumericVal.value#{def_id}(#{delegate.to_s('F')})"
+          "NumericVal.value#{def_id}(#{@delegate.to_s('F')})"
         end
+
+        # @group Mathematical Operators
 
         # @return [NumericVal::NonEmpty]
         def /(other)
           if other.is_a?(self.class)
-            self.class.new(delegate / other.delegate, element_def)
+            self.class.new(@delegate / other.delegate, element_def)
           else
-            self.class.new(delegate / other, element_def)
+            self.class.new(@delegate / other, element_def)
           end
         end
 
         # @return [NumericVal::NonEmpty]
         def +(other)
           if other.is_a?(self.class)
-            self.class.new(delegate + other.delegate, element_def)
+            self.class.new(@delegate + other.delegate, element_def)
           else
-            self.class.new(delegate + other, element_def)
+            self.class.new(@delegate + other, element_def)
           end
         end
 
         # @return [NumericVal::NonEmpty]
         def -(other)
           if other.is_a?(self.class)
-            self.class.new(delegate - other.delegate, element_def)
+            self.class.new(@delegate - other.delegate, element_def)
           else
-            self.class.new(delegate - other, element_def)
+            self.class.new(@delegate - other, element_def)
           end
         end
 
         # @return [NumericVal::NonEmpty]
         def **(other)
           if other.is_a?(self.class)
-            self.class.new(delegate ** other.delegate, element_def)
+            self.class.new(@delegate ** other.delegate, element_def)
           else
-            self.class.new(delegate ** other, element_def)
+            self.class.new(@delegate ** other, element_def)
           end
         end
 
         # @return [NumericVal::NonEmpty]
         def *(other)
           if other.is_a?(self.class)
-            self.class.new(delegate * other.delegate, element_def)
+            self.class.new(@delegate * other.delegate, element_def)
           else
-            self.class.new(delegate * other, element_def)
+            self.class.new(@delegate * other, element_def)
           end
         end
 
         # @return [NumericVal::NonEmpty]
         def %(other)
           if other.is_a?(self.class)
-            self.class.new(delegate % other.delegate, element_def)
+            self.class.new(@delegate % other.delegate, element_def)
           else
-            self.class.new(delegate % other, element_def)
+            self.class.new(@delegate % other, element_def)
           end
+        end
+
+        # @return [NumericVal::NonEmpty]
+        def -@
+          self.class.new(-@delegate, element_def)
+        end
+
+        # @return [NumericVal::NonEmpty]
+        def +@
+          self
         end
 
         # @return [Integer]
@@ -133,6 +132,8 @@ module Stupidedi
             delegate <=> other
           end
         end
+
+        # @endgroup
       end
 
     end

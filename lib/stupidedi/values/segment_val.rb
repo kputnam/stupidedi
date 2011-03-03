@@ -3,6 +3,7 @@ module Stupidedi
 
     class SegmentVal
       attr_reader :segment_def
+      alias_method :definition, :segment_def
 
       attr_reader :element_vals
 
@@ -15,21 +16,11 @@ module Stupidedi
       end
 
       def present?
-        @element_vals.any?(&:present?)
+        not empty?
       end
 
       def [](n)
         @element_vals[n]
-      end
-
-      # @private
-      def prepend(element_val)
-        self.class.new(segment_def, @element_val.cons(element_vals))
-      end
-
-      # @private
-      def append(element_val)
-        self.class.new(segment_def, @element_vals + [element_val])
       end
 
       # @private
@@ -45,6 +36,16 @@ module Stupidedi
             q.pp e
           end
         end
+      end
+
+      # @private
+      def prepend(element_val)
+        self.class.new(segment_def, @element_val.cons(element_vals))
+      end
+
+      # @private
+      def append(element_val)
+        self.class.new(segment_def, @element_vals.snoc(element_val))
       end
     end
 

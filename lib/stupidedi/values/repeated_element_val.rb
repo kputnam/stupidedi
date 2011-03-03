@@ -9,15 +9,12 @@ module Stupidedi
     #
     class RepeatedElementVal
       attr_reader :element_def
+      alias_method :definition, :element_def
 
       attr_reader :element_vals
 
       def initialize(element_vals, element_def)
         @element_vals, @element_def = element_vals, element_def
-      end
-
-      def count
-        @element_vals.length
       end
 
       def length
@@ -36,29 +33,12 @@ module Stupidedi
 
       # True if any occurences are present
       def present?
-        @element_vals.any?(&:present?)
-      end
-
-      # Creates a new {RepeatedElementVal} with the given element appended
-      # to the end of the list of occurences
-      #
-      # @note Intended for use by {SegmentReader}
-      # @private
-      def append(element)
-        self.class.new(@element_vals + [element], element_def)
-      end
-
-      # Creates a new {RepeatedElementVal} with the given element prepended to
-      # the end of the list of occurences
-      #
-      # @note Intended for use by {SegmentReader}
-      # @private
-      def prepend(element)
-        self.class.new(element.cons(@element_vals), element_def)
+        not empty?
       end
 
       # @private
       def ==(other)
+        other.element_def == @element_def and
         other.element_vals == @element_vals
       end
 
@@ -75,6 +55,24 @@ module Stupidedi
             q.pp e
           end
         end
+      end
+
+      # Creates a new {RepeatedElementVal} with the given element value
+      # appended to the end of the list of occurences
+      #
+      # @note Intended for use by {SegmentReader}
+      # @private
+      def append(element_val)
+        self.class.new(element_val.snoc(@element_vals), element_def)
+      end
+
+      # Creates a new {RepeatedElementVal} with the given element value
+      # prepended to the end of the list of occurences
+      #
+      # @note Intended for use by {SegmentReader}
+      # @private
+      def prepend(element_val)
+        self.class.new(element_val.cons(@element_vals), element_def)
       end
     end
 
