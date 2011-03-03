@@ -2,6 +2,7 @@ require "bigdecimal"
 require "time"
 require "date"
 require "continuation" if RUBY_VERSION >= "1.9"
+require "blankslate"   if RUBY_VERSION <  "1.9"
 
 # Monkey patches
 require "ruby/tailcall"

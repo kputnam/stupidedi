@@ -50,35 +50,23 @@ module Stupidedi
         @trailer_segment_vals.all(&:empty?)
       end
 
-      def append(val)
-        if val.is_a?(FunctionalGroupVal)
-          copy(:functional_group_vals => val.snoc(@functional_group_vals))
-        else
-          if @functional_group_vals.empty?
-            copy(:header_segment_vals => val.snoc(@header_segment_vals))
-          else
-            copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
-          end
-        end
+      def append_header(segment)
+        copy(:header_segment_vals => val.snoc(@header_segment_vals))
       end
 
-      def prepend(val)
-        if val.is_a?(FunctionalGroupVal)
-          copy(:functional_group_vals => val.cons(@functional_group_vals))
-        else
-          if @functional_group_vals.empty?
-            copy(:header_segment_vals => val.cons(@header_segment_vals))
-          else
-            copy(:trailer_segment_vals => val.cons(@trailer_segment_vals))
-          end
-        end
+      def append_group(functional_group_val)
+        copy(:functional_group_vals => val.snoc(@functional_group_vals))
+      end
+
+      def append_trailer(segment)
+        copy(:trailer_segment_vals => val.snoc(@trailer_segment_vals))
       end
 
       # @private
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}]" }
-        q.text("InterchangeVal#{id}")
-        q.group(1, "(", ")") do
+        q.text "InterchangeVal#{id}"
+        q.group 2, "(", ")" do
           q.breakable ""
           @header_segment_vals.each do |e|
             unless q.current_group.first?

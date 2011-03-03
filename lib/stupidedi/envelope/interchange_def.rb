@@ -33,6 +33,34 @@ module Stupidedi
       def segment_uses
         @header_segment_uses + @trailer_segment_uses
       end
+
+      def pretty_print(q)
+        q.text("InterchangeDef[#{id}]")
+        q.group(2, "(", ")") do
+          q.breakable ""
+          @header_segment_uses.each do |e|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp e
+          end
+
+          unless q.current_group.first?
+            q.text ","
+            q.breakable
+          end
+          q.text "... (FUNCTIONAL GROUPS) ..."
+
+          @trailer_segment_uses.each do |e|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp e
+          end
+        end
+      end
     end
 
   end

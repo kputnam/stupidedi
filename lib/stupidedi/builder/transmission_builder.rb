@@ -2,57 +2,48 @@ module Stupidedi
   module Builder
 
     class TransmissionBuilder
-      # @return [Array<Envelope::InterchangeVal>]
-      attr_reader :interchanges
+      attr_reader :interchange_vals
 
-      # @return [Envelope::Router]
-      attr_reader :router
+      def initialize(router, interchange_vals)
+        @router, @interchange_vals = router, interchange_vals
+      end
 
-      def initialize(router)
-        @router       = router
-        @interchanges = []
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:router, @router),
+          changes.fetch(:interchange_vals, @interchange_vals)
+      end
+
+      def append(interchange_val)
+        copy(:interchange_vals => interchange_val.snoc(@interchange_vals))
       end
 
       def segment(name, *elements)
-        unless name == :ISA
-          raise "@todo"
-        end
+        case name
+        when :ISA
+          # ISA12 Interchange Control Version Number
+          version    = elements.at(11))
+          envelope_def = @router.interchange.lookup(version)
 
-        isa(*elements)
-      end
-
-      def isa(*elements)
-        # ISA12 Interchange Control Number
-        unless elements.defined_at?(11)
-          raise "@todo"
-        end
-
-        # Envelope::InterchangeDef
-        version = @router.interchange.lookup(elements.at(11))
-
-        unless version
-          raise "@todo"
-        end
-
-        # Construct an empty ISA segment
-        isa = version.header_segment_uses.first.definition.empty
-
-        # Populate the ISA's elements
-        # @todo: error-check (extra|missing|invalid) elements
-        if elements.length < isa.definition.element_uses.length
-          isa.definition.element_uses.zip(elements) do |use, value|
-            isa = isa.append(use.definition.value(value))
+          unless envelope_def
+            fail "Unrecognized interchange version #{version.inspect}"
           end
+
+          # Construct an ISA segment
+          segment_def = envelope_def.header_segment_uses.head.definition
+          segment_val = construct(segment_def, elements)
+          interchange_val = version.value(segment_val.cons, [], [])
+
+          branch InterchangeBuilder.start(interchange_val, self)
         else
-          elements.zip(isa.definition.element_uses) do |value, use|
-            isa = isa.append(use.definition.value(value))
-          end
+          fail "Interchange must begin with the ISA segment"
         end
+      end
+    end
 
-        interchange = version.value([isa], [], [])
-        @interchanges << interchange
-
-        InterchangeBuilder.new(self, interchange)
+    class << TransmissionBuilder
+      def start(router)
+        TransmissionBuilder.new(router, [])
       end
     end
 

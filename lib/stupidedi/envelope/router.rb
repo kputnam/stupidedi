@@ -17,6 +17,24 @@ module Stupidedi
         @transaction_set  = TransactionSetRouter.new
       end
 
+      # @private
+      def pretty_print(q)
+        q.text "TransactionSetRouter"
+        q.group 2, "(", ")" do
+          q.breakable ""
+
+          q.pp @interchange
+          q.text ","
+          q.breakable
+
+          q.pp @functional_group
+          q.text ","
+          q.breakable
+
+          q.pp @transaction_set
+        end
+      end
+
       #
       # The interchange control segments (ISA/ISE) are versioned independently
       # from the functional group segments (GS/GE). Because different interchange
@@ -51,13 +69,28 @@ module Stupidedi
         #   table.register(FourOhOne::InterchangeDef,   "00401")
         #   table.register(ThreeOhFour::InterchangeDef, "00304")
         #
-        def register(definition, version = interchange.id)
+        def register(definition, version = definition.id)
           @table[version] = definition
         end
 
         # @param version  ISA12
         def lookup(version)
           @table[version]
+        end
+
+        # @private
+        def pretty_print(q)
+          q.text "InterchangeRouter"
+          q.group 2, "(", ")" do
+            q.breakable ""
+            @table.keys.each do |e|
+              unless q.current_group.first?
+                q.text ","
+                q.breakable
+              end
+              q.pp e
+            end
+          end
         end
       end
 
@@ -85,12 +118,27 @@ module Stupidedi
         #   table.register(FourtyTen,   "004010")
         #   table.register(ThirtyForty, "003040")
         #
-        def register(definition, version)
+        def register(definition, version = definition.id)
           @table[version] = definition
         end
 
         def lookup(version)
           @table[version]
+        end
+
+        # @private
+        def pretty_print(q)
+          q.text "FunctionalGroupRouter"
+          q.group 2, "(", ")" do
+            q.breakable ""
+            @table.keys.each do |e|
+              unless q.current_group.first?
+                q.text ","
+                q.breakable
+              end
+              q.pp e
+            end
+          end
         end
       end
 
@@ -150,6 +198,21 @@ module Stupidedi
         # @param transaction  ST01
         def lookup(version, function, transaction)
           @table[Array[version, function, transaction]]
+        end
+
+        # @private
+        def pretty_print(q)
+          q.text "TransactionSetRouter"
+          q.group 2, "(", ")" do
+            q.breakable ""
+            @table.keys.each do |e|
+              unless q.current_group.first?
+                q.text ","
+                q.breakable
+              end
+              q.pp e
+            end
+          end
         end
       end
     end
