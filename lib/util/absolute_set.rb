@@ -18,6 +18,7 @@ module Stupidedi
   # probably a better use case for RelativeSet.
   #
   class AbsoluteSet < AbstractSet
+    include Enumerable
 
     # @return [Integer]
     attr_reader :mask
@@ -29,17 +30,18 @@ module Stupidedi
       @mask, @universe = mask, universe.freeze
     end
 
-    # @return [Array]
-    def to_a
-      elements = []
+    def copy(changes = {})
+      self.class.new \
+        changes.fetch(:mask, @mask),
+        changes.fetch(:universe, @universe)
+    end
 
+    def each
       @universe.each do |value, n|
         unless @mask[n].zero?
-          elements << value
+          yield(value)
         end
       end
-
-      elements
     end
 
     # @return [AbsoluteSet]
@@ -54,7 +56,7 @@ module Stupidedi
         end
       end
 
-      self.class.new(mask, @universe)
+      copy(:mask => mask)
     end
 
     # @return [AbsoluteSet]
@@ -67,7 +69,7 @@ module Stupidedi
         end
       end
 
-      self.class.new(mask, @universe)
+      copy(:mask => mask)
     end
 
     # @return [AbsoluteSet]
@@ -80,12 +82,12 @@ module Stupidedi
         end
       end
 
-      self.class.new(mask, @universe)
+      copy(:mask => mask)
     end
 
     # @return [Boolean]
-    def include?(other)
-      if n = @universe.at(other)
+    def include?(element)
+      if n = @universe.at(element)
         # Same as (@mask & (1 << n)).zero? but potentially eliminates
         # converting the intermediate computation to a Ruby value
         not @mask[n].zero?
@@ -109,42 +111,42 @@ module Stupidedi
 
     # @return [AbsoluteSet]
     def complement
-      self.class.new(~@mask, @universe)
+      copy(:mask => ~@mask & ((1 << @universe.size) - 1))
     end
 
     # @return [AbsoluteSet]
     def union(other)
       if other.is_a?(self.class) and other.universe.eql?(@universe)
-        return self.class.new(@mask | other.mask, @universe)
+        copy(:mask => @mask | other.mask)
       else
-        self.class.new(@mask | as_mask(other), @universe)
+        copy(:mask => @mask | as_mask(other))
       end
     end
 
     # @return [AbsoluteSet]
     def intersection(other)
       if other.is_a?(self.class) and other.universe.eql?(@universe)
-        self.class.new(@mask & other.mask, @universe)
+        copy(:mask => @mask & other.mask)
       else
-        self.class.new(@mask & as_mask(other), @universe)
+        copy(:mask => @mask & as_mask(other))
       end
     end
 
     # @return [AbsoluteSet]
     def difference(other)
       if other.is_a?(self.class) and other.universe.eql?(@universe)
-        self.class.new(@mask & ~other.mask, @universe)
+        copy(:copy => @mask & ~other.mask)
       else
-        self.class.new(@mask & ~as_mask(other), @universe)
+        copy(:copy => @mask & ~as_mask(other))
       end
     end
 
     # @return [AbsoluteSet]
     def symmetric_difference(other)
       if other.is_a?(self.class) and other.universe.eql?(@universe)
-        self.class.new(@mask ^ other.mask, @universe)
+        copy(:copy => @mask ^ other.mask)
       else
-        self.class.new(@mask ^ as_mask(other), @universe)
+        copy(:copy => @mask ^ as_mask(other))
       end
     end
 
@@ -153,7 +155,7 @@ module Stupidedi
       if other.is_a?(self.class) and other.universe.eql?(@universe)
         other
       else
-        self.class.new(as_mask(other), @universe)
+        copy(:mask => as_mask(other, true))
       end
     end
 
@@ -169,7 +171,7 @@ module Stupidedi
   private
 
     # @return [Integer]
-    def as_mask(other)
+    def as_mask(other, strict = false)
       mask = 0
 
       # Unfortunately, computing our size is O(|U|) and other.size
@@ -187,6 +189,8 @@ module Stupidedi
         other.each do |x|
           if n = @universe.at(x)
             mask |= (1 << n)
+          else
+            raise "Universe does not contain element #{x.inspect}"
           end
         end
       end

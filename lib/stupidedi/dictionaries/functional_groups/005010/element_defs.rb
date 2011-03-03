@@ -294,6 +294,7 @@ module Stupidedi
               "471" => "Prescription",
               "472" => "Service",
               "484" => "Last Menstrual Period",
+              "573" => "Date Claim Paid",
               "607" => "Certification Revision",
               "738" => "Most Recent Hemoglobin or Hematocrit or Both",
               "739" => "Most Recent Serum Creatine"))
@@ -644,6 +645,7 @@ module Stupidedi
               "HC" => "Health Cerification",
               "HR" => "Health Clinic Records",
               "I5" => "Immunization Record",
+              "IR" => "State School Immunization Records",
               "LA" => "Laboratory Results",
               "M1" => "Medical Record Attachment",
               "MT" => "Models",
@@ -826,6 +828,7 @@ module Stupidedi
               "P" => "Primary",
               "S" => "Secondary",
               "T" => "Tertiary",
+              "U" => "Unknown",
               "A" => "Payer Responsibility Four",
               "B" => "Payer Responsibility Five",
               "C" => "Payer Responsibility Six",
@@ -1053,7 +1056,7 @@ module Stupidedi
             s::CodeList.build(
               "AA" => "Auto Accident",
               "EM" => "Employment",
-              "QA" => "Other Accident"))
+              "OA" => "Other Accident"))
 
           E1363 = t::ID.new(:E1363, "Release of Information Code"          , 1, 1,
             s::CodeList.build(
@@ -1077,6 +1080,7 @@ module Stupidedi
               "03" => "Priced at a Contractual Percentage",
               "04" => "Bundled Pricing",
               "05" => "Peer Review Pricing",
+              "06" => "Per Diem Pricing",
               "07" => "Flat Rate Pricing",
               "08" => "Combination Pricing",
               "09" => "Maternity Pricing",
