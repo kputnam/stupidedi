@@ -1,0 +1,10 @@
+
+  def copy(changes = {})
+    # Remove non-changes
+    changes.delete(:a) if @a.eql?(changes.at(:a))
+    changes.delete(:b) if @b.eql?(changes.at(:b))
+
+    if changes.empty?
+      self
+    end
+  end
