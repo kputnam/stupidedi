@@ -19,13 +19,12 @@ require "ruby/threadlocal"
 
 module Stupidedi
   autoload :Either,       "stupidedi/either"
-  autoload :Input,        "stupidedi/input"
-  autoload :Reader,       "stupidedi/reader"
 
   autoload :Builder,      "stupidedi/builder"
   autoload :Dictionaries, "stupidedi/dictionaries"
   autoload :Editor,       "stupidedi/editor"
   autoload :Envelope,     "stupidedi/envelope"
+  autoload :Guides,       "stupidedi/guides"
   autoload :Reader,       "stupidedi/reader"
   autoload :Schema,       "stupidedi/schema"
   autoload :Values,       "stupidedi/values"
