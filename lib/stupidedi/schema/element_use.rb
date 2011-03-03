@@ -27,15 +27,15 @@ module Stupidedi
       # @return [RepeatCount]
       attr_reader :repeat_count
 
-      # @return [ValueSet]
+      # @return [Set, BitmaskSubset]
       attr_reader :allowed_values
 
       # @return [SegmentDef]
       attr_reader :parent
 
-      def initialize(definition, requirement, repeat_count, parent)
-        @definition, @requirement, @repeat_count, @parent =
-          definition, requirement, repeat_count, parent
+      def initialize(definition, requirement, repeat_count, allowed_values, parent)
+        @definition, @requirement, @repeat_count, @allowed_values, @parent =
+          definition, requirement, repeat_count, allowed_values, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -50,6 +50,7 @@ module Stupidedi
           changes.fetch(:definition, @definition),
           changes.fetch(:requirement, @requirement),
           changes.fetch(:repeat_count, @repeat_count),
+          changes.fetch(:allowed_values, @allowed_values),
           changes.fetch(:parent, @parent)
       end
 
@@ -85,12 +86,12 @@ module Stupidedi
       # @return [CompositeElementDef]
       attr_reader :parent
 
-      # @return [ValueSet]
+      # @return [Set, BitmaskSubset]
       attr_reader :allowed_values
 
-      def initialize(definition, requirement, parent)
-        @definition, @requirement, @parent =
-          definition, requirement, parent
+      def initialize(definition, requirement, allowed_values, parent)
+        @definition, @requirement, @allowed_values, @parent =
+          definition, requirement, allowed_values, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -104,6 +105,7 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:requirement, @requirement),
+          changes.fetch(:allowed_values, @allowed_values),
           changes.fetch(:parent, @parent)
       end
 

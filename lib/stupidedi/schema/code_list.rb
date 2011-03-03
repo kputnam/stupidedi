@@ -5,19 +5,15 @@ module Stupidedi
     #
     #
     class CodeList
+      delegate :at, :defined_at?, :to => :@hash
 
-      # @return [Hash]
-      attr_reader :storage
-
-      delegate :at, :defined_at?, :to => :@storage
-
-      def initialize(codes)
-        @codes = codes
+      def initialize(hash)
+        @hash = hash
       end
 
       # @return [Array<String>]
       def codes
-        @storage.keys
+        @hash.keys
       end
     end
 

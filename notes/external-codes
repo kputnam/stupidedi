@@ -1,3 +1,5 @@
+#  77: "X12 Directories"
+
 4: ABA Routing Number
 - E20
 - E60/13
@@ -64,7 +66,7 @@ x E235/HC
 x E1270/BO
 x E1270/BP
 
-131: ICD9 CM
+131: International Classification of Diseases, 9th Revision, Clinical Modification (ICD-9-CM)
 x E128/ICD
 x E235/DX
 x E235/ID
@@ -121,7 +123,7 @@ x E1314
 231: Admission Type Code
 x E1315
 
-235: Claim Frequency Code
+235: Claim Frequency Type Code
 x E1325
 
 236: Uniform Billing Claim Form Bill Type
@@ -207,6 +209,7 @@ x E128/ABY
 x E235/ER
 
 528: Centers for Medicare and Medicaid Services (CMS) Durable Medical Equipment Regional Carrier (DMERC) Certificate of Medical Necessity (CMN) Forms
+# 582: "Centers for Medicare and Medicaid Services (CMS) Durable Medical Equipment Regional Carrier (DMERC) Certificate of Medical Necessity (CMN) Forms"
 x E1270/UT
 
 663: Logical Observation Identifier Names and Codes
@@ -240,12 +243,12 @@ x E1270/REC
 881: Version / Release / Industry Code Identifier
 x E480
 
-896: ICD10 PCS
+896: International Classification of Diseases, 10th Revision, Procedure Coding System (ICD-10-PCS)
 x E235/IP
 x E1270/BBQ
 x E1270/BBR
 
-897: ICD10 CM
+897: International Classification of Diseases, 10th Revision, Clinical Modification (ICD-10-CM)
 x E235/DC
 x E1270/ABF
 x E1270/ABJ

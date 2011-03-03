@@ -17,6 +17,7 @@ module Stupidedi
 
             attr_reader :parent
 
+            # @return [Class<Values::SimpleElementVal>]
             abstract :companion
 
             def initialize(id, name, min_length, max_length, description = nil, parent = nil)
@@ -28,6 +29,7 @@ module Stupidedi
               end
             end
 
+            # @return [SimpleElementDef]
             def copy(changes = {})
               self.class.new \
                 changes.fetch(:id, @id),
@@ -38,10 +40,12 @@ module Stupidedi
                 changes.fetch(:parent, @parent)
             end
 
+            # @return [Values::SimpleElementVal]
             def value(object, parent = nil, usage = nil)
               companion.value(object, self, parent, usage)
             end
 
+            # @return [Values::SimpleElementVal]
             def empty(parent = nil, usage = nil)
               companion.empty(self, parent, usage)
             end
@@ -103,8 +107,44 @@ module Stupidedi
             "stupidedi/dictionaries/functional_groups/005010/element_types/identifier_val"
 
           class ID < SimpleElementDef
+            attr_reader :code_list
+
+            def initialize(id, name, min_length, max_length, code_list = nil, description = nil, parent = nil)
+              super(id, name, min_length, max_length, description, parent)
+              @code_list = code_list
+            end
+
             def companion
               IdentifierVal
+            end
+
+            def copy(changes = {})
+              self.class.new \
+                changes.fetch(:id, @id),
+                changes.fetch(:name, @name),
+                changes.fetch(:min_length, @min_length),
+                changes.fetch(:max_length, @max_length),
+                changes.fetch(:code_list, @code_list),
+                changes.fetch(:description, @description),
+                changes.fetch(:parent, @parent)
+            end
+
+            # @return [SimpleElementUse]
+            def simple_use(requirement, repeat_count, parent = nil)
+              if @code_list
+                Schema::SimpleElementUse.new(self, requirement, repeat_count, BitmaskSubset.build(code_list.codes), parent)
+              else
+                Schema::SimpleElementUse.new(self, requirement, repeat_count, nil, parent)
+              end
+            end
+
+            # @return [ComponentElementUse]
+            def component_use(requirement, parent = nil)
+              if @code_list
+                Schema::ComponentElementUse.new(self, requirement, BitmaskSubset.build(code_list.codes), parent)
+              else
+                Schema::ComponentElementUse.new(self, requirement, nil, parent)
+              end
             end
           end
 

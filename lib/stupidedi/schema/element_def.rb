@@ -31,12 +31,12 @@ module Stupidedi
 
       # @return [SimpleElementUse]
       def simple_use(requirement, repeat_count, parent = nil)
-        SimpleElementUse.new(self, requirement, repeat_count, parent)
+        SimpleElementUse.new(self, requirement, repeat_count, nil, parent)
       end
 
       # @return [ComponentElementUse]
       def component_use(requirement, parent = nil)
-        ComponentElementUse.new(self, requirement, parent)
+        ComponentElementUse.new(self, requirement, nil, parent)
       end
     end
 

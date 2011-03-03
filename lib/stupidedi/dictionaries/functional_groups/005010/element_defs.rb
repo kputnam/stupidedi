@@ -8,9 +8,6 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
-          # Szz:    ID element is linked to a code source "zz"
-          # QQ=Szz: When qualifier element value is "QQ", the qualified element code source is zz
-
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E26   = t::ID.new(:E26  , "Country Code"                         , 2, 3,
@@ -134,7 +131,7 @@ module Stupidedi
               "FY"  => "Claim Office Number",
               "G1"  => "Prior Authorization Number",
               "G2"  => "Provider Commercial Number",
-              "G2"  => "Predetermination of Benefits Identification Number",
+              "G3"  => "Predetermination of Benefits Identification Number",
               "HI"  => s::CodeList.external("121"),
               "HPI" => s::CodeList.external("537"),
               "ICD" => s::CodeList.external("131"),
