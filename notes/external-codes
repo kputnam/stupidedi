@@ -1,0 +1,268 @@
+4: ABA Routing Number
+- E20
+- E60/13
+x E506/01
+- E647/806
+
+5: Countries, Currencies, and Funds
+  a: Currency Code
+  b: Alpha-2 Country Codes ISO 3166
+  c: Alpha-3 Country Codes ISO 3166
+x E26
+x E66/38
+x E100
+x E235/CH
+x E955/SP
+x E1715
+
+16 D-U-N-S Number
+- E860
+x E66/1
+x E66/9
+x E128/DNS
+x E128/DUN
+
+22: States and Provinces
+x E156
+x E66/SJ
+x E235/A5
+x E771/009
+
+51: ZIP Code
+x E116
+x E66/16
+x E309/PQ
+x E309/PR
+x E309/PS
+x E771/010
+
+60: (DFI) Identification Number
+x E507
+
+91: Canadian Financial Institution Branch and Institution Number
+x E66/CF
+x E128/04
+x E506/04
+- E647/806
+
+94: International Organization for Standardization (Date and Time)
+x E623
+
+102: Languages
+- E819
+x E66/LE
+
+121: Health Industry Number
+x E66/21
+x E128/HI
+x E1270/HI
+x I05/20
+
+130: Healthcare Common Procedural Coding System
+# The AMA's CPT codes are also Level 1 HCPCS Codes
+x E235/HC
+x E1270/BO
+x E1270/BP
+
+131: ICD9 CM
+x E128/ICD
+x E235/DX
+x E235/ID
+x E1270/BF
+x E1270/BJ
+x E1270/BK
+x E1270/BN
+x E1270/BQ
+x E1270/BR
+x E1270/DD
+x E1270/PR
+x E1270/SD
+x E1270/TD
+x E1270/AAU
+x E1270/AAV
+x E1270/AAX
+
+132: National Uniform Billing Committee (NUBC) Codes
+x E235/NU
+x E235/RB
+x E1270/BE
+x E1270/BG
+x E1270/BH
+x E1270/BI
+x E1270/NUB
+
+133: Current Procedural Terminology (CPT) Codes
+x E128/CPT
+x E235/CJ
+x E1270/BS
+x E1270/AAW
+
+135: American Dental Association
+x E1361
+x E235/AD
+x E1270/JO
+x E1270/JP
+x E1270/TQ
+x E1270/AAY
+
+139: Claim Adjustment Reason Code
+x E1034
+
+206: Government Bill of Lading Office Code
+~ E309
+
+229: Diagnosis Related Group Number
+x E1354
+x E1270/DR
+
+230: Admission Source Code
+x E1314
+
+231: Admission Type Code
+x E1315
+
+235: Claim Frequency Code
+x E1325
+
+236: Uniform Billing Claim Form Bill Type
+x E1332/A
+
+237: Place of Service Codes for Professional Claims
+x E1332/B
+
+239: Patient Status Code
+x E1352
+
+240: National Drug Code by Format
+x E235/N1
+x E235/N2
+x E235/N3
+x E235/N4
+x E235/N5
+x E235/N6
+x E1270/NDC
+
+245: National Association of Insurance Commissioners (NAIC) Code
+x E128/NF
+
+284: Nature of Injury Code
+x E1270/GR
+~ E1270/NI
+
+307: National Council for Prescription Drug Programs Pharmacy Number
+x E128/D3
+
+327: Society for Worldwide Interbank Financial Telecommunication (SWIFT)
+x E1270/S
+
+359: Treatment Codes
+x E235/TD
+x E1270/TC
+
+407: Occupational Injury and Illness Classification Manual
+x E559/LB
+x E1270/BT
+x E1270/BU
+x E1270/EK
+x E1270/GS
+x E1270/GU
+x E1270/GW
+~ E1270/NI
+x E1270/PB
+x E1270/SJ
+x E1270/SL
+
+411: Remittance Advice Remark Codes
+x E1270/HE
+
+457: NISO Z39.53 Language Code List
+x E66/LD
+
+468: Ambulatory Payment Classification
+x E128/APC
+
+507: Health Care Claim Status Category Code
+~ E1270
+
+508: Health Care Claim Status Code
+x E1271
+x E1270/65
+
+513: Home Infusion EDI Coalition (HIEC) Product/Service Code List
+x E235/IV
+x E1270/HO
+
+530: National Council for Prescription Drug Programs Reject/Payment Codes
+x E1270/RX
+
+537: Centers for Medicare and Medicaid Services National Provider Identifier
+x E66/XX
+x E128/HPI
+
+540: Centers for Medicare and Medicaid Services PlanID
+x E66/XV
+x E128/ABY
+
+576: Workers Compensation Specific Procedure and Supply Codes
+x E235/ER
+
+528: Centers for Medicare and Medicaid Services (CMS) Durable Medical Equipment Regional Carrier (DMERC) Certificate of Medical Necessity (CMN) Forms
+x E1270/UT
+
+663: Logical Observation Identifier Names and Codes
+x E128/LOI
+x E235/LB
+x E1270/LOI
+
+656: Form Type Codes
+x E1270/AS
+
+682: Health Care Provider Taxonomy
+x E128/PXC
+x E1270/68
+
+716 Health Insurance Prospective Payment System (HIPPS) Rate Code for Skilled Nursing Facilities
+x E235/HP
+
+843: Advanced Billing Concepts (ABC) Codes
+x E235/WK
+x E1270/CAH
+
+844: Eligibility Category
+x E128/MRC
+
+859: Classification of Race or Ethnicity
+x E1270/RET
+
+860: Race or Ethnicity Collection Code
+x E1270/REC
+
+881: Version / Release / Industry Code Identifier
+x E480
+
+896: ICD10 PCS
+x E235/IP
+x E1270/BBQ
+x E1270/BBR
+
+897: ICD10 CM
+x E235/DC
+x E1270/ABF
+x E1270/ABJ
+x E1270/ABK
+x E1270/ABN
+x E1270/ABU
+x E1270/ABV
+x E1270/ADD
+x E1270/APR
+x E1270/ASD
+x E1270/ATD
+
+932: Universal Postal Codes
+x E116
+
+DOD1 Military Rank and Health Care Service Region
+x E309/RJ
+
+DOD2 Paygrade
+~ E1038
