@@ -1,8 +1,4 @@
 class String
-  def blank?
-    self =~ /\S/
-  end
-
   # Return the one-character string at the given index
   #
   # @param [Integer] n zero-based index of the character to read
