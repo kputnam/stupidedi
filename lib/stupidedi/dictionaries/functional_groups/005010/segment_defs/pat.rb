@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          PAT = SegmentDef.new \
-            :PAT, "Patient Information",
+          PAT = SegmentDef.new :PAT, "Patient Information",
             "To supply patient information",
             E::E1069.simple_use(Optional,   RepeatCount.bounded(1)),
             E::E1384.simple_use(Optional,   RepeatCount.bounded(1)),

@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          QTY = SegmentDef.new \
-            :QTY, "Quantity Information",
+          QTY = SegmentDef.new :QTY, "Quantity Information",
             "To specify quantity information",
             E::E673.simple_use(Mandatory,   RepeatCount.bounded(1)),
             E::E380.simple_use(Relational,  RepeatCount.bounded(1)),

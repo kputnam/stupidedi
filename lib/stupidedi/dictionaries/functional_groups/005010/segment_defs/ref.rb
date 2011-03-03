@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          REF = SegmentDef.new \
-            :REF, "Reference Information",
+          REF = SegmentDef.new :REF, "Reference Information",
             "To specify identifying information",
             E::E128 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E127 .simple_use(Relational, RepeatCount.bounded(1)),

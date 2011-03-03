@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          PER = SegmentDef.new \
-            :PER, "Administrative Communications Contact",
+          PER = SegmentDef.new :PER, "Administrative Communications Contact",
             "To identify a person or office to whom administrative communications should be directed",
             E::E366 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E93  .simple_use(Optional,   RepeatCount.bounded(1)),

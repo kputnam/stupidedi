@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          CTP = SegmentDef.new \
-            :CTP, "Pricing Information",
+          CTP = SegmentDef.new :CTP, "Pricing Information",
             "To specify pricing information",
             E::E687 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E236 .simple_use(Relational, RepeatCount.bounded(1)),

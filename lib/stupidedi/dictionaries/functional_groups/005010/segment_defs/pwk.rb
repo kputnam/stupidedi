@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          PWK = SegmentDef.new \
-            :PWK, "Paperwork",
+          PWK = SegmentDef.new :PWK, "Paperwork",
             E::E755 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E756 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E757 .simple_use(Optional,   RepeatCount.bounded(1)),

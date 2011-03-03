@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          SV5 = SegmentDef.new \
-            :SV5, "Durable Medical Equipment Service",
+          SV5 = SegmentDef.new :SV5, "Durable Medical Equipment Service",
             "To specify the claim service detail for durable medical equipment",
             E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E355 .simple_use(Mandatory,  RepeatCount.bounded(1)),

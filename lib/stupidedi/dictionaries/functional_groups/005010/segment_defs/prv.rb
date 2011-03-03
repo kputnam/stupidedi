@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          PRV = SegmentDef.new \
-            :PRV, "Provider Information",
+          PRV = SegmentDef.new :PRV, "Provider Information",
             "To specify the identifying characteristics of a provider",
             E::E1221.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E128 .simple_use(Relational, RepeatCount.bounded(1)),

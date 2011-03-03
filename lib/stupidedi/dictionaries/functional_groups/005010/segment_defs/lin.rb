@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          LIN = SegmentDef.new \
-            :LIN, "Item Identification",
+          LIN = SegmentDef.new :LIN, "Item Identification",
             "To specify basic item identification data",
             E::E350 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E235 .simple_use(Mandatory,  RepeatCount.bounded(1)),

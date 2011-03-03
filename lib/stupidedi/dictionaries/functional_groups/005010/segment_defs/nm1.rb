@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          NM1 = SegmentDef.new \
-            :NM1, "Individual or Organizational Name",
+          NM1 = SegmentDef.new :NM1, "Individual or Organizational Name",
             "To supply the full name of an individual or organizational entity",
             E::E98  .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1065.simple_use(Mandatory,  RepeatCount.bounded(1)),

@@ -2,7 +2,7 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
           autoload :AMT,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/amt"

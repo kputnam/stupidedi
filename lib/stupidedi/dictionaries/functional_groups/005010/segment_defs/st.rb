@@ -2,14 +2,13 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          ST = SegmentDef.new \
-            :ST, "Transaction Set Header",
+          ST = SegmentDef.new :ST, "Transaction Set Header",
             "To indicate the start of a transaction set and assign a control number",
-            E::E143 .simple_use(Mandatory,  RepeatCount.bound(1)),
-            E::E329 .simple_use(Mandatory,  RepeatCount.bound(1)),
-            E::E1705.simple_use(Optional,   RepeatCount.bound(1))
+            E::DE143 .simple_use(Mandatory,  RepeatCount.bound(1)),
+            E::DE329 .simple_use(Mandatory,  RepeatCount.bound(1)),
+            E::DE1705.simple_use(Optional,   RepeatCount.bound(1))
 
         end
       end

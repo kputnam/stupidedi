@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          CN1 = SegmentDef.new \
-            :CN1, "Contract Information",
+          CN1 = SegmentDef.new :CN1, "Contract Information",
             "To specify basic data about the contract or contract line item",
             E::E1166.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),

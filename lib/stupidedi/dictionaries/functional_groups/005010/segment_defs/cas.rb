@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          CAS = SegmentDef.new \
-            :CAS, "Claims Adjustment",
+          CAS = SegmentDef.new :CAS, "Claims Adjustment",
             "To supply adjustment reason codes and amounts as needed for an entire claim or for a particular service within the claim being paid",
             E::E1033.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1034.simple_use(Mandatory,  RepeatCount.bounded(1)),

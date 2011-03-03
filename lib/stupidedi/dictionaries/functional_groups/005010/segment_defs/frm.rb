@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          FRM = SegmentDef.new \
-            :FRM, "Supporting Documentation",
+          FRM = SegmentDef.new :FRM, "Supporting Documentation",
             "To specify information in response to a codified questionnaire document",
             E::E350 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1073.simple_use(Relational, RepeatCount.bounded(1)),

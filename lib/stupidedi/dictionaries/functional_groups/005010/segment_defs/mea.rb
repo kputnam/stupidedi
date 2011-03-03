@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          MEA = SegmentDef.new \
-            :MEA, "Measurements",
+          MEA = SegmentDef.new :MEA, "Measurements",
             "To specify physical measurements or counts, including dimensions, tolerances, variances, and weights",
             E::E737 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E738 .simple_use(Optional,   RepeatCount.bounded(1)),

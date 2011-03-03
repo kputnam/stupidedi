@@ -2,10 +2,10 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          CLP = SegmentDef.new \
-            :CLP, "Claim Level Data",
+          CLP = SegmentDef.new :CLP, "Claim Level Data",
+            "To supply information common to all services of a claim",
             E::E1028.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1029.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Mandatory,  RepeatCount.bounded(1)),

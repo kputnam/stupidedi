@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          DMG = SegmentDef.new \
-            :DMG, "Demographic Information",
+          DMG = SegmentDef.new :DMG, "Demographic Information",
             "To supply demographic information",
             E::E1250.simple_use(Relational, RepeatCount.bounded(1)),
             E::E1251.simple_use(Relational, RepeatCount.bounded(1)),

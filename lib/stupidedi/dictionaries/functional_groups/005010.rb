@@ -6,11 +6,11 @@ module Stupidedi
         autoload :ElementTypes,
           "stupidedi/dictionaries/functional_groups/005010/element_types"
 
-        autoload :ElementDictionary,
-          "stupidedi/dictionaries/functional_groups/005010/element_dictionary"
+        autoload :ElementDefs,
+          "stupidedi/dictionaries/functional_groups/005010/element_defs"
 
-        autoload :SegmentDictionary,
-          "stupidedi/dictionaries/functional_groups/005010/segment_dictionary"
+        autoload :SegmentDefs,
+          "stupidedi/dictionaries/functional_groups/005010/segment_defs"
 
         autoload :TransactionSets,
           "stupidedi/dictionaries/functional_groups/005010/transaction_sets"

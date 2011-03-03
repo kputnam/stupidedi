@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          SVD = SegmentDef.new \
-            :SVD, "Service Line Adjustment",
+          SVD = SegmentDef.new :SVD, "Service Line Adjustment",
             "To convey service line adjudication information for coordination of benefits between the initial payers of a health care claim and all subsequent payers",
             E::E67  .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Relational, RepeatCount.bounded(1)),

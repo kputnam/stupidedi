@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          SV1 = SegmentDef.new \
-            :SV1, "Professional Service",
+          SV1 = SegmentDef.new :SV1, "Professional Service",
             "To specify the service line item detail for a health care professional",
             E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),

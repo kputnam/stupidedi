@@ -2,10 +2,10 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          DTM = SegmentDef.new \
-            :DTM, "Date/Time Reference",
+          DTM = SegmentDef.new :DTM, "Date/Time Reference",
+            "To specify pertinent dates and times",
             E::E374 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E373 .simple_use(Relational, RepeatCount.bounded(1)),
             E::E337 .simple_use(Relational, RepeatCount.bounded(1)),

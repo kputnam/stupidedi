@@ -2,10 +2,9 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
-        module SegmentDictionary
+        module SegmentDefs
 
-          CUR = SegmentDef.new \
-            :CUR, "Currency",
+          CUR = SegmentDef.new :CUR, "Currency",
             "To specify the currency (dollars, pounds, francs, etc) used in a transaction",
             E::E98  .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E100 .simple_use(Mandatory,  RepeatCount.bounded(1)),
