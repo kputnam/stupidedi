@@ -88,4 +88,9 @@ class Array
   def split_at(n)
     return take(n), drop(n)
   end
+
+  # True if {#at}+(n)+ is defined
+  def defined_at?(n)
+    n < length
+  end
 end
