@@ -45,7 +45,7 @@ module Stupidedi
             version = @value.at(:GS).first.at(7).to_s
           end
 
-          envelope_def = router.transaction_set.lookup(version, group, transaction)
+          envelope_def = config.transaction_set.lookup(version, group, transaction)
 
           if envelope_def
             # Construct an empty TransactionSetVal

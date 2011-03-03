@@ -35,7 +35,7 @@ module Stupidedi
 
           # GS08 Version / Release / Industry Identifier Code
           version = elements.at(7).to_s.slice(0, 6)
-          envelope_def = router.functional_group.lookup(version)
+          envelope_def = config.functional_group.lookup(version)
 
           if envelope_def
             # Construct a GS segment

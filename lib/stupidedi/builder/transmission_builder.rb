@@ -6,17 +6,17 @@ module Stupidedi
       # @return [Array<InterchangeVal>]
       attr_reader :value
 
-      # @return [Envelope::Router]
-      attr_reader :router
+      # @return [Configuration::RootConfig]
+      attr_reader :config
 
-      def initialize(router, interchange_vals)
-        @router, @value = router, interchange_vals
+      def initialize(config, interchange_vals)
+        @config, @value = config, interchange_vals
       end
 
       # @return [TransmissionBuilder]
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:router, @router),
+          changes.fetch(:config, @config),
           changes.fetch(:value, @value)
       end
 
@@ -31,7 +31,7 @@ module Stupidedi
         when :ISA
           # ISA12 Interchange Control Version Number
           version      = elements.at(11)
-          envelope_def = @router.interchange.lookup(version)
+          envelope_def = @config.interchange.lookup(version)
 
           unless envelope_def
             return failure("Unrecognized interchange version #{version.inspect}")
@@ -68,8 +68,8 @@ module Stupidedi
     end
 
     class << TransmissionBuilder
-      def start(router)
-        TransmissionBuilder.new(router, [])
+      def start(config)
+        TransmissionBuilder.new(config, [])
       end
     end
 

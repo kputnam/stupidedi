@@ -58,8 +58,8 @@ module Stupidedi
     end
 
     class << StateMachine
-      def start(router)
-        start = TransmissionBuilder.start(router)
+      def start(config)
+        start = TransmissionBuilder.start(config)
         StateMachine.new(start.cons, [])
       end
     end

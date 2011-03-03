@@ -17,9 +17,9 @@ module Stupidedi
         false
       end
 
-      # @return [Envelope::Router]
-      def router
-        predecessor.router
+      # @return [Configuration::RootConfig]
+      def config
+        predecessor.config
       end
 
     private
