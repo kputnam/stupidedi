@@ -1,7 +1,6 @@
 require "spec_helper"
 
 describe Stupidedi::FiftyTen::Readers::LoopReader do
-
   describe "#read" do
     let(:definitions) { Stupidedi::FiftyTen::Definitions }
 
@@ -78,7 +77,6 @@ describe Stupidedi::FiftyTen::Readers::LoopReader do
       # @error-handling
       context "and only the second segment is present" do
         let(:input) { "YYY*..*1234*..~..." }
-
         it "is not defined" do
           loop_def.reader(input, isa.default).read.should_not be_defined
         end
