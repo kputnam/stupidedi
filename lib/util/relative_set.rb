@@ -7,6 +7,10 @@ module Stupidedi
       @hash = hash
     end
 
+    def inspect
+      "RelativeSet(#{to_a.join(', ')})"
+    end
+
     def each
       @hash.keys.each{|o| yield o }
     end
@@ -34,6 +38,10 @@ module Stupidedi
       @hash.include?(object)
     end
 
+    def finite?
+      true
+    end
+
     def complement
       RelativeComplement.build(self)
     end
@@ -41,9 +49,7 @@ module Stupidedi
     def intersection(other)
       if other.is_a?(self.class)
         # A & B
-        if other.empty?
-          self
-        elsif size <= other.size
+        if size <= other.size
           self.class.new(@hash.clone.delete_if{|o,_| not other.include?(o) })
         else
           other.intersection(self)
@@ -122,12 +128,13 @@ module Stupidedi
         if other.empty?
           self
         else
-          difference(other).union(RelativeSet.build(other).difference(self))
+          difference(other).
+            union(RelativeSet.build(other).difference(self))
         end
       elsif other.is_a?(RelativeComplement)
-        # A ^ ~B = (A | ~B) - (A & ~B) = ~(B - A) - (A - B)
-        difference(other.complement).complement.
-          difference(difference(other.complement))
+        # A ^ ~B = (A - ~B) | (~B - A) = (B & A) | (~B & ~A) = ~A ^ B
+        difference(other).
+          union(other.difference(self))
       else
         raise TypeError, "Argument must be an AbstractSet or an Array"
       end
@@ -165,17 +172,27 @@ module Stupidedi
   class << RelativeSet
     # @return [RelativeSet]
     def build(object)
-      hash = if object.is_a?(RelativeSet)
-               object.instance_variable_get(:@hash)
-             elsif object.is_a?(Hash)
-               object
-             elsif object.is_a?(Enumerable)
-               object.inject({}){|h,o| h[o] = true; h }
-             else
-               raise TypeError
-             end
+      if object.is_a?(RelativeSet)
+        object
+      elsif object.is_a?(Hash)
+        if object.empty?
+          EmptySet
+        else
+          RelativeSet.new(object)
+        end
+      elsif object.is_a?(Enumerable)
+        if object.empty?
+          EmptySet
+        else
+          RelativeSet.new(object.inject({}){|h,o| h[o] = true; h })
+        end
+      else
+        raise TypeError
+      end
+    end
 
-      RelativeSet.new(hash)
+    def empty
+      EmptySet
     end
   end
 

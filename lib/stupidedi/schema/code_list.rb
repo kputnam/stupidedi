@@ -1,28 +1,56 @@
 module Stupidedi
   module Schema
 
-    #
-    #
-    #
     class CodeList
-      delegate :at, :defined_at?, :to => :@hash
-
-      def initialize(hash)
-        @hash = hash
+      abstract :external?
+      
+      def internal?
+        not external?
       end
 
-      # @return [Array<String>]
-      def codes
-        @hash.keys
+      #
+      #
+      #
+      class Internal < CodeList
+        delegate :at, :defined_at?, :to => :@hash
+
+        def initialize(hash)
+          @hash = hash
+        end
+
+        # @return [Array<String>]
+        def codes
+          @hash.keys
+        end
+
+        def external?
+          false
+        end
+      end
+
+      #
+      #
+      #
+      class External < CodeList
+        attr_reader :id
+
+        def initialize(id)
+          @id = id
+        end
+
+        def external?
+          true
+        end
       end
     end
 
     class << CodeList
       def build(hash)
-        CodeList.new(hash)
+        CodeList::Internal.new(hash)
       end
 
       def external(id)
+        CodeList::External.new(id)
       end
     end
 

@@ -27,7 +27,7 @@ module Stupidedi
       # @return [RepeatCount]
       attr_reader :repeat_count
 
-      # @return [Set, BitmaskSubset]
+      # @return [AbstractSet]
       attr_reader :allowed_values
 
       # @return [SegmentDef]
@@ -86,7 +86,7 @@ module Stupidedi
       # @return [CompositeElementDef]
       attr_reader :parent
 
-      # @return [Set, BitmaskSubset]
+      # @return [AbstractSet]
       attr_reader :allowed_values
 
       def initialize(definition, requirement, allowed_values, parent)

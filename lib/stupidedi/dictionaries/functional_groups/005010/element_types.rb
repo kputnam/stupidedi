@@ -131,19 +131,19 @@ module Stupidedi
 
             # @return [SimpleElementUse]
             def simple_use(requirement, repeat_count, parent = nil)
-              if @code_list
-                Schema::SimpleElementUse.new(self, requirement, repeat_count, BitmaskSubset.build(code_list.codes), parent)
+              if @code_list and @code_list.internal?
+                Schema::SimpleElementUse.new(self, requirement, repeat_count, AbsoluteSet.build(code_list.codes), parent)
               else
-                Schema::SimpleElementUse.new(self, requirement, repeat_count, nil, parent)
+                Schema::SimpleElementUse.new(self, requirement, repeat_count, UniversalSet, parent)
               end
             end
 
             # @return [ComponentElementUse]
             def component_use(requirement, parent = nil)
-              if @code_list
-                Schema::ComponentElementUse.new(self, requirement, BitmaskSubset.build(code_list.codes), parent)
+              if @code_list and @code_list.internal?
+                Schema::ComponentElementUse.new(self, requirement, AbsoluteSet.build(code_list.codes), parent)
               else
-                Schema::ComponentElementUse.new(self, requirement, nil, parent)
+                Schema::ComponentElementUse.new(self, requirement, UniversalSet, parent)
               end
             end
           end

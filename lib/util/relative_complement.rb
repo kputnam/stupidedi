@@ -1,17 +1,25 @@
 module Stupidedi
 
   class RelativeComplement < AbstractSet
-    def initialize(orig)
-      @orig = orig
+    def initialize(complement)
+      @complement = complement
+    end
+
+    def inspect
+      "RelativeComplement(#{@complement.inspect})"
     end
 
     def include?(object)
-      not @orig.include?(object)
+      not @complement.include?(object)
+    end
+
+    def finite?
+      false
     end
 
     def complement
       # ~(~A) = A
-      @orig
+      @complement
     end
 
     def size
@@ -22,6 +30,7 @@ module Stupidedi
       false
     end
 
+    # @return [AbstractSet]
     def intersection(other)
       if other.is_a?(RelativeSet) or other.is_a?(Array)
         # ~A & B = B - A
@@ -32,35 +41,46 @@ module Stupidedi
       end
     end
 
+    # @return [AbstractSet]
     def union(other)
       if other.is_a?(RelativeSet) or other.is_a?(Array)
         # ~A | B = ~(A - B)
-        complement.difference(other).complement
+        if other.empty?
+          self
+        else
+          complement.difference(other).complement
+        end
       elsif other.is_a?(self.class)
         # ~A | ~B = ~(A & B)
         complement.intersection(other.complement).complement
       end
     end
 
+    # @return [AbstractSet]
     def symmetric_difference(other)
       if other.is_a?(RelativeSet) or other.is_a?(Array)
-        # ~A ^ B = (~A | B) - (~A & B) = ~(A - B) - (B - A)
-        complement.difference(other).complement.
-          difference(RelativeSet.build(other).difference(complement))
+        # ~A ^ B = (~A - B) | (B - ~A) = (~B & ~A) | (B & A) = A ^ ~B
+        difference(other).
+          union(RelativeSet.build(other).difference(self))
       elsif other.is_a?(self.class)
-        # ~A ^ ~B = (~A | ~B) - (~A & ~B)
+        # ~A ^ ~B = (~A - ~B) | (~B - ~A) = (B - A) | (A - B) = A ^ B
+        RelativeSet.build(other).difference(complement).
+          union(complement.difference(other))
       end
     end
 
+    # @return [AbstractSet]
     def difference(other)
       if other.is_a?(RelativeSet) or other.is_a?(Array)
         # ~A - B = ~(A | B)
         complement.union(other).complement
       elsif other.is_a?(self.class)
-        # ~A - ~B
+        # ~A - ~B = B - A
+        complement.difference(other.complement)
       end
     end
 
+    # @return [AbstractSet]
     def replace(other)
       if other.is_a?(self.class) or other.is_a?(RelativeSet)
         other
@@ -69,18 +89,21 @@ module Stupidedi
       end
     end
     
+    # @return [Boolean]
     def proper_subset?(other)
       other.is_a?(self.class) and 
-      other.complement.size > @orig.size and
+      other.complement.size > @complement.size and
       subset?(other)
     end
 
+    # @return [Boolean]
     def proper_superset?(other)
       other.is_a?(self.class) and 
-      other.complement.size < @orig.size and
+      other.complement.size < @complement.size and
       superset?(other)
     end
 
+    # @return [Boolean]
     def ==(other)
       eql?(other) or 
        (other.is_a?(self.class) and
@@ -94,12 +117,24 @@ module Stupidedi
       if object.is_a?(RelativeComplement)
         object
       elsif object.is_a?(AbstractSet)
-        RelativeComplement.new(object)
+        if object.empty?
+          UniversalSet
+        else
+          RelativeComplement.new(object)
+        end
       elsif object.is_a?(Enumerable)
-        RelativeComplement.new(RelativeSet.build(object))
+        if object.empty?
+          UniversalSet
+        else
+          RelativeComplement.new(RelativeSet.build(object))
+        end
       else
         raise TypeError
       end
+    end
+
+    def universal
+      UniversalSet
     end
   end
 

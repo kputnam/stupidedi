@@ -39,7 +39,8 @@ module Stupidedi
 
   autoload :AbsoluteSet,        "util/absolute_set"
   autoload :AbstractSet,        "util/abstract_set"
+  autoload :EmptySet,           "util/empty_set"
   autoload :RelativeComplement, "util/relative_complement"
   autoload :RelativeSet,        "util/relative_set"
-  autoload :UniverseSet,        "util/universe_set"
+  autoload :UniversalSet,       "util/universal_set"
 end

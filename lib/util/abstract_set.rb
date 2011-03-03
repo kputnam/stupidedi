@@ -2,13 +2,13 @@ module Stupidedi
 
   class AbstractSet
     abstract :include?, :args => %w(object)
+    abstract :finite?
     abstract :empty?
     abstract :size
 
     abstract :complement
     abstract :union, :args => %w(other)
     abstract :difference, :args => %w(other)
-    abstract :complement, :args => %w(other)
     abstract :symmetric_difference, :args => %w(other)
     abstract :intersection, :args => %w(other)
     abstract :replace, :args => %w(other)
@@ -40,6 +40,10 @@ module Stupidedi
 
     def proper_superset?(other)
       other.size < size and superset?(other)
+    end
+
+    def disjoint?(other)
+      intersection(other).empty?
     end
   end
 
