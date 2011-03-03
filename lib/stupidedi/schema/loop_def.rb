@@ -117,7 +117,7 @@ module Stupidedi
         if header.empty?
           raise Exceptions::InvalidSchemaError,
             "LoopDef must start with a SegmentUse"
-        elsif header.repeat_count.include?(0)
+        elsif header.head.repeat_count.include?(0)
           "First SegmentUse in LoopDef must have RepeatCount.bounded(1)"
         end
 

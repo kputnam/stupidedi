@@ -85,6 +85,9 @@ module Stupidedi
       # @return [CompositeElementDef]
       attr_reader :parent
 
+      # @return [ValueSet]
+      attr_reader :allowed_values
+
       def initialize(definition, requirement, parent)
         @definition, @requirement, @parent =
           definition, requirement, parent
