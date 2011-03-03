@@ -9,7 +9,34 @@
 # actually performs significantly worse -- about 70% slower at 50 stack frames,
 # and nearly 100% slower at 10 stack frames.
 #
-# With 10000 stack frames the optimized version runs about 40% faster.
+# class Unoptimized
+#   def fact(n, accumulator = 1)
+#     (n < 2) ? accumulator : fact(n-1, n * accumulator)
+#   end
+# end
+#
+# class Optimized
+#   include Tailcall
+#
+#   def fact(n, accumulator = 1)
+#     (n < 2) ? accumulator : fact(n-1, n * accumulator)
+#   end
+#
+#   optimize_tailcall :fact
+# end
+#
+# o = O.new
+# u = U.new
+#
+# [10, 50, 100, 500, 1000, 5000, 10000, 50000].each do |n|
+#   Benchmark.bm do |x|
+#     x.report("#{n} optim = ") { puts(begin; o.fact(n).size; rescue; $! end) }
+#     x.report("#{n} plain = ") { puts(begin; u.fact(n).size; rescue; $! end) }
+#   end
+# end
+#
+# With 10000 stack frames the optimized version runs about 40% faster. These
+# benchmark results were produced by Ruby Enterprise Edition 1.8.7
 #
 #          n       tco     plain    ratio
 #     ------------------------------------
@@ -22,14 +49,11 @@
 #      10000   14.5664   20.3000    1.3936
 #      25000    9.3729  (stack err)
 #
-# More importantly, because it uses define_method, we can't tailcall optimize
-# methods that take a block parameter. Maybe this could be done using an eval
-# to define the method instead.
-#
 # It seems like this tradeoff makes sense only for methods we know are going to
 # consistently generate thousands of stack frames. We're probably better off
 # using Ruby YARV (1.9) in all cases though, since it performs faster in general
 # and it supposedly implements tail call optimization in the interpreter.
+#
 #
 # See http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/145593
 #
@@ -39,30 +63,39 @@ module Tailcall
   end
 
   module ClassMethods
+
     def optimize_tailcall(*names)
+      @__tc ||= Hash.new
+
       for name in names
-        original = instance_method(name)
+        @__tc[name.to_sym] = instance_method(name)
 
-        define_method(name) do |*args|
-          if Thread.current[name]
-            throw(:tc_recurse, args)
-          else
-            Thread.current[name] = original.bind(self)
+        module_eval <<-RUBY
+          def #{name}(*args, &block)
+            if Thread.current[:tc_#{name}]
+              throw(:recurse_#{name}, [args, block])
+            else
+              Thread.current[:tc_#{name}] =
+                self.class.instance_variable_get(:@__tc)[:#{name}].bind(self)
 
-            result = catch(:tc_done) do
-              while true
-                args = catch(:tc_recurse) do
-                  throw(:tc_done, Thread.current[name].call(*args))
+              result = catch(:done_#{name}) do
+                while true
+                  args, block =
+                    catch(:recurse_#{name}) do
+                      throw(:done_#{name},
+                        Thread.current[:tc_#{name}].call(*args, &block))
+                    end
                 end
               end
+
+              Thread.current[:tc_#{name}] = nil
+
+              result
             end
-
-            Thread.current[name] = nil
-
-            result
           end
-        end
+        RUBY
       end
     end
+
   end
 end
