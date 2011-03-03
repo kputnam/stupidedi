@@ -10,7 +10,7 @@ end
 task :default => :spec
 
 task :console do
-  sh *%w(irb -I lib -r stupidedi)
+  exec *%w(irb -I lib -r stupidedi)
 end
 
 begin
