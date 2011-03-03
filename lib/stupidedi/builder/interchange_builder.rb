@@ -54,7 +54,7 @@ module Stupidedi
 
           # @todo: Explain use of #tail
           states = d.header_segment_uses.tail.inject([]) do |list, u|
-            if @position <= u.position and name == u.definition.id
+            if @position <= u.position and match?(u, name, elements)
               value = @value.append_header_segment(mksegment(u, elements))
               list.push(copy(:position => u.position, :value => value))
             else
@@ -63,7 +63,7 @@ module Stupidedi
           end
 
           states = d.trailer_segment_uses.inject(states) do |list, u|
-            if @position <= u.position and name == u.definition.id
+            if @position <= u.position and match?(u, name, elements)
               value = @value.append_trailer_segment(mksegment(u, elements))
               list.push(copy(:position => u.position, :value => value))
             else
@@ -71,17 +71,17 @@ module Stupidedi
             end
           end
 
-          # Terminate this functional group and try parsing segemnt as a sibling
+          # Terminate this functional group and try parsing segment as a sibling
           # of @value's parent. Supress any stuck "uncle" states because they
           # won't say anything more than the single stuck state we create below.
           uncles = @predecessor.merge(@value).segment(name, elements)
           states.concat(uncles.reject(&:stuck?))
 
           if states.empty?
-            states.push(failure("Unexpected segment #{name}"))
+            failure("Unexpected segment #{name}")
+          else
+            branches(states)
           end
-
-          branches(states)
         end
       end
 

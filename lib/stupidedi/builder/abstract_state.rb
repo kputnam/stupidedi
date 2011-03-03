@@ -43,6 +43,44 @@ module Stupidedi
         FailureState.new(explanation, self).cons
       end
 
+      def match?(segment_use, name, elements)
+        unless name == segment_use.definition.id
+          return false
+        end
+
+        segment_use.definition.element_uses.zip(elements).all? do |u, e|
+          # This is some rough logic, but basically we are using every
+          # syntactically required element as a segment qualifier. This
+          # isn't very efficient because in the context of the rest of
+          # the grammar, we may not even need to look at the elements to
+          # determine this -- or maybe we need only to look at one. That
+          # knowledge would also prevent false matches, which can happen
+          # when the single element value we need to exampine value isn't
+          # present. Hopefully for now, the false positives get sorted out
+          # by hitting a stuck state within a few more tokens.
+
+          if u.composite?
+            unless e.blank?
+              u.definition.element_uses.zip(e).all? do |c, e|
+                if c.requirement.required? and not e.blank?
+                  c.allowed_values.include?(e)
+                else
+                  true
+                end
+              end
+            else
+              true
+            end
+          else
+            if u.requirement.required? and not e.blank?
+              u.allowed_values.include?(e)
+            else
+              true
+            end
+          end
+        end
+      end
+
       # @return [SegmentVal]
       def mksegment(segment_use, values, parent = nil)
         segment_def  = segment_use.definition

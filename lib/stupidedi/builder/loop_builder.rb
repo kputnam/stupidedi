@@ -33,7 +33,7 @@ module Stupidedi
 
         # @todo: Explain use of #tail
         states = d.header_segment_uses.tail.inject([]) do |list, u|
-          if @position <= u.position and name == u.definition.id
+          if @position <= u.position and match?(u, name, elements)
             value = @value.append_header_segment(mksegment(u, elements))
             list.push(copy(:position => u.position, :value => value))
           else
@@ -44,16 +44,16 @@ module Stupidedi
         # Try parsing this segment as the start segment of a child loop. Because
         # we check the segment constraints here, we can be sure it doesn't fail.
         d.loop_defs.each do |l|
-          u = l.start_segment_use
-
-          if @position <= u.position and name == u.definition.id
-            states.push(LoopBuilder.start(mksegment(u, elements),
-                                          copy(:position => u.position)))
+          l.entry_segment_uses.each do |u|
+            if @position <= u.position and match?(u, name, elements)
+              states.push(LoopBuilder.start(mksegment(u, elements),
+                                            copy(:position => u.position)))
+            end
           end
         end
 
         d.trailer_segment_uses.each do |u|
-          if @position <= u.position and name == u.definition.id
+          if @position <= u.position and match?(u, name, elements)
             value = @value.append_trailer_segment(mksegment(u, elements))
             states.push(copy(:position => u.position, :value => value))
           end
@@ -65,10 +65,10 @@ module Stupidedi
         end
 
         if states.empty?
-          return failure("Unexpected segment #{name}")
+          failure("Unexpected segment #{name}")
+        else
+          branches(states)
         end
-
-        branches(states)
       end
 
       # @private

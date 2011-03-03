@@ -4,8 +4,6 @@ module Stupidedi
   #
   #
   module Envelope
-    autoload :Router,             "stupidedi/envelope/router"
-
     autoload :FunctionalGroupDef, "stupidedi/envelope/functional_group_def"
     autoload :FunctionalGroupVal, "stupidedi/envelope/functional_group_val"
 

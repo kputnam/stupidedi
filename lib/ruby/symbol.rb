@@ -2,7 +2,7 @@ class Symbol
   ##
   # Returns a proc that calls self on the proc's parameter
   def to_proc
-    lambda{|receiver, *args| call(receiver, *args) }
+    lambda{|receiver| call(receiver) }
   end
 
   ##

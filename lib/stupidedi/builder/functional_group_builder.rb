@@ -69,7 +69,7 @@ module Stupidedi
 
           # @todo: Explain use of #tail
           states = d.header_segment_uses.tail.inject([]) do |list, u|
-            if @position <= u.position and name == u.definition.id
+            if @position <= u.position and match?(u, name, elements)
               value = @value.append_header_segment(mksegment(u, elements))
               list.push(copy(:position => u.position, :value => value))
             else
@@ -78,7 +78,7 @@ module Stupidedi
           end
 
           d.trailer_segment_uses do |u|
-            if @position <= u.position and name == u.definition.id
+            if @position <= u.position and match?(u, name, elements)
               value = @value.append_trailer_segment(mksegment(u, elements))
               states.push(copy(:position => u.position, :value => value))
             end
@@ -91,10 +91,10 @@ module Stupidedi
           states.concat(uncles.reject(&:stuck?))
 
           if states.empty?
-            return failure("Unexpected segment #{name}")
+            failure("Unexpected segment #{name}")
+          else
+            branches(states)
           end
-
-          branches(states)
         end
       end
 

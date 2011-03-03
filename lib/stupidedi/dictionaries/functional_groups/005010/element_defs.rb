@@ -51,6 +51,7 @@ module Stupidedi
           E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 3,
             s::CodeList.build(
+              "40" => "Receiver",
               "41" => "Submitter",
               "45" => "Drop-off Location",
               "74" => "Corrected Insured",

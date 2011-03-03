@@ -32,7 +32,7 @@ module Stupidedi
         d = @value.definition
 
         states = d.header_segment_uses.inject([]) do |list, u|
-          if @position <= u.position and name == u.definition.id
+          if @position <= u.position and match?(u, name, elements)
             value = @value.append_header_segment(mksegment(u, elements))
             list.push(copy(:position => u.position, :value => value))
           else
@@ -40,30 +40,32 @@ module Stupidedi
           end
         end
 
-        d.loop_defs.map(&:start_segment_use).each do |u|
-          if @position <= u.position and name == u.definition.id
-            states.push(LoopBuilder.start(mksegment(u, elements),
-                                          copy(:position => u.position)))
+        d.loop_defs.each do |l|
+          l.entry_segment_uses.each do |u|
+            if @position <= u.position and match?(u, name, elements)
+              states.push(LoopBuilder.start(mksegment(u, elements),
+                                            copy(:position => u.position)))
+            end
           end
         end
 
         d.trailer_segment_uses do |u|
-          if @position <= u.position and name == u.definition.id
+          if @position <= u.position and match?(u, name, elements)
             value = @value.append_trailer_segment(mksegment(u, elements))
             states.push(copy(:position => u.position, :value => value))
           end
         end
 
         if upward
-          uncles = @predecessor.merge(@value).segment(name, elements)
+          uncles = @predecessor.merge(@value).segment(name, elements, true, d)
           states.concat(uncles.reject(&:stuck?))
         end
 
         if states.empty?
-          return failure("Unexpected segment #{name}")
+          failure("Unexpected segment #{name}")
+        else
+          branches(states)
         end
-
-        branches(states)
       end
 
       # @private
@@ -78,7 +80,7 @@ module Stupidedi
 
     class << TableBuilder
       def start(table_def, predecessor)
-        position = table_def.start_segment_use.position
+        position = table_def.entry_segment_uses.head.position
         new(position, table_def.empty(predecessor.value), predecessor)
       end
     end

@@ -6,6 +6,7 @@ module Stupidedi
 
           # Import definitions of B, DT, R, ID, Nn, AN, TM, and SimpleElementDef
           t = FunctionalGroups::FiftyTen::ElementTypes
+          s = Schema
 
           class SeparatorElementVal < Values::SimpleElementVal
             delegate :to_s, :to => :@value
@@ -40,21 +41,21 @@ module Stupidedi
           end
 
           I01 = t::ID.new(:I01, "Authorization Information Qualifier",    2,  2,
-            CodeList.build(
+            s::CodeList.build(
               "00" => "No Authorization Information Present (No Meaningful Information in I02)",
-              "03" => "Additional Data Identification")),
+              "03" => "Additional Data Identification"))
 
           I02 = t::AN.new(:I02, "Authorization Information",             10, 10)
 
           I03 = t::ID.new(:I03, "Security Information Qualifier",         2,  2,
-            CodeList.build(
+            s::CodeList.build(
               "00" => "No Security Information (No Meaningful Information in I04)",
               "01" => "Password"))
 
           I04 = t::AN.new(:I04, "Security Information",                  10, 10)
 
           I05 = t::ID.new(:I05, "Interchange ID Qualifier",               2,  2,
-            CodeList.build(
+            s::CodeList.build(
               "01" => "Duns (Dun & Bradstreet)",
               "02" => "SCAC (Standard Carrier Alpha Code)",
               "03" => "FMC (Federal Maritime Commission)",
@@ -72,7 +73,7 @@ module Stupidedi
               "17" => "American Bankers Association (ABA) Transit Routing Number (Including Check Digit, 9 Digit)",
               "18" => "Association of American Railroads (AAR) Standard Distribution Code",
               "19" => "EDI Council of Australia (EDICA) Communications ID Number (COMM ID)",
-              "20" => CodeList.external("121"),
+              "20" => s::CodeList.external("121"),
               "21" => "Integrated Postsecondary Education Data System, or (IPEDS)",
               "22" => "Federal Interagency Commission on Education, or FICE",
               "23" => "National Center for Education Statistics Common Core of Data 12-Digit Number of Pre-K-Grade 12 institutes, or NCES",
@@ -103,18 +104,18 @@ module Stupidedi
           I09 = t::TM.new(:I09, "Interchange Time",                       4,  4)
 
           I11 = t::ID.new(:I11, "Interchange Control Version Number",     5,  5,
-            CodeList.build(
+            s::CodeList.build(
               "00501" => "Standards Approved for Publication by ASC X12 Procedures Review Board through October 2003"))
 
           I12 = t::Nn.new(:I12, "Interchange Control Number",             9,  9, 0)
 
           I13 = t::ID.new(:I13, "Acknowledgment Requested",               1,  1,
-            CodeList.build(
+            s::CodeList.build(
               "0" => "No Interchange Acknowledgment Requested",
               "1" => "Interchange Acknowledgment Requested (TA1)"))
 
           I14 = t::ID.new(:I14, "Interchange Usage Indicator",            1,  1,
-            CodeList.build(
+            s::CodeList.build(
               "I" => "Information",
               "P" => "Production Data",
               "T" => "Test Data"))
@@ -128,13 +129,13 @@ module Stupidedi
           I16 = t::Nn.new(:I16, "Number of Included Functional Groups",   1,  5, 0)
 
           I17 = t::ID.new(:I17, "Interchange Acknowledgement Code",       1,  1,
-            CodeList.build(
+            s::CodeList.build(
               "A" => "The Transmitted Interchange Control Structure Header and Trailer Have Been Received and Have No Errors",
               "E" => "The Transmitted Interchange Control Structure Header and Trailer Have Been Received and Are Accepted But Errors Are Noted. This Means the Sender Must Not Resend the Data.",
               "R" => "The Transmitted Interchange Control Structure Header and Trailer are Rejected Because of Errors"))
 
           I18 = t::ID.new(:I18, "Interchange Note Code",                  3,  3,
-            CodeList.build(
+            s::CodeList.build(
               "000" => "No error",
               "001" => "The Interchange Control Number in the Header and Trailer Do Not Match. The Value From the Header is Used in the Acknowledgement",
               "002" => "This Standard as Noted in the Control Standards Identifier is Not Supported",

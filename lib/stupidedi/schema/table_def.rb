@@ -44,9 +44,23 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
-      # @return [SegmentDef]
-      def start_segment_use
-        @header_segment_uses.first or @loop_defs.first.start_segment_use
+      # @return [Array<SegmentUse>]
+      def entry_segment_uses
+        uses = []
+
+        unless @header_segment_uses.empty?
+          uses << @header_segment_uses.head
+        else
+          unless @trailer_segment_uses.empty?
+            uses << @trailer_segment_uses.head
+          end
+        end
+
+        unless @loop_defs.empty?
+          uses.concat(@loop_defs.head.entry_segment_uses)
+        end
+
+        uses
       end
 
       # @return [Values::TableVal]
