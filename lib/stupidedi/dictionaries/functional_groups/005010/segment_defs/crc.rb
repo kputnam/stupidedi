@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          CRC = SegmentDef.new :CRC, "Conditions Indicator",
+          CRC = SegmentDef.build :CRC, "Conditions Indicator",
             "To supply information on conditions",
             E::E1136.simple_use(Mandatory, RepeatCount.bounded(1)),
             E::E1073.simple_use(Mandatory, RepeatCount.bounded(1)),

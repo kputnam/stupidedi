@@ -1,14 +1,14 @@
 module Stupidedi
   module Dictionaries
-    module Interchange
+    module Interchanges
       module FiveOhOne
 
         class InterchangeVal < Values::InterchangeVal
           class Separators
-            attr_accessor :component  # :
-            attr_accessor :repetition # ^
-            attr_accessor :element    # *
-            attr_accessor :segment    # ~
+            attr_reader :component  # :
+            attr_reader :repetition # ^
+            attr_reader :element    # *
+            attr_reader :segment    # ~
 
             def initialize(component, repetition, element, segment, parent)
               @component, @repetition, @element, @segment, @parent =
@@ -26,12 +26,12 @@ module Stupidedi
             end
           end
 
-          def initialize(definition, segment_vals, functional_group_vals, separators = nil)
+          def initialize(segment_vals, functional_group_vals, definition, separators = nil)
             super(definition, segment_vals, functional_group_vals)
 
             @separators =
               if separators.nil?
-                if isa = at(:isa).try(:first)
+                if isa = at(:isa).first
                   Separators.new(isa.at(16).to_s, isa.at(11).to_s, nil, nil, self)
                 else
                   Separators.new(nil, nil, nil, nil, self)
@@ -44,9 +44,9 @@ module Stupidedi
           # @return [InterchangeVal]
           def copy(changes = {})
             self.class.new \
-              changes.fetch(:definition, @definition),
-              changes.fetch(:segment_vals, @segment_vals),
-              changes.fetch(:functional_group_vals, @functional_group_vals),
+              changes.fetch(:segment_vals, segment_vals),
+              changes.fetch(:functional_group_vals, functional_group_vals),
+              changes.fetch(:definition, definition),
               changes.fetch(:separators, @separators)
           end
         end

@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          N1 = SegmentDef.new :N1, "Party Identification",
+          N1 = SegmentDef.build :N1, "Party Identification",
             "To identify a party by type of organization, name, and code",
             E::E98  .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E93  .simple_use(Relational, RepeatCount.bounded(1)),

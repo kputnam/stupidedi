@@ -35,7 +35,7 @@ module Stupidedi
         if @element_vals.defined_at?(n)
           @element_vals.at(n)
         else
-          @definition.element_uses.at(n).element_def.blank
+          @definition.element_uses.at(n).definition.blank
         end
       end
 

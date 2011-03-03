@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          AMT = SegmentDef.new :AMT, "Monetary Amount Information",
+          AMT = SegmentDef.build :AMT, "Monetary Amount Information",
             "To indicate the total monetary amount",
             E::E522 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Mandatory,  RepeatCount.bounded(1)),

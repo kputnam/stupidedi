@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV5 = SegmentDef.new :SV5, "Durable Medical Equipment Service",
+          SV5 = SegmentDef.build :SV5, "Durable Medical Equipment Service",
             "To specify the claim service detail for durable medical equipment",
             E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E355 .simple_use(Mandatory,  RepeatCount.bounded(1)),
@@ -15,8 +15,8 @@ module Stupidedi
 
             E::E923 .simple_use(Optional,   RepeatCount.bounded(1)),
 
-            SyntaxNote::R.new(4, 5),
-            SyntaxNote::C.new(6, 5)
+            SyntaxNote::R.build(4, 5),
+            SyntaxNote::C.build(6, 5)
 
         end
       end

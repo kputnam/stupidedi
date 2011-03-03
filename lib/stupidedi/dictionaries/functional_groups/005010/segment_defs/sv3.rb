@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV3 = SegmentDef.new :SV3, "Dental Service",
+          SV3 = SegmentDef.build :SV3, "Dental Service",
             "To specify the service line item detail for dental work",
             E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),

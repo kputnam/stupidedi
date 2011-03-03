@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          LX = SegmentDef.new :LX, "Transaction Set Line Number",
+          LX = SegmentDef.build :LX, "Transaction Set Line Number",
             "To reference a line number in a transaction set",
             E::E554 .simple_use(Mandatory,  RepeatCount.bounded(1))
 

@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          CLM = SegmentDef.new :CLM, "Health Claim",
+          CLM = SegmentDef.build :CLM, "Health Claim",
             "To specify basic data about the claim",
             E::E1028.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),

@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SBR = SegmentDef.new :SBR, "Subscriber Information",
+          SBR = SegmentDef.build :SBR, "Subscriber Information",
             "To record information specific to the primary insured and the insurance carrier for that insured",
             E::E1138.simple_use(Mandatory, RepeatCount.bounded(1)),
             E::E1069.simple_use(Optional,  RepeatCount.bounded(1)),

@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PAT = SegmentDef.new :PAT, "Patient Information",
+          PAT = SegmentDef.build :PAT, "Patient Information",
             "To supply patient information",
             E::E1069.simple_use(Optional,   RepeatCount.bounded(1)),
             E::E1384.simple_use(Optional,   RepeatCount.bounded(1)),
@@ -17,8 +17,8 @@ module Stupidedi
             E::E81  .simple_use(Relational, RepeatCount.bounded(1)),
             E::E1073.simple_use(Optional,   RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new(5, 6),
-            SyntaxNote::P.new(7, 8)
+            SyntaxNote::P.build(5, 6),
+            SyntaxNote::P.build(7, 8)
 
         end
       end

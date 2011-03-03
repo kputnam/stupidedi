@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          CLP = SegmentDef.new :CLP, "Claim Level Data",
+          CLP = SegmentDef.build :CLP, "Claim Level Data",
             "To supply information common to all services of a claim",
             E::E1028.simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1029.simple_use(Mandatory,  RepeatCount.bounded(1)),

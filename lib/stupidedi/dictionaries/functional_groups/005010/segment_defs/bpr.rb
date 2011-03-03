@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          BPR = SegmentDef.new :BPR, "Financial Information",
+          BPR = SegmentDef.build :BPR, "Financial Information",
             E::DE305 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::DE782 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::DE478 .simple_use(Mandatory,  RepeatCount.bounded(1)),
@@ -30,12 +30,12 @@ module Stupidedi
             E::DE569 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::DE508 .simple_use(Relational, RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new( 6,  7),
-            SyntaxNote::C.new( 8,  9),
-            SyntaxNote::P.new(12, 13),
-            SyntaxNote::C.new(14, 15),
-            SyntaxNote::P.new(18, 19),
-            SyntaxNote::C.new(20, 21)
+            SyntaxNote::P.build( 6,  7),
+            SyntaxNote::C.build( 8,  9),
+            SyntaxNote::P.build(12, 13),
+            SyntaxNote::C.build(14, 15),
+            SyntaxNote::P.build(18, 19),
+            SyntaxNote::C.build(20, 21)
 
         end
       end

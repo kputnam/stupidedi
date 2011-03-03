@@ -9,31 +9,33 @@ module Stupidedi
 
             attr_reader :name
 
-            attr_reader :purpose
+            attr_reader :description
 
             attr_reader :min_length
 
             attr_reader :max_length
 
-            def initialize(id, name, purpose, min_length, max_length)
+            abstract :companion
+
+            def initialize(id, name, min_length, max_length, description = nil, parent = nil)
+              super(id, name, description, parent)
+
               if min_length > max_length
                 raise ArgumentError, "Minimum length cannot be greater than maximum length"
               end
 
-              @id, @name, @purpose, @min_length, @max_length =
-                id, name, purpose, min_length, max_length
+              @min_length, @max_length = min_length, max_length
             end
 
             def copy(changes = {})
               self.class.new \
                 changes.fetch(:id, @id),
                 changes.fetch(:name, @name),
-                changes.fetch(:purpose, @purpose),
                 changes.fetch(:min_length, @min_length),
-                changes.fetch(:max_length, @max_length)
+                changes.fetch(:max_length, @max_length),
+                changes.fetch(:description, @description),
+                changes.fetch(:parent, @parent)
             end
-
-            abstract :companion
 
             def value(object, parent)
               companion.value(object, self, parent)
@@ -45,6 +47,16 @@ module Stupidedi
 
             def reader(input, context)
               companion.reader(input, context)
+            end
+
+            # @private
+            def pretty_print(q)
+              q.text @id.to_s
+
+              type = self.class.name.split('::').last
+              unless type.blank?
+                q.text "[#{type}]"
+              end
             end
           end
 
@@ -61,7 +73,9 @@ module Stupidedi
             "stupidedi/dictionaries/functional_groups/005010/element_types/date_val"
 
           class DT < SimpleElementDef
-            def initialize(id, name, purpose, min_length, max_length)
+            def initialize(id, name, min_length, max_length, description = nil, parent = nil)
+              super(id, name, min_length, max_length, description, parent)
+
               unless min_length == 6 or min_length == 8
                 raise ArgumentError,
                   "Minimum length must be either 6 or 8"
@@ -71,8 +85,6 @@ module Stupidedi
                 raise ArgumentError,
                   "Maximum length must be either 6 or 8"
               end
-
-              super(id, name, purpose, min_length, max_length)
             end
 
             def companion
@@ -104,13 +116,14 @@ module Stupidedi
           class Nn < SimpleElementDef
             attr_reader :precision
 
-            def initialize(id, name, purpose, min_length, max_length, precision)
+            def initialize(id, name, min_length, max_length, precision, description = nil, parent = nil)
+              super(id, name, min_length, max_length, description, parent)
+
               if precision > max_length
                 raise ArgumentError,
                   "Precision cannot be greater than maximum length"
               end
 
-              super(id, name, purpose, min_length, max_length)
               @precision = precision
             end
 
@@ -118,10 +131,17 @@ module Stupidedi
               self.class.new \
                 changes.fetch(:id, @id),
                 changes.fetch(:name, @name),
-                changes.fetch(:purpose, @purpose),
                 changes.fetch(:min_length, @min_length),
                 changes.fetch(:max_length, @max_length),
-                changes.fetch(:precision, @precision)
+                changes.fetch(:precision, @precision),
+                changes.fetch(:description, @description),
+                changes.fetch(:parent, @parent)
+            end
+
+            # @private
+            def pretty_print(q)
+              q.text @id.to_s
+              q.text "[N#{@precision}]"
             end
 
             def companion
@@ -142,18 +162,18 @@ module Stupidedi
             "stupidedi/dictionaries/functional_groups/005010/element_types/time_val"
 
           class TM < SimpleElementDef
-            def initialize(id, name, purpose, min_length, max_length)
-              if min_length == 2 or min_length == 4 or min_length >= 6
+            def initialize(id, name, min_length, max_length, description = nil, parent = nil)
+              super(id, name, min_length, max_length, description)
+
+              unless min_length == 2 or min_length == 4 or min_length >= 6
                 raise ArgumentError,
                   "Minimum length must be either 2, 4, 6, or greater"
               end
 
-              if max_length == 2 or max_length == 4 or max_length >= 6
+              unless max_length == 2 or max_length == 4 or max_length >= 6
                 raise ArgumentError,
                   "Maximum length must be either 2, 4, 6, or greater"
               end
-
-              super(id, name, purpose, min_length, max_length)
             end
 
             def companion

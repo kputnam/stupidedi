@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SV1 = SegmentDef.new :SV1, "Professional Service",
+          SV1 = SegmentDef.build :SV1, "Professional Service",
             "To specify the service line item detail for a health care professional",
             E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Optional,   RepeatCount.bounded(1)),
@@ -31,7 +31,7 @@ module Stupidedi
             E::E1337.simple_use(Optional,   RepeatCount.bounded(1)),
             E::E1360.simple_use(Optional,   RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new(3, 4)
+            SyntaxNote::P.build(3, 4)
 
         end
       end

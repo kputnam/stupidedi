@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          OI = SegmentDef.new :OI, "Other Health Insurance Information",
+          OI = SegmentDef.build :OI, "Other Health Insurance Information",
             "To specify information associated with other health insurance coverage",
             E::E1032.simple_use(Optional,   RepeatCount.bounded(1)),
             E::E1383.simple_use(Optional,   RepeatCount.bounded(1)),

@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          CTP = SegmentDef.new :CTP, "Pricing Information",
+          CTP = SegmentDef.build :CTP, "Pricing Information",
             "To specify pricing information",
             E::E687 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E236 .simple_use(Relational, RepeatCount.bounded(1)),
@@ -19,11 +19,11 @@ module Stupidedi
             E::E499 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E289 .simple_use(Optional,   RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new( 4,  5),
-            SyntaxNote::C.new( 6,  7),
-            SyntaxNote::C.new( 9,  2),
-            SyntaxNote::C.new(10,  2),
-            SyntaxNote::C.new(11,  3)
+            SyntaxNote::P.build( 4,  5),
+            SyntaxNote::C.build( 6,  7),
+            SyntaxNote::C.build( 9,  2),
+            SyntaxNote::C.build(10,  2),
+            SyntaxNote::C.build(11,  3)
 
         end
       end

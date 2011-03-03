@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          DTM = SegmentDef.new :DTM, "Date/Time Reference",
+          DTM = SegmentDef.build :DTM, "Date/Time Reference",
             "To specify pertinent dates and times",
             E::E374 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E373 .simple_use(Relational, RepeatCount.bounded(1)),

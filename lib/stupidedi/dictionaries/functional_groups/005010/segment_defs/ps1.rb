@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PS1 = SegmentDef.new :PS1, "Purchase Service",
+          PS1 = SegmentDef.build :PS1, "Purchase Service",
             "To specify the information about services that are purchased",
             E::E127 .simple_use(Mandatory,  RepeatCount.bounded(1))
             E::E782 .simple_use(Mandatory,  RepeatCount.bounded(1))

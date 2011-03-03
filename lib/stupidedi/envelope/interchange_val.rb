@@ -1,5 +1,5 @@
 module Stupidedi
-  module Values
+  module Envelope
 
     #
     # @note: This is similar to a LoopVal or TableVal, because it contains
@@ -14,8 +14,10 @@ module Stupidedi
     # the contents of the IEA segment can be entirely derived from the segments
     # preceeding it.
     #
+    # @see X12.5 3.2.1 Basic Interchange Service Request
+    #
     class InterchangeVal
-      include SegmentValGroup
+      include Values::SegmentValGroup
 
       attr_reader :definition
 
@@ -31,6 +33,9 @@ module Stupidedi
       def initialize(definition, segment_vals, functional_group_vals)
         @definition, @segment_vals, @functional_group_vals =
           definition, segment_vals, functional_group_vals
+
+        @segment_vals = segment_vals.map{|x| x.copy(:parent => self) }
+        @functional_group_vals = functional_group_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [InterchangeVal]

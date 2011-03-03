@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          DTP = SegmentDef.new :DTP, "Date or Time Period",
+          DTP = SegmentDef.build :DTP, "Date or Time Period",
             "To specify any or all of a date, or a time period",
             E::E374 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1250.simple_use(Mandatory,  RepeatCount.bounded(1)),

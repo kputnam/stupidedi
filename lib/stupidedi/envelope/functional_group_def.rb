@@ -1,5 +1,5 @@
 module Stupidedi
-  module Schema
+  module Envelope
 
     class FunctionalGroupDef
       def value(segment_vals, transaction_set_vals, parent)
@@ -9,6 +9,8 @@ module Stupidedi
       def empty(parent)
         FunctionalGroupVal.new(self, [], [], parent)
       end
+
+      abstract :reader, :args => %w(input context)
     end
 
   end

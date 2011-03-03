@@ -50,8 +50,8 @@ module Stupidedi
         #   table.register(FourOhOne,   "00401")
         #   table.register(ThreeOhFour, "00304")
         #
-        def register(implementation, version)
-          @table[version] = implementation
+        def register(definition, version = interchange.id)
+          @table[version] = definition
         end
 
         # @param version  ISA12
@@ -84,8 +84,8 @@ module Stupidedi
         #   table.register(FourtyTen,   "004010")
         #   table.register(ThirtyForty, "003040")
         #
-        def register(implementation, version)
-          @table[version] = implementation
+        def register(definition, version)
+          @table[version] = definition
         end
 
         def lookup(version)
@@ -140,8 +140,8 @@ module Stupidedi
         #   table.register(Standards::FA997, nil, "FA", "997")
         #   table.register(Standards::FA999, nil, "FA", "999")
         #
-        def register(implementation, version, function, transaction)
-          @table[Array[version, function, transaction]] = implementation
+        def register(definition, version, function = definition.functional_group, transaction = function.id)
+          @table[Array[version, function, transaction]] = definition
         end
 
         # @param version      ST03 or GS08

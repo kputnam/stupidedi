@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          SVC = SegmentDef.new :SVC, "Service Payment Information",
+          SVC = SegmentDef.build :SVC, "Service Payment Information",
             "To supply payment and control information to a provider for a particular service",
             E::C003 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E782 .simple_use(Mandatory,  RepeatCount.bounded(1)),

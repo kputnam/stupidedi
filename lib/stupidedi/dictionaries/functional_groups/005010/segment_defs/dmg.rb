@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          DMG = SegmentDef.new :DMG, "Demographic Information",
+          DMG = SegmentDef.build :DMG, "Demographic Information",
             "To supply demographic information",
             E::E1250.simple_use(Relational, RepeatCount.bounded(1)),
             E::E1251.simple_use(Relational, RepeatCount.bounded(1)),
@@ -18,9 +18,9 @@ module Stupidedi
             E::E1270.simple_use(Relational, RepeatCount.bounded(1)),
             E::E1271.simple_use(Relational, RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new( 1,  2),
-            SyntaxNote::P.new(10, 11),
-            SyntaxNote::C.new(11,  5)
+            SyntaxNote::P.build( 1,  2),
+            SyntaxNote::P.build(10, 11),
+            SyntaxNote::C.build(11,  5)
 
         end
       end

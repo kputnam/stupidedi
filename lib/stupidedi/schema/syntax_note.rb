@@ -10,8 +10,8 @@ module Stupidedi
     #
     # @see X222 B.1.1.3.9 Condition Designator
     class SyntaxNote
-      # @return [Array<SimpleElementDef, CompositeElementDef>]
-      abstract :element_defs
+      # @return [Array<SimpleElementUse, CompositeElementUse>]
+      abstract :element_uses
     end
 
   end

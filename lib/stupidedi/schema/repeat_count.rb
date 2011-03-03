@@ -10,12 +10,20 @@ module Stupidedi
         def include?(n)
           n <= @max
         end
+
+        def inspect
+          @max.to_s
+        end
       end
 
       # Singleton
       Unbounded = Class.new(RepeatCount) do
         def include?(n)
           true
+        end
+
+        def inspect
+          ">1"
         end
       end.new
     end

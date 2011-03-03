@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          TRN = SegmentDef.new :TRN, "Trace",
+          TRN = SegmentDef.build :TRN, "Trace",
             "To uniquely identify a transaction to an application",
             E::E481 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E127 .simple_use(Mandatory,  RepeatCount.bounded(1)),

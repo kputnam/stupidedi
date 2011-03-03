@@ -2,6 +2,7 @@ module Stupidedi
   module Values
     autoload :AbstractVal,          "stupidedi/values/abstract_val"
     autoload :SegmentVal,           "stupidedi/values/segment_val"
+    autoload :SegmentValGroup,      "stupidedi/values/segment_val_group"
     autoload :CompositeElementVal,  "stupidedi/values/composite_element_val"
     autoload :RepeatedElementVal,   "stupidedi/values/repeated_element_val"
     autoload :LoopVal,              "stupidedi/values/loop_val"

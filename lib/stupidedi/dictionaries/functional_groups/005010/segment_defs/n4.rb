@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          N4 = SegmentDef.new :N4, "Geographic Location",
+          N4 = SegmentDef.build :N4, "Geographic Location",
             "To specify the geographic place of the named party",
             E::E19  .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E156 .simple_use(Relational, RepeatCount.bounded(1)),
@@ -15,9 +15,9 @@ module Stupidedi
 
             E::E1715.simple_use(Relational, RepeatCount.bounded(1)),
 
-            SyntaxNote::E.new(2, 7),
-            SyntaxNote::C.new(6, 5),
-            SyntaxNote::C.new(7, 4)
+            SyntaxNote::E.build(2, 7),
+            SyntaxNote::C.build(6, 5),
+            SyntaxNote::C.build(7, 4)
 
         end
       end

@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          DN2 = SegmentDef.new :DN2, "Tooth Summary",
+          DN2 = SegmentDef.build :DN2, "Tooth Summary",
             "To specify the status of individual teeth",
             E::E127 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1368.simple_use(Optional,   RepeatCount.bounded(1)),

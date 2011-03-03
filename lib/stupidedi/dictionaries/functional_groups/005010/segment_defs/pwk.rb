@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          PWK = SegmentDef.new :PWK, "Paperwork",
+          PWK = SegmentDef.build :PWK, "Paperwork",
             E::E755 .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E756 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E757 .simple_use(Optional,   RepeatCount.bounded(1)),
@@ -16,7 +16,7 @@ module Stupidedi
             E::C002 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E1525.simple_use(Optional,   RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new(5, 6)
+            SyntaxNote::P.build(5, 6)
 
         end
       end

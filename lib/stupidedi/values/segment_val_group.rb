@@ -1,7 +1,7 @@
 module Stupidedi
   module Values
 
-    module SegmentGroup
+    module SegmentValGroup
       # @return [Array<SegmentVal>]
       abstract :segment_vals
 
@@ -18,7 +18,7 @@ module Stupidedi
 
         case n
         when Symbol, String
-          segment_vals.select{|s| s.segment_use.segment_def.id == n.to_sym }
+          segment_vals.select{|s| s.segment_use.definition.id == n.to_sym }
         when Integer
           segment_vals.select{|s| s.segment_use.position == n }
         when SegmentDef
@@ -31,7 +31,7 @@ module Stupidedi
 
         case n
         when Symbol, String
-          definition.segment_uses.any?{|s| s.segment_def.id == n.to_sym }
+          definition.segment_uses.any?{|s| s.definition.id == n.to_sym }
         when Integer
           definition.segment_uses.any?{|s| s.position == n }
         when SegmentDef

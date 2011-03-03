@@ -1,28 +1,36 @@
 module Stupidedi
   module Dictionaries
-    module Interchange
+    module Interchanges
       module FiveOhOne
 
         InterchangeDef = Class.new(Schema::InterchangeDef) do
+          def copy(changes = {})
+            raise NoMethodError, "@todo"
+          end
+
           def id
             "00501"
           end
 
           def segment_uses
             @segment_uses ||=
-              Array[ ISA.segment_use(Mandatory, RepepatCount.max(1)),
-                     ISB.segment_use(Optional,  RepepatCount.max(1)),
-                     ISE.segment_use(Optional,  RepepatCount.max(1)),
-                     TA1.segment_use(Optional,  RepepatCount.unbound),
-                     IEA.segment_use(Mandatory, RepeatCount.max(1)) ]
-          end
-
-          def value(segment_vals, functional_group_vals = [])
-            InterchangeVal.new(self, segment_vals, functional_group_vals)
+              [ SegmentDefs::ISA.use(Mandatory, Schema::RepeatCount.bounded(1)),
+                SegmentDefs::ISB.use(Optional,  Schema::RepeatCount.bounded(1)),
+                SegmentDefs::ISE.use(Optional,  Schema::RepeatCount.bounded(1)),
+                SegmentDefs::TA1.use(Optional,  Schema::RepeatCount.unbound),
+                SegmentDefs::IEA.use(Mandatory, Schema::RepeatCount.bounded(1)) ]
           end
 
           def empty
-            InterchangeVal.new(self, [], [])
+            Envelope::InterchangeVal.new([], [], self)
+          end
+
+          def value(segment_vals, functional_group_vals = [])
+            Envelope::InterchangeVal.new(segment_vals, functional_group_vals, self)
+          end
+
+          def reader(input, context)
+            raise NoMethodError, "@todo"
           end
         end.new
 

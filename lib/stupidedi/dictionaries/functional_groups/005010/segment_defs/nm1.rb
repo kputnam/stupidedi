@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          NM1 = SegmentDef.new :NM1, "Individual or Organizational Name",
+          NM1 = SegmentDef.build :NM1, "Individual or Organizational Name",
             "To supply the full name of an individual or organizational entity",
             E::E98  .simple_use(Mandatory,  RepeatCount.bounded(1)),
             E::E1065.simple_use(Mandatory,  RepeatCount.bounded(1)),
@@ -19,9 +19,9 @@ module Stupidedi
             E::E98  .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E1035.simple_use(Optional,   RepeatCount.bounded(1)),
 
-            SyntaxNote::P.new( 8,  9),
-            SyntaxNote::C.new(11, 10),
-            SyntaxNote::C.new(12,  3)
+            SyntaxNote::P.build( 8,  9),
+            SyntaxNote::C.build(11, 10),
+            SyntaxNote::C.build(12,  3)
 
         end
       end

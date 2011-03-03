@@ -3,11 +3,11 @@ module Stupidedi
     module Interchanges
       module FiveOhOne
 
-        autoload :ElementDictionary,
-          "stupidedi/dictionaries/interchanges/00501/element_dictionary"
+        autoload :ElementDefs,
+          "stupidedi/dictionaries/interchanges/00501/element_defs"
 
-        autoload :SegmentDictionary,
-          "stupidedi/dictionaries/interchanges/00501/segment_dictionary"
+        autoload :SegmentDefs,
+          "stupidedi/dictionaries/interchanges/00501/segment_defs"
 
         autoload :InterchangeDef,
           "stupidedi/dictionaries/interchanges/00501/interchange_def"

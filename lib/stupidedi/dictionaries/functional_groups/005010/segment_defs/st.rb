@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          ST = SegmentDef.new :ST, "Transaction Set Header",
+          ST = SegmentDef.build :ST, "Transaction Set Header",
             "To indicate the start of a transaction set and assign a control number",
             E::DE143 .simple_use(Mandatory,  RepeatCount.bound(1)),
             E::DE329 .simple_use(Mandatory,  RepeatCount.bound(1)),

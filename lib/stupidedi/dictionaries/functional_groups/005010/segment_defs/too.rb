@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          TOO = SegmentDef.new :TOO, "Tooth Identification",
+          TOO = SegmentDef.build :TOO, "Tooth Identification",
             "To identify a tooth by number and, if applicable, one or more tooth surfaces",
             E::E1270.simple_use(Relational, RepeatCount.bounded(1)),
             E::E1271.simple_use(Relational, RepeatCount.bounded(1)),

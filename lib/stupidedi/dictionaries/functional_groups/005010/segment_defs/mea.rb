@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module SegmentDefs
 
-          MEA = SegmentDef.new :MEA, "Measurements",
+          MEA = SegmentDef.build :MEA, "Measurements",
             "To specify physical measurements or counts, including dimensions, tolerances, variances, and weights",
             E::E737 .simple_use(Optional,   RepeatCount.bounded(1)),
             E::E738 .simple_use(Optional,   RepeatCount.bounded(1)),
@@ -20,13 +20,13 @@ module Stupidedi
             E::E1270.simple_use(Relational, RepeatCount.bounded(1)),
             E::E1271.simple_use(Relational, RepeatCount.bounded(1)),
 
-            SyntaxNote::R.new( 3,  5,  6,  8),
-            SyntaxNote::E.new( 4, 12),
-            SyntaxNote::L.new( 5,  4, 12),
-            SyntaxNote::L.new( 6,  4, 12),
-            SyntaxNote::L.new( 7,  3,  5,  6),
-            SyntaxNote::E.new( 8,  3),
-            SyntaxNote::P.new(11, 12)
+            SyntaxNote::R.build( 3,  5,  6,  8),
+            SyntaxNote::E.build( 4, 12),
+            SyntaxNote::L.build( 5,  4, 12),
+            SyntaxNote::L.build( 6,  4, 12),
+            SyntaxNote::L.build( 7,  3,  5,  6),
+            SyntaxNote::E.build( 8,  3),
+            SyntaxNote::P.build(11, 12)
 
         end
       end

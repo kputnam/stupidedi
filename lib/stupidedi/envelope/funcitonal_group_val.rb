@@ -1,8 +1,8 @@
 module Stupidedi
-  module Values
+  module Envelope
 
     class FunctionalGroupVal
-      include SegmentValGroup
+      include Schema::SegmentValGroup
 
       # @return [FunctionalGroupDef]
       attr_reader :definition
@@ -19,6 +19,9 @@ module Stupidedi
       def initialize(definition, segment_vals, transaction_set_vals, parent)
         @definition, @segment_vals, @transaction_set_vals, @parent =
           definition, segment_vals, transaction_set_vals, parent
+
+        @segment_vals = segment_vals.map{|x| x.copy(:parent => self) }
+        @transaction_set_vals = transaction_set_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [FunctionalGroupVal]
