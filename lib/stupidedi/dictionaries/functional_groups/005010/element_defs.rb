@@ -389,6 +389,7 @@ module Stupidedi
             # 25 S3S Security Start Segment Missing for S3E Security End Segment
             # 26 S4E Security End Segment Missing for S4S Security Start Segment
             # 27 S4S Security Start Segment Missing for S4E Security End Segment
+            # I5 Implementation One or More Segments In Error
             # I6 Implementation Convention Not Supported
 
 

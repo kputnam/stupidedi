@@ -8,8 +8,8 @@ module Stupidedi
           e = ElementDefs
           r = FunctionalGroups::FiftyTen::ElementReqs
 
-          ISA = s::SegmentDef.build \
-            :ISA, "Interchange Control Header", "",
+          ISA = s::SegmentDef.build(:ISA, "Interchange Control Header",
+            "",
             e::I01.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::I02.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::I03.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
@@ -25,7 +25,7 @@ module Stupidedi
             e::I12.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::I13.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::I14.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
-            e::I15.simple_use(r::Mandatory, s::RepeatCount.bounded(1))
+            e::I15.simple_use(r::Mandatory, s::RepeatCount.bounded(1)))
 
         end
       end

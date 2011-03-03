@@ -8,8 +8,7 @@ module Stupidedi
           e = ElementDefs
           r = FunctionalGroups::FiftyTen::ElementReqs
 
-          TA3 = s::SegmentDef.build \
-            :TA3, "Interchange Delivery Notice", ""
+          TA3 = s::SegmentDef.build(:TA3, "Interchange Delivery Notice", "")
 
         end
       end

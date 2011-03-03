@@ -8,8 +8,7 @@ module Stupidedi
           e = ElementDefs
           r = FunctionalGroups::FiftyTen::ElementReqs
 
-          ISE = s::SegmentDef.build \
-            :ISE, "Deferred Delivery Request", ""
+          ISE = s::SegmentDef.build(:ISE, "Deferred Delivery Request", "")
 
         end
       end

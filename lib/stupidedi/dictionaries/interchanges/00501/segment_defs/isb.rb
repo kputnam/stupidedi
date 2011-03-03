@@ -8,8 +8,7 @@ module Stupidedi
           e = ElementDefs
           r = FunctionalGroups::FiftyTen::ElementReqs
 
-          ISB = s::SegmentDef.build \
-            :ISB, "Grade of Service Request", ""
+          ISB = s::SegmentDef.build(:ISB, "Grade of Service Request", "")
 
         end
       end
