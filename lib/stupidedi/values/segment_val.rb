@@ -16,12 +16,16 @@ module Stupidedi
         @element_vals.all?(&:empty?)
       end
 
+      def present?
+        not empty?
+      end
+
       def [](n)
         @element_vals[n]
       end
 
       # @private
-      def prtty_print(q)
+      def pretty_print(q)
         q.text("SegmentVal[#{segment_def.try(:id)}]")
         q.group(1, "(", ")") do
           q.breakable ""

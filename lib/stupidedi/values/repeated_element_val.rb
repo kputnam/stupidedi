@@ -25,6 +25,11 @@ module Stupidedi
         @element_vals.all?(&:empty?)
       end
 
+      # True if any occurences are present
+      def present?
+        not empty?
+      end
+
       # @private
       def ==(other)
         other.element_def == @element_def and
@@ -52,7 +57,7 @@ module Stupidedi
       # @note Intended for use by {SegmentReader}
       # @private
       def append(element_val)
-        RepeatedElementVal.new(element_val.snoc(@element_vals), element_def)
+        self.class.new(element_val.snoc(@element_vals), element_def)
       end
 
       # Creates a new {RepeatedElementVal} with the given element value
@@ -61,7 +66,7 @@ module Stupidedi
       # @note Intended for use by {SegmentReader}
       # @private
       def prepend(element_val)
-        RepeatedElementVal.new(element_val.cons(@element_vals), element_def)
+        self.class.new(element_val.cons(@element_vals), element_def)
       end
     end
 
