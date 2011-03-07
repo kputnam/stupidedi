@@ -29,7 +29,7 @@ module Stupidedi
                 s::IK5.use(800, r::Mandatory, d::RepeatCount.bounded(1))),
 
               s::AK9.use( 900, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: ST.use(1000, r::Mandatory, d::RepeatCount.bounded(1))))
+              s:: SE.use(1000, r::Mandatory, d::RepeatCount.bounded(1))))
 
         end
       end

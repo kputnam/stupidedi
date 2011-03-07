@@ -206,6 +206,8 @@ module Stupidedi
               "U" => "Split Payment and Remittance",
               "X" => "Handling Party's Option to Split Payment and Remittance"))
 
+          E306  = t::ID.new(:E306 , "Action Code"                          , 1, 2)
+
           E309  = t::ID.new(:E309 , "Location Qualifier"                   , 1, 2,
             s::CodeList.build(
               "PQ" => s::CodeList.external("51"),
@@ -344,6 +346,7 @@ module Stupidedi
               "WO" => "Overpayment Recovery",
               "WU" => "Unspecified Recovery"))
 
+          E429  = t::AN.new(:E429 , "Check Number"                         , 1, 16)
           E443  = t::AN.new(:E443 , "Contract Inquiry Reference"           , 1, 20)
           E447  = t::AN.new(:E447 , "Loop Identifier Code"                 , 1, 4)
           E449  = t::AN.new(:E449 , "Fixed Format Information"             , 1, 80)
@@ -706,6 +709,7 @@ module Stupidedi
 
           E923  = t::ID.new(:E923 , "Prognosis Code"                       , 1, 1)
 
+          E933  = t::AN.new(:E933 , "Free-form Message Text"               , 1, 264)
           E935  = t::ID.new(:E935 , "Measurement Significance Code"        , 2, 2)
           E936  = t::ID.new(:E936 , "Measurement Attribute Code"           , 2, 2)
           E954  = t:: R.new(:E954 , "Percentage as Decimal"                , 1,  10)
@@ -1132,8 +1136,8 @@ module Stupidedi
           E9998 = t::AN.new(:E9998, "Context Reference"                    , 1, 35)
           E9999 = t::AN.new(:E9998, "Context Name"                         , 1, 35)
 
-          C001 = Schema::CompositeElementDef.build \
-            :C001, "Composite Unit of Measure",
+          C001 = Schema::CompositeElementDef.build(:C001,
+            "Composite Unit of Measure",
             "To identify a composite unit of measure",
             E355 .component_use(r::Mandatory),
             E1018.component_use(r::Optional),
@@ -1149,20 +1153,20 @@ module Stupidedi
             E649 .component_use(r::Optional), # If not used, value is interpreted as 1
             E355 .component_use(r::Optional),
             E1018.component_use(r::Optional), # If not used, value is interpreted as 1
-            E649 .component_use(r::Optional)  # If not used, value is interpreted as 1
+            E649 .component_use(r::Optional)) # If not used, value is interpreted as 1
 
           # @note Copied from an unverified 4010 internet source
-          C002 = Schema::CompositeElementDef.build \
-            :C002, "Actions Indicated",
+          C002 = Schema::CompositeElementDef.build(:C002,
+            "Actions Indicated",
             "",
             E704.component_use(r::Mandatory),
             E704.component_use(r::Optional),
             E704.component_use(r::Optional),
             E704.component_use(r::Optional),
-            E704.component_use(r::Optional)
+            E704.component_use(r::Optional))
 
-          C003 = Schema::CompositeElementDef.build \
-            :C003, "Composite Medical Procedure Identifier",
+          C003 = Schema::CompositeElementDef.build(:C003,
+            "Composite Medical Procedure Identifier",
             "To identify a procedure by its standardized codes and applicable modifiers",
             E235 .component_use(r::Mandatory),
             E234 .component_use(r::Mandatory), # Qualified by C003-01
@@ -1171,36 +1175,36 @@ module Stupidedi
             E1339.component_use(r::Optional),
             E1339.component_use(r::Optional),
             E352 .component_use(r::Optional),
-            E234 .component_use(r::Optional)  # Qualified by C003-01
+            E234 .component_use(r::Optional)) # Qualified by C003-01
 
-          C004 = Schema::CompositeElementDef.build \
-            :C004, "Composite Diagnosis Code Pointer",
+          C004 = Schema::CompositeElementDef.build(:C004,
+            "Composite Diagnosis Code Pointer",
             "To identify one or more diagnosis code pointers",
             E1328.component_use(r::Mandatory),
             E1328.component_use(r::Optional),
             E1328.component_use(r::Optional),
-            E1328.component_use(r::Optional)
+            E1328.component_use(r::Optional))
 
-          C005 = Schema::CompositeElementDef.build \
-            :C005, "Tooth Surface",
+          C005 = Schema::CompositeElementDef.build(:C005,
+            "Tooth Surface",
             "To identify one or more tooth surface codes",
             E1369.component_use(r::Mandatory),
             E1369.component_use(r::Optional),
             E1369.component_use(r::Optional),
             E1369.component_use(r::Optional),
-            E1369.component_use(r::Optional)
+            E1369.component_use(r::Optional))
 
-          C006 = Schema::CompositeElementDef.build \
-            :C006, "Oral Cavity Designation",
+          C006 = Schema::CompositeElementDef.build(:C006,
+            "Oral Cavity Designation",
             "To identify one or more areas of oral cavity",
             E1361.component_use(r::Mandatory),
             E1361.component_use(r::Optional),
             E1361.component_use(r::Optional),
             E1361.component_use(r::Optional),
-            E1361.component_use(r::Optional)
+            E1361.component_use(r::Optional))
 
-          C022 = Schema::CompositeElementDef.build \
-            :C022, "Health Care Code Information",
+          C022 = Schema::CompositeElementDef.build(:C022,
+            "Health Care Code Information",
             "To send health care codes and their associated dates, amounts and quantities",
             E1270.component_use(r::Mandatory),
             E1271.component_use(r::Mandatory),
@@ -1212,41 +1216,41 @@ module Stupidedi
             E1271.component_use(r::Relational),
             E1073.component_use(r::Relational),
             SyntaxNotes::P.build(3, 4),
-            SyntaxNotes::E.build(8, 9)
+            SyntaxNotes::E.build(8, 9))
 
-          C023 = Schema::CompositeElementDef.build \
-            :C023, "Health Care Service Location Information",
+          C023 = Schema::CompositeElementDef.build(:C023,
+            "Health Care Service Location Information",
             "To provide information that identifies the place of service or the type of bill related to the location at which a health care service was rendered",
             E1331 .component_use(r::Mandatory),
             E1332 .component_use(r::Optional),
-            E1325 .component_use(r::Optional)
+            E1325 .component_use(r::Optional))
 
-          C024 = Schema::CompositeElementDef.build \
-            :C024, "Related Causes Information",
+          C024 = Schema::CompositeElementDef.build(:C024,
+            "Related Causes Information",
             "To identify one or more related causes and associated state or country information",
             E1362.component_use(r::Optional),
             E1362.component_use(r::Mandatory),
             E1362.component_use(r::Optional),
             E156 .component_use(r::Optional),
-            E26  .component_use(r::Optional)
+            E26  .component_use(r::Optional))
 
-          C030 = Schema::CompositeElementDef.build \
-            :C030, "Position in Segment",
+          C030 = Schema::CompositeElementDef.build(:C030,
+            "Position in Segment",
             "Code indicating the relative position of the simple data element or composite data structure in error within a segment, count beginning with 1 for the position immediately following the segment ID; additionally, indicating the relative position of a repeating structure in error, count beginning with 1 for the position immediately following the preceding element separator; additionally indicating the relative position of a component of a composite data structure in error, count beginning with 1 for the position following the preceding element or repetition separator",
             E722 .component_use(r::Mandatory),
             E1528.component_use(r::Optional),
-            E1686.component_use(r::Optional)
+            E1686.component_use(r::Optional))
 
           # @note Copied from an unverified 4010 internet source
-          C035 = Schema::CompositeElementDef.build \
-            :C035, "Provider Specialty Information",
+          C035 = Schema::CompositeElementDef.build(:C035,
+            "Provider Specialty Information",
             "",
             E1222.component_use(r::Mandatory),
             E559 .component_use(r::Optional),
-            E1073.component_use(r::Optional)
+            E1073.component_use(r::Optional))
 
-          C040 = Schema::CompositeElementDef.build \
-            :C040, "Reference Identifier",
+          C040 = Schema::CompositeElementDef.build(:C040,
+            "Reference Identifier",
             "To identify one or more reference numbers or identification numbers as specified by the Reference Qualifier",
             E128 .component_use(r::Mandatory),
             E127 .component_use(r::Mandatory),
@@ -1255,32 +1259,40 @@ module Stupidedi
             E128 .component_use(r::Relational),
             E127 .component_use(r::Relational),
             SyntaxNotes::P.build(3, 4),
-            SyntaxNotes::P.build(5, 6)
+            SyntaxNotes::P.build(5, 6))
 
-          C042 = Schema::CompositeElementDef.build \
-            :C042, "Adjustment Identifier",
+          C042 = Schema::CompositeElementDef.build(:C042,
+            "Adjustment Identifier",
             "To provide the category and identifying reference information for an adjustment",
             E426 .component_use(r::Mandatory),
-            E127 .component_use(r::Optional)
+            E127 .component_use(r::Optional))
 
-          C056 = Schema::CompositeElementDef.build \
-            :C056, "Composite Race or Ethnicity Information",
+          C043 = Schema::CompositeElementDef.build(:C043,
+            "Health Care Claim Status",
+            "Used to convey status of the entire claim or a specific service line",
+            E1271.component_use(r::Mandatory),
+            E1271.component_use(r::Mandatory),
+            E98  .component_use(r::Optional),
+            E1270.component_use(r::Optional))
+
+          C056 = Schema::CompositeElementDef.build(:C056,
+            "Composite Race or Ethnicity Information",
             "",
             E1109.component_use(r::Optional),
             E1270.component_use(r::Relational),
-            E1271.component_use(r::Relational)
+            E1271.component_use(r::Relational))
 
-          C998 = Schema::CompositeElementDef.build \
-            :C998, "Context Identification",
+          C998 = Schema::CompositeElementDef.build(:C998,
+            "Context Identification",
             "Holds information to identify a context",
             E9999.component_use(r::Mandatory),
-            E9998.component_use(r::Optional)
+            E9998.component_use(r::Optional))
 
-          C999 = Schema::CompositeElementDef.build \
-            :C999, "Reference in Segment",
+          C999 = Schema::CompositeElementDef.build(:C999,
+            "Reference in Segment",
             "To hold the reference number of a data element and optionally component data element within a composite",
             E725.component_use(r::Mandatory),
-            E725.component_use(r::Mandatory)
+            E725.component_use(r::Mandatory))
 
         end
       end

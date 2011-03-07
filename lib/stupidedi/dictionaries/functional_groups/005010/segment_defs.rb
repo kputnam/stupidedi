@@ -178,6 +178,9 @@ module Stupidedi
           autoload :ST,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/st"
 
+          autoload :STC,
+            "stupidedi/dictionaries/functional_groups/005010/segment_defs/stc"
+
           autoload :SV1,
             "stupidedi/dictionaries/functional_groups/005010/segment_defs/sv1"
 
