@@ -21,6 +21,11 @@ module Stupidedi
           changes.fetch(:segment_defs, @segment_defs)
       end
 
+      # @return [StreamReader]
+      def stream
+        StreamReader.new(@input)
+      end
+
       def empty?
         @input.empty?
       end
@@ -81,6 +86,27 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
+      # Read the first character in front of the cursor
+      #
+      # @return [Either<Result<String>>]
+      def read_character
+        position = 0
+        buffer   = ""
+
+        while @input.defined_at?(position)
+          character = @input.at(position)
+          position += 1
+
+          if is_control?(character)
+            next
+          end
+
+          return result(character, advance(position))
+        end
+
+        failure("Less than one character available")
+      end
+
       # @return [Either<Result(:segment, ID, elements)>]
       def read_segment
         # Consume ~
@@ -95,11 +121,11 @@ module Stupidedi
             case b.value
             when @separators.element_separator
               b.remainder.read_elements(element_uses).map do |c|
-                c.map{|es| [:segment, a.value, es] }
+                c.map{|es| :segment.cons(a.value.cons(es.cons)) }
               end
             when @separators.segment_terminator
               # @todo: Segment with no elements
-              result([:segment, id])
+              result(:segment.cons(id.cons))
             end
           end
         end
@@ -194,9 +220,9 @@ module Stupidedi
             return advance(position).read_simple_element.map do |r|
               r.map do |e, *es|
                 if e == :repeat
-                  [:repeat, buffer].concat(es)
+                  :repeat.cons(buffer.cons(es))
                 else
-                  [:repeat, buffer, e]
+                  :repeat.cons(buffer.cons(e.cons))
                 end
               end
             end
@@ -297,9 +323,9 @@ module Stupidedi
               b.remainder.read_composite_element.map do |c|
                 c.map do |e, *es|
                   if e == :repeat
-                    [:repeat, a.value].concat(es)
+                    :repeat.cons(a.value.cons(es))
                   else
-                    [:repeat, a.value, c.value]
+                    :repeat.cons(a.value.cons(c.value.cons))
                   end
                 end
               end

@@ -7,10 +7,10 @@ module Stupidedi
   #
   module Reader
 
-    autoload :Success,       "stupidedi/reader/success"
-    autoload :Failure,       "stupidedi/reader/failure"
+    autoload :Result,        "stupidedi/reader/result"
+    autoload :Success,       "stupidedi/reader/result"
+    autoload :Failure,       "stupidedi/reader/result"
 
-    autoload :DefaultReader, "stupidedi/reader/default_reader"
     autoload :StreamReader,  "stupidedi/reader/stream_reader"
     autoload :TokenReader,   "stupidedi/reader/token_reader"
 
@@ -21,7 +21,7 @@ module Stupidedi
     BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
     EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
     EITHER   = Regexp.union(BASIC, EXTENDED)
-    BYTES    = (0..255).inject("") {|string, c| string << c }
+    BYTES    = (0..255).inject(""){|string, c| string << c }
 
     class << self
       # Returns non-nil if c belongs to the basic character set
