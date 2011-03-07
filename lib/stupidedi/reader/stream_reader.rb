@@ -16,12 +16,13 @@ module Stupidedi
         @input = input
       end
 
+      # @return [StreamReader]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:input, @input)
       end
 
-      # Returns true if there is no remaining input
+      # True if there is no remaining input
       def empty?
         @input.empty?
       end
@@ -89,11 +90,15 @@ module Stupidedi
               # terminator. The {read_character} method here does *not* skip past
               # control character, so the delimiter could be a control character.
               x.remainder.stream.read_character.flatmap do |y|
-                delims.segment_terminator = y.value
-                result(segment, TokenReader.new(y.remainder.input, delims))
+                if y.value == delims.element_separator
+                  failure("Element separator and segment terminator must be distinct", x.remainder.input)
+                else
+                  delims.segment_terminator = y.value
+                  result(segment, TokenReader.new(y.remainder.input, delims))
+                end
               end
             end
-          end.or do
+          end.or do |x|
             # We read "ISA" but failed to tokenize the input that followed. This was
             # probably a random occurrence of the sequence "ISA", so we'll skip past
             # it and try again.
@@ -118,36 +123,17 @@ module Stupidedi
           character = @input.at(position)
           position += 1
 
-          if Reader.is_basic_character?(character) or Reader.is_extended_character?(character)
-            buffer.slice!(0)
-            buffer << character.upcase
-          end
+          unless Reader.is_control_character?(character)
+            # Slide the "window" forward one character
+            buffer = buffer.slice!(1..-1) << character.upcase
 
-          if buffer == "ISA"
-            return success(advance(position))
+            if buffer == "ISA"
+              return success(advance(position))
+            end
           end
         end
 
         failure("Reached end of input before finding ISA segment identifier")
-      end
-
-      # Read up to the next occurrence of element_separator and consume the separator
-      def read_simple_element(element_separator)
-        if position = @input.index(element_separator)
-          result(@input.take(position), advance(position + 1))
-        else
-          failure("Reached end of input before finding an element separator")
-        end
-      end
-
-      def read_nth_element(element_separator, n, value = nil)
-        if n.zero?
-          result(value, self)
-        else
-          read_simple_element(element_separator).flatmap do |value, rest|
-            read_nth_element(element_separator, n - 1, value)
-          end
-        end
       end
 
     private
@@ -156,7 +142,7 @@ module Stupidedi
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-          self.class.new(@input.drop(n))
+          copy(:input => @input.drop(n))
         end
       end
 

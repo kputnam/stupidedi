@@ -32,10 +32,18 @@ module Stupidedi
         case name
         when :ST
           # ST01 Transaction Set Identifier Code
-          transaction = elements.at(0).to_s # 835, 837, etc
+          tag, transaction = elements.at(0)
+          
+          unless tag == :simple
+            raise "@todo: expected simple element but got #{elements.at(0).inspect}"
+          end
 
           # ST03 Implementation Convention Reference
-          version = elements.at(2).to_s # 005010X222, etc
+          tag, version = elements.at(2)
+          
+          unless tag == :simple
+            raise "@todo: expected simple element but got #{elements.at(2).inspect}"
+          end
 
           # GS01 Functional Identifier Code
           group = @value.at(:GS).first.at(0).to_s # HC, HP, etc

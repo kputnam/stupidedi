@@ -30,7 +30,12 @@ module Stupidedi
         case name
         when :ISA
           # ISA12 Interchange Control Version Number
-          version      = elements.at(11)
+          tag, version = elements.at(11)
+
+          unless tag == :simple
+            raise "@todo: expected simple element but got #{elements.at(11).inspect}"
+          end
+
           envelope_def = @config.interchange.lookup(version)
 
           unless envelope_def
@@ -47,6 +52,19 @@ module Stupidedi
           step(InterchangeBuilder.start(interchange_val, self))
         else
           failure("Unexpected segment #{name}")
+        end
+      end
+
+      def read(input)
+        Reader::StreamReader.new(input).read_isa_segment.map do |result|
+          # One of the 16 elements has the interchange version, which
+          # will indicate extra information regarding how to tokenize
+          # the input, like component separator and repetition separators.
+          result.value      #=> [:segment, :ISA, [:simple, "00"], [..], ..]
+
+          # This TokenReader has the very minimum parser context information
+          # which includes element delimiter and segment terminator.
+          result.remainder  #=> TokenReader
         end
       end
 

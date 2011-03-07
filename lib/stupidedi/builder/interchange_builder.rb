@@ -34,7 +34,14 @@ module Stupidedi
           # @todo: Explain why GS is a special case
 
           # GS08 Version / Release / Industry Identifier Code
-          version = elements.at(7).to_s.slice(0, 6)
+          tag, version = elements.at(7)
+
+          if tag != :simple
+            raise "@todo: expected simple element but got #{elements.at(7)}"
+          end
+
+          version = version.to_s.slice(0, 6)
+
           envelope_def = config.functional_group.lookup(version)
 
           if envelope_def

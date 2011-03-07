@@ -159,6 +159,8 @@ module Stupidedi
           end
         end
 
+        # We only arrive here if {character} is a delimiter, or if we read
+        # three characters into {buffer} and an additional into {character}
         if buffer =~ /\A[A-Z][A-Z0-9]{1,2}\Z/
           case character
           when @separators.segment_terminator,
@@ -209,7 +211,9 @@ module Stupidedi
           character = @input.at(position)
           position += 1
 
-          next if is_control?(character)
+          if is_control?(character)
+            next
+          end
 
           case character
           when @separators.segment_terminator,
@@ -245,7 +249,9 @@ module Stupidedi
           character = @input.at(position)
           position += 1
 
-          next if is_control?(character)
+          if is_control?(character)
+            next
+          end
 
           if is_delimiter?(character)
             # Don't consume the delimiter

@@ -20,8 +20,8 @@ module Stupidedi
       # @return [Array<FailureState>]
       attr_reader :failures
 
-      def initialize(states, failures)
-        @states, @failures = states, failures
+      def initialize(failures, states)
+        @failures, @states = failures, states
       end
 
       # @return [StateMachine]
@@ -36,8 +36,9 @@ module Stupidedi
             end
           end
 
-        failures, successors = successors.partition(&:stuck?)
-        self.class.new(successors, failures)
+        failures, states = successors.partition(&:stuck?)
+
+        self.class.new(failures, states)
       end
 
       def stuck?
@@ -45,8 +46,8 @@ module Stupidedi
       end
 
       # @return [StateMachine]
-      def read(input, context)
-        # @todo
+      def read(input)
+        #
       end
 
       # @return [Values::AbstractVal]
@@ -60,7 +61,7 @@ module Stupidedi
     class << StateMachine
       def start(config)
         start = TransmissionBuilder.start(config)
-        StateMachine.new(start.cons, [])
+        StateMachine.new([], start.cons)
       end
     end
 
