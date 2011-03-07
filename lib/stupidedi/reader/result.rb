@@ -54,9 +54,10 @@ module Stupidedi
     #
     #   # More breifly
     #   y = x.map{|r| r.remainder.flatmap{|s| s.read }}
-    #       # Looking at this you can guess that x is an Either of something
+    #       # Looking at this you can infer that x is an Either of something
     #       # with a #remainder method. That #remainder method is also an
-    #       # Either, this time of something with a #read method.
+    #       # Either, which wraps a value that responds to the #read method,
+    #       # which returns an Either.
     #
     class Success < Result
       attr_reader :value
@@ -67,15 +68,23 @@ module Stupidedi
         @value, @remainder = value, remainder
       end
 
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:value, @value),
+          changes.fetch(:remainder, @remainder)
+      end
+
       # Transforms the value using the given block parameter
+      #
+      # @return [Success]
       def map
-        self.class.new(yield(value), remainder)
+        copy(:value => yield(@value))
       end
 
       # Compares two Success instances, or directly compares the value to
       # the given the argument
       def ==(other)
-        if self.class === other
+        if other.is_a?(self.class)
           @value == other.value and @remainder == other.remainder
         else
           @value == other
@@ -93,7 +102,6 @@ module Stupidedi
         yield remainder
       end
     end
-
 
     #
     # This is not the same as {Either::Failure}, though it is likely that values
@@ -117,19 +125,19 @@ module Stupidedi
       end
 
       def offset
-        unless @remainder.nil? or not @remainder.respond_to?(:offset)
+        if @remainder.respond_to?(:offset)
           @remainder.offset
         end
       end
 
       def line
-        unless @remainder.nil? or not @remainder.respond_to?(:line)
+        if @remainder.respond_to?(:line)
           @remainder.line
         end
       end
 
       def column
-        unless @remainder.nil? or not @remainder.respond_to?(:column)
+        if @remainder.respond_to?(:column)
           @remainder.column
         end
       end

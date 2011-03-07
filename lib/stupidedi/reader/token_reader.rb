@@ -9,9 +9,12 @@ module Stupidedi
       # @return [Separators]
       attr_reader :separators
 
-      def initialize(input, separators, segment_defs = {})
-        @input, @separators, @segment_defs =
-          input, separators, segment_defs
+      # @return [SegmentDict]
+      attr_accessor :segment_dict
+
+      def initialize(input, separators, segment_dict = Schema::SegmentDict.empty)
+        @input, @separators, @segment_dict =
+          input, separators, segment_dict
       end
 
       # @return [TokenReader]
@@ -19,7 +22,7 @@ module Stupidedi
         self.class.new \
           changes.fetch(:input, @input),
           changes.fetch(:separators, @separators),
-          changes.fetch(:segment_defs, @segment_defs)
+          changes.fetch(:segment_dict, @segment_dict)
       end
 
       # @return [StreamReader]
@@ -104,22 +107,20 @@ module Stupidedi
 
       # @return [Either<Result<SegmentTok, TokenReader>>]
       def read_segment
-        # Consume ~
         read_segment_id.flatmap do |a|
-          if segment_def = @segment_defs[a.value]
-            element_uses = segment_def.element_uses
+          if @segment_dict.defined_at?(a.value)
+            element_uses = @segment_dict.at(a.value).element_uses
           else
             element_uses = []
           end
 
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
-            when @separators.element_separator
-              b.remainder.read_elements(element_uses).map do |c|
-                c.map{|es| segment(a.value, @input, c.remainder.input, es) }
-              end
-            when @separators.segment_terminator
-              # @todo: Segment with no elements
+            when @separators.element
+              rest = b.remainder.read_elements(element_uses)
+              rest.map{|c| c.map{|es| segment(a.value, @input, c.remainder.input, es) }}
+            when @separators.segment
+              # Consume the segment terminator
               result(segment(a.value, @input, b.remainder.input), b.remainder)
             end
           end
@@ -142,15 +143,14 @@ module Stupidedi
         end.flatmap do |a|
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
-            when @separators.segment_terminator
+            when @separators.segment
               # This is the last element before the segment terminator, make
               # it into a singleton list and _do_ consume the delimiter
               result(a.value.cons, b.remainder)
-            when @separators.element_separator
+            when @separators.element
               # There is another element following the delimiter
-              b.remainder.read_elements(element_uses.tail).map do |r|
-                r.map{|es| a.value.cons(es) }
-              end
+              rest = b.remainder.read_elements(element_uses.tail)
+              rest.map{|c| c.map{|es| a.value.cons(es) }}
             end
           end
         end
@@ -161,16 +161,15 @@ module Stupidedi
         read_component_element(repeatable).flatmap do |a|
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
-            when @separators.segment_terminator,
-                 @separators.element_separator,
-                 @separators.repetition_separator
+            when @separators.segment,
+                 @separators.element,
+                 @separators.repetition
               # This is the last component element within the composite element,
               # so make it into a singleton list and don't consume the delimiter
               result(a.value.cons, a.remainder)
-            when @separators.component_separator
-              b.remainder.read_component_elements(repeatable).map do |c|
-                c.map{|es| a.value.cons(es) }
-              end
+            when @separators.component
+              rest = b.remainder.read_component_elements(repeatable)
+              rest.map{|c| c.map{|es| a.value.cons(es) }}
             end
           end
         end
@@ -208,13 +207,13 @@ module Stupidedi
           remainder = advance(position - 1)
 
           case character
-          when @separators.segment_terminator,
-               @separators.element_separator
+          when @separators.segment,
+               @separators.element
             # Don't consume the delimiter
             result(buffer.upcase.to_sym, remainder)
-          when @separators.repetition_separator
+          when @separators.repetition
             failure("Found repetition separator following segment identifier", remainder)
-          when @separators.component_separator
+          when @separators.component
             failure("Found component separator following segment identifier", remainder)
           else
             failure("Found #{character.inspect} following segment identifier", remainder)
@@ -260,23 +259,22 @@ module Stupidedi
           end
 
           case character
-          when @separators.segment_terminator,
-               @separators.element_separator
+          when @separators.segment,
+               @separators.element
             # These delimiters mark the end of the element. We don't consume
             # the delimiter because the next reader can use the delimiter to
             # know which token to next expect.
             token = simple(buffer, @input, @input.drop(position))
             return result(token, advance(position - 1))
-          when @separators.repetition_separator
+          when @separators.repetition
             if repeatable
               token = simple(buffer, @input, @input.drop(position))
-              return advance(position).read_simple_element(repeatable).map do |r|
-                r.map{|e| e.repeat(token) }
-              end
+              rest  = advance(position).read_simple_element(repeatable)
+              return rest.map{|r| r.map{|e| e.repeat(token) }}
             else
               # @todo: Read this as data but sound the alarms
             end
-          when @separators.component_separator
+          when @separators.component
             # @todo: Read this as data but sound the alarms
           end
 
@@ -300,15 +298,15 @@ module Stupidedi
           end
 
           case character
-          when @separators.element_separator,
-               @separators.segment_terminator,
-               @separators.component_separator
-            # Don't consume the delimiter
+          when @separators.element,
+               @separators.segment,
+               @separators.component
+            # Don't consume the separator/terminator
             token = component(buffer, @input, @input.drop(position))
             return result(token, advance(position - 1))
-          when @separators.repetition_separator
+          when @separators.repetition
             if repeatable
-              # Don't consume the delimiter
+              # Don't consume the repetition separator
               token = component(buffer, @input, @input.drop(position))
               return result(token, advance(position - 1))
             else
@@ -329,10 +327,10 @@ module Stupidedi
 
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
-            when @separators.segment_terminator,
-                 @separators.element_separator
+            when @separators.segment,
+                 @separators.element
               result(token, a.remainder)
-            when @separators.repetition_separator
+            when @separators.repetition
               b.remainder.read_composite_element.map do |r|
                 r.map{|e| e.repeat(token) }
               end
@@ -367,10 +365,10 @@ module Stupidedi
       end
 
       def is_delimiter?(character)
-        character == @separators.segment_terminator  or
-        character == @separators.element_separator   or
-        character == @separators.component_separator or
-        character == @separators.repetition_separator
+        character == @separators.segment   or
+        character == @separators.element   or
+        character == @separators.component or
+        character == @separators.repetition
       end
 
       def is_basic?(character)

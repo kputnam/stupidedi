@@ -89,6 +89,10 @@ module Stupidedi
         end
       end
 
+      def segment_dict
+        @definition.segment_dict
+      end
+
       # @private
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}]" }

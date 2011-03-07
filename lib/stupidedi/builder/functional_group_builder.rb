@@ -28,7 +28,7 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(segment_tok)
+      def successors(segment_tok)
         case segment_tok.id
         when :ST
           # ST01 Transaction Set Identifier Code
@@ -37,11 +37,11 @@ module Stupidedi
           version     = segment_tok.element_toks.at(2).value
 
           # GS01 Functional Identifier Code
-          group = @value.at(:GS).first.at(0) # HC, HP, etc
+          group = @value.at(:GS).first.at(0).to_s # HC, HP, etc
 
           if version.blank?
             # GS08 Version / Release / Industry Identifier Code
-            version = @value.at(:GS).first.at(7)
+            version = @value.at(:GS).first.at(7).to_s
           end
 
           envelope_def = config.transaction_set.lookup(version, group, transaction)
@@ -52,7 +52,7 @@ module Stupidedi
             transaction_builder = TransactionSetBuilder.start(transaction_set_val, self)
 
             # Let the TransactionSetBuilder figure out parsing the ST segment
-            children = transaction_builder.segment(segment_tok, false)
+            children = transaction_builder.successors(segment_tok, false)
             states   = children.reject(&:stuck?)
 
             if states.empty?
@@ -89,7 +89,7 @@ module Stupidedi
           # of @value's parent. Supress any stuck "uncle" states because they
           # won't say anything more than the single stuck state we create below.
           # @todo: Optimize for deterministic transitions
-          uncles = @predecessor.merge(@value).segment(segment_tok)
+          uncles = @predecessor.merge(@value).successors(segment_tok)
           states.concat(uncles.reject(&:stuck?))
 
           if states.empty?

@@ -29,7 +29,7 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(segment_tok, upward = true)
+      def successors(segment_tok, upward = true)
         d = @value.definition
 
         states = d.header_segment_uses.inject([]) do |list, u|
@@ -62,7 +62,7 @@ module Stupidedi
 
         if upward
           # @todo: Optimize for non-ambiguous transitions
-          uncles = @predecessor.merge(@value).segment(segment_tok, true, d)
+          uncles = @predecessor.merge(@value).successors(segment_tok, true, d)
           states.concat(uncles.reject(&:stuck?))
         end
 

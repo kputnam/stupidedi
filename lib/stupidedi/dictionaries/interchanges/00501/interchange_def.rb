@@ -14,6 +14,10 @@ module Stupidedi
           def value(segment_val)
             FiveOhOne::InterchangeVal.new(self, segment_val.cons, [], [])
           end
+
+          def segment_dict
+            Schema::SegmentDict.build(SegmentDefs)
+          end
         end.new "00501",
           # Interchange header
           [ SegmentDefs::ISA.use(-9050, r::Mandatory, s::RepeatCount.bounded(1)),

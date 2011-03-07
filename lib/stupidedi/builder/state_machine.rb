@@ -25,26 +25,92 @@ module Stupidedi
       end
 
       # @return [StateMachine]
-      def segment(segment_tok)
+      def advance!(segment_tok)
         successors =
           case @states.length
           when 0 then []
-          when 1 then @states.head.segment(segment_tok)
+          when 1 then @states.head.successors(segment_tok)
           else
             @states.inject([]) do |list, s|
-              list.concat(s.segment(segment_tok))
+              list.concat(s.successors(segment_tok))
             end
           end
 
         failures, states = successors.partition(&:stuck?)
 
-        self.class.new(failures, states)
+        @states = states
+        @failures.concat(failures)
+
+        self
       end
 
-      def read(reader)
-        reader.read_segment.map do |result|
-          pp result
+      def read!(reader)
+        remainder = Either.success(reader)
+
+        while not stuck? and remainder.defined?
+          remainder = remainder.flatmap(&:read_segment).map do |result|
+            # result.value: SegmentTok
+            # result.remainder: TokenReader
+            advance!(result.value)
+
+            if stuck?
+              return remainder
+            end
+
+
+            # @todo: Handle non-deterministic state
+            #
+            # @todo: Can we move these comparisons into the respective
+            # Builder classes, so we can skip them most of the time?
+
+            case result.value.id
+            when :ISA
+              # value: InterchangeVal
+
+              # Add the interchange version-specific separators to TokenReader
+              value.merge!(result.remainder)
+
+              value.separators.segment =
+                result.remainder.separators.segment
+
+              value.separators.element =
+                result.remainder.separators.element
+
+              # Add the interchange segment definitions
+              result.remainder.segment_dict =
+                result.remainder.segment_dict.concat(value.segment_dict)
+            when :GS
+              # value: FunctionalGroupVal
+
+              # Add the segment definitions defined by the functional group
+              result.remainder.segment_dict =
+                result.remainder.segment_dict.concat(value.segment_dict)
+            when :GE
+              # value: FunctionalGroupVal
+
+              # Remove the segment definitions defined by the functional group
+              result.remainder.segment_dict =
+                result.remainder.segment_dict.pop
+            when :ISE
+              # value: InterchangeVal
+
+              # Remove the interchange version-specific separators from TokenReader
+              value.unmerge!(result.remainder)
+
+              # Remove the interchange segment definitions
+              result.remainder.segment_dict =
+                result.remainder.segment_dict.pop
+            end
+
+            result.remainder
+          end
         end
+
+        # @todo: "Reached end of input without finding a segment identifier" is
+        # a normal failed state, but we can't easily prevent it because #empty?
+        # is false, even if the only remaining input is control characters
+
+        remainder
       end
 
       def stuck?

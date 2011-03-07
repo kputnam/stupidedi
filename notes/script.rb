@@ -27,10 +27,12 @@ config.transaction_set.register(Stupidedi::Dictionaries::FunctionalGroups::Fifty
 config.transaction_set.register(Stupidedi::Guides::FiftyTen::X222::HC837, "005010X222");nil
 
 pp  s0 = Stupidedi::Builder.new(config);nil
+pp doc = Stupidedi::Reader::StreamReader.new(Stupidedi::Reader::Input.build(File.open("837P.txt")));nil
+pp  s0.read!(doc);nil
 
-pp doc = Stupidedi::Reader::StreamReader.new("ISA*00*...*00*...*ZZ*SUBMITTER*ZZ*RECEIVER*110223*1245*^*00501*333666999*1*T*\n:~")
-pp isa = doc.read_segment
-pp isa.map{|r| s0.segment(r.value) }
+pp doc.read_segment.map{|r| s0.successors(r.value) };nil
+
+#pp doc = Stupidedi::Reader::StreamReader.new("ISA*00*...*00*...*ZZ*SUBMITTER*ZZ*RECEIVER*110223*1245*^*00501*333666999*1*T*\n:~")
 
 pp  s1 =  s0.segment(:ISA,
                      [[:simple, "00"],

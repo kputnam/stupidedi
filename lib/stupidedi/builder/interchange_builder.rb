@@ -28,7 +28,7 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(segment_tok)
+      def successors(segment_tok)
         case segment_tok.id
         when :GS
           # @todo: Explain why GS is a special case
@@ -77,7 +77,7 @@ module Stupidedi
           # of @value's parent. Supress any stuck "uncle" states because they
           # won't say anything more than the single stuck state we create below.
           # @todo: Optimize for deterministic transitions
-          uncles = @predecessor.merge(@value).segment(segment_tok)
+          uncles = @predecessor.merge(@value).successors(segment_tok)
           states.concat(uncles.reject(&:stuck?))
 
           if states.empty?

@@ -10,7 +10,7 @@ module Stupidedi
       abstract :value
 
       # @return [Array<AbstractState>]
-      abstract :segment, :args => %w(name elements)
+      abstract :segment, :args => %w(segment_tok)
 
       # @return [Boolean]
       def stuck?
@@ -73,7 +73,7 @@ module Stupidedi
             # @todo: Not sure what to do with repeatable elements
             true
           elsif u.composite?
-            u.definition.element_uses.zip(e.value).all? do |c, e|
+            u.definition.element_uses.zip(e.component_toks).all? do |c, e|
               if c.requirement.required? and not e.blank?
                 c.allowed_values.include?(e.value)
               else
@@ -107,7 +107,9 @@ module Stupidedi
       # @return [SimpleElementVal, CompositeElementVal]
       def mkelement(element_use, element_tok, parent = nil)
         if element_use.simple?
-          if element_tok.simple?
+          if element_tok.nil?
+            element_use.empty(parent)
+          elsif element_tok.simple?
             element_use.value(element_tok.value, parent)
           else
             # @todo: This is a syntax error. The tokenizer won't have caused
@@ -116,12 +118,21 @@ module Stupidedi
             element_use.empty(parent)
           end
         else
-          component_uses = element_use.definition.element_uses
-          component_vals = component_uses.zip(element_tok.value).map do |component_use, e|
-            component_use.value(e.value)
-          end
+          if element_tok.nil?
+            element_use.empty(parent)
+          else
+            component_uses = element_use.definition.element_uses
+            component_vals = component_uses.zip(element_tok.component_toks)
+            component_vals.map! do |component_use, component_tok|
+              if component_tok.nil?
+                component_use.empty
+              else
+                component_use.value(component_tok.value)
+              end
+            end
 
-          element_use.value(component_vals, parent)
+            element_use.value(component_vals, parent)
+          end
         end
       end
 

@@ -29,14 +29,14 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(segment_tok, upward = true, downward = nil)
+      def successors(segment_tok, upward = true, downward = nil)
         states = @value.definition.table_defs.inject([]) do |list, t|
           unless t.eql?(downward)
             t.entry_segment_uses.each do |u|
               if @position <= t.position and match?(u, segment_tok)
                 # @todo: Optimize for non-ambiguous transitions
                 table_builder = TableBuilder.start(t, copy(:position => t.position))
-                list.concat(table_builder.segment(segment_tok, false))
+                list.concat(table_builder.successors(segment_tok, false))
               end
             end
           end
@@ -46,7 +46,7 @@ module Stupidedi
 
         if upward
           # @todo: Optimize for non-ambiguous transitions
-          uncles = @predecessor.merge(@value).segment(segment_tok)
+          uncles = @predecessor.merge(@value).successors(segment_tok)
           states.concat(uncles.reject(&:stuck?))
         end
 

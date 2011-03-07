@@ -5,10 +5,10 @@ module Stupidedi
 
         class InterchangeVal < Envelope::InterchangeVal
           class Separators
-            attr_reader :component  # :
-            attr_reader :repetition # ^
-            attr_reader :element    # *
-            attr_reader :segment    # ~
+            attr_accessor :component  # :
+            attr_accessor :repetition # ^
+            attr_accessor :element    # *
+            attr_accessor :segment    # ~
 
             def initialize(component, repetition, element, segment, parent)
               @component, @repetition, @element, @segment, @parent =
@@ -60,6 +60,20 @@ module Stupidedi
               changes.fetch(:functional_group_vals, functional_group_vals),
               changes.fetch(:trailer_segment_vals, trailer_segment_vals),
               changes.fetch(:separators, @separators)
+          end
+
+          def merge!(reader)
+            reader.separators.repetition = separators.repetition
+            reader.separators.component  = separators.component
+          end
+
+          def unmerge!(reader)
+            reader.separators.repetition = nil
+            reader.separators.component  = nil
+          end
+
+          def segment_dict
+            definition.segment_dict
           end
         end
 

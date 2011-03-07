@@ -29,7 +29,7 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(segment_tok, upward = true)
+      def successors(segment_tok, upward = true)
         d = @value.definition
 
         # @todo: Explain use of #tail
@@ -65,7 +65,7 @@ module Stupidedi
 
         if upward
           # @todo: Optimize for non-ambiguous transitions
-          uncles = @predecessor.merge(@value).segment(segment_tok)
+          uncles = @predecessor.merge(@value).successors(segment_tok)
           states.concat(uncles.reject(&:stuck?))
         end
 
