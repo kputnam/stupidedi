@@ -1,0 +1,357 @@
+module Stupidedi
+  module Reader
+
+    class TokenReader
+
+      # @return [Reader]
+      attr_reader :input
+
+      # @return [Separators]
+      attr_reader :separators
+
+      def initialize(input, separators, segment_defs = {})
+        @input, @separators, @segment_defs =
+          input, separators, segment_defs
+      end
+
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:input, @input),
+          changes.fetch(:separators, @separators),
+          changes.fetch(:segment_defs, @segment_defs)
+      end
+
+      def empty?
+        @input.empty?
+      end
+
+      # Consume s if it is directly in front of the cursor
+      #
+      # @return [Either<TokenReader>]
+      def consume_prefix(s)
+        return success(self) if s.empty?
+
+        position = 0
+        buffer   = ""
+
+        while @input.defined_at?(position)
+          character = @input.at(position)
+          position += 1
+
+          unless is_control?(character)
+            buffer << character
+
+            if s.length == buffer.length
+              if s == buffer
+                return success(advance(position))
+              else
+                return failure("Found #{buffer.inspect} instead of #{s.inspect}")
+              end
+            end
+          end
+        end
+
+        failure("Reached end of input without finding #{s.inspect}")
+      end
+
+      # Consume input, including s, from here to the next occurrence of s
+      #
+      # @return [Either<TokenReader>]
+      def consume(s)
+        return success(self) if s.empty?
+
+        position = 0
+        buffer   = " " * s.length
+
+        while @input.defined_at?(position)
+          character = @input.at(position)
+
+          unless is_control?(character)
+            # Slide the "window" forward one character
+            buffer = buffer.slice(1..-1) << character
+          end
+
+          position += 1
+
+          if s == buffer
+            return success(advance(position))
+          end
+        end
+
+        failure("Reached end of input without finding #{s.inspect}")
+      end
+
+      # @return [Either<Result(:segment, ID, elements)>]
+      def read_segment
+        # Consume ~
+        read_segment_id.flatmap do |a|
+          if segment_def = @segment_defs[a.value]
+            element_uses = segment_def.element_uses
+          else
+            element_uses = []
+          end
+
+          a.remainder.read_delimiter.flatmap do |b|
+            case b.value
+            when @separators.element_separator
+              b.remainder.read_elements(element_uses).map do |c|
+                c.map{|es| [:segment, a.value, es] }
+              end
+            when @separators.segment_terminator
+              # @todo: Segment with no elements
+              result([:segment, id])
+            end
+          end
+        end
+      end
+
+      # Reads a segment identifier from the beginning of the input
+      #
+      # @return [Either<Result<Symbol>>]
+      def read_segment_id
+        position = 0
+        buffer   = ""
+
+        while true
+          unless @input.defined_at?(position)
+            return failure("Reached end of input without finding a segment identifier")
+          end
+
+          character = @input.at(position)
+          position += 1
+
+          if is_delimiter?(character)
+            break
+          end
+
+          unless is_control?(character)
+            if buffer.length == 3
+              break
+            end
+
+            buffer << character
+          end
+        end
+
+        if buffer =~ /\A[A-Z][A-Z0-9]{1,2}\Z/
+          case character
+          when @separators.segment_terminator,
+               @separators.element_separator
+            # Don't consume the delimiter
+            result(buffer.upcase.to_sym, advance(position - 1))
+          when @separators.repetition_separator
+            failure("Found repetition separator following segment identifier")
+          when @separators.component_separator
+            failure("Found component separator following segment identifier")
+          else
+            failure("Found #{character.inspect} following segment identifier")
+          end
+        else
+          failure("Found #{buffer.inspect} instead of segment identifier")
+        end
+      end
+
+      # @return [Either<Result<Character>>]
+      def read_delimiter
+        position = 0
+
+        while @input.defined_at?(position)
+          character = @input.at(position)
+          position += 1
+
+          if is_control?(character)
+            next
+          end
+
+          if is_delimiter?(character)
+            return result(character, advance(position))
+          else
+            return failure("Found #{character.inspect} instead of a delimiter")
+          end
+        end
+
+        failure("Reached end of input without finding a delimiter")
+      end
+
+      # @return [Either<Result<String>>]
+      # @return [Either<Result<Array(:repeat, String, String, ...)>>]
+      def read_simple_element
+        position = 0
+        buffer   = ""
+
+        while @input.defined_at?(position)
+          character = @input.at(position)
+          position += 1
+
+          next if is_control?(character)
+
+          case character
+          when @separators.segment_terminator,
+               @separators.element_separator
+            # Don't consume the delimiter
+            return result(buffer, advance(position - 1))
+          when @separators.repetition_separator
+            return advance(position).read_simple_element.map do |r|
+              r.map do |e, *es|
+                if e == :repeat
+                  [:repeat, buffer].concat(es)
+                else
+                  [:repeat, buffer, e]
+                end
+              end
+            end
+          when @separators.component_separator
+            # @todo: Read this as data but sound the alarms
+          end
+
+          buffer << character
+        end
+
+        failure("Reached end of input without finding a simple data element")
+      end
+
+      # @return [Either<Result<String>>]
+      def read_component_element
+        position = 0
+        buffer   = ""
+
+        while @input.defined_at?(position)
+          character = @input.at(position)
+          position += 1
+
+          next if is_control?(character)
+
+          if is_delimiter?(character)
+            # Don't consume the delimiter
+            return result(buffer, advance(position - 1))
+          end
+
+          buffer << character
+        end
+
+        failure("Reached end of input without finding a component data element")
+      end
+
+      # [ [:simple, "ABC"],
+      #   [:simple, [:repeat, "ABC", "DEF", ...]],
+      #
+      #   [:composite, "XX", "YY"],
+      #   [:composite, [:repeat, ["XX", "YY"], ["AA", "BB"]]] ]
+      #
+      # @return [Either<Result<Array>>]
+      def read_elements(element_uses)
+        if element_uses.empty? or not element_uses.head.composite?
+          read_simple_element.map do |r|
+            r.map{|e| :simple.cons(e.cons) }
+          end
+        else
+          read_composite_element.map do |r|
+            r.map{|e| :composite.cons(e) }
+          end
+        end.flatmap do |a|
+          a.remainder.read_delimiter.flatmap do |b|
+            case b.value
+            when @separators.segment_terminator
+              result(a.value.cons, a.remainder)
+            when @separators.element_separator
+              b.remainder.read_elements(element_uses.tail).map do |r|
+                r.map{|es| a.value.cons(es) }
+              end
+            end
+          end
+        end
+      end
+
+      # @return [Either<Result<Array<String>>>]
+      def read_component_elements
+        read_component_element.flatmap do |a|
+          a.remainder.read_delimiter.flatmap do |b|
+            case b.value
+            when @separators.segment_terminator,
+                 @separators.element_separator,
+                 @separators.repetition_separator
+              # Don't consume the delimiter
+              result(a.value.cons, a.remainder)
+            when @separators.component_separator
+              b.remainder.read_component_elements.map do |c|
+                c.map{|es| a.value.cons(es) }
+              end
+            end
+          end
+        end
+      end
+
+      # @return [Either<Array<String>>]
+      # @return [Either<Result<Array(:repeat, Array<String>, Array<String>, ...)>>]
+      def read_composite_element
+        read_component_elements.flatmap do |a|
+          a.remainder.read_delimiter.flatmap do |b|
+            case b.value
+            when @separators.segment_terminator
+              # Don't consume the delimiter
+              result(a.value, a.remainder)
+            when @separators.element_separator
+              # Don't consume the delimiter
+              result(a.value, a.remainder)
+            when @separators.repetition_separator
+              b.remainder.read_composite_element.map do |c|
+                c.map do |e, *es|
+                  if e == :repeat
+                    [:repeat, a.value].concat(es)
+                  else
+                    [:repeat, a.value, c.value]
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+    private
+
+      # Returns a new TokenReader with n characters consumed from input
+      #
+      # @return [TokenReader]
+      def advance(n)
+        unless @input.defined_at?(n-1)
+          raise IndexError, "Less than #{n} characters available"
+        else
+          copy(:input => @input.drop(n))
+        end
+      end
+
+      def is_delimiter?(character)
+        character == @separators.segment_terminator  or
+        character == @separators.element_separator   or
+        character == @separators.component_separator or
+        character == @separators.repetition_separator
+      end
+
+      def is_basic?(character)
+        Reader.is_basic_character?(character)
+      end
+
+      def is_extended?(character)
+        Reader.is_extended_character?(character)
+      end
+
+      def is_control?(character)
+        Reader.is_control_character?(character) and not is_delimiter?(character)
+      end
+
+      def failure(message)
+        Either.failure(Reader::Failure.new(message, @input))
+      end
+
+      def success(value)
+        Either.success(value)
+      end
+
+      def result(value, remainder)
+        Either.success(Reader::Success.new(value, remainder))
+      end
+    end
+
+  end
+end

@@ -35,7 +35,7 @@ module Stupidedi
 
       # @return [Array<AbstractState>]
       def step(successor)
-        Array[successor]
+        successor.cons
       end
 
       # @return [Array<FailureState>]
