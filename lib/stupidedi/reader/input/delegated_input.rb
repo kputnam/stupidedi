@@ -4,7 +4,7 @@ module Stupidedi
     class DelegatedInput < Input
       attr_reader :delegate, :offset, :line, :column
 
-      def initialize(delegate, offset, line, column)
+      def initialize(delegate, offset = 0, line = 1, column = 1)
         @delegate, @offset, @line, @column = delegate, offset, line, column
       end
 
@@ -46,6 +46,23 @@ module Stupidedi
 
       def index(value)
         delegate.index(value)
+      end
+
+      def pretty_print(q)
+        q.text("DelegateInput")
+        q.group(2, "(", ")") do
+          preview = @delegate.take(4)
+          preview = if preview.empty?
+                      "EOF"
+                    elsif preview.length <= 3
+                      preview.inspect
+                    else
+                      (preview.take(3) << "...").inspect
+                    end
+
+          q.text preview
+          q.text " at line #{@line}, column #{@column}, offset #{@offset}"
+        end
       end
 
       def ==(other)

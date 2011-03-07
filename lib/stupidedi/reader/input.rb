@@ -114,23 +114,15 @@ module Stupidedi
     #
     class << Input
       # @return [Input]
-      def from_string(*args)
-        from_delegate(*args)
-      end
-
-      # @return [Input]
-      def from_array(*args)
-        from_delegate(*args)
-      end
-
-      # @return [Input]
-      def from_file(io, offset = 0, line = 1, column = 1)
-        FileInput.new(io, offset, line, column)
-      end
-
-      # @return [Input]
-      def from_delegate(s, offset = 0, line = 1, column = 1)
-        DelegatedInput.new(s, offset, line, column)
+      def build(o, *args)
+        case o
+        when IO
+          FileInput.new(o, *args)
+        when String, Array
+          DelegatedInput.new(o, *args)
+        else
+          raise TypeError
+        end
       end
     end
 

@@ -14,9 +14,15 @@ module Stupidedi
     autoload :StreamReader,  "stupidedi/reader/stream_reader"
     autoload :TokenReader,   "stupidedi/reader/token_reader"
 
+    autoload :ComponentElementTok,  "stupidedi/reader/tokens/component_element_tok"
+    autoload :CompositeElementTok,  "stupidedi/reader/tokens/composite_element_tok"
+    autoload :RepeatedElementTok,   "stupidedi/reader/tokens/repeated_element_tok"
+    autoload :SegmentTok,           "stupidedi/reader/tokens/segment_tok"
+    autoload :SimpleElementTok,     "stupidedi/reader/tokens/simple_element_tok"
+
     autoload :Input,          "stupidedi/reader/input"
-    autoload :DelegatedInput, "stupidedi/reader/delegated_input"
-    autoload :FileInput,      "stupidedi/reader/file_input"
+    autoload :DelegatedInput, "stupidedi/reader/input/delegated_input"
+    autoload :FileInput,      "stupidedi/reader/input/file_input"
 
     BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
     EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/

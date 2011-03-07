@@ -3,7 +3,7 @@ module Stupidedi
 
     class TokenReader
 
-      # @return [Reader]
+      # @return [String, Input]
       attr_reader :input
 
       # @return [Separators]
@@ -14,6 +14,7 @@ module Stupidedi
           input, separators, segment_defs
       end
 
+      # @return [TokenReader]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:input, @input),
@@ -30,8 +31,6 @@ module Stupidedi
         @input.empty?
       end
 
-      # Consume s if it is directly in front of the cursor
-      #
       # @return [Either<TokenReader>]
       def consume_prefix(s)
         return success(self) if s.empty?
@@ -59,8 +58,6 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
-      # Consume input, including s, from here to the next occurrence of s
-      #
       # @return [Either<TokenReader>]
       def consume(s)
         return success(self) if s.empty?
@@ -86,8 +83,6 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
-      # Read the first character in front of the cursor
-      #
       # @return [Either<Result<String>>]
       def read_character
         position = 0
@@ -107,7 +102,7 @@ module Stupidedi
         failure("Less than one character available")
       end
 
-      # @return [Either<Result(:segment, ID, elements)>]
+      # @return [Either<Result<SegmentTok, TokenReader>>]
       def read_segment
         # Consume ~
         read_segment_id.flatmap do |a|
@@ -121,19 +116,62 @@ module Stupidedi
             case b.value
             when @separators.element_separator
               b.remainder.read_elements(element_uses).map do |c|
-                c.map{|es| :segment.cons(a.value.cons(es.cons)) }
+                c.map{|es| segment(a.value, @input, c.remainder.input, es) }
               end
             when @separators.segment_terminator
               # @todo: Segment with no elements
-              result(:segment.cons(id.cons))
+              result(segment(a.value, @input, b.remainder.input), b.remainder)
             end
           end
         end
       end
 
-      # Reads a segment identifier from the beginning of the input
-      #
-      # @return [Either<Result<Symbol>>]
+      # @return [Either<Result<Array<SimpleElementTok, CompositeElementTok>, TokenReader>>]
+      def read_elements(element_uses)
+        if element_uses.empty?
+          read_simple_element
+        elsif element_uses.head.composite?
+          read_composite_element
+        else
+          read_simple_element
+        end.flatmap do |a|
+          a.remainder.read_delimiter.flatmap do |b|
+            case b.value
+            when @separators.segment_terminator
+              # This is the last element before the segment terminator, make
+              # it into a singleton list and _do_ consume the delimiter
+              result(a.value.cons, b.remainder)
+            when @separators.element_separator
+              # There is another element following the delimiter
+              b.remainder.read_elements(element_uses.tail).map do |r|
+                r.map{|es| a.value.cons(es) }
+              end
+            end
+          end
+        end
+      end
+
+      # @return [Either<Result<Array<ComponentElementTok, TokenReader>>>]
+      def read_component_elements
+        read_component_element.flatmap do |a|
+          a.remainder.read_delimiter.flatmap do |b|
+            case b.value
+            when @separators.segment_terminator,
+                 @separators.element_separator,
+                 @separators.repetition_separator
+              # This is the last component element within the composite element,
+              # so make it into a singleton list and don't consume the delimiter
+              result(a.value.cons, a.remainder)
+            when @separators.component_separator
+              b.remainder.read_component_elements.map do |c|
+                c.map{|es| a.value.cons(es) }
+              end
+            end
+          end
+        end
+      end
+
+      # @return [Either<Result<Symbol, TokenReader>>]
       def read_segment_id
         position = 0
         buffer   = ""
@@ -162,24 +200,26 @@ module Stupidedi
         # We only arrive here if {character} is a delimiter, or if we read
         # three characters into {buffer} and an additional into {character}
         if buffer =~ /\A[A-Z][A-Z0-9]{1,2}\Z/
+          remainder = advance(position - 1)
+
           case character
           when @separators.segment_terminator,
                @separators.element_separator
             # Don't consume the delimiter
-            result(buffer.upcase.to_sym, advance(position - 1))
+            result(buffer.upcase.to_sym, remainder)
           when @separators.repetition_separator
-            failure("Found repetition separator following segment identifier")
+            failure("Found repetition separator following segment identifier", remainder)
           when @separators.component_separator
-            failure("Found component separator following segment identifier")
+            failure("Found component separator following segment identifier", remainder)
           else
-            failure("Found #{character.inspect} following segment identifier")
+            failure("Found #{character.inspect} following segment identifier", remainder)
           end
         else
           failure("Found #{buffer.inspect} instead of segment identifier")
         end
       end
 
-      # @return [Either<Result<Character>>]
+      # @return [Either<Result<Character, TokenReader>>]
       def read_delimiter
         position = 0
 
@@ -201,8 +241,7 @@ module Stupidedi
         failure("Reached end of input without finding a delimiter")
       end
 
-      # @return [Either<Result<String>>]
-      # @return [Either<Result<Array(:repeat, String, String, ...)>>]
+      # @return [Either<Result<SimpleElementToken, TokenReader>>]
       def read_simple_element
         position = 0
         buffer   = ""
@@ -218,17 +257,15 @@ module Stupidedi
           case character
           when @separators.segment_terminator,
                @separators.element_separator
-            # Don't consume the delimiter
-            return result(buffer, advance(position - 1))
+            # These delimiters mark the end of the element. We don't consume
+            # the delimiter because the next reader can use the delimiter to
+            # know which token to next expect.
+            token = simple(buffer, @input, @input.drop(position))
+            return result(token, advance(position - 1))
           when @separators.repetition_separator
+            token = simple(buffer, @input, @input.drop(position))
             return advance(position).read_simple_element.map do |r|
-              r.map do |e, *es|
-                if e == :repeat
-                  :repeat.cons(buffer.cons(es))
-                else
-                  :repeat.cons(buffer.cons(e.cons))
-                end
-              end
+              r.map{|e| e.repeat(token) }
             end
           when @separators.component_separator
             # @todo: Read this as data but sound the alarms
@@ -240,7 +277,7 @@ module Stupidedi
         failure("Reached end of input without finding a simple data element")
       end
 
-      # @return [Either<Result<String>>]
+      # @return [Either<Result<ComponentElementTok, TokenReader>>]
       def read_component_element
         position = 0
         buffer   = ""
@@ -255,7 +292,8 @@ module Stupidedi
 
           if is_delimiter?(character)
             # Don't consume the delimiter
-            return result(buffer, advance(position - 1))
+            token = component(buffer, @input, @input.drop(position))
+            return result(token, advance(position - 1))
           end
 
           buffer << character
@@ -264,92 +302,50 @@ module Stupidedi
         failure("Reached end of input without finding a component data element")
       end
 
-      # [ [:simple, "ABC"],
-      #   [:simple, [:repeat, "ABC", "DEF", ...]],
-      #
-      #   [:composite, "XX", "YY"],
-      #   [:composite, [:repeat, ["XX", "YY"], ["AA", "BB"]]] ]
-      #
-      # @return [Either<Result<Array>>]
-      def read_elements(element_uses)
-        if element_uses.empty? or not element_uses.head.composite?
-          read_simple_element.map do |r|
-            r.map{|e| :simple.cons(e.cons) }
-          end
-        else
-          read_composite_element.map do |r|
-            r.map{|e| :composite.cons(e) }
-          end
-        end.flatmap do |a|
-          a.remainder.read_delimiter.flatmap do |b|
-            case b.value
-            when @separators.segment_terminator
-              result(a.value.cons, a.remainder)
-            when @separators.element_separator
-              b.remainder.read_elements(element_uses.tail).map do |r|
-                r.map{|es| a.value.cons(es) }
-              end
-            end
-          end
-        end
-      end
+      # @return [Either<Result<CompositeElementTok, TokenReader>>]
+      def read_composite_element
+        read_component_elements.flatmap do |a|
+          token = composite(a.value, @input, a.remainder.input)
 
-      # @return [Either<Result<Array<String>>>]
-      def read_component_elements
-        read_component_element.flatmap do |a|
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
             when @separators.segment_terminator,
-                 @separators.element_separator,
-                 @separators.repetition_separator
-              # Don't consume the delimiter
-              result(a.value.cons, a.remainder)
-            when @separators.component_separator
-              b.remainder.read_component_elements.map do |c|
-                c.map{|es| a.value.cons(es) }
+                 @separators.element_separator
+              result(token, a.remainder)
+            when @separators.repetition_separator
+              b.remainder.read_composite_element.map do |r|
+                r.map{|e| e.repeat(token) }
               end
             end
           end
         end
       end
 
-      # @return [Either<Array<String>>]
-      # @return [Either<Result<Array(:repeat, Array<String>, Array<String>, ...)>>]
-      def read_composite_element
-        read_component_elements.flatmap do |a|
-          a.remainder.read_delimiter.flatmap do |b|
-            case b.value
-            when @separators.segment_terminator
-              # Don't consume the delimiter
-              result(a.value, a.remainder)
-            when @separators.element_separator
-              # Don't consume the delimiter
-              result(a.value, a.remainder)
-            when @separators.repetition_separator
-              b.remainder.read_composite_element.map do |c|
-                c.map do |e, *es|
-                  if e == :repeat
-                    :repeat.cons(a.value.cons(es))
-                  else
-                    :repeat.cons(a.value.cons(c.value.cons))
-                  end
-                end
-              end
-            end
-          end
+      # @private
+      def pretty_print(q)
+        q.text("TokenReader")
+        q.group(2, "(", ")") do
+          q.breakable ""
+
+          q.pp @input
+          q.text ","
+          q.breakable
+
+          q.pp @separators
         end
       end
 
     private
 
-      # Returns a new TokenReader with n characters consumed from input
-      #
       # @return [TokenReader]
       def advance(n)
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-          copy(:input => @input.drop(n))
+        # copy(:input => @input.drop(n))
+
+          @input = @input.drop(n)
+          self
         end
       end
 
@@ -372,8 +368,8 @@ module Stupidedi
         Reader.is_control_character?(character) and not is_delimiter?(character)
       end
 
-      def failure(message)
-        Either.failure(Reader::Failure.new(message, @input))
+      def failure(message, remainder = @input)
+        Either.failure(Reader::Failure.new(message, remainder))
       end
 
       def success(value)
@@ -382,6 +378,22 @@ module Stupidedi
 
       def result(value, remainder)
         Either.success(Reader::Success.new(value, remainder))
+      end
+
+      def segment(segment_id, start, remainder, elements = [])
+        SegmentTok.build(segment_id, elements, start, remainder)
+      end
+
+      def simple(value, start, remainder)
+        SimpleElementTok.build(value, start, remainder)
+      end
+
+      def component(value, start, remainder)
+        ComponentElementTok.build(value, start, remainder)
+      end
+      
+      def composite(value, start, remainder)
+        CompositeElementTok.build(value, start, remainder)
       end
     end
 

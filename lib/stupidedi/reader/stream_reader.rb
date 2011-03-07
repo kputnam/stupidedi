@@ -55,46 +55,47 @@ module Stupidedi
       # elements, like the repetition separator or the component separator, because
       # these are interchange version-dependent.
       #
-      # @return [Either<Result<Array(:segment, :ISA, [:simple, "..."], [...], ...), TokenReader>>]
+      # @return [Either<Result<..., TokenReader>>]
       def read_isa_segment
         consume_isa.flatmap do |rest|
           # The character after "ISA" is defined to be the element separator
           rest.read_character.flatmap do |a|
-            segment = :segment.cons(:ISA.cons)
-            delims  = OpenStruct.new
-            last    = Either.success(TokenReader.new(a.remainder.input, delims))
+            delimiters = OpenStruct.new
+            remaining  = Either.success(TokenReader.new(a.remainder.input, delimiters))
 
-            # The TokenReader maintains a reference to {delims}, so when we
-            # mutate {delims}, we are passing information to the TokenReader.
-            delims.element_separator = a.value
+            # The TokenReader maintains a reference to {delimiters}, so when we
+            # mutate {delimiters}, we are passing information to the TokenReader.
+            delimiters.element_separator = a.value
+
+            token = SegmentToken.new(:ISA)
 
             # Read 15 simple elements into an array. Consume/discard the element
             # separator that follows each one.
             15.times do
-              last =
-                last.flatmap(&:read_simple_element).flatmap do |x|
-                  segment << :simple.cons(x.value.cons)
+              remaining =
+                remaining.flatmap(&:read_simple_element).flatmap do |x|
+                  token << x.value
 
                   # Throw away the following element separator
-                  x.remainder.consume_prefix(delims.element_separator)
+                  x.remainder.consume_prefix(delimiters.element_separator)
                 end
             end
 
             # We have to assume the last (16th) element is fixed-length because
             # it is not terminated by an element delimiter. The {read_character}
             # method here skips past control characters.
-            last.flatmap(&:read_character).flatmap do |x|
-              segment << :simple.cons(x.value.cons)
+            remaining.flatmap(&:read_character).flatmap do |x|
+              token << SimpleElementToken.new(x.value)
 
               # The character after the last element is defined to be the segment
               # terminator. The {read_character} method here does *not* skip past
               # control character, so the delimiter could be a control character.
               x.remainder.stream.read_character.flatmap do |y|
-                if y.value == delims.element_separator
+                if y.value == delimiters.element_separator
                   failure("Element separator and segment terminator must be distinct", x.remainder.input)
                 else
-                  delims.segment_terminator = y.value
-                  result(segment, TokenReader.new(y.remainder.input, delims))
+                  delimiters.segment_terminator = y.value
+                  result(segment, TokenReader.new(y.remainder.input, delimiters))
                 end
               end
             end

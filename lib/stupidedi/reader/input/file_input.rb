@@ -10,7 +10,7 @@ module Stupidedi
     class FileInput < Input
       attr_reader :io, :offset, :line, :column
 
-      def initialize(io, offset, line, column, size = io.stat.size)
+      def initialize(io, offset = 0, line = 1, column = 1, size = io.stat.size)
         @io, @offset, @line, @column, @size = io, offset, line, column, size
       end
 
