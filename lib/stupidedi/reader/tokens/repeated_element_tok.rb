@@ -19,6 +19,14 @@ module Stupidedi
       def pretty_print(q)
         q.pp(:repeated.cons(@value))
       end
+
+      def repeated?
+        true
+      end
+
+      def blank?
+        false
+      end
     end
 
   end

@@ -23,6 +23,10 @@ module Stupidedi
       def pretty_print(q)
         q.pp(:segment.cons(@id.cons(@elements)))
       end
+
+      def blank?
+        @elements.blank?
+      end
     end
 
     class << SegmentTok

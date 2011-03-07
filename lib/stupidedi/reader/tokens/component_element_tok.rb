@@ -20,6 +20,10 @@ module Stupidedi
       def pretty_print(q)
         q.pp(:component.cons(@value.cons))
       end
+
+      def blank?
+        @value.blank?
+      end
     end
 
     class << ComponentElementTok

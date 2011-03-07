@@ -130,10 +130,15 @@ module Stupidedi
       def read_elements(element_uses)
         if element_uses.empty?
           read_simple_element
-        elsif element_uses.head.composite?
-          read_composite_element
         else
-          read_simple_element
+          element_use = element_uses.head
+          repeatable  = element_use.repeat_count.include?(2)
+
+          if element_uses.head.composite?
+            read_composite_element(repeatable)
+          else
+            read_simple_element(repeatable)
+          end
         end.flatmap do |a|
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
@@ -152,8 +157,8 @@ module Stupidedi
       end
 
       # @return [Either<Result<Array<ComponentElementTok, TokenReader>>>]
-      def read_component_elements
-        read_component_element.flatmap do |a|
+      def read_component_elements(repeatable = false)
+        read_component_element(repeatable).flatmap do |a|
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
             when @separators.segment_terminator,
@@ -163,7 +168,7 @@ module Stupidedi
               # so make it into a singleton list and don't consume the delimiter
               result(a.value.cons, a.remainder)
             when @separators.component_separator
-              b.remainder.read_component_elements.map do |c|
+              b.remainder.read_component_elements(repeatable).map do |c|
                 c.map{|es| a.value.cons(es) }
               end
             end
@@ -242,7 +247,7 @@ module Stupidedi
       end
 
       # @return [Either<Result<SimpleElementToken, TokenReader>>]
-      def read_simple_element
+      def read_simple_element(repeatable = false)
         position = 0
         buffer   = ""
 
@@ -263,9 +268,13 @@ module Stupidedi
             token = simple(buffer, @input, @input.drop(position))
             return result(token, advance(position - 1))
           when @separators.repetition_separator
-            token = simple(buffer, @input, @input.drop(position))
-            return advance(position).read_simple_element.map do |r|
-              r.map{|e| e.repeat(token) }
+            if repeatable
+              token = simple(buffer, @input, @input.drop(position))
+              return advance(position).read_simple_element(repeatable).map do |r|
+                r.map{|e| e.repeat(token) }
+              end
+            else
+              # @todo: Read this as data but sound the alarms
             end
           when @separators.component_separator
             # @todo: Read this as data but sound the alarms
@@ -278,7 +287,7 @@ module Stupidedi
       end
 
       # @return [Either<Result<ComponentElementTok, TokenReader>>]
-      def read_component_element
+      def read_component_element(repeatable = false)
         position = 0
         buffer   = ""
 
@@ -290,10 +299,21 @@ module Stupidedi
             next
           end
 
-          if is_delimiter?(character)
+          case character
+          when @separators.element_separator,
+               @separators.segment_terminator,
+               @separators.component_separator
             # Don't consume the delimiter
             token = component(buffer, @input, @input.drop(position))
             return result(token, advance(position - 1))
+          when @separators.repetition_separator
+            if repeatable
+              # Don't consume the delimiter
+              token = component(buffer, @input, @input.drop(position))
+              return result(token, advance(position - 1))
+            else
+              # @todo: Read this as data but sound the alarms
+            end
           end
 
           buffer << character
@@ -303,8 +323,8 @@ module Stupidedi
       end
 
       # @return [Either<Result<CompositeElementTok, TokenReader>>]
-      def read_composite_element
-        read_component_elements.flatmap do |a|
+      def read_composite_element(repeatable = false)
+        read_component_elements(repeatable).flatmap do |a|
           token = composite(a.value, @input, a.remainder.input)
 
           a.remainder.read_delimiter.flatmap do |b|
@@ -342,10 +362,7 @@ module Stupidedi
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-        # copy(:input => @input.drop(n))
-
-          @input = @input.drop(n)
-          self
+          copy(:input => @input.drop(n))
         end
       end
 

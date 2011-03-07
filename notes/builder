@@ -2,7 +2,7 @@
   Appending to Syntax Tree
     b = Stupidedi::Builder::Transmission.new
 
-    b = b.isa("00", b.blank,
+    b = b.ISA("00", b.blank,
               "01", "SECRET",
               "ZZ", "SUBMITTERS ID",
               "ZZ", "RECEIVERS ID",
@@ -10,14 +10,14 @@
               "U", "00401",
               "000000905", "1", "T", b.default)
 
-    b = b.gs("HC",
+    b = b.GS("HC",
              "SENDER CODE",
              "RECEIVER CODE",
              Date.current, Time.current,
              b.default,
              "X", "004010X098")
 
-    b = b.st("837", b.default).
+    b = b.ST("837", b.default).
           bht("0019", "00", "0123", Date.current, Time.current, "CH").
           nm1("41", "2", "CRAMMER, DOLE, PALMER, AND JOHANSON",
               b.blank, b.blank, b.blank, b.blank, "46", "W7933THU").
@@ -26,17 +26,25 @@
 
     ...
 
-    b.clm("A37YH556", 500, b.blank, b.blank,
+    b.CLM("A37YH556", 500, b.blank, b.blank,
           b.composite(11, b.blank, 1),
           "Y", "A", "Y", "Y", "C")
 
+    # Unlike the TokenReader, Ruby evaluates the elements before evaluating
+    # the segment. That means we can't really validate the correctness of
+    # each element as the value is constructed -- we have to do it in the
+    # method that builds segments.
+
     ...
 
-    b.iea(b.default, b.default)
+    b.IEA(b.default, b.default)
 
   Shorthand
-    b.segment
-    b.element
+    # These methods could be implemented to capture the caller's stack trace,
+    # but we probably don't need very fine granularity. Knowing the location
+    # that generated the segment would suffice, and any element-level errors
+    # can be noted with the element descriptor: CLM05-02
+
     b.composite
     b.repeated
     b.blank

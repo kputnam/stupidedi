@@ -24,6 +24,14 @@ module Stupidedi
       def repeat(element)
         RepeatedElementTok.new([element, self])
       end
+
+      def repeated?
+        false
+      end
+
+      def blank?
+        @value.blank?
+      end
     end
 
     class << CompositeElementTok
