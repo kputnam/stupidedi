@@ -10,10 +10,12 @@ module Stupidedi
           s = SegmentDefs
 
           HC837 = e::TransactionSetDef.build("HC", "837",
+
             d::TableDef.build("Table 1 - Header",
               s:: ST.use( 50, r::Mandatory, d::RepeatCount.bounded(1)),
               s::BHT.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::REF.use(150, r::Optional,  d::RepeatCount.bounded(3)),
+
               d::LoopDef.build("1000", d::RepeatCount.bounded(10),
                 s::NM1.use(200, r::Optional,  d::RepeatCount.bounded(1)),
                 s:: N2.use(250, r::Optional,  d::RepeatCount.bounded(2)),
@@ -21,6 +23,7 @@ module Stupidedi
                 s:: N4.use(350, r::Optional,  d::RepeatCount.bounded(1)),
                 s::REF.use(400, r::Optional,  d::RepeatCount.bounded(2)),
                 s::PER.use(450, r::Optional,  d::RepeatCount.bounded(2)))),
+
             d::TableDef.build("Table 2 - Detail",
               d::LoopDef.build("2000", d::RepeatCount.unbounded,
                 s:: HL.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
@@ -29,6 +32,7 @@ module Stupidedi
                 s::PAT.use( 70, r::Optional,  d::RepeatCount.bounded(1)),
                 s::DTP.use( 90, r::Optional,  d::RepeatCount.bounded(5)),
                 s::CUR.use(100, r::Optional,  d::RepeatCount.bounded(1)),
+
                 d::LoopDef.build("2010", d::RepeatCount.bounded(10),
                   s::NM1.use(150, r::Optional,  d::RepeatCount.bounded(1)),
                   s:: N2.use(200, r::Optional,  d::RepeatCount.bounded(2)),
@@ -37,6 +41,7 @@ module Stupidedi
                   s::DMG.use(320, r::Optional,  d::RepeatCount.bounded(1)),
                   s::REF.use(350, r::Optional,  d::RepeatCount.bounded(20)),
                   s::PER.use(400, r::Optional,  d::RepeatCount.bounded(2))),
+
                 d::LoopDef.build("2300", d::RepeatCount.bounded(100),
                   s::CLM.use(1300, r::Optional,  d::RepeatCount.bounded(1)),
                   s::DTP.use(1350, r::Optional,  d::RepeatCount.bounded(150)),
@@ -62,9 +67,11 @@ module Stupidedi
                   s:: HI.use(2310, r::Optional,  d::RepeatCount.bounded(25)),
                   s::QTY.use(2400, r::Optional,  d::RepeatCount.bounded(10)),
                   s::HCP.use(2410, r::Optional,  d::RepeatCount.bounded(1)),
+
                 # d::LoopDef.build("2305", d::RepeatCount.bounded(6),
                 #   s::CR7.use(2420, r::Optional,  d::RepeatCount.bounded(1)),
                 #   s::HSD.use(2430, r::Optional,  d::RepeatCount.bounded(12))),
+
                   d::LoopDef.build("2310", d::RepeatCount.bounded(9),
                     s::NM1.use(2500, r::Optional,  d::RepeatCount.bounded(1)),
                     s::PRV.use(2550, r::Optional,  d::RepeatCount.bounded(1)),
@@ -73,6 +80,7 @@ module Stupidedi
                     s:: N4.use(2700, r::Optional,  d::RepeatCount.bounded(1)),
                     s::REF.use(2710, r::Optional,  d::RepeatCount.bounded(20)),
                     s::PER.use(2750, r::Optional,  d::RepeatCount.bounded(2))),
+
                   d::LoopDef.build("2320", d::RepeatCount.bounded(10),
                     s::SBR.use(2900, r::Optional,  d::RepeatCount.bounded(1)),
                     s::CAS.use(2950, r::Optional,  d::RepeatCount.bounded(1)),
@@ -81,6 +89,7 @@ module Stupidedi
                     s:: OI.use(3100, r::Optional,  d::RepeatCount.bounded(1)),
                     s::MIA.use(3150, r::Optional,  d::RepeatCount.bounded(1)),
                     s::MOA.use(3200, r::Optional,  d::RepeatCount.bounded(1)),
+
                     d::LoopDef.build("2330", d::RepeatCount.bounded(10),
                       s::NM1.use(3250, r::Optional,  d::RepeatCount.bounded(1)),
                       s:: N2.use(3300, r::Optional,  d::RepeatCount.bounded(2)),
@@ -89,6 +98,7 @@ module Stupidedi
                       s::PER.use(3450, r::Optional,  d::RepeatCount.bounded(2)),
                       s::DTP.use(3500, r::Optional,  d::RepeatCount.bounded(9)),
                       s::REF.use(3550, r::Optional,  d::RepeatCount.unbounded))),
+
                   d::LoopDef.build("2400", d::RepeatCount.unbounded,
                     s:: LX.use(3650, r::Optional,  d::RepeatCount.bounded(1)),
                     s::SV1.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
@@ -119,10 +129,12 @@ module Stupidedi
                   # s::IMM.use(4900, r::Optional,  d::RepeatCount.unbounded),
                   # s::HSD.use(4910, r::Optional,  d::RepeatCount.bounded(1)),
                     s::HCP.use(4920, r::Optional,  d::RepeatCount.bounded(1)),
+
                     d::LoopDef.build("2410", d::RepeatCount.unbounded,
                       s::LIN.use(4930, r::Optional,  d::RepeatCount.bounded(1)),
                       s::CTP.use(4940, r::Optional,  d::RepeatCount.bounded(1)),
                       s::REF.use(4950, r::Optional,  d::RepeatCount.bounded(1))),
+
                     d::LoopDef.build("2420", d::RepeatCount.bounded(10),
                       s::NM1.use(5000, r::Optional,  d::RepeatCount.bounded(1)),
                       s::PRV.use(5050, r::Optional,  d::RepeatCount.bounded(1)),
@@ -131,14 +143,17 @@ module Stupidedi
                       s:: N4.use(5200, r::Optional,  d::RepeatCount.bounded(1)),
                       s::REF.use(5250, r::Optional,  d::RepeatCount.bounded(20)),
                       s::PER.use(5300, r::Optional,  d::RepeatCount.bounded(2))),
+
                     d::LoopDef.build("2430", d::RepeatCount.unbounded,
                       s::SVD.use(5400, r::Optional,  d::RepeatCount.bounded(1)),
                       s::CAS.use(5450, r::Optional,  d::RepeatCount.bounded(99)),
                       s::DTP.use(5500, r::Optional,  d::RepeatCount.bounded(9)),
                       s::AMT.use(5505, r::Optional,  d::RepeatCount.bounded(20))),
+
                     d::LoopDef.build("2440", d::RepeatCount.unbounded,
                       s:: LQ.use(5510, r::Optional,  d::RepeatCount.bounded(1)),
                       s::FRM.use(5520, r::Mandatory, d::RepeatCount.bounded(99)))))),
+
               s:: SE.use(5550, r::Mandatory, d::RepeatCount.bounded(1))))
 
         end
