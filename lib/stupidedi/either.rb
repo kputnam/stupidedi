@@ -103,7 +103,7 @@ module Stupidedi
       def pretty_print(q)
         q.text("Either.success")
         q.group(2, "(", ")") do
-          q.breakable
+          q.breakable ""
           q.pp @value
         end
       end
@@ -172,7 +172,7 @@ module Stupidedi
       def pretty_print(q)
         q.text("Either.failure")
         q.group(1, "(", ")") do
-          q.breakable
+          q.breakable ""
           q.pp @explanation
         end
       end
