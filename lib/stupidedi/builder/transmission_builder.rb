@@ -26,45 +26,28 @@ module Stupidedi
       end
 
       # @return [InterchangeBuilder, FailureState]
-      def segment(name, elements)
-        case name
+      def successors(segment_tok)
+        case segment_tok.id
         when :ISA
           # ISA12 Interchange Control Version Number
-          tag, version = elements.at(11)
-
-          unless tag == :simple
-            raise "@todo: expected simple element but got #{elements.at(11).inspect}"
-          end
+          version = segment_tok.element_toks.at(11).value
 
           envelope_def = @config.interchange.lookup(version)
 
           unless envelope_def
-            return failure("Unrecognized interchange version #{version.inspect}")
+            return failure("Unrecognized version in ISA12 #{version.inspect}")
           end
 
           # Construct an ISA segment
           segment_use = envelope_def.header_segment_uses.head
-          segment_val = mksegment(segment_use, elements)
+          segment_val = mksegment(segment_use, segment_tok)
 
           # Construct an InterchangeVal containing the ISA segment
           interchange_val = envelope_def.value(segment_val)
 
           step(InterchangeBuilder.start(interchange_val, self))
         else
-          failure("Unexpected segment #{name}")
-        end
-      end
-
-      def read(input)
-        Reader::StreamReader.new(input).read_isa_segment.map do |result|
-          # One of the 16 elements has the interchange version, which
-          # will indicate extra information regarding how to tokenize
-          # the input, like component separator and repetition separators.
-          result.value      #=> [:segment, :ISA, [:simple, "00"], [..], ..]
-
-          # This TokenReader has the very minimum parser context information
-          # which includes element delimiter and segment terminator.
-          result.remainder  #=> TokenReader
+          failure("Unexpected segment #{segment_tok.inspect}")
         end
       end
 

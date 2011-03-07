@@ -28,13 +28,13 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(name, elements, upward = true, downward = nil)
+      def segment(segment_tok, upward = true, downward = nil)
         states = @value.definition.table_defs.inject([]) do |list, t|
           unless t.eql?(downward)
             t.entry_segment_uses.each do |u|
-              if @position <= t.position and match?(u, name, elements)
+              if @position <= t.position and match?(u, segment_tok)
                 table_builder = TableBuilder.start(t, copy(:position => t.position))
-                list.concat(table_builder.segment(name, elements, false))
+                list.concat(table_builder.segment(segment_tok, false))
               end
             end
           end
@@ -43,12 +43,12 @@ module Stupidedi
         end
 
         if upward
-          uncles = @predecessor.merge(@value).segment(name, elements)
+          uncles = @predecessor.merge(@value).segment(segment_tok)
           states.concat(uncles.reject(&:stuck?))
         end
 
         if states.empty?
-          failure("Unexpected segment #{name}")
+          failure("Unexpected segment #{segment_tok.inspect}")
         else
           branches(states)
         end

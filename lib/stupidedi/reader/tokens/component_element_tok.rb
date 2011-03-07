@@ -24,6 +24,10 @@ module Stupidedi
       def blank?
         @value.blank?
       end
+
+      def simple?
+        true
+      end
     end
 
     class << ComponentElementTok

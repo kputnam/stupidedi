@@ -25,14 +25,14 @@ module Stupidedi
       end
 
       # @return [StateMachine]
-      def segment(name, elements)
+      def segment(segment_tok)
         successors =
           case @states.length
           when 0 then []
-          when 1 then @states.head.segment(name, elements)
+          when 1 then @states.head.segment(segment_tok)
           else
             @states.inject([]) do |list, s|
-              list.concat(s.segment(name, elements))
+              list.concat(s.segment(segment_tok))
             end
           end
 
@@ -43,11 +43,6 @@ module Stupidedi
 
       def stuck?
         @states.empty?
-      end
-
-      # @return [StateMachine]
-      def read(input)
-        #
       end
 
       # @return [Values::AbstractVal]

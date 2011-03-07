@@ -43,8 +43,8 @@ module Stupidedi
         FailureState.new(explanation, self).cons
       end
 
-      def match?(segment_use, name, element_toks)
-        unless name == segment_use.definition.id
+      def match?(segment_use, segment_tok)
+        unless segment_tok.id == segment_use.definition.id
           return false
         end
 
@@ -54,6 +54,7 @@ module Stupidedi
         # TokenReader will simply bulldoze over those delimiters, and whatever 
         # other API we will implement to generate tokens from Ruby will also
         # need to catch these errors.
+        element_toks = segment_tok.element_toks
 
         segment_use.definition.element_uses.zip(element_toks).all? do |u, e|
           # This is some rough logic, but basically we are using every
@@ -90,9 +91,10 @@ module Stupidedi
       end
 
       # @return [SegmentVal]
-      def mksegment(segment_use, element_toks, parent = nil)
+      def mksegment(segment_use, segment_tok, parent = nil)
         segment_def  = segment_use.definition
         element_uses = segment_def.element_uses
+        element_toks = segment_tok.element_toks
 
         # @todo: Check for too many values
         element_vals = element_uses.zip(element_toks).map do |element_use, e|

@@ -3,8 +3,8 @@ module Stupidedi
     
     class CompositeElementTok
 
-      # @return [String]
-      attr_reader :value
+      # @return [Array<ComponentElementTok>]
+      attr_reader :component_toks
 
       # @todo
       attr_reader :start
@@ -12,17 +12,17 @@ module Stupidedi
       # @todo
       attr_reader :remainder
 
-      def initialize(value, start, remainder)
-        @value, @start, @remainder =
-          value, start, remainder
+      def initialize(component_toks, start, remainder)
+        @component_toks, @start, @remainder =
+          component_toks, start, remainder
       end
 
       def pretty_print(q)
-        q.pp(:composite.cons(@value))
+        q.pp(:composite.cons(@component_toks))
       end
 
-      def repeat(element)
-        RepeatedElementTok.new([element, self])
+      def repeat(composite_tok)
+        RepeatedElementTok.new([composite_tok, self])
       end
 
       def repeated?
@@ -30,13 +30,17 @@ module Stupidedi
       end
 
       def blank?
-        @value.blank?
+        @component_toks.blank?
+      end
+
+      def simple?
+        false
       end
     end
 
     class << CompositeElementTok
-      def build(value, start, remainder)
-        new(value, start, remainder)
+      def build(component_toks, start, remainder)
+        new(component_toks, start, remainder)
       end
     end
 

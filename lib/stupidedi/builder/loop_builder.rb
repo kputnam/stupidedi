@@ -28,13 +28,13 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(name, elements, upward = true)
+      def segment(segment_tok, upward = true)
         d = @value.definition
 
         # @todo: Explain use of #tail
         states = d.header_segment_uses.tail.inject([]) do |list, u|
-          if @position <= u.position and match?(u, name, elements)
-            value = @value.append_header_segment(mksegment(u, elements))
+          if @position <= u.position and match?(u, segment_tok)
+            value = @value.append_header_segment(mksegment(u, segment_tok))
             list.push(copy(:position => u.position, :value => value))
           else
             list
@@ -45,27 +45,27 @@ module Stupidedi
         # we check the segment constraints here, we can be sure it doesn't fail.
         d.loop_defs.each do |l|
           l.entry_segment_uses.each do |u|
-            if @position <= u.position and match?(u, name, elements)
-              states.push(LoopBuilder.start(mksegment(u, elements),
+            if @position <= u.position and match?(u, segment_tok)
+              states.push(LoopBuilder.start(mksegment(u, segment_tok),
                                             copy(:position => u.position)))
             end
           end
         end
 
         d.trailer_segment_uses.each do |u|
-          if @position <= u.position and match?(u, name, elements)
-            value = @value.append_trailer_segment(mksegment(u, elements))
+          if @position <= u.position and match?(u, segment_tok)
+            value = @value.append_trailer_segment(mksegment(u, segment_tok))
             states.push(copy(:position => u.position, :value => value))
           end
         end
 
         if upward
-          uncles = @predecessor.merge(@value).segment(name, elements)
+          uncles = @predecessor.merge(@value).segment(segment_tok)
           states.concat(uncles.reject(&:stuck?))
         end
 
         if states.empty?
-          failure("Unexpected segment #{name}")
+          failure("Unexpected segment #{segment_tok.inspect}")
         else
           branches(states)
         end

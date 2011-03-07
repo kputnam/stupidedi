@@ -47,6 +47,11 @@ module Stupidedi
         definition.empty(parent, self)
       end
 
+      # @return [SegmentVal]
+      def value(element_vals, parent = nil)
+        definition.value(element_vals, parent, self)
+      end
+
       # @private
       def pretty_print(q)
         q.text "SegmentUse"

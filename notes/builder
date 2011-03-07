@@ -79,7 +79,29 @@
     o.segments
 
   Reader Interface
+    # This operation might only make sense as a way to create a new interchange,
+    # not so much as a way to concatenate a blob of X12 into the middle of some
+    # half-generated document. The main concern is if {input} doesn't start with
+    # an ISA segment, we need to tell the tokenizer about separators.
     b.read(input)
+
+# Right now, StreamReader can read ISA and construct a TokenReader, but it
+# does/should not need to know about InterchangeConfig etc to create the
+# dictionary that TokenReader needs. The dictionary would include all of the
+# ISA, ISB, ISE, IEA, TA1 etc SegmentDefs, plus the GS segment's definition.
+#
+# When Builder gets an ISA SegmentTok, it should construct the correct version
+# of the InterchangeVal and ask it for the segment dictionary. Then it should
+# copy/update the TokenReader with the interchange version-specific dictionary
+#
+# When Builder gets a GS SegmentTok, it should construct the correct version of
+# FunctionalGroupVal and ask it for the segment dictionary, which it will merge
+# with the InterchangeVal's dictionary. The current TokenReader will be updated
+# with the merged dictionary.
+#
+# When Builder closes a FunctionalGroupVal, eg after reading an interchange
+# segment, it should once again update TokenReader with the *unmerged* segment
+# dictionary, in preperation for the next functional group.
 
   Writer Interface
     o.used_chars #=> "ABC...abc...123"

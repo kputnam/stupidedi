@@ -6,8 +6,8 @@ module Stupidedi
       # @return [Symbol]
       attr_reader :id
 
-      # @return [Array<CompositeElementVal, SimpleElementVal>]
-      attr_reader :elements
+      # @return [Array<CompositeElementTok, SimpleElementTok>]
+      attr_reader :element_toks
 
       # @todo
       attr_reader :start
@@ -15,23 +15,23 @@ module Stupidedi
       # @todo
       attr_reader :remainder
 
-      def initialize(id, elements, start, remainder)
-        @id, @elements, @start, @remainder =
-          id, elements, start, remainder
+      def initialize(id, element_toks, start, remainder)
+        @id, @element_toks, @start, @remainder =
+          id, element_toks, start, remainder
       end
 
       def pretty_print(q)
-        q.pp(:segment.cons(@id.cons(@elements)))
+        q.pp(:segment.cons(@id.cons(@element_toks)))
       end
 
       def blank?
-        @elements.blank?
+        @element_toks.blank?
       end
     end
 
     class << SegmentTok
-      def build(id, elements, start, remainder)
-        new(id, elements, start, remainder)
+      def build(id, element_toks, start, remainder)
+        new(id, element_toks, start, remainder)
       end
     end
 

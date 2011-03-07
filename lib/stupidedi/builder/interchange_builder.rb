@@ -28,26 +28,19 @@ module Stupidedi
       end
 
       # @return [Array<AbstractState>]
-      def segment(name, elements)
-        case name
+      def segment(segment_tok)
+        case segment_tok.id
         when :GS
           # @todo: Explain why GS is a special case
 
           # GS08 Version / Release / Industry Identifier Code
-          tag, version = elements.at(7)
-
-          if tag != :simple
-            raise "@todo: expected simple element but got #{elements.at(7)}"
-          end
-
-          version = version.to_s.slice(0, 6)
-
+          version      = segment_tok.element_toks.at(7).value.slice(0, 6)
           envelope_def = config.functional_group.lookup(version)
 
           if envelope_def
             # Construct a GS segment
             segment_use = envelope_def.header_segment_uses.head
-            segment_val = mksegment(segment_use, elements, @value)
+            segment_val = mksegment(segment_use, segment_tok, @value)
 
             # Construct a FunctionalGroupVal containing the GS segment
             functional_group_val = envelope_def.value(segment_val.cons, [], [], @value)
@@ -61,8 +54,8 @@ module Stupidedi
 
           # @todo: Explain use of #tail
           states = d.header_segment_uses.tail.inject([]) do |list, u|
-            if @position <= u.position and match?(u, name, elements)
-              value = @value.append_header_segment(mksegment(u, elements))
+            if @position <= u.position and match?(u, segment_tok)
+              value = @value.append_header_segment(mksegment(u, segment_tok))
               list.push(copy(:position => u.position, :value => value))
             else
               list
@@ -70,8 +63,8 @@ module Stupidedi
           end
 
           states = d.trailer_segment_uses.inject(states) do |list, u|
-            if @position <= u.position and match?(u, name, elements)
-              value = @value.append_trailer_segment(mksegment(u, elements))
+            if @position <= u.position and match?(u, segment_tok)
+              value = @value.append_trailer_segment(mksegment(u, segment_tok))
               list.push(copy(:position => u.position, :value => value))
             else
               list
@@ -81,11 +74,11 @@ module Stupidedi
           # Terminate this functional group and try parsing segment as a sibling
           # of @value's parent. Supress any stuck "uncle" states because they
           # won't say anything more than the single stuck state we create below.
-          uncles = @predecessor.merge(@value).segment(name, elements)
+          uncles = @predecessor.merge(@value).segment(segment_tok)
           states.concat(uncles.reject(&:stuck?))
 
           if states.empty?
-            failure("Unexpected segment #{name}")
+            failure("Unexpected segment #{segment_tok.inspect}")
           else
             branches(states)
           end
