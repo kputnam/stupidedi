@@ -41,6 +41,12 @@ module Stupidedi
         self.class.new(failures, states)
       end
 
+      def read(reader)
+        reader.read_segment.map do |result|
+          pp result
+        end
+      end
+
       def stuck?
         @states.empty?
       end

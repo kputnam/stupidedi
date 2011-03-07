@@ -24,6 +24,7 @@ module Stupidedi
 
       # @return [TransactionSetBuilder]
       def merge(table_val)
+        # @todo: Optimize for non-ambiguous transitions
         copy(:value => @value.append_table(table_val))
       end
 
@@ -33,6 +34,7 @@ module Stupidedi
           unless t.eql?(downward)
             t.entry_segment_uses.each do |u|
               if @position <= t.position and match?(u, segment_tok)
+                # @todo: Optimize for non-ambiguous transitions
                 table_builder = TableBuilder.start(t, copy(:position => t.position))
                 list.concat(table_builder.segment(segment_tok, false))
               end
@@ -43,6 +45,7 @@ module Stupidedi
         end
 
         if upward
+          # @todo: Optimize for non-ambiguous transitions
           uncles = @predecessor.merge(@value).segment(segment_tok)
           states.concat(uncles.reject(&:stuck?))
         end

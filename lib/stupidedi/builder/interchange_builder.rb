@@ -55,6 +55,7 @@ module Stupidedi
           # @todo: Explain use of #tail
           states = d.header_segment_uses.tail.inject([]) do |list, u|
             if @position <= u.position and match?(u, segment_tok)
+              # @todo: Optimize for deterministic transitions
               value = @value.append_header_segment(mksegment(u, segment_tok))
               list.push(copy(:position => u.position, :value => value))
             else
@@ -64,6 +65,7 @@ module Stupidedi
 
           states = d.trailer_segment_uses.inject(states) do |list, u|
             if @position <= u.position and match?(u, segment_tok)
+              # @todo: Optimize for deterministic transitions
               value = @value.append_trailer_segment(mksegment(u, segment_tok))
               list.push(copy(:position => u.position, :value => value))
             else
@@ -74,6 +76,7 @@ module Stupidedi
           # Terminate this functional group and try parsing segment as a sibling
           # of @value's parent. Supress any stuck "uncle" states because they
           # won't say anything more than the single stuck state we create below.
+          # @todo: Optimize for deterministic transitions
           uncles = @predecessor.merge(@value).segment(segment_tok)
           states.concat(uncles.reject(&:stuck?))
 

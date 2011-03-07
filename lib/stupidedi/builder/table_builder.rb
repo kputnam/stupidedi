@@ -24,6 +24,7 @@ module Stupidedi
 
       # @return [TableBuilder]
       def merge(loop_val)
+        # @todo: Optimize for non-ambiguous transitions
         copy(:value => @value.append_loop(loop_val))
       end
 
@@ -33,6 +34,7 @@ module Stupidedi
 
         states = d.header_segment_uses.inject([]) do |list, u|
           if @position <= u.position and match?(u, segment_tok)
+            # @todo: Optimize for non-ambiguous transitions
             value = @value.append_header_segment(mksegment(u, segment_tok))
             list.push(copy(:position => u.position, :value => value))
           else
@@ -43,6 +45,7 @@ module Stupidedi
         d.loop_defs.each do |l|
           l.entry_segment_uses.each do |u|
             if @position <= u.position and match?(u, segment_tok)
+              # @todo: Optimize for non-ambiguous transitions
               states.push(LoopBuilder.start(mksegment(u, segment_tok),
                                             copy(:position => u.position)))
             end
@@ -51,12 +54,14 @@ module Stupidedi
 
         d.trailer_segment_uses do |u|
           if @position <= u.position and match?(u, segment_tok)
+            # @todo: Optimize for non-ambiguous transitions
             value = @value.append_trailer_segment(mksegment(u, segment_tok))
             states.push(copy(:position => u.position, :value => value))
           end
         end
 
         if upward
+          # @todo: Optimize for non-ambiguous transitions
           uncles = @predecessor.merge(@value).segment(segment_tok, true, d)
           states.concat(uncles.reject(&:stuck?))
         end
