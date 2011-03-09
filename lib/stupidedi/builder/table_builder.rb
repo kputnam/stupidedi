@@ -45,11 +45,10 @@ module Stupidedi
         end
 
         d.loop_defs.each do |l|
-          l.entry_segment_uses.each do |u|
-            if @position <= u.position and match?(u, segment_tok)
-              states.push(LoopBuilder.start(mksegment(u, segment_tok),
-                                            copy(:position => u.position)))
-            end
+          u = l.entry_segment_use.each
+          if @position <= u.position and match?(u, segment_tok)
+            states.push(LoopBuilder.start(mksegment(u, segment_tok),
+                                          copy(:position => u.position)))
           end
         end
 

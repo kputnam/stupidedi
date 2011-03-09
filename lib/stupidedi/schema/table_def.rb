@@ -51,15 +51,31 @@ module Stupidedi
 
       # @return [Array<SegmentUse>]
       def entry_segment_uses
+        min  = 1.0 / 0.0
         uses = []
-
-        unless @header_segment_uses.empty?
-          @header_segment_uses.head.cons
-        else
-          @loop_defs.inject([]) do |list, l|
-            list.concat(l.entry_segment_uses)
+        
+        @header_segment_uses.each do |u|
+          if u.position < min
+            min   = u.position
+            uses << u
           end
         end
+
+        @loop_defs.each do |l|
+          if l.entry_segment_use.position < min
+            min   = l.entry_segment_use.position
+            uses << l.entry_segment_use
+          end
+        end
+
+        @trailer_segment_uses.each do |u|
+          if u.position < min
+            min   = u.position
+            uses << u
+          end
+        end
+
+        return uses
       end
 
       # @return [Values::TableVal]
@@ -103,17 +119,26 @@ module Stupidedi
     end
 
     class << TableDef
+
       # @return [TableDef]
-      def repeatable(position, id, *children)
+      def header(id, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, position, true, header, loop_defs, trailer, nil)
+        new(id, 1, false, header, loop_defs, trailer, nil)
       end
 
-      def single(position, id, *children)
+      # @return [TableDef]
+      def detail(id, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, position, false, header, loop_defs, trailer, nil)
+        new(id, 2, true, header, loop_defs, trailer, nil)
+      end
+
+      # @return [TableDef]
+      def summary(id, *children)
+        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
+        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
+        new(id, 3, false, header, loop_defs, trailer, nil)
       end
     end
 

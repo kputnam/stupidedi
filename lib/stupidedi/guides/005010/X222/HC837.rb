@@ -1814,7 +1814,7 @@ module Stupidedi
                     b::Element(e::Situational, "Question Response")))))
 
         HC837 = b.build(t::HC837,
-          d::TableDef.single(1, "Table 1 - Header",
+          d::TableDef.header("Table 1 - Header",
             b::Segment(50, s::ST, "Transaction Set Header",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("837")),
@@ -1874,7 +1874,7 @@ module Stupidedi
                 b::Element(e::NotUsed,     "Entity Identifier Code"),
                 b::Element(e::NotUsed,     "Name Last or Organization Name")))),
 
-          d::TableDef.repeatable(2, "Table 2 - Billing Provider Detail",
+          d::TableDef.detail("Table 2 - Billing Provider Detail",
             d::LoopDef.build("2000A BILLING PROVIDER HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Billing Provider Hierarchical Level",
@@ -2040,7 +2040,7 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Description"),
                   b::Element(e::NotUsed,     "REFERENCE IDENTIFIER"))))),
 
-          d::TableDef.repeatable(2, "Table 2 - Subscriber Detail",
+          d::TableDef.detail("Table 2 - Subscriber Detail",
             d::LoopDef.build("2000B SUBSCRIBER HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Subscriber Hierarchical Level",
@@ -2182,7 +2182,7 @@ module Stupidedi
 
               loop2300)),
 
-          d::TableDef.repeatable(2, "Table 2 - Patient Detail",
+          d::TableDef.detail("Table 2 - Patient Detail",
             d::LoopDef.build("2000 PATIENT HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Patient Hierachical Level",
@@ -2276,7 +2276,7 @@ module Stupidedi
           #
           # This structure doesn't match the specification, but it does ensure
           # that the first occurrence of SE terminates the transaction set.
-          d::TableDef.single(5, "Table 3 - Summary",
+          d::TableDef.summary("Table 3 - Summary",
             b::Segment(5550, s::SE, "Transaction Set Trailer",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Included Segments"),

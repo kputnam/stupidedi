@@ -62,9 +62,9 @@ module Stupidedi
         @header_segment_uses.head.definition.id == :HL
       end
 
-      # @return [Array<SegmentUse>]
-      def entry_segment_uses
-        @header_segment_uses.head.cons
+      # @return [SegmentUse]
+      def entry_segment_use
+        @header_segment_uses.head
       end
 
       # @return [LoopVal]

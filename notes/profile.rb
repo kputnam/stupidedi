@@ -8,24 +8,15 @@ config.transaction_set.register(Stupidedi::Dictionaries::FunctionalGroups::Fifty
 config.transaction_set.register(Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835, "005010")
 config.transaction_set.register(Stupidedi::Guides::FiftyTen::X222::HC837, "005010X222")
 
-s = Stupidedi::Builder.new(config)
-doc = Stupidedi::Reader::StreamReader.new(Stupidedi::Reader::Input.build(File.open("837s.txt")))
-tok = nil
-pp s.read!(doc)
+input     = Stupidedi::Reader::Input.build(File.open(ARGV.first))
+tokenizer = Stupidedi::Reader::StreamReader.new(input)
+parser    = Stupidedi::Builder.new(config)
+
+pp parser.read!(tokenizer)
+pp parser
 
 #result = RubyProf.profile do
 #  tok = s.read!(doc)
 #end
 #
 #RubyProf::GraphPrinter.new(result).print($stdout)
-
-#pp s.read!(doc)
-
-#if s.stuck?
-#  pp s.failures#last.predecessor.predecessor.predecessor.predecessor
-#else
-#  pp s
-#end
-
-#pp tok
-

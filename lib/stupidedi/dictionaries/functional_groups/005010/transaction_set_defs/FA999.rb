@@ -11,7 +11,7 @@ module Stupidedi
 
           FA999 = e::TransactionSetDef.build("FA", "999",
 
-            d::TableDef.build("Table 1 - Header",
+            d::TableDef.header("Table 1 - Header",
               s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::AK1.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
 
