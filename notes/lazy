@@ -1,0 +1,11 @@
+To minimize startup costs, lazy loading can be used (autoload)
+* Need to ensure high code coverage to ensure syntax errors and other parse-time
+  bugs don't hide out in lazy-loaded files which aren't loaded by the test suite
+
+* SegmentDict.constants lazily-loads SegmentDefs
+
+* InterchangeConfig, FunctionalGroupConfig, TransactionSetConfig force loading
+  the definitions, so these should be change to be compatible with lazy-loading
+
+* Both of these classes perform similar functionality and should be reviewed to
+  examine their similarities and make them more consistent where possible
