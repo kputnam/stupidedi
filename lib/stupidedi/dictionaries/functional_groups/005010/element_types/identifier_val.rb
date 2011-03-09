@@ -18,7 +18,7 @@ module Stupidedi
 
               # @private
               def inspect
-                def_id = definition.try{|d| "[#{d.id}]" }
+                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "ID.empty#{def_id}"
               end
 
@@ -57,7 +57,7 @@ module Stupidedi
 
               # @private
               def inspect
-                def_id = definition.try{|d| "[#{d.id}]" }
+                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "ID.value#{def_id}(#{@value})"
               end
 

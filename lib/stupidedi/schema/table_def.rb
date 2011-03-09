@@ -17,12 +17,12 @@ module Stupidedi
       # @return [TransactionSetDef]
       attr_reader :parent
 
-      # @todo: Is this temporary?
+      # @return [Integer]
       attr_reader :position
 
-      def initialize(id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent)
-        @id, @position, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
-          id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent
+      def initialize(id, position, repeatable, header_segment_uses, loop_defs, trailer_segment_uses, parent)
+        @id, @position, @repeatable, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
+          id, position, repeatable, header_segment_uses, loop_defs, trailer_segment_uses, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -38,10 +38,15 @@ module Stupidedi
         self.class.new \
           changes.fetch(:id, @id),
           changes.fetch(:position, @position),
+          changes.fetch(:repeatable, @repeatable),
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:loop_defs, @loop_defs),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
           changes.fetch(:parent, @parent)
+      end
+
+      def repeatable?
+        @repeatable
       end
 
       # @return [Array<SegmentUse>]
@@ -49,18 +54,12 @@ module Stupidedi
         uses = []
 
         unless @header_segment_uses.empty?
-          uses << @header_segment_uses.head
+          @header_segment_uses.head.cons
         else
-          unless @trailer_segment_uses.empty?
-            uses << @trailer_segment_uses.head
+          @loop_defs.inject([]) do |list, l|
+            list.concat(l.entry_segment_uses)
           end
         end
-
-        unless @loop_defs.empty?
-          uses.concat(@loop_defs.head.entry_segment_uses)
-        end
-
-        uses
       end
 
       # @return [Values::TableVal]
@@ -105,10 +104,16 @@ module Stupidedi
 
     class << TableDef
       # @return [TableDef]
-      def build(id, *children)
+      def repeatable(position, id, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, nil, header, loop_defs, trailer, nil)
+        new(id, position, true, header, loop_defs, trailer, nil)
+      end
+
+      def single(position, id, *children)
+        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
+        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
+        new(id, position, false, header, loop_defs, trailer, nil)
       end
     end
 

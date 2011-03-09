@@ -39,8 +39,8 @@ module Stupidedi
       end
 
       # @return [Array<FailureState>]
-      def failure(explanation)
-        FailureState.new(explanation, self).cons
+      def failure(explanation, segment_tok)
+        FailureState.new(explanation, segment_tok, self).cons
       end
 
       def match?(segment_use, segment_tok)

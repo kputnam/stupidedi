@@ -17,7 +17,7 @@ module Stupidedi
 
               # @private
               def inspect
-                id = definition.try{|d| "[#{d.id}]" }
+                id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "DT.empty#{id}"
               end
 
@@ -94,7 +94,7 @@ module Stupidedi
 
               # @private
               def inspect
-                id = definition.try{|d| "[#{d.id}]" }
+                id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "DT.value#{id}(#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
               end
 
@@ -176,7 +176,7 @@ module Stupidedi
 
               # @private
               def inspect
-                id = definition.try{|d| "[#{d.id}]" }
+                id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "DT.value#{id}(XX#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
               end
 

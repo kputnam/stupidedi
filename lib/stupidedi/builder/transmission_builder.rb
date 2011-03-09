@@ -25,6 +25,10 @@ module Stupidedi
         copy(:value => interchange_val.snoc(@value))
       end
 
+      def terminate
+        @value.each{|x| x.reparent! }
+      end
+
       # @return [InterchangeBuilder, FailureState]
       def successors(segment_tok)
         case segment_tok.id
@@ -35,7 +39,7 @@ module Stupidedi
           envelope_def = @config.interchange.lookup(version)
 
           unless envelope_def
-            return failure("Unrecognized version in ISA12 #{version.inspect}")
+            return failure("Unrecognized version in ISA12 #{version}", segment_tok)
           end
 
           # Construct an ISA segment
@@ -47,7 +51,7 @@ module Stupidedi
 
           step(InterchangeBuilder.start(interchange_val, self))
         else
-          failure("Unexpected segment #{segment_tok.inspect}")
+          failure("Unexpected segment", segment_tok)
         end
       end
 

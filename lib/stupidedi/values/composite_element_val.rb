@@ -7,7 +7,7 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<SimpleElementVal>]
-      attr_reader :component_element_vals
+      attr_reader :component_vals
 
       # @return [SegmentVal]
       attr_reader :parent
@@ -15,14 +15,14 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :usage
 
-      def initialize(definition, component_element_vals, parent, usage)
-        @definition, @component_element_vals, @parent, @usage =
-          definition, component_element_vals, parent, usage
+      def initialize(definition, component_vals, parent, usage)
+        @definition, @component_vals, @parent, @usage =
+          definition, component_vals, parent, usage
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @component_element_vals = @component_element_vals.map{|x| x.copy(:parent => self) }
+        # @component_vals = component_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -30,20 +30,26 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:component_element_vals, @component_element_vals),
+          changes.fetch(:component_vals, @component_vals),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @parent)
       end
 
+      def reparent!(parent)
+        @parent = parent
+        @component_vals.each{|x| x.reparent!(self) }
+        return self
+      end
+
       def empty?
-        @component_element_vals.all?(&:empty?)
+        @component_vals.all?(&:empty?)
       end
 
       # @return [SimpleElementVal]
       def at(n)
         if @definition.component_element_uses.defined_at?(n)
-          if @component_element_vals.defined_at?(n)
-            @component_element_vals.at(n)
+          if @component_vals.defined_at?(n)
+            @component_vals.at(n)
           else
             @definition.component_element_uses.at(n).empty
           end
@@ -54,7 +60,7 @@ module Stupidedi
 
       # @return [CompositeElementVal]
       def append_component(component_val)
-        copy(:component_element_vals => component_val.snoc(@component_element_vals))
+        copy(:component_vals => component_val.snoc(@component_vals))
       end
 
       # @return [RepeatedElementVal]
@@ -64,7 +70,7 @@ module Stupidedi
 
       # @private
       def pretty_print(q)
-        id = @definition.try{|e| "[#{e.id}]" }
+        id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
         q.text("CompositeElementVal#{id}")
 
         if empty?
@@ -72,7 +78,7 @@ module Stupidedi
         else
           q.group(2, "(", ")") do
             q.breakable ""
-            @component_element_vals.each do |e|
+            @component_vals.each do |e|
               unless q.current_group.first?
                 q.text ", "
                 q.breakable
@@ -86,7 +92,7 @@ module Stupidedi
       # @private
       def ==(other)
         other.definition == @definition and
-        other.component_element_vals == @component_element_vals
+        other.component_vals == @component_vals
       end
     end
 

@@ -13,7 +13,8 @@ module Stupidedi
       attr_reader :usage
 
       def initialize(definition, parent, usage)
-        @definition, @parent, @usage = definition, parent, usage
+        @definition, @parent, @usage =
+          definition, parent, usage
       end
 
       # @return [SimpleElementVal]
@@ -22,6 +23,11 @@ module Stupidedi
           changes.fetch(:definition, @definition),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
+      end
+
+      def reparent!(parent)
+        @parent = parent
+        return self
       end
 
       # @return [RepeatedElementVal]

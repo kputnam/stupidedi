@@ -17,7 +17,7 @@ module Stupidedi
 
               # @private
               def inspect
-                def_id = definition.try{|d| "[#{d.id}]" }
+                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "TM.empty#{def_id}"
               end
 
@@ -76,7 +76,7 @@ module Stupidedi
 
               # @private
               def inspect
-                def_id = definition.try{|d| "[#{d.id}]" }
+                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 hh =   @hour.try{|h| '%02d' % h } || 'hh'
                 mm = @minute.try{|m| '%02d' % m } || 'mm'
                 ss = @second.try(:to_s) || 'ss'

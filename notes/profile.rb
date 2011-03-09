@@ -9,15 +9,23 @@ config.transaction_set.register(Stupidedi::Dictionaries::FunctionalGroups::Fifty
 config.transaction_set.register(Stupidedi::Guides::FiftyTen::X222::HC837, "005010X222")
 
 s = Stupidedi::Builder.new(config)
-doc = Stupidedi::Reader::StreamReader.new(Stupidedi::Reader::Input.build(File.open("837P.txt")))
+doc = Stupidedi::Reader::StreamReader.new(Stupidedi::Reader::Input.build(File.open("837s.txt")))
 tok = nil
+pp s.read!(doc)
 
-result = RubyProf.profile do
-  tok = s.read!(doc)
-end
+#result = RubyProf.profile do
+#  tok = s.read!(doc)
+#end
+#
+#RubyProf::GraphPrinter.new(result).print($stdout)
 
-#pp s
+#pp s.read!(doc)
+
+#if s.stuck?
+#  pp s.failures#last.predecessor.predecessor.predecessor.predecessor
+#else
+#  pp s
+#end
+
 #pp tok
-
-RubyProf::GraphPrinter.new(result).print($stdout)
 

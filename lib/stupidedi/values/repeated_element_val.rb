@@ -13,12 +13,13 @@ module Stupidedi
       attr_reader :parent
 
       def initialize(definition, element_vals, parent)
-        @definition, @element_vals, @parent = definition, element_vals, parent
+        @definition, @element_vals, @parent =
+          definition, element_vals, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @element_vals = @element_vals.map{|x| x.copy(:parent => self) }
+        # @element_vals = element_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -28,6 +29,12 @@ module Stupidedi
           changes.fetch(:definition, @definition),
           changes.fetch(:element_vals, @element_vals),
           changes.fetch(:parent, @parent)
+      end
+
+      def reparent!(parent)
+        @parent = parent
+        @element_vals.each{|x| x.reparent!(self) }
+        return self
       end
 
       def length

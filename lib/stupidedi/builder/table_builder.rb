@@ -24,8 +24,11 @@ module Stupidedi
 
       # @return [TableBuilder]
       def merge(loop_val)
-        # @todo: Optimize for non-ambiguous transitions
         copy(:value => @value.append_loop(loop_val))
+      end
+
+      def terminate
+        @predecessor.merge(@value).terminate
       end
 
       # @return [Array<AbstractState>]
@@ -34,8 +37,7 @@ module Stupidedi
 
         states = d.header_segment_uses.inject([]) do |list, u|
           if @position <= u.position and match?(u, segment_tok)
-            # @todo: Optimize for non-ambiguous transitions
-            value = @value.append_header_segment(mksegment(u, segment_tok))
+            value  = @value.append_header_segment(mksegment(u, segment_tok))
             list.push(copy(:position => u.position, :value => value))
           else
             list
@@ -45,7 +47,6 @@ module Stupidedi
         d.loop_defs.each do |l|
           l.entry_segment_uses.each do |u|
             if @position <= u.position and match?(u, segment_tok)
-              # @todo: Optimize for non-ambiguous transitions
               states.push(LoopBuilder.start(mksegment(u, segment_tok),
                                             copy(:position => u.position)))
             end
@@ -54,20 +55,25 @@ module Stupidedi
 
         d.trailer_segment_uses do |u|
           if @position <= u.position and match?(u, segment_tok)
-            # @todo: Optimize for non-ambiguous transitions
             value = @value.append_trailer_segment(mksegment(u, segment_tok))
             states.push(copy(:position => u.position, :value => value))
           end
         end
 
-        if upward
-          # @todo: Optimize for non-ambiguous transitions
-          uncles = @predecessor.merge(@value).successors(segment_tok, true, d)
+        # @todo: Highly unsatisfactory hack! When this table contains no header
+        # segments but starts with a loop, reading the loop start tag could mean
+        # the start of a new loop within the same table, or the start of a new
+        # loop within a new table (because "detail" tables can repeat).
+        #
+        # The ambiguity can never be resolved, so this is one way to force the
+        # loop repetitions to stay within a single table when possible.
+        if upward and states.empty?
+          uncles = @predecessor.merge(@value).successors(segment_tok, true)
           states.concat(uncles.reject(&:stuck?))
         end
 
         if states.empty?
-          failure("Unexpected segment #{segment_tok.inspect}")
+          failure("Unexpected segment",  segment_tok)
         else
           branches(states)
         end

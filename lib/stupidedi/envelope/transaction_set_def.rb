@@ -15,12 +15,7 @@ module Stupidedi
         @functional_group, @id, @table_defs =
           functional_group, id, table_defs
 
-        # @todo: This assigns an implied parsing order, but depending on the
-        # order in which tables can occur, either the user should assign these
-        # when calling TableDef.build or the parser should implicitly order the
-        # tables on its own. This is temporary
-        position    = 0
-        @table_defs = table_defs.map{|x| x.copy(:parent => self, :position => (position += 1)) }
+        @table_defs = table_defs.map{|x| x.copy(:parent => self) }
       end
 
       def copy(changes = {})

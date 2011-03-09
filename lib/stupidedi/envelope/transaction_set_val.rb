@@ -19,7 +19,7 @@ module Stupidedi
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @table_vals = table_vals.map{|x| x.copy(:parent => self) }
+        # @table_vals = table_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -29,6 +29,12 @@ module Stupidedi
           changes.fetch(:definition, @definition),
           changes.fetch(:table_vals, @table_vals),
           changes.fetch(:parent, @parent)
+      end
+
+      def reparent!(parent)
+        @parent = parent
+        @table_vals.each{|x| x.reparent!(self) }
+        return self
       end
 
       # @return [TransactionSetVal]

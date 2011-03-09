@@ -26,9 +26,9 @@ module Stupidedi
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @header_segment_vals  = @header_segment_vals.map{|x| x.copy(:parent => self) }
-          @trailer_segment_vals = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
-          @transaction_set_vals = @transaction_set_vals.map{|x| x.copy(:parent => self) }
+        # @header_segment_vals  = @header_segment_vals.map{|x| x.copy(:parent => self) }
+        # @trailer_segment_vals = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
+        # @transaction_set_vals = @transaction_set_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -42,15 +42,17 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def reparent!(parent)
+        @parent = parent
+        @header_segment_vals.each{|x| x.reparent!(self) }
+        @trailer_segment_vals.each{|x| x.reparent!(self) }
+        @transaction_set_vals.each{|x| x.reparent!(self) }
+        return self
+      end
+
       # @return [Array<SegmentVal>]
       def segment_vals
         @header_segment_vals + @trailer_segment_vals
-      end
-
-      def empty?
-        @header_segment_vals.all(&:empty?) and
-        @trailer_segment_vals.all(&:empty?) and
-        @transaction_set_vals.all(&:empty?)
       end
 
       def append_header_segment(segment_val)

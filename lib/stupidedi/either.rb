@@ -78,7 +78,9 @@ module Stupidedi
       # @yieldparam value
       # @yieldreturn [Either]
       def flatmap
-        if Either === (result = yield(@value))
+        result = yield(@value)
+
+        if result.is_a?(Either)
           result
         else
           raise TypeError, "block did not return an instance of Either"
@@ -96,7 +98,7 @@ module Stupidedi
       end
 
       def ==(other)
-        self.class === other and other.select{|x| x == @value }.defined?
+        other.is_a?(self.class) and other.select{|x| x == @value }.defined?
       end
 
       # @private
@@ -150,7 +152,9 @@ module Stupidedi
       # @yieldparam explanation
       # @yieldreturn [Either]
       def or
-        if Either === (result = yield(@explanation))
+        result = yield(@explanation)
+
+        if result.is_a?(Either)
           result
         else
           raise TypeError, "block did not return an instance of Either"
@@ -165,7 +169,7 @@ module Stupidedi
       end
 
       def ==(other)
-        self.class === other and other.explanation == @explanation
+        other.is_a?(self.class) and other.explanation == @explanation
       end
 
       # @private

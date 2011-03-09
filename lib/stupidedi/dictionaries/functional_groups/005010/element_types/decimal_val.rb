@@ -23,8 +23,8 @@ module Stupidedi
 
               # @private
               def inspect
-                def_id = definition.try{|d| "[#{d.id}]" }
-                "R.empty#{def_id}"
+                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
+                " R.empty#{def_id}"
               end
 
               # @private
@@ -77,8 +77,8 @@ module Stupidedi
 
               # @private
               def inspect
-                def_id = definition.try{|d| "[#{d.id}]" }
-                "R.value#{def_id}(#{@value.to_s('F')})"
+                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
+                " R.value#{def_id}(#{@value.to_s('F')})"
               end
 
               # @group Mathematical Operators

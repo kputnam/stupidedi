@@ -227,7 +227,7 @@ module Stupidedi
                 b::Element(e::Required,    "Investigational Device Exemption Identifier"),
                 b::Element(e::NotUsed,     "Description"),
                 b::Element(e::NotUsed,     "REFERENCE IDENTIFIER")),
-              b::Segment(1800, s::REF, "Claim Identifier For Transmission Intermediaries",
+              b::Segment(1800, s::REF, "Claim Identifier for Transmission Intermediaries",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Identification Qualifier", b::Values("D9")),
                 b::Element(e::Required,    "Value Added Network Trace Number"),
@@ -479,7 +479,7 @@ module Stupidedi
               b::Segment(2310, s::HI, "Condition Information",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "HEALTH CARE CODE INFORMATION",
-                  b::Element(e::Required,    "Code List Qualifier", b::Values("BP")),
+                  b::Element(e::Required,    "Code List Qualifier", b::Values("BG")),
                   b::Element(e::Required,    "Diagnosis Code"),
                   b::Element(e::NotUsed,     "Date Time Period Format Qualifier"),
                   b::Element(e::NotUsed,     "Date Time Period"),
@@ -1814,7 +1814,7 @@ module Stupidedi
                     b::Element(e::Situational, "Question Response")))))
 
         HC837 = b.build(t::HC837,
-          d::TableDef.build("Table 1 - Header",
+          d::TableDef.single(1, "Table 1 - Header",
             b::Segment(50, s::ST, "Transaction Set Header",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("837")),
@@ -1874,7 +1874,7 @@ module Stupidedi
                 b::Element(e::NotUsed,     "Entity Identifier Code"),
                 b::Element(e::NotUsed,     "Name Last or Organization Name")))),
 
-          d::TableDef.build("Table 2 - Billing Provider Detail",
+          d::TableDef.repeatable(2, "Table 2 - Billing Provider Detail",
             d::LoopDef.build("2000A BILLING PROVIDER HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Billing Provider Hierarchical Level",
@@ -2040,13 +2040,13 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Description"),
                   b::Element(e::NotUsed,     "REFERENCE IDENTIFIER"))))),
 
-          d::TableDef.build("Table 2 - Subscriber Detail",
+          d::TableDef.repeatable(2, "Table 2 - Subscriber Detail",
             d::LoopDef.build("2000B SUBSCRIBER HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Subscriber Hierarchical Level",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Hierarchical ID Number"),
-                b::Element(e::Required,    "Hierarchical Payrent ID Number"),
+                b::Element(e::Required,    "Hierarchical Parent ID Number"),
                 b::Element(e::Required,    "Hierarchical Level Code", b::Values("22")),
                 b::Element(e::Required,    "Hierachical Child values", b::Values("0", "1"))),
               b::Segment(50, s::SBR, "Subscriber Information",
@@ -2182,7 +2182,7 @@ module Stupidedi
 
               loop2300)),
 
-          d::TableDef.build("Table 2 - Patient Detail",
+          d::TableDef.repeatable(2, "Table 2 - Patient Detail",
             d::LoopDef.build("2000 PATIENT HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Patient Hierachical Level",
@@ -2276,7 +2276,7 @@ module Stupidedi
           #
           # This structure doesn't match the specification, but it does ensure
           # that the first occurrence of SE terminates the transaction set.
-          d::TableDef.build("Table 3 - Summary",
+          d::TableDef.single(5, "Table 3 - Summary",
             b::Segment(5550, s::SE, "Transaction Set Trailer",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Included Segments"),

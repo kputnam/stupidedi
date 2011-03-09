@@ -53,10 +53,16 @@ module Stupidedi
             # result.remainder: TokenReader
             advance!(result.value)
 
+            if @states.size > 1
+              pp @states
+              pp @states.size
+              pp result.value
+              raise
+            end
+
             if stuck?
               return remainder
             end
-
 
             # @todo: Handle non-deterministic state
             #
@@ -109,6 +115,7 @@ module Stupidedi
         # @todo: "Reached end of input without finding a segment identifier" is
         # a normal failed state, but we can't easily prevent it because #empty?
         # is false, even if the only remaining input is control characters
+        @states.first.terminate
 
         remainder
       end

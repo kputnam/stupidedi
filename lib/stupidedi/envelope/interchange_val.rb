@@ -26,9 +26,9 @@ module Stupidedi
         @definition, @header_segment_vals, @functional_group_vals, @trailer_segment_vals =
           definition, header_segment_vals, functional_group_vals, trailer_segment_vals
 
-        @header_segment_vals   = header_segment_vals.map{|x| x.copy(:parent => self) }
-        @trailer_segment_vals  = trailer_segment_vals.map{|x| x.copy(:parent => self) }
-        @functional_group_vals = functional_group_vals.map{|x| x.copy(:parent => self) }
+      # @header_segment_vals   = header_segment_vals.map{|x| x.copy(:parent => self) }
+      # @trailer_segment_vals  = trailer_segment_vals.map{|x| x.copy(:parent => self) }
+      # @functional_group_vals = functional_group_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [InterchangeVal]
@@ -40,15 +40,16 @@ module Stupidedi
           changes.fetch(:trailer_segment_vals, @trailer_segment_vals)
       end
 
+      def reparent!
+        @header_segment_vals.each{|x| x.reparent!(self) }
+        @trailer_segment_vals.each{|x| x.reparent!(self) }
+        @functional_group_vals.each{|x| x.reparent!(self) }
+        return self
+      end
+
       # @return [Array<SegmentVal>]
       def segment_vals
         @header_segment_vals + @trailer_segment_vals
-      end
-
-      def empty?
-        @header_segment_vals.all(&:empty?) and
-        @functional_group_vals.all(&:empty?) and
-        @trailer_segment_vals.all(&:empty?)
       end
 
       # @return [InterchangeVal]

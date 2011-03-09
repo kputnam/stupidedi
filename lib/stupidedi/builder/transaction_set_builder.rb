@@ -24,34 +24,35 @@ module Stupidedi
 
       # @return [TransactionSetBuilder]
       def merge(table_val)
-        # @todo: Optimize for non-ambiguous transitions
         copy(:value => @value.append_table(table_val))
       end
 
+      def terminate
+        @predecessor.merge(@value).terminate
+      end
+
       # @return [Array<AbstractState>]
-      def successors(segment_tok, upward = true, downward = nil)
+      def successors(segment_tok, upward = true)
         states = @value.definition.table_defs.inject([]) do |list, t|
-          unless t.eql?(downward)
-            t.entry_segment_uses.each do |u|
-              if @position <= t.position and match?(u, segment_tok)
-                # @todo: Optimize for non-ambiguous transitions
-                table_builder = TableBuilder.start(t, copy(:position => t.position))
-                list.concat(table_builder.successors(segment_tok, false))
-              end
+          t.entry_segment_uses.each do |u|
+            if @position <= t.position and match?(u, segment_tok)
+              position = (t.repeatable?) ? t.position : t.position + 1
+
+              table_builder = TableBuilder.start(t, copy(:position => position))
+              list.concat(table_builder.successors(segment_tok, false))
             end
           end
-          
+
           list
         end
 
         if upward
-          # @todo: Optimize for non-ambiguous transitions
           uncles = @predecessor.merge(@value).successors(segment_tok)
           states.concat(uncles.reject(&:stuck?))
         end
 
         if states.empty?
-          failure("Unexpected segment #{segment_tok.inspect}")
+          failure("Unexpected segment", segment_tok)
         else
           branches(states)
         end
@@ -59,7 +60,7 @@ module Stupidedi
 
       # @private
       def pretty_print(q)
-        q.text("TransactionSetBuilder")
+        q.text("TransactionSetBuilder[@#{@position}]")
         q.group(2, "(", ")") do
           q.breakable ""
           q.pp @value
