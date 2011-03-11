@@ -60,7 +60,8 @@ module Stupidedi
 
       # @private
       def pretty_print(q)
-        q.text("SegmentDef[#{@id}]")
+        q.text "SegmentDef[#{@id}]"
+
         q.group(2, "(", ")") do
           q.breakable ""
           @element_uses.each do |e|

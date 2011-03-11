@@ -2,6 +2,10 @@ module Stupidedi
   module Schema
 
     class ElementUse
+      abstract :definition
+
+      abstract :simple?
+
       # @return [SimpleElementVal, CompositeElementVal]
       def empty(parent = nil)
         definition.empty(parent, self)
@@ -54,6 +58,10 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def repeatable?
+        @repeat_count.try{|r| r.include?(2) }
+      end
+
       def simple?
         true
       end
@@ -98,6 +106,10 @@ module Stupidedi
         unless parent.nil?
           @definition = @definition.copy(:parent => self)
         end
+      end
+
+      def repeatable?
+        false
       end
 
       # @return [ComponentElementUse]
@@ -157,6 +169,10 @@ module Stupidedi
           changes.fetch(:requirement, @requirement),
           changes.fetch(:repeat_count, @repeat_count),
           changes.fetch(:parent, @parent)
+      end
+
+      def repeatable?
+        @repeat_count.try{|r| r.include?(2) }
       end
 
       def simple?

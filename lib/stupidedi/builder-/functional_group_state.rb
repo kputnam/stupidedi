@@ -65,16 +65,35 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(functional_group_def)
-        # @todo: Do not include GS segment
-        functional_group_def.header_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
+        instructions = []
+        position     = 0
+        drop         = 0
+
+        functional_group_def.header_segment_uses.tail.each do |use|
+          unless use.repeatable? or use.position == position
+            drop += 1
+          end
+
+          position = use.position
+
+          instructions << Instruction.new(nil, use, 0, drop, nil)
         end
 
-        Instruction.new(:ST, nil, 0, x, TransactionSetState)
+        position = 0
+
+        instructions << Instruction.new(:ST, nil, 0, drop, TransactionSetState)
 
         functional_group_def.trailer_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
+          unless use.repeatable? or use.position == position
+            drop += 1
+          end
+
+          position = use.position
+
+          instructions << Instruction.new(nil, use, 0, drop, nil)
         end
+
+        instructions
       end
     end
 

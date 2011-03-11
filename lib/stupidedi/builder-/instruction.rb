@@ -61,6 +61,28 @@ module Stupidedi
           changes.fetch(:drop, @drop),
           changes.fetch(:push, @push)
       end
+
+      # @private
+      def pretty_print(q)
+        id = @segment_id.to_s
+
+        q.text "Instruction[#{'% 3s' % id}]"
+
+        q.group(2, "(", ")") do
+          q.breakable ""
+
+          q.text "pop: #{@pop},"
+          q.breakable
+
+          q.text "drop: #{@drop}"
+
+          unless @push.nil?
+            q.text ","
+            q.breakable
+            q.text "push: #{@push.try{|c| c.name.split('::').last}}"
+          end
+        end
+      end
     end
 
   end

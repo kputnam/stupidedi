@@ -45,6 +45,10 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def repeatable?
+        @repeat_count.try{|r| r.include?(2) }
+      end
+
       # @see X222 B.1.1.3.11.1 Loop Control Segments
       # @see X222 B.1.1.3.12.4 Loops of Data Segments Bounded Loops
       def bounded?

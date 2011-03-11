@@ -42,6 +42,10 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def repeatable?
+        @repeat_count.try{|r| r.include?(2) }
+      end
+
       # @return [SegmentVal]
       def empty(parent = nil)
         definition.empty(parent, self)

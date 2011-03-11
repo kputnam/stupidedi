@@ -68,16 +68,19 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(interchange_def)
-        # @todo: Do not include ISA segment
-        interchange_def.header_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
+        instructions = []
+
+        interchange_def.header_segment_uses.tail.each do |use|
+          instructions << Instruction.new(nil, buffer, 0, drop, nil)
         end
 
-        Instruction.new(:GS, nil, 0, x, FunctionalGroupState)
+        instructions << Instruction.new(:GS, nil, 0, drop, FunctionalGroupState)
 
         interchange_def.trailer_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
+          instructions << Instruction.new(nil, use, 0, drop, nil)
         end
+
+        instructions
       end
     end
 
