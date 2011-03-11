@@ -37,10 +37,17 @@ module Stupidedi
         @child_vals.select{|x| x.is_a?(SegmentVal) }
       end
 
+      def empty?
+        @child_vals.all(&:empty?)
+      end
+
       # @return [TableVal]
       def append(segment_val)
         copy(:child_vals => segment_val.snoc(@child_vals))
       end
+
+      alias append_loop append_child
+      alias append_segment append_child
 
       # @private
       def pretty_print(q)

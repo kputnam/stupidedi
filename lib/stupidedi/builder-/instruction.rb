@@ -3,6 +3,9 @@ module Stupidedi
 
     class Instruction
 
+      # @return [Symbol]
+      attr_reader :segment_id
+
       # @return [SegmentUse]
       attr_reader :segment_use
 
@@ -10,14 +13,14 @@ module Stupidedi
       attr_reader :pop
 
       # @return [Integer]
-      attr_reader :advance
+      attr_reader :drop
 
-      # @return [Array(Class<AbstractState>, SegmentUse)]
+      # @return [Class<AbstractState>]
       attr_reader :push
 
-      def initialize(segment_use, pop, advance, push)
-        @segment_use, @pop, @advance, @push =
-          segment_use, pop, advance, push
+      def initialize(segment_id, segment_use, pop, advance, push)
+        @segment_id, @segment_use, @pop, @advance, @push =
+          segment_id, segment_use, pop, advance, push
       end
 
       # @return [Instruction]

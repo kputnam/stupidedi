@@ -3,7 +3,17 @@ module Stupidedi
 
     class InterchangeState < AbstractState
 
-      def initialize(envelope_val, parent)
+      # @return [InterchangeVal]
+      attr_reader :interchange_val
+
+      def initialize(interchange_val, parent)
+        @interchange_val = interchange_val
+      end
+
+      def pop(segment_tok, segment_use)
+      end
+
+      def advance(segment_tok, segment_use)
       end
     end
 
@@ -16,7 +26,7 @@ module Stupidedi
       # segment defined by the InterchangeDef (which is typically ISA). This
       # means another occurence of that segment will pop this state and the
       # parent state will create a new InterchangeState.
-      def build(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent)
         # ISA12: Interchange Control Version Number
         version = segment_tok.element_toks.at(11).value
 
@@ -33,6 +43,11 @@ module Stupidedi
 
         # @todo: Remove the entry segment from successor states
         InterchangeState.new(envelope_val, parent)
+      end
+
+      def successors(interchange_val)
+        interchange_def = interchange_val.definition
+
       end
     end
 

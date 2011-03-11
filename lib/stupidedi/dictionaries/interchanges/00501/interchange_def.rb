@@ -23,8 +23,7 @@ module Stupidedi
           [ SegmentDefs::ISA.use(-9050, r::Mandatory, s::RepeatCount.bounded(1)),
             SegmentDefs::ISB.use(-9040, r::Optional,  s::RepeatCount.bounded(1)),
             SegmentDefs::ISE.use(-9030, r::Optional,  s::RepeatCount.bounded(1)),
-            SegmentDefs::TA1.use(-9020, r::Optional,  s::RepeatCount.unbounded)
-          ],
+            SegmentDefs::TA1.use(-9020, r::Optional,  s::RepeatCount.unbounded) ],
 
           # Interchange trailer
           [ SegmentDefs::IEA.use(99000, r::Mandatory, s::RepeatCount.bounded(1)) ]

@@ -2,6 +2,12 @@ module Stupidedi
   module Builder_
 
     class TableState < AbstractState
+
+      def pop(segment_tok, segment_use)
+      end
+
+      def advance(segment_tok, segment_use)
+      end
     end
 
     class << TableState
@@ -17,7 +23,7 @@ module Stupidedi
       # means consecutive occurrences of any of the table's entry segments will
       # belong to the existing table -- rather creating a new table each time
       # by popping this state and letting the parent state create a new one.
-      def build(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent)
         case segment_use.parent
         when Schema::TableDef
           # The segment is a direct descendant of the table
@@ -35,7 +41,7 @@ module Stupidedi
           # segment belongs to a child loop. Because we already know this, we'll
           # construct the LoopState as a child of the TableState. LoopState will
           # take care of acting on the entry segment.
-          LoopState.build(segment_tok, segment_use,
+          LoopState.push(segment_tok, segment_use,
             TableState.new(table_val, parent))
         end
       end

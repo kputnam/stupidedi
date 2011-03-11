@@ -5,6 +5,12 @@ module Stupidedi
 
       def initialize(envelope_val, parent)
       end
+
+      def pop(segment_tok, segment_use)
+      end
+
+      def advance(segment_tok, segment_use)
+      end
     end
 
     class << FunctionalGroupState
@@ -16,7 +22,7 @@ module Stupidedi
       # segment defined by the FunctionalGroupDef (which is probably GS). This
       # means another occurrence of that segment will pop this state and the
       # parent state will create a new FunctionalGroupState.
-      def build(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent)
         # GS08: Version / Release / Industry Identifier Code
         version = segment_tok.element_toks.at(7).value.slice(0, 6)
 

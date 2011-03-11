@@ -3,7 +3,16 @@ module Stupidedi
 
     class TransactionSetState < AbstractState
 
+      # @return [FunctionalGroupState]
+      attr_reader :parent
+
       def initialize(envelope_val, parent)
+      end
+
+      def pop(segment_tok, segment_use)
+      end
+
+      def advance(segment_tok, segment_use)
       end
     end
 
@@ -23,7 +32,7 @@ module Stupidedi
       # defined by each table. If the segment is a direct descendant of a table,
       # a TableState will be created; otherwise the segment belongs to a loop
       # that belongs to a table, so both a TableState and LoopState are created.
-      def build(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent)
         # GS01: Functional Identifier Code
         fgcode = parent.value.at(:GS).head.at(0).to_s
 
@@ -49,9 +58,9 @@ module Stupidedi
         segment_use  = envelope_def.entry_segment_use
 
         # Because TransactionState does not include the entry segment as one of
-        # its successors, we pass it as the parent to TableState.build -- which
+        # its successors, we pass it as the parent to TableState.push -- which
         # will take care of acting on the entry segment.
-        TableState.build(segment_tok, segment_use,
+        TableState.push(segment_tok, segment_use,
           TransactionState.new(envelope_val, parent))
       end
     end

@@ -5,6 +5,12 @@ module Stupidedi
 
       def initialize(loop_val, parent, successors)
       end
+
+      def pop(segment_tok, segment_use)
+      end
+
+      def advance(segment_tok, segment_use)
+      end
     end
 
     class << LoopState
@@ -15,7 +21,7 @@ module Stupidedi
       # segment defined by the LoopDef. This means another occurrence of that
       # segment will pop this state and the parent state will create a new
       # LoopState.
-      def build(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent)
         segment_val = segment(segment_tok, segment_use)
         loop_def    = segment_use.parent
         loop_val    = loop_def.value(segment_val, parent.value)
