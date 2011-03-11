@@ -40,11 +40,11 @@ module Stupidedi
         end
 
         # @todo: Narrow the results down by evaluating segment constraints
-        @__successors.fetch(segment_tok, [])
+        @__successors.fetch(segment_tok.id, [])
       end
 
       # @return [InstructionTable]
-      def pop(count = 1)
+      def pop(count)
         if count.zero?
           self
         else

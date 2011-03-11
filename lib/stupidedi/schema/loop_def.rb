@@ -45,11 +45,6 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
-      # @return [Array<SegmentUse>]
-      def segment_uses
-        @header_segment_uses + @trailer_segment_uses
-      end
-
       # @see X222 B.1.1.3.11.1 Loop Control Segments
       # @see X222 B.1.1.3.12.4 Loops of Data Segments Bounded Loops
       def bounded?

@@ -3,13 +3,31 @@ module Stupidedi
 
     class LoopState < AbstractState
 
+      # @return [Values::LoopVal]
+      attr_reader :loop_val
+      alias value loop_val
+
+      # @return [TableState, LoopState]
+      attr_reader :parent
+
+      # @return [Array<Instructions>]
+      attr_reader :successors
+
       def initialize(loop_val, parent, successors)
+        @loop_val, @parent, @successors =
+          loop_val, parent, successors
       end
 
-      def pop(segment_tok, segment_use)
+      def pop(count)
+        if count.zero?
+          self
+        else
+          # @todo
+        end
       end
 
-      def advance(segment_tok, segment_use)
+      def add(segment_tok, segment_use)
+        # @todo
       end
     end
 
@@ -28,6 +46,21 @@ module Stupidedi
 
         # @todo: Remove the entry segment from successor states
         LoopState.new(loop_val, parent)
+      end
+
+      def successors(loop_def)
+        loop_def.header_segment_uses.each do |use|
+          Instruction.new(nil, use, 0, x, nil)
+        end
+
+        loop_def.loop_defs.each do |l|
+          use = l.entry_segment_use
+          Instruction.new(nil, use, 0, x, LoopState)
+        end
+
+        loop_def.trailer_segment_uses.each do |use|
+          Instruction.new(nil, use, 0, x, nil)
+        end
       end
     end
 

@@ -19,7 +19,7 @@ module Stupidedi
     #  005021     Jun 04          Oct 04          Feb 05          Mar 05
     #  005022     Oct 04          Feb 05          Jun 05          Jul 05
     #
-    # @see http://www.disa.org/x12org/subcommittees/dev/pDF/X12RELEASESCHED.pdf
+    # @see http://www.disa.org/x12org/subcommittees/dev/pdf/X12RELEASESCHED.pdf
     #
     class FunctionalGroupDef
 

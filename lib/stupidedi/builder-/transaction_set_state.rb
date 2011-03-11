@@ -3,16 +3,31 @@ module Stupidedi
 
     class TransactionSetState < AbstractState
 
+      # @return [Envelope::TransactionSetVal]
+      attr_reader :transaction_set_val
+      alias value transaction_set_val
+
       # @return [FunctionalGroupState]
       attr_reader :parent
 
-      def initialize(envelope_val, parent)
+      # @return [Array<Instruction>]
+      attr_reader :instructions
+
+      def initialize(envelope_val, parent, instructions)
+        @transaction_set_val, @parent, @instructions =
+          envelope_val, parent, instructions
       end
 
-      def pop(segment_tok, segment_use)
+      def pop(count)
+        if count.zero?
+          self
+        else
+          # @todo
+        end
       end
 
-      def advance(segment_tok, segment_use)
+      def add(segment_tok, segment_use)
+        # @todo
       end
     end
 
@@ -32,7 +47,7 @@ module Stupidedi
       # defined by each table. If the segment is a direct descendant of a table,
       # a TableState will be created; otherwise the segment belongs to a loop
       # that belongs to a table, so both a TableState and LoopState are created.
-      def push(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent, reader = nil)
         # GS01: Functional Identifier Code
         fgcode = parent.value.at(:GS).head.at(0).to_s
 
@@ -60,8 +75,26 @@ module Stupidedi
         # Because TransactionState does not include the entry segment as one of
         # its successors, we pass it as the parent to TableState.push -- which
         # will take care of acting on the entry segment.
-        TableState.push(segment_tok, segment_use,
-          TransactionState.new(envelope_val, parent))
+        ts = TransactionState.new(envelope_val, parent,
+          instructions(envelope_def))
+
+        TableState.push(segment_tok, segment_use, ts, reader)
+      end
+
+      # @return [Array<Instructions>]
+      def instructions(transaction_set_def)
+        # @todo: Do not include instruction to push a new header table when
+        # the ST segment is read -- more generally, only the entry segments
+        # for the detail tables, followed by the summary table which should
+        # drop all the detail table instructions. The summary table cannot
+        # repeat but the entry segments can -- they don't indicate the start
+        # of a new summary table.
+
+        transaction_set_def.table_defs.tail.each do |t|
+          t.entry_segment_uses.each do |use|
+            Instruction.new(nil, use, 0, x, TableState)
+          end
+        end
       end
     end
 

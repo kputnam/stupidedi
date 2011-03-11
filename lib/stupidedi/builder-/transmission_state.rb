@@ -3,6 +3,20 @@ module Stupidedi
 
     class TransmissionState < AbstractState
 
+      # @return [Configuration::RootConfig]
+      attr_reader :config
+
+      # @return [Reader::Separators]
+      attr_reader :separators
+
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
+
+      def initialize(config, separators, segment_dict)
+        @config, @separators, @segment_dict =
+          config, separators, segment_dict
+      end
+
       def successors
         # From this state, we can only accept an "ISA" SegmentTok, which will
         # always push a new InterchangeState onto the stack. We can't determine

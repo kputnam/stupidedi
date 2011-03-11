@@ -3,13 +3,34 @@ module Stupidedi
 
     class FunctionalGroupState < AbstractState
 
-      def initialize(envelope_val, parent)
+      # @return [Envelope::FunctionalGroupVal]
+      attr_reader :functional_group_val
+      alias value functional_group_val
+
+      # @return [InterchangeState]
+      attr_reader :parent
+
+      # @return [Array<Instruction>]
+      attr_reader :instructions
+
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
+
+      def initialize(envelope_val, parent, instructions, segment_dict)
+        @functional_group_val, @parent, @instructions, @segment_dict =
+          functional_group_val, parent, successor, segment_dict
       end
 
-      def pop(segment_tok, segment_use)
+      def pop(count)
+        if count.zero?
+          self
+        else
+          # @todo
+        end
       end
 
-      def advance(segment_tok, segment_use)
+      def add(segment_tok, segment_use)
+        # @todo
       end
     end
 
@@ -22,7 +43,7 @@ module Stupidedi
       # segment defined by the FunctionalGroupDef (which is probably GS). This
       # means another occurrence of that segment will pop this state and the
       # parent state will create a new FunctionalGroupState.
-      def push(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent, reader = nil)
         # GS08: Version / Release / Industry Identifier Code
         version = segment_tok.element_toks.at(7).value.slice(0, 6)
 
@@ -37,7 +58,23 @@ module Stupidedi
         segment_val  = segment(segment_tok, segment_use)
 
         # @todo: Remove the entry segment from successor states
-        FunctionalGroupState.new(envelope_val, parent)
+        FunctionalGroupState.new(envelope_val, parent,
+          instructions(envelope_def),
+          parent.segment_dict.push(envelope_val.segment_dict))
+      end
+
+      # @return [Array<Instruction>]
+      def instructions(functional_group_def)
+        # @todo: Do not include GS segment
+        functional_group_def.header_segment_uses.each do |use|
+          Instruction.new(nil, use, 0, x, nil)
+        end
+
+        Instruction.new(:ST, nil, 0, x, TransactionSetState)
+
+        functional_group_def.trailer_segment_uses.each do |use|
+          Instruction.new(nil, use, 0, x, nil)
+        end
       end
     end
 

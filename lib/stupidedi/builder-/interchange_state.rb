@@ -3,17 +3,37 @@ module Stupidedi
 
     class InterchangeState < AbstractState
 
-      # @return [InterchangeVal]
+      # @return [Envelope::InterchangeVal]
       attr_reader :interchange_val
+      alias value interchange_val
 
-      def initialize(interchange_val, parent)
-        @interchange_val = interchange_val
+      # @return [TransmissionState]
+      attr_reader :parent
+
+      # @return [Array<Instruction>]
+      attr_reader :instructions
+
+      # @return [Reader::Separators]
+      attr_reader :separators
+
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
+
+      def initialize(envelope_val, parent, instructions, separators, segment_dict)
+        @interchange_val, @parent, @instructions, @separators, @segment_dict =
+          interchange_val, parent, instructions, separators, segment_dict
       end
 
-      def pop(segment_tok, segment_use)
+      def pop(count)
+        if count.zero?
+          self
+        else
+          # @todo
+        end
       end
 
-      def advance(segment_tok, segment_use)
+      def add(segment_tok, segment_use)
+        # @todo
       end
     end
 
@@ -26,7 +46,7 @@ module Stupidedi
       # segment defined by the InterchangeDef (which is typically ISA). This
       # means another occurence of that segment will pop this state and the
       # parent state will create a new InterchangeState.
-      def push(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent, reader = nil)
         # ISA12: Interchange Control Version Number
         version = segment_tok.element_toks.at(11).value
 
@@ -41,13 +61,23 @@ module Stupidedi
         segment_use  = envelope_def.header_segment_use
         segment_val  = segment(segment_tok, segment_use)
 
-        # @todo: Remove the entry segment from successor states
-        InterchangeState.new(envelope_val, parent)
+        InterchangeState.new(envelope_val, parent, instructions(envelope_def),
+          envelope_val.separators(reader.try(:separators)),
+          reader.envelope_val.segment_dict)
       end
 
-      def successors(interchange_val)
-        interchange_def = interchange_val.definition
+      # @return [Array<Instruction>]
+      def instructions(interchange_def)
+        # @todo: Do not include ISA segment
+        interchange_def.header_segment_uses.each do |use|
+          Instruction.new(nil, use, 0, x, nil)
+        end
 
+        Instruction.new(:GS, nil, 0, x, FunctionalGroupState)
+
+        interchange_def.trailer_segment_uses.each do |use|
+          Instruction.new(nil, use, 0, x, nil)
+        end
       end
     end
 

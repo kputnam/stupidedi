@@ -3,13 +3,44 @@ module Stupidedi
 
     class AbstractState
 
-      # Each {AbstractState} subclass is responsible for building up a syntax
-      # tree node from the {Values} or {Envelope} namespace.
+      # Each {AbstractState} subclass is responsible for building up a specific
+      # type of node from the {Values} or {Envelope} namespace.
+      #
+      # @return [Values::AbstractVal]
       abstract :value
 
       # The {AbstractState} whose {value} is the parent of this state's {value}.
+      #
+      # @return [AbstractState]
       abstract :parent
 
+      # @return [AbstractState]
+      abstract :pop, :args => %w(count)
+
+      # @return [AbstractState]
+      abstract :add, :args => %w(segment_tok segment_use)
+
+    private
+
+      # @return [Values::SegmentVal]
+      def segment(segment_tok, segment_use, parent = nil)
+        AbstractState.segment(segment_tok, segment_use, parent)
+      end
+
+      # @return [Configuration::RootConfig]
+      def config
+        parent.config
+      end
+
+      # @return [Reader::Separators]
+      def separators
+        parent.separators
+      end
+
+      # @return [Reader::SegmentDict]
+      def segment_dict
+        parent.segment_dict
+      end
     end
 
     class << AbstractState
@@ -20,9 +51,9 @@ module Stupidedi
       # state's {parent}.
       #
       # @return [AbstractState]
-      abstract :push, :args => %w(segment_tok segment_use parent)
+      abstract :push, :args => %w(segment_tok segment_use parent reader)
 
-      # @return [SegmentVal]
+      # @return [Values::SegmentVal]
       def segment(segment_tok, segment_use, parent = nil)
         segment_def  = segment_use.definition
         element_uses = segment_def.element_uses
@@ -41,7 +72,7 @@ module Stupidedi
 
     private
 
-      # @return [SimpleElementVal, CompositeElementVal]
+      # @return [Values::SimpleElementVal, Values::CompositeElementVal]
       def element(element_use, element_tok, parent = nil)
         if element_use.simple?
           simple_element(element_use, element_tok, parent)
@@ -50,7 +81,7 @@ module Stupidedi
         end
       end
 
-      # @return [CompositeElementVal]
+      # @return [Values::CompositeElementVal]
       def composite_element(composite_use, composite_tok, parent = nil)
         composite_def  = composite_use.definition
         component_uses = composite_def.component_uses
@@ -67,7 +98,7 @@ module Stupidedi
         composite_use.value(component_vals, parent)
       end
 
-      # @return [SimpleElementVal]
+      # @return [Values::SimpleElementVal]
       def simple_element(element_use, element_tok, parent = nil)
         # We don't validate that element_tok is simple because the TokenReader
         # will always produce a SimpleElementTok given a SimpleElementUse from
