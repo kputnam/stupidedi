@@ -4,30 +4,23 @@ module Stupidedi
     class LoopVal < AbstractVal
       include SegmentValGroup
 
+      # @return [LoopDef]
       attr_reader :definition
 
-      # @return [Array<SegmentVal>]
-      attr_reader :header_segment_vals
-
-      # @return [Array<SegmentVal>]
-      attr_reader :trailer_segment_vals
-
-      # @return [Array<LoopVal>]
-      attr_reader :loop_vals
+      # @return [Array<SegmentVal, LoopVal>]
+      attr_reader :child_vals
 
       # @return [LoopVal, TableVal]
       attr_reader :parent
 
-      def initialize(definition, header_segment_vals, loop_vals, trailer_segment_vals, parent)
-        @definition, @header_segment_vals, @loop_vals, @trailer_segment_vals, @parent =
-          definition, header_segment_vals, loop_vals, trailer_segment_vals, parent
+      def initialize(definition, child_vals, parent)
+        @definition, @child_vals, @parent =
+          definition, child_vals, parent
 
-        # Delay re-parenting until the entire definition tree has a root
+        # Delay re-parenting until the entire value tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-        # @header_segment_vals  =  header_segment_vals.map{|x| x.copy(:parent => self) }
-        # @loop_vals            =            loop_vals.map{|x| x.copy(:parent => self) }
-        # @trailer_segment_vals = trailer_segment_vals.map{|x| x.copy(:parent => self) }
+          @child_vals = child_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -35,41 +28,26 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:header_segment_vals, @header_segment_vals),
-          changes.fetch(:loop_vals, @loop_vals),
-          changes.fetch(:trailer_segment_vals, @trailer_segment_vals),
+          changes.fetch(:child_vals, @child_vals),
           changes.fetch(:parent, @parent)
       end
 
-      def reparent!(parent)
-        @parent = parent
-        @loop_vals.each{|x| x.reparent!(self) }
-        @header_segment_vals.each{|x| x.reparent!(self) }
-        @trailer_segment_vals.each{|x| x.reparent!(self) }
-        return self
-      end
-
+      # @return [Array<SegmentVal>]
       def segment_vals
-        @header_segment_vals + @trailer_segment_vals
+        @child_vals.select{|x| x.is_a?(SegmentVal) }
       end
 
       def empty?
-        @header_segment_vals.all?(&:empty?) and
-        @trailer_segment_vals.all?(&:empty?) and
-        @loop_vals.all(&:empty?)
+        @child_vals.all(&:empty?)
       end
 
-      def append_header_segment(segment_val)
-        copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
+      # @return [LoopVal]
+      def append_child(child_val)
+        copy(:child_vals => child_val.snoc(@child_vals))
       end
 
-      def append_trailer_segment(segment_val)
-        copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
-      end
-
-      def append_loop(loop_val)
-        copy(:loop_vals => loop_val.snoc(@loop_vals))
-      end
+      alias append_loop append_child
+      alias append_segment append_child
 
       # @private
       def pretty_print(q)
@@ -77,23 +55,9 @@ module Stupidedi
         q.text("LoopVal#{id}")
         q.group(2, "(", ")") do
           q.breakable ""
-          @header_segment_vals.each do |e|
+          @child_vals.each do |e|
             unless q.current_group.first?
               q.text ","
-              q.breakable
-            end
-            q.pp e
-          end
-          @loop_vals.each do |e|
-            unless q.current_group.first?
-              q.text ","
-              q.breakable
-            end
-            q.pp e
-          end
-          @trailer_segment_vals.each do |e|
-            unless q.current_group.first?
-              q.text ", "
               q.breakable
             end
             q.pp e
@@ -103,10 +67,8 @@ module Stupidedi
 
       # @private
       def ==(other)
-        other.definition           == @definition and
-        other.header_segment_vals  == @header_segment_vals and
-        other.trailer_segment_vals == @trailer_segment_vals and
-        other.loop_vals            == @loop_vals
+        other.definition == @definition and
+        other.child_vals == @child_vals
       end
     end
 

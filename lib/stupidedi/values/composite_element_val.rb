@@ -3,6 +3,7 @@ module Stupidedi
 
     # @see X222 B.1.1.3.3 Composite Data Structure
     class CompositeElementVal < AbstractVal
+
       # @return [CompositeElementDef]
       attr_reader :definition
 
@@ -19,10 +20,10 @@ module Stupidedi
         @definition, @component_vals, @parent, @usage =
           definition, component_vals, parent, usage
 
-        # Delay re-parenting until the entire definition tree has a root
+        # Delay re-parenting until the entire value tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-        # @component_vals = component_vals.map{|x| x.copy(:parent => self) }
+          @component_vals = component_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -33,12 +34,6 @@ module Stupidedi
           changes.fetch(:component_vals, @component_vals),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @parent)
-      end
-
-      def reparent!(parent)
-        @parent = parent
-        @component_vals.each{|x| x.reparent!(self) }
-        return self
       end
 
       def empty?
@@ -91,7 +86,7 @@ module Stupidedi
 
       # @private
       def ==(other)
-        other.definition == @definition and
+        other.definition     == @definition and
         other.component_vals == @component_vals
       end
     end

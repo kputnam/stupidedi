@@ -3,6 +3,7 @@ module Stupidedi
 
     # @see X222 B.1.1.3.2 Repeating Data Elements
     class RepeatedElementVal < AbstractVal
+
       # @return [CompositeElementDef, SimpleElementDef]
       attr_reader :definition
 
@@ -12,6 +13,8 @@ module Stupidedi
       # @return [SegmentVal]
       attr_reader :parent
 
+      delegate :at, :defined_at?, :length, :to => :@element_vals
+
       def initialize(definition, element_vals, parent)
         @definition, @element_vals, @parent =
           definition, element_vals, parent
@@ -19,7 +22,7 @@ module Stupidedi
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-        # @element_vals = element_vals.map{|x| x.copy(:parent => self) }
+          @element_vals = element_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -31,35 +34,13 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
-      def reparent!(parent)
-        @parent = parent
-        @element_vals.each{|x| x.reparent!(self) }
-        return self
-      end
-
-      def length
-        @element_vals.length
-      end
-
-      # Returns the occurence at the given index. Numbering begins at zero.
-      def at(n)
-        @element_vals.at(n)
-      end
-
-      def defined_at?(n)
-        @element_vals.defined_at?(n)
-      end
-
       def empty?
-        @element_vals.empty?
+        @element_vals.all(&:empty?)
       end
 
+      # @return [RepeatedElementVal]
       def append(element_val)
-        RepeatedElementVal.new(@definition, element_val.snoc(@element_vals), @parent)
-      end
-
-      def prepend(element_val)
-        RepeatedElementVal.new(@definition, element_val.cons(@element_vals), @parent)
+        copy(:element_vals => element_val.snoc(@element_vals))
       end
 
       # @private
@@ -80,7 +61,7 @@ module Stupidedi
 
       # @private
       def ==(other)
-        other.definition == @definition and
+        other.definition   == @definition and
         other.element_vals == @element_vals
       end
     end

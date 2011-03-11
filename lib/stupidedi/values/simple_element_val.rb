@@ -3,6 +3,7 @@ module Stupidedi
 
     # @see X222 B.1.1.3.1 Data Element
     class SimpleElementVal < AbstractVal
+
       # @return [SimpleElementDef]
       attr_reader :definition
 
@@ -23,11 +24,6 @@ module Stupidedi
           changes.fetch(:definition, @definition),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
-      end
-
-      def reparent!(parent)
-        @parent = parent
-        return self
       end
 
       # @return [RepeatedElementVal]

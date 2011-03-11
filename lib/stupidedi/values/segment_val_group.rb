@@ -2,11 +2,12 @@ module Stupidedi
   module Values
 
     module SegmentValGroup
+
+      # @return [SimpleElementDef, CompositeElementDef, LoopDef, SegmentDef, TableDef]
+      abstract :definition
+
       # @return [Array<SegmentVal>]
       abstract :segment_vals
-
-      # @return [LoopDef, TableDef, ...]
-      abstract :definition
 
       def empty?
         segment_vals.all?(&:empty?)

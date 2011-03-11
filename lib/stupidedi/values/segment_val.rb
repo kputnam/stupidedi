@@ -3,6 +3,7 @@ module Stupidedi
 
     # @see X222 B.1.1.3.4 Data Segment
     class SegmentVal < AbstractVal
+
       # @return [SegmentDef]
       attr_reader :definition
 
@@ -22,7 +23,7 @@ module Stupidedi
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-        # @element_vals = element_vals.map{|x| x.copy(:parent => self) }
+          @element_vals = element_vals.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -33,12 +34,6 @@ module Stupidedi
           changes.fetch(:element_vals, @element_vals),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
-      end
-
-      def reparent!(parent)
-        @parent = parent
-        @element_vals.each{|x| x.reparent!(self) }
-        return self
       end
 
       def empty?
@@ -68,6 +63,7 @@ module Stupidedi
       # @private
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
+
         q.text("SegmentVal#{id}")
         q.group(2, "(", ")") do
           q.breakable ""
@@ -82,8 +78,9 @@ module Stupidedi
         end
       end
 
+      # @private
       def ==(other)
-        other.definition == @definition and
+        other.definition   == @definition and
         other.element_vals == @element_vals
       end
     end
