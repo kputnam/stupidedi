@@ -72,6 +72,136 @@ module Stupidedi
 
     private
 
+      # @return [Array<Instruction>]
+      def sequence(segment_uses, start = 0)
+        instructions = []
+        buffer       = []
+        count        = start
+        last         = nil
+
+        segment_uses.each do |use|
+          unless last.nil? or use.position == last.position
+            d =
+              if buffer.length == 1 and not last.repeatable?
+                count
+              else
+                count - buffer.length
+              end
+
+            buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, nil) }
+            buffer.clear
+          end
+
+          last  = use
+          count += 1
+          buffer << use
+        end
+
+        unless buffer.empty?
+          d =
+            if buffer.length == 1 and not last.repeatable?
+              count
+            else
+              count - buffer.length
+            end
+
+          buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, nil) }
+        end
+
+        instructions
+      end
+
+      # @return [Array<Instruction>]
+      def lsequence(loop_defs, start = 0)
+        instructions = []
+        buffer       = []
+        count        = start
+        last         = nil
+
+        loop_defs.each do |l|
+          unless last.nil? or l.entry_segment_use.position == last.entry_segment_use.position
+            d =
+              if buffer.length == 1 and not last.repeatable?
+                count
+              else
+                count - buffer.length
+              end
+
+            buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, LoopState) }
+            buffer.clear
+          end
+
+          last = l
+          count += 1
+          buffer << l.entry_segment_use
+        end
+
+        unless buffer.nil?
+          d =
+            if buffer.length == 1 and not last.repeatable?
+              count
+            else
+              count - buffer.length
+            end
+
+          buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, LoopState) }
+        end
+
+        instructions
+      end
+
+      # @return [Array<Instruction>]
+      def tsequence(table_defs, start = 0)
+        instructions = []
+        buffer       = []
+        count        = start
+        last         = nil
+
+        table_defs.each do |t|
+          unless last.nil? or t.position == last.position
+            d =
+              if buffer.length == 1 and not last.repeatable?
+                count
+              else
+                count - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
+              end
+
+            buffer.each do |b|
+              if b.repeatable? and b.entry_segment_uses.length > 1
+                raise "@todo"
+              end
+
+              b.entry_segment_uses.each do |u|
+                instructions << Instruction.new(nil, u, 0, d, TableState)
+              end
+            end
+
+            buffer.clear
+          end
+
+          last    = t
+          count  += t.entry_segment_uses.length
+          buffer << t
+        end
+
+        unless buffer.empty?
+          d =
+            if buffer.length == 1 and not last.repeatable?
+              count
+            else
+              count - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
+            end
+
+          buffer.each do |b|
+            b.entry_segment_uses.each do |u|
+              instructions << Instruction.new(nil, u, 0, d, TableState)
+            end
+          end
+        end
+
+        instructions
+      end
+
       # @return [Values::SimpleElementVal, Values::CompositeElementVal]
       def element(element_use, element_tok, parent = nil)
         if element_use.simple?

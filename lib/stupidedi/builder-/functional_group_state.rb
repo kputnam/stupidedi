@@ -65,35 +65,9 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(functional_group_def)
-        instructions = []
-        position     = 0
-        drop         = 0
-
-        functional_group_def.header_segment_uses.tail.each do |use|
-          unless use.repeatable? or use.position == position
-            drop += 1
-          end
-
-          position = use.position
-
-          instructions << Instruction.new(nil, use, 0, drop, nil)
-        end
-
-        position = 0
-
-        instructions << Instruction.new(:ST, nil, 0, drop, TransactionSetState)
-
-        functional_group_def.trailer_segment_uses.each do |use|
-          unless use.repeatable? or use.position == position
-            drop += 1
-          end
-
-          position = use.position
-
-          instructions << Instruction.new(nil, use, 0, drop, nil)
-        end
-
-        instructions
+        is = sequence(functional_group_def.header_segment_uses.tail)
+        is << Instruction.new(:ST, nil, 0, is.length, TransactionSetState)
+        is.concat(sequence(functional_group_def.trailer_segment_uses, is.length))
       end
     end
 

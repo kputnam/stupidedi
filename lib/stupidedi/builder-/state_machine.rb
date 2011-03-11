@@ -40,27 +40,14 @@ module Stupidedi
                 end
               end
             else
-              # Note: Instruction#push returns a subclass of AbstractState,
-              # which has a constructor method named {push}, that links the new
-              # instance to the parent {state}
+              # Note: Instruction#push returns a concrete subclass of
+              # AbstractState, which has a constructor method named {push}, that
+              # links the new instance to the parent {state}
               a = x.push
-              s = a.push(segment_tok, x.segment_use, state.pop(x.pop), reader)
 
               # @todo: Check for FailureState
-
-              t = table.pop(x.pop).drop(x.drop)
-              i = s.instructions
-
-              if i.is_a?(Array)
-                # Normally we only pushed a single {AbstractState}, so we only
-                # need to add one layer to the instruction table.
-                t = t.push(i)
-              else
-                # But sometimes we actually pushed more than one {AbstractState}
-                # eg, by falling through TransactionSetState to TableState in a
-                # single transition. In this case we need to concatenate tables.
-                t = t.concat(i)
-              end
+              s = a.push(segment_tok, x.segment_use, state.pop(x.pop), reader)
+              t = table.pop(x.pop).drop(x.drop).push(s.instructions)
 
               unless reader.nil?
                 # More general than checking if segment_tok is an ISA/GS segment

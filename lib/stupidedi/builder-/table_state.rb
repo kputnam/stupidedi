@@ -5,7 +5,7 @@ module Stupidedi
 
       # @return [Values::TableVal]
       attr_reader :table_val
-      alias value loop_val
+      alias value table_val
 
       # @return [TransmissionState]
       attr_reader :parent
@@ -71,21 +71,11 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(table_def)
-        # @todo: Drop all the instructions before and -- depending on the
-        # repeat count of the segment/loop/table -- including parsed segment.
-        table_def.header_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
-        end
-
-        table_def.loop_defs.each do |l|
-          use = l.entry_segment_use
-          Instruction.new(nil, use, 0, x, LoopState)
-        end
-
-        table_def.trailer_segment_uses.each do |u|
-          Instruction.new(nil, use, 0, x, nil)
-        end
+        is = sequence(table_def.header_segment_uses)
+        is.concat(lsequence(table_def.loop_defs, is.length))
+        is.concat(sequence(table_def.trailer_segment_uses, is.length))
       end
+
     end
 
   end

@@ -51,31 +51,10 @@ module Stupidedi
 
       # @return [Array<SegmentUse>]
       def entry_segment_uses
-        min  = 1.0 / 0.0
         uses = []
-        
-        @header_segment_uses.each do |u|
-          if u.position < min
-            min   = u.position
-            uses << u
-          end
-        end
-
-        @loop_defs.each do |l|
-          if l.entry_segment_use.position < min
-            min   = l.entry_segment_use.position
-            uses << l.entry_segment_use
-          end
-        end
-
-        @trailer_segment_uses.each do |u|
-          if u.position < min
-            min   = u.position
-            uses << u
-          end
-        end
-
-        return uses
+        uses.concat(@header_segment_uses)
+        uses.concat(@loop_defs.map{|l| l.entry_segment_use })
+        uses.concat(@trailer_segment_uses)
       end
 
       # @return [Values::TableVal]

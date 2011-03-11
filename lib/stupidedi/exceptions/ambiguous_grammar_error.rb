@@ -1,6 +1,8 @@
 module Stupidedi
   module Exceptions
-    class InvalidSchemaError < StandardError
+
+    class AmbiguousGrammarError < StandardError
     end
+
   end
 end

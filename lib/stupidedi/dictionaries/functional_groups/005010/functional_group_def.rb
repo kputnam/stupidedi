@@ -22,10 +22,10 @@ module Stupidedi
           end
         end.new "005010",
           # Functional group header
-          [ SegmentDefs::GS.use(-8000, r::Mandatory, s::RepeatCount.bounded(1)) ],
+          [ SegmentDefs::GS.use(1, r::Mandatory, s::RepeatCount.bounded(1)) ],
 
           # Functional group trailer
-          [ SegmentDefs::GE.use(98000, r::Mandatory, s::RepeatCount.bounded(1)) ]
+          [ SegmentDefs::GE.use(2, r::Mandatory, s::RepeatCount.bounded(1)) ]
 
       end
     end

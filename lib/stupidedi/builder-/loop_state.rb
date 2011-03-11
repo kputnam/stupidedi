@@ -11,11 +11,11 @@ module Stupidedi
       attr_reader :parent
 
       # @return [Array<Instructions>]
-      attr_reader :successors
+      attr_reader :instructions
 
-      def initialize(loop_val, parent, successors)
-        @loop_val, @parent, @successors =
-          loop_val, parent, successors
+      def initialize(loop_val, parent, instructions)
+        @loop_val, @parent, @instructions =
+          loop_val, parent, instructions
       end
 
       def pop(count)
@@ -48,19 +48,10 @@ module Stupidedi
         LoopState.new(loop_val, parent)
       end
 
-      def successors(loop_def)
-        loop_def.header_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
-        end
-
-        loop_def.loop_defs.each do |l|
-          use = l.entry_segment_use
-          Instruction.new(nil, use, 0, x, LoopState)
-        end
-
-        loop_def.trailer_segment_uses.each do |use|
-          Instruction.new(nil, use, 0, x, nil)
-        end
+      def instructions(loop_def)
+        is = sequence(loop_def.header_segment_uses.tail)
+        is.concat(sequence(loop_def.loop_defs.map{|l| l.entry_segment_use }, is.length, LoopState))
+        is.concat(sequence(loop_def.trailer_segment_uses, is.length))
       end
     end
 

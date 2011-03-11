@@ -68,19 +68,9 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(interchange_def)
-        instructions = []
-
-        interchange_def.header_segment_uses.tail.each do |use|
-          instructions << Instruction.new(nil, buffer, 0, drop, nil)
-        end
-
-        instructions << Instruction.new(:GS, nil, 0, drop, FunctionalGroupState)
-
-        interchange_def.trailer_segment_uses.each do |use|
-          instructions << Instruction.new(nil, use, 0, drop, nil)
-        end
-
-        instructions
+        is = sequence(interchange_def.header_segment_uses.tail)
+        is << Instruction.new(:GS, nil, 0, is.length, FunctionalGroupState)
+        is.concat(sequence(interchange_def.trailer_segment_uses, is.length))
       end
     end
 
