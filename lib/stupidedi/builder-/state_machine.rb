@@ -15,19 +15,38 @@ module Stupidedi
           state, table = state
           instructions = table.successors(segment_tok)
 
+          # No matching instructions indicates this token cannot legally belong
+          # to any part of this state's parse tree according to the grammar. If
+          # there are more @states, the token might be valid in those states.
           if instructions.empty?
             errors.push(segment_tok)
             next
           end
 
-          # Evaluate each instruction to compute the next AbstractState {s} and
-          # and the InstructionTable {t}.
-          instructions.each do |x|
-            if x.push.nil?
-              s = state.pop(x.pop).add(segment_tok, x.segment_use)
-              t = table.pop(x.pop).drop(x.drop)
+          # 
+          if instructions.length > 1
+            deepest = 0
+            buffer  = []
 
-              unless x.pop.zero? or reader.nil?
+            instructions.each do |i|
+              if i.pop_count == deepest
+                buffer << i
+              elsif i.pop_count < deepest
+                deepest = i.pop_count
+                buffer.clear
+                buffer << i
+              end
+            end
+
+            instructions = buffer
+          end
+
+          instructions.each do |i|
+            if i.push.nil?
+              s = state.pop(i.pop_count).add(segment_tok, i.segment_use)
+              t = table.pop(i.pop_count).drop(i.drop_count)
+
+              unless i.pop_count.zero? or reader.nil?
                 # More general than checking if segment_tok is an ISE/GE segment
                 if not reader.separators.eql?(s.separators)
                   reader = reader.copy \
@@ -43,11 +62,11 @@ module Stupidedi
               # Note: Instruction#push returns a concrete subclass of
               # AbstractState, which has a constructor method named {push}, that
               # links the new instance to the parent {state}
-              a = x.push
+              a = i.push
 
               # @todo: Check for FailureState
-              s = a.push(segment_tok, x.segment_use, state.pop(x.pop), reader)
-              t = table.pop(x.pop).drop(x.drop).push(s.instructions)
+              s = a.push(segment_tok, i.segment_use, state.pop(i.pop_count), reader)
+              t = table.pop(i.pop_count).drop(i.drop_count).push(s.instructions)
 
               unless reader.nil?
                 # More general than checking if segment_tok is an ISA/GS segment
@@ -86,7 +105,7 @@ module Stupidedi
           end
         end
 
-        # return
+        # @todo: return
       end
 
     end

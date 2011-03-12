@@ -35,6 +35,7 @@ module Stupidedi
 
       # @param [SegmentTok] segment_tok the transaction set start segment
       # @param [SegmentUse] segment_use nil
+      # @param [InterchangeState] parent
       #
       # This will construct a state whose successors do not include the entry
       # segment defined by the TransactionSetDef (which is typically ST). This
@@ -72,9 +73,6 @@ module Stupidedi
         envelope_val = envelope_val.empty(parent.value)
         segment_use  = envelope_def.entry_segment_use
 
-        # Because TransactionState does not include the entry segment as one of
-        # its successors, we pass it as the parent to TableState.push -- which
-        # will take care of acting on the entry segment.
         ts = TransactionState.new(envelope_val, parent,
           instructions(envelope_def))
 
@@ -83,12 +81,21 @@ module Stupidedi
 
       # @return [Array<Instructions>]
       def instructions(transaction_set_def)
-        is = tsequence(transaction_set_def.table_defs.tail)
+        @__instructions ||= Hash.new
+        @__instructions[transaction_set_def] ||= begin
+          # @todo: Explain this optimization
+           if transaction_set_def.table_defs.head.repeatable?
+             tsequence(transaction_set_def.table_defs)
+           else
+             tsequence(transaction_set_def.table_defs.tail)
+           end
+        end
+      end
 
+      def fail_if_ambiguous(instructions)
         count = 0
 
-        # Check if the grammar is parsable by this parser
-        is.each do |i|
+        instructions.each do |i|
           count += 1
 
           # When this segment is read, the instruction is not removed
@@ -163,8 +170,6 @@ module Stupidedi
             end
           end
         end
-
-        return is
       end
     end
 

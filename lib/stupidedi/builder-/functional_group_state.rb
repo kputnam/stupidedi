@@ -65,9 +65,12 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(functional_group_def)
-        is = sequence(functional_group_def.header_segment_uses.tail)
-        is << Instruction.new(:ST, nil, 0, is.length, TransactionSetState)
-        is.concat(sequence(functional_group_def.trailer_segment_uses, is.length))
+        @__instructions ||= Hash.new
+        @__instructions[functional_group_def] ||= begin
+          is = sequence(functional_group_def.header_segment_uses.tail)
+          is << Instruction.new(:ST, nil, 0, is.length, TransactionSetState)
+          is.concat(sequence(functional_group_def.trailer_segment_uses, is.length))
+        end
       end
     end
 

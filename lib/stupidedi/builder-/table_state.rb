@@ -33,6 +33,10 @@ module Stupidedi
 
     class << TableState
 
+      # @param [SegmentTok] segment_tok the table set start segment
+      # @param [SegmentUse] segment_use
+      # @param [TransactionSetState] parent
+      #
       # It is assumed that the entry segments for a table all have the same
       # defined position, and that position is the smallest position of: all
       # the segments that can occur as direct children of the table and all
@@ -56,24 +60,27 @@ module Stupidedi
           table_def   = segment_use.parent
           table_val   = table_def.value(segment_val, parent.value)
 
-          TableState.new(table_val, parent,
-            instructions(table_def))
+          # @todo
         when Schema::LoopDef
           table_def   = segment_use.parent.parent
           table_val   = table_def.empty(parent.value)
 
-          LoopState.push(segment_tok, segment_use,
-            TableState.new(table_val, parent,
-              instructions(table_def)),
-            reader)
+          # @todo
         end
       end
 
       # @return [Array<Instruction>]
       def instructions(table_def)
-        is = sequence(table_def.header_segment_uses)
-        is.concat(lsequence(table_def.loop_defs, is.length))
-        is.concat(sequence(table_def.trailer_segment_uses, is.length))
+        @__instructions ||= Hash.new
+        @__instructions[table_def] ||= begin
+          is = sequence(table_def.header_segment_uses)
+          is.concat(lsequence(table_def.loop_defs, is.length))
+          is.concat(sequence(table_def.trailer_segment_uses, is.length))
+        end
+      end
+
+      def fail_if_ambiguous(instructions)
+        # @todo
       end
 
     end

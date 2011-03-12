@@ -3,7 +3,7 @@ class Array
   # Return the first item
   def head
     raise IndexError, "head of empty list" if empty?
-    x, _ = self
+    x, = self
     x
   end
 

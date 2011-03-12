@@ -34,23 +34,24 @@ module Stupidedi
     class << LoopState
 
       # @param [SegmentTok] segment_tok the loop start segment
-      #
-      # This will construct a state whose successors do not include the entry
-      # segment defined by the LoopDef. This means another occurrence of that
-      # segment will pop this state and the parent state will create a new
-      # LoopState.
       def push(segment_tok, segment_use, parent)
         segment_val = segment(segment_tok, segment_use)
         loop_def    = segment_use.parent
         loop_val    = loop_def.value(segment_val, parent.value)
 
         # @todo: Remove the entry segment from successor states
-        LoopState.new(loop_val, parent)
+        LoopState.new(loop_val, parent, instructions(loop_def))
       end
 
       def instructions(loop_def)
-        is = sequence(loop_def.header_segment_uses.tail)
-        is.concat(sequence(loop_def.loop_defs.map{|l| l.entry_segment_use }, is.length, LoopState))
+        # @todo: Explain this optimization
+        is = if loop_def.header_segment_uses.head.repeatable?
+              sequence(loop_def.header_segment_uses)
+             else
+               sequence(loop_def.header_segment_uses.tail)
+             end
+
+        is.concat(lsequence(loop_def.loop_defs, is.length))
         is.concat(sequence(loop_def.trailer_segment_uses, is.length))
       end
     end

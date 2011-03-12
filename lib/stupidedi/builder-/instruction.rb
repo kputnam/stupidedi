@@ -18,7 +18,7 @@ module Stupidedi
       # tree before storing the segment.
       #
       # @return [Integer]
-      attr_reader :pop
+      attr_reader :pop_count
 
       # This controls the allowed order in which structures may occur, by
       # indicating the number of instructions to remove from the beginning of
@@ -28,12 +28,12 @@ module Stupidedi
       # remains in the successor table.
       #
       # Sibling structures that have the same position (as defined by their
-      # SegmentUse) will have equal drop values such that all of the sibling
-      # instructions remain in the successor table when any one of them is
-      # executed.
+      # SegmentUse) will have equal drop_count values such that all of the
+      # sibling instructions remain in the successor table when any one of them
+      # is executed.
       #
       # @return [Integer]
-      attr_reader :drop
+      attr_reader :drop_count
 
       # This indicates that a child node should be added to the tree, which
       # will then contain the segment.
@@ -48,7 +48,7 @@ module Stupidedi
       attr_reader :push
 
       def initialize(segment_id, segment_use, pop, drop, push)
-        @segment_id, @segment_use, @pop, @drop, @push =
+        @segment_id, @segment_use, @pop_count, @drop_count, @push =
           segment_id || segment_use.definition.id, segment_use, pop, drop, push
       end
 
@@ -57,8 +57,8 @@ module Stupidedi
         self.class.new \
           changes.fetch(:segment_id, @segment_id),
           changes.fetch(:segment_use, @segment_use),
-          changes.fetch(:pop, @pop),
-          changes.fetch(:drop, @drop),
+          changes.fetch(:pop_count, @pop_count),
+          changes.fetch(:drop_count, @drop_count),
           changes.fetch(:push, @push)
       end
 
@@ -71,10 +71,10 @@ module Stupidedi
         q.group(2, "(", ")") do
           q.breakable ""
 
-          q.text "pop: #{@pop},"
+          q.text "pop: #{@pop_count},"
           q.breakable
 
-          q.text "drop: #{@drop}"
+          q.text "drop: #{@drop_count}"
 
           unless @push.nil?
             q.text ","

@@ -8,6 +8,10 @@ module Stupidedi
 
       def initialize(instructions, pop)
         @instructions, @pop = instructions, pop
+
+        @__push = Hash.new
+        @__drop = Hash.new
+        @__successors = Hash.new
       end
 
       # @return [InstructionTable]
@@ -17,11 +21,15 @@ module Stupidedi
           changes.fetch(:pop, @pop)
       end
 
+      def length
+        @instructions.length
+      end
+
       # @return [InstructionTable]
       def push(instructions)
         @__push[instructions] ||= begin
           offset = instructions.length
-          bottom = @instructions.map{|x| x.copy(:pop => x.pop + 1) }
+          bottom = @instructions.map{|x| x.copy(:pop_count => x.pop_count + 1) }
 
           copy(:instructions => instructions + bottom, :pop => self)
         end
@@ -63,9 +71,19 @@ module Stupidedi
                 "InstructionTable contains less than #{count} entries"
             end
 
-            copy(:instructions =>
-              @instructions.drop(count).
-                map{|x| x.copy(:drop => x.drop - count) })
+            if @pop.nil?
+              drop   = @instructions.drop(count)
+              result =
+                drop.map{|x| x.copy(:drop_count => x.drop_count - count) }
+            else
+              drop     = @instructions.drop(count)
+              top, pop = drop.split_at(drop.length - @pop.length)
+              result   =
+                top.map{|x| x.copy(:drop_count => x.drop_count - count) }.
+                    concat(pop)
+            end
+
+            copy(:instructions => result)
           end
         end
       end
@@ -74,11 +92,17 @@ module Stupidedi
       def pretty_print(q)
         q.text("InstructionTable")
         q.group(2, "(", ")") do
+          q.breakable ""
+
+          index = 0
           @instructions.each do |e|
+            index += 1
             unless q.current_group.first?
               q.text ","
               q.breakable
             end
+
+            q.text "#{'% 2s' % index}: "
             q.pp e
           end
         end

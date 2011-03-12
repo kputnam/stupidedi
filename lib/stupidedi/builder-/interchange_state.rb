@@ -61,7 +61,8 @@ module Stupidedi
         segment_use  = envelope_def.header_segment_use
         segment_val  = segment(segment_tok, segment_use)
 
-        InterchangeState.new(envelope_val, parent, instructions(envelope_def),
+        InterchangeState.new(envelope_val, parent,
+          instructions(envelope_def),
           envelope_val.separators(reader.try(:separators)),
           reader.envelope_val.segment_dict)
       end
