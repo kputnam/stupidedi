@@ -66,7 +66,14 @@ module Stupidedi
 
               # @todo: Check for FailureState
               s = a.push(segment_tok, i.segment_use, state.pop(i.pop_count), reader)
-              t = table.pop(i.pop_count).drop(i.drop_count).push(s.instructions)
+              t = table.pop(i.pop_count).drop(i.drop_count)
+
+              directive = s.instructions
+              if directive.is_a?(InstructionTable)
+                t = t.concat(directive)
+              else
+                t = t.push(directive)
+              end
 
               unless reader.nil?
                 # More general than checking if segment_tok is an ISA/GS segment

@@ -69,9 +69,17 @@ module Stupidedi
 
       # @return [Array<Instruction>]
       def instructions(interchange_def)
-        is = sequence(interchange_def.header_segment_uses.tail)
-        is << Instruction.new(:GS, nil, 0, is.length, FunctionalGroupState)
-        is.concat(sequence(interchange_def.trailer_segment_uses, is.length))
+        @__instructions ||= Hash.new
+        @__instructions[interchange_def] ||= begin
+          is = if interchange_def.header_segment_uses.head.repeatable?
+                 sequence(interchange_def.header_segment_uses)
+               else
+                 sequence(interchange_def.header_segment_uses.tail)
+               end
+
+          is << Instruction.new(:GS, nil, 0, is.length, FunctionalGroupState)
+          is.concat(sequence(interchange_def.trailer_segment_uses, is.length))
+        end
       end
     end
 

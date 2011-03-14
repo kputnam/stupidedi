@@ -55,17 +55,30 @@ module Stupidedi
       def push(segment_tok, segment_use, parent, reader = nil)
         case segment_use.parent
         when Schema::TableDef
-          # The segment is a direct descendant of the table
           segment_val = segment(segment_tok, segment_use)
           table_def   = segment_use.parent
           table_val   = table_def.value(segment_val, parent.value)
 
-          # @todo
+          ptable = parent.instructions
+          pstart = ptable.at(segment_use)
+
+          ttable = InstructionTable.build(instructions(table_def))
+          tstart = ttable.at(segment_use)
+
+          TableState.new(table_val, parent,
+            ptable.drop(pstart.try(:drop_count) || 0).
+              concat(ttable.drop(tstart.drop_count)))
         when Schema::LoopDef
           table_def   = segment_use.parent.parent
           table_val   = table_def.empty(parent.value)
 
-          # @todo
+          ptable = parent.instructions
+          pstart = ptable.at(segment_use)
+
+          LoopState.push(segment_tok, segment_use,
+            TableState.new(table_val, parent,
+              ptable.drop(pstart.try(:drop_count) || 0).
+                concat(ttable.drop(tstart.drop_count))))
         end
       end
 

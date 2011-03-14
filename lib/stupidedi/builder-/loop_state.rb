@@ -34,7 +34,7 @@ module Stupidedi
     class << LoopState
 
       # @param [SegmentTok] segment_tok the loop start segment
-      def push(segment_tok, segment_use, parent)
+      def push(segment_tok, segment_use, parent, reader = nil)
         segment_val = segment(segment_tok, segment_use)
         loop_def    = segment_use.parent
         loop_val    = loop_def.value(segment_val, parent.value)

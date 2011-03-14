@@ -73,10 +73,9 @@ module Stupidedi
         envelope_val = envelope_val.empty(parent.value)
         segment_use  = envelope_def.entry_segment_use
 
-        ts = TransactionState.new(envelope_val, parent,
-          instructions(envelope_def))
-
-        TableState.push(segment_tok, segment_use, ts, reader)
+        TableState.push(segment_tok, segment_use,
+          TransactionState.new(envelope_val, parent,
+            InstructionTable.build(instructions(envelope_def))))
       end
 
       # @return [Array<Instructions>]

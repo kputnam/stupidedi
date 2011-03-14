@@ -16,8 +16,8 @@ class Array
 
   # Selects all elements except the last
   # @return [Array]
-  def init
-    slice(0..-2) or []
+  def init(n = 1)
+    slice(0..-(n + 1)) or []
   end
 
   # Select all elements except the first +n+ ones
