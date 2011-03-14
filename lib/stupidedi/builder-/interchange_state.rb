@@ -21,19 +21,34 @@ module Stupidedi
 
       def initialize(envelope_val, parent, instructions, separators, segment_dict)
         @interchange_val, @parent, @instructions, @separators, @segment_dict =
-          interchange_val, parent, instructions, separators, segment_dict
+          envelope_val, parent, instructions, separators, segment_dict
+      end
+
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:interchange_val, @interchange_val),
+          changes.fetch(:parent, @parent),
+          changes.fetch(:instructions, @instructions),
+          changes.fetch(:separators, @separators),
+          changes.fetch(:segment_dict, @segment_dict)
       end
 
       def pop(count)
         if count.zero?
           self
         else
-          # @todo
+          @parent.merge(self).pop(count - 1)
         end
       end
 
       def add(segment_tok, segment_use)
-        # @todo
+        copy(:interchange_val =>
+          @interchange_val.append(segment(segment_tok, segment_use)))
+      end
+
+      def merge(child)
+        copy(:interchange_val =>
+          @interchange_val.append(child))
       end
     end
 
@@ -57,14 +72,14 @@ module Stupidedi
 
         # Construct a SegmentVal and InterchangeVal around it
         envelope_def = parent.config.interchange.at(version)
-        envelope_val = envelope_def.value(segment_val)
-        segment_use  = envelope_def.header_segment_use
+        segment_use  = envelope_def.entry_segment_use
         segment_val  = segment(segment_tok, segment_use)
+        envelope_val = envelope_def.value(segment_val)
 
         InterchangeState.new(envelope_val, parent,
           instructions(envelope_def),
-          envelope_val.separators(reader.try(:separators)),
-          reader.envelope_val.segment_dict)
+          envelope_val.separators.merge(reader.try(:separators)),
+          reader.segment_dict.push(envelope_val.segment_dict))
       end
 
       # @return [Array<Instruction>]

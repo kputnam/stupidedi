@@ -10,21 +10,15 @@ module Stupidedi
       # @return [InterchangeDef]
       attr_reader :definition
 
-      # @return [Array<SegmentVal>]
-      attr_reader :header_segment_vals
-
-      # @return [Array<FunctionalGroupVal>]
-      attr_reader :functional_group_vals
-
-      # @return [Array<SegmentVal>]
-      attr_reader :trailer_segment_vals
+      # @return [Array<SegmentVal, FunctionalGroupVal>]
+      attr_reader :children
 
       # @return [#segment, #element, #repetition, #component]
       abstract :separators
 
-      def initialize(definition, header_segment_vals, functional_group_vals, trailer_segment_vals)
-        @definition, @header_segment_vals, @functional_group_vals, @trailer_segment_vals =
-          definition, header_segment_vals, functional_group_vals, trailer_segment_vals
+      def initialize(definition, children)
+        @definition, @children =
+          definition, children
 
       # @header_segment_vals   = header_segment_vals.map{|x| x.copy(:parent => self) }
       # @trailer_segment_vals  = trailer_segment_vals.map{|x| x.copy(:parent => self) }
@@ -35,36 +29,17 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:header_segment_vals, @header_segment_vals),
-          changes.fetch(:functional_group_vals, @functional_group_vals),
-          changes.fetch(:trailer_segment_vals, @trailer_segment_vals)
-      end
-
-      def reparent!
-        @header_segment_vals.each{|x| x.reparent!(self) }
-        @trailer_segment_vals.each{|x| x.reparent!(self) }
-        @functional_group_vals.each{|x| x.reparent!(self) }
-        return self
+          changes.fetch(:children, @children)
       end
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @header_segment_vals + @trailer_segment_vals
+        @children.select{|x| x.is_a?(Values::SegmentVal) }
       end
 
       # @return [InterchangeVal]
-      def append_header_segment(segment_val)
-        copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
-      end
-
-      # @return [InterchangeVal]
-      def append_functional_group(functional_group_val)
-        copy(:functional_group_vals => functional_group_val.snoc(@functional_group_vals))
-      end
-
-      # @return [InterchangeVal]
-      def append_trailer_segment(segment_val)
-        copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
+      def append(child)
+        copy(:children => child.snoc(@children))
       end
 
       # @private
@@ -73,21 +48,7 @@ module Stupidedi
         q.text "InterchangeVal#{id}"
         q.group 2, "(", ")" do
           q.breakable ""
-          @header_segment_vals.each do |e|
-            unless q.current_group.first?
-              q.text ", "
-              q.breakable
-            end
-            q.pp e
-          end
-          @functional_group_vals.each do |e|
-            unless q.current_group.first?
-              q.text ", "
-              q.breakable
-            end
-            q.pp e
-          end
-          @trailer_segment_vals.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ", "
               q.breakable
@@ -99,10 +60,8 @@ module Stupidedi
 
       # @private
       def ==(other)
-        other.definition            == @definition and
-        other.header_segment_vals   == @header_segment_vals and
-        other.trailer_segment_vals  == @trailer_segment_vals and
-        other.functional_group_vals == @functional_group_vals
+        other.definition == @definition and
+        other.children   == @children
       end
     end
 

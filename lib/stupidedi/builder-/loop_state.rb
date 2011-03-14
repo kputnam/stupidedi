@@ -18,16 +18,29 @@ module Stupidedi
           loop_val, parent, instructions
       end
 
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:loop_val, @loop_val),
+          changes.fetch(:parent, @parent),
+          changes.fetch(:instructions, @instructions)
+      end
+
       def pop(count)
         if count.zero?
           self
         else
-          # @todo
+          @parent.merge(self).pop(count - 1)
         end
       end
 
       def add(segment_tok, segment_use)
-        # @todo
+        copy(:loop_val =>
+          @loop_val.append(segment(segment_tok, segment_use)))
+      end
+
+      def merge(child)
+        copy(:loop_val =>
+          @loop_val.append(child))
       end
     end
 

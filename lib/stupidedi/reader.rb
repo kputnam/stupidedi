@@ -13,6 +13,7 @@ module Stupidedi
 
     autoload :StreamReader,  "stupidedi/reader/stream_reader"
     autoload :TokenReader,   "stupidedi/reader/token_reader"
+    autoload :Separators,    "stupidedi/reader/separators"
 
     autoload :ComponentElementTok,  "stupidedi/reader/tokens/component_element_tok"
     autoload :CompositeElementTok,  "stupidedi/reader/tokens/composite_element_tok"

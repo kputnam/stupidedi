@@ -12,7 +12,7 @@ module Stupidedi
           end
 
           def value(segment_val)
-            FiveOhOne::InterchangeVal.new(self, segment_val.cons, [], [])
+            FiveOhOne::InterchangeVal.new(self, segment_val.cons)
           end
 
           def segment_dict

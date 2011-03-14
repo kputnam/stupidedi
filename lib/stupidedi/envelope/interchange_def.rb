@@ -30,6 +30,10 @@ module Stupidedi
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
       end
 
+      def entry_segment_use
+        @header_segment_uses.head
+      end
+
       # @return [Array<SegmentUse>]
       def segment_uses
         @header_segment_uses + @trailer_segment_uses

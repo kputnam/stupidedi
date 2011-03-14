@@ -12,7 +12,7 @@ module Stupidedi
 
           @__push = Hash.new
           @__drop = Hash.new
-          @__successors = Hash.new
+        # @__successors = Hash.new
         end
 
         # @return [InstructionTable]
@@ -57,10 +57,11 @@ module Stupidedi
             # @todo: Compute segment constraints when the segment identifier
             # alone does not identify a single state.
 
-            @instructions.inject(Hash.new{|h,k| h[k] = [] }) do |hash, x|
-              hash[x.segment_id] = x
-              hash
-            end
+            hash = Hash.new{|h,k| h[k] = [] }
+
+            @instructions.each{|x| hash[x.segment_id] << x }
+
+            hash
           end
 
           # @todo: Narrow the results down by evaluating segment constraints

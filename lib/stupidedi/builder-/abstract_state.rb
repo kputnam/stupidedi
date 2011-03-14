@@ -20,6 +20,16 @@ module Stupidedi
       # @return [AbstractState]
       abstract :add, :args => %w(segment_tok segment_use)
 
+      # @return [Reader::Separators]
+      def separators
+        parent.separators
+      end
+
+      # @return [Reader::SegmentDict]
+      def segment_dict
+        parent.segment_dict
+      end
+
     private
 
       # @return [Values::SegmentVal]
@@ -30,16 +40,6 @@ module Stupidedi
       # @return [Configuration::RootConfig]
       def config
         parent.config
-      end
-
-      # @return [Reader::Separators]
-      def separators
-        parent.separators
-      end
-
-      # @return [Reader::SegmentDict]
-      def segment_dict
-        parent.segment_dict
       end
     end
 

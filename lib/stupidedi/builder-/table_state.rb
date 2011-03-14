@@ -18,16 +18,29 @@ module Stupidedi
           table_val, parent, instructions
       end
 
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:table_val, @table_val),
+          changes.fetch(:parent, @parent),
+          changes.fetch(:instructions, @instructions)
+      end
+
       def pop(count)
         if count.zero?
           self
         else
-          # @todo
+          @parent.merge(self).pop(count - 1)
         end
       end
 
       def add(segment_tok, segment_use)
-        # @todo
+        copy(:table_val =>
+          @table_val.append(segment(segment_tok, segment_use)))
+      end
+
+      def merge(child)
+        copy(:table_val =>
+          @table_val.append(child))
       end
     end
 
@@ -62,7 +75,7 @@ module Stupidedi
           ptable = parent.instructions
           pstart = ptable.at(segment_use)
 
-          ttable = InstructionTable.build(instructions(table_def))
+          ttable = instructions(table_def)
           tstart = ttable.at(segment_use)
 
           TableState.new(table_val, parent,
@@ -82,18 +95,16 @@ module Stupidedi
         end
       end
 
-      # @return [Array<Instruction>]
+      # @return [InstructionTable]
       def instructions(table_def)
         @__instructions ||= Hash.new
         @__instructions[table_def] ||= begin
           is = sequence(table_def.header_segment_uses)
           is.concat(lsequence(table_def.loop_defs, is.length))
           is.concat(sequence(table_def.trailer_segment_uses, is.length))
-        end
-      end
 
-      def fail_if_ambiguous(instructions)
-        # @todo
+          InstructionTable.build(is)
+        end
       end
 
     end

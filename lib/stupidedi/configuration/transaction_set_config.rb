@@ -55,8 +55,12 @@ module Stupidedi
       # @param version      ST03 or GS08
       # @param function     GS01
       # @param transaction  ST01
-      def lookup(version, function, transaction)
+      def at(version, function, transaction)
         @table[Array[version, function, transaction]]
+      end
+
+      def defined_at?(version, function, transaction)
+        @table.defined_at?([version, function, transaction])
       end
 
       # @private

@@ -25,8 +25,12 @@ module Stupidedi
         @table[version] = definition
       end
 
-      def lookup(version)
+      def at(version)
         @table[version]
+      end
+
+      def defined_at?(version)
+        @table.defined_at?(version)
       end
 
       # @private

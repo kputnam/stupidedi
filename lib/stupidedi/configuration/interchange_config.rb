@@ -42,8 +42,12 @@ module Stupidedi
       end
 
       # @param version  ISA12
-      def lookup(version)
+      def at(version)
         @table[version]
+      end
+
+      def defined_at?(version)
+        @table.defined_at?(version)
       end
 
       # @private

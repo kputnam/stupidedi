@@ -21,16 +21,30 @@ module Stupidedi
           functional_group_val, parent, successor, segment_dict
       end
 
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:functional_group_val, @functional_group_val),
+          changes.fetch(:parent, @parent),
+          changes.fetch(:instructions, @instructions),
+          changes.fetch(:segment_dict, @segment_dict)
+      end
+
       def pop(count)
         if count.zero?
           self
         else
-          # @todo
+          @parent.merge(self).pop(count - 1)
         end
       end
 
       def add(segment_tok, segment_use)
-        # @todo
+        copy(:functional_group_val =>
+          @functional_group_val.append(segment(segment_tok, segment_use)))
+      end
+
+      def merge(child)
+        copy(:functional_group_val =>
+          @functional_group_val.append(child))
       end
     end
 
