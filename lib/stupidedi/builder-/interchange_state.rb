@@ -4,13 +4,13 @@ module Stupidedi
     class InterchangeState < AbstractState
 
       # @return [Envelope::InterchangeVal]
-      attr_reader :interchange_val
-      alias value interchange_val
+      attr_reader :value
+      alias interchange_val value
 
       # @return [TransmissionState]
       attr_reader :parent
 
-      # @return [Array<Instruction>]
+      # @return [InstructionTable]
       attr_reader :instructions
 
       # @return [Reader::Separators]
@@ -19,14 +19,14 @@ module Stupidedi
       # @return [Reader::SegmentDict]
       attr_reader :segment_dict
 
-      def initialize(envelope_val, parent, instructions, separators, segment_dict)
-        @interchange_val, @parent, @instructions, @separators, @segment_dict =
-          envelope_val, parent, instructions, separators, segment_dict
+      def initialize(value, parent, instructions, separators, segment_dict)
+        @value, @parent, @instructions, @separators, @segment_dict =
+          value, parent, instructions, separators, segment_dict
       end
 
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:interchange_val, @interchange_val),
+          changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions),
           changes.fetch(:separators, @separators),
@@ -37,18 +37,24 @@ module Stupidedi
         if count.zero?
           self
         else
-          @parent.merge(self).pop(count - 1)
+          @parent.merge(@value).pop(count - 1)
+        end
+      end
+
+      def drop(count)
+        if count.zero?
+          self
+        else
+          copy(:instructions => @instructions.drop(count))
         end
       end
 
       def add(segment_tok, segment_use)
-        copy(:interchange_val =>
-          @interchange_val.append(segment(segment_tok, segment_use)))
+        copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
       def merge(child)
-        copy(:interchange_val =>
-          @interchange_val.append(child))
+        copy(:value => @value.append(child))
       end
     end
 
@@ -77,7 +83,7 @@ module Stupidedi
         envelope_val = envelope_def.value(segment_val)
 
         InterchangeState.new(envelope_val, parent,
-          instructions(envelope_def),
+          parent.instructions.push(instructions(envelope_def)),
           envelope_val.separators.merge(reader.try(:separators)),
           reader.segment_dict.push(envelope_val.segment_dict))
       end

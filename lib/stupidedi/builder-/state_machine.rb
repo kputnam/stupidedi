@@ -13,9 +13,7 @@ module Stupidedi
         errors = []
 
         @states.each do |state|
-          state, table = state
-
-          instructions = table.successors(segment_tok)
+          instructions = state.instructions.successors(segment_tok)
 
           # No matching instructions means that this parse tree hit a dead end
           # and cannot accept this token. Keep in mind there may be another
@@ -41,7 +39,7 @@ module Stupidedi
           # we would end up with parse trees that accept exactly the same set
           # of tokens -- meaning the trees will never converge.
           if instructions.length > 1
-            deepest = 0
+            deepest = 1.0 / 0.0 # Infinity
             buffer  = []
 
             instructions.each do |i|
@@ -59,11 +57,10 @@ module Stupidedi
 
           instructions.each do |i|
             if i.push.nil?
-              s = state.pop(i.pop_count).add(segment_tok, i.segment_use)
-              t = table.pop(i.pop_count).drop(i.drop_count)
-
-              # @todo: Combine AbstractState + InstructionTable
-              # s = state.pop(i.pop_count).forward(i.drop_count, segment_tok, i.segment_use)
+              s = state.
+                pop(i.pop_count).
+                drop(i.drop_count).
+                add(segment_tok, i.segment_use)
 
               unless reader.nil? or i.pop_count.zero?
                 # More general than checking if segment_tok is an ISE/GE segment
@@ -78,35 +75,14 @@ module Stupidedi
                 end
               end
             else
+              s = state.
+                pop(i.pop_count).
+                drop(i.drop_count)
+
               # Note Instruction#push returns a subclass of AbstractState,
               # which has a concrete constructor method named "push", that
               # links the new instance to the parent {state}
-              a = i.push
-
-              # @todo: Check for FailureState
-              s = a.push(segment_tok, i.segment_use, state.pop(i.pop_count), reader)
-              t = table.pop(i.pop_count).drop(i.drop_count)
-
-              directive = s.instructions
-
-              if directive.is_a?(InstructionTable)
-                # Normally AbstractState#instructions returns Array<Instruction>
-                # which is a single layer of instructions that get pushed onto
-                # the table... (note Object#is_a? returned nearly twice as fast
-                # when returning false than when returning true in micro-
-                # benchmarks performed on Ruby 1.8.7)
-                t = t.concat(directive)
-              else
-                # ... however sometimes we've pushed more than one state (when
-                # the intermediate states don't consume the segment), so we need
-                # to push more than one layer of instructions.
-                t = t.push(directive)
-              end
-
-              # @todo: Combine AbstractState + InstructionTable
-              # s = i.push.push(segment_tok, i.segment_use,
-              #                 state.pop(i.pop_count).forward(i.drop_count),
-              #                 reader)
+              s = i.push.push(segment_tok, i.segment_use, s, reader)
 
               unless reader.nil?
                 # More general than checking if segment_tok is an ISA/GS segment
@@ -122,9 +98,11 @@ module Stupidedi
               end
             end
 
-            states.push([s, t])
+            states << s
           end
         end
+
+        puts "#{segment_tok.id}: #{states.length}"
 
         @errors = errors
         @states = states
@@ -154,13 +132,12 @@ module Stupidedi
 
     class << StateMachine
       def build(config)
-        separators   = OpenStruct.new(:element => nil, :segment => nil, :component => nil, :repetition => nil)
-        segment_dict = Schema::SegmentDict.empty
+        separators   = Reader::Separators.empty
+        segment_dict = Reader::SegmentDict.empty
 
         state = TransmissionState.new(config, separators, segment_dict)
-        table = InstructionTable.build(state.instructions)
 
-        StateMachine.new([[state, table]], [])
+        StateMachine.new(state.cons, [])
       end
     end
 

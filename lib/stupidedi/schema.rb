@@ -13,7 +13,6 @@ module Stupidedi
     autoload :LoopDef,      "stupidedi/schema/loop_def"
     autoload :RepeatCount,  "stupidedi/schema/repeat_count"
     autoload :SegmentDef,   "stupidedi/schema/segment_def"
-    autoload :SegmentDict,  "stupidedi/schema/segment_dict"
     autoload :SegmentReq,   "stupidedi/schema/segment_req"
     autoload :SegmentUse,   "stupidedi/schema/segment_use"
     autoload :SyntaxNote,   "stupidedi/schema/syntax_note"

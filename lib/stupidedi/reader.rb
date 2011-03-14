@@ -7,13 +7,14 @@ module Stupidedi
   #
   module Reader
 
-    autoload :Result,        "stupidedi/reader/result"
-    autoload :Success,       "stupidedi/reader/result"
-    autoload :Failure,       "stupidedi/reader/result"
+    autoload :Result,       "stupidedi/reader/result"
+    autoload :Success,      "stupidedi/reader/result"
+    autoload :Failure,      "stupidedi/reader/result"
 
-    autoload :StreamReader,  "stupidedi/reader/stream_reader"
-    autoload :TokenReader,   "stupidedi/reader/token_reader"
-    autoload :Separators,    "stupidedi/reader/separators"
+    autoload :StreamReader, "stupidedi/reader/stream_reader"
+    autoload :TokenReader,  "stupidedi/reader/token_reader"
+    autoload :Separators,   "stupidedi/reader/separators"
+    autoload :SegmentDict,  "stupidedi/reader/segment_dict"
 
     autoload :ComponentElementTok,  "stupidedi/reader/tokens/component_element_tok"
     autoload :CompositeElementTok,  "stupidedi/reader/tokens/composite_element_tok"

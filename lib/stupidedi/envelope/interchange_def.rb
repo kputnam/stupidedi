@@ -34,9 +34,8 @@ module Stupidedi
         @header_segment_uses.head
       end
 
-      # @return [Array<SegmentUse>]
       def segment_uses
-        @header_segment_uses + @trailer_segment_uses
+        @__segment_uses ||= @header_segment_uses + @trailer_segment_uses
       end
 
       def pretty_print(q)

@@ -52,8 +52,12 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def entry_segment_use
+        @header_segment_uses.head
+      end
+
       def segment_uses
-        @header_segment_uses + @trailer_segment_uses
+        @__segment_uses ||= @header_segment_uses + @trailer_segment_uses
       end
 
       # @return [FunctionalGroupVal]

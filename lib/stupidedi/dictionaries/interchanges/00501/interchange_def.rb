@@ -16,7 +16,7 @@ module Stupidedi
           end
 
           def segment_dict
-            Schema::SegmentDict.build(SegmentDefs)
+            SegmentDefs
           end
         end.new "00501",
           # Interchange header

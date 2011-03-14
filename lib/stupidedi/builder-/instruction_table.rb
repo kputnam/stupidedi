@@ -13,6 +13,7 @@ module Stupidedi
           @__push = Hash.new
           @__drop = Hash.new
         # @__successors = Hash.new
+          @__constraints = Hash.new
         end
 
         # @return [InstructionTable]
@@ -34,37 +35,62 @@ module Stupidedi
         # @return [InstructionTable]
         def push(instructions)
           @__push[instructions] ||= begin
+            print "#{object_id}.push(#{instructions.object_id})"
             offset = instructions.length
             bottom = @instructions.map{|x| x.copy(:pop_count => x.pop_count + 1) }
 
-            copy(:instructions => instructions + bottom, :pop => self)
+            x = copy(:instructions => instructions + bottom, :pop => self)
+            puts " = #{x.object_id}"
+            x
           end
         end
 
-        # @return [InstructionTable]
-        def reverse(onto = InstructionTable.empty)
-          @pop.reverse(onto.push(@instructions.init(@pop.length)))
-        end
+      # # @return [InstructionTable]
+      # def reverse(onto = InstructionTable.empty)
+      #   @pop.reverse(onto.push(@instructions.init(@pop.length)))
+      # end
 
-        # @return [InstructionTable]
-        def concat(other)
-          other.reverse.reverse(self)
-        end
+      # # @return [InstructionTable]
+      # def concat(other)
+      #   other.reverse.reverse(self)
+      # end
 
         # @return [Array<Instruction>]
         def successors(segment_tok)
           @__successors ||= begin
-            # @todo: Compute segment constraints when the segment identifier
-            # alone does not identify a single state.
-
+            puts "#{object_id}.successors"
             hash = Hash.new{|h,k| h[k] = [] }
 
             @instructions.each{|x| hash[x.segment_id] << x }
 
+            hash.each do |segment_id, instructions|
+              unless instructions.length > 1
+                next
+              end
+
+              # When one of the instructions has a nil segment_use, it means
+              # the SegmentUse is determined when pushing the new state. There
+              # isn't a way to know the segment constraints from here.
+              if instructions.any?{|i| i.segment_use.nil? }
+                next
+              end
+
+              # The same SegmentUse may appear more than once, because the
+              # segment can be placed at different levels in the tree. If
+              # all the instructions have the same SegmentUse, we can't use
+              # segment constraints to narrow down the instruction list.
+              segment_uses = instructions.map{|i| i.segment_use }
+
+              unless segment_uses.map{|u| u.object_id }.uniq.length > 1
+                next
+              end
+
+              # @todo: Build segment constraints
+            end
+
             hash
           end
 
-          # @todo: Narrow the results down by evaluating segment constraints
           @__successors.fetch(segment_tok.id, [])
         end
 
@@ -83,24 +109,35 @@ module Stupidedi
             self
           else
             @__drop[count] ||= begin
-              if count > @instructions.length
-                raise IndexError,
-                  "InstructionTable contains less than #{count} entries"
+
+              # @todo: Explain
+              smallest = @instructions.length
+              @instructions.each do |i|
+                if smallest > i.drop_count and i.drop_count > 0
+                  smallest = i.drop_count
+                end
               end
 
-              if @pop.nil?
-                drop   = @instructions.drop(count)
-                result =
-                  drop.map{|x| x.copy(:drop_count => x.drop_count - count) }
+              if smallest == count
+                if @pop.nil?
+                  drop   = @instructions.drop(count)
+                  result =
+                    drop.map{|x| x.copy(:drop_count => x.drop_count - count) }
+                else
+                  drop     = @instructions.drop(count)
+                  top, pop = drop.split_at(drop.length - @pop.length)
+                  result   =
+                    top.map{|x| x.copy(:drop_count => x.drop_count - count) }.
+                        concat(pop)
+                end
+
+                x = copy(:instructions => result)
+                puts "#{object_id}.drop(#{count}) = #{x.object_id}"
+                x
               else
-                drop     = @instructions.drop(count)
-                top, pop = drop.split_at(drop.length - @pop.length)
-                result   =
-                  top.map{|x| x.copy(:drop_count => x.drop_count - count) }.
-                      concat(pop)
+                puts "#{object_id}.drop(#{count}) = drop(#{smallest}).drop(#{count - smallest})"
+                drop(smallest).drop(count - smallest)
               end
-
-              copy(:instructions => result)
             end
           end
         end
@@ -180,7 +217,7 @@ module Stupidedi
       end
 
       def build(instructions)
-        InstructionTable::NonEmpty.new(instructions, InstructionTable::Empty)
+        InstructionTable::Empty.push(instructions)
       end
     end
   end

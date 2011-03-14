@@ -14,8 +14,14 @@ module Stupidedi
       # @return [AbstractState]
       abstract :parent
 
+      # @return [InstructionTable]
+      abstract :instructions
+
       # @return [AbstractState]
       abstract :pop, :args => %w(count)
+
+      # @return [AbstractState]
+      abstract :drop, :args => %w(count)
 
       # @return [AbstractState]
       abstract :add, :args => %w(segment_tok segment_use)
@@ -30,16 +36,24 @@ module Stupidedi
         parent.segment_dict
       end
 
+      # @return [Configuration::RootConfig]
+      def config
+        parent.config
+      end
+
+      def pretty_print(q)
+        q.text self.class.name.split('::').last
+        q.group(2, "(", ")") do
+          q.breakable ""
+          q.pp value
+        end
+      end
+
     private
 
       # @return [Values::SegmentVal]
       def segment(segment_tok, segment_use, parent = nil)
         AbstractState.segment(segment_tok, segment_use, parent)
-      end
-
-      # @return [Configuration::RootConfig]
-      def config
-        parent.config
       end
     end
 

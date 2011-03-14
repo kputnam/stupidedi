@@ -34,6 +34,11 @@ module Stupidedi
       end
 
       # @return [SegmentUse]
+      def entry_segment_use
+        @table_defs.head.header_segment_uses.head
+      end
+
+      # @return [SegmentUse]
       def first_segment_use
         @table_defs.head.header_segment_uses.head
       end

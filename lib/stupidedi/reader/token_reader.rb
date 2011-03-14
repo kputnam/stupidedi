@@ -12,7 +12,7 @@ module Stupidedi
       # @return [SegmentDict]
       attr_accessor :segment_dict
 
-      def initialize(input, separators, segment_dict = Schema::SegmentDict.empty)
+      def initialize(input, separators, segment_dict = SegmentDict.empty)
         @input, @separators, @segment_dict =
           input, separators, segment_dict
       end

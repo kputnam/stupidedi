@@ -58,7 +58,7 @@ module Stupidedi
               end
 
               unless e_requirement.forbidden?
-                unless e_arguments.length == u.definition.element_uses.length
+                unless e_arguments.length == u.definition.component_uses.length
                   raise Exceptions::InvalidSchemaError,
                     "Composite element #{u.definition.id} at #{segment_def.id}" <<
                     "#{element_index} has #{u.definition.element_uses.length}" <<
@@ -67,7 +67,7 @@ module Stupidedi
 
                 # ComponentElementUses
                 component_index = "00"
-                component_uses  = e_arguments.zip(u.definition.element_uses).map do |e, c|
+                component_uses  = e_arguments.zip(u.definition.component_uses).map do |e, c|
                   c_tag, c_requirement, c_name, c_arguments = e
                   component_index.succ!
 

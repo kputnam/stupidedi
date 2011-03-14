@@ -4,26 +4,26 @@ module Stupidedi
     class FunctionalGroupState < AbstractState
 
       # @return [Envelope::FunctionalGroupVal]
-      attr_reader :functional_group_val
-      alias value functional_group_val
+      attr_reader :value
+      alias functional_group_val value
 
       # @return [InterchangeState]
       attr_reader :parent
 
-      # @return [Array<Instruction>]
+      # @return [InstructionTable]
       attr_reader :instructions
 
       # @return [Reader::SegmentDict]
       attr_reader :segment_dict
 
-      def initialize(envelope_val, parent, instructions, segment_dict)
-        @functional_group_val, @parent, @instructions, @segment_dict =
-          functional_group_val, parent, successor, segment_dict
+      def initialize(value, parent, instructions, segment_dict)
+        @value, @parent, @instructions, @segment_dict =
+          value, parent, instructions, segment_dict
       end
 
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:functional_group_val, @functional_group_val),
+          changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions),
           changes.fetch(:segment_dict, @segment_dict)
@@ -33,30 +33,29 @@ module Stupidedi
         if count.zero?
           self
         else
-          @parent.merge(self).pop(count - 1)
+          @parent.merge(@value).pop(count - 1)
+        end
+      end
+
+      def drop(count)
+        if count.zero?
+          self
+        else
+          copy(:instructions => @instructions.drop(count))
         end
       end
 
       def add(segment_tok, segment_use)
-        copy(:functional_group_val =>
-          @functional_group_val.append(segment(segment_tok, segment_use)))
+        copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
       def merge(child)
-        copy(:functional_group_val =>
-          @functional_group_val.append(child))
+        copy(:value => @value.append(child))
       end
     end
 
     class << FunctionalGroupState
 
-      # @param [SegmentTok] segment_tok the functional group start segment
-      # @param [SegmentUse] segment_use nil
-      #
-      # This will construct a state whose successors do not include the entry
-      # segment defined by the FunctionalGroupDef (which is probably GS). This
-      # means another occurrence of that segment will pop this state and the
-      # parent state will create a new FunctionalGroupState.
       def push(segment_tok, segment_use, parent, reader = nil)
         # GS08: Version / Release / Industry Identifier Code
         version = segment_tok.element_toks.at(7).value.slice(0, 6)
@@ -67,13 +66,12 @@ module Stupidedi
         end
 
         envelope_def = parent.config.functional_group.at(version)
-        envelope_val = envelope_def.value(segment_val, parent.value)
-        segment_use  = envelope_def.header_segment_use
+        segment_use  = envelope_def.entry_segment_use
         segment_val  = segment(segment_tok, segment_use)
+        envelope_val = envelope_def.value(segment_val, parent.value)
 
-        # @todo: Remove the entry segment from successor states
         FunctionalGroupState.new(envelope_val, parent,
-          instructions(envelope_def),
+          parent.instructions.push(instructions(envelope_def)),
           parent.segment_dict.push(envelope_val.segment_dict))
       end
 

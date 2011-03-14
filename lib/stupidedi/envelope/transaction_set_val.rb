@@ -31,16 +31,16 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
-      def reparent!(parent)
-        @parent = parent
-        @table_vals.each{|x| x.reparent!(self) }
-        return self
+      # @return [TransactionSetVal]
+      def append(child_val)
+        unless child_val.is_a?(Values::TableVal)
+          raise TypeError, child_val.class.name
+        end
+
+        copy(:table_vals => child_val.snoc(@table_vals))
       end
 
-      # @return [TransactionSetVal]
-      def append_table(table_val)
-        copy(:table_vals => table_val.snoc(@table_vals))
-      end
+      alias append_table append
 
       # @private
       def pretty_print(q)

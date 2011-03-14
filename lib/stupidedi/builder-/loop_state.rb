@@ -4,23 +4,23 @@ module Stupidedi
     class LoopState < AbstractState
 
       # @return [Values::LoopVal]
-      attr_reader :loop_val
-      alias value loop_val
+      attr_reader :value
+      alias loop_val value
 
       # @return [TableState, LoopState]
       attr_reader :parent
 
-      # @return [Array<Instructions>]
+      # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(loop_val, parent, instructions)
-        @loop_val, @parent, @instructions =
-          loop_val, parent, instructions
+      def initialize(value, parent, instructions)
+        @value, @parent, @instructions =
+          value, parent, instructions
       end
 
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:loop_val, @loop_val),
+          changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
       end
@@ -29,18 +29,24 @@ module Stupidedi
         if count.zero?
           self
         else
-          @parent.merge(self).pop(count - 1)
+          @parent.merge(@value).pop(count - 1)
+        end
+      end
+
+      def drop(count)
+        if count.zero?
+          self
+        else
+          copy(:instructions => @instructions.drop(count))
         end
       end
 
       def add(segment_tok, segment_use)
-        copy(:loop_val =>
-          @loop_val.append(segment(segment_tok, segment_use)))
+        copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
       def merge(child)
-        copy(:loop_val =>
-          @loop_val.append(child))
+        copy(:value => @value.append(child))
       end
     end
 
@@ -52,8 +58,8 @@ module Stupidedi
         loop_def    = segment_use.parent
         loop_val    = loop_def.value(segment_val, parent.value)
 
-        # @todo: Remove the entry segment from successor states
-        LoopState.new(loop_val, parent, instructions(loop_def))
+        LoopState.new(loop_val, parent,
+          parent.instructions.push(instructions(loop_def)))
       end
 
       def instructions(loop_def)

@@ -7,21 +7,15 @@ module Stupidedi
       # @return [FunctionalGroupDef]
       attr_reader :definition
 
-      # @return [Array<SegmentVal>]
-      attr_reader :header_segment_vals
-
-      # @return [Array<SegmentVal>]
-      attr_reader :trailer_segment_vals
-
-      # @return [Array<TransactionSetVal>]
-      attr_reader :transaction_set_vals
+      # @return [Array<SegmentVal, TransactionSetVal>]
+      attr_reader :child_vals
 
       # @return [InterchangeVal]
       attr_reader :parent
 
-      def initialize(definition, header_segment_vals, transaction_set_vals, trailer_segment_vals, parent)
-        @definition, @header_segment_vals, @transaction_set_vals, @trailer_segment_vals, @parent =
-          definition, header_segment_vals, transaction_set_vals, trailer_segment_vals, parent
+      def initialize(definition, child_vals, parent)
+        @definition, @child_vals, @parent =
+          definition, child_vals, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -36,35 +30,21 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:header_segment_vals, @header_segment_vals),
-          changes.fetch(:transaction_set_vals, @transaction_set_vals),
-          changes.fetch(:trailer_segment_vals, @trailer_segment_vals),
+          changes.fetch(:child_vals, @child_vals),
           changes.fetch(:parent, @parent)
-      end
-
-      def reparent!(parent)
-        @parent = parent
-        @header_segment_vals.each{|x| x.reparent!(self) }
-        @trailer_segment_vals.each{|x| x.reparent!(self) }
-        @transaction_set_vals.each{|x| x.reparent!(self) }
-        return self
       end
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @header_segment_vals + @trailer_segment_vals
+        @child_vals.select{|x| x.is_a?(Values::SegmentVal) }
       end
 
-      def append_header_segment(segment_val)
-        copy(:header_segment_vals => segment_val.snoc(@header_segment_vals))
-      end
+      def append(child_val)
+        unless child_val.is_a?(TransactionSetVal) or child_val.is_a?(Values::SegmentVal)
+          raise TypeError, child_val.class.name
+        end
 
-      def append_transaction_set(transaction_set_val)
-        copy(:transaction_set_vals => transaction_set_val.snoc(@transaction_set_vals))
-      end
-
-      def append_trailer_segment(segment_val)
-        copy(:trailer_segment_vals => segment_val.snoc(@trailer_segment_vals))
+        copy(:child_vals => child_val.snoc(@child_vals))
       end
 
       def version
@@ -101,21 +81,7 @@ module Stupidedi
         q.text "FunctionalGroupVal#{id}"
         q.group 2, "(", ")" do
           q.breakable ""
-          @header_segment_vals.each do |e|
-            unless q.current_group.first?
-              q.text ", "
-              q.breakable
-            end
-            q.pp e
-          end
-          @transaction_set_vals.each do |e|
-            unless q.current_group.first?
-              q.text ", "
-              q.breakable
-            end
-            q.pp e
-          end
-          @trailer_segment_vals.each do |e|
+          @child_vals.each do |e|
             unless q.current_group.first?
               q.text ", "
               q.breakable

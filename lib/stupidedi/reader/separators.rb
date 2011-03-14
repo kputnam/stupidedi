@@ -18,7 +18,7 @@ module Stupidedi
           changes.fetch(:component, @component),
           changes.fetch(:repetition, @repetition),
           changes.fetch(:element, @element),
-          changes.fetch(:segment, @segment),
+          changes.fetch(:segment, @segment)
       end
 
       def merge(other)
@@ -31,6 +31,12 @@ module Stupidedi
 
       def inspect
         "Separators(#{@component.inspect}, #{@repetition.inspect}, #{@element.inspect}, #{@segment.inspect})"
+      end
+    end
+
+    class << Separators
+      def empty
+        Separators.new(nil, nil, nil, nil)
       end
     end
 

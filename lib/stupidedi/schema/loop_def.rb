@@ -68,12 +68,12 @@ module Stupidedi
 
       # @return [LoopVal]
       def value(segment_val, parent = nil)
-        Values::LoopVal.new(self, segment_val.cons, [], [], parent)
+        Values::LoopVal.new(self, segment_val.cons, parent)
       end
 
       # @return [LoopVal]
       def empty(parent = nil)
-        Values::LoopVal.new(self, [], [], [], parent)
+        Values::LoopVal.new(self, [], parent)
       end
 
       # @private

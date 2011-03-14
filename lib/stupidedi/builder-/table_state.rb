@@ -4,23 +4,23 @@ module Stupidedi
     class TableState < AbstractState
 
       # @return [Values::TableVal]
-      attr_reader :table_val
-      alias value table_val
+      attr_reader :value
+      alias table_val value
 
       # @return [TransmissionState]
       attr_reader :parent
 
-      # @return [Array<Instruction>]
+      # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(table_val, parent, instructions)
-        @table_val, @parent, @instructions =
-          table_val, parent, instructions
+      def initialize(value, parent, instructions)
+        @value, @parent, @instructions =
+          value, parent, instructions
       end
 
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:table_val, @table_val),
+          changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
       end
@@ -29,18 +29,24 @@ module Stupidedi
         if count.zero?
           self
         else
-          @parent.merge(self).pop(count - 1)
+          @parent.merge(@value).pop(count - 1)
+        end
+      end
+
+      def drop(count)
+        if count.zero?
+          self
+        else
+          copy(:instructions => @instructions.drop(count))
         end
       end
 
       def add(segment_tok, segment_use)
-        copy(:table_val =>
-          @table_val.append(segment(segment_tok, segment_use)))
+        copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
       def merge(child)
-        copy(:table_val =>
-          @table_val.append(child))
+        copy(:value => @value.append(child))
       end
     end
 
@@ -72,26 +78,15 @@ module Stupidedi
           table_def   = segment_use.parent
           table_val   = table_def.value(segment_val, parent.value)
 
-          ptable = parent.instructions
-          pstart = ptable.at(segment_use)
-
-          ttable = instructions(table_def)
-          tstart = ttable.at(segment_use)
-
           TableState.new(table_val, parent,
-            ptable.drop(pstart.try(:drop_count) || 0).
-              concat(ttable.drop(tstart.drop_count)))
+            parent.instructions.push(instructions(table_def)))
         when Schema::LoopDef
           table_def   = segment_use.parent.parent
           table_val   = table_def.empty(parent.value)
 
-          ptable = parent.instructions
-          pstart = ptable.at(segment_use)
-
           LoopState.push(segment_tok, segment_use,
             TableState.new(table_val, parent,
-              ptable.drop(pstart.try(:drop_count) || 0).
-                concat(ttable.drop(tstart.drop_count))))
+              parent.instructions.push(instructions(table_def))))
         end
       end
 
@@ -102,8 +97,6 @@ module Stupidedi
           is = sequence(table_def.header_segment_uses)
           is.concat(lsequence(table_def.loop_defs, is.length))
           is.concat(sequence(table_def.trailer_segment_uses, is.length))
-
-          InstructionTable.build(is)
         end
       end
 

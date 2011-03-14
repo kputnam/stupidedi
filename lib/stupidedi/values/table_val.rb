@@ -42,12 +42,12 @@ module Stupidedi
       end
 
       # @return [TableVal]
-      def append(segment_val)
-        copy(:child_vals => segment_val.snoc(@child_vals))
+      def append(child_val)
+        copy(:child_vals => child_val.snoc(@child_vals))
       end
 
-      alias append_loop append_child
-      alias append_segment append_child
+      alias append_loop append
+      alias append_segment append
 
       # @private
       def pretty_print(q)

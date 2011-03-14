@@ -52,7 +52,7 @@ module Stupidedi
       attr_reader :description
 
       # @return [Array<ComponentElementUse>]
-      attr_reader :element_uses
+      attr_reader :component_uses
 
       # @return [Array<SyntaxNote>]
       attr_reader :syntax_notes
@@ -60,15 +60,15 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :parent
 
-      def initialize(id, name, description, element_uses, syntax_notes, parent)
-        @id, @name, @description, @element_uses, @syntax_notes, @parent =
-          id, name, description, element_uses, syntax_notes, parent
+      def initialize(id, name, description, component_uses, syntax_notes, parent)
+        @id, @name, @description, @component_uses, @syntax_notes, @parent =
+          id, name, description, component_uses, syntax_notes, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @element_uses = @element_uses.map{|x| x.copy(:parent => self) }
-          @syntax_notes = @syntax_notes.map{|x| x.copy(:parent => self) }
+          @component_uses = @component_uses.map{|x| x.copy(:parent => self) }
+          @syntax_notes   = @syntax_notes.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -78,7 +78,7 @@ module Stupidedi
           changes.fetch(:id, @id),
           changes.fetch(:name, @name),
           changes.fetch(:description, @description),
-          changes.fetch(:element_uses, @element_uses),
+          changes.fetch(:component_uses, @component_uses),
           changes.fetch(:syntax_notes, @syntax_notes),
           changes.fetch(:parent, @parent)
       end
@@ -111,7 +111,7 @@ module Stupidedi
         q.text("CompositeElementDef[#{@id}]")
         q.group(2, "(", ")") do
           q.breakable ""
-          @element_uses.each do |e|
+          @component_uses.each do |e|
             unless q.current_group.first?
               q.text ","
               q.breakable
@@ -125,10 +125,10 @@ module Stupidedi
     class << CompositeElementDef
       # @return [CompositeElementDef]
       def build(id, name, description, *args)
-        element_uses = args.take_while{|x| x.is_a?(ElementUse) }
-        syntax_notes = args.drop(element_uses.length)
+        component_uses = args.take_while{|x| x.is_a?(ElementUse) }
+        syntax_notes   = args.drop(component_uses.length)
 
-        new(id, name, description, element_uses, syntax_notes, parent = nil)
+        new(id, name, description, component_uses, syntax_notes, parent = nil)
       end
     end
 

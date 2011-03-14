@@ -1,5 +1,5 @@
 module Stupidedi
-  module Schema
+  module Reader
 
     class SegmentDict
       # Return the top element from the stack. This will throw an exception
@@ -50,11 +50,11 @@ module Stupidedi
         end
 
         def push(top)
-          copy(:top => top, :pop => self)
-        end
-
-        def concat(other)
-          copy(:pop => @pop.concat(other))
+          if top.is_a?(Module)
+            copy(:top => Constants.new(top), :pop => self)
+          else
+            copy(:top => top, :pop => self)
+          end
         end
 
         def at(segment_id)
@@ -74,8 +74,21 @@ module Stupidedi
           false
         end
 
-        def length
-          1 + @pop.length
+        def pretty_print(q)
+          q.text "SegmentDict"
+          q.group(2, "(", ")") do
+            q.breakable ""
+
+            node = self
+            until node.empty?
+              unless q.current_group.first?
+                q.text ","
+                q.breakable
+              end
+              q.pp node.top
+              node = node.pop
+            end
+          end
         end
       end
 
@@ -90,7 +103,11 @@ module Stupidedi
         end
 
         def push(top)
-          SegmentDict::NonEmpty.new(top, self)
+          if top.is_a?(Module)
+            NonEmpty.new(Constants.new(top), self)
+          else
+            NonEmpty.new(top, self)
+          end
         end
 
         def concat(other)
@@ -109,10 +126,28 @@ module Stupidedi
           true
         end
 
-        def length
-          0
+        def pretty_print(q)
+          q.text "SegmentDict.empty"
         end
       end.new
+
+      class Constants
+        def initialize(namespace)
+          @namespace = namespace
+        end
+
+        def at(segment_id)
+          @namespace.const_get(segment_id)
+        end
+
+        def defined_at?(segment_id)
+          @namespace.constants.any?{|c| c.to_s == segment_id.to_s }
+        end
+
+        def pretty_print(q)
+          q.text("#{@namespace.name}.constants")
+        end
+      end
     end
 
     class << SegmentDict
@@ -120,31 +155,8 @@ module Stupidedi
         SegmentDict::Empty
       end
 
-      def constants(namespace)
-        top = Class.new do
-          def initialize(namespace)
-            @namespace = namespace
-          end
-
-          def at(segment_id)
-            @namespace.const_get(segment_id)
-          end
-
-          def defined_at?(segment_id)
-            @namespace.constants.any?{|c| c.to_s == segment_id.to_s }
-          end
-        end.new(namespace)
-
-        SegmentDict::NonEmpty.new(top)
-      end
-
       def build(top)
-        case top
-        when Module
-          constants(top)
-        else
-          SegmentDict::NonEmpty.new(top)
-        end
+        empty.push(top)
       end
     end
 

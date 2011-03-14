@@ -13,12 +13,12 @@ module Stupidedi
           end
 
           # @return [FunctionalGroupVal]
-          def value(header_segment_vals, transaction_set_vals, trailer_segment_vals, parent = nil)
-            FunctionalGroupVal.new(self, header_segment_vals, trailer_segment_vals, trailer_segment_vals, parent)
+          def value(segment_val, parent = nil)
+            FunctionalGroupVal.new(self, segment_val.cons, parent)
           end
 
           def segment_dict
-            Schema::SegmentDict.build(SegmentDefs)
+            SegmentDefs
           end
         end.new "005010",
           # Functional group header
