@@ -163,8 +163,30 @@ module Stupidedi
     def ==(other)
       if other.is_a?(self.class) and other.universe.eql?(@universe)
         @mask == other.mask
-      else
+      elsif other.is_a?(Enumerable) or other.is_a?(AbstractSet)
         @mask == as_mask(other)
+      end
+    end
+
+    def pretty_print(q)
+      q.text("AbsoluteSet[#{size}/#{@universe.size}]")
+      q.group(2, "(", ")") do
+        q.breakable ""
+
+        elements = to_a
+        elements.take(5).each do |e|
+          unless q.current_group.first?
+            q.text ","
+            q.breakable
+          end
+          q.pp e
+        end
+
+        if elements.length > 5
+          q.text ","
+          q.breakable
+          q.text "..."
+        end
       end
     end
 

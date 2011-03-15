@@ -44,7 +44,7 @@ module Stupidedi
     end
 
     def union(other)
-      RelativeSet.build(other)
+      AbstractSet.build(other)
     end
 
     def difference(other)
@@ -52,11 +52,11 @@ module Stupidedi
     end
 
     def symmetric_difference(other)
-      RelativeSet.build(other)
+      AbstractSet.build(other)
     end
 
     def replace(other)
-      RelativeSet.build(other)
+      AbstractSet.build(other)
     end
 
     def size

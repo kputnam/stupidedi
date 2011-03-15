@@ -51,4 +51,14 @@ module Stupidedi
     end
   end
 
+  class << AbstractSet
+    def build(object)
+      if object.is_a?(AbstractSet)
+        object
+      elsif object.is_a?(Enumerable)
+        RelativeSet.build(object)
+      end
+    end
+  end
+
 end

@@ -23,38 +23,6 @@ module Stupidedi
             next
           end
 
-          # Each matching instruction produces a unique parse tree containing
-          # the new token; more than one instruction creates non-determinism,
-          # but often the difference between instructions is how tightly the
-          # segment binds to the current subtree.
-          #
-          # For instance, "HL*20" always indicates a new 2000B loop. However,
-          # if the parse tree is currently already within "Table 2 - Provider",
-          # we could either place the 2000B loop within the current table or we
-          # could create a new occurence of "Table 2 - Provider" as the parent
-          # of the 2000B loop.
-          #
-          # This block of code dicards all instructions except those that most
-          # tightly bind the segment. Note that without performing this filter,
-          # we would end up with parse trees that accept exactly the same set
-          # of tokens -- meaning the trees will never converge.
-          if instructions.length > 1
-            deepest = 1.0 / 0.0 # Infinity
-            buffer  = []
-
-            instructions.each do |i|
-              if i.pop_count == deepest
-                buffer << i
-              elsif i.pop_count < deepest
-                deepest = i.pop_count
-                buffer.clear
-                buffer << i
-              end
-            end
-
-            instructions = buffer
-          end
-
           instructions.each do |i|
             if i.push.nil?
               s = state.
@@ -102,7 +70,7 @@ module Stupidedi
           end
         end
 
-        puts "#{segment_tok.id}: #{states.length}"
+      # puts "#{segment_tok.id}: #{states.length}"
 
         @errors = errors
         @states = states

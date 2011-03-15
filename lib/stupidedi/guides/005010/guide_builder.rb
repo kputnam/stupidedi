@@ -80,8 +80,8 @@ module Stupidedi
                   mod_element(c, c_requirement, c_name, c_arguments)
                 end
 
-                changes[:definition] = u.definition.copy(:name         => e_name,
-                                                         :element_uses => component_uses)
+                changes[:definition] = u.definition.copy(:name           => e_name,
+                                                         :component_uses => component_uses)
               else
                 changes[:definition] = u.definition.copy(:name => e_name)
               end

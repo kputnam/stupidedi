@@ -10,13 +10,12 @@ config.transaction_set.register(Stupidedi::Guides::FiftyTen::X222::HC837, "00501
 
 input     = Stupidedi::Reader::Input.build(File.open(ARGV.first))
 tokenizer = Stupidedi::Reader::StreamReader.new(input)
-parser    = Stupidedi::Builder.new(config)
+parser    = Stupidedi::Builder_::StateMachine.build(config)
 
-pp parser.read!(tokenizer)
+result = RubyProf.profile do
+  parser.read!(tokenizer)
+end
+
+RubyProf::GraphPrinter.new(result).print($stdout)
+
 pp parser
-
-#result = RubyProf.profile do
-#  tok = s.read!(doc)
-#end
-#
-#RubyProf::GraphPrinter.new(result).print($stdout)

@@ -13,7 +13,6 @@ module Stupidedi
           @__push = Hash.new
           @__drop = Hash.new
         # @__successors = Hash.new
-          @__constraints = Hash.new
         end
 
         # @return [InstructionTable]
@@ -35,13 +34,10 @@ module Stupidedi
         # @return [InstructionTable]
         def push(instructions)
           @__push[instructions] ||= begin
-            print "#{object_id}.push(#{instructions.object_id})"
             offset = instructions.length
             bottom = @instructions.map{|x| x.copy(:pop_count => x.pop_count + 1) }
 
-            x = copy(:instructions => instructions + bottom, :pop => self)
-            puts " = #{x.object_id}"
-            x
+            copy(:instructions => instructions + bottom, :pop => self)
           end
         end
 
@@ -58,40 +54,23 @@ module Stupidedi
         # @return [Array<Instruction>]
         def successors(segment_tok)
           @__successors ||= begin
-            puts "#{object_id}.successors"
-            hash = Hash.new{|h,k| h[k] = [] }
+            constraints = Hash.new
+            grouped     = Hash.new{|h,k| h[k] = [] }
 
-            @instructions.each{|x| hash[x.segment_id] << x }
+            @instructions.each{|x| grouped[x.segment_id] << x }
 
-            hash.each do |segment_id, instructions|
-              unless instructions.length > 1
-                next
-              end
-
-              # When one of the instructions has a nil segment_use, it means
-              # the SegmentUse is determined when pushing the new state. There
-              # isn't a way to know the segment constraints from here.
-              if instructions.any?{|i| i.segment_use.nil? }
-                next
-              end
-
-              # The same SegmentUse may appear more than once, because the
-              # segment can be placed at different levels in the tree. If
-              # all the instructions have the same SegmentUse, we can't use
-              # segment constraints to narrow down the instruction list.
-              segment_uses = instructions.map{|i| i.segment_use }
-
-              unless segment_uses.map{|u| u.object_id }.uniq.length > 1
-                next
-              end
-
-              # @todo: Build segment constraints
+            grouped.each do |segment_id, instructions|
+              constraints[segment_id] = ConstraintTable.build(instructions)
             end
 
-            hash
+            constraints
           end
 
-          @__successors.fetch(segment_tok.id, [])
+          if @__successors.defined_at?(segment_tok.id)
+            @__successors.at(segment_tok.id).matches(segment_tok)
+          else
+            []
+          end
         end
 
         # @return [InstructionTable]
@@ -131,11 +110,8 @@ module Stupidedi
                         concat(pop)
                 end
 
-                x = copy(:instructions => result)
-                puts "#{object_id}.drop(#{count}) = #{x.object_id}"
-                x
+                copy(:instructions => result)
               else
-                puts "#{object_id}.drop(#{count}) = drop(#{smallest}).drop(#{count - smallest})"
                 drop(smallest).drop(count - smallest)
               end
             end

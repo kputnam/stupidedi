@@ -10,6 +10,7 @@ module Stupidedi
     autoload :TransactionSetState,  "stupidedi/builder-/transaction_set_state"
     autoload :TransmissionState,    "stupidedi/builder-/transmission_state"
 
+    autoload :ConstraintTable,      "stupidedi/builder-/constraint_table"
     autoload :InstructionTable,     "stupidedi/builder-/instruction_table"
     autoload :Instruction,          "stupidedi/builder-/instruction"
     autoload :StateMachine,         "stupidedi/builder-/state_machine"
