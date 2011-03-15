@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     class TableState < AbstractState
 
@@ -19,7 +19,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        self.class.new \
+        TableState.new \
           changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
@@ -94,6 +94,7 @@ module Stupidedi
       def instructions(table_def)
         @__instructions ||= Hash.new
         @__instructions[table_def] ||= begin
+        # puts "TableState.instructions(#{table_def.object_id})"
           is = sequence(table_def.header_segment_uses)
           is.concat(lsequence(table_def.loop_defs, is.length))
           is.concat(sequence(table_def.trailer_segment_uses, is.length))

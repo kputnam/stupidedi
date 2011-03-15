@@ -22,7 +22,6 @@ module Stupidedi
   autoload :Either,         "stupidedi/either"
 
   autoload :Builder,        "stupidedi/builder"
-  autoload :Builder_,       "stupidedi/builder_"
   autoload :Configuration,  "stupidedi/configuration"
   autoload :Dictionaries,   "stupidedi/dictionaries"
   autoload :Editor,         "stupidedi/editor"

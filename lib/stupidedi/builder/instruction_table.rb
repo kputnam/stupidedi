@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     #
     #
@@ -17,7 +17,7 @@ module Stupidedi
 
         # @return [InstructionTable]
         def copy(changes = {})
-          self.class.new \
+          NonEmpty.new \
             changes.fetch(:instructions, @instructions),
             changes.fetch(:pop, @pop)
         end
@@ -34,26 +34,18 @@ module Stupidedi
         # @return [InstructionTable]
         def push(instructions)
           @__push[instructions] ||= begin
+          # puts "#{object_id}.push(#{object_id})"
             offset = instructions.length
             bottom = @instructions.map{|x| x.copy(:pop_count => x.pop_count + 1) }
 
-            copy(:instructions => instructions + bottom, :pop => self)
+            NonEmpty.new(instructions + bottom, self)
           end
         end
-
-      # # @return [InstructionTable]
-      # def reverse(onto = InstructionTable.empty)
-      #   @pop.reverse(onto.push(@instructions.init(@pop.length)))
-      # end
-
-      # # @return [InstructionTable]
-      # def concat(other)
-      #   other.reverse.reverse(self)
-      # end
 
         # @return [Array<Instruction>]
         def successors(segment_tok)
           @__successors ||= begin
+          # puts "#{object_id}.constraints"
             constraints = Hash.new
             grouped     = Hash.new{|h,k| h[k] = [] }
 
@@ -98,6 +90,7 @@ module Stupidedi
               end
 
               if smallest == count
+              # puts "#{object_id}.drop(#{count})"
                 if @pop.nil?
                   drop   = @instructions.drop(count)
                   result =
@@ -110,8 +103,9 @@ module Stupidedi
                         concat(pop)
                 end
 
-                copy(:instructions => result)
+                NonEmpty.new(result, @pop)
               else
+              # puts "#{object_id}.drop(#{count} = drop(#{smallest}).drop(#{count - smallest})"
                 drop(smallest).drop(count - smallest)
               end
             end
@@ -156,23 +150,15 @@ module Stupidedi
           InstructionTable::NonEmpty.new(instructions, self)
         end
 
-        def reverse(onto = self)
-          onto
-        end
-
-        def concat(other)
-          other
-        end
-
         def successors(segment_tok)
-          raise
+          raise "@todo"
         end
 
         def pop(count)
           if count.zero?
             self
           else
-            raise
+            raise "@todo"
           end
         end
 

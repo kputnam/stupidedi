@@ -3,139 +3,254 @@ module Stupidedi
 
     class AbstractState
 
-      # @return [AbstractState]
-      abstract :predecessor
-
-      # @return [InterchangeVal, FunctionalGroupVal, TransactionSetVal, TableVal, LoopVal, SegmentVal]
+      # Each {AbstractState} subclass is responsible for building up a specific
+      # type of node from the {Values} or {Envelope} namespace.
+      #
+      # @return [Values::AbstractVal]
       abstract :value
 
-      # @return [Array<AbstractState>]
-      abstract :segment, :args => %w(segment_tok)
+      # The {AbstractState} whose {value} is the parent of this state's {value}.
+      #
+      # @return [AbstractState]
+      abstract :parent
 
-      # @return [Boolean]
-      def stuck?
-        false
+      # @return [InstructionTable]
+      abstract :instructions
+
+      # @return [AbstractState]
+      abstract :pop, :args => %w(count)
+
+      # @return [AbstractState]
+      abstract :drop, :args => %w(count)
+
+      # @return [AbstractState]
+      abstract :add, :args => %w(segment_tok segment_use)
+
+      # @return [Reader::Separators]
+      def separators
+        parent.separators
+      end
+
+      # @return [Reader::SegmentDict]
+      def segment_dict
+        parent.segment_dict
       end
 
       # @return [Configuration::RootConfig]
       def config
-        predecessor.config
+        parent.config
+      end
+
+      def pretty_print(q)
+        q.text self.class.name.split('::').last
+        q.group(2, "(", ")") do
+          q.breakable ""
+          q.pp value
+        end
       end
 
     private
 
-      # @return [Array<AbstractState>]
-      def branches(successors)
-        if successors.is_a?(Array)
-          successors
-        else
-          Array[successors]
-        end
+      # @return [Values::SegmentVal]
+      def segment(segment_tok, segment_use, parent = nil)
+        AbstractState.segment(segment_tok, segment_use, parent)
       end
+    end
 
-      # @return [Array<AbstractState>]
-      def step(successor)
-        successor.cons
-      end
+    class << AbstractState
 
-      # @return [Array<FailureState>]
-      def failure(explanation, segment_tok)
-        FailureState.new(explanation, segment_tok, self).cons
-      end
+      # This method constructs a new instance of (a subclass of) {AbstractState}
+      # and pushes it above {parent} onto a nested stack-like structure. The
+      # stack structure is implicit, and it can be iterated by following each
+      # state's {parent}.
+      #
+      # @return [AbstractState]
+      abstract :push, :args => %w(segment_tok segment_use parent reader)
 
-      def match?(segment_use, segment_tok)
-        unless segment_tok.id == segment_use.definition.id
-          return false
-        end
-
-        # @todo: We're assuming that if the segment identifier matches,
-        # someone has ensured the elements are valid: that we didn't get a
-        # composite or repeated element in violation of the SegmentDef. The
-        # TokenReader will simply bulldoze over those delimiters, and whatever 
-        # other API we will implement to generate tokens from Ruby will also
-        # need to catch these errors.
-        element_toks = segment_tok.element_toks
-
-        segment_use.definition.element_uses.zip(element_toks).all? do |u, e|
-          # This is some rough logic, but basically we are using every
-          # syntactically required element as a segment qualifier. This
-          # isn't very efficient because in the context of the rest of
-          # the grammar, we may not even need to look at the elements to
-          # determine this -- or maybe we need only to look at one. That
-          # knowledge would also prevent false matches, which can happen
-          # when the single element value we need to exampine valu`e isn't
-          # present. Hopefully for now, the false positives get sorted out
-          # by hitting a stuck state within a few more tokens.
-
-          if e.blank?
-            true
-          elsif u.repeat_count.include?(2) or e.repeated?
-            # @todo: Not sure what to do with repeatable elements
-            true
-          elsif u.composite?
-            u.definition.element_uses.zip(e.component_toks).all? do |c, e|
-              if c.requirement.required? and not e.blank?
-                c.allowed_values.include?(e.value)
-              else
-                true
-              end
-            end
-          else
-            if u.requirement.required? and not e.blank?
-              u.allowed_values.include?(e.value)
-            else
-              true
-            end
-          end
-        end
-      end
-
-      # @return [SegmentVal]
-      def mksegment(segment_use, segment_tok, parent = nil)
+      # @return [Values::SegmentVal]
+      def segment(segment_tok, segment_use, parent = nil)
         segment_def  = segment_use.definition
         element_uses = segment_def.element_uses
         element_toks = segment_tok.element_toks
 
-        # @todo: Check for too many values
-        element_vals = element_uses.zip(element_toks).map do |element_use, e|
-          mkelement(element_use, e)
+        element_vals = element_uses.zip(element_toks).map do |use, tok|
+          if tok.nil?
+            use.empty
+          else
+            element(use, tok)
+          end
         end
 
         segment_use.value(element_vals, parent)
       end
 
-      # @return [SimpleElementVal, CompositeElementVal]
-      def mkelement(element_use, element_tok, parent = nil)
-        if element_use.simple?
-          if element_tok.nil?
-            element_use.empty(parent)
-          elsif element_tok.simple?
-            element_use.value(element_tok.value, parent)
-          else
-            # @todo: This is a syntax error. The tokenizer won't have caused
-            # this because it should have all the SegmentDefs and know which
-            # elements are composite or simple.
-            element_use.empty(parent)
-          end
-        else
-          if element_tok.nil?
-            element_use.empty(parent)
-          else
-            component_uses = element_use.definition.element_uses
-            component_vals = component_uses.zip(element_tok.component_toks)
-            component_vals.map! do |component_use, component_tok|
-              if component_tok.nil?
-                component_use.empty
+    private
+
+      # @return [Array<Instruction>]
+      def sequence(segment_uses, start = 0)
+        instructions = []
+        buffer       = []
+        count        = start
+        last         = nil
+
+        segment_uses.each do |use|
+          unless last.nil? or use.position == last.position
+            d =
+              if buffer.length == 1 and not last.repeatable?
+                count
               else
-                component_use.value(component_tok.value)
+                count - buffer.length
+              end
+
+            buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, nil) }
+            buffer.clear
+          end
+
+          last  = use
+          count += 1
+          buffer << use
+        end
+
+        unless buffer.empty?
+          d =
+            if buffer.length == 1 and not last.repeatable?
+              count
+            else
+              count - buffer.length
+            end
+
+          buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, nil) }
+        end
+
+        instructions
+      end
+
+      # @return [Array<Instruction>]
+      def lsequence(loop_defs, start = 0)
+        instructions = []
+        buffer       = []
+        count        = start
+        last         = nil
+
+        loop_defs.each do |l|
+          unless last.nil? or l.entry_segment_use.position == last.entry_segment_use.position
+            d =
+              if buffer.length == 1 and not last.repeatable?
+                count
+              else
+                count - buffer.length
+              end
+
+            buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, LoopState) }
+            buffer.clear
+          end
+
+          last = l
+          count += 1
+          buffer << l.entry_segment_use
+        end
+
+        unless buffer.nil?
+          d =
+            if buffer.length == 1 and not last.repeatable?
+              count
+            else
+              count - buffer.length
+            end
+
+          buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, LoopState) }
+        end
+
+        instructions
+      end
+
+      # @return [Array<Instruction>]
+      def tsequence(table_defs, start = 0)
+        instructions = []
+        buffer       = []
+        count        = start
+        last         = nil
+
+        table_defs.each do |t|
+          unless last.nil? or t.position == last.position
+            d =
+              if buffer.length == 1 and not last.repeatable?
+                count
+              else
+                count - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
+              end
+
+            buffer.each do |b|
+              if b.repeatable? and b.entry_segment_uses.length > 1
+                raise "@todo"
+              end
+
+              b.entry_segment_uses.each do |u|
+                instructions << Instruction.new(nil, u, 0, d, TableState)
               end
             end
 
-            element_use.value(component_vals, parent)
+            buffer.clear
           end
+
+          last    = t
+          count  += t.entry_segment_uses.length
+          buffer << t
+        end
+
+        unless buffer.empty?
+          d =
+            if buffer.length == 1 and not last.repeatable?
+              count
+            else
+              count - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
+            end
+
+          buffer.each do |b|
+            b.entry_segment_uses.each do |u|
+              instructions << Instruction.new(nil, u, 0, d, TableState)
+            end
+          end
+        end
+
+        instructions
+      end
+
+      # @return [Values::SimpleElementVal, Values::CompositeElementVal]
+      def element(element_use, element_tok, parent = nil)
+        if element_use.simple?
+          simple_element(element_use, element_tok, parent)
+        else
+          composite_element(element_use, element_tok, parent)
         end
       end
 
+      # @return [Values::CompositeElementVal]
+      def composite_element(composite_use, composite_tok, parent = nil)
+        composite_def  = composite_use.definition
+        component_uses = composite_def.component_uses
+        component_toks = composite_tok.component_toks
+
+        component_vals = component_uses.zip(component_toks).map do |use, tok|
+          if tok.nil?
+            use.empty
+          else
+            simple_element(use, tok)
+          end
+        end
+
+        composite_use.value(component_vals, parent)
+      end
+
+      # @return [Values::SimpleElementVal]
+      def simple_element(element_use, element_tok, parent = nil)
+        # We don't validate that element_tok is simple because the TokenReader
+        # will always produce a SimpleElementTok given a SimpleElementUse from
+        # the SegmentDef. On the other hand, the public builder API will throw
+        # an exception if the programmer constructs the wrong kind of element
+        # according to the SegmentDef.
+        element_use.value(element_tok.value, parent)
+      end
     end
 
   end

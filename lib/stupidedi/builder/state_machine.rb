@@ -1,141 +1,122 @@
 module Stupidedi
   module Builder
 
-    #
-    # This state machine processes all possible states (ie, interpretations) of
-    # the input in parallel using a breadth-first traversal.
-    #
-    # If the grammar is deterministic, the state machine will parse the input in
-    # linear time, proportional to the number of tokens. Otherwise, performance
-    # is proportional to the grammar's degree of non-determinism. It performs
-    # better when fewer tokens are required to resolve the non-determinism.
-    #
-    # @see http://en.wikipedia.org/wiki/GLR_parser
-    #
     class StateMachine
 
-      # @return [Array<AbstractState>]
-      attr_reader :states
-
-      # @return [Array<FailureState>]
-      attr_reader :failures
-
-      def initialize(failures, states)
-        @failures, @states = failures, states
+      def initialize(states, errors)
+        @states, @errors = states, errors
       end
 
-      # @return [StateMachine]
-      def advance!(segment_tok)
-        successors =
-          case @states.length
-          when 0 then []
-          when 1 then @states.head.successors(segment_tok)
-          else
-            @states.inject([]) do |list, s|
-              list.concat(s.successors(segment_tok))
-            end
+      # @return [Reader::TokenReader]
+      def input!(segment_tok, reader = nil)
+        states = []
+        errors = []
+
+        @states.each do |state|
+          instructions = state.instructions.successors(segment_tok)
+
+          # No matching instructions means that this parse tree hit a dead end
+          # and cannot accept this token. Keep in mind there may be another
+          # state in @states that can accept this token.
+          if instructions.empty?
+            errors.push(segment_tok)
+            next
           end
 
-        failures, states = successors.partition(&:stuck?)
+          instructions.each do |i|
+            if i.push.nil?
+              s = state.
+                pop(i.pop_count).
+                drop(i.drop_count).
+                add(segment_tok, i.segment_use)
 
+              unless reader.nil? or i.pop_count.zero?
+                # More general than checking if segment_tok is an ISE/GE segment
+                if not reader.separators.eql?(s.separators)
+                  reader = reader.copy \
+                    :separators   => s.separators,
+                    :segment_dict => s.segment_dict
+                elsif not reader.segment_dict.eql?(s.segment_dict)
+                  reader = reader.copy \
+                    :separators   => s.separators,
+                    :segment_dict => s.segment_dict
+                end
+              end
+            else
+              s = state.
+                pop(i.pop_count).
+                drop(i.drop_count)
+
+              # Note Instruction#push returns a subclass of AbstractState,
+              # which has a concrete constructor method named "push", that
+              # links the new instance to the parent {state}
+              s = i.push.push(segment_tok, i.segment_use, s, reader)
+
+              unless reader.nil?
+                # More general than checking if segment_tok is an ISA/GS segment
+                if not reader.separators.eql?(s.separators)
+                  reader = reader.copy \
+                    :separators   => s.separators,
+                    :segment_dict => s.segment_dict
+                elsif not reader.segment_dict.eql?(s.segment_dict)
+                  reader = reader.copy \
+                    :separators   => s.separators,
+                    :segment_dict => s.segment_dict
+                end
+              end
+            end
+
+            states << s
+          end
+        end
+
+      # puts "#{segment_tok.id}: #{states.length}"
+
+        @errors = errors
         @states = states
-        @failures.concat(failures)
-
-        self
+        
+        return reader
       end
 
       def read!(reader)
         remainder = Either.success(reader)
 
         while not stuck? and remainder.defined?
-          remainder = remainder.flatmap(&:read_segment).map do |result|
+          remainder = remainder.flatmap{|x| x.read_segment }.map do |result|
             # result.value: SegmentTok
             # result.remainder: TokenReader
-            advance!(result.value)
-
-            if @states.size > 1
-              pp @states
-              pp @states.size
-              pp result.value
-              raise
-            end
-
-            if stuck?
-              return remainder
-            end
-
-            # @todo: Handle non-deterministic state
-            #
-            # @todo: Can we move these comparisons into the respective
-            # Builder classes, so we can skip them most of the time?
-
-            case result.value.id
-            when :ISA
-              # value: InterchangeVal
-
-              # Add the interchange version-specific separators to TokenReader
-              value.merge!(result.remainder)
-
-              value.separators.segment =
-                result.remainder.separators.segment
-
-              value.separators.element =
-                result.remainder.separators.element
-
-              # Add the interchange segment definitions
-              result.remainder.segment_dict =
-                result.remainder.segment_dict.concat(value.segment_dict)
-            when :GS
-              # value: FunctionalGroupVal
-
-              # Add the segment definitions defined by the functional group
-              result.remainder.segment_dict =
-                result.remainder.segment_dict.concat(value.segment_dict)
-            when :GE
-              # value: FunctionalGroupVal
-
-              # Remove the segment definitions defined by the functional group
-              result.remainder.segment_dict =
-                result.remainder.segment_dict.pop
-            when :ISE
-              # value: InterchangeVal
-
-              # Remove the interchange version-specific separators from TokenReader
-              value.unmerge!(result.remainder)
-
-              # Remove the interchange segment definitions
-              result.remainder.segment_dict =
-                result.remainder.segment_dict.pop
-            end
-
-            result.remainder
+            input!(result.value, result.remainder)
           end
+
+        # remainder = remainder.flatmap do |x|
+        #   RubyProf.resume
+        #   y = x.read_segment
+        #   RubyProf.pause
+        #   y
+        # end.map do |result|
+        #   # result.value: SegmentTok
+        #   # result.remainder: TokenReader
+        #   input!(result.value, result.remainder)
+        # end
         end
 
-        # @todo: "Reached end of input without finding a segment identifier" is
-        # a normal failed state, but we can't easily prevent it because #empty?
-        # is false, even if the only remaining input is control characters
-        @states.first.terminate
-
-        remainder
+        return remainder
       end
 
       def stuck?
         @states.empty?
       end
 
-      # @return [Values::AbstractVal]
-      def value
-        if @states.length == 1
-          @states.first.value
-        end
-      end
     end
 
     class << StateMachine
-      def start(config)
-        start = TransmissionBuilder.start(config)
-        StateMachine.new([], start.cons)
+      def build(config)
+        separators   = Reader::Separators.empty
+        segment_dict = Reader::SegmentDict.empty
+
+        state = TransmissionState.new(config, separators, segment_dict)
+
+        StateMachine.new(state.cons, [])
       end
     end
 

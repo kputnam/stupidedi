@@ -15,7 +15,7 @@ module Stupidedi
       end
 
       def defined_at?(n)
-        @offset + n < @size
+        n < @size
       end
 
       def empty?
@@ -29,17 +29,20 @@ module Stupidedi
         prefix = @io.read(n)
         suffix = @io
 
-        if start = prefix.rindex("\n")
-          column = prefix.length - start
-        else
-          column = @column + prefix.length
-        end
+        length = prefix.length
+        count  = prefix.count("\n")
+
+        column = unless count.zero?
+                   length - prefix.rindex("\n")
+                 else
+                   @column + length
+                 end
 
         self.class.new(suffix,
-                       @offset + prefix.length,
-                       @line   + prefix.count("\n"),
+                       @offset + length,
+                       @line   + count,
                        column,
-                       @size)
+                       @size   - length)
       end
 
       def take(n)

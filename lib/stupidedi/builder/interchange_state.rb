@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     class InterchangeState < AbstractState
 
@@ -25,7 +25,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        self.class.new \
+        InterchangeState.new \
           changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions),
@@ -92,6 +92,7 @@ module Stupidedi
       def instructions(interchange_def)
         @__instructions ||= Hash.new
         @__instructions[interchange_def] ||= begin
+        # puts "InterchangeState.instructions(#{interchange_def.object_id})"
           is = if interchange_def.header_segment_uses.head.repeatable?
                  sequence(interchange_def.header_segment_uses)
                else

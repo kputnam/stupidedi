@@ -4,16 +4,10 @@ module Stupidedi
     class DelegatedInput < Input
       attr_reader :delegate, :offset, :line, :column
 
+      delegate :defined_at?, :empty?, :take, :at, :index, :to => :@delegate
+
       def initialize(delegate, offset = 0, line = 1, column = 1)
         @delegate, @offset, @line, @column = delegate, offset, line, column
-      end
-
-      def defined_at?(n)
-        delegate.defined_at?(n)
-      end
-
-      def empty?
-        delegate.empty?
       end
 
       def drop(n)
@@ -22,30 +16,19 @@ module Stupidedi
         suffix = delegate.drop(n)
         prefix = delegate.take(n)
 
-        if start = prefix.rindex("\n")
-          column = prefix.length - start
-        else
-          column = @column + prefix.length
-        end
+        length = prefix.length
+        count  = prefix.count("\n")
+
+        column = unless count.zero?
+                   length - prefix.rindex("\n")
+                 else
+                   @column + length
+                 end
 
         self.class.new(suffix,
-                       @offset + prefix.length,
-                       @line   + prefix.count("\n"),
+                       @offset + length,
+                       @line   + count,
                        column)
-      end
-
-      def take(n)
-        raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
-        delegate.take(n)
-      end
-
-      def at(n)
-        raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
-        delegate.at(n)
-      end
-
-      def index(value)
-        delegate.index(value)
       end
 
       def pretty_print(q)

@@ -360,7 +360,7 @@ module Stupidedi
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-          copy(:input => @input.drop(n))
+          self.class.new(@input.drop(n), @separators, @segment_dict)
         end
       end
 

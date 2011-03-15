@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     class Instruction
 
@@ -54,7 +54,7 @@ module Stupidedi
 
       # @return [Instruction]
       def copy(changes = {})
-        self.class.new \
+        Instruction.new \
           changes.fetch(:segment_id, @segment_id),
           changes.fetch(:segment_use, @segment_use),
           changes.fetch(:pop_count, @pop_count),

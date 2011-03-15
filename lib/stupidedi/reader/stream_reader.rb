@@ -20,8 +20,7 @@ module Stupidedi
 
       # @return [StreamReader]
       def copy(changes = {})
-        self.class.new \
-          changes.fetch(:input, @input)
+        self.class.new(changes.fetch(:input, @input))
       end
 
       # True if there is no remaining input
@@ -62,7 +61,7 @@ module Stupidedi
         consume_isa.flatmap do |rest|
           # The character after "ISA" is defined to be the element separator
           rest.read_character.flatmap do |a|
-            separators = OpenStruct.new(:element => a.value)
+            separators = Separators.new(nil, nil, a.value, nil)
             remaining  = Either.success(TokenReader.new(a.remainder.input, separators))
             elements   = []
 
@@ -90,7 +89,7 @@ module Stupidedi
                 # by StreamReader, does not skip past control character, so the
                 # separator could be a control character.
                 x.remainder.stream.read_character.flatmap do |y|
-                  if y.value == separators.element_separator
+                  if y.value == separators.element
                     failure("Element separator and segment terminator must be distinct", x.remainder.input)
                   else
                     separators.segment = y.value
@@ -149,7 +148,7 @@ module Stupidedi
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-          copy(:input => @input.drop(n))
+          self.class.new(@input.drop(n))
         end
       end
 

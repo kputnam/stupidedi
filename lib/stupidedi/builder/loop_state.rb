@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     class LoopState < AbstractState
 
@@ -19,7 +19,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        self.class.new \
+        LoopState.new \
           changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
@@ -63,15 +63,19 @@ module Stupidedi
       end
 
       def instructions(loop_def)
-        # @todo: Explain this optimization
-        is = if loop_def.header_segment_uses.head.repeatable?
-              sequence(loop_def.header_segment_uses)
-             else
-               sequence(loop_def.header_segment_uses.tail)
-             end
+        @__instructions ||= Hash.new
+        @__instructions[loop_def] ||= begin
+        # puts "LoopDef.instructions(#{loop_def.object_id})"
+          # @todo: Explain this optimization
+          is = if loop_def.header_segment_uses.head.repeatable?
+                sequence(loop_def.header_segment_uses)
+               else
+                 sequence(loop_def.header_segment_uses.tail)
+               end
 
-        is.concat(lsequence(loop_def.loop_defs, is.length))
-        is.concat(sequence(loop_def.trailer_segment_uses, is.length))
+          is.concat(lsequence(loop_def.loop_defs, is.length))
+          is.concat(sequence(loop_def.trailer_segment_uses, is.length))
+        end
       end
     end
 

@@ -26,20 +26,22 @@ module Stupidedi
     autoload :DelegatedInput, "stupidedi/reader/input/delegated_input"
     autoload :FileInput,      "stupidedi/reader/input/file_input"
 
-    BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
-    EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
-    EITHER   = Regexp.union(BASIC, EXTENDED)
-    BYTES    = (0..255).inject(""){|string, c| string << c }
+    R_BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
+    R_EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
+    R_EITHER   = Regexp.union(R_BASIC, R_EXTENDED)
+
+    C_BYTES    = (0..255).inject(""){|string, c| string << c }
+    C_EITHER   = (C_BYTES.scan(R_EITHER)).inject({}){|h,c| h[c] = nil; h }
 
     class << self
       # Returns non-nil if c belongs to the basic character set
       def is_basic_character?(character)
-        character =~ Reader::BASIC
+        # @todo
       end
 
       # Returns non-nil if c belongs to the extended character set
       def is_extended_character?(character)
-        character =~ Reader::EXTENDED
+        # @todo
       end
 
       # Returns non-nil if c does not belong to the extended or basic character
@@ -52,7 +54,7 @@ module Stupidedi
       #
       # @param [String] character
       def is_control_character?(character)
-        character !~ Reader::EITHER
+        not Reader::C_EITHER.include?(character)
       end
 
       # Strips control characters from the string, leaving only basic and
@@ -66,18 +68,17 @@ module Stupidedi
 
       # @private
       def basic_characters
-        @basic_characters ||= Reader::BYTES.scan(Reader::BASIC)
+        # @todo
       end
 
       # @private
       def extended_characters
-        @extended_characters ||= Reader::BYTES.scan(Reader::EXTENDED)
+        # @todo
       end
 
       # @private
       def control_characters
-        @control_characters ||= Reader::BYTES.split(//) -
-          (basic_characters.join + extended_characters.join).split(//)
+        # @todo
       end
     end
 

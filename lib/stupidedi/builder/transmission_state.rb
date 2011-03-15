@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     class TransmissionState < AbstractState
 

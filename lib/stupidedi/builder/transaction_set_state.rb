@@ -1,5 +1,5 @@
 module Stupidedi
-  module Builder_
+  module Builder
 
     class TransactionSetState < AbstractState
 
@@ -19,7 +19,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        self.class.new \
+        TransactionSetState.new \
           changes.fetch(:value, @value),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
@@ -86,6 +86,7 @@ module Stupidedi
       def instructions(transaction_set_def)
         @__instructions ||= Hash.new
         @__instructions[transaction_set_def] ||= begin
+        # puts "TransactionSetState.instructions(#{transaction_set_def.object_id})"
           # @todo: Explain this optimization
           if transaction_set_def.table_defs.head.repeatable?
             tsequence(transaction_set_def.table_defs)

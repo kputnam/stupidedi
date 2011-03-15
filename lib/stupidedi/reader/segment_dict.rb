@@ -134,6 +134,8 @@ module Stupidedi
       class Constants
         def initialize(namespace)
           @namespace = namespace
+          @constants = Hash.new
+          namespace.constants.each{|c| @constants[c.to_sym] = true }
         end
 
         def at(segment_id)
@@ -141,7 +143,7 @@ module Stupidedi
         end
 
         def defined_at?(segment_id)
-          @namespace.constants.any?{|c| c.to_s == segment_id.to_s }
+          @constants.include?(segment_id.to_sym)
         end
 
         def pretty_print(q)
