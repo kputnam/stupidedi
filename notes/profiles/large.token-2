@@ -1,0 +1,770 @@
+Thread ID: -608597118
+Total Time: 14.69
+
+  %total   %self     total      self      wait     child            calls   Name
+--------------------------------------------------------------------------------
+ 100.00%   4.63%     14.69      0.68      0.00     14.01                1     Stupidedi::Builder_::StateMachine#read!
+                     14.01      0.03      0.00     13.98        6201/6201     Stupidedi::Reader::TokenReader#read_segment
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::StreamReader#read_segment
+--------------------------------------------------------------------------------
+                     14.01      0.03      0.00     13.98        6201/6201     Stupidedi::Builder_::StateMachine#read!
+  95.37%   0.20%     14.01      0.03      0.00     13.98             6201     Stupidedi::Reader::TokenReader#read_segment
+                     12.27      0.05      0.00     12.22       6200/74863     Stupidedi::Either::Success#flatmap
+                      1.71      0.56      0.00      1.15        6201/6201     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Failure#flatmap
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00       2222/74863     Stupidedi::Reader::TokenReader#read_component_elements
+                      0.00      0.00      0.00      0.00         30/74863     Integer#times
+                      0.00      0.20      0.00      0.00      27875/74863     Stupidedi::Reader::TokenReader#read_elements
+                      0.00      0.00      0.00      0.00       1117/74863     Stupidedi::Reader::TokenReader#read_composite_element
+                      0.00      0.38      0.00      0.00      37418/74863     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00          1/74863     Stupidedi::Reader::StreamReader#read_segment
+                     12.27      0.05      0.00     12.22       6200/74863     Stupidedi::Reader::TokenReader#read_segment
+  83.53%   4.29%     12.27      0.63      0.00     12.22            74863     Stupidedi::Either::Success#flatmap
+                     10.96      0.26      0.00     10.83      27875/27875     Stupidedi::Reader::TokenReader#read_elements
+                      3.48      0.40      0.00      3.08      37414/37414     Stupidedi::Reader::TokenReader#read_delimiter
+                      0.54      0.08      0.00      0.46      28980/28980     Stupidedi::Either::Success#map
+                      0.28      0.01      0.00      0.27        6169/6200     Stupidedi::Reader::SegmentDict::NonEmpty#at
+                      0.24      0.01      0.00      0.23        6200/6696     Stupidedi::Reader::SegmentDict::NonEmpty#defined_at?
+                      0.12      0.02      0.00      0.10       8434/81044     Stupidedi::Reader::TokenReader#result
+                      0.12      0.08      0.00      0.04     64064/505930     Kernel#===
+                      0.06      0.06      0.00      0.00      21675/21675     Array#tail
+                      0.04      0.04      0.00      0.00      74863/74863     Kernel#is_a?
+                      0.03      0.01      0.00      0.02       7317/30097     Object#cons
+                      0.00      0.38      0.00      0.00      37418/74863     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00        1117/1117     Stupidedi::Reader::TokenReader#composite
+                      0.00      0.00      0.00      0.00          1/81064     <Class::Stupidedi::Either>#success
+                      0.00      0.00      0.00      0.00              1/4     Kernel#singleton_method_added
+                      0.00      0.00      0.00      0.00              2/2     Stupidedi::Reader::StreamReader#read_character
+                      0.00      0.00      0.00      0.00             6/19     Module#attr_reader
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::TokenReader#stream
+                      0.00      0.00      0.00      0.00              1/3     Stupidedi::Reader::StreamReader#result
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::TokenReader#read_character
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Success#or
+                      0.00      0.00      0.00      0.00            31/78     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00         5/430642     Class#new
+                      0.00      0.00      0.00      0.00              2/8     Class#inherited
+                      0.00      0.00      0.00      0.00            16/16     Array#<<
+                      0.00      0.00      0.00      0.00         1/430643     <Class::Object>#allocate
+                      0.00      0.00      0.00      0.00              1/2     Module#private
+                      0.00      0.00      0.00      0.00         1/752482     String#==
+                      0.00      0.00      0.00      0.00              1/1     Module#attr_accessor
+                      0.00      0.00      0.00      0.00            15/15     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00            15/15     Symbol#call
+                      0.00      0.00      0.00      0.00              1/1     Integer#times
+                      0.00      0.00      0.00      0.00        1105/2222     Stupidedi::Reader::TokenReader#read_component_elements
+--------------------------------------------------------------------------------
+                     10.96      0.26      0.00     10.83      27875/27875     Stupidedi::Either::Success#flatmap
+  74.61%   1.77%     10.96      0.26      0.00     10.83            27875     Stupidedi::Reader::TokenReader#read_elements
+                      5.78      1.27      0.00      4.51      26758/26773     Stupidedi::Reader::TokenReader#read_simple_element
+                      1.03      0.00      0.00      1.03        1117/1117     Stupidedi::Reader::TokenReader#read_composite_element
+                      0.11      0.08      0.00      0.03      55254/55254     Array#head
+                      0.03      0.01      0.00      0.02      27627/27627     Stupidedi::Schema::ElementUse#composite?
+                      0.02      0.02      0.00      0.00      27875/83129     Array#empty?
+                      0.02      0.02      0.00      0.00      27627/27627     Stupidedi::Schema::RepeatCount::Bounded#include?
+                      0.00      0.20      0.00      0.00      27875/74863     Stupidedi::Either::Success#flatmap
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         15/26773     Kernel#__send__
+                      5.78      1.27      0.00      4.51      26758/26773     Stupidedi::Reader::TokenReader#read_elements
+  39.35%   8.65%      5.78      1.27      0.00      4.51            26773     Stupidedi::Reader::TokenReader#read_simple_element
+                      1.14      0.13      0.00      1.01      26773/72625     Stupidedi::Reader::TokenReader#advance
+                      0.83      0.49      0.00      0.34    115362/195821     Stupidedi::Reader::FileInput#at
+                      0.70      0.35      0.00      0.35     26773/101623     Stupidedi::Reader::FileInput#drop
+                      0.51      0.09      0.00      0.42    115362/189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.46      0.33      0.00      0.13    401959/505930     Kernel#===
+                      0.34      0.04      0.00      0.30      26773/81044     Stupidedi::Reader::TokenReader#result
+                      0.28      0.16      0.00      0.12    115362/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.18      0.04      0.00      0.14      26773/26773     Stupidedi::Reader::TokenReader#simple
+                      0.04      0.04      0.00      0.00     88589/110803     String#<<
+                      0.03      0.03      0.00      0.00    115362/958757     Fixnum#+
+                      0.00      0.00      0.00      0.00     26773/114023     Fixnum#-
+--------------------------------------------------------------------------------
+                      3.48      0.40      0.00      3.08      37414/37414     Stupidedi::Either::Success#flatmap
+  23.69%   2.72%      3.48      0.40      0.00      3.08            37414     Stupidedi::Reader::TokenReader#read_delimiter
+                      1.76      0.24      0.00      1.52      37414/72625     Stupidedi::Reader::TokenReader#advance
+                      0.52      0.10      0.00      0.42      37414/81044     Stupidedi::Reader::TokenReader#result
+                      0.29      0.11      0.00      0.18     37414/189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.24      0.14      0.00      0.10     37414/195821     Stupidedi::Reader::FileInput#at
+                      0.15      0.12      0.00      0.03     37414/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.07      0.05      0.00      0.02      37414/84925     Stupidedi::Reader::TokenReader#is_delimiter?
+                      0.05      0.05      0.00      0.00     37414/958757     Fixnum#+
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         15/72625     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00          1/72625     Stupidedi::Reader::TokenReader#read_character
+                      0.14      0.03      0.00      0.11       2222/72625     Stupidedi::Reader::TokenReader#read_component_element
+                      0.17      0.01      0.00      0.16       6200/72625     Stupidedi::Reader::TokenReader#read_segment_id
+                      1.14      0.13      0.00      1.01      26773/72625     Stupidedi::Reader::TokenReader#read_simple_element
+                      1.76      0.24      0.00      1.52      37414/72625     Stupidedi::Reader::TokenReader#read_delimiter
+  21.85%   2.79%      3.21      0.41      0.00      2.80            72625     Stupidedi::Reader::TokenReader#advance
+                      1.83      0.80      0.00      1.03     72625/101623     Stupidedi::Reader::FileInput#drop
+                      0.72      0.23      0.00      0.49      72625/72625     Stupidedi::Reader::TokenReader#copy
+                      0.23      0.16      0.00      0.07     72625/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.02      0.02      0.00      0.00     72625/114023     Fixnum#-
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         3/101623     Stupidedi::Reader::StreamReader#advance
+                      0.04      0.02      0.00      0.02      2222/101623     Stupidedi::Reader::TokenReader#read_component_element
+                      0.70      0.35      0.00      0.35     26773/101623     Stupidedi::Reader::TokenReader#read_simple_element
+                      1.83      0.80      0.00      1.03     72625/101623     Stupidedi::Reader::TokenReader#advance
+  17.49%   7.96%      2.57      1.17      0.00      1.40           101623     Stupidedi::Reader::FileInput#drop
+                      0.54      0.15      0.00      0.39    101623/430642     Class#new
+                      0.19      0.19      0.00      0.00    101623/101623     String#count
+                      0.17      0.17      0.00      0.00    298669/958757     Fixnum#+
+                      0.11      0.11      0.00      0.00    101623/297444     IO#read
+                      0.10      0.10      0.00      0.00    101623/203231     Kernel#class
+                      0.09      0.09      0.00      0.00    203246/219775     String#length
+                      0.09      0.09      0.00      0.00    101623/297444     IO#seek
+                      0.07      0.07      0.00      0.00    101623/101623     String#rindex
+                      0.04      0.04      0.00      0.00    101623/297444     Fixnum#>=
+                      0.00      0.00      0.00      0.00      6200/114023     Fixnum#-
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         1/430642     Stupidedi::Reader::TokenReader#failure
+                      0.00      0.00      0.00      0.00         1/430642     <Class::Stupidedi::Either>#failure
+                      0.00      0.00      0.00      0.00         3/430642     Stupidedi::Reader::StreamReader#result
+                      0.00      0.00      0.00      0.00         1/430642     Stupidedi::Reader::TokenReader#stream
+                      0.00      0.00      0.00      0.00      1117/430642     <Class::Stupidedi::Reader::CompositeElementTok>#build
+                      0.00      0.00      0.00      0.00         5/430642     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00         3/430642     Stupidedi::Reader::StreamReader#copy
+                      0.01      0.01      0.00      0.00      2222/430642     <Class::Stupidedi::Reader::ComponentElementTok>#build
+                      0.03      0.01      0.00      0.02      6200/430642     <Class::Stupidedi::Reader::SegmentTok>#build
+                      0.05      0.02      0.00      0.03     28980/430642     Stupidedi::Either::Success#map
+                      0.11      0.05      0.00      0.06     28980/430642     Stupidedi::Reader::Success#copy
+                      0.13      0.05      0.00      0.08     26773/430642     <Class::Stupidedi::Reader::SimpleElementTok>#build
+                      0.28      0.17      0.00      0.11     72625/430642     Stupidedi::Reader::TokenReader#copy
+                      0.32      0.14      0.00      0.18     81064/430642     <Class::Stupidedi::Either>#success
+                      0.46      0.19      0.00      0.27     81044/430642     Stupidedi::Reader::TokenReader#result
+                      0.54      0.15      0.00      0.39    101623/430642     Stupidedi::Reader::FileInput#drop
+  13.14%   5.38%      1.93      0.79      0.00      1.14           430642     Class#new
+                      0.32      0.32      0.00      0.00    101623/101623     Stupidedi::Reader::FileInput#initialize
+                      0.30      0.30      0.00      0.00    430642/430643     <Class::Object>#allocate
+                      0.26      0.26      0.00      0.00    110027/110027     Stupidedi::Reader::Success#initialize
+                      0.13      0.13      0.00      0.00    110044/110044     Stupidedi::Either::Success#initialize
+                      0.08      0.08      0.00      0.00      72627/72627     Stupidedi::Reader::TokenReader#initialize
+                      0.03      0.03      0.00      0.00      26774/26774     Stupidedi::Reader::SimpleElementTok#initialize
+                      0.02      0.02      0.00      0.00        6201/6201     Stupidedi::Reader::SegmentTok#initialize
+                      0.00      0.00      0.00      0.00              2/2     <Class::Stupidedi::Reader::SegmentDict>#empty
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Failure#initialize
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::Failure#initialize
+                      0.00      0.00      0.00      0.00        1117/1117     Stupidedi::Reader::CompositeElementTok#initialize
+                      0.00      0.00      0.00      0.00        2222/2222     Stupidedi::Reader::ComponentElementTok#initialize
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::Separators#initialize
+                      0.00      0.00      0.00      0.00              4/4     Stupidedi::Reader::StreamReader#initialize
+--------------------------------------------------------------------------------
+                      1.71      0.56      0.00      1.15        6201/6201     Stupidedi::Reader::TokenReader#read_segment
+  11.64%   3.81%      1.71      0.56      0.00      1.15             6201     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.22      0.08      0.00      0.14     28905/189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.22      0.16      0.00      0.06     35106/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.19      0.16      0.00      0.03     35105/195821     Stupidedi::Reader::FileInput#at
+                      0.17      0.10      0.00      0.07      35105/84925     Stupidedi::Reader::TokenReader#is_delimiter?
+                      0.17      0.01      0.00      0.16       6200/72625     Stupidedi::Reader::TokenReader#advance
+                      0.10      0.02      0.00      0.08       6200/81044     Stupidedi::Reader::TokenReader#result
+                      0.02      0.02      0.00      0.00     16499/110803     String#<<
+                      0.02      0.02      0.00      0.00     35105/958757     Fixnum#+
+                      0.01      0.01      0.00      0.00        6200/6203     String#upcase
+                      0.01      0.01      0.00      0.00     16499/219775     String#length
+                      0.01      0.01      0.00      0.00     12400/505930     Kernel#===
+                      0.01      0.01      0.00      0.00      6200/114023     Fixnum#-
+                      0.00      0.00      0.00      0.00        6200/6200     String#to_sym
+                      0.00      0.00      0.00      0.00      16499/16514     Fixnum#==
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::TokenReader#failure
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        15/195821     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00         1/195821     Stupidedi::Reader::TokenReader#read_character
+                      0.00      0.00      0.00      0.00         2/195821     Stupidedi::Reader::StreamReader#read_character
+                      0.00      0.00      0.00      0.00         3/195821     Stupidedi::Reader::StreamReader#consume_isa
+                      0.05      0.03      0.00      0.02      7919/195821     Stupidedi::Reader::TokenReader#read_component_element
+                      0.19      0.16      0.00      0.03     35105/195821     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.24      0.14      0.00      0.10     37414/195821     Stupidedi::Reader::TokenReader#read_delimiter
+                      0.83      0.49      0.00      0.34    115362/195821     Stupidedi::Reader::TokenReader#read_simple_element
+   8.92%   5.58%      1.31      0.82      0.00      0.49           195821     Stupidedi::Reader::FileInput#at
+                      0.22      0.22      0.00      0.00    195821/297444     IO#seek
+                      0.12      0.12      0.00      0.00    195821/297444     IO#read
+                      0.08      0.08      0.00      0.00    195821/958757     Fixnum#+
+                      0.07      0.07      0.00      0.00    195821/297444     Fixnum#>=
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00          1/81044     Stupidedi::Reader::TokenReader#read_character
+                      0.00      0.00      0.00      0.00       2222/81044     Stupidedi::Reader::TokenReader#read_component_element
+                      0.10      0.02      0.00      0.08       6200/81044     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.12      0.02      0.00      0.10       8434/81044     Stupidedi::Either::Success#flatmap
+                      0.34      0.04      0.00      0.30      26773/81044     Stupidedi::Reader::TokenReader#read_simple_element
+                      0.52      0.10      0.00      0.42      37414/81044     Stupidedi::Reader::TokenReader#read_delimiter
+   7.35%   1.23%      1.08      0.18      0.00      0.90            81044     Stupidedi::Reader::TokenReader#result
+                      0.46      0.19      0.00      0.27     81044/430642     Class#new
+                      0.44      0.12      0.00      0.32      81044/81064     <Class::Stupidedi::Either>#success
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        15/189616     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00         1/189616     Stupidedi::Reader::TokenReader#read_character
+                      0.03      0.01      0.00      0.02      7919/189616     Stupidedi::Reader::TokenReader#read_component_element
+                      0.22      0.08      0.00      0.14     28905/189616     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.29      0.11      0.00      0.18     37414/189616     Stupidedi::Reader::TokenReader#read_delimiter
+                      0.51      0.09      0.00      0.42    115362/189616     Stupidedi::Reader::TokenReader#read_simple_element
+   7.15%   1.97%      1.05      0.29      0.00      0.76           189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.71      0.33      0.00      0.38    189616/189619     <Module::Stupidedi::Reader>#is_control_character?
+                      0.05      0.03      0.00      0.02      12406/84925     Stupidedi::Reader::TokenReader#is_delimiter?
+--------------------------------------------------------------------------------
+                      1.03      0.00      0.00      1.03        1117/1117     Stupidedi::Reader::TokenReader#read_elements
+   7.01%   0.00%      1.03      0.00      0.00      1.03             1117     Stupidedi::Reader::TokenReader#read_composite_element
+                      0.88      0.00      0.00      0.88        1117/2222     Stupidedi::Reader::TokenReader#read_component_elements
+                      0.00      0.00      0.00      0.00       1117/74863     Stupidedi::Either::Success#flatmap
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        15/268448     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00         1/268448     Stupidedi::Reader::TokenReader#read_character
+                      0.00      0.00      0.00      0.00         3/268448     Stupidedi::Reader::StreamReader#consume_isa
+                      0.00      0.00      0.00      0.00         3/268448     Stupidedi::Reader::StreamReader#advance
+                      0.04      0.04      0.00      0.00      7919/268448     Stupidedi::Reader::TokenReader#read_component_element
+                      0.15      0.12      0.00      0.03     37414/268448     Stupidedi::Reader::TokenReader#read_delimiter
+                      0.22      0.16      0.00      0.06     35106/268448     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.23      0.16      0.00      0.07     72625/268448     Stupidedi::Reader::TokenReader#advance
+                      0.28      0.16      0.00      0.12    115362/268448     Stupidedi::Reader::TokenReader#read_simple_element
+   6.26%   4.36%      0.92      0.64      0.00      0.28           268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.16      0.16      0.00      0.00    268448/268448     Fixnum#<
+                      0.12      0.12      0.00      0.00    268448/958757     Fixnum#+
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        1105/2222     Stupidedi::Either::Success#flatmap
+                      0.88      0.00      0.00      0.88        1117/2222     Stupidedi::Reader::TokenReader#read_composite_element
+   5.99%   0.00%      0.88      0.00      0.00      0.88             2222     Stupidedi::Reader::TokenReader#read_component_elements
+                      0.51      0.12      0.00      0.39        2222/2222     Stupidedi::Reader::TokenReader#read_component_element
+                      0.00      0.00      0.00      0.00       2222/74863     Stupidedi::Either::Success#flatmap
+--------------------------------------------------------------------------------
+                      0.72      0.23      0.00      0.49      72625/72625     Stupidedi::Reader::TokenReader#advance
+   4.90%   1.57%      0.72      0.23      0.00      0.49            72625     Stupidedi::Reader::TokenReader#copy
+                      0.28      0.17      0.00      0.11     72625/430642     Class#new
+                      0.17      0.17      0.00      0.00    217875/275838     Hash#fetch
+                      0.04      0.04      0.00      0.00     72625/203231     Kernel#class
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         3/189619     Stupidedi::Reader::StreamReader#consume_isa
+                      0.71      0.33      0.00      0.38    189616/189619     Stupidedi::Reader::TokenReader#is_control?
+   4.83%   2.25%      0.71      0.33      0.00      0.38           189619     <Module::Stupidedi::Reader>#is_control_character?
+                      0.38      0.38      0.00      0.00    189619/189619     String#=~
+--------------------------------------------------------------------------------
+                      0.01      0.01      0.00      0.00     12400/505930     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.06      0.05      0.00      0.01     27507/505930     Stupidedi::Reader::TokenReader#read_component_element
+                      0.12      0.08      0.00      0.04     64064/505930     Stupidedi::Either::Success#flatmap
+                      0.46      0.33      0.00      0.13    401959/505930     Stupidedi::Reader::TokenReader#read_simple_element
+   4.42%   3.20%      0.65      0.47      0.00      0.18           505930     Kernel#===
+                      0.18      0.18      0.00      0.00    505660/752482     String#==
+                      0.00      0.00      0.00      0.00       270/381278     Kernel#==
+--------------------------------------------------------------------------------
+                      0.54      0.08      0.00      0.46      28980/28980     Stupidedi::Either::Success#flatmap
+   3.68%   0.54%      0.54      0.08      0.00      0.46            28980     Stupidedi::Either::Success#map
+                      0.41      0.08      0.00      0.33      28980/28980     Stupidedi::Reader::Success#map
+                      0.05      0.02      0.00      0.03     28980/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.51      0.12      0.00      0.39        2222/2222     Stupidedi::Reader::TokenReader#read_component_elements
+   3.47%   0.82%      0.51      0.12      0.00      0.39             2222     Stupidedi::Reader::TokenReader#read_component_element
+                      0.14      0.03      0.00      0.11       2222/72625     Stupidedi::Reader::TokenReader#advance
+                      0.06      0.05      0.00      0.01     27507/505930     Kernel#===
+                      0.05      0.03      0.00      0.02      7919/195821     Stupidedi::Reader::FileInput#at
+                      0.04      0.02      0.00      0.02      2222/101623     Stupidedi::Reader::FileInput#drop
+                      0.04      0.04      0.00      0.00      7919/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.03      0.01      0.00      0.02      7919/189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.02      0.00      0.00      0.02        2222/2222     Stupidedi::Reader::TokenReader#component
+                      0.01      0.01      0.00      0.00      7919/958757     Fixnum#+
+                      0.00      0.00      0.00      0.00       2222/81044     Stupidedi::Reader::TokenReader#result
+                      0.00      0.00      0.00      0.00      2222/114023     Fixnum#-
+                      0.00      0.00      0.00      0.00      5697/110803     String#<<
+--------------------------------------------------------------------------------
+                      0.23      0.02      0.00      0.21       6696/12896     Stupidedi::Reader::SegmentDict::NonEmpty#defined_at?
+                      0.27      0.00      0.00      0.27       6200/12896     Stupidedi::Reader::SegmentDict::NonEmpty#at
+   3.40%   0.14%      0.50      0.02      0.00      0.48            12896     Stupidedi::Reader::SegmentDict::Constants#defined_at?
+                      0.47      0.01      0.00      0.46      12896/12896     Stupidedi::RelativeSet#include?
+                      0.01      0.01      0.00      0.00      12896/12896     Symbol#to_sym
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        15/958757     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00         1/958757     Stupidedi::Reader::TokenReader#read_character
+                      0.00      0.00      0.00      0.00         3/958757     Stupidedi::Reader::StreamReader#consume_isa
+                      0.01      0.01      0.00      0.00      7919/958757     Stupidedi::Reader::TokenReader#read_component_element
+                      0.02      0.02      0.00      0.00     35105/958757     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.03      0.03      0.00      0.00    115362/958757     Stupidedi::Reader::TokenReader#read_simple_element
+                      0.05      0.05      0.00      0.00     37414/958757     Stupidedi::Reader::TokenReader#read_delimiter
+                      0.08      0.08      0.00      0.00    195821/958757     Stupidedi::Reader::FileInput#at
+                      0.12      0.12      0.00      0.00    268448/958757     Stupidedi::Reader::FileInput#defined_at?
+                      0.17      0.17      0.00      0.00    298669/958757     Stupidedi::Reader::FileInput#drop
+   3.27%   3.27%      0.48      0.48      0.00      0.00           958757     Fixnum#+
+--------------------------------------------------------------------------------
+                      0.47      0.01      0.00      0.46      12896/12896     Stupidedi::Reader::SegmentDict::Constants#defined_at?
+   3.20%   0.07%      0.47      0.01      0.00      0.46            12896     Stupidedi::RelativeSet#include?
+                      0.46      0.18      0.00      0.28      12896/12896     Array#include?
+--------------------------------------------------------------------------------
+                      0.46      0.18      0.00      0.28      12896/12896     Stupidedi::RelativeSet#include?
+   3.13%   1.23%      0.46      0.18      0.00      0.28            12896     Array#include?
+                      0.28      0.28      0.00      0.00    381008/381278     Kernel#==
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00          1/81064     Stupidedi::Reader::StreamReader#success
+                      0.00      0.00      0.00      0.00         15/81064     Stupidedi::Reader::TokenReader#success
+                      0.00      0.00      0.00      0.00          1/81064     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00          3/81064     Stupidedi::Reader::StreamReader#result
+                      0.44      0.12      0.00      0.32      81044/81064     Stupidedi::Reader::TokenReader#result
+   3.00%   0.82%      0.44      0.12      0.00      0.32            81064     <Class::Stupidedi::Either>#success
+                      0.32      0.14      0.00      0.18     81064/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.41      0.08      0.00      0.33      28980/28980     Stupidedi::Either::Success#map
+   2.79%   0.54%      0.41      0.08      0.00      0.33            28980     Stupidedi::Reader::Success#map
+                      0.23      0.10      0.00      0.13      28980/28980     Stupidedi::Reader::Success#copy
+                      0.06      0.03      0.00      0.03      22780/30097     Object#cons
+                      0.04      0.01      0.00      0.03        6200/6200     Stupidedi::Reader::TokenReader#segment
+--------------------------------------------------------------------------------
+                      0.38      0.38      0.00      0.00    189619/189619     <Module::Stupidedi::Reader>#is_control_character?
+   2.59%   2.59%      0.38      0.38      0.00      0.00           189619     String#=~
+--------------------------------------------------------------------------------
+                      0.32      0.32      0.00      0.00    101623/101623     Class#new
+   2.18%   2.18%      0.32      0.32      0.00      0.00           101623     Stupidedi::Reader::FileInput#initialize
+--------------------------------------------------------------------------------
+                      0.09      0.09      0.00      0.00    101623/297444     Stupidedi::Reader::FileInput#drop
+                      0.22      0.22      0.00      0.00    195821/297444     Stupidedi::Reader::FileInput#at
+   2.11%   2.11%      0.31      0.31      0.00      0.00           297444     IO#seek
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         1/430643     Stupidedi::Either::Success#flatmap
+                      0.30      0.30      0.00      0.00    430642/430643     Class#new
+   2.04%   2.04%      0.30      0.30      0.00      0.00           430643     <Class::Object>#allocate
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        15/752482     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00         3/752482     Stupidedi::Reader::StreamReader#consume_isa
+                      0.00      0.00      0.00      0.00         1/752482     Stupidedi::Either::Success#flatmap
+                      0.11      0.11      0.00      0.00    246803/752482     Stupidedi::Reader::TokenReader#is_delimiter?
+                      0.18      0.18      0.00      0.00    505660/752482     Kernel#===
+   1.97%   1.97%      0.29      0.29      0.00      0.00           752482     String#==
+--------------------------------------------------------------------------------
+                      0.05      0.03      0.00      0.02      12406/84925     Stupidedi::Reader::TokenReader#is_control?
+                      0.07      0.05      0.00      0.02      37414/84925     Stupidedi::Reader::TokenReader#read_delimiter
+                      0.17      0.10      0.00      0.07      35105/84925     Stupidedi::Reader::TokenReader#read_segment_id
+   1.97%   1.23%      0.29      0.18      0.00      0.11            84925     Stupidedi::Reader::TokenReader#is_delimiter?
+                      0.11      0.11      0.00      0.00    246803/752482     String#==
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00          31/6200     Stupidedi::Reader::SegmentDict::NonEmpty#at
+                      0.28      0.01      0.00      0.27        6169/6200     Stupidedi::Either::Success#flatmap
+   1.91%   0.07%      0.28      0.01      0.00      0.27             6200     Stupidedi::Reader::SegmentDict::NonEmpty#at
+                      0.27      0.00      0.00      0.27       6200/12896     Stupidedi::Reader::SegmentDict::Constants#defined_at?
+                      0.00      0.00      0.00      0.00        6169/6169     Stupidedi::Reader::SegmentDict::Constants#at
+                      0.00      0.00      0.00      0.00          31/6200     Stupidedi::Reader::SegmentDict::NonEmpty#at
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00       270/381278     Kernel#===
+                      0.28      0.28      0.00      0.00    381008/381278     Array#include?
+   1.91%   1.91%      0.28      0.28      0.00      0.00           381278     Kernel#==
+--------------------------------------------------------------------------------
+                      0.26      0.26      0.00      0.00    110027/110027     Class#new
+   1.77%   1.77%      0.26      0.26      0.00      0.00           110027     Stupidedi::Reader::Success#initialize
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         496/6696     Stupidedi::Reader::SegmentDict::NonEmpty#defined_at?
+                      0.24      0.01      0.00      0.23        6200/6696     Stupidedi::Either::Success#flatmap
+   1.63%   0.07%      0.24      0.01      0.00      0.23             6696     Stupidedi::Reader::SegmentDict::NonEmpty#defined_at?
+                      0.23      0.02      0.00      0.21       6696/12896     Stupidedi::Reader::SegmentDict::Constants#defined_at?
+                      0.00      0.00      0.00      0.00            31/31     #<Class:0xb7371254>#defined_at?
+                      0.00      0.00      0.00      0.00         496/6696     Stupidedi::Reader::SegmentDict::NonEmpty#defined_at?
+--------------------------------------------------------------------------------
+                      0.11      0.11      0.00      0.00    101623/297444     Stupidedi::Reader::FileInput#drop
+                      0.12      0.12      0.00      0.00    195821/297444     Stupidedi::Reader::FileInput#at
+   1.57%   1.57%      0.23      0.23      0.00      0.00           297444     IO#read
+--------------------------------------------------------------------------------
+                      0.23      0.10      0.00      0.13      28980/28980     Stupidedi::Reader::Success#map
+   1.57%   0.68%      0.23      0.10      0.00      0.13            28980     Stupidedi::Reader::Success#copy
+                      0.11      0.05      0.00      0.06     28980/430642     Class#new
+                      0.01      0.01      0.00      0.00     28980/203231     Kernel#class
+                      0.01      0.01      0.00      0.00     57960/275838     Hash#fetch
+--------------------------------------------------------------------------------
+                      0.19      0.19      0.00      0.00    101623/101623     Stupidedi::Reader::FileInput#drop
+   1.29%   1.29%      0.19      0.19      0.00      0.00           101623     String#count
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         3/275838     Stupidedi::Reader::StreamReader#copy
+                      0.01      0.01      0.00      0.00     57960/275838     Stupidedi::Reader::Success#copy
+                      0.17      0.17      0.00      0.00    217875/275838     Stupidedi::Reader::TokenReader#copy
+   1.23%   1.23%      0.18      0.18      0.00      0.00           275838     Hash#fetch
+--------------------------------------------------------------------------------
+                      0.18      0.04      0.00      0.14      26773/26773     Stupidedi::Reader::TokenReader#read_simple_element
+   1.23%   0.27%      0.18      0.04      0.00      0.14            26773     Stupidedi::Reader::TokenReader#simple
+                      0.14      0.01      0.00      0.13      26773/26773     <Class::Stupidedi::Reader::SimpleElementTok>#build
+                      0.00      0.00      0.00      0.00              1/4     Kernel#singleton_method_added
+                      0.00      0.00      0.00      0.00             3/19     Module#attr_reader
+                      0.00      0.00      0.00      0.00             6/78     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00              1/8     Class#inherited
+--------------------------------------------------------------------------------
+                      0.16      0.16      0.00      0.00    268448/268448     Stupidedi::Reader::FileInput#defined_at?
+   1.09%   1.09%      0.16      0.16      0.00      0.00           268448     Fixnum#<
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         3/203231     Stupidedi::Reader::StreamReader#copy
+                      0.01      0.01      0.00      0.00     28980/203231     Stupidedi::Reader::Success#copy
+                      0.04      0.04      0.00      0.00     72625/203231     Stupidedi::Reader::TokenReader#copy
+                      0.10      0.10      0.00      0.00    101623/203231     Stupidedi::Reader::FileInput#drop
+   1.02%   1.02%      0.15      0.15      0.00      0.00           203231     Kernel#class
+--------------------------------------------------------------------------------
+                      0.14      0.01      0.00      0.13      26773/26773     Stupidedi::Reader::TokenReader#simple
+   0.95%   0.07%      0.14      0.01      0.00      0.13            26773     <Class::Stupidedi::Reader::SimpleElementTok>#build
+                      0.13      0.05      0.00      0.08     26773/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.13      0.13      0.00      0.00    110044/110044     Class#new
+   0.88%   0.88%      0.13      0.13      0.00      0.00           110044     Stupidedi::Either::Success#initialize
+--------------------------------------------------------------------------------
+                      0.11      0.08      0.00      0.03      55254/55254     Stupidedi::Reader::TokenReader#read_elements
+   0.75%   0.54%      0.11      0.08      0.00      0.03            55254     Array#head
+                      0.03      0.03      0.00      0.00      55254/83129     Array#empty?
+--------------------------------------------------------------------------------
+                      0.04      0.04      0.00      0.00    101623/297444     Stupidedi::Reader::FileInput#drop
+                      0.07      0.07      0.00      0.00    195821/297444     Stupidedi::Reader::FileInput#at
+   0.75%   0.75%      0.11      0.11      0.00      0.00           297444     Fixnum#>=
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        30/219775     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.01      0.01      0.00      0.00     16499/219775     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.09      0.09      0.00      0.00    203246/219775     Stupidedi::Reader::FileInput#drop
+   0.68%   0.68%      0.10      0.10      0.00      0.00           219775     String#length
+--------------------------------------------------------------------------------
+                      0.03      0.01      0.00      0.02       7317/30097     Stupidedi::Either::Success#flatmap
+                      0.06      0.03      0.00      0.03      22780/30097     Stupidedi::Reader::Success#map
+   0.61%   0.27%      0.09      0.04      0.00      0.05            30097     Object#cons
+                      0.05      0.05      0.00      0.00      30097/30097     Array#+
+--------------------------------------------------------------------------------
+                      0.08      0.08      0.00      0.00      72627/72627     Class#new
+   0.54%   0.54%      0.08      0.08      0.00      0.00            72627     Stupidedi::Reader::TokenReader#initialize
+--------------------------------------------------------------------------------
+                      0.07      0.07      0.00      0.00    101623/101623     Stupidedi::Reader::FileInput#drop
+   0.48%   0.48%      0.07      0.07      0.00      0.00           101623     String#rindex
+--------------------------------------------------------------------------------
+                      0.06      0.06      0.00      0.00      21675/21675     Stupidedi::Either::Success#flatmap
+   0.41%   0.41%      0.06      0.06      0.00      0.00            21675     Array#tail
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        15/110803     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00         3/110803     Stupidedi::Reader::StreamReader#consume_isa
+                      0.00      0.00      0.00      0.00      5697/110803     Stupidedi::Reader::TokenReader#read_component_element
+                      0.02      0.02      0.00      0.00     16499/110803     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.04      0.04      0.00      0.00     88589/110803     Stupidedi::Reader::TokenReader#read_simple_element
+   0.41%   0.41%      0.06      0.06      0.00      0.00           110803     String#<<
+--------------------------------------------------------------------------------
+                      0.02      0.02      0.00      0.00      27875/83129     Stupidedi::Reader::TokenReader#read_elements
+                      0.03      0.03      0.00      0.00      55254/83129     Array#head
+   0.34%   0.34%      0.05      0.05      0.00      0.00            83129     Array#empty?
+--------------------------------------------------------------------------------
+                      0.05      0.05      0.00      0.00      30097/30097     Object#cons
+   0.34%   0.34%      0.05      0.05      0.00      0.00            30097     Array#+
+--------------------------------------------------------------------------------
+                      0.04      0.04      0.00      0.00      74863/74863     Stupidedi::Either::Success#flatmap
+   0.27%   0.27%      0.04      0.04      0.00      0.00            74863     Kernel#is_a?
+--------------------------------------------------------------------------------
+                      0.04      0.01      0.00      0.03        6200/6200     Stupidedi::Reader::Success#map
+   0.27%   0.07%      0.04      0.01      0.00      0.03             6200     Stupidedi::Reader::TokenReader#segment
+                      0.03      0.00      0.00      0.03        6200/6200     <Class::Stupidedi::Reader::SegmentTok>#build
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00     26773/114023     Stupidedi::Reader::TokenReader#read_simple_element
+                      0.00      0.00      0.00      0.00         3/114023     Stupidedi::Reader::StreamReader#advance
+                      0.00      0.00      0.00      0.00      2222/114023     Stupidedi::Reader::TokenReader#read_component_element
+                      0.00      0.00      0.00      0.00      6200/114023     Stupidedi::Reader::FileInput#drop
+                      0.01      0.01      0.00      0.00      6200/114023     Stupidedi::Reader::TokenReader#read_segment_id
+                      0.02      0.02      0.00      0.00     72625/114023     Stupidedi::Reader::TokenReader#advance
+   0.20%   0.20%      0.03      0.03      0.00      0.00           114023     Fixnum#-
+--------------------------------------------------------------------------------
+                      0.03      0.01      0.00      0.02      27627/27627     Stupidedi::Reader::TokenReader#read_elements
+   0.20%   0.07%      0.03      0.01      0.00      0.02            27627     Stupidedi::Schema::ElementUse#composite?
+                      0.02      0.02      0.00      0.00      26510/26510     Stupidedi::Schema::SimpleElementUse#simple?
+                      0.00      0.00      0.00      0.00        1117/1117     Stupidedi::Schema::CompositeElementUse#simple?
+--------------------------------------------------------------------------------
+                      0.03      0.00      0.00      0.03        6200/6200     Stupidedi::Reader::TokenReader#segment
+   0.20%   0.00%      0.03      0.00      0.00      0.03             6200     <Class::Stupidedi::Reader::SegmentTok>#build
+                      0.03      0.01      0.00      0.02      6200/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.03      0.03      0.00      0.00      26774/26774     Class#new
+   0.20%   0.20%      0.03      0.03      0.00      0.00            26774     Stupidedi::Reader::SimpleElementTok#initialize
+--------------------------------------------------------------------------------
+                      0.02      0.02      0.00      0.00      27627/27627     Stupidedi::Reader::TokenReader#read_elements
+   0.14%   0.14%      0.02      0.02      0.00      0.00            27627     Stupidedi::Schema::RepeatCount::Bounded#include?
+                      0.00      0.00      0.00      0.00      27627/27627     Fixnum#<=
+--------------------------------------------------------------------------------
+                      0.02      0.02      0.00      0.00      26510/26510     Stupidedi::Schema::ElementUse#composite?
+   0.14%   0.14%      0.02      0.02      0.00      0.00            26510     Stupidedi::Schema::SimpleElementUse#simple?
+--------------------------------------------------------------------------------
+                      0.02      0.02      0.00      0.00        6201/6201     Class#new
+   0.14%   0.14%      0.02      0.02      0.00      0.00             6201     Stupidedi::Reader::SegmentTok#initialize
+--------------------------------------------------------------------------------
+                      0.02      0.00      0.00      0.02        2222/2222     Stupidedi::Reader::TokenReader#read_component_element
+   0.14%   0.00%      0.02      0.00      0.00      0.02             2222     Stupidedi::Reader::TokenReader#component
+                      0.02      0.01      0.00      0.01        2222/2222     <Class::Stupidedi::Reader::ComponentElementTok>#build
+                      0.00      0.00      0.00      0.00             4/78     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00              1/4     Kernel#singleton_method_added
+                      0.00      0.00      0.00      0.00              1/8     Class#inherited
+                      0.00      0.00      0.00      0.00             3/19     Module#attr_reader
+--------------------------------------------------------------------------------
+                      0.02      0.01      0.00      0.01        2222/2222     Stupidedi::Reader::TokenReader#component
+   0.14%   0.07%      0.02      0.01      0.00      0.01             2222     <Class::Stupidedi::Reader::ComponentElementTok>#build
+                      0.01      0.01      0.00      0.00      2222/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00           3/6203     Stupidedi::Reader::StreamReader#consume_isa
+                      0.01      0.01      0.00      0.00        6200/6203     Stupidedi::Reader::TokenReader#read_segment_id
+   0.07%   0.07%      0.01      0.01      0.00      0.00             6203     String#upcase
+--------------------------------------------------------------------------------
+                      0.01      0.01      0.00      0.00      12896/12896     Stupidedi::Reader::SegmentDict::Constants#defined_at?
+   0.07%   0.07%      0.01      0.01      0.00      0.00            12896     Symbol#to_sym
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Builder_::StateMachine#read!
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::StreamReader#read_segment
+                      0.00      0.00      0.00      0.00          1/74863     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::StreamReader#consume_isa
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::TokenReader#read_segment
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Either::Failure#flatmap
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::StreamReader#read_segment
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::StreamReader#consume_isa
+                      0.00      0.00      0.00      0.00           3/6203     String#upcase
+                      0.00      0.00      0.00      0.00         3/110803     String#<<
+                      0.00      0.00      0.00      0.00         3/752482     String#==
+                      0.00      0.00      0.00      0.00         3/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.00      0.00      0.00      0.00         3/195821     Stupidedi::Reader::FileInput#at
+                      0.00      0.00      0.00      0.00              3/3     String#slice!
+                      0.00      0.00      0.00      0.00              1/3     Stupidedi::Reader::StreamReader#advance
+                      0.00      0.00      0.00      0.00         3/189619     <Module::Stupidedi::Reader>#is_control_character?
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::StreamReader#success
+                      0.00      0.00      0.00      0.00         3/958757     Fixnum#+
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00         15/16514     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00      16499/16514     Stupidedi::Reader::TokenReader#read_segment_id
+   0.00%   0.00%      0.00      0.00      0.00      0.00            16514     Fixnum#==
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              3/3     Stupidedi::Reader::StreamReader#consume_isa
+   0.00%   0.00%      0.00      0.00      0.00      0.00                3     String#slice!
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        6200/6200     Stupidedi::Reader::TokenReader#read_segment_id
+   0.00%   0.00%      0.00      0.00      0.00      0.00             6200     String#to_sym
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Either::Success#or
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/3     Stupidedi::Reader::StreamReader#consume_isa
+                      0.00      0.00      0.00      0.00              2/3     Stupidedi::Reader::StreamReader#read_character
+   0.00%   0.00%      0.00      0.00      0.00      0.00                3     Stupidedi::Reader::StreamReader#advance
+                      0.00      0.00      0.00      0.00         3/101623     Stupidedi::Reader::FileInput#drop
+                      0.00      0.00      0.00      0.00              3/3     Stupidedi::Reader::StreamReader#copy
+                      0.00      0.00      0.00      0.00         3/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.00      0.00      0.00      0.00         3/114023     Fixnum#-
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              2/2     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00                2     Stupidedi::Reader::StreamReader#read_character
+                      0.00      0.00      0.00      0.00         2/195821     Stupidedi::Reader::FileInput#at
+                      0.00      0.00      0.00      0.00              2/3     Stupidedi::Reader::StreamReader#result
+                      0.00      0.00      0.00      0.00              2/2     Stupidedi::Reader::FileInput#empty?
+                      0.00      0.00      0.00      0.00              2/3     Stupidedi::Reader::StreamReader#advance
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::StreamReader#consume_isa
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::StreamReader#success
+                      0.00      0.00      0.00      0.00          1/81064     <Class::Stupidedi::Either>#success
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::TokenReader#read_segment_id
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::TokenReader#failure
+                      0.00      0.00      0.00      0.00              1/1     <Class::Stupidedi::Either>#failure
+                      0.00      0.00      0.00      0.00         1/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            31/31     Stupidedi::Reader::SegmentDict::NonEmpty#defined_at?
+   0.00%   0.00%      0.00      0.00      0.00      0.00               31     #<Class:0xb7371254>#defined_at?
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00             6/78     Stupidedi::Reader::TokenReader#simple
+                      0.00      0.00      0.00      0.00             4/78     Stupidedi::Reader::TokenReader#component
+                      0.00      0.00      0.00      0.00            31/78     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00            19/78     Module#attr_reader
+                      0.00      0.00      0.00      0.00             6/78     Stupidedi::Reader::TokenReader#composite
+                      0.00      0.00      0.00      0.00            10/78     Stupidedi::Reader::StreamReader#result
+                      0.00      0.00      0.00      0.00             2/78     Module#attr_accessor
+   0.00%   0.00%      0.00      0.00      0.00      0.00               78     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00            78/78     Module#blank_slate_method_added
+                      0.00      0.00      0.00      0.00            78/79     Module#==
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::TokenReader#failure
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     <Class::Stupidedi::Either>#failure
+                      0.00      0.00      0.00      0.00         1/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/8     Stupidedi::Reader::TokenReader#simple
+                      0.00      0.00      0.00      0.00              1/8     Stupidedi::Reader::TokenReader#component
+                      0.00      0.00      0.00      0.00              2/8     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00              1/8     Stupidedi::Reader::TokenReader#composite
+                      0.00      0.00      0.00      0.00              3/8     Stupidedi::Reader::StreamReader#result
+   0.00%   0.00%      0.00      0.00      0.00      0.00                8     Class#inherited
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Integer#times
+                      0.00      0.00      0.00      0.00            15/15     Symbol#to_proc
+                      0.00      0.00      0.00      0.00         30/74863     Stupidedi::Either::Success#flatmap
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Module#attr_accessor
+                      0.00      0.00      0.00      0.00             2/78     <Class::Object>#method_added
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00             3/19     Stupidedi::Reader::TokenReader#simple
+                      0.00      0.00      0.00      0.00             3/19     Stupidedi::Reader::TokenReader#component
+                      0.00      0.00      0.00      0.00             6/19     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00             3/19     Stupidedi::Reader::TokenReader#composite
+                      0.00      0.00      0.00      0.00             4/19     Stupidedi::Reader::StreamReader#result
+   0.00%   0.00%      0.00      0.00      0.00      0.00               19     Module#attr_reader
+                      0.00      0.00      0.00      0.00            19/78     <Class::Object>#method_added
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/2     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00              1/2     Stupidedi::Reader::StreamReader#result
+   0.00%   0.00%      0.00      0.00      0.00      0.00                2     Module#private
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              2/2     Stupidedi::Reader::StreamReader#read_character
+   0.00%   0.00%      0.00      0.00      0.00      0.00                2     Stupidedi::Reader::FileInput#empty?
+                      0.00      0.00      0.00      0.00              2/2     IO#eof?
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        6169/6169     Stupidedi::Reader::SegmentDict::NonEmpty#at
+   0.00%   0.00%      0.00      0.00      0.00      0.00             6169     Stupidedi::Reader::SegmentDict::Constants#at
+                      0.00      0.00      0.00      0.00        6169/6169     Module#const_get
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              3/3     Stupidedi::Reader::StreamReader#advance
+   0.00%   0.00%      0.00      0.00      0.00      0.00                3     Stupidedi::Reader::StreamReader#copy
+                      0.00      0.00      0.00      0.00         3/275838     Hash#fetch
+                      0.00      0.00      0.00      0.00         3/203231     Kernel#class
+                      0.00      0.00      0.00      0.00         3/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/3     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00              2/3     Stupidedi::Reader::StreamReader#read_character
+   0.00%   0.00%      0.00      0.00      0.00      0.00                3     Stupidedi::Reader::StreamReader#result
+                      0.00      0.00      0.00      0.00              1/2     Module#private
+                      0.00      0.00      0.00      0.00              1/1     Module#include
+                      0.00      0.00      0.00      0.00             4/19     Module#attr_reader
+                      0.00      0.00      0.00      0.00          3/81064     <Class::Stupidedi::Either>#success
+                      0.00      0.00      0.00      0.00            10/78     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00         3/430642     Class#new
+                      0.00      0.00      0.00      0.00              3/8     Class#inherited
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              2/2     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00                2     <Class::Stupidedi::Reader::SegmentDict>#empty
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              2/2     Stupidedi::Reader::FileInput#empty?
+   0.00%   0.00%      0.00      0.00      0.00      0.00                2     IO#eof?
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            78/79     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00             1/79     Module#append_features
+   0.00%   0.00%      0.00      0.00      0.00      0.00               79     Module#==
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            78/78     <Class::Object>#method_added
+   0.00%   0.00%      0.00      0.00      0.00      0.00               78     Module#blank_slate_method_added
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        6169/6169     Stupidedi::Reader::SegmentDict::Constants#at
+   0.00%   0.00%      0.00      0.00      0.00      0.00             6169     Module#const_get
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Reader::StreamReader#result
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Module#include
+                      0.00      0.00      0.00      0.00              1/1     Module#included
+                      0.00      0.00      0.00      0.00              1/1     Module#append_features
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::Failure#initialize
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::Separators#initialize
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::TokenReader#read_character
+                      0.00      0.00      0.00      0.00          1/72625     Stupidedi::Reader::TokenReader#advance
+                      0.00      0.00      0.00      0.00         1/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.00      0.00      0.00      0.00         1/195821     Stupidedi::Reader::FileInput#at
+                      0.00      0.00      0.00      0.00         1/189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.00      0.00      0.00      0.00          1/81044     Stupidedi::Reader::TokenReader#result
+                      0.00      0.00      0.00      0.00         1/958757     Fixnum#+
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Integer#times
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     Symbol#to_proc
+                      0.00      0.00      0.00      0.00            15/15     Kernel#lambda
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            16/16     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00               16     Array#<<
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00      27627/27627     Stupidedi::Schema::RepeatCount::Bounded#include?
+   0.00%   0.00%      0.00      0.00      0.00      0.00            27627     Fixnum#<=
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Symbol#to_proc
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     Kernel#lambda
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Module#include
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Module#append_features
+                      0.00      0.00      0.00      0.00              1/1     Module#blankslate_original_append_features
+                      0.00      0.00      0.00      0.00             1/79     Module#==
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Module#include
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Module#included
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Either::Failure#initialize
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              4/4     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00                4     Stupidedi::Reader::StreamReader#initialize
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     Stupidedi::Reader::TokenReader#consume_prefix
+                      0.00      0.00      0.00      0.00        15/110803     String#<<
+                      0.00      0.00      0.00      0.00        15/752482     String#==
+                      0.00      0.00      0.00      0.00         15/72625     Stupidedi::Reader::TokenReader#advance
+                      0.00      0.00      0.00      0.00        15/268448     Stupidedi::Reader::FileInput#defined_at?
+                      0.00      0.00      0.00      0.00        15/195821     Stupidedi::Reader::FileInput#at
+                      0.00      0.00      0.00      0.00        15/189616     Stupidedi::Reader::TokenReader#is_control?
+                      0.00      0.00      0.00      0.00            15/15     Stupidedi::Reader::TokenReader#success
+                      0.00      0.00      0.00      0.00            15/15     String#empty?
+                      0.00      0.00      0.00      0.00        30/219775     String#length
+                      0.00      0.00      0.00      0.00         15/16514     Fixnum#==
+                      0.00      0.00      0.00      0.00        15/958757     Fixnum#+
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Reader::TokenReader#stream
+                      0.00      0.00      0.00      0.00         1/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        1117/1117     Stupidedi::Schema::ElementUse#composite?
+   0.00%   0.00%      0.00      0.00      0.00      0.00             1117     Stupidedi::Schema::CompositeElementUse#simple?
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     Symbol#call
+                      0.00      0.00      0.00      0.00            15/15     Kernel#__send__
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Symbol#call
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     Kernel#__send__
+                      0.00      0.00      0.00      0.00         15/26773     Stupidedi::Reader::TokenReader#read_simple_element
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/4     Stupidedi::Reader::TokenReader#simple
+                      0.00      0.00      0.00      0.00              1/4     Stupidedi::Reader::TokenReader#component
+                      0.00      0.00      0.00      0.00              1/4     Stupidedi::Either::Success#flatmap
+                      0.00      0.00      0.00      0.00              1/4     Stupidedi::Reader::TokenReader#composite
+   0.00%   0.00%      0.00      0.00      0.00      0.00                4     Kernel#singleton_method_added
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00              1/1     Module#append_features
+   0.00%   0.00%      0.00      0.00      0.00      0.00                1     Module#blankslate_original_append_features
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Stupidedi::Reader::TokenReader#consume_prefix
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     String#empty?
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        1117/1117     Stupidedi::Either::Success#flatmap
+   0.00%   0.00%      0.00      0.00      0.00      0.00             1117     Stupidedi::Reader::TokenReader#composite
+                      0.00      0.00      0.00      0.00        1117/1117     <Class::Stupidedi::Reader::CompositeElementTok>#build
+                      0.00      0.00      0.00      0.00             3/19     Module#attr_reader
+                      0.00      0.00      0.00      0.00              1/4     Kernel#singleton_method_added
+                      0.00      0.00      0.00      0.00             6/78     <Class::Object>#method_added
+                      0.00      0.00      0.00      0.00              1/8     Class#inherited
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00            15/15     Stupidedi::Reader::TokenReader#consume_prefix
+   0.00%   0.00%      0.00      0.00      0.00      0.00               15     Stupidedi::Reader::TokenReader#success
+                      0.00      0.00      0.00      0.00         15/81064     <Class::Stupidedi::Either>#success
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        1117/1117     Stupidedi::Reader::TokenReader#composite
+   0.00%   0.00%      0.00      0.00      0.00      0.00             1117     <Class::Stupidedi::Reader::CompositeElementTok>#build
+                      0.00      0.00      0.00      0.00      1117/430642     Class#new
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        1117/1117     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00             1117     Stupidedi::Reader::CompositeElementTok#initialize
+--------------------------------------------------------------------------------
+                      0.00      0.00      0.00      0.00        2222/2222     Class#new
+   0.00%   0.00%      0.00      0.00      0.00      0.00             2222     Stupidedi::Reader::ComponentElementTok#initialize
+
+
+#<Stupidedi::Builder_::StateMachine:0xb735e7bc
+ @errors=[],
+ @states=
+  [InterchangeState(
+     InterchangeVal[00501](
+       SegmentVal[ISA: Interchange Control Header](
+         ID.value[  I01: Authorization Information Qualifier](00), 
+         AN.value[  I02: Authorization Information](          ), 
+         ID.value[  I03: Security Information Qualifier](01), 
+         AN.value[  I04: Security Information](SECRET    ), 
+         ID.value[  I05: Interchange ID Qualifier](ZZ), 
+         AN.value[  I06: Interchange Sender ID](SUBMITTERS ID  ), 
+         ID.value[  I05: Interchange ID Qualifier](ZZ), 
+         AN.value[  I07: Interchange Receiver ID](RECEIVERS ID   ), 
+         DT.value[  I08: Interchange Date](XX03-01-01), 
+         TM.value[  I09: Interchange Time](12:53:ss), 
+         SeparatorElementVal.value[I65](^), 
+         ID.value[  I11: Interchange Control Version Number](00501), 
+         Nn.value[  I12: Interchange Control Number](1037003.0), 
+         ID.value[  I13: Acknowledgment Requested](1), 
+         ID.value[  I14: Interchange Usage Indicator](T), 
+         SeparatorElementVal.value[I15](:))))]>

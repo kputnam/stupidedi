@@ -19,4 +19,4 @@ parser.read!(tokenizer)
 
 #RubyProf::GraphPrinter.new(RubyProf.stop).print($stdout)
 
-#pp parser
+pp parser
