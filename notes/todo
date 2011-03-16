@@ -1,0 +1,36 @@
+
+Renamed Configuration namespace to Config
+
+Programmatic API for Builder that constructs SegmentTok and friends with stack
+frames for the input position. Requires creating a new Reader::Position class
+because constructing a Reader::Input to encode the position is yucky.
+
+Implement Builder::FailureState -- the "non-clean" 835 sample files are tripping
+the error handling in one of the AbstractState.push methods.
+
+Colorized pretty printer output. Definitions and meta-data should be separately
+colored (to blend in with the background), element values should stand out, and
+invalid elements should stand out most
+
+Code lookup values in pretty printer output. This will force a design choice on
+where the CodeConfig is bound -- globally, to the parse tree, or parameterized?
+
+Evaluate implementation guide conformance regarding ElementReq and SyntaxNote.
+This requires interpreting the meaning of SyntaxNote, so its necessarily version
+specific.
+
+Update GuideBuilder to ensure SegmentReq, ElementReq, and RepeatCount are only
+restricted by the implementation guide and not made less restrictive.
+
+Implement the destructive update methods for both AbstractState subclasses and
+for Values/Envelope data types. Need to evaluate when both can be called, when
+only the AbstractState can be modified destructively, etc.
+
+Fix the error handling with Reader::TokenReader so StateMachine can know when
+reading a segment failed due to EOF at an expected or unexpected boundary.
+
+Create a new AbstractState that bypasses the parse tree. This will be useful
+when we want to skip an entire transaction, functional group, or interchange.
+
+Improve the tree traversal API. This is hard to conceive, but perhaps working on
+the Editor code will reveal the key problems.

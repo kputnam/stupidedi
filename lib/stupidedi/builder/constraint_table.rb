@@ -53,7 +53,7 @@ module Stupidedi
               end
             end
 
-            deepest
+            deepest.cons
           end
         end
       end

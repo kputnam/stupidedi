@@ -45,14 +45,14 @@ module Stupidedi
             end
 
             if u.composite?
-              repeat_count, e_arguments = e_arguments.partition{|x| x.is_a?(Schema::RepeatCount) }
+              e_repeat_count, e_arguments = e_arguments.partition{|x| x.is_a?(Schema::RepeatCount) }
 
               changes = Hash.new
               changes[:requirement] = e_requirement
 
-              if repeat_count.length == 1
-                changes[:repeat_count] = repeat_count.head
-              elsif repeat_count.length > 1
+              if e_repeat_count.length == 1
+                changes[:repeat_count] = e_repeat_count.head
+              elsif e_repeat_count.length > 1
                 raise Exceptions::InvalidSchemaError,
                   "More than one RepeatCount was specified"
               end

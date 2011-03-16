@@ -60,7 +60,7 @@ module Stupidedi
         txcode = segment_tok.element_toks.at(0).value
 
         # ST03: Implementation Convention Reference
-        version = segment_tok.element_toks.at(2).value
+        version = segment_tok.element_toks.at(2).try(:value)
 
         if version.blank?
           # GS08: Version / Release / Industry Identifier Code
