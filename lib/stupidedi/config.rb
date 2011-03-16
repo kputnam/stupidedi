@@ -1,10 +1,10 @@
 module Stupidedi
 
-  module Configuration
-    autoload :CodeListConfig,         "stupidedi/configuration/code_list_config"
-    autoload :FunctionalGroupConfig,  "stupidedi/configuration/functional_group_config"
-    autoload :InterchangeConfig,      "stupidedi/configuration/interchange_config"
-    autoload :TransactionSetConfig,   "stupidedi/configuration/transaction_set_config"
+  module Config
+    autoload :CodeListConfig,         "stupidedi/config/code_list_config"
+    autoload :FunctionalGroupConfig,  "stupidedi/config/functional_group_config"
+    autoload :InterchangeConfig,      "stupidedi/config/interchange_config"
+    autoload :TransactionSetConfig,   "stupidedi/config/transaction_set_config"
 
     class RootConfig
       # @return [InterchangeConfig]
@@ -28,7 +28,7 @@ module Stupidedi
 
       # @private
       def pretty_print(q)
-        q.text "Configuration"
+        q.text "Config"
         q.group 2, "(", ")" do
           q.breakable ""
 
@@ -50,9 +50,9 @@ module Stupidedi
     end
   end
 
-  class << Configuration
+  class << Config
     def new
-      Configuration::RootConfig.new
+      Config::RootConfig.new
     end
   end
 

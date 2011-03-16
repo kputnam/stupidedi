@@ -1,5 +1,5 @@
 module Stupidedi
-  module Configuration
+  module Config
 
     #
     # The interchange control segments (ISA/ISE) are versioned independently
@@ -32,18 +32,18 @@ module Stupidedi
       # @example
       #   table = InterchangeConfig.new
       #
-      #   table.register(SixOhTwo::InterchangeDef,    "00602")
-      #   table.register(FiveOhOne::InterchangeDef,   "00501")
-      #   table.register(FourOhOne::InterchangeDef,   "00401")
-      #   table.register(ThreeOhFour::InterchangeDef, "00304")
+      #   table.register("00602") { SixOhTwo::InterchangeDef }
+      #   table.register("00501") { FiveOhOne::InterchangeDef }
+      #   table.register("00401") { FourOhOne::InterchangeDef }
+      #   table.register("00304") { ThreeOhFour::InterchangeDef }
       #
-      def register(definition, version = definition.id)
-        @table[version] = definition
+      def register(version, &constructor)
+        @table[version] = constructor
       end
 
       # @param version  ISA12
       def at(version)
-        @table[version]
+        @table[version].call
       end
 
       def defined_at?(version)

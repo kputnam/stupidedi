@@ -1,5 +1,15 @@
 class Module
 
+  # Creates an abstract method
+  #
+  # @return [void]
+  #
+  # @example
+  #   class Collection
+  #     abstract :size
+  #     abstract :add, :args => %w(item)
+  #   end
+  #
   def abstract(name, *params)
     if params.last.is_a?(Hash)
       # abstract :method, :args => %w(a b c)
@@ -23,6 +33,20 @@ class Module
     end
   end
 
+  # Creates a method (or methods) that delegates messages to an instance
+  # variable or another instance method.
+  #
+  # @return [void]
+  #
+  # @example
+  #   class WrappedCollection
+  #     delegate :size, :add, :to => :@wrapped
+  #
+  #     def initialize(wrapped)
+  #       @wrapped = wrapped
+  #     end
+  #   end
+  #
   def delegate(*params)
     unless params.last.is_a?(Hash)
       raise ArgumentError, "Last argument must be :to => ..."

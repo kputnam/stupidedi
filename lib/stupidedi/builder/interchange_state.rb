@@ -69,7 +69,7 @@ module Stupidedi
       # parent state will create a new InterchangeState.
       def push(segment_tok, segment_use, parent, reader = nil)
         # ISA12: Interchange Control Version Number
-        version = segment_tok.element_toks.at(11).value
+        version = segment_tok.element_toks.at(11).try(:value)
 
         unless parent.config.interchange.defined_at?(version)
           return FailureState.new("Unknown interchange version #{version}",

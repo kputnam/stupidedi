@@ -30,8 +30,7 @@ module Stupidedi
 
             #
             # Non-empty identifier value. Shouldn't be directly instantiated --
-            # instead, use the {IdentifierVal.value} and
-            # {IdentifierVal.from_string} constructors
+            # instead, use the {IdentifierVal.value} constructor
             #
             class NonEmpty < IdentifierVal
               attr_reader :value

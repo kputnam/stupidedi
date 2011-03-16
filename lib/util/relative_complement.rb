@@ -1,14 +1,16 @@
 module Stupidedi
 
   #
-  # This data type encodes the complement of a RelativeSet, which is an infinite
-  # and non-enumerable set of values.
+  # This data type encodes the complement of a {RelativeSet}, which is an
+  # infinite and non-enumerable set of values.
   #
   class RelativeComplement < AbstractSet
+
     def initialize(complement)
       @complement = complement
     end
 
+    # @return [void]
     def inspect
       "RelativeComplement(#{@complement.inspect})"
     end
@@ -17,21 +19,37 @@ module Stupidedi
       not @complement.include?(object)
     end
 
-    def finite?
-      false
-    end
-
-    def complement
-      # ~(~A) = A
-      @complement
-    end
-
+    # @return Infinity
     def size
       1.0 / 0.0
     end
 
+    # @return false
+    def finite?
+      false
+    end
+
+    # @return false
     def empty?
       false
+    end
+
+    # @return [AbstractSet] other
+    def replace(other)
+      if other.is_a?(self.class) or other.is_a?(RelativeSet)
+        other
+      elsif other.is_a?(Array)
+        RelativeSet.build(other)
+      end
+    end
+
+    # @group Set Operations
+    ###########################################################################
+
+    # @return [AbstractSet]
+    def complement
+      # ~(~A) = A
+      @complement
     end
 
     # @return [AbstractSet]
@@ -84,14 +102,8 @@ module Stupidedi
       end
     end
 
-    # @return [AbstractSet]
-    def replace(other)
-      if other.is_a?(self.class) or other.is_a?(RelativeSet)
-        other
-      elsif other.is_a?(Array)
-        RelativeSet.build(other)
-      end
-    end
+    # @group Set Ordering
+    ###########################################################################
     
     # @return [Boolean]
     def proper_subset?(other)
@@ -113,9 +125,12 @@ module Stupidedi
        (other.is_a?(self.class) and
         complement == other.complement)
     end
+
+    # @endgroup
   end
 
   class << RelativeComplement
+
     # @return [RelativeComplement]
     def build(object)
       if object.is_a?(RelativeComplement)
@@ -137,9 +152,6 @@ module Stupidedi
       end
     end
 
-    def universal
-      UniversalSet
-    end
   end
 
 end

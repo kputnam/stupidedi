@@ -1,6 +1,9 @@
 class Object
-  ##
-  # Sends the arguments to self or yields self (when self is non-nil)
+
+  # @group Combinators
+
+  # Sends the arguments to +self+ or yields +self+ (when +self+ is non-+nil+).
+  # This is overridden by {NilClass#try}, which always returns +nil+.
   def try(*args, &block)
     if args.empty?
       yield self
@@ -11,8 +14,12 @@ class Object
 end
 
 class NilClass
-  ##
-  # Returns nil (when self is nil)
+
+  # @group Combinators
+
+  # Returns +nil+ (when +self+ is +nil+). This overrides {Object#try}
+  #
+  # @return nil
   def try(*args)
     self
   end

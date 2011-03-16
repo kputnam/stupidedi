@@ -1,6 +1,4 @@
 
-Renamed Configuration namespace to Config
-
 Programmatic API for Builder that constructs SegmentTok and friends with stack
 frames for the input position. Requires creating a new Reader::Position class
 because constructing a Reader::Input to encode the position is yucky.

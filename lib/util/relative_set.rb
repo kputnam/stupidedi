@@ -3,14 +3,14 @@ module Stupidedi
   #
   # This data type encodes a set of unique values that belong to an infinite
   # universe of possible values. Set operations generally perform worse than
-  # AbsoluteSet, as they operate on Hash tables and require copying before
-  # mutating and most operations require traversing the Hash table of at least
-  # of of the sets in O(n) time.
+  # {AbsoluteSet}, as they operate on {Hash} values and require copying before
+  # mutating and most operations require traversing the {Hash} of at least one
+  # of the sets in +O(n)+ time.
   #
   # This is suitable for sets that don't have an inherently restricted universe
-  # of allowed values (eg a Set of arbitrary String values), including where the
-  # universe is significantly large compared to the typical size of sets built
-  # from those values.
+  # of allowed values (eg a set of arbitrary {String} values), including where
+  # the universe is significantly large compared to the typical size of sets
+  # built from those values.
   #
   class RelativeSet < AbstractSet
     include Enumerable
@@ -19,18 +19,22 @@ module Stupidedi
       @hash = hash
     end
 
+    # @return [void]
     def inspect
       "RelativeSet(#{to_a.join(', ')})"
     end
 
+    # @return [void]
     def each
       @hash.keys.each{|o| yield o }
     end
 
+    # @return [Array]
     def to_a
       @hash.keys
     end
 
+    # @return [RelativeSet]
     def map
       self.class.new(@hash.keys.inject({}) do |hash, key|
         hash[yield(key)] = true
@@ -38,10 +42,12 @@ module Stupidedi
       end)
     end
 
+    # @return [RelativeSet]
     def select
       self.class.new(@hash.clone.delete_if{|o,_| not yield(o) })
     end
 
+    # @return [RelativeSet]
     def reject
       self.class.new(@hash.clone.delete_if{|o,_| yield(o) })
     end
@@ -50,14 +56,40 @@ module Stupidedi
       @hash.include?(object)
     end
 
+    # @return true
     def finite?
       true
     end
 
+    # @return [AbstractSet]
+    def replace(other)
+      if other.is_a?(AbstractSet)
+        other
+      elsif other.is_a?(Array)
+        self.class.build(other)
+      else
+        raise TypeError, "Argument must be an AbstractSet or an Array"
+      end
+    end
+
+    # @return [Integer]
+    def size
+      @hash.size
+    end
+
+    def empty?
+      @hash.empty?
+    end
+
+    # @group Set Operations
+    ###########################################################################
+
+    # @return [RelativeComplement]
     def complement
       RelativeComplement.build(self)
     end
 
+    # @return [AbstractSet]
     def intersection(other)
       if other.is_a?(self.class)
         # A & B
@@ -85,6 +117,7 @@ module Stupidedi
       end
     end
 
+    # @return [AbstractSet]
     def union(other)
       if other.is_a?(self.class)
         # A | B
@@ -110,6 +143,7 @@ module Stupidedi
       end
     end
 
+    # @return [AbstractSet]
     def difference(other)
       if other.is_a?(self.class)
         # A - B = A & ~B
@@ -133,6 +167,7 @@ module Stupidedi
       end
     end
 
+    # @return [AbstractSet]
     def symmetric_difference(other)
       if other.is_a?(self.class) or other.is_a?(Array)
         # A ^ B = (A | B) - (A & B) = (A - B) | (B - A)
@@ -152,23 +187,8 @@ module Stupidedi
       end
     end
 
-    def replace(other)
-      if other.is_a?(AbstractSet)
-        other
-      elsif other.is_a?(Array)
-        self.class.build(other)
-      else
-        raise TypeError, "Argument must be an AbstractSet or an Array"
-      end
-    end
-
-    def size
-      @hash.size
-    end
-
-    def empty?
-      @hash.empty?
-    end
+    # @group Set Ordering
+    ###########################################################################
 
     def ==(other)
       eql?(other) or
@@ -179,9 +199,12 @@ module Stupidedi
            @hash.keys == other
          end)
     end
+
+    # @endgroup
   end
 
   class << RelativeSet
+
     # @return [RelativeSet]
     def build(object)
       if object.is_a?(RelativeSet)
@@ -203,6 +226,7 @@ module Stupidedi
       end
     end
 
+    # @return EmptySet
     def empty
       EmptySet
     end

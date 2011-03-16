@@ -12,16 +12,10 @@ module Stupidedi
       # @return [SegmentDict]
       abstract :pop
 
-      # Returns a new SegmentDict with {top} pushed to the top of the stack
+      # Returns a new SegmentDict with +top+ pushed to the top of the stack
       #
       # @return [SegmentDict]
       abstract :push, :args => %w(top)
-
-      # Returns a new stack where the elements in {other} follow all of
-      # the elements in {self}
-      #
-      # @return [SegmentDict]
-      abstract :concat, :args => %w(other)
 
       # Searches the stack for the definition of the given segment identifier
       abstract :at, :args => %w(segment_id)
@@ -110,10 +104,6 @@ module Stupidedi
           end
         end
 
-        def concat(other)
-          other
-        end
-
         def defined_at?(segment_id)
           false
         end
@@ -158,7 +148,7 @@ module Stupidedi
       end
 
       def build(top)
-        empty.push(top)
+        SegmentDict::Empty.push(top)
       end
     end
 

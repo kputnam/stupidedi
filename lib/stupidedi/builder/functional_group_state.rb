@@ -58,7 +58,7 @@ module Stupidedi
 
       def push(segment_tok, segment_use, parent, reader = nil)
         # GS08: Version / Release / Industry Identifier Code
-        version = segment_tok.element_toks.at(7).value.slice(0, 6)
+        version = segment_tok.element_toks.at(7).try{|t| t.value.slice(0, 6) }
 
         unless parent.config.functional_group.defined_at?(version)
           return FailureState.new("Unknown functional group version #{version}",

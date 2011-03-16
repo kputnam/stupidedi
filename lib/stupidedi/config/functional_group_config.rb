@@ -1,5 +1,5 @@
 module Stupidedi
-  module Configuration
+  module Config
 
     #
     # The functional group segments (GS/GE) and the segments contained by that
@@ -21,12 +21,12 @@ module Stupidedi
         @table = Hash.new
       end
 
-      def register(definition, version = definition.id)
-        @table[version] = definition
+      def register(version, &constructor)
+        @table[version] = constructor
       end
 
       def at(version)
-        @table[version]
+        @table[version].call
       end
 
       def defined_at?(version)

@@ -1,5 +1,6 @@
 module Stupidedi
 
+  # Singleton
   UniversalSet = Class.new(RelativeComplement) do
     def initialize
     end
@@ -8,25 +9,42 @@ module Stupidedi
       "UniversalSet"
     end
 
+    # @return true
     def include?(object)
       true
     end
 
+    # @return false
     def finite?
       false
     end
 
+    # @return EmptySet
     def complement
       EmptySet
     end
 
+    # @return Infinity
     def size
       1.0 / 0.0
     end
 
+    # @return false
     def empty?
       false
     end
+
+    # @return [AbstractSet]
+    def replace(other)
+      if other.is_a?(RelativeComplement) or other.is_a?(RelativeSet)
+        other
+      elsif other.is_a?(Array)
+        RelativeSet.build(other)
+      end
+    end
+
+    # Set Operations
+    ###########################################################################
 
     # @return [AbstractSet]
     def intersection(other)
@@ -68,14 +86,8 @@ module Stupidedi
       end
     end
 
-    # @return [AbstractSet]
-    def replace(other)
-      if other.is_a?(RelativeComplement) or other.is_a?(RelativeSet)
-        other
-      elsif other.is_a?(Array)
-        RelativeSet.build(other)
-      end
-    end
+    # Set Ordering
+    ###########################################################################
     
     # @return [Boolean]
     def proper_subset?(other)
@@ -91,6 +103,9 @@ module Stupidedi
     def ==(other)
       eql?(other)
     end
+
+    # @endgroup
+
   end.new
 
 end

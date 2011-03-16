@@ -1,5 +1,5 @@
 module Stupidedi
-  module Configuration
+  module Config
 
     class CodeListConfig
       def initialize

@@ -1,33 +1,57 @@
 class Array
 
-  # Return the first item
+  # Return the first item. Raises an +IndexError+ if the Array is +empty?+.
+  #
+  # @example
+  #   [1, 2, 3].head  #=> 1
+  #
   def head
     raise IndexError, "head of empty list" if empty?
     x, = self
     x
   end
 
-  # Selects all elements except the first
+  # Selects all elements except the first.
+  #
+  # @example
+  #   [1, 2, 3].tail  #=> [2, 3]
+  #   [1].tail        #=> []
+  #   [].tail         #=> []
+  #
   # @return [Array]
   def tail
     _, *xs = self
     xs
   end
 
-  # Selects all elements except the last +n+ ones
+  # Selects all elements except the last +n+ ones.
+  #
+  # @example
+  #   [1, 2, 3].tail      #=> [1, 2]
+  #   [1, 2, 3].tail(2)   #=> [1]
+  #   [].tail             #=> []
+  #
   # @return [Array]
   def init(n = 1)
+    raise ArgumentError, "n (#{n}) must be positive" if n < 0
     slice(0..-(n + 1)) or []
   end
 
-  # Select all elements except the first +n+ ones
+  # Select all elements except the first +n+ ones.
+  #
+  # @example
+  #   [1, 2, 3].drop(1)   #=> [2, 3]
+  #   [1, 3, 3].drop(2)   #=> [3]
+  #   [].drop(10)         #=> []
+  #
   # @return [Array]
   def drop(n)
     raise ArgumentError, "n (#{n}) must be positive" if n < 0
     slice(n..-1) or []
   end
 
-  # Drops the longest prefix of elements that satisfy the predicate
+  # Drops the longest prefix of elements that satisfy the predicate.
+  #
   # @return [Array]
   def drop_while(&block)
     # This is in tail call form
@@ -38,7 +62,8 @@ class Array
     end
   end
 
-  # Drops the longest prefix of elements that do not satisfy the predicate
+  # Drops the longest prefix of elements that do not satisfy the predicate.
+  #
   # @return [Array]
   def drop_until(&block)
     # This is in tail call form
@@ -49,14 +74,16 @@ class Array
     end
   end
 
-  # Select all elements except the last +n+ ones
+  # Select all elements except the last +n+ ones.
+  #
   # @return [Array]
   def take(n)
     raise ArgumentError, "n (#{n}) must be positive" if n < 0
     slice(0, n) or []
   end
 
-  # Takes the longest prefix of elements that satisfy the predicate
+  # Takes the longest prefix of elements that satisfy the predicate.
+  #
   # @return [Array]
   def take_while(accumulator = [], &block)
     # This is in tail call form
@@ -67,7 +94,8 @@ class Array
     end
   end
 
-  # Takes the longest prefix of elements that do not satisfy the predicate
+  # Takes the longest prefix of elements that do not satisfy the predicate.
+  #
   # @return [Array]
   def take_until(accumulator = [], &block)
     # This is in tail call form
@@ -78,7 +106,8 @@ class Array
     end
   end
 
-  # Splits the array into prefix/suffix pair according to the predicate
+  # Splits the array into prefix/suffix pair according to the predicate.
+  #
   # @return [(Array, Array)]
   def span(&block)
     prefix = take_while(&block)
@@ -86,7 +115,8 @@ class Array
     return prefix, suffix
   end
 
-  # Splits the array into prefix/suffix pair according to the predicate
+  # Splits the array into prefix/suffix pair according to the predicate.
+  #
   # @return [(Array, Array)]
   def split_when(&block)
     prefix = take_until(&block)
@@ -94,13 +124,23 @@ class Array
     return prefix, suffix
   end
 
-  # Split the array in two at the given position
+  # Split the array in two at the given position.
+  #
+  # @example
+  #   [1, 2, 3].split_at(2)   #=> [[1,2], [3]]
+  #   [1, 2, 3].split_at(0)   #=> [[], [1,2,3]]
+  #
   # @return [(Array, Array)]
   def split_at(n)
     return take(n), drop(n)
   end
 
   # True if {#at}+(n)+ is defined
+  #
+  # @example
+  #   [1, 2, 3].defined_at?(0)    #=> true
+  #   [].defined_at?(0)           #=> false
+  #
   def defined_at?(n)
     n < length
   end

@@ -3,6 +3,8 @@ module Stupidedi
 
     class Instruction
 
+      # The segment identifier to which this {Instruction} applies
+      #
       # @return [Symbol]
       attr_reader :segment_id
 
@@ -11,7 +13,7 @@ module Stupidedi
       # It also enumerates the allowed values for segment qualifiers, which is
       # used to minimize non-determinism.
       #
-      # @return [SegmentUse]
+      # @return [Schema::SegmentUse]
       attr_reader :segment_use
 
       # This indicates the number of levels to ascend and terminate within the
@@ -39,10 +41,8 @@ module Stupidedi
       # will then contain the segment.
       #
       # When a segment indicates the start of a child structure, the class
-      # indicated by this attribute is expected to respond to {push(segment_tok,
-      # segment_use, parent)} by creating a new AbstractState. That state is
-      # then expected to respond to {#successors} with list of {Instruction}s
-      # that will be pushed onto the {InstructionTable}.
+      # indicated by this attribute is expected to respond to +push(segment_tok,
+      # segment_use, parent, reader)+ by creating a new AbstractState.
       #
       # @return [Class<AbstractState>]
       attr_reader :push

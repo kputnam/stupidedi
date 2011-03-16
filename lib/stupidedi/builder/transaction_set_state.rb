@@ -57,7 +57,7 @@ module Stupidedi
         fgcode = parent.value.at(:GS).head.at(0).to_s
 
         # ST01: Transaction Set Identifier Code
-        txcode = segment_tok.element_toks.at(0).value
+        txcode = segment_tok.element_toks.at(0).try(:value)
 
         # ST03: Implementation Convention Reference
         version = segment_tok.element_toks.at(2).try(:value)
