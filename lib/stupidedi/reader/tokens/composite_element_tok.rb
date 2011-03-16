@@ -40,7 +40,7 @@ module Stupidedi
 
     class << CompositeElementTok
       def build(component_toks, start, remainder)
-        new(component_toks, start, remainder)
+        CompositeElementTok.new(component_toks, start, remainder)
       end
     end
 

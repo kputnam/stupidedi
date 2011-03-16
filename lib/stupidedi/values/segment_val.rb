@@ -65,17 +65,17 @@ module Stupidedi
         id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
 
         q.text("SegmentVal#{id}")
-      # q.group(2, "(", ")") do
-      #   q.breakable ""
+        q.group(2, "(", ")") do
+          q.breakable ""
 
-      #   @element_vals.each do |e|
-      #     unless q.current_group.first?
-      #       q.text ", "
-      #       q.breakable
-      #     end
-      #     q.pp e
-      #   end
-      # end
+          @element_vals.each do |e|
+            unless q.current_group.first?
+              q.text ", "
+              q.breakable
+            end
+            q.pp e
+          end
+        end
       end
 
       # @private

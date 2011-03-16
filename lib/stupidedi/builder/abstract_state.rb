@@ -75,7 +75,11 @@ module Stupidedi
 
         element_vals = element_uses.zip(element_toks).map do |use, tok|
           if tok.nil?
-            use.empty
+            if use.repeatable?
+              use.empty.repeated
+            else
+              use.empty
+            end
           else
             element(use, tok)
           end
@@ -216,13 +220,36 @@ module Stupidedi
         instructions
       end
 
-      # @return [Values::SimpleElementVal, Values::CompositeElementVal]
+      # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
       def element(element_use, element_tok, parent = nil)
         if element_use.simple?
-          simple_element(element_use, element_tok, parent)
+          if element_use.repeatable?
+            element_toks = element_tok.element_toks
+            element_vals = element_toks.map do |element_tok|
+              simple_element(element_use, element_tok, parent)
+            end
+
+            repeated_element(element_use, element_vals, parent)
+          else
+            simple_element(element_use, element_tok, parent)
+          end
         else
-          composite_element(element_use, element_tok, parent)
+          if element_use.repeatable?
+            element_toks = element_tok.element_toks
+            element_vals = element_toks.map do |element_tok|
+              composite_element(element_use, element_tok, parent)
+            end
+
+            repeated_element(element_use, element_vals, parent)
+          else
+            composite_element(element_use, element_tok, parent)
+          end
         end
+      end
+
+      # @return [Values::RepeatedElementVal]
+      def repeated_element(element_use, element_vals, parent = nil)
+        Values::RepeatedElementVal.build(element_use.definition, element_vals, parent)
       end
 
       # @return [Values::CompositeElementVal]

@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     blankslate (2.1.2.3)
+    called_from (0.1.0)
     diff-lcs (1.1.2)
     rake (0.8.7)
     rcov (0.9.9)
@@ -20,6 +21,7 @@ PLATFORMS
 
 DEPENDENCIES
   blankslate
+  called_from
   rake (~> 0.8.7)
   rcov (~> 0.9.9)
   rspec (~> 2.3.0)

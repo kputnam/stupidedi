@@ -66,5 +66,18 @@ module Stupidedi
       end
     end
 
+    class << RepeatedElementVal
+
+      # @return [RepeatedElementVal]
+      def empty(definition, parent)
+        RepeatedElementVal.new(definition, [], parent)
+      end
+
+      # @return [RepeatedElementVal]
+      def build(definition, element_vals, parent)
+        RepeatedElementVal.new(definition, element_vals, parent)
+      end
+    end
+
   end
 end

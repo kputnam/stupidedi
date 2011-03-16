@@ -3,6 +3,7 @@ require "benchmark"
 
 N = 10_000_000
 
+def zero; nil; end
 def one(a) nil; end
 def two(a,b) nil; end
 def three(a,b,c) nil; end
@@ -12,8 +13,33 @@ def six(a,b,c,d,e,f) nil; end
 def seven(a,b,c,d,e,f,g) nil; end
 def eight(a,b,c,d,e,f,g,h) nil; end
 
-def implicit_return; 100; end
-def explicit_return; return 100; end
+def implicit_return; nil; end
+def explicit_return; return nil; end
+
+def call_stack_raise
+  raise
+rescue
+end
+
+def call_stack_global
+  raise
+rescue
+  $!.backtrace.first
+end
+
+def call_stack_inline
+  raise rescue $!.backtrace.first
+end
+
+def call_stack_named
+  raise
+rescue => e
+  e.backtrace.first
+end
+
+def call_stack_caller; caller.first; end
+
+def call_stack_called_from; pp called_from(5); end
 
 Benchmark.bmbm(10) do |bm|
     single = %w(a)
@@ -28,6 +54,7 @@ Benchmark.bmbm(10) do |bm|
 
 
   # puts "b. What is the cost of calling methods with more parameters?"
+  # bm.report("b. zero") { N.times { zero }}
   # bm.report("b. one") { N.times { one(1) }}
   # bm.report("b. two") { N.times { two(1,2) }}
   # bm.report("b. three") { N.times { three(1,2,3) }}
@@ -49,7 +76,16 @@ Benchmark.bmbm(10) do |bm|
   # bm.report("d. is_a? true") { N.times { %w(x).is_a?(Array) }}
   # bm.report("d. is_a? false") { N.times { "x".is_a?(Array) }}
 
-    puts "e. How do explicit and implicit method returns compare?"
-    bm.report("implicit") { N.times { implicit_return }}
-    bm.report("explicit") { N.times { explicit_return }}
+  # puts "e. How do explicit and implicit method returns compare?"
+  # bm.report("implicit") { N.times { implicit_return }}
+  # bm.report("explicit") { N.times { explicit_return }}
+
+  # puts "f. How expensive is generating the call stack?"
+  # bm.report("raise")  { (N/10).times { call_stack_raise  }}
+  # bm.report("global") { (N/10).times { call_stack_global }}
+  # bm.report("inline") { (N/10).times { call_stack_inline }}
+  # bm.report("named")  { (N/10).times { call_stack_named  }}
+  # bm.report("caller") { (N/10).times { call_stack_caller }}
+    bm.report("..from") { (10).times { call_stack_called_from }}
+  # bm.report("nil")    { (N/10).times { implicit_return   }}
 end

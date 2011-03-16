@@ -5,19 +5,19 @@ module Stupidedi
 
       # @return [Array<CompositeElementTok>]
       # @return [Array<SimpleElementTok>]
-      attr_reader :value
+      attr_reader :element_toks
 
-      def initialize(value)
-        @value = value
+      def initialize(element_toks)
+        @element_toks = element_toks
       end
 
-      def repeat(element)
-        @value.unshift(element)
+      def repeat(element_tok)
+        @element_toks.unshift(element_tok)
         self
       end
 
       def pretty_print(q)
-        q.pp(:repeated.cons(@value))
+        q.pp(:repeated.cons(@element_toks))
       end
 
       def repeated?
@@ -26,6 +26,14 @@ module Stupidedi
 
       def blank?
         false
+      end
+    end
+
+    class << RepeatedElementTok
+
+      # @return [RepeatedElementTok]
+      def build(element_toks)
+        RepeatedElementTok.new(element_toks)
       end
     end
 

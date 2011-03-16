@@ -2,6 +2,7 @@ module Stupidedi
 
   module Builder
     autoload :AbstractState,        "stupidedi/builder/abstract_state"
+    autoload :BuilderDsl,           "stupidedi/builder/builder_dsl"
     autoload :FailureState,         "stupidedi/builder/failure_state"
     autoload :FunctionalGroupState, "stupidedi/builder/functional_group_state"
     autoload :InterchangeState,     "stupidedi/builder/interchange_state"
