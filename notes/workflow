@@ -1,4 +1,24 @@
 
+    #
+    #     .---.             .---.
+    #     |   | --- 270 --> |   | Eligibility Inquiry (X279)
+    #     |   | <-- 271 --- |   | Eligibility Response (X279)
+    #     |   |             |   |
+    #     |   | --- 278 --> |   | Authorization (X217)
+    #     | P | <-- 278 --- |   | Authorization (X217)
+    #     | R |             | P |
+    #     | O | --- 837 --> | A | Claim (X222, X223, X224)
+    #     | V | --- 275 --> | Y | Additional Information (X210)
+    #     | I |             | E |
+    #     | D | --- 276 --> | R | Claim Status Inquiry (X212)
+    #     | E | <-- 277 --- | S | Claim Status Response (X212)
+    #     | R |             |   |
+    #     | S | <-- 277 --- |   | Request for Additional Information (X213)
+    #     |   | --- 275 --> |   | Additional Information (X210)
+    #     |   |             |   |
+    #     |   | <-- 835 --- |   | Remittance (X221)
+    #     '---'             '---'
+    #
 
   (1) sent
         837 claim / encounter
