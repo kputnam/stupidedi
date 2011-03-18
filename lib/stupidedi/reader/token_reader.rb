@@ -406,7 +406,7 @@ module Stupidedi
       def component(value, start, remainder)
         ComponentElementTok.build(value, start, remainder)
       end
-      
+
       def composite(value, start, remainder)
         CompositeElementTok.build(value, start, remainder)
       end

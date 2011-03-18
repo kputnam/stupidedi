@@ -77,7 +77,7 @@ module Stupidedi
                     s:: LE.use(4000, r::Optional,  d::RepeatCount.bounded(1))))),
 
               s:: SE.use(4100, r::Mandatory, d::RepeatCount.bounded(1))))
-        
+
         end
       end
     end

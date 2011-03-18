@@ -3,7 +3,7 @@ module Stupidedi
 
     class CodeList
       abstract :external?
-      
+
       def internal?
         not external?
       end

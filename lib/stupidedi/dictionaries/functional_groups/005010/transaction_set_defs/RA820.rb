@@ -232,7 +232,7 @@ module Stupidedi
 
             d::TableDef.summary("Table 3 - Summary",
               s:: SE.use( 100, r::Mandatory, d::RepeatCount.bounded(1))))
-        
+
         end
       end
     end

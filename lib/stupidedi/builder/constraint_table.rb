@@ -3,15 +3,17 @@ module Stupidedi
 
     #
     # The {ConstraintTable} is a data structure that contains one or more
-    # {Instruction}s for the same segment identifier. Each concrete subclass
-    # implements different strategies for narrowing down the {Instruction} list.
+    # {Instruction} values for the same segment identifier. Each concrete
+    # subclass implements different strategies for narrowing down the
+    # {Instruction} list.
     #
-    # Reducing the number of valid {Instruction}s is important because executing
-    # more than one {Instruction} creates a non-deterministic state -- more than
-    # one valid parse tree exists -- which slows the parser. Most often there is
-    # only one valid {Instruction} but the parser cannot (efficiently or at all)
-    # narrow the tree down without evaluating the constraints declared by each
-    # {Instruction}'s {Schema::SegmentUse}, which is done here.
+    # Reducing the number of valid {Instruction} values is important because
+    # executing more than one {Instruction} creates a non-deterministic state --
+    # more than one valid parse tree exists -- which slows the parser. Most
+    # often there is only one valid {Instruction} but the parser cannot
+    # (efficiently or at all) narrow the tree down without evaluating the
+    # constraints declared by each {Instruction}'s {Schema::SegmentUse}, which
+    # is done here.
     #
     class ConstraintTable
 
@@ -59,10 +61,10 @@ module Stupidedi
       end
 
       #
-      # Chooses the subset of {Instruction}s based on the distinguishing values
-      # allowed by each {Schema::SegmentUse}. If none of the {Instruction}s have
-      # {Schema::SegmentUse} values that restrict allowed element values, it will
-      # behave identically to {Stub}.
+      # Chooses the subset of {Instruction} values based on the distinguishing
+      # values allowed by each {Schema::SegmentUse}. If none of the
+      # {Instruction} values have {Schema::SegmentUse} values that restrict
+      # allowed element values, it will behave identically to {Stub}.
       #
       class ValueBased < ConstraintTable
         def initialize(instructions)
@@ -139,8 +141,8 @@ module Stupidedi
             # If this is a composite element, we iterate over each component.
             # Otherwise this loop iterates once with the index {m} set to nil.
             ms.each do |m|
-              last  = nil       # the last subset we examined
-              total = EmptySet  # the union of all examined subsets
+              last  = nil        # the last subset we examined
+              total = Sets.empty # the union of all examined subsets
 
               distinct = false
               disjoint = true
@@ -318,8 +320,9 @@ module Stupidedi
 
     class << ConstraintTable
 
-      # Given a list of {Instruction}s for the same segment identifier, this
-      # method constructs the appropriate concrete subclass of {ConstraintTable}.
+      # Given a list of {Instruction} values for the same segment identifier,
+      # this method constructs the appropriate concrete subclass of
+      # {ConstraintTable}.
       #
       # @param [Array<Instruction>] instructions
       # @return [ConstraintTable]

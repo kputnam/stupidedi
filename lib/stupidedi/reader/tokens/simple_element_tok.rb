@@ -1,6 +1,6 @@
 module Stupidedi
   module Reader
-    
+
     class SimpleElementTok
 
       # @todo

@@ -20,15 +20,34 @@ module Stupidedi
     # @see X222 2.2.1 Industry Usage
     class ElementReq
 
+      def initialize(required, forbidden, to_s)
+        @required, @forbidden, @to_s =
+          required, forbidden, to_s
+      end
+
       # True if the element's presence is unconditionally required
-      abstract :required?
+      def required?
+        @required
+      end
 
       # True if the element's presence is unconditionally forbidden
-      abstract :forbidden?
+      def forbidden?
+        @forbidden
+      end
 
       # True if the element's presence is required conditionally
       def optional?
-        not (required? or forbidden?)
+        not (@required or @forbidden)
+      end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text @to_s
+      end
+
+      # @return [String]
+      def inspect
+        @to_s
       end
     end
 

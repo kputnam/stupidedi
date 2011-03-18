@@ -66,7 +66,7 @@ module Stupidedi
                       s:: N3.use(2600, r::Optional,  d::RepeatCount.bounded(1)))))),
 
               s:: SE.use(2700, r::Mandatory, d::RepeatCount.bounded(1))))
-        
+
         end
       end
     end

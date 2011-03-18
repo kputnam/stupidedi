@@ -1,3 +1,5 @@
+require "continuation" if RUBY_VERSION >= "1.9"
+
 class Exception
   attr_accessor :continuation
 

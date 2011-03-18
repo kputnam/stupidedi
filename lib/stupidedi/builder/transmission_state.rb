@@ -7,7 +7,7 @@ module Stupidedi
       attr_reader :value
       alias interchange_vals value
 
-      # @return [Configuration::RootConfig]
+      # @return [Config::RootConfig]
       attr_reader :config
 
       # @return [Reader::Separators]
@@ -27,7 +27,7 @@ module Stupidedi
         # always push a new InterchangeState onto the stack. We can't determine
         # the SegmentUse without examining the contents of the SegmentTok, so
         # we leave it nil and let InterchangeState.push determine it.
-        @instructions = instructions || 
+        @instructions = instructions ||
           InstructionTable.build(
             Instruction.new(:ISA, nil, 0, 0, InterchangeState).cons)
       end

@@ -45,7 +45,7 @@ module Stupidedi
                     s::DTP.use(2000, r::Optional,  d::RepeatCount.bounded(9))))),
 
               s:: SE.use(2100, r::Mandatory, d::RepeatCount.bounded(1))))
-        
+
         end
       end
     end

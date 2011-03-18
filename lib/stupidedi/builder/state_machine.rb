@@ -74,10 +74,11 @@ module Stupidedi
 
         @errors = errors
         @states = states
-        
+
         return reader
       end
 
+      # @return [Reader::TokenReader]
       def read!(reader)
         remainder = Either.success(reader)
 
@@ -109,6 +110,9 @@ module Stupidedi
     end
 
     class << StateMachine
+      #########################################################################
+      # @group Constructor Methods
+
       # @return [StateMachine]
       def build(config)
         separators   = Reader::Separators.empty
@@ -118,6 +122,9 @@ module Stupidedi
 
         StateMachine.new(state.cons, [])
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

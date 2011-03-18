@@ -1,4 +1,4 @@
-class PpmAbstractMethodHandler < YARD::Handlers::Ruby::Base
+class AbstractMethodHandler < YARD::Handlers::Ruby::Base
   handles method_call(:abstract)
   namespace_only
 
@@ -30,7 +30,8 @@ class PpmAbstractMethodHandler < YARD::Handlers::Ruby::Base
 
     # Predicate methods return (Boolean), so automatically add the documentation
     if name =~ /\?$/
-      if tag = object.tag(:return)
+      if object.has_tag?(:return)
+        tag = object.tag(:return)
         if tag.types.nil? or tag.types.empty?
           tag.types = %w(Boolean)
         end
@@ -61,10 +62,9 @@ private
       [name, default]
     end
   end
-
 end
 
-class PpmDelegateMethodHandler < YARD::Handlers::Ruby::MethodHandler
+class DelegateMethodHandler < YARD::Handlers::Ruby::MethodHandler
   handles method_call(:delegate)
   namespace_only
 
@@ -74,19 +74,18 @@ class PpmDelegateMethodHandler < YARD::Handlers::Ruby::MethodHandler
 
     unless target.eql?(statement.parameters)
       if target.first.jump(:symbol, :ident).source == ":to"
-        target = target[1].source
+      # target = target[1].source
 
-        if target =~ /:@/
-          target = "#" << target.slice(2..-1)
-        else
-          target = "#" << target.slice(1..-1)
-        end
+      # if target =~ /:@/
+      #   target = "#" << target.slice(2..-1)
+      # else
+      #   target = "#" << target.slice(1..-1)
+      # end
 
-        target = YARD::Registry.resolve(P(namespace), target, true, false)
-        if target and target.has_tag?(:return)
-          target.tag(:return).types
-        end
-
+      # target = YARD::Registry.resolve(P(namespace), target, true, false)
+      # if target and target.has_tag?(:return)
+      #   target.tag(:return).types
+      # end
       end
     end
 

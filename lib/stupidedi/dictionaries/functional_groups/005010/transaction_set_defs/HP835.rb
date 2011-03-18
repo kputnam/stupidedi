@@ -60,7 +60,7 @@ module Stupidedi
             d::TableDef.summary("Table 3 - Summary",
               s::PLB.use(100, r::Optional,  d::RepeatCount.unbounded),
               s:: SE.use(200, r::Mandatory, d::RepeatCount.bounded(1))))
-        
+
         end
       end
     end

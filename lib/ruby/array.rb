@@ -11,6 +11,19 @@ class Array
     x
   end
 
+  # True if {#at} is defined for the given +n+
+  #
+  # @example
+  #   [1, 2, 3].defined_at?(0)    #=> true
+  #   [].defined_at?(0)           #=> false
+  #
+  def defined_at?(n)
+    n < length
+  end
+
+  #############################################################################
+  # @group Selection
+
   # Selects all elements except the first.
   #
   # @example
@@ -23,18 +36,6 @@ class Array
     _, *xs = self
     xs
   end
-
-  # True if {#at} is defined for the given +n+
-  #
-  # @example
-  #   [1, 2, 3].defined_at?(0)    #=> true
-  #   [].defined_at?(0)           #=> false
-  #
-  def defined_at?(n)
-    n < length
-  end
-
-  # @group Subselection
 
   # Selects all elements except the last +n+ ones.
   #
@@ -82,7 +83,9 @@ class Array
   end
 
   # @endgroup
+  #############################################################################
 
+  #############################################################################
   # @group Filtering
 
   # Drops the longest prefix of elements that satisfy the predicate.
@@ -150,5 +153,8 @@ class Array
     suffix = drop(prefix.length)
     return prefix, suffix
   end
+
+  # @endgroup
+  #############################################################################
 
 end

@@ -83,9 +83,12 @@ begin
   require "yard"
 
   # Note options are loaded from .yardopts
-  YARD::Rake::YardocTask.new do |t|
-    t.files   = %w(lib/**/*.rb spec/examples/**/*.example)
+  YARD::Rake::YardocTask.new(:yard => :clobber_yard)
+
+  task :clobber_yard do
+    rm_rf "doc/generated"
   end
+
 rescue LoadError
   task :yard do
     warn "couldn't load yard:"

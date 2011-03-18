@@ -9,6 +9,7 @@ module Stupidedi
                                  Reader::SegmentDict.empty)
       end
 
+      #########################################################################
       # @group Element Constructors
 
       # Generates a repeated element (simple or composite)
@@ -27,7 +28,9 @@ module Stupidedi
       end
 
       # @endgroup
+      #########################################################################
 
+      #########################################################################
       # @group Element Placeholders
 
       # @see Schema::ElementReq#forbidden?
@@ -41,6 +44,7 @@ module Stupidedi
       end
 
       # @endgroup
+      #########################################################################
 
       # @return [void]
       def pretty_print(q)
@@ -216,10 +220,10 @@ module Stupidedi
         @separators, @segment_dict = separators, segment_dict
       end
 
+      # @return [DslReader]
       def copy(changes = {})
-        DslReader.new \
-          changes.fetch(:separators, @separators),
-          changes.fetch(:segment_dict, @segment_dict)
+        @separators   = changes.fetch(:separators, @separators)
+        @element_dict = changes.fetch(:segment_dict, @segment_dict)
       end
     end
 

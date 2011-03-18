@@ -62,8 +62,8 @@ end
 
 class Float
 
-  # Raises a TypeError exception. The reason this method is defined at
-  # all is to produce a more meaningful error than NoSuchMethod.
+  # Raises a +TypeError+ exception. The reason this method is defined at
+  # all is to produce a more meaningful error than +NoSuchMethod+.
   #
   # @return [void]
   def to_d

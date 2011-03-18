@@ -11,11 +11,31 @@ module Stupidedi
     #   SITUATIONAL
     #   REQUIRED
     class SegmentReq
-      abstract :required?
-      abstract :forbidden?
+      def initialize(required, forbidden, to_s)
+        @required, @forbidden, @to_s =
+          required, forbidden, to_s
+      end
+
+      def required?
+        @required
+      end
+
+      def forbidden?
+        @forbidden
+      end
 
       def optional?
-        not (required? or forbidden?)
+        not (@required or @forbidden)
+      end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text @to_s
+      end
+
+      # @return [String]
+      def inspect
+        @to_s
       end
     end
 

@@ -6,6 +6,8 @@ module Stupidedi
       end
 
       class << GuideBuilder
+
+        # @return [Envelope::TransactionSetDef]
         def build(transaction_set_def, *table_defs)
           transaction_set_def.copy(:table_defs => table_defs)
         end
@@ -97,6 +99,9 @@ module Stupidedi
             use(position, requirement, repeat_count)
         end
 
+       private
+
+        # @return [Schema::SimpleElementUse]
         def mod_element(element_use, requirement, name, arguments)
           unless requirement.is_a?(Schema::ElementReq)
             raise ArgumentError,

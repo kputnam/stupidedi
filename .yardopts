@@ -1,3 +1,12 @@
 --no-private
+
+--output-dir doc/generated
+--readme doc/README.md
+--files 'doc/*.md'
+
 --load ./yard/rspec-plugin/lib/yard-rspec.rb
 --load ./yard/ppm-plugin/lib/yard-ppm.rb
+
+--title 'Stupidedi Documentation'
+
+--markup markdown

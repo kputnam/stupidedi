@@ -36,7 +36,7 @@ module Stupidedi
         parent.segment_dict
       end
 
-      # @return [Configuration::RootConfig]
+      # @return [Config::RootConfig]
       def config
         parent.config
       end
@@ -60,6 +60,9 @@ module Stupidedi
 
     class << AbstractState
 
+      # @group Constructor Methods
+      #########################################################################
+
       # This method constructs a new instance of (a subclass of) {AbstractState}
       # and pushes it above {#parent} onto a nested stack-like structure. The
       # stack structure is implicit, and it can be iterated by following each
@@ -68,8 +71,11 @@ module Stupidedi
       # @return [AbstractState]
       abstract :push, :args => %w(segment_tok segment_use parent reader)
 
-      # @group SegmentVal Construction
+      # @endgroup
       #########################################################################
+
+      #########################################################################
+      # @group SegmentVal Construction
 
       # @return [Values::SegmentVal]
       def segment(segment_tok, segment_use, parent = nil)
@@ -151,8 +157,11 @@ module Stupidedi
         element_use.value(element_tok.value, parent)
       end
 
-      # @group Instruction Generation
+      # @endgroup
       #########################################################################
+
+      #########################################################################
+      # @group Instruction Generation
 
       # @return [Array<Instruction>]
       def sequence(segment_uses, start = 0)
@@ -283,6 +292,9 @@ module Stupidedi
 
         instructions
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

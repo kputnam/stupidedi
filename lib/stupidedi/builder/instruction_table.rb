@@ -7,6 +7,7 @@ module Stupidedi
     class InstructionTable
 
       class NonEmpty < InstructionTable
+
         def initialize(instructions, pop)
           @instructions, @pop = instructions.freeze, pop
 
@@ -22,6 +23,7 @@ module Stupidedi
             changes.fetch(:pop, @pop)
         end
 
+        # @return [Integer]
         def length
           @instructions.length
         end
@@ -134,18 +136,22 @@ module Stupidedi
       end
 
       Empty = Class.new(InstructionTable) do
+        # @return [Empty]
         def copy(changes = {})
           self
         end
 
+        # @return [Integer]
         def length
           0
         end
 
+        # @return nil
         def at(segment_use)
           nil
         end
 
+        # @return [NonEmpty]
         def push(instructions)
           InstructionTable::NonEmpty.new(instructions, self)
         end
@@ -154,6 +160,7 @@ module Stupidedi
           raise "@todo"
         end
 
+        # @return [Empty]
         def pop(count)
           if count.zero?
             self
@@ -162,6 +169,7 @@ module Stupidedi
           end
         end
 
+        # @return [Empty]
         def drop(count)
           self
         end
