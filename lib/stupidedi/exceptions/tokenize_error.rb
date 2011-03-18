@@ -1,7 +1,7 @@
 module Stupidedi
   module Exceptions
 
-    class AmbiguousGrammarError < StupidediError
+    class TokenizeError < StupidediError
     end
 
   end

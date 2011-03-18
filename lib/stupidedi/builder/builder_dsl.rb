@@ -9,6 +9,12 @@ module Stupidedi
                                  Reader::SegmentDict.empty)
       end
 
+      def successors
+        @machine.states.inject([]) do |list, s|
+          list << s.instructions
+        end
+      end
+
       #########################################################################
       # @group Element Constructors
 
@@ -51,7 +57,29 @@ module Stupidedi
         q.pp @machine
       end
 
+      # @return [BuilderDsl]
+      def segment!(name, *args)
+        @reader = @machine.input!(segment_tok(name, args), @reader)
+
+        if @machine.stuck?
+          raise Exceptions::ParseError
+        end
+
+        return self
+      end
+
     private
+
+      def method_missing(name, *args)
+        if name.to_s.upcase =~ /^[A-Z][A-Z0-9]{1,2}$/
+          segment!(name, *args)
+        else
+          super
+        end
+      end
+
+      #########################################################################
+      # @group TokenVal Constructors
 
       # @return [Reader::SegmentTok]
       def segment_tok(id, elements)
@@ -173,19 +201,8 @@ module Stupidedi
         Reader::SimpleElementTok.build(value, nil, nil)
       end
 
-      def method_missing(name, *args)
-        unless name.to_s.upcase =~ /^[A-Z][A-Z0-9]{1,2}$/
-          super
-        end
-
-        @reader = @machine.input!(segment_tok(name, args), @reader)
-
-        if @machine.stuck?
-          # ...
-        end
-
-        return self
-      end
+      # @endgroup
+      #########################################################################
 
       # We can use a much faster implementation provided by the "called_from"
       # gem, but this only compiles against Ruby 1.8. Use this implementation
@@ -202,12 +219,9 @@ module Stupidedi
       end
 
       private :caller
-
     end
 
-    #
-    #
-    #
+    # @private
     class DslReader
 
       # @return [Reader::Separators]
@@ -224,6 +238,7 @@ module Stupidedi
       def copy(changes = {})
         @separators   = changes.fetch(:separators, @separators)
         @element_dict = changes.fetch(:segment_dict, @segment_dict)
+        self
       end
     end
 

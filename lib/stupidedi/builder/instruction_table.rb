@@ -1,9 +1,6 @@
 module Stupidedi
   module Builder
 
-    #
-    #
-    #
     class InstructionTable
 
       class NonEmpty < InstructionTable
@@ -13,7 +10,6 @@ module Stupidedi
 
           @__push = Hash.new
           @__drop = Hash.new
-        # @__successors = Hash.new
         end
 
         # @return [InstructionTable]
@@ -45,14 +41,17 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def successors(segment_tok)
-          @__successors ||= begin
+        def matches(segment_tok)
+          @__matches ||= begin
           # puts "#{object_id}.constraints"
             constraints = Hash.new
-            grouped     = Hash.new{|h,k| h[k] = [] }
 
+            # Group instructions by segment identifier
+            grouped = Hash.new{|h,k| h[k] = [] }
             @instructions.each{|x| grouped[x.segment_id] << x }
 
+            # For each group of instructions that have the same segment
+            # id, build a constraint table that can distinguish them
             grouped.each do |segment_id, instructions|
               constraints[segment_id] = ConstraintTable.build(instructions)
             end
@@ -60,8 +59,8 @@ module Stupidedi
             constraints
           end
 
-          if @__successors.defined_at?(segment_tok.id)
-            @__successors.at(segment_tok.id).matches(segment_tok)
+          if @__matches.defined_at?(segment_tok.id)
+            @__matches.at(segment_tok.id).matches(segment_tok)
           else
             []
           end
@@ -156,7 +155,7 @@ module Stupidedi
           InstructionTable::NonEmpty.new(instructions, self)
         end
 
-        def successors(segment_tok)
+        def matches(segment_tok)
           raise "@todo"
         end
 

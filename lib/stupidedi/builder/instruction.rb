@@ -64,7 +64,18 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @segment_id.to_s
+        id = '% 3s' % @segment_id.to_s
+
+        unless @segment_use.nil?
+          width = 18
+          name  = @segment_use.definition.name
+
+          if name.length > width - 2
+            id << ": #{name.slice(0, width - 2)}.."
+          else
+            id << ": #{name.ljust(width)}"
+          end
+        end
 
         q.text "Instruction[#{'% 3s' % id}]"
 
@@ -80,12 +91,6 @@ module Stupidedi
             q.text ","
             q.breakable
             q.text "push: #{@push.try{|c| c.name.split('::').last}}"
-          end
-
-          unless @segment_use.nil?
-            q.text ","
-            q.breakable
-            q.text "use: #{@segment_use.definition.name}"
           end
         end
       end

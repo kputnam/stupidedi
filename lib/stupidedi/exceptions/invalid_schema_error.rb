@@ -1,7 +1,7 @@
 module Stupidedi
   module Exceptions
 
-    class InvalidSchemaError < StandardError
+    class InvalidSchemaError < StupidediError
     end
 
   end

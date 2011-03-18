@@ -41,3 +41,5 @@ b.DMG("D8", "19431022", "M")
 #b.ST("835", "4321")
 
 pp b
+
+pp b.successors

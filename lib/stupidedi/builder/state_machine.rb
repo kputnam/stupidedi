@@ -3,6 +3,12 @@ module Stupidedi
 
     class StateMachine
 
+      # @return [Array<AbstractState>]
+      attr_reader :states
+
+      # @return [Array<FailureState>]
+      attr_reader :errors
+
       def initialize(states, errors)
         @states, @errors = states, errors
       end
@@ -13,13 +19,15 @@ module Stupidedi
         errors = []
 
         @states.each do |state|
-          instructions = state.instructions.successors(segment_tok)
+          instructions = state.instructions.matches(segment_tok)
 
           # No matching instructions means that this parse tree hit a dead end
           # and cannot accept this token. Keep in mind there may be another
           # state in @states that can accept this token.
           if instructions.empty?
-            errors.push(segment_tok)
+            m = "Unexpected segment #{segment_tok.id}"
+            s = FailureState.new(m, segment_tok, state)
+            errors << s
             next
           end
 
@@ -29,6 +37,8 @@ module Stupidedi
                 pop(i.pop_count).
                 drop(i.drop_count).
                 add(segment_tok, i.segment_use)
+
+              states << s
 
               unless reader.nil? or i.pop_count.zero?
                 # More general than checking if segment_tok is an ISE/GE segment
@@ -52,6 +62,12 @@ module Stupidedi
               # links the new instance to the parent {state}
               s = i.push.push(segment_tok, i.segment_use, s, reader)
 
+              if s.failure?
+                errors << s
+              else
+                states << s
+              end
+
               unless reader.nil?
                 # More general than checking if segment_tok is an ISA/GS segment
                 if not reader.separators.eql?(s.separators)
@@ -66,13 +82,12 @@ module Stupidedi
               end
             end
 
-            states << s
           end
         end
 
       # puts "#{segment_tok.id}: #{states.length}"
 
-        @errors = errors
+        @errors.concat(errors)
         @states = states
 
         return reader
@@ -89,6 +104,7 @@ module Stupidedi
             input!(result.value, result.remainder)
           end
 
+        # This block of code is used to profile the tokenizer
         # remainder = remainder.flatmap do |x|
         #   RubyProf.resume
         #   y = x.read_segment
@@ -104,6 +120,7 @@ module Stupidedi
         return remainder
       end
 
+      # True if the state machine cannot recover from failing to parse a token
       def stuck?
         @states.empty?
       end

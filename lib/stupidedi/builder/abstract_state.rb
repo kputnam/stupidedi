@@ -41,6 +41,10 @@ module Stupidedi
         parent.config
       end
 
+      def failure?
+        false
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text self.class.name.split('::').last

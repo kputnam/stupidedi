@@ -13,7 +13,7 @@ class LegacyAbstractMethodHandler < YARD::Handlers::Ruby::Legacy::Base
       args = m.captures.at(2)
 
       if m = /%w\(([^)]+)\)/.match(args)
-        params = args.split(/\s+/)
+        params = m.captures.first.split(/\s+/)
       else
         params = args.split(/\s*,\s*/)
       end
