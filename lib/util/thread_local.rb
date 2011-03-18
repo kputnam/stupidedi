@@ -1,12 +1,13 @@
 #
-# t = ThreadLocalVal("default")
-# t.get           #=> "default"
-# t.set("value")
+# @example
+#   t = ThreadLocalVal("default")
+#   t.get           #=> "default"
+#   t.set("value")
 #
-# Thread.new { t.get }.value                  #=> "default"
-# Thread.new { t.set(:vanish); t.get }.value  #=> :vanish
+#   Thread.new { t.get }.value                  #=> "default"
+#   Thread.new { t.set(:vanish); t.get }.value  #=> :vanish
 #
-# t.get           #=> "value"
+#   t.get           #=> "value"
 #
 class ThreadLocalVar
 
@@ -44,22 +45,23 @@ class ThreadLocalVar
 end
 
 #
-# class Counter
-#   delegate :current, :current=, :to => @threadlocal
+# @example
+#   class Counter
+#     delegate :current, :current=, :to => @threadlocal
 #
-#   def counter(start)
-#     @threadlocal = ThreadLocalHash.new(:current => start)
+#     def counter(start)
+#       @threadlocal = ThreadLocalHash.new(:current => start)
+#     end
 #   end
-# end
 #
-# counter = Counter.new(50)
+#   counter = Counter.new(50)
 #
-# x = Thread.new { 200.times { counter.current += 1 }; counter.current }
-# y = Thread.new { 300.times { counter.current += 1 }; counter.current }
+#   x = Thread.new { 200.times { counter.current += 1 }; counter.current }
+#   y = Thread.new { 300.times { counter.current += 1 }; counter.current }
 #
-# x.value         #=> 250
-# x.value         #=> 350
-# counter.current #=> 50
+#   x.value         #=> 250
+#   x.value         #=> 350
+#   counter.current #=> 50
 #
 class ThreadLocalHash
 

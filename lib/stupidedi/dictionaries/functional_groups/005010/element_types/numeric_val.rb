@@ -34,6 +34,7 @@ module Stupidedi
             class NonEmpty < NumericVal
               include Comparable
 
+              # @return [BigDecimal]
               attr_reader :value
 
               delegate :to_i, :to_d, :to_f, :to_s, :to => :@value

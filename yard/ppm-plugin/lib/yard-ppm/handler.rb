@@ -23,8 +23,8 @@ class PpmAbstractMethodHandler < YARD::Handlers::Ruby::Base
     object = register(YARD::CodeObjects::MethodObject.new(namespace, name, scope)) do |o|
       o.visibility = visibility
       o.source     = statement.source
-      o.signature  = signature(name, params)
       o.explicit   = false
+      o.signature  = signature(name, params)
       o.parameters = parameters(params)
     end
 
@@ -40,7 +40,7 @@ class PpmAbstractMethodHandler < YARD::Handlers::Ruby::Base
     end
 
     # Ensure the method is marked abstract
-    if object.tag(:abstract).nil?
+    unless object.has_tag?(:abstract)
       object.docstring.add_tag(YARD::Tags::Tag.new(:abstract, ""))
     end
   end
@@ -57,7 +57,7 @@ private
 
   def parameters(params)
     params.map do |p|
-      name, default = p.split('=', 2)
+      name, default = p.split("=", 2)
       [name, default]
     end
   end
@@ -69,5 +69,40 @@ class PpmDelegateMethodHandler < YARD::Handlers::Ruby::MethodHandler
   namespace_only
 
   def process
+    methods = statement.parameters.slice(0..-3).map{|x| x.source }
+    target  = statement.parameters.jump(:assoc)
+
+    unless target.eql?(statement.parameters)
+      if target.first.jump(:symbol, :ident).source == ":to"
+        target = target[1].source
+
+        if target =~ /:@/
+          target = "#" << target.slice(2..-1)
+        else
+          target = "#" << target.slice(1..-1)
+        end
+
+        target = YARD::Registry.resolve(P(namespace), target, true, false)
+        if target and target.has_tag?(:return)
+          target.tag(:return).types
+        end
+
+      end
+    end
+
+    methods.each do |name|
+      name = name.slice(1..-1)
+
+      object = register(YARD::CodeObjects::MethodObject.new(namespace, name, scope)) do |o|
+        o.visibility = visibility
+        o.source     = statement.source
+        o.explicit   = false
+        o.group      = (scope == :instance) ?
+          "Delegated Instance Methods" :
+          "Delegated Class Methods"
+        o.namespace.groups |= [o.group]
+      end
+    end
+
   end
 end

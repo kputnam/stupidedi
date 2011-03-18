@@ -2,7 +2,15 @@ module Stupidedi
   module Reader
 
     class DelegatedInput < Input
-      attr_reader :delegate, :offset, :line, :column
+
+      # @return [Integer]
+      attr_reader :offset
+
+      # @return [Integer]
+      attr_reader :line
+
+      # @return [Integer]
+      attr_reader :column
 
       delegate :defined_at?, :empty?, :take, :at, :index, :to => :@delegate
 
@@ -10,6 +18,7 @@ module Stupidedi
         @delegate, @offset, @line, @column = delegate, offset, line, column
       end
 
+      # @return [DelegatedInput]
       def drop(n)
         raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
 
@@ -31,6 +40,7 @@ module Stupidedi
                        column)
       end
 
+      # @return [void]
       def pretty_print(q)
         q.text("DelegateInput")
         q.group(2, "(", ")") do
@@ -45,14 +55,6 @@ module Stupidedi
 
           q.text preview
           q.text " at line #{@line}, column #{@column}, offset #{@offset}"
-        end
-      end
-
-      def ==(other)
-        if other.is_a?(DelegatedInput)
-          @delegate == other.delegate
-        else
-          @delegate == other
         end
       end
     end

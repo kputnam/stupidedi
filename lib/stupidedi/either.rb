@@ -5,29 +5,43 @@ module Stupidedi
   #
   class Either
 
-    abstract :each, "&block"
-
-    # @return [Either]
-    abstract :select, "explanation = 'select'", "&block"
-
-    # @return [Either]
-    abstract :reject, "explanation = 'reject'", "&block"
+    # @return [void]
+    abstract :each, :args => %w(&block)
 
     # @return [Boolean]
     abstract :defined?
 
-    # @return [Either]
-    abstract :map, "&block"
+    ###########################################################################
+    # @group Filter Methods
 
     # @return [Either]
-    abstract :flatmap, "&block"
+    abstract :select, :args => %w(explanation='select' &block)
 
     # @return [Either]
-    abstract :or, "&block"
+    abstract :reject, :args => %w(explanation='reject' &block)
+
+    # @endgroup
+    ###########################################################################
+
+    ###########################################################################
+    # @group Combinator Methods
 
     # @return [Either]
-    abstract :explain, "&block"
+    abstract :map, :args => %w(&block)
 
+    # @return [Either]
+    abstract :flatmap, :args => %w(&block)
+
+    # @return [Either]
+    abstract :or, :args => %w(&block)
+
+    # @return [Either]
+    abstract :explain, :args => %w(&block)
+
+    # @endgroup
+    ###########################################################################
+
+    #
     class Success < Either
       def initialize(value)
         @value = value
@@ -39,6 +53,14 @@ module Stupidedi
         yield(@value)
         self
       end
+
+      # @return true
+      def defined?
+        true
+      end
+
+      #########################################################################
+      # @group Filter Methods
 
       # @return [Either]
       # @yieldparam value
@@ -62,10 +84,11 @@ module Stupidedi
         end
       end
 
-      # @return true
-      def defined?
-        true
-      end
+      # @endgroup
+      #########################################################################
+
+      #########################################################################
+      # @group Combinator Methods
 
       # @return [Success]
       # @yieldparam value
@@ -97,11 +120,15 @@ module Stupidedi
         self
       end
 
+      # @endgroup
+      #########################################################################
+
+      # @return [Boolean]
       def ==(other)
-        other.is_a?(self.class) and other.select{|x| x == @value }.defined?
+        other.is_a?(Success) and other.select{|x| x == @value }.defined?
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("Either.success")
         q.group(2, "(", ")") do
@@ -123,6 +150,14 @@ module Stupidedi
         self
       end
 
+      # @return false
+      def defined?
+        false
+      end
+
+      #########################################################################
+      # @group Filter Methods
+
       # @return [Failure]
       def select(explanation = nil)
         self
@@ -133,10 +168,11 @@ module Stupidedi
         self
       end
 
-      # @return false
-      def defined?
-        false
-      end
+      # @endgroup
+      #########################################################################
+
+      #########################################################################
+      # @group Combinator Methods
 
       # @return [Failure]
       def map
@@ -168,11 +204,15 @@ module Stupidedi
         Either.failure(yield(@explanation))
       end
 
+      # @endgroup
+      #########################################################################
+
+      # @return [Boolean]
       def ==(other)
         other.is_a?(self.class) and other.explanation == @explanation
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("Either.failure")
         q.group(1, "(", ")") do
@@ -201,10 +241,11 @@ module Stupidedi
 
   end
 
-  #
-  # Constructors
-  #
   class << Either
+
+    ###########################################################################
+    # @group Constructor Methods
+
     # @return [Success]
     def success(value)
       Either::Success.new(value)
@@ -214,6 +255,10 @@ module Stupidedi
     def failure(explanation)
       Either::Failure.new(explanation)
     end
+
+    # @endgroup
+    ###########################################################################
+
   end
 
   Either.eigenclass.send(:protected, :new)

@@ -32,6 +32,8 @@ module Stupidedi
             # instead, use the {StringVal.value} constructor.
             #
             class NonEmpty < StringVal
+
+              # @return [String]
               attr_reader :value
 
               delegate :to_d, :to_s, :to_f, :length, :to => :@value

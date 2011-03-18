@@ -33,6 +33,8 @@ module Stupidedi
             # instead, use the {IdentifierVal.value} constructor
             #
             class NonEmpty < IdentifierVal
+
+              # @return [String]
               attr_reader :value
 
               delegate :to_s, :length, :=~, :match, :include?, :to => :@value

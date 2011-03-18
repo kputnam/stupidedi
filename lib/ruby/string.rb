@@ -52,7 +52,8 @@ class String
     [take(n), drop(n)]
   end
 
-  # True if the string is long enough such that {#at}+(n)+ is defined
+  # True if the string is long enough such that {#at} is defined for the
+  # given +n+
   #
   # @example
   #   "abc".defined_at?(0)  #=> true

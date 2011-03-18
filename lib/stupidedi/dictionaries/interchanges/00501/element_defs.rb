@@ -9,6 +9,7 @@ module Stupidedi
           s = Schema
 
           class SeparatorElementVal < Values::SimpleElementVal
+
             delegate :to_s, :to => :@value
 
             def initialize(value, definition, parent, usage)
