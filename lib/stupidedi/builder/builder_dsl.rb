@@ -1,7 +1,7 @@
 module Stupidedi
   module Builder
 
-    class BuilderDsl # < (RUBY_VERSION <= "1.9") ? BlankSlate : BasicObject
+    class BuilderDsl
 
       def initialize(config)
         @machine = StateMachine.build(config)
@@ -9,12 +9,42 @@ module Stupidedi
                                  Reader::SegmentDict.empty)
       end
 
-      def repeated(*values)
-        :repeated.cons(element_toks.cons)
+      # @group Element Constructors
+
+      # Generates a repeated element (simple or composite)
+      def repeated(*elements)
+        :repeated.cons(elements.cons)
       end
 
-      def composite(*element_toks)
-        :composite.cons(element_toks.cons)
+      # Generates a composite element
+      def composite(*components)
+        :composite.cons(components.cons)
+      end
+
+      # Generates a blank element
+      def blank
+        nil
+      end
+
+      # @endgroup
+
+      # @group Element Placeholders
+
+      # @see Schema::ElementReq#forbidden?
+      def notused
+        :notused.cons
+      end
+
+      # @see Schema::SimpleElementUse#allowed_values
+      def default
+        :default.cons
+      end
+
+      # @endgroup
+
+      # @return [void]
+      def pretty_print(q)
+        q.pp @machine
       end
 
     private
@@ -157,15 +187,17 @@ module Stupidedi
       # gem, but this only compiles against Ruby 1.8. Use this implementation
       # when its available, but fall back to the slow Kernel.caller method if
       # we have to
-      if Kernel.respond_to?(:called_from)
+      if ::Kernel.respond_to?(:called_from)
         def caller(depth = 2)
-          Kernel.called_from(depth)
+          ::Kernel.called_from(depth)
         end
       else
         def caller(depth = 2)
-          Kernel.caller.at(depth)
+          ::Kernel.caller.at(depth)
         end
       end
+
+      private :caller
 
     end
 

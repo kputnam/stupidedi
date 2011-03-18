@@ -1,9 +1,9 @@
 module Stupidedi
 
   #
-  # {AbsoluteSet}s are subsets of a finite, fully-enumerated universe set. This
+  # {AbsoluteSet} is a subset of a finite, fully-enumerated universe set. This
   # means every possible value that can belong to the {AbsoluteSet} must already
-  # belong to the universe set, which is a finite collection ({Hash}).
+  # belong to the universe set, which is a _finite_ collection ({Hash}).
   #
   # This implementation is fairly efficient when computing set operations on two
   # sets from the same universe, especially compared to {RelativeSet}. Efficiency
@@ -235,6 +235,8 @@ module Stupidedi
 
   class << AbsoluteSet
 
+    # @group Constructor Methods
+
     # @return [AbsoluteSet]
     def build(values)
       count    = -1
@@ -242,5 +244,9 @@ module Stupidedi
 
       AbsoluteSet.new((1 << (count + 1)) - 1, universe)
     end
+
+    # @endgroup
+
   end
+
 end

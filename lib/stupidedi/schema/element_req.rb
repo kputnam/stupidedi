@@ -19,9 +19,14 @@ module Stupidedi
     #
     # @see X222 2.2.1 Industry Usage
     class ElementReq
+
+      # True if the element's presence is unconditionally required
       abstract :required?
+
+      # True if the element's presence is unconditionally forbidden
       abstract :forbidden?
 
+      # True if the element's presence is required conditionally
       def optional?
         not (required? or forbidden?)
       end

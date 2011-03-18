@@ -24,6 +24,18 @@ class Array
     xs
   end
 
+  # True if {#at} is defined for the given +n+
+  #
+  # @example
+  #   [1, 2, 3].defined_at?(0)    #=> true
+  #   [].defined_at?(0)           #=> false
+  #
+  def defined_at?(n)
+    n < length
+  end
+
+  # @group Subselection
+
   # Selects all elements except the last +n+ ones.
   #
   # @example
@@ -50,6 +62,29 @@ class Array
     slice(n..-1) or []
   end
 
+  # Select all elements except the last +n+ ones.
+  #
+  # @return [Array]
+  def take(n)
+    raise ArgumentError, "n (#{n}) must be positive" if n < 0
+    slice(0, n) or []
+  end
+
+  # Split the array in two at the given position.
+  #
+  # @example
+  #   [1, 2, 3].split_at(2)   #=> [[1,2], [3]]
+  #   [1, 2, 3].split_at(0)   #=> [[], [1,2,3]]
+  #
+  # @return [(Array, Array)]
+  def split_at(n)
+    return take(n), drop(n)
+  end
+
+  # @endgroup
+
+  # @group Filtering
+
   # Drops the longest prefix of elements that satisfy the predicate.
   #
   # @return [Array]
@@ -72,14 +107,6 @@ class Array
     else
       self
     end
-  end
-
-  # Select all elements except the last +n+ ones.
-  #
-  # @return [Array]
-  def take(n)
-    raise ArgumentError, "n (#{n}) must be positive" if n < 0
-    slice(0, n) or []
   end
 
   # Takes the longest prefix of elements that satisfy the predicate.
@@ -109,7 +136,7 @@ class Array
   # Splits the array into prefix/suffix pair according to the predicate.
   #
   # @return [(Array, Array)]
-  def span(&block)
+  def split_until(&block)
     prefix = take_while(&block)
     suffix = drop(prefix.length)
     return prefix, suffix
@@ -124,24 +151,4 @@ class Array
     return prefix, suffix
   end
 
-  # Split the array in two at the given position.
-  #
-  # @example
-  #   [1, 2, 3].split_at(2)   #=> [[1,2], [3]]
-  #   [1, 2, 3].split_at(0)   #=> [[], [1,2,3]]
-  #
-  # @return [(Array, Array)]
-  def split_at(n)
-    return take(n), drop(n)
-  end
-
-  # True if {#at}+(n)+ is defined
-  #
-  # @example
-  #   [1, 2, 3].defined_at?(0)    #=> true
-  #   [].defined_at?(0)           #=> false
-  #
-  def defined_at?(n)
-    n < length
-  end
 end

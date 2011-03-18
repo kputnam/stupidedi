@@ -2,6 +2,8 @@ module Stupidedi
   module Schema
 
     class ElementUse
+
+      # @return [SimpleElementDef, CompositeElementDef]
       abstract :definition
 
       abstract :simple?

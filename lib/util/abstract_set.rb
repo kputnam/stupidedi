@@ -1,19 +1,30 @@
 module Stupidedi
 
+  #
+  # {AbstractSet} describes the common interface implemented by its concrete
+  # subclasses. The two main implementations are {RelativeSet} and {AbsoluteSet}
+  # which are each optimized for different kinds of set operations.
+  #
   class AbstractSet
 
+    # True if the set includes the given +object+
     abstract :include?, :args => %w(object)
 
+    # True if {#size} +< Infinity+
     abstract :finite?
 
+    # True if {#size} +== 0+
     abstract :empty?
 
+    # Returns the number of elements in the set
+    #
     # @return [Numeric]
     abstract :size
 
-    # @return [AbstractSet] other
+    # @return [AbstractSet]
     abstract :replace, :args => %w(other)
 
+    # True if the set contains infinitely many elements
     def infinite?
       not finite?
     end
@@ -36,21 +47,40 @@ module Stupidedi
     # @return [AbstractSet]
     abstract :intersection, :args => %w(other)
 
-    def  |(other) union(other) end
-    def  +(other) union(other) end
-    def  -(other) difference(other) end
-    def  ~(other) complement(other) end
-    def  ^(other) symmetric_difference(other) end
+    # @return [AbstractSet]
+    def |(other) union(other) end
+
+    # @return [AbstractSet]
+    def +(other) union(other) end
+
+    # @return [AbstractSet]
+    def -(other) difference(other) end
+
+    # @return [AbstractSet]
+    def ~(other) complement(other) end
+
+    # @return [AbstractSet]
+    def ^(other) symmetric_difference(other) end
+
+    # @return [AbstractSet]
     def  &(other) intersection(other) end
-    def  <(other) proper_subset?(other) end
-    def  >(other) proper_superset?(other) end
+
+    # @return [AbstractSet]
+    def <(other) proper_subset?(other) end
+
+    # @return [AbstractSet]
+    def >(other) proper_superset?(other) end
+
+    # @return [AbstractSet]
     def <=(other) subset?(other) end
+
+    # @return [AbstractSet]
     def >=(other) superset?(other) end
 
     # @group Set Ordering
     ###########################################################################
 
-    # True when the +other+ set contains the same elements
+    # @return [Boolean]
     abstract :==, :args => %w(other)
 
     def subset?(other)
@@ -78,6 +108,8 @@ module Stupidedi
 
   class << AbstractSet
 
+    # @group Constructor Methods
+
     # @return [AbstractSet]
     def build(object)
       if object.is_a?(AbstractSet)
@@ -86,6 +118,9 @@ module Stupidedi
         RelativeSet.build(object)
       end
     end
+
+    # @endgroup
+
   end
 
 end

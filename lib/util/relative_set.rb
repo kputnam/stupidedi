@@ -1,16 +1,16 @@
 module Stupidedi
 
   #
-  # This data type encodes a set of unique values that belong to an infinite
+  # This data type encodes a set of unique values that belong to an _infinite_
   # universe of possible values. Set operations generally perform worse than
-  # {AbsoluteSet}, as they operate on {Hash} values and require copying before
-  # mutating and most operations require traversing the {Hash} of at least one
-  # of the sets in +O(n)+ time.
+  # {AbsoluteSet}, as they operate on {Hash} values and require iterating the
+  # underlying {Hash} of at least one of the two sets in +O(n)+ time.
   #
   # This is suitable for sets that don't have an inherently restricted universe
   # of allowed values (eg a set of arbitrary {String} values), including where
   # the universe is significantly large compared to the typical size of sets
-  # built from those values.
+  # built from those values. {RelativeSet} also requires only a single step to
+  # execute {#include?}, while {AbsoluteSet} requires two.
   #
   class RelativeSet < AbstractSet
     include Enumerable
@@ -190,6 +190,7 @@ module Stupidedi
     # @group Set Ordering
     ###########################################################################
 
+    # @return [Boolean]
     def ==(other)
       eql?(other) or
         (other.size == size and
@@ -205,6 +206,10 @@ module Stupidedi
 
   class << RelativeSet
 
+    # @group Constructor Methods
+
+    # Returns a set that contains the elements from +other+
+    #
     # @return [RelativeSet]
     def build(object)
       if object.is_a?(RelativeSet)
@@ -226,10 +231,14 @@ module Stupidedi
       end
     end
 
-    # @return EmptySet
+    # Returns an empty set
+    #
+    # @return [EmptySet]
     def empty
       EmptySet
     end
+
+    # @endgroup
   end
 
 end
