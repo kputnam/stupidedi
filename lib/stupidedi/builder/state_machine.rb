@@ -106,10 +106,10 @@ module Stupidedi
       def stuck?
         @states.empty?
       end
-
     end
 
     class << StateMachine
+      # @return [StateMachine]
       def build(config)
         separators   = Reader::Separators.empty
         segment_dict = Reader::SegmentDict.empty

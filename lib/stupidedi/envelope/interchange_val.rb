@@ -19,10 +19,6 @@ module Stupidedi
       def initialize(definition, child_vals)
         @definition, @child_vals =
           definition, child_vals
-
-      # @header_segment_vals   = header_segment_vals.map{|x| x.copy(:parent => self) }
-      # @trailer_segment_vals  = trailer_segment_vals.map{|x| x.copy(:parent => self) }
-      # @functional_group_vals = functional_group_vals.map{|x| x.copy(:parent => self) }
       end
 
       # @return [InterchangeVal]
@@ -62,7 +58,7 @@ module Stupidedi
         end
       end
 
-      # @private
+      # @return [Boolean]
       def ==(other)
         other.definition == @definition and
         other.child_vals == @child_vals

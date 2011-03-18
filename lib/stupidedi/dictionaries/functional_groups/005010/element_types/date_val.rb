@@ -15,13 +15,13 @@ module Stupidedi
                 true
               end
 
-              # @private
+              # @return [String]
               def inspect
                 id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "DT.empty#{id}"
               end
 
-              # @private
+              # @return [Boolean]
               def ==(other)
                 other.is_a?(self.class)
               end
@@ -50,7 +50,7 @@ module Stupidedi
 
               # @return [Proper]
               def copy(changes = {})
-                self.class.new \
+                Proper.new \
                   changes.fetch(:year, @year),
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
@@ -92,14 +92,14 @@ module Stupidedi
                 self
               end
 
-              # @private
+              # @return [String]
               def inspect
                 id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "DT.value#{id}(#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
               end
 
-              # @private
               # @note Not commutative
+              # @return [Boolean]
               def ==(other)
                 @day   == other.day  and
                 @year  == other.year and
@@ -148,7 +148,7 @@ module Stupidedi
 
               # Converts this to a proper date
               #
-              # @return [DateVal::Proper]
+              # @return [Proper]
               def cutoff(yy, century = ::Date.today.year / 100)
                 unless yy.between?(0, 99)
                   raise ArgumentError,
@@ -164,7 +164,7 @@ module Stupidedi
 
               # Converts this to a proper date
               #
-              # @return [DateVal::Proper]
+              # @return [Proper]
               def delta(nn, century = ::Date.today.year / 100)
                 unless nn.between?(0, 99)
                   raise ArgumentError,
@@ -180,8 +180,8 @@ module Stupidedi
                 "DT.value#{id}(XX#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
               end
 
-              # @private
               # @note Not commutative
+              # @return [Boolean]
               def ==(other)
                 @day   == other.day  and
                 @year  == other.year and

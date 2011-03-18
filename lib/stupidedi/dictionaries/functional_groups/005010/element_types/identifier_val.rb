@@ -42,6 +42,7 @@ module Stupidedi
                 super(definition, parent, usage)
               end
 
+              # @return [NonEmpty]
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
@@ -54,14 +55,13 @@ module Stupidedi
                 false
               end
 
-              # @private
+              # @return [String]
               def inspect
                 def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "ID.value#{def_id}(#{@value})"
               end
 
               # @note Not commutative, because String doesn't call coerce
-              # @private
               def ==(other)
                 if other.is_a?(self.class)
                   @value == other.value

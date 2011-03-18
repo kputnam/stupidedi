@@ -32,6 +32,7 @@ module Stupidedi
             Instruction.new(:ISA, nil, 0, 0, InterchangeState).cons)
       end
 
+      # @return [TransmissionState]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:config, @config),
@@ -45,6 +46,11 @@ module Stupidedi
         raise "@todo: TransmissionState#parent"
       end
 
+      def add(segment_tok, segment_use)
+        raise "@todo: TransmissionState#add"
+      end
+
+      # @return [TransmissionState]
       def pop(count)
         if count.zero?
           self
@@ -53,20 +59,18 @@ module Stupidedi
         end
       end
 
+      # @return [TransmissionState]
+      def merge(child)
+        copy(:value => child.cons(@value))
+      end
+
+      # @return [TransmissionState]
       def drop(count)
         if count.zero?
           self
         else
           raise "@todo: TransmissionState#drop"
         end
-      end
-
-      def add(segment_tok, segment_use)
-        raise "@todo: TransmissionState#add"
-      end
-
-      def merge(child)
-        copy(:value => child.cons(@value))
       end
     end
 

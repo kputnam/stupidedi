@@ -63,7 +63,7 @@ module Stupidedi
         @table.defined_at?([version, function, transaction])
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text "TransactionSetConfig"
         q.group 2, "(", ")" do

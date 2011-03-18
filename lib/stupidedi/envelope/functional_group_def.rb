@@ -52,10 +52,12 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [SegmentUse]
       def entry_segment_use
         @header_segment_uses.head
       end
 
+      # @return [Array<SegmentUse>]
       def segment_uses
         @__segment_uses ||= @header_segment_uses + @trailer_segment_uses
       end
@@ -70,7 +72,7 @@ module Stupidedi
         FunctionalGroupVal.new(self, [], [], parent)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("FunctionalGroupDef")
         q.group(2, "(", ")") do

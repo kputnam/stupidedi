@@ -140,6 +140,10 @@ module Stupidedi
       end
 
       def method_missing(name, *args)
+        unless name.to_s.upcase =~ /^[A-Z][A-Z0-9]{1,2}$/
+          super
+        end
+
         @reader = @machine.input!(segment_tok(name, args), @reader)
 
         if @machine.stuck?
@@ -149,6 +153,10 @@ module Stupidedi
         return self
       end
 
+      # We can use a much faster implementation provided by the "called_from"
+      # gem, but this only compiles against Ruby 1.8. Use this implementation
+      # when its available, but fall back to the slow Kernel.caller method if
+      # we have to
       if Kernel.respond_to?(:called_from)
         def caller(depth = 2)
           Kernel.called_from(depth)
@@ -161,6 +169,9 @@ module Stupidedi
 
     end
 
+    #
+    #
+    #
     class DslReader
 
       # @return [Reader::Separators]

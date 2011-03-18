@@ -18,6 +18,7 @@ module Stupidedi
           value, parent, instructions
       end
 
+      # @return [LoopState]
       def copy(changes = {})
         LoopState.new \
           changes.fetch(:value, @value),
@@ -25,6 +26,7 @@ module Stupidedi
           changes.fetch(:instructions, @instructions)
       end
 
+      # @return [AbstractState]
       def pop(count)
         if count.zero?
           self
@@ -33,6 +35,7 @@ module Stupidedi
         end
       end
 
+      # @return [LoopState]
       def drop(count)
         if count.zero?
           self
@@ -41,10 +44,12 @@ module Stupidedi
         end
       end
 
+      # @return [LoopState]
       def add(segment_tok, segment_use)
         copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
+      # @return [LoopState]
       def merge(child)
         copy(:value => @value.append(child))
       end
@@ -52,7 +57,7 @@ module Stupidedi
 
     class << LoopState
 
-      # @param [SegmentTok] segment_tok the loop start segment
+      # @return [LoopState]
       def push(segment_tok, segment_use, parent, reader = nil)
         segment_val = segment(segment_tok, segment_use)
         loop_def    = segment_use.parent
@@ -62,6 +67,9 @@ module Stupidedi
           parent.instructions.push(instructions(loop_def)))
       end
 
+    private
+
+      # @return [Array<Instruction>]
       def instructions(loop_def)
         @__instructions ||= Hash.new
         @__instructions[loop_def] ||= begin

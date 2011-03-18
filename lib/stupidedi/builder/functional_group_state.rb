@@ -21,6 +21,7 @@ module Stupidedi
           value, parent, instructions, segment_dict
       end
 
+      # @return [FunctionalGroupState]
       def copy(changes = {})
         FunctionalGroupState.new \
           changes.fetch(:value, @value),
@@ -29,6 +30,7 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict)
       end
 
+      # @return [AbstractState]
       def pop(count)
         if count.zero?
           self
@@ -37,6 +39,7 @@ module Stupidedi
         end
       end
 
+      # @return [FunctionalGroupState]
       def drop(count)
         if count.zero?
           self
@@ -45,10 +48,12 @@ module Stupidedi
         end
       end
 
+      # @return [FunctionalGroupState]
       def add(segment_tok, segment_use)
         copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
+      # @return [FunctionalGroupState]
       def merge(child)
         copy(:value => @value.append(child))
       end
@@ -56,6 +61,7 @@ module Stupidedi
 
     class << FunctionalGroupState
 
+      # @return [FunctionalGroupState]
       def push(segment_tok, segment_use, parent, reader = nil)
         # GS08: Version / Release / Industry Identifier Code
         version = segment_tok.element_toks.at(7).try{|t| t.value.slice(0, 6) }
@@ -74,6 +80,8 @@ module Stupidedi
           parent.instructions.push(instructions(envelope_def)),
           parent.segment_dict.push(envelope_val.segment_dict))
       end
+
+    private
 
       # @return [Array<Instruction>]
       def instructions(functional_group_def)

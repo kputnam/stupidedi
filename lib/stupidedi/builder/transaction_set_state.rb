@@ -18,6 +18,7 @@ module Stupidedi
           value, parent, instructions
       end
 
+      # @return [TransactionSetState]
       def copy(changes = {})
         TransactionSetState.new \
           changes.fetch(:value, @value),
@@ -25,6 +26,7 @@ module Stupidedi
           changes.fetch(:instructions, @instructions)
       end
 
+      # @return [AbstractState]
       def pop(count)
         if count.zero?
           self
@@ -33,6 +35,7 @@ module Stupidedi
         end
       end
 
+      # @return [TransactionSetState]
       def drop(count)
         if count.zero?
           self
@@ -41,10 +44,12 @@ module Stupidedi
         end
       end
 
+      # @return [TransactionSetState]
       def add(segment_tok, segment_use)
         copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
+      # @return [TransactionSetState]
       def merge(child)
         copy(:value => @value.append(child))
       end
@@ -52,6 +57,7 @@ module Stupidedi
 
     class << TransactionSetState
 
+      # @return [TransactionSetState]
       def push(segment_tok, segment_use, parent, reader = nil)
         # GS01: Functional Identifier Code
         fgcode = parent.value.at(:GS).head.at(0).to_s
@@ -81,6 +87,8 @@ module Stupidedi
           TransactionSetState.new(envelope_val, parent,
             parent.instructions.push(instructions(envelope_def))))
       end
+
+    private
 
       # @return [Array<Instruction>]
       def instructions(transaction_set_def)

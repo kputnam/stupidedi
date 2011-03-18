@@ -5,16 +5,22 @@ module Stupidedi
         module ElementTypes
 
           class SimpleElementDef < Schema::SimpleElementDef
+            # @return [Symbol]
             attr_reader :id
 
+            # @return [String]
             attr_reader :name
 
+            # @return [String]
             attr_reader :description
 
+            # @return [Integer]
             attr_reader :min_length
 
+            # @return [Integer]
             attr_reader :max_length
 
+            # @return [Schema::SegmentDef, Schema::CompositeElementDef]
             attr_reader :parent
 
             # @return [Class<Values::SimpleElementVal>]
@@ -50,7 +56,7 @@ module Stupidedi
               companion.empty(self, parent, usage)
             end
 
-            # @private
+            # @return [void]
             def pretty_print(q)
               type = self.class.name.try{|n| n.split('::').last }
 

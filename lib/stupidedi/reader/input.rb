@@ -84,7 +84,7 @@ module Stupidedi
       #
       # @return [Integer]
       # @return nil if +element+ is not present in the input
-      abstract :index, "value"
+      abstract :index, :args => %w(value)
 
       # @group Advancing the Cursor
       ##########################################################################
@@ -94,7 +94,7 @@ module Stupidedi
       # @param [Integer] n the number of elements to advance (+n >= 0+)
       #
       # @return [Input] new object with advanced cursor
-      abstract :drop, "n"
+      abstract :drop, :args => %w(n)
 
       # @group Testing the Input
       ##########################################################################
@@ -103,7 +103,7 @@ module Stupidedi
       # defined
       #
       # @param [Integer] n the index to test (+n >= 0+)
-      abstract :defined_at?, "n"
+      abstract :defined_at?, :args => %w(n)
 
       # True if no elements remain in the input
       abstract :empty?
@@ -113,6 +113,7 @@ module Stupidedi
     # Constructors
     #
     class << Input
+
       # @return [Input]
       def build(o, *args)
         case o

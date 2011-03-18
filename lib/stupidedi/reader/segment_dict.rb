@@ -3,11 +3,11 @@ module Stupidedi
 
     class SegmentDict
       # Return the top element from the stack. This will throw an exception
-      # if the stack is {empty?}
+      # if the stack is {#empty?}
       abstract :top
 
       # Return the remainder of the stack. This will throw an exception if
-      # the stack is {empty?}
+      # the stack is {#empty?}
       #
       # @return [SegmentDict]
       abstract :pop
@@ -24,6 +24,7 @@ module Stupidedi
       # segment identifier
       abstract :defined_at?, :args => %w(segment_id)
 
+      # True if the stack of dictionaries is empty
       abstract :empty?
 
       class NonEmpty < SegmentDict
@@ -68,6 +69,7 @@ module Stupidedi
           false
         end
 
+        # @return [void]
         def pretty_print(q)
           q.text "SegmentDict"
           q.group(2, "(", ")") do
@@ -116,6 +118,7 @@ module Stupidedi
           true
         end
 
+        # @return [void]
         def pretty_print(q)
           q.text "SegmentDict.empty"
         end
@@ -136,6 +139,7 @@ module Stupidedi
           @constants.include?(segment_id.to_sym)
         end
 
+        # @return [void]
         def pretty_print(q)
           q.text("#{@namespace.name}.constants")
         end

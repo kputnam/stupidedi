@@ -4,8 +4,9 @@ module Stupidedi
       module FiftyTen
         module ElementReqs
 
+          # Singleton
           Mandatory = Class.new(Schema::ElementReq) do
-            # @private
+            # @return [void]
             def pretty_print(q)
               q.text "M"
             end
@@ -19,8 +20,9 @@ module Stupidedi
             end
           end.new
 
+          # Singleton
           Optional = Class.new(Schema::ElementReq) do
-            # @private
+            # @return [void]
             def pretty_print(q)
               q.text "O"
             end
@@ -34,8 +36,9 @@ module Stupidedi
             end
           end.new
 
+          # Singleton
           Relational = Class.new(Schema::ElementReq) do
-            # @private
+            # @return [void]
             def pretty_print(q)
               q.text "X"
             end

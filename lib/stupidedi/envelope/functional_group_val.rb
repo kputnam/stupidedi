@@ -16,14 +16,6 @@ module Stupidedi
       def initialize(definition, child_vals, parent)
         @definition, @child_vals, @parent =
           definition, child_vals, parent
-
-        # Delay re-parenting until the entire definition tree has a root
-        # to prevent unnecessarily copying objects
-        unless parent.nil?
-        # @header_segment_vals  = @header_segment_vals.map{|x| x.copy(:parent => self) }
-        # @trailer_segment_vals = @trailer_segment_vals.map{|x| x.copy(:parent => self) }
-        # @transaction_set_vals = @transaction_set_vals.map{|x| x.copy(:parent => self) }
-        end
       end
 
       # @return [FunctionalGroupVal]
@@ -47,35 +39,40 @@ module Stupidedi
         copy(:child_vals => child_val.snoc(@child_vals))
       end
 
+      # @return [String, nil]
       def version
         if at(6) == "X"
           at(7).to_s.slice(0, 3)
         end
       end
 
+      # @return [String, nil]
       def release
         if at(6) == "X"
           at(7).to_s.slice(0, 4)
         end
       end
 
+      # @return [String, nil]
       def subrelease
         if at(6) == "X"
           at(7).to_s.slice(0, 5)
         end
       end
 
+      # @return [String, nil]
       def implementation
         if at(6) == "X"
           at(7).to_s.slice(6, 4)
         end
       end
 
+      # @return [Module]
       def segment_dict
         @definition.segment_dict
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}]" }
         q.text "FunctionalGroupVal#{id}"

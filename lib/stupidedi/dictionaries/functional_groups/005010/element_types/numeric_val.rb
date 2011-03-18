@@ -15,13 +15,13 @@ module Stupidedi
                 true
               end
 
-              # @private
+              # @return [String]
               def inspect
                 def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "Nn.empty#{def_id}"
               end
 
-              # @private
+              # @return [Boolean]
               def ==(other)
                 other.is_a?(self.class)
               end
@@ -43,8 +43,9 @@ module Stupidedi
                 super(definition, parent, usage)
               end
 
+              # @return [NonEmpty]
               def copy(changes = {})
-                self.class.new \
+                NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
                   changes.fetch(:parent, parent),
@@ -55,7 +56,7 @@ module Stupidedi
                 false
               end
 
-              # @private
+              # @return [Array(NonEmpty, Numeric)]
               def coerce(other)
                 if other.is_a?(::Numeric)
                   # Re-evaluate other.call(self) as self.op(other)
@@ -76,8 +77,9 @@ module Stupidedi
               end
 
               # @group Mathematical Operators
+              #################################################################
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def /(other)
                 if other.is_a?(self.class)
                   copy(:value => @value / other.value)
@@ -86,7 +88,7 @@ module Stupidedi
                 end
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def +(other)
                 if other.is_a?(self.class)
                   copy(:value => @value + other.value)
@@ -95,7 +97,7 @@ module Stupidedi
                 end
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def -(other)
                 if other.is_a?(self.class)
                   copy(:value => @value - other.value)
@@ -104,7 +106,7 @@ module Stupidedi
                 end
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def **(other)
                 if other.is_a?(self.class)
                   copy(:value => @value ** other.value)
@@ -113,7 +115,7 @@ module Stupidedi
                 end
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def *(other)
                 if other.is_a?(self.class)
                   copy(:value => @value * other.value)
@@ -122,7 +124,7 @@ module Stupidedi
                 end
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def %(other)
                 if other.is_a?(self.class)
                   copy(:value => @value % other.value)
@@ -131,16 +133,17 @@ module Stupidedi
                 end
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def -@
                 copy(:value => -@value)
               end
 
-              # @return [NumericVal::NonEmpty]
+              # @return [NonEmpty]
               def +@
                 self
               end
 
+              # @return [NonEmpty]
               def abs
                 copy(:value => @value.abs)
               end

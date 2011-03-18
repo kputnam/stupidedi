@@ -4,8 +4,9 @@ module Stupidedi
       module FiftyTen
         module SegmentReqs
 
+          # Singleton
           Mandatory = Class.new(Schema::SegmentReq) do
-            # @private
+            # @return [void]
             def pretty_print(q)
               q.text("M")
             end
@@ -19,8 +20,9 @@ module Stupidedi
             end
           end.new
 
+          # Singleton
           Optional = Class.new(Schema::SegmentReq) do
-            # @private
+            # @return [void]
             def pretty_print(q)
               q.text("O")
             end

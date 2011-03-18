@@ -50,6 +50,7 @@ module Stupidedi
     # @group Set Ordering
     ###########################################################################
 
+    # True when the +other+ set contains the same elements
     abstract :==, :args => %w(other)
 
     def subset?(other)

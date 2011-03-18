@@ -25,10 +25,12 @@ module Stupidedi
           changes.fetch(:table_defs, @table_defs)
       end
 
+      # @return [TransactionSetVal]
       def value(header_segment_vals, parent = nil)
         TransactionSetVal.new(self, @table_defs.head.value(header_segment_vals, [], []).cons, parent)
       end
 
+      # @return [TransactionSetVal]
       def empty(parent = nil)
         TransactionSetVal.new(self, [], parent)
       end
@@ -48,7 +50,7 @@ module Stupidedi
         @table_defs.last.trailer_segment_uses.last
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("TransactionSetDef[#{@functional_group}#{@id}]")
         q.group(2, "(", ")") do
@@ -65,6 +67,8 @@ module Stupidedi
     end
 
     class << TransactionSetDef
+
+      # @return [TransactionSetDef]
       def build(functional_group, id, *table_defs)
         new(functional_group, id, table_defs)
       end

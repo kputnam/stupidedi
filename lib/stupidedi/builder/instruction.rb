@@ -62,7 +62,7 @@ module Stupidedi
           changes.fetch(:push, @push)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @segment_id.to_s
 
@@ -80,6 +80,12 @@ module Stupidedi
             q.text ","
             q.breakable
             q.text "push: #{@push.try{|c| c.name.split('::').last}}"
+          end
+
+          unless @segment_use.nil?
+            q.text ","
+            q.breakable
+            q.text "use: #{@segment_use.definition.name}"
           end
         end
       end

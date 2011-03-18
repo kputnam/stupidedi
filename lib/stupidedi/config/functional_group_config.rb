@@ -33,7 +33,7 @@ module Stupidedi
         @table.defined_at?(version)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text "FunctionalGroupConfig"
         q.group 2, "(", ")" do

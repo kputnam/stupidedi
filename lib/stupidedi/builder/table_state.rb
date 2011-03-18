@@ -18,6 +18,7 @@ module Stupidedi
           value, parent, instructions
       end
 
+      # @return [TableState]
       def copy(changes = {})
         TableState.new \
           changes.fetch(:value, @value),
@@ -25,6 +26,7 @@ module Stupidedi
           changes.fetch(:instructions, @instructions)
       end
 
+      # @return [AbstractState]
       def pop(count)
         if count.zero?
           self
@@ -33,6 +35,7 @@ module Stupidedi
         end
       end
 
+      # @return [TableState]
       def drop(count)
         if count.zero?
           self
@@ -41,10 +44,12 @@ module Stupidedi
         end
       end
 
+      # @return [TableState]
       def add(segment_tok, segment_use)
         copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
+      # @return [TableState]
       def merge(child)
         copy(:value => @value.append(child))
       end
@@ -52,25 +57,7 @@ module Stupidedi
 
     class << TableState
 
-      # @param [SegmentTok] segment_tok the table set start segment
-      # @param [SegmentUse] segment_use
-      # @param [TransactionSetState] parent
-      #
-      # It is assumed that the entry segments for a table all have the same
-      # defined position, and that position is the smallest position of: all
-      # the segments that can occur as direct children of the table and all
-      # the entry segments of loops that are direct children of the table.
-      #
-      # @todo: The above is wrong -- 005010X221 HP835 Table 3 begins with an
-      # optional and repeatable PLB segment followed by an ST segment. This
-      # means Table 3 can begin with ST alone.
-      #
-      # This will construct a state whose successors include all the segments
-      # that are direct descendants of the table, in addition to all the entry
-      # segments of every loop that is a direct descendant of the table. This
-      # means consecutive occurrences of any of the table's entry segments will
-      # belong to the existing table -- rather creating a new table each time
-      # by popping this state and letting the parent state create a new one.
+      # @return [TableState]
       def push(segment_tok, segment_use, parent, reader = nil)
         case segment_use.parent
         when Schema::TableDef
@@ -90,7 +77,9 @@ module Stupidedi
         end
       end
 
-      # @return [InstructionTable]
+    private
+
+      # @return [Array<Instruction]
       def instructions(table_def)
         @__instructions ||= Hash.new
         @__instructions[table_def] ||= begin

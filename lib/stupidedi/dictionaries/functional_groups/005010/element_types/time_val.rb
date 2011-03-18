@@ -15,13 +15,13 @@ module Stupidedi
                 true
               end
 
-              # @private
+              # @return [String]
               def inspect
                 def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "TM.empty#{def_id}"
               end
 
-              # @private
+              # @return [Boolean]
               def ==(other)
                 other.is_a?(self.class)
               end
@@ -52,6 +52,7 @@ module Stupidedi
                 super(definition, parent, usage)
               end
 
+              # @return [NonEmpty]
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:hour, @hour),
@@ -74,7 +75,7 @@ module Stupidedi
                          *[@hour, @minute, @second].take_until(&:nil?))
               end
 
-              # @private
+              # @return [String]
               def inspect
                 def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 hh =   @hour.try{|h| '%02d' % h } || 'hh'
@@ -83,7 +84,7 @@ module Stupidedi
                 "TM.value#{def_id}(#{hh}:#{mm}:#{ss})"
               end
 
-              # @private
+              # @return [Boolean]
               def ==(other)
                 other.hour   == @hour   and
                 other.minute == @minute and

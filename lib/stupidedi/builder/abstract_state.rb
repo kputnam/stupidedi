@@ -9,7 +9,7 @@ module Stupidedi
       # @return [Values::AbstractVal]
       abstract :value
 
-      # The {AbstractState} whose {value} is the parent of this state's {value}.
+      # The state whose {#value} is the parent of this state's {#value}.
       #
       # @return [AbstractState]
       abstract :parent
@@ -41,6 +41,7 @@ module Stupidedi
         parent.config
       end
 
+      # @return [void]
       def pretty_print(q)
         q.text self.class.name.split('::').last
         q.group(2, "(", ")") do
@@ -60,12 +61,15 @@ module Stupidedi
     class << AbstractState
 
       # This method constructs a new instance of (a subclass of) {AbstractState}
-      # and pushes it above {parent} onto a nested stack-like structure. The
+      # and pushes it above {#parent} onto a nested stack-like structure. The
       # stack structure is implicit, and it can be iterated by following each
-      # state's {parent}.
+      # state's {#parent}.
       #
       # @return [AbstractState]
       abstract :push, :args => %w(segment_tok segment_use parent reader)
+
+      # @group SegmentVal Construction
+      #########################################################################
 
       # @return [Values::SegmentVal]
       def segment(segment_tok, segment_use, parent = nil)
@@ -76,7 +80,7 @@ module Stupidedi
         element_vals = element_uses.zip(element_toks).map do |use, tok|
           if tok.nil?
             if use.repeatable?
-              use.empty.repeated
+              Values::RepeatedElementVal.empty(use.definition, parent)
             else
               use.empty
             end
@@ -88,7 +92,67 @@ module Stupidedi
         segment_use.value(element_vals, parent)
       end
 
-    private
+      # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
+      def element(element_use, element_tok, parent = nil)
+        if element_use.simple?
+          if element_use.repeatable?
+            element_toks = element_tok.element_toks
+            element_vals = element_toks.map do |element_tok|
+              simple_element(element_use, element_tok, parent)
+            end
+
+            repeated_element(element_use, element_vals, parent)
+          else
+            simple_element(element_use, element_tok, parent)
+          end
+        else
+          if element_use.repeatable?
+            element_toks = element_tok.element_toks
+            element_vals = element_toks.map do |element_tok|
+              composite_element(element_use, element_tok, parent)
+            end
+
+            repeated_element(element_use, element_vals, parent)
+          else
+            composite_element(element_use, element_tok, parent)
+          end
+        end
+      end
+
+      # @return [Values::RepeatedElementVal]
+      def repeated_element(element_use, element_vals, parent = nil)
+        Values::RepeatedElementVal.build(element_use.definition, element_vals, parent)
+      end
+
+      # @return [Values::CompositeElementVal]
+      def composite_element(composite_use, composite_tok, parent = nil)
+        composite_def  = composite_use.definition
+        component_uses = composite_def.component_uses
+        component_toks = composite_tok.component_toks
+
+        component_vals = component_uses.zip(component_toks).map do |use, tok|
+          if tok.nil?
+            use.empty
+          else
+            simple_element(use, tok)
+          end
+        end
+
+        composite_use.value(component_vals, parent)
+      end
+
+      # @return [Values::SimpleElementVal]
+      def simple_element(element_use, element_tok, parent = nil)
+        # We don't validate that element_tok is simple because the TokenReader
+        # will always produce a SimpleElementTok given a SimpleElementUse from
+        # the SegmentDef. On the other hand, the public builder API will throw
+        # an exception if the programmer constructs the wrong kind of element
+        # according to the SegmentDef.
+        element_use.value(element_tok.value, parent)
+      end
+
+      # @group Instruction Generation
+      #########################################################################
 
       # @return [Array<Instruction>]
       def sequence(segment_uses, start = 0)
@@ -218,65 +282,6 @@ module Stupidedi
         end
 
         instructions
-      end
-
-      # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
-      def element(element_use, element_tok, parent = nil)
-        if element_use.simple?
-          if element_use.repeatable?
-            element_toks = element_tok.element_toks
-            element_vals = element_toks.map do |element_tok|
-              simple_element(element_use, element_tok, parent)
-            end
-
-            repeated_element(element_use, element_vals, parent)
-          else
-            simple_element(element_use, element_tok, parent)
-          end
-        else
-          if element_use.repeatable?
-            element_toks = element_tok.element_toks
-            element_vals = element_toks.map do |element_tok|
-              composite_element(element_use, element_tok, parent)
-            end
-
-            repeated_element(element_use, element_vals, parent)
-          else
-            composite_element(element_use, element_tok, parent)
-          end
-        end
-      end
-
-      # @return [Values::RepeatedElementVal]
-      def repeated_element(element_use, element_vals, parent = nil)
-        Values::RepeatedElementVal.build(element_use.definition, element_vals, parent)
-      end
-
-      # @return [Values::CompositeElementVal]
-      def composite_element(composite_use, composite_tok, parent = nil)
-        composite_def  = composite_use.definition
-        component_uses = composite_def.component_uses
-        component_toks = composite_tok.component_toks
-
-        component_vals = component_uses.zip(component_toks).map do |use, tok|
-          if tok.nil?
-            use.empty
-          else
-            simple_element(use, tok)
-          end
-        end
-
-        composite_use.value(component_vals, parent)
-      end
-
-      # @return [Values::SimpleElementVal]
-      def simple_element(element_use, element_tok, parent = nil)
-        # We don't validate that element_tok is simple because the TokenReader
-        # will always produce a SimpleElementTok given a SimpleElementUse from
-        # the SegmentDef. On the other hand, the public builder API will throw
-        # an exception if the programmer constructs the wrong kind of element
-        # according to the SegmentDef.
-        element_use.value(element_tok.value, parent)
       end
     end
 

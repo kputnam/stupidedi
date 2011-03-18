@@ -9,7 +9,7 @@ module Stupidedi
           r = FunctionalGroups::FiftyTen::ElementReqs
 
           ISA = s::SegmentDef.build(:ISA, "Interchange Control Header",
-            "",
+            "To start and identify an interchange of zero or more functional groups and interchange-related control segments",
             e::I01.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::I02.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::I03.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),

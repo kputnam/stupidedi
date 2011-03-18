@@ -112,7 +112,7 @@ module Stupidedi
           end
         end
 
-        # @private
+        # @return [void]
         def pretty_print(q)
           q.text("InstructionTable")
           q.group(2, "(", ")") do
@@ -166,6 +166,7 @@ module Stupidedi
           self
         end
 
+        # @return [void]
         def pretty_print(q)
           q.text "InstructionTable.empty"
         end

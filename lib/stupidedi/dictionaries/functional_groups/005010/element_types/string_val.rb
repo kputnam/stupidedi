@@ -21,7 +21,7 @@ module Stupidedi
                 "AN.empty#{def_id}"
               end
 
-              # @private
+              # @return [Boolean]
               def ==(other)
                 other.is_a?(self.class)
               end
@@ -59,7 +59,7 @@ module Stupidedi
               end
 
               # @note Not commutative
-              # @private
+              # @return [Boolean]
               def ==(other)
                 if other.is_a?(self.class)
                   @value == other.value

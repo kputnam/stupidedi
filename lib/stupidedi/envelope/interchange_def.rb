@@ -1,6 +1,9 @@
 module Stupidedi
   module Envelope
 
+    #
+    # @see X12.5 3.2.1 Basic Interchange Service Request
+    #
     class InterchangeDef
       # @return [String]
       attr_reader :id
@@ -30,14 +33,17 @@ module Stupidedi
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
       end
 
+      # @return [SegmentUse]
       def entry_segment_use
         @header_segment_uses.head
       end
 
+      # @return [Array<SegmentUse>]
       def segment_uses
         @__segment_uses ||= @header_segment_uses + @trailer_segment_uses
       end
 
+      # @return [void]
       def pretty_print(q)
         q.text("InterchangeDef[#{id}]")
         q.group(2, "(", ")") do

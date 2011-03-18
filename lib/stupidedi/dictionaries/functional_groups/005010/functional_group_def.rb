@@ -6,10 +6,11 @@ module Stupidedi
         s = Schema
         r = ElementReqs
 
+        # Singleton
         FunctionalGroupDef = Class.new(Envelope::FunctionalGroupDef) do
           # @return [FunctionalGroupVal]
           def empty(parent = nil)
-            FunctionalGroupVal.new(self, [], [], [], parent)
+            FunctionalGroupVal.new(self, [], parent)
           end
 
           # @return [FunctionalGroupVal]
@@ -17,6 +18,7 @@ module Stupidedi
             FunctionalGroupVal.new(self, segment_val.cons, parent)
           end
 
+          # @return [Module]
           def segment_dict
             SegmentDefs
           end

@@ -24,6 +24,7 @@ module Stupidedi
           value, parent, instructions, separators, segment_dict
       end
 
+      # @return [InterchangeState]
       def copy(changes = {})
         InterchangeState.new \
           changes.fetch(:value, @value),
@@ -33,6 +34,7 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict)
       end
 
+      # @return [TransmissionState]
       def pop(count)
         if count.zero?
           self
@@ -41,6 +43,7 @@ module Stupidedi
         end
       end
 
+      # @return [InterchangeState]
       def drop(count)
         if count.zero?
           self
@@ -49,10 +52,12 @@ module Stupidedi
         end
       end
 
+      # @return [InterchangeState]
       def add(segment_tok, segment_use)
         copy(:value => @value.append(segment(segment_tok, segment_use)))
       end
 
+      # @return [InterchangeState]
       def merge(child)
         copy(:value => @value.append(child))
       end
@@ -60,13 +65,7 @@ module Stupidedi
 
     class << InterchangeState
 
-      # @param [SegmentTok] segment_tok the interchange start segment
-      # @param [SegmentUse] segment_use nil
-      #
-      # This will construct a state whose successors do not include the entry
-      # segment defined by the InterchangeDef (which is typically ISA). This
-      # means another occurence of that segment will pop this state and the
-      # parent state will create a new InterchangeState.
+      # @return [InterchangeState]
       def push(segment_tok, segment_use, parent, reader = nil)
         # ISA12: Interchange Control Version Number
         version = segment_tok.element_toks.at(11).try(:value)
@@ -87,6 +86,8 @@ module Stupidedi
           envelope_val.separators.merge(reader.try(:separators)),
           reader.segment_dict.push(envelope_val.segment_dict))
       end
+
+    private
 
       # @return [Array<Instruction>]
       def instructions(interchange_def)

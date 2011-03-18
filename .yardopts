@@ -1,2 +1,3 @@
 --no-private
 --load ./yard/rspec-plugin/lib/yard-rspec.rb
+--load ./yard/ppm-plugin/lib/yard-ppm.rb
