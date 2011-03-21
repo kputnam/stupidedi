@@ -1,7 +1,7 @@
 module Stupidedi
   module Reader
 
-    class DelegatedInput < Input
+    class DelegatedInput < AbstractInput
 
       # @return [Integer]
       attr_reader :offset
@@ -34,10 +34,19 @@ module Stupidedi
                    @column + length
                  end
 
-        self.class.new(suffix,
-                       @offset + length,
-                       @line   + count,
-                       column)
+        copy(:delegate => suffix,
+             :offset   => @offset + length,
+             :line     => @line + count,
+             :column   => column)
+      end
+
+      # @return [DelegatedInput]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:delegate, @delegate),
+          changes.fetch(:offset, @offset),
+          changes.fetch(:line, @line),
+          changes.fetch(:column, @column)
       end
 
       # @return [void]

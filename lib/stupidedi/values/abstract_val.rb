@@ -6,7 +6,7 @@ module Stupidedi
       # @return [SimpleElementDef, CompositeElementDef, LoopDef, SegmentDef, TableDef]
       abstract :definition
 
-      # @see X222 B.1.3.10 Absence of Data
+      # @see X222.pdf B.1.3.10 Absence of Data
       abstract :empty?
 
       def present?

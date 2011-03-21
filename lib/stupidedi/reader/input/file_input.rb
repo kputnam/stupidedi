@@ -2,16 +2,32 @@ module Stupidedi
   module Reader
 
     #
-    # @note This class is not thread-safe. If more than one +Thread+ has access
+    # @note This class is not thread-safe. If more than one `Thread` has access
     #   to the same instance, and they simultaneously call methods on that
     #   instance, the methods may produce incorrect results and the object might
     #   be left in an inconsistent state.
     #
-    class FileInput < Input
-      attr_reader :io, :offset, :line, :column
+    class FileInput < AbstractInput
+
+      # @return [IO]
+      attr_reader :io
+      
+      # @return [Integer]
+      attr_reader :offset
+      
+      # @return [Integer]
+      attr_reader :line
+      
+      # @return [Integer]
+      attr_reader :column
 
       def initialize(io, offset = 0, line = 1, column = 1, size = io.stat.size)
         @io, @offset, @line, @column, @size = io, offset, line, column, size
+      end
+
+      # @return [Position]
+      def position
+        Position.new(@offset, @line, @column, @io.path)
       end
 
       def defined_at?(n)
@@ -22,6 +38,7 @@ module Stupidedi
         @io.eof?
       end
 
+      # @return [FileInput]
       def drop(n)
         raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
 
@@ -38,18 +55,29 @@ module Stupidedi
                    @column + length
                  end
 
-        self.class.new(suffix,
-                       @offset + length,
-                       @line   + count,
-                       column,
-                       @size   - length)
+        copy(:offset => @offset + length,
+             :line   => @line + count,
+             :column => column,
+             :size   => @size - length)
       end
 
+      # @return [FileInput]
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:io, @io),
+          changes.fetch(:offset, @offset),
+          changes.fetch(:line, @line),
+          changes.fetch(:column, @column),
+          changes.fetch(:size, @size)
+      end
+
+      # @return [String]
       def take(n)
         @io.seek(@offset)
         @io.read(n)
       end
 
+      # @return [String]
       def at(n)
         raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
 
@@ -57,6 +85,7 @@ module Stupidedi
         @io.read(1)
       end
 
+      # @return [Integer, nil]
       def index(value)
         @io.seek(@offset)
         length = value.length
@@ -74,11 +103,6 @@ module Stupidedi
         end
       end
 
-      def ==(other)
-        if other.is_a?(FileInput)
-          @io.path == other.io.path and @offset == other.offset
-        end
-      end
     end
 
   end

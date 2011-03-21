@@ -13,26 +13,26 @@ class String
     self[n, 1] unless n >= length
   end
 
-  # Return the string with +n+ characters removed from the front
+  # Return the string with `n` characters removed from the front
   #
   # @example
   #   "abc".drop(0)   #=> "abc"
   #   "abc".drop(2)   #=> "c"
   #
-  # @param [Integer] n number of characters to drop (+n > 0+)
+  # @param [Integer] n number of characters to drop (`n > 0`)
   #
   # @return [String]
   def drop(n)
     (length >= n) ? self[n..-1] : ""
   end
 
-  # Return the first +n+ characters from the front
+  # Return the first `n` characters from the front
   #
   # @example
   #   "abc".take(0)   #=> ""
   #   "abc".take(2)   #=> "ab"
   #
-  # @param [Integer] n number of characters to select (+n > 0+)
+  # @param [Integer] n number of characters to select (`n > 0`)
   #
   # @return [String]
   def take(n)
@@ -45,7 +45,7 @@ class String
   #   "abc".split_at(0)   #=> ["", "abc"]
   #   "abc".split_at(2)   #=> ["ab", "c"]
   #
-  # @param [Integer] n number of characters at which to split (+n > 0+)
+  # @param [Integer] n number of characters at which to split (`n > 0`)
   #
   # @return [Array(String, String)]
   def split_at(n)
@@ -53,7 +53,7 @@ class String
   end
 
   # True if the string is long enough such that {#at} is defined for the
-  # given +n+
+  # given `n`
   #
   # @example
   #   "abc".defined_at?(0)  #=> true

@@ -1,6 +1,6 @@
 class String
 
-  # True if the string is +empty?+ or contains all whitespace
+  # True if the string is `empty?` or contains all whitespace
   #
   # @example
   #   "abc".blank?    #=> false
@@ -14,7 +14,7 @@ end
 
 module Enumerable
 
-  # True if the collection is +empty?+
+  # True if the collection is `empty?`
   #
   # @example
   #   [1,2].blank?    #=> false
@@ -27,7 +27,7 @@ end
 
 class NilClass
 
-  # Always +true+. Note this overrides {Object#blank?} which returns false.
+  # Always `true`. Note this overrides {Object#blank?} which returns false.
   #
   # @example
   #   nil.blank?    #=> true
@@ -39,7 +39,7 @@ end
 
 class Object
 
-  # Always +false+. Note that {NilClass#blank?} is overridden to return +true+
+  # Always `false`. Note that {NilClass#blank?} is overridden to return `true`
   #
   # @example
   #   false.blank?    #=> false

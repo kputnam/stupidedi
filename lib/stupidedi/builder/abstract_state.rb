@@ -90,7 +90,7 @@ module Stupidedi
         element_vals = element_uses.zip(element_toks).map do |use, tok|
           if tok.nil?
             if use.repeatable?
-              Values::RepeatedElementVal.empty(use.definition, parent)
+              Values::RepeatedElementVal.empty(use.definition, parent, use)
             else
               use.empty
             end

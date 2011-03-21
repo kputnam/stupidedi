@@ -81,14 +81,10 @@ module Stupidedi
             end
 
             def value(object, definition, parent, usage)
-              if object.respond_to?(:to_s)
-                s = object.to_s
-
-                if s.empty?
-                  StringVal::Empty.new(definition, parent, usage)
-                else
-                  StringVal::NonEmpty.new(s, definition, parent, usage)
-                end
+              if object.blank?
+                StringVal::Empty.new(definition, parent, usage)
+              elsif object.respond_to?(:to_s)
+                StringVal::NonEmpty.new(object.to_s, definition, parent, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end

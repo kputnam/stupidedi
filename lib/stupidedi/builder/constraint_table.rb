@@ -288,9 +288,9 @@ module Stupidedi
           end
         end
 
-        # Return the value of the +m+-th elemnt, or if +n+ is not nil, return
-        # the value of the +n+-th component from the +n+-th element. When the
-        # value is blank, the function returns +nil+.
+        # Return the value of the `m`-th elemnt, or if `n` is not nil, return
+        # the value of the `n`-th component from the `n`-th element. When the
+        # value is blank, the function returns `nil`.
         #
         # @param [Array<Reader::SimpleElementTok, Reader::CompositeElementTok>] element_toks
         # @param [Integer] m

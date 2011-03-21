@@ -1,6 +1,10 @@
 module Stupidedi
   module Dictionaries
     module Interchanges
+
+      #
+      # @see FunctionalGroups::FiftyTen
+      #
       module FiveOhOne
 
         autoload :ElementDefs,
@@ -16,6 +20,7 @@ module Stupidedi
           "stupidedi/dictionaries/interchanges/00501/interchange_val"
 
       end
+
     end
   end
 end

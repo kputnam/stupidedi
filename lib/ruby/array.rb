@@ -1,6 +1,6 @@
 class Array
 
-  # Return the first item. Raises an +IndexError+ if the Array is +empty?+.
+  # Return the first item. Raises an `IndexError` if the Array is `empty?`.
   #
   # @example
   #   [1, 2, 3].head  #=> 1
@@ -11,7 +11,7 @@ class Array
     x
   end
 
-  # True if {#at} is defined for the given +n+
+  # True if {#at} is defined for the given `n`
   #
   # @example
   #   [1, 2, 3].defined_at?(0)    #=> true
@@ -37,7 +37,7 @@ class Array
     xs
   end
 
-  # Selects all elements except the last +n+ ones.
+  # Selects all elements except the last `n` ones.
   #
   # @example
   #   [1, 2, 3].tail      #=> [1, 2]
@@ -50,7 +50,7 @@ class Array
     slice(0..-(n + 1)) or []
   end
 
-  # Select all elements except the first +n+ ones.
+  # Select all elements except the first `n` ones.
   #
   # @example
   #   [1, 2, 3].drop(1)   #=> [2, 3]
@@ -63,7 +63,7 @@ class Array
     slice(n..-1) or []
   end
 
-  # Select all elements except the last +n+ ones.
+  # Select all elements except the last `n` ones.
   #
   # @return [Array]
   def take(n)

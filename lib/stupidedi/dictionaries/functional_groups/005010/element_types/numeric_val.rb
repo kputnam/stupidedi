@@ -174,7 +174,7 @@ module Stupidedi
             end
 
             def value(object, definition, parent, usage)
-              if object.blank? or object.is_a?(NumericVal::Empty)
+              if object.blank?
                 NumericVal::Empty.new(definition, parent, usage)
               elsif object.respond_to?(:to_d)
                 NumericVal::NonEmpty.new(object.to_d, definition, parent, usage)

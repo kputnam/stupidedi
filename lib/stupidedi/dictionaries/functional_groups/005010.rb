@@ -1,6 +1,11 @@
 module Stupidedi
   module Dictionaries
     module FunctionalGroups
+
+      #
+      # @see Guides::FiftyTen
+      # @see Interchanges::FiveOhOne
+      #
       module FiftyTen
 
         autoload :ElementTypes,
@@ -31,6 +36,7 @@ module Stupidedi
           "stupidedi/dictionaries/functional_groups/005010/transaction_set_defs"
 
       end
+
     end
   end
 end

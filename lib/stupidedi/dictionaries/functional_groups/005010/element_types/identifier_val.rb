@@ -87,14 +87,10 @@ module Stupidedi
 
             # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
             def value(object, definition, parent, usage)
-              if object.nil?
+              if object.blank?
                 IdentifierVal::Empty.new(definition, parent, usage)
-              elsif object.is_a?(String) or object.is_a?(StringVal) or object.is_a?(IdentifierVal)
-                if object.empty?
-                  IdentifierVal::Empty.new(definition, parent, usage)
-                else
-                  IdentifierVal::NonEmpty.new(object.to_s, definition, parent, usage)
-                end
+              elsif object.respond_to?(:to_s)
+                IdentifierVal::NonEmpty.new(object.to_s, definition, parent, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end

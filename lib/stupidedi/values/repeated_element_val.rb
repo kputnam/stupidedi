@@ -1,7 +1,9 @@
 module Stupidedi
   module Values
 
-    # @see X222 B.1.1.3.2 Repeating Data Elements
+    #
+    # @see X222.pdf B.1.1.3.2 Repeating Data Elements
+    #
     class RepeatedElementVal < AbstractVal
 
       # @return [CompositeElementDef, SimpleElementDef]
@@ -13,11 +15,14 @@ module Stupidedi
       # @return [SegmentVal]
       attr_reader :parent
 
+      # @return [Schema::SimpleElementUse, Schema::CompositeElementUse
+      attr_reader :usage
+
       delegate :at, :defined_at?, :length, :to => :@element_vals
 
-      def initialize(definition, element_vals, parent)
-        @definition, @element_vals, @parent =
-          definition, element_vals, parent
+      def initialize(definition, element_vals, parent, usage)
+        @definition, @element_vals, @parent, @usage =
+          definition, element_vals, parent, usage
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -31,7 +36,8 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:element_vals, @element_vals),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:parent, @parent),
+          changes.fetch(:usage, @usage)
       end
 
       def empty?
@@ -43,7 +49,7 @@ module Stupidedi
         copy(:element_vals => element_val.snoc(@element_vals))
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @definition.try{|e| "[#{e.id}]" }
         q.text("RepeatedElementVal#{id}")
@@ -67,16 +73,21 @@ module Stupidedi
     end
 
     class << RepeatedElementVal
+      #########################################################################
+      # @group Constructor Methods
 
       # @return [RepeatedElementVal]
-      def empty(definition, parent)
-        RepeatedElementVal.new(definition, [], parent)
+      def empty(definition, parent, element_use)
+        RepeatedElementVal.new(definition, [], parent, element_use)
       end
 
       # @return [RepeatedElementVal]
-      def build(definition, element_vals, parent)
-        RepeatedElementVal.new(definition, element_vals, parent)
+      def build(definition, element_vals, parent, element_use)
+        RepeatedElementVal.new(definition, element_vals, parent, element_use)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

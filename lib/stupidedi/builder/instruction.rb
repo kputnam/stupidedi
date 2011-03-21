@@ -41,8 +41,8 @@ module Stupidedi
       # will then contain the segment.
       #
       # When a segment indicates the start of a child structure, the class
-      # indicated by this attribute is expected to respond to +push(segment_tok,
-      # segment_use, parent, reader)+ by creating a new AbstractState.
+      # indicated by this attribute is expected to respond to `push(segment_tok,
+      # segment_use, parent, reader)` by creating a new AbstractState.
       #
       # @return [Class<AbstractState>]
       attr_reader :push

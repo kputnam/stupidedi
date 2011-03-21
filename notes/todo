@@ -1,10 +1,9 @@
+TODO
+-------------------------------------------------------------------------------
 
-Programmatic API for Builder that constructs SegmentTok and friends with stack
-frames for the input position. Requires creating a new Reader::Position class
-because constructing a Reader::Input to encode the position is yucky.
-
-Implement Builder::FailureState -- the "non-clean" 835 sample files are tripping
-the error handling in one of the AbstractState.push methods.
+Fix the StateMachine's handling of Reader. When ISE is read, the TokenReader
+should be "downcast" to StreamReader. Otherwise we don't correctly skip non-X12
+data from the input stream between interchanges.
 
 Colorized pretty printer output. Definitions and meta-data should be separately
 colored (to blend in with the background), element values should stand out, and
@@ -31,7 +30,8 @@ Create a new AbstractState that bypasses the parse tree. This will be useful
 when we want to skip an entire transaction, functional group, or interchange.
 
 Improve the tree traversal API. This is hard to conceive, but perhaps working on
-the Editor code will reveal the key problems.
+the Editor code will reveal the key problems. Perhaps something like zipper that
+can use qualifier values to search for specific instances of SegmentUse
 
 Design the error handling more carefully. Currently constructors for subclasses
 of SimpleElementVal raise exceptions for badly formatted input, which will blow
@@ -42,6 +42,17 @@ It might be most sensible to change AbstractState to accept already-built
 SegmentVals from the programmatic API in addition to SegmentToks from the
 Reader::TokenReader. This would reduce wasteful object creation.
 
+DONE
+-------------------------------------------------------------------------------
+
+Implement Builder::FailureState -- the "non-clean" 835 sample files are tripping
+the error handling in one of the AbstractState.push methods.
+
 Change Builder::StateMachine#input! to either require a reader or correctly deal
 with having a nil reader. Currently the InterchangeState.push constructior blows
 up because it tries to merge reader.separators
+
+Programmatic API for Builder that constructs SegmentTok and friends with stack
+frames for the input position. Requires creating a new Reader::Position class
+because constructing a Reader::Input to encode the position is yucky.
+

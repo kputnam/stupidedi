@@ -1,7 +1,9 @@
 module Stupidedi
   module Values
 
-    # @see X222 B.1.1.3.3 Composite Data Structure
+    #
+    # @see X222.pdf B.1.1.3.3 Composite Data Structure
+    #
     class CompositeElementVal < AbstractVal
 
       # @return [CompositeElementDef]

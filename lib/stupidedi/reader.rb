@@ -23,26 +23,26 @@ module Stupidedi
     autoload :SimpleElementTok,     "stupidedi/reader/tokens/simple_element_tok"
 
     autoload :Input,          "stupidedi/reader/input"
+    autoload :AbstractInput,  "stupidedi/reader/input/abstract_input"
     autoload :DelegatedInput, "stupidedi/reader/input/delegated_input"
     autoload :FileInput,      "stupidedi/reader/input/file_input"
 
+    # @private
     R_BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
+
+    # @private
     R_EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
+
+    # @private
     R_EITHER   = Regexp.union(R_BASIC, R_EXTENDED)
 
+    # @private
     C_BYTES    = (0..255).inject(""){|string, c| string << c }
+
+    # @private
     C_EITHER   = (C_BYTES.scan(R_EITHER)).inject({}){|h,c| h[c] = nil; h }
 
     class << self
-      # Returns non-nil if c belongs to the basic character set
-      def is_basic_character?(character)
-        # @todo
-      end
-
-      # Returns non-nil if c belongs to the extended character set
-      def is_extended_character?(character)
-        # @todo
-      end
 
       # Returns non-nil if c does not belong to the extended or basic character
       # set.
@@ -57,29 +57,6 @@ module Stupidedi
         not Reader::C_EITHER.include?(character)
       end
 
-      # Strips control characters from the string, leaving only basic and
-      # extended characters
-      #
-      # @param [String] string
-      # @return [String]
-      def strip(string)
-        string.scan(Reader::EITHER).join
-      end
-
-      # @private
-      def basic_characters
-        # @todo
-      end
-
-      # @private
-      def extended_characters
-        # @todo
-      end
-
-      # @private
-      def control_characters
-        # @todo
-      end
     end
 
   end

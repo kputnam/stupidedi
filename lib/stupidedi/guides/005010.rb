@@ -1,5 +1,9 @@
 module Stupidedi
   module Guides
+
+    #
+    # @see Stupidedi::Dictionaries::FunctionalGroups::FiftyTen
+    #
     module FiftyTen
 
       autoload :SegmentReqs,  "stupidedi/guides/005010/segment_reqs"

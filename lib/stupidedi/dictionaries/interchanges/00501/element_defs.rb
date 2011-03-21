@@ -2,6 +2,11 @@ module Stupidedi
   module Dictionaries
     module Interchanges
       module FiveOhOne
+
+        #
+        # @see FunctionalGroups::FiftyTen::ElementTypes
+        # @see Schema::CodeList
+        #
         module ElementDefs
 
           # Import definitions of B, DT, R, ID, Nn, AN, TM, and SimpleElementDef
@@ -32,13 +37,22 @@ module Stupidedi
           end
 
           class << SeparatorElementVal
+
+            ###################################################################
+            # @group Constructor Methods
+
+            # @raise NoMethodError
             def empty(definition, parent, usage)
               raise NoMethodError, "@todo"
             end
 
+            # @return [SeparatorElementVal]
             def value(character, definition, parent, usage)
               SeparatorElementVal.new(character, definition, parent, usage)
             end
+
+            # @endgroup
+            ###################################################################
           end
 
           I01 = t::ID.new(:I01, "Authorization Information Qualifier",    2,  2,

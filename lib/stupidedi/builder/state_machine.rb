@@ -14,7 +14,7 @@ module Stupidedi
       end
 
       # @return [Reader::TokenReader]
-      def input!(segment_tok, reader = nil)
+      def input!(segment_tok, reader)
         states = []
         errors = []
 

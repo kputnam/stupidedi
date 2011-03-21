@@ -203,7 +203,7 @@ module Stupidedi
 
             # @return [DateVal::Empty,  DateVal::Proper, DateVal::Improper]
             def value(object, definition, parent, usage)
-              if object.nil?
+              if object.blank?
                 DateVal::Empty.new(definition, parent, usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)

@@ -2,6 +2,10 @@ module Stupidedi
   module Dictionaries
     module Interchanges
       module FiveOhOne
+
+        #
+        # @see Schema::SegmentDef.build
+        #
         module SegmentDefs
 
           s = Schema

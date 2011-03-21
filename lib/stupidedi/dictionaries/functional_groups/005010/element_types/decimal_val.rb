@@ -180,7 +180,7 @@ module Stupidedi
 
             # @return [DecimalVal::Empty, DecimalVal::NonEmpty]
             def value(object, definition, parent, usage)
-              if object.blank? or object.is_a?(DecimalVal::Empty)
+              if object.blank?
                 DecimalVal::Empty.new(definition, parent, usage)
               elsif object.respond_to?(:to_d)
                 DecimalVal::NonEmpty.new(object.to_d, definition, parent, usage)

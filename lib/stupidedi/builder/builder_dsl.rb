@@ -9,6 +9,7 @@ module Stupidedi
                                  Reader::SegmentDict.empty)
       end
 
+      # @return [Array<InstructionTable>]
       def successors
         @machine.states.inject([]) do |list, s|
           list << s.instructions
@@ -41,12 +42,12 @@ module Stupidedi
 
       # @see Schema::ElementReq#forbidden?
       def notused
-        :notused.cons
+        @__notused ||= :notused.cons
       end
 
       # @see Schema::SimpleElementUse#allowed_values
       def default
-        :default.cons
+        @__default ||= :default.cons
       end
 
       # @endgroup
@@ -62,7 +63,8 @@ module Stupidedi
         @reader = @machine.input!(segment_tok(name, args), @reader)
 
         if @machine.stuck?
-          raise Exceptions::ParseError
+          raise Exceptions::ParseError,
+            "Segment #{name} cannot occur here"
         end
 
         return self
@@ -91,7 +93,7 @@ module Stupidedi
             element_idx.succ!
 
             unless e_val.nil?
-              raise ArgumentError,
+              raise Exceptions::ParseError,
                 "#{id}#{element_idx} is a simple element"
             end
 
@@ -102,7 +104,7 @@ module Stupidedi
           element_uses = segment_def.element_uses
 
           if elements.length > element_uses.length
-            raise ArgumentError,
+            raise Exceptions::ParseError,
               "wrong number of arguments (#{elements.length} for 1..#{element_uses.length})"
           end
 
@@ -113,7 +115,7 @@ module Stupidedi
             if e_use.repeatable?
               # repeatable composite or non-composite
               unless e_tag == :repeated or (e_tag.blank? and e_val.blank?)
-                raise ArgumentError,
+                raise Exceptions::ParseError,
                   "#{id}#{element_idx} is a repeatable element"
               end
 
@@ -121,7 +123,7 @@ module Stupidedi
             elsif e_use.composite?
               # non-repeatable composite
               unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
-                raise ArgumentError,
+                raise Exceptions::ParseError,
                   "#{id}#{element_idx} is a composite element"
               end
 
@@ -129,7 +131,7 @@ module Stupidedi
             else
               # non-repeatable non-composite
               unless e_val.nil?
-                raise ArgumentError,
+                raise Exceptions::ParseError,
                   "#{id}#{element_idx} is a simple element"
               end
 
@@ -148,7 +150,8 @@ module Stupidedi
         if element_use.composite?
           elements.each do |e_tag, e_val|
             unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
-              raise "@todo is a composite element"
+              raise Exceptions::ParseError,
+                "@todo is a composite element"
             end
 
             element_toks << composite_tok(e_val || [], element_use)
@@ -156,7 +159,8 @@ module Stupidedi
         else
           elements.each do |e_tag, e_val|
             unless e_val.nil?
-              raise "@todo is a simple element"
+              raise Exceptions::ParseError,
+                "@todo is a simple element"
             end
 
             element_toks << simple_tok(e_tag, element_use)
@@ -171,7 +175,7 @@ module Stupidedi
         component_uses = composite_use.definition.component_uses
 
         if components.length > component_uses.length
-          raise ArgumentError,
+          raise Exceptions::ParseError,
             "wrong number of arguments (#{components.length} for 1..#{component_uses.length})"
         end
 
@@ -181,7 +185,7 @@ module Stupidedi
           component_idx.succ!
 
           unless c_val.nil?
-            raise ArgumentError,
+            raise Exceptions::ParseError,
               "@todo is a component element"
           end
 

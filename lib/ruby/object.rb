@@ -28,12 +28,12 @@ class Object
 
   # @group Combinators
 
-  # Yields +self+ to a block argument
+  # Yields `self` to a block argument
   def bind
     yield self
   end
 
-  # Yields +self+ to a side-effect block argument and return +self+
+  # Yields `self` to a side-effect block argument and return `self`
   #
   # @return self
   def tap

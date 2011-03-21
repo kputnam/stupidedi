@@ -2,6 +2,9 @@ module Stupidedi
   module Guides
     module FiftyTen
 
+      #
+      # {GuideBuilder} is a simple DSL for construction an implementation guide.
+      #
       module GuideBuilder
       end
 
@@ -12,20 +15,34 @@ module Stupidedi
           transaction_set_def.copy(:table_defs => table_defs)
         end
 
+        #######################################################################
+        # @group Element Constraints
+
+        # @param [String, ...] values
         def Values(*values)
           [:Values, values]
         end
 
+        # @param [Integer] n
         def MaxLength(n)
           [:MaxLength, n]
         end
 
+        # @param [Integer] n
         def MaxPrecision(n)
           [:MaxPrecision, n]
         end
 
-        def Element(requirement, name, *args)
-          [:Element, requirement, name, args]
+        # @endgroup
+        #######################################################################
+
+        #######################################################################
+        # @group Definition Constructors
+
+        # @param [Schema::ElementReq] requirement
+        # @param [String] name
+        def Element(requirement, name, *constraints)
+          [:Element, requirement, name, constraints]
         end
 
         # @return [SegmentUse]
@@ -98,6 +115,9 @@ module Stupidedi
             copy(:element_uses => element_uses).
             use(position, requirement, repeat_count)
         end
+
+        # @endgroup
+        #######################################################################
 
        private
 

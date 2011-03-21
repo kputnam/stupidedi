@@ -104,7 +104,7 @@ module Stupidedi
 
             # @return [TimeVal::NonEmpty, TimeVal::Empty]
             def value(object, definition, parent, usage)
-              if object.nil?
+              if object.blank?
                 TimeVal::Empty.new(definition, parent, usage)
 
               elsif object.is_a?(Time)

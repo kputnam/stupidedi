@@ -28,17 +28,17 @@ module Stupidedi
   #     optimize_tailcall :fact
   #   end
   #
-  # =Benchmarks
+  # Benchmarks
+  # ----------
+  #     o = Optimized.new
+  #     u = Unoptimized.new
   #
-  #   o = Optimized.new
-  #   u = Unoptimized.new
-  #
-  #   [10, 50, 100, 500, 1000, 5000, 10000, 50000].each do |n|
-  #     Benchmark.bm do |x|
-  #       x.report("#{n} optim = ") { puts(begin; o.fact(n).size; rescue; $! end) }
-  #       x.report("#{n} plain = ") { puts(begin; u.fact(n).size; rescue; $! end) }
+  #     [10, 50, 100, 500, 1000, 5000, 10000, 50000].each do |n|
+  #       Benchmark.bm do |x|
+  #         x.report("#{n} optim = ") { puts(begin; o.fact(n).size; rescue; $! end) }
+  #         x.report("#{n} plain = ") { puts(begin; u.fact(n).size; rescue; $! end) }
+  #       end
   #     end
-  #   end
   #
   # With 10000 stack frames the optimized version runs about 40% faster. These
   # benchmark results were produced by Ruby Enterprise Edition 1.8.7

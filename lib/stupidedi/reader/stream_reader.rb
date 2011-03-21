@@ -82,7 +82,7 @@ module Stupidedi
             # method defined by TokenReader skips past control characters.
             remaining.flatmap do |w|
               w.read_character.flatmap do |x|
-                elements << SimpleElementTok.new(x.value, w.input, x.remainder.input)
+                elements << SimpleElementTok.build(x.value, w.input, x.remainder.input)
 
                 # The character after the last element is defined to be the
                 # segment terminator. The {read_character} method here, defined
@@ -94,7 +94,7 @@ module Stupidedi
                   else
                     separators.segment = y.value
 
-                    token = SegmentTok.new(:ISA, elements, @input, y.remainder.input)
+                    token = SegmentTok.build(:ISA, elements, @input, y.remainder.input)
 
                     result(token, TokenReader.new(y.remainder.input, separators))
                   end

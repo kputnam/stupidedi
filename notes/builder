@@ -1,28 +1,28 @@
 
   Appending to Syntax Tree
-    b = Stupidedi::Builder::Transmission.new
+    b = Stupidedi::Builder::BuilderDsl.new
 
-    b = b.ISA("00", b.blank,
-              "01", "SECRET",
-              "ZZ", "SUBMITTERS ID",
-              "ZZ", "RECEIVERS ID",
-              Date.current, Time.current,
-              "U", "00401",
-              "000000905", "1", "T", b.default)
+    b.ISA("00", b.blank,
+          "01", "SECRET",
+          "ZZ", "SUBMITTERS ID",
+          "ZZ", "RECEIVERS ID",
+          Date.current, Time.current,
+          "U", "00401",
+          "000000905", "1", "T", b.default)
 
-    b = b.GS("HC",
-             "SENDER CODE",
-             "RECEIVER CODE",
-             Date.current, Time.current,
-             b.default,
-             "X", "004010X098")
+    b.GS("HC",
+         "SENDER CODE",
+         "RECEIVER CODE",
+         Date.current, Time.current,
+         b.default,
+         "X", "004010X098")
 
-    b = b.ST("837", b.default).
-          bht("0019", "00", "0123", Date.current, Time.current, "CH").
-          nm1("41", "2", "CRAMMER, DOLE, PALMER, AND JOHANSON",
-              b.blank, b.blank, b.blank, b.blank, "46", "W7933THU").
-          n2("N ASSOCIATES, INC").
-          per("IC", "JANE DOE", "TE", "9005555555")
+    b.ST("837", b.default).
+      BHT("0019", "00", "0123", Date.current, Time.current, "CH").
+      NM1("41", "2", "CRAMMER, DOLE, PALMER, AND JOHANSON",
+          b.blank, b.blank, b.blank, b.blank, "46", "W7933THU").
+       N2("N ASSOCIATES, INC").
+      PER("IC", "JANE DOE", "TE", "9005555555")
 
     ...
 

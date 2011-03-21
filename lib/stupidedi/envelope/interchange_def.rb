@@ -2,9 +2,10 @@ module Stupidedi
   module Envelope
 
     #
-    # @see X12.5 3.2.1 Basic Interchange Service Request
+    # @see X12.5.pdf 3.2.1 Basic Interchange Service Request
     #
     class InterchangeDef
+
       # @return [String]
       attr_reader :id
 

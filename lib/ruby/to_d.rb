@@ -18,7 +18,7 @@ class String
                \Z/ix
 
   # Converts the string to a BigDecimal after validating the format. If the
-  # string does not match the pattern for a valid number, an +ArgumentError+
+  # string does not match the pattern for a valid number, an `ArgumentError`
   # is raised.
   #
   # @example
@@ -62,8 +62,8 @@ end
 
 class Float
 
-  # Raises a +TypeError+ exception. The reason this method is defined at
-  # all is to produce a more meaningful error than +NoSuchMethod+.
+  # Raises a `TypeError` exception. The reason this method is defined at
+  # all is to produce a more meaningful error than `NoSuchMethod`.
   #
   # @return [void]
   def to_d
