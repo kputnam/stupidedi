@@ -19,10 +19,6 @@ specific.
 Update GuideBuilder to ensure SegmentReq, ElementReq, and RepeatCount are only
 restricted by the implementation guide and not made less restrictive.
 
-Implement the destructive update methods for both AbstractState subclasses and
-for Values/Envelope data types. Need to evaluate when both can be called, when
-only the AbstractState can be modified destructively, etc.
-
 Fix the error handling with Reader::TokenReader so StateMachine can know when
 reading a segment failed due to EOF at an expected or unexpected boundary.
 
@@ -56,3 +52,6 @@ Programmatic API for Builder that constructs SegmentTok and friends with stack
 frames for the input position. Requires creating a new Reader::Position class
 because constructing a Reader::Input to encode the position is yucky.
 
+Implement the destructive update methods for both AbstractState subclasses and
+for Values/Envelope data types. Need to evaluate when both can be called, when
+only the AbstractState can be modified destructively, etc.

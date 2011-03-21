@@ -20,9 +20,14 @@ by three elements) to an instance of [`TransactionSetDef`][3].
 
     config = Stupidedi::Config.new
 
-    # Link the "00501" value in ISA12 element to the definition
+    # Link the "00501" value in ISA12 element to the interchange definition
     config.interchange.register("00501") do
       Stupidedi::Dictionaries::Interchanges::FiveOhOne::InterchangeDef
+    end
+
+    # Link the "005010" value is GS08 to the functional group definition
+    config.functional_group.register("005010") do
+      Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::FunctionalGroupDef
     end
 
     # Link "005010X222" in GS08 or ST03, "HC" in GS01, and "837"
@@ -248,11 +253,13 @@ The `SegmentDef` indicates the number of elements and their types (composite,
 repeated, simple).  This information allows `Builder::BuilderDsl` to raise a
 [`ParseError`][12] on the following conditions:
 
-Generating a composite element instead of a simple or repeated element
+Generating a composite element instead of a simple or repeated element:
+
     b.NM1(b.composite(nil, "B"), nil)
       #=> NM101 is a simple element (Stupidedi::Exceptions::ParseError)
 
-Generating a simple element instead of a repeated or composite element
+Generating a simple element instead of a repeated or composite element:
+
     b.REF(nil, nil, nil, "D")
       #=> REF04 is a composite element (Stupidedi::Exceptions::ParseError)
     b.DMG(nil, nil, nil, nli, "E")
@@ -260,11 +267,13 @@ Generating a simple element instead of a repeated or composite element
     b.DMG(nil, nil, nil, nil, b.repeated("E"))
       #=> DMG05 is a composite element (Stupidedi::Exceptions::ParseError)
 
-Generating a repeated element instead of a composite or simple element
+Generating a repeated element instead of a composite or simple element:
+
     b.NM1(b.repeated("A", "B"))
       #=> NM101 is a simple element (Stupidedi::Exceptions::ParseError)
 
-Generating too many elements
+Generating too many elements:
+
     b.N3(nil, nil, nil)
       #=> N3 has only 4 elements (Stupidedi::Exceptions::ParseError)
     b.REF(nil, nil, nil, b.composite("A", "B", "C", "D", "E", "F", "G"))
