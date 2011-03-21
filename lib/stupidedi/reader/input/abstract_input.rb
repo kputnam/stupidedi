@@ -48,7 +48,7 @@ module Stupidedi
 
       # @group Querying the Position
       ########################################################################
-      
+
       # The {Position} value that describes the position of the input stream
       #
       # @return [Position]

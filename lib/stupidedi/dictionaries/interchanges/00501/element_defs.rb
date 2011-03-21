@@ -22,8 +22,9 @@ module Stupidedi
               super(definition, parent, usage)
             end
 
+            # @return [SeparatorElementVal]
             def copy(changes = {})
-              self.class.new \
+              SeparatorElementVal.new \
                 changes.fetch(:value, @value),
                 changes.fetch(:definition, definition),
                 changes.fetch(:parent, parent),
@@ -48,6 +49,11 @@ module Stupidedi
 
             # @return [SeparatorElementVal]
             def value(character, definition, parent, usage)
+              SeparatorElementVal.new(character, definition, parent, usage)
+            end
+
+            # @return [SeparatorElementVal]
+            def parse(character, definition, parent, usage)
               SeparatorElementVal.new(character, definition, parent, usage)
             end
 

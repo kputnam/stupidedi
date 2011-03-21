@@ -110,7 +110,7 @@ module Stupidedi
         # ST03: Implementation Convention Reference
         version = segment_tok.element_toks.at(2).try(:value)
 
-        if version.blank?
+        if version.blank? or version == :default
           # GS08: Version / Release / Industry Identifier Code
           version = parent.value.at(:GS).head.at(7).to_s
         end

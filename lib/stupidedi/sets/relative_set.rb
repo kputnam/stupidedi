@@ -44,6 +44,10 @@ module Stupidedi
         true
       end
 
+      def first
+        @hash.at(@hash.keys.first)
+      end
+
       # @return [AbstractSet]
       def replace(other)
         if other.is_a?(AbstractSet)

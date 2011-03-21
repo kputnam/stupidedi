@@ -38,6 +38,14 @@ module Stupidedi
           changes.fetch(:universe, @universe)
       end
 
+      def first
+        @universe.each do |value, n|
+          unless @mask[n].zero?
+            return value
+          end
+        end
+      end
+
       # @return [void]
       def each
         @universe.each do |value, n|

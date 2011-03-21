@@ -11,13 +11,13 @@ module Stupidedi
 
       # @return [IO]
       attr_reader :io
-      
+
       # @return [Integer]
       attr_reader :offset
-      
+
       # @return [Integer]
       attr_reader :line
-      
+
       # @return [Integer]
       attr_reader :column
 

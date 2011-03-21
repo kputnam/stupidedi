@@ -87,78 +87,114 @@ module Stupidedi
         element_uses = segment_def.element_uses
         element_toks = segment_tok.element_toks
 
-        element_vals = element_uses.zip(element_toks).map do |use, tok|
-          if tok.nil?
-            if use.repeatable?
-              Values::RepeatedElementVal.empty(use.definition, parent, use)
+        element_vals = []
+        element_idx  = "00"
+        element_uses.zip(element_toks) do |element_use, element_tok|
+          element_idx.succ!
+
+          element_vals <<
+            if element_tok.nil?
+              if element_use.repeatable?
+                Values::RepeatedElementVal.empty(element_use.definition, parent, element_use)
+              else
+                element_use.empty
+              end
             else
-              use.empty
+              element("#{segment_def.id}#{element_idx}", element_use, element_tok)
             end
-          else
-            element(use, tok)
-          end
         end
 
         segment_use.value(element_vals, parent)
       end
 
       # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
-      def element(element_use, element_tok, parent = nil)
+      def element(designator, element_use, element_tok, parent = nil)
         if element_use.simple?
           if element_use.repeatable?
             element_toks = element_tok.element_toks
             element_vals = element_toks.map do |element_tok|
-              simple_element(element_use, element_tok, parent)
+              simple_element(designator, element_use, element_tok, parent)
             end
 
-            repeated_element(element_use, element_vals, parent)
+            repeated_element(designator, element_use, element_vals, parent)
           else
-            simple_element(element_use, element_tok, parent)
+            simple_element(designator, element_use, element_tok, parent)
           end
         else
           if element_use.repeatable?
             element_toks = element_tok.element_toks
             element_vals = element_toks.map do |element_tok|
-              composite_element(element_use, element_tok, parent)
+              composite_element(designator, element_use, element_tok, parent)
             end
 
-            repeated_element(element_use, element_vals, parent)
+            repeated_element(designator, element_use, element_vals, parent)
           else
-            composite_element(element_use, element_tok, parent)
+            composite_element(designator, element_use, element_tok, parent)
           end
         end
       end
 
       # @return [Values::RepeatedElementVal]
-      def repeated_element(element_use, element_vals, parent = nil)
+      def repeated_element(designator, element_use, element_vals, parent = nil)
+        # @todo: Position
         Values::RepeatedElementVal.build(element_use.definition, element_vals, parent, element_use)
       end
 
       # @return [Values::CompositeElementVal]
-      def composite_element(composite_use, composite_tok, parent = nil)
+      def composite_element(designator, composite_use, composite_tok, parent = nil)
         composite_def  = composite_use.definition
         component_uses = composite_def.component_uses
         component_toks = composite_tok.component_toks
 
-        component_vals = component_uses.zip(component_toks).map do |use, tok|
-          if tok.nil?
-            use.empty
-          else
-            simple_element(use, tok)
-          end
+        component_vals = []
+        component_idx  = "00"
+        component_uses.zip(component_toks) do |component_use, component_tok|
+          component_idx.succ!
+
+          component_vals <<
+            if component_tok.nil?
+              component_use.empty
+            else
+              simple_element("#{designator}-#{component_idx}", component_use, component_tok)
+            end
         end
 
+        # @todo: Position
         composite_use.value(component_vals, parent)
       end
 
       # @return [Values::SimpleElementVal]
-      def simple_element(element_use, element_tok, parent = nil)
+      def simple_element(designator, element_use, element_tok, parent = nil)
         # We don't validate that element_tok is simple because the TokenReader
         # will always produce a SimpleElementTok given a SimpleElementUse from
-        # the SegmentDef. On the other hand, the public builder API will throw
-        # an exception if the programmer constructs the wrong kind of element
+        # the SegmentDef. On the other hand, the BuilderDsl API will throw an
+        # exception if the programmer constructs the wrong kind of element
         # according to the SegmentDef.
-        element_use.value(element_tok.value, parent)
+
+        # @todo: Position
+        if element_tok.value == :default
+          allowed_vals = element_use.allowed_values
+
+          if element_use.requirement.forbidden?
+            element_use.empty(parent)
+          elsif allowed_vals.empty?
+            element_use.empty(parent)
+          elsif allowed_vals.size == 1
+            element_use.value(allowed_vals.first, parent)
+          else
+            raise Exceptions::ParseError,
+              "Cannot determine default value for element #{designator}"
+          end
+        elsif element_tok.value == :not_used
+          if element_use.requirement.forbidden?
+            element_use.empty(parent)
+          else
+            raise Exceptions::ParseError,
+              "Element #{designator} is not forbidden"
+          end
+        else
+          element_use.value(element_tok.value, parent)
+        end
       end
 
       # @endgroup

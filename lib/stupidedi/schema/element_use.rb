@@ -61,6 +61,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [SimpleElementVal]
+      def parse(string, parent = nil)
+        definition.parse(string, parent, self)
+      end
+
       def repeatable?
         @repeat_count.try{|r| r.include?(2) }
       end
@@ -109,6 +114,11 @@ module Stupidedi
         unless parent.nil?
           @definition = @definition.copy(:parent => self)
         end
+      end
+
+      # @return [SimpleElementVal]
+      def parse(string, parent = nil)
+        definition.parse(string, parent, self)
       end
 
       def repeatable?

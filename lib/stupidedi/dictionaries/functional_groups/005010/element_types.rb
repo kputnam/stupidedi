@@ -48,6 +48,11 @@ module Stupidedi
             end
 
             # @return [Values::SimpleElementVal]
+            def parse(string, parent = nil, usage = nil)
+              companion.parse(string, self, parent, usage)
+            end
+
+            # @return [Values::SimpleElementVal]
             def value(object, parent = nil, usage = nil)
               companion.value(object, self, parent, usage)
             end

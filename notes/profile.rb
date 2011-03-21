@@ -18,8 +18,8 @@ tokenizer = Stupidedi::Reader::StreamReader.new(input)
 parser    = Stupidedi::Builder::StateMachine.build(config)
 pp parser.read!(tokenizer)
 
-#result = RubyProf.profile do
-#  parser.read!(tokenizer)
-#end
-#RubyProf::GraphPrinter.new(result || RubyProf.stop).print($stdout)
+result = RubyProf.profile do
+  parser.read!(tokenizer)
+end
+RubyProf::GraphPrinter.new(result || RubyProf.stop).print($stdout)
 #pp parser
