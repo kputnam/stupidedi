@@ -241,8 +241,8 @@ module Stupidedi
       # @return [DslReader]
       def copy(changes = {})
         @separators   = changes.fetch(:separators, @separators)
-        @element_dict = changes.fetch(:segment_dict, @segment_dict)
-        self
+        @segment_dict = changes.fetch(:segment_dict, @segment_dict)
+        return self
       end
     end
 

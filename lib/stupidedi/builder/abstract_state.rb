@@ -131,7 +131,7 @@ module Stupidedi
 
       # @return [Values::RepeatedElementVal]
       def repeated_element(element_use, element_vals, parent = nil)
-        Values::RepeatedElementVal.build(element_use.definition, element_vals, parent)
+        Values::RepeatedElementVal.build(element_use.definition, element_vals, parent, element_use)
       end
 
       # @return [Values::CompositeElementVal]

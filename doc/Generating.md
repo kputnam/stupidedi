@@ -12,8 +12,8 @@ Configuration
 
 Minimal configuration is needed so Stupidedi can load the correct definitions to
 ensure well-formedness. The configuration below links interchange version 00501
-to an instance of [InterchangeDef][2], and links the transaction set (identified
-by three elements) to an instance of [TransactionSetDef][3].
+to an instance of [`InterchangeDef`][2], and links the transaction set (identified
+by three elements) to an instance of [`TransactionSetDef`][3].
 
   [2]: ../../Stupidedi/Envelope/InterchangeDef.html
   [3]: ../../Stupidedi/Envelope/TransactionSetDef.html
@@ -146,7 +146,7 @@ a segment.
 
 Blank elements (simple, composite, and repeated) can be generated from a `nil`
 argument, but you can improve readability by using `#blank`, and no-argument
-calls to `#composite` and `#repeated`.
+calls to `#composite` and `#repeated`. These are arguably more self-documenting.
 
     b.AK9(nil, 1, 1, 0)
     b.AK9(b.repeated, 1, 1, 0)
@@ -163,8 +163,8 @@ both generate the same segment.
 
 ### Default Elements
 
-Certain elements are declared with a single value in `#allowed_values`. These
-are usually qualifier elements, like `NM102`, whose value adds little
+Certain elements are declared with a single value in [`#allowed_values`][13].
+These are usually qualifier elements, like `NM102`, whose value adds little
 readability. These values can be inferred by [`Builder::BuilderDsl`][1] when the
 `#default` placeholder is used. For example, when generating the X222 837P, the
 following statements generate the same segment.
@@ -176,18 +176,92 @@ following statements generate the same segment.
 When a default value cannot be inferred, a [`ParseError`][12] is thrown.
 
   [12]: ../../Stupidedi/Exceptions/ParseError.html
+  [13]: ../../Stupidedi/Schema/SimpleElementUse.html#allowed_values-instance_method
 
 ### Unused Elements
 
 For elements that are declared to never be sent, `nil` or `#blank` will generate
-the empty segment, however using `#notused` may be more self-documenting. If
+the empty element; however using `#not_used` may be more self-documenting. If
 `Builder::BuilderDsl` determines that the element is not declared as such, it
-will raise a [`ParseError`][12].
+will raise a [`ParseError`][12]. For example the X221 835 document declares ST03
+with `NOT USED`:
+
+    b.ST("835", "1234", b.not_used)
 
 Syntax Validation
 -----------------
 
+The parse tree that `Builder::BuilderDsl` maintains is used to ensure only
+well-formed X12 is generated. This means segments occur in the correct order
+and have the correct number and type of elements.
+
 ### Segment Order
+
+The order in which segments may occur is defined by the [`TransactionSetDef`][3]
+and [`InterchangeDef`][2]. Internally, an instance of [`Builder::StateMachine`][14]
+is used to both incrementally build the parse tree and keep track of which
+segments can occur from the given state. The `#successors` method will return
+one or more [`InstructionTable`][15] values that enumerate the segments that may
+occur in the current state:
+
+    pp b.sucessors
+
+    [InstructionTable(
+      1: Instruction[REF: Subscriber Secon..](pop: 0, drop: 0),
+      2: Instruction[REF: Property and Cas..](pop: 0, drop: 0),
+      3: Instruction[PER: Property and Cas..](pop: 0, drop: 3),
+      4: Instruction[NM1: Subscriber Name   ](pop: 1, drop: 0, push: LoopState),
+      5: Instruction[NM1: Payer Name        ](pop: 1, drop: 0, push: LoopState),
+      6: Instruction[CLM: Claim Informatio..](pop: 1, drop: 2, push: LoopState),
+      7: Instruction[ HL: Subscriber Hiera..](pop: 2, drop: 0, push: LoopState),
+      8: Instruction[ HL: Billing Provider..](pop: 3, drop: 0, push: TableState),
+      9: Instruction[ HL: Subscriber Hiera..](pop: 3, drop: 0, push: TableState),
+     10: Instruction[ HL: Patient Hierachi..](pop: 3, drop: 0, push: TableState),
+     11: Instruction[ SE: Transaction Set ..](pop: 3, drop: 4, push: TableState),
+     12: Instruction[ ST](pop: 4, drop: 0, push: TransactionSetState),
+     13: Instruction[ GE: Functional Group..](pop: 4, drop: 2),
+     14: Instruction[ GS](pop: 5, drop: 0, push: FunctionalGroupState),
+     15: Instruction[IEA: Interchange Cont..](pop: 5, drop: 2),
+     16: Instruction[ISA](pop: 6, drop: 0, push: InterchangeState))]
+
+  [14]: ../../Stupidedi/Builder/StateMachine.html
+  [15]: ../../Stupidedi/Builder/InstructionTable.html
+
+The above output pertains to the X222 837 implementation guide. The output shows
+a single active `InstructionTable` and the segments it is able to accept. For
+more information about how the parser works, see the [Parser Design Document][16].
+Attempting to generate a segment that is not a member of at least one of the
+instruction tables will cause a [`ParseError`][12] to be raised.
+
+    b.N3("SUITE 111", "1234 OCEAN BLVD")
+    #=> Segment N3 cannot occur here (Stupidedi::Exceptions::ParseError)
+
+  [16]: design/Parser.md
 
 ### Element Types
 
+The [`InterchangeDef`][2] or [`TransactionSetDef`][3] classes both respond to
+`#segment_dict`, which allows looking up a `SegmentDef` by segment identifier.
+The `SegmentDef` indicates the number of elements and their types (composite,
+repeated, simple).  This information allows `Builder::BuilderDsl` to raise a
+[`ParseError`][12] on the following conditions:
+
+Generating a composite element instead of a simple or repeated element
+    b.NM1(b.composite(nil, "B"), nil)
+      #=> NM101 is a simple element (Stupidedi::Exceptions::ParseError)
+
+Generating a simple element instead of a repeated or composite element
+    b.REF(nil, nil, nil, "D")
+      #=> REF04 is a composite element (Stupidedi::Exceptions::ParseError)
+    b.DMG(nil, nil, nil, nli, "E")
+      #=> DMG05 is a repeatable element (Stupiedi::Exceptions::ParseError)
+    b.DMG(nil, nil, nil, nil, b.repeated("E"))
+      #=> DMG05 is a composite element (Stupidedi::Exceptions::ParseError)
+
+Generating a repeated element instead of a composite or simple element
+    b.NM1(b.repeated("A", "B"))
+      #=> NM101 is a simple element (Stupidedi::Exceptions::ParseError)
+
+Generating too many elements
+    b.N3(nil, nil, nil)
+      #=> wrong number of arguments (3 for 1..2) (Stupidedi::Exceptions::ParseError)
