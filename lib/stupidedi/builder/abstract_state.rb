@@ -183,7 +183,7 @@ module Stupidedi
             element_use.value(allowed_vals.first, parent)
           else
             raise Exceptions::ParseError,
-              "Cannot determine default value for element #{designator}"
+              "Element #{designator} cannot be inferred"
           end
         elsif element_tok.value == :not_used
           if element_use.requirement.forbidden?
