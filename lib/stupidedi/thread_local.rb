@@ -12,6 +12,7 @@ module Stupidedi
   #   t.get           #=> "value"
   #
   class ThreadLocalVar
+    include Inspect
 
     def initialize(value)
       @value   = value

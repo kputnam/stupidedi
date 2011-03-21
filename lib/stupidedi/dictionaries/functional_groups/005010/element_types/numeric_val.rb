@@ -164,15 +164,15 @@ module Stupidedi
           end
 
           class << NumericVal
+            ###################################################################
             # @group Constructors
 
-            # Create an empty numeric value.
-            #
             # @return [NumericVal::Empty]
             def empty(definition, parent, usage)
               NumericVal::Empty.new(definition, parent, usage)
             end
 
+            # @return [NumericVal::Empty, NumericVal::NonEmpty]
             def value(object, definition, parent, usage)
               if object.blank?
                 NumericVal::Empty.new(definition, parent, usage)
@@ -183,7 +183,20 @@ module Stupidedi
               end
             end
 
+            # @return [NumericVal::Empty, NumericVal::NonEmpty]
+            def parse(string, definition, parent, usage)
+              if string.blank?
+                NumericVal::Empty.new(definition, parent, usage)
+              else
+                NumericVal::NonEmpty.new(string.to_d, definition, parent, usage)
+              end
+            rescue ArgumentError
+              # @todo
+              NumericVal::Empty.new(definition, parent, usage)
+            end
+
             # @endgroup
+            ###################################################################
           end
 
           # Prevent direct instantiation of abstract class NumericVal

@@ -2,6 +2,8 @@ module Stupidedi
   module Envelope
 
     class TransactionSetDef
+      include Inspect
+
       # @return [String]
       attr_reader :id
 

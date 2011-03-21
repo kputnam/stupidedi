@@ -2,15 +2,14 @@ module Stupidedi
   module Schema
 
     class CodeList
+      include Inspect
+
       abstract :external?
 
       def internal?
         not external?
       end
 
-      #
-      #
-      #
       class Internal < CodeList
 
         delegate :at, :defined_at?, :to => :@hash
@@ -29,9 +28,6 @@ module Stupidedi
         end
       end
 
-      #
-      #
-      #
       class External < CodeList
         attr_reader :id
 

@@ -2,6 +2,7 @@ module Stupidedi
   module Reader
 
     class RepeatedElementTok
+      include Inspect
 
       # @return [Array<CompositeElementTok>]
       # @return [Array<SimpleElementTok>]
@@ -25,7 +26,7 @@ module Stupidedi
       end
 
       def blank?
-        false
+        @element_toks.all?(&:blank?)
       end
     end
 

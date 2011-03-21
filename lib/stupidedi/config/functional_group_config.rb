@@ -17,6 +17,8 @@ module Stupidedi
     # @see http://x12.org/rfis/ "Relations Between the ISA and GS Segments.PDF"
     #
     class FunctionalGroupConfig
+      include Inspect
+
       def initialize
         @table = Hash.new
       end

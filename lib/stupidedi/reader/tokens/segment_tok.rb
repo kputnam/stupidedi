@@ -2,6 +2,7 @@ module Stupidedi
   module Reader
 
     class SegmentTok
+      include Inspect
 
       # @return [Symbol]
       attr_reader :id
@@ -25,7 +26,7 @@ module Stupidedi
       end
 
       def blank?
-        @element_toks.blank?
+        @element_toks.all(&:blank?)
       end
     end
 

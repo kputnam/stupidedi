@@ -35,7 +35,6 @@ module Stupidedi
 
           instructions.each do |i|
             if i.push.nil?
-
               if mutable
                 state = state.
                   pop!(i.pop_count).
@@ -50,7 +49,7 @@ module Stupidedi
 
               states << state
 
-              unless reader.nil? or i.pop_count.zero?
+              unless i.pop_count.zero?
                 # More general than checking if segment_tok is an ISE/GE segment
                 if not reader.separators.eql?(state.separators)
                   reader = reader.copy \
@@ -84,17 +83,15 @@ module Stupidedi
                 states << state
               end
 
-              unless reader.nil?
-                # More general than checking if segment_tok is an ISA/GS segment
-                if not reader.separators.eql?(state.separators)
-                  reader = reader.copy \
-                    :separators   => state.separators,
-                    :segment_dict => state.segment_dict
-                elsif not reader.segment_dict.eql?(state.segment_dict)
-                  reader = reader.copy \
-                    :separators   => state.separators,
-                    :segment_dict => state.segment_dict
-                end
+              # More general than checking if segment_tok is an ISA/GS segment
+              if not reader.separators.eql?(state.separators)
+                reader = reader.copy \
+                  :separators   => state.separators,
+                  :segment_dict => state.segment_dict
+              elsif not reader.segment_dict.eql?(state.segment_dict)
+                reader = reader.copy \
+                  :separators   => state.separators,
+                  :segment_dict => state.segment_dict
               end
             end
 

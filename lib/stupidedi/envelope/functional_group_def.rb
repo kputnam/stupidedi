@@ -22,6 +22,7 @@ module Stupidedi
     # @see http://www.disa.org/x12org/subcommittees/dev/pdf/X12RELEASESCHED.pdf
     #
     class FunctionalGroupDef
+      include Inspect
 
       # @return [String]
       attr_reader :id

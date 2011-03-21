@@ -6,6 +6,7 @@ module Stupidedi
     #
     class InterchangeVal < Values::AbstractVal
       include Values::SegmentValGroup
+      include Inspect
 
       # @return [InterchangeDef]
       attr_reader :definition

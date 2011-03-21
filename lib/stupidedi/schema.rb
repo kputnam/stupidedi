@@ -1,9 +1,9 @@
 module Stupidedi
   module Schema
-
     autoload :CodeList,             "stupidedi/schema/code_list"
-
     autoload :ElementReq,           "stupidedi/schema/element_req"
+    autoload :AbstractElementDef,   "stupidedi/schema/element_def"
+    autoload :AbstractElementUse,   "stupidedi/schema/element_use"
     autoload :SimpleElementDef,     "stupidedi/schema/element_def"
     autoload :SimpleElementUse,     "stupidedi/schema/element_use"
     autoload :CompositeElementDef,  "stupidedi/schema/element_def"
@@ -17,6 +17,5 @@ module Stupidedi
     autoload :SegmentUse,   "stupidedi/schema/segment_use"
     autoload :SyntaxNote,   "stupidedi/schema/syntax_note"
     autoload :TableDef,     "stupidedi/schema/table_def"
-
   end
 end

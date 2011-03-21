@@ -1,7 +1,8 @@
 module Stupidedi
   module Schema
 
-    class ElementUse
+    class AbstractElementUse
+      include Inspect
 
       # @return [SimpleElementDef, CompositeElementDef]
       abstract :definition
@@ -23,7 +24,7 @@ module Stupidedi
       end
     end
 
-    class SimpleElementUse < ElementUse
+    class SimpleElementUse < AbstractElementUse
       # @return [SimpleElementDef]
       attr_reader :definition
 
@@ -68,7 +69,7 @@ module Stupidedi
         true
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("SimpleElementUse")
         q.group(2, "(", ")") do
@@ -86,7 +87,7 @@ module Stupidedi
       end
     end
 
-    class ComponentElementUse < ElementUse
+    class ComponentElementUse < AbstractElementUse
       # @return [SimpleElementDef]
       attr_reader :definition
 
@@ -127,7 +128,7 @@ module Stupidedi
         true
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("ComponentElementUse")
         q.group(2, "(", ")") do
@@ -140,7 +141,7 @@ module Stupidedi
       end
     end
 
-    class CompositeElementUse < ElementUse
+    class CompositeElementUse < AbstractElementUse
       # @return [CompositeElementDef]
       attr_reader :definition
 
@@ -181,7 +182,7 @@ module Stupidedi
         false
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("CompositeElementUse")
         q.group(2, "(", ")") do

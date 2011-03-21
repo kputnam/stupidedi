@@ -5,6 +5,7 @@ module Stupidedi
     # @see X12.5.pdf 3.2.1 Basic Interchange Service Request
     #
     class InterchangeDef
+      include Inspect
 
       # @return [String]
       attr_reader :id

@@ -2,6 +2,7 @@ module Stupidedi
   module Reader
 
     class SimpleElementTok
+      include Inspect
 
       # @todo
       attr_reader :value

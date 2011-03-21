@@ -2,6 +2,7 @@ module Stupidedi
   module Envelope
 
     class TransactionSetVal < Values::AbstractVal
+      include Inspect
 
       # @return [TransactionSetDef]
       attr_reader :definition

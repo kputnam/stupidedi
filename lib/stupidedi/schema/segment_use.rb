@@ -2,6 +2,8 @@ module Stupidedi
   module Schema
 
     class SegmentUse
+      include Inspect
+
       # @see X222 B.1.1.3.12.7 Data Segment Position
       # @return [Integer]
       attr_reader :position
@@ -56,7 +58,7 @@ module Stupidedi
         definition.value(element_vals, parent, self)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text "SegmentUse"
         q.group(2, "(", ")") do

@@ -1,12 +1,7 @@
 # encoding: ISO-8859-1
 
 module Stupidedi
-
-  #
-  #
-  #
   module Reader
-
     autoload :Result,       "stupidedi/reader/result"
     autoload :Success,      "stupidedi/reader/result"
     autoload :Failure,      "stupidedi/reader/result"
@@ -56,7 +51,6 @@ module Stupidedi
       def is_control_character?(character)
         not Reader::C_EITHER.include?(character)
       end
-
     end
 
   end

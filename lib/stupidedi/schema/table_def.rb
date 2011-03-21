@@ -67,7 +67,7 @@ module Stupidedi
         Values::TableVal.new(self, [], parent)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("TableDef[#{@id}]")
         q.group(2, "(", ")") do
@@ -98,6 +98,8 @@ module Stupidedi
     end
 
     class << TableDef
+      #########################################################################
+      # @group Constructor Methods
 
       # @return [TableDef]
       def header(id, *children)
@@ -119,6 +121,9 @@ module Stupidedi
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
         new(id, 3, false, header, loop_defs, trailer, nil)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

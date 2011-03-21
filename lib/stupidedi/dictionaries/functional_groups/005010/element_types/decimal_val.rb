@@ -169,10 +169,9 @@ module Stupidedi
           end
 
           class << DecimalVal
+            ###################################################################
             # @group Constructors
 
-            # Create an empty numeric value.
-            #
             # @return [DecimalVal::Empty]
             def empty(definition, parent, usage)
               DecimalVal::Empty.new(definition, parent, usage)
@@ -189,7 +188,20 @@ module Stupidedi
               end
             end
 
+            # @return [DecimalVal::Empty, DecimalVal::NonEmpty]
+            def parse(string, definition, parent, usage)
+              if string.blank?
+                DecimalVal::Empty.new(definition, parent, usage)
+              else
+                DecimalVal::NonEmpty.new(string.to_d, definition, parent, usage)
+              end
+            rescue ArgumentError
+              # @todo
+              DecimalVal::Empty.new(definition, parent, usage)
+            end
+
             # @endgroup
+            ###################################################################
           end
 
           # Prevent direct instantiation of abstract class DecimalVal

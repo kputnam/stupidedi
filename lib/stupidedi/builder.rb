@@ -1,5 +1,4 @@
 module Stupidedi
-
   module Builder
     autoload :AbstractState,        "stupidedi/builder/abstract_state"
     autoload :BuilderDsl,           "stupidedi/builder/builder_dsl"
@@ -16,5 +15,4 @@ module Stupidedi
     autoload :Instruction,          "stupidedi/builder/instruction"
     autoload :StateMachine,         "stupidedi/builder/state_machine"
   end
-
 end

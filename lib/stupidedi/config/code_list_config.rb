@@ -2,16 +2,22 @@ module Stupidedi
   module Config
 
     class CodeListConfig
+      include Inspect
+
       def initialize
         @table = Hash.new
       end
 
-      def register(definition, id)
-        @table[id] = definition
+      def register(id, &constructor)
+        @table[id] = constructor
       end
 
-      def lookup(id)
-        @table[id]
+      def defined_at?(id)
+        @table.defined_at?(id)
+      end
+
+      def at(id)
+        @table[id].call
       end
 
       # @return [void]

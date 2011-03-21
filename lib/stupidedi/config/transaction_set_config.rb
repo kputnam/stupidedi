@@ -11,6 +11,8 @@ module Stupidedi
     # 837P from the HIPAA guide.
     #
     class TransactionSetConfig
+      include Inspect
+
       def initialize
         @table = Hash.new
       end

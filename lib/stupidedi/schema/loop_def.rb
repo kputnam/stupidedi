@@ -3,6 +3,8 @@ module Stupidedi
 
     # @see X222 B.1.3.12.4 Loops of Data Segments
     class LoopDef
+      include Inspect
+
       # @return [String]
       attr_reader :id
 
@@ -76,7 +78,7 @@ module Stupidedi
         Values::LoopVal.new(self, [], parent)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("LoopDef[#{@id}]")
         q.group(2, "(", ")") do
@@ -107,6 +109,9 @@ module Stupidedi
     end
 
     class << LoopDef
+      #########################################################################
+      # @group Constructor Methods
+
       # @return [LoopDef]
       def build(id, repeat_count, *children)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
@@ -122,6 +127,9 @@ module Stupidedi
 
         new(id, repeat_count, header, loop_defs, trailer, nil)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

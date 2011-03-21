@@ -2,9 +2,17 @@ module Stupidedi
   module Reader
 
     class Separators
+
+      # @return [String]
       attr_accessor :component  # :
+
+      # @return [String]
       attr_accessor :repetition # ^
+
+      # @return [String]
       attr_accessor :element    # *
+
+      # @return [String]
       attr_accessor :segment    # ~
 
       def initialize(component, repetition, element, segment)
@@ -14,7 +22,7 @@ module Stupidedi
 
       # @return [Separators]
       def copy(changes = {})
-        self.class.new \
+        Separators.new \
           changes.fetch(:component, @component),
           changes.fetch(:repetition, @repetition),
           changes.fetch(:element, @element),
@@ -22,11 +30,11 @@ module Stupidedi
       end
 
       def merge(other)
-        copy \
-          :component  => other.component  || @component,
-          :repetition => other.repetition || @repetition,
-          :element    => other.element    || @element,
-          :segment    => other.segment    || @segment
+        Separators.new \
+          other.component  || @component,
+          other.repetition || @repetition,
+          other.element    || @element,
+          other.segment    || @segment
       end
 
       def inspect

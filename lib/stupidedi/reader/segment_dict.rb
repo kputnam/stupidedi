@@ -2,6 +2,8 @@ module Stupidedi
   module Reader
 
     class SegmentDict
+      include Inspect
+
       # Return the top element from the stack. This will throw an exception
       # if the stack is {#empty?}
       abstract :top

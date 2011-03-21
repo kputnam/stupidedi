@@ -8,6 +8,7 @@ module Stupidedi
     # operations.
     #
     class AbstractSet
+      include Inspect
 
       # True if the set includes the given +object+
       abstract :include?, :args => %w(object)

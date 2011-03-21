@@ -1,8 +1,4 @@
 module Stupidedi
-
-  #
-  #
-  #
   module Envelope
     autoload :FunctionalGroupDef, "stupidedi/envelope/functional_group_def"
     autoload :FunctionalGroupVal, "stupidedi/envelope/functional_group_val"

@@ -25,7 +25,8 @@ module Stupidedi
       attr_reader :path
 
       def initialize(io, offset = 0, line = 1, column = 1, size = io.stat.size)
-        @io, @offset, @line, @column, @size = io, offset, line, column, size
+        @io, @offset, @line, @column, @size =
+          io, offset, line, column, size
       end
 
       # @return [Position]

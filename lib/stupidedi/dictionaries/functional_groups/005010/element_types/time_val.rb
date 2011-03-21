@@ -95,6 +95,7 @@ module Stupidedi
           end
 
           class << TimeVal
+            ###################################################################
             # @group Constructors
 
             # Creates an empty time value.
@@ -116,25 +117,42 @@ module Stupidedi
                                       definition, parent, usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
-                if object.blank?
-                  TimeVal::Empty.new(definition, parent, usage)
-                else
-                  hour   = object.to_s.slice(0, 2).to_i
-                  minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                  second = object.to_s.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
+                hour   = object.to_s.slice(0, 2).to_i
+                minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
+                second = object.to_s.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
 
-                  if decimal = object.to_s.slice(6..-1)
-                    second += "0.#{decimal}".to_f
-                  end
-
-                  TimeVal::NonEmpty.new(hour, minute, second, definition, parent, usage)
+                if decimal = object.to_s.slice(6..-1)
+                  second += "0.#{decimal}".to_f
                 end
+
+                TimeVal::NonEmpty.new(hour, minute, second, definition, parent, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
             end
 
+            # @return [TimeVal::NonEmpty, TimeVal::Empty]
+            def parse(string, definition, parent, usage)
+              if string.blank?
+                TimeVal::Empty.new(definition, parent, usage)
+              else
+                hour   = string.slice(0, 2).to_i
+                minute = string.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
+                second = string.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
+
+                if decimal = string.slice(6..-1)
+                  second += "0.#{decimal}".to_f
+                end
+
+                TimeVal::NonEmpty.new(hour, minute, second, definition, parent, usage)
+              end
+            rescue ArgumentError
+              # @todo
+              TimeVal::Empty.new(definition, parent, usage)
+            end
+
             # @endgroup
+            ###################################################################
           end
 
           # Prevent direct instantiation of abstract class TimeVal

@@ -2,6 +2,7 @@ module Stupidedi
   module Reader
 
     class TokenReader
+      include Inspect
 
       # @return [String, Input]
       attr_reader :input
@@ -339,7 +340,7 @@ module Stupidedi
         end
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("TokenReader")
         q.group(2, "(", ")") do

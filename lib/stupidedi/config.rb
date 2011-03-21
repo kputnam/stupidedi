@@ -1,5 +1,4 @@
 module Stupidedi
-
   module Config
     autoload :CodeListConfig,         "stupidedi/config/code_list_config"
     autoload :FunctionalGroupConfig,  "stupidedi/config/functional_group_config"
@@ -7,6 +6,8 @@ module Stupidedi
     autoload :TransactionSetConfig,   "stupidedi/config/transaction_set_config"
 
     class RootConfig
+      include Inspect
+
       # @return [InterchangeConfig]
       attr_reader :interchange
 

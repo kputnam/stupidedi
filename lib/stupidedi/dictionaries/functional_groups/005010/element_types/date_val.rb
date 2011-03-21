@@ -192,22 +192,21 @@ module Stupidedi
           end
 
           class << DateVal
+            ###################################################################
             # @group Constructors
 
-            # Create an empty date value
-            #
             # @return [DateVal::Empty]
             def empty(definition, parent, usage)
               DateVal::Empty.new(definition, parent, usage)
             end
 
-            # @return [DateVal::Empty,  DateVal::Proper, DateVal::Improper]
+            # @return [DateVal::Empty, DateVal::Proper, DateVal::Improper]
             def value(object, definition, parent, usage)
               if object.blank?
                 DateVal::Empty.new(definition, parent, usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
-                return DateVal::Empty.new(definition, parent, usage) if object.empty?
+                return DateVal::Empty.new(definition, parent, usage) if object.blank?
 
                 day   = object.to_s.slice(-2, 2)
                 month = object.to_s.slice(-4, 2)
@@ -233,7 +232,28 @@ module Stupidedi
               end
             end
 
+            # @return [DateVal::Empty, DateVal::Proper, DateVal::Improper]
+            def parse(string, definition, parent, usage)
+              if string.blank?
+                DateVal::Empty.new(definition, parent, usage)
+              else
+                day   = string.slice(-2, 2)
+                month = string.slice(-4, 2)
+                year  = string.slice( 0..-5)
+
+                if year.length < 4
+                  DateVal::Improper.new(year, month, day, definition, parent, usage)
+                else
+                  DateVal::Proper.new(year, month, day, definition, parent, usage)
+                end
+              end
+            rescue ArgumentError
+              # @todo
+              DateVal::Empty.new(definition, parent, usage)
+            end
+
             # @endgroup
+            ###################################################################
           end
 
           # Prevent direct instantiation of abstract class DateVal

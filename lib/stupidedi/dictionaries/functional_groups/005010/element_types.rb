@@ -5,6 +5,7 @@ module Stupidedi
         module ElementTypes
 
           class SimpleElementDef < Schema::SimpleElementDef
+
             # @return [Symbol]
             attr_reader :id
 
@@ -124,8 +125,9 @@ module Stupidedi
               IdentifierVal
             end
 
+            # @return [ID]
             def copy(changes = {})
-              self.class.new \
+              ID.new \
                 changes.fetch(:id, @id),
                 changes.fetch(:name, @name),
                 changes.fetch(:min_length, @min_length),
@@ -171,8 +173,9 @@ module Stupidedi
               @precision = precision
             end
 
+            # @return [Nn]
             def copy(changes = {})
-              self.class.new \
+              Nn.new \
                 changes.fetch(:id, @id),
                 changes.fetch(:name, @name),
                 changes.fetch(:min_length, @min_length),
@@ -182,7 +185,7 @@ module Stupidedi
                 changes.fetch(:parent, @parent)
             end
 
-            # @private
+            # @return [void]
             def pretty_print(q)
               q.text "N#{@precision}[#{@id}]"
             end

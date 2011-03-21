@@ -1,18 +1,23 @@
 module Stupidedi
   module Schema
 
+    class AbstractElementDef
+      include Inspect
+
+      # @return [String]
+      attr_reader :id
+
+      # @return [String]
+      attr_reader :name
+
+      # @return [String]
+      attr_reader :description
+    end
+
     #
     # @see X222 B.1.1.3.1 Data Element
     #
-    class SimpleElementDef
-      # @return [String]
-      abstract :id
-
-      # @return [String]
-      abstract :name
-
-      # @return [String]
-      abstract :description
+    class SimpleElementDef < AbstractElementDef
 
       # @return [SimpleElementUse, ComponentElementUse]
       abstract :parent
@@ -22,6 +27,9 @@ module Stupidedi
 
       # @return [SimpleElementVal]
       abstract :value, :args => %w(object)
+
+      # @return [SimpleElementVal]
+      abstract :parse, :args => %w(string)
 
       def simple?
         true
@@ -43,15 +51,7 @@ module Stupidedi
     end
 
     # @see X222 B.1.1.3.3 Composite Data Structure
-    class CompositeElementDef
-      # @return [String]
-      attr_reader :id
-
-      # @return [String]
-      attr_reader :name
-
-      # @return [String]
-      attr_reader :description
+    class CompositeElementDef < AbstractElementDef
 
       # @return [Array<ComponentElementUse>]
       attr_reader :component_uses
@@ -108,7 +108,7 @@ module Stupidedi
         Values::CompositeElementVal.new(self, [], parent, usage)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text("CompositeElementDef[#{@id}]")
         q.group(2, "(", ")") do
@@ -125,13 +125,19 @@ module Stupidedi
     end
 
     class << CompositeElementDef
+      #########################################################################
+      # @group Constructor Methods
+
       # @return [CompositeElementDef]
       def build(id, name, description, *args)
-        component_uses = args.take_while{|x| x.is_a?(ElementUse) }
+        component_uses = args.take_while{|x| x.is_a?(AbstractElementUse) }
         syntax_notes   = args.drop(component_uses.length)
 
         new(id, name, description, component_uses, syntax_notes, parent = nil)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

@@ -2,6 +2,7 @@ module Stupidedi
   module Reader
 
     class CompositeElementTok
+      include Inspect
 
       # @return [Array<ComponentElementTok>]
       attr_reader :component_toks
@@ -30,7 +31,7 @@ module Stupidedi
       end
 
       def blank?
-        @component_toks.blank?
+        @component_toks.all?(&:blank?)
       end
 
       def simple?

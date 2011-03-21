@@ -2,6 +2,7 @@ module Stupidedi
   module Reader
 
     class ComponentElementTok
+      include Inspect
 
       # @return [String]
       attr_reader :value

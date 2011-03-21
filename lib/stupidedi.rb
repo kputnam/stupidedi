@@ -34,6 +34,7 @@ module Stupidedi
 
   autoload :Sets,             "stupidedi/sets"
   autoload :Either,           "stupidedi/either"
+  autoload :Inspect,          "stupidedi/inspect"
   autoload :TailCall,         "stupidedi/tail_call"
   autoload :ThreadLocalVar,   "stupidedi/thread_local"
   autoload :ThreadLocalHash,  "stupidedi/thread_local"

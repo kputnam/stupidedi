@@ -3,6 +3,7 @@ module Stupidedi
 
     class FunctionalGroupVal < Values::AbstractVal
       include Values::SegmentValGroup
+      include Inspect
 
       # @return [FunctionalGroupDef]
       attr_reader :definition

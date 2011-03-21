@@ -12,6 +12,8 @@ module Stupidedi
     # built to deal with that problem.
     #
     class StreamReader
+      include Inspect
+
       attr_reader :input
 
       def initialize(input)

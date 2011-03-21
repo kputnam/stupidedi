@@ -76,10 +76,9 @@ module Stupidedi
           end
 
           class << IdentifierVal
+            ###################################################################
             # @group Constructors
 
-            # Create an empty identifier value.
-            #
             # @return [IdentifierVal::Empty]
             def empty(definition, parent, usage)
               IdentifierVal::Empty.new(definition, parent, usage)
@@ -96,7 +95,17 @@ module Stupidedi
               end
             end
 
+            # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
+            def parse(string, definition, parent, usage)
+              if string.blank?
+                IdentifierVal::Empty.new(definition, parent, usage)
+              else
+                IdentifierVal::NonEmpty.new(string, definition, parent, usage)
+              end
+            end
+
             # @endgroup
+            ###################################################################
           end
 
           # Prevent direct instantiation of abstract class IdentifierVal

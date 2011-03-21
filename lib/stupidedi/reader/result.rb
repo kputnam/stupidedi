@@ -2,6 +2,17 @@ module Stupidedi
   module Reader
 
     class Result
+      include Inspect
+    end
+
+    class << Result
+      def success(value, remainder)
+        Result::Success.new(value, remainder)
+      end
+
+      def failure(reason, remainder)
+        Result::Failure.new(reason, remainder)
+      end
     end
 
     #
@@ -69,7 +80,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        self.class.new \
+        Success.new \
           changes.fetch(:value, @value),
           changes.fetch(:remainder, @remainder)
       end
@@ -78,7 +89,7 @@ module Stupidedi
       #
       # @return [Success]
       def map
-        copy(:value => yield(@value))
+        Success.new(yield(@value), @remainder)
       end
 
       # Compares two Success instances, or directly compares the value to
@@ -88,6 +99,18 @@ module Stupidedi
           @value == other.value and @remainder == other.remainder
         else
           @value == other
+        end
+      end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text "Result.success"
+        q.group(2, "(", ")") do
+          q.breakable ""
+          q.pp @value
+          q.text ","
+          q.breakable
+          q.pp @remainder
         end
       end
 
@@ -116,37 +139,61 @@ module Stupidedi
     # input stream is wrapped).
     #
     class Failure < Result
-      attr_reader :message
+
+      attr_reader :reason
 
       attr_reader :remainder
 
-      def initialize(message, remainder)
-        @message, @remainder = message, remainder
+      def initialize(reason, remainder)
+        @reason, @remainder = reason, remainder
       end
 
+      # @return [Position]
+      def position
+        if @remainder.respond_to?(:position)
+          @remainder.position
+        end
+      end
+
+      # @return [Integer]
       def offset
         if @remainder.respond_to?(:offset)
           @remainder.offset
         end
       end
 
+      # @return [Integer]
       def line
         if @remainder.respond_to?(:line)
           @remainder.line
         end
       end
 
+      # @return [Integer]
       def column
         if @remainder.respond_to?(:column)
           @remainder.column
         end
       end
 
+      # @return [Boolean]
       def ==(other)
         if other.is_a?(self.class)
-          @message == other.message
+          @reason == other.reason
         else
-          @message == other
+          @reason == other
+        end
+      end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text "Result.failure"
+        q.group(2, "(", ")") do
+          q.breakable ""
+          q.pp @reason
+          q.text ","
+          q.breakable
+          q.pp @remainder
         end
       end
     end

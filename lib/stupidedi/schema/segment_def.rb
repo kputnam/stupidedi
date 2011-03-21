@@ -2,6 +2,8 @@ module Stupidedi
   module Schema
 
     class SegmentDef
+      include Inspect
+
       # @return [Symbol]
       attr_reader :id
 
@@ -58,7 +60,7 @@ module Stupidedi
         Values::SegmentVal.new(self, element_vals, parent, usage)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text "SegmentDef[#{@id}]"
 
@@ -84,14 +86,20 @@ module Stupidedi
     end
 
     class << SegmentDef
+      #########################################################################
+      # @group Constructor Methods
+
       # @return [SegmentDef]
       def build(id, name, purpose, *args)
-        element_uses = args.take_while{|x| x.is_a?(ElementUse) }
+        element_uses = args.take_while{|x| x.is_a?(AbstractElementUse) }
         syntax_notes = args.drop(element_uses.length)
 
         # @todo: Validate SyntaxNotes
         new(id, name, purpose, element_uses, syntax_notes, nil)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

@@ -44,6 +44,7 @@ module Stupidedi
     #   and {Array} values.
     #
     class AbstractInput
+      include Inspect
 
       # @group Querying the Position
       ########################################################################

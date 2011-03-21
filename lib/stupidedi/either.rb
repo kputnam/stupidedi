@@ -1,9 +1,6 @@
 module Stupidedi
-
-  #
-  #
-  #
   class Either
+    include Inspect
 
     # @return [void]
     abstract :each, :args => %w(&block)
@@ -215,7 +212,7 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         q.text("Either.failure")
-        q.group(1, "(", ")") do
+        q.group(2, "(", ")") do
           q.breakable ""
           q.pp @explanation
         end
@@ -242,7 +239,6 @@ module Stupidedi
   end
 
   class << Either
-
     ###########################################################################
     # @group Constructor Methods
 
@@ -258,7 +254,6 @@ module Stupidedi
 
     # @endgroup
     ###########################################################################
-
   end
 
   Either.eigenclass.send(:protected, :new)

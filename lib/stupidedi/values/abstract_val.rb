@@ -2,6 +2,7 @@ module Stupidedi
   module Values
 
     class AbstractVal
+      include Inspect
 
       # @return [SimpleElementDef, CompositeElementDef, LoopDef, SegmentDef, TableDef]
       abstract :definition
