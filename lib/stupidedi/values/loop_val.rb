@@ -45,9 +45,16 @@ module Stupidedi
       def append(child_val)
         copy(:child_vals => child_val.snoc(@child_vals))
       end
-
       alias append_loop append
       alias append_segment append
+
+      # @return [LoopVal]
+      def append!(child_val)
+        @child_vals = child_val.snoc(@child_vals)
+        self
+      end
+      alias append_loop! append!
+      alias append_segment! append!
 
       # @private
       def pretty_print(q)

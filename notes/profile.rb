@@ -21,7 +21,5 @@ pp parser.read!(tokenizer)
 #result = RubyProf.profile do
 #  parser.read!(tokenizer)
 #end
-
-#RubyProf::GraphPrinter.new(RubyProf.stop).print($stdout)
-
-pp parser
+#RubyProf::GraphPrinter.new(result || RubyProf.stop).print($stdout)
+#pp parser

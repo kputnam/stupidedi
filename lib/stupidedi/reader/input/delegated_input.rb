@@ -49,6 +49,10 @@ module Stupidedi
           changes.fetch(:column, @column)
       end
 
+      def position
+        Position.new(@offset, @line, @column, nil)
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text("DelegateInput")

@@ -31,13 +31,20 @@ module Stupidedi
         @child_vals.select{|x| x.is_a?(Values::SegmentVal) }
       end
 
+      # @return [FunctionalGroupVal]
       def append(child_val)
-        unless child_val.is_a?(TransactionSetVal) or child_val.is_a?(Values::SegmentVal)
-          raise TypeError, child_val.class.name
-        end
-
         copy(:child_vals => child_val.snoc(@child_vals))
       end
+      alias append_segment append
+      alias append_transaction_set_val append
+
+      # @return [FunctionalGroupVal]
+      def append!(child_val)
+        @child_vals = child_val.snoc(@child_vals)
+        self
+      end
+      alias append_segment! append!
+      alias append_transaction_set_val! append!
 
       # @return [String, nil]
       def version

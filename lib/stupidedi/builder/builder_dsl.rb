@@ -29,20 +29,20 @@ module Stupidedi
         :composite.cons(components.cons)
       end
 
-      # Generates a blank element
-      def blank
-        nil
-      end
-
       # @endgroup
       #########################################################################
 
       #########################################################################
       # @group Element Placeholders
 
+      # Generates a blank element
+      def blank
+        nil
+      end
+
       # @see Schema::ElementReq#forbidden?
-      def notused
-        @__notused ||= :notused.cons
+      def not_used
+        @__not_used ||= :not_used.cons
       end
 
       # @see Schema::SimpleElementUse#allowed_values
@@ -67,7 +67,7 @@ module Stupidedi
             "Segment #{name} cannot occur here"
         end
 
-        return self
+        self
       end
 
     private
@@ -97,7 +97,7 @@ module Stupidedi
                 "#{id}#{element_idx} is a simple element"
             end
 
-            element_toks << simple_tok(e_tag, nil)
+            element_toks << simple_tok(e_tag)
           end
         else
           segment_def  = @reader.segment_dict.at(id)
@@ -105,37 +105,37 @@ module Stupidedi
 
           if elements.length > element_uses.length
             raise Exceptions::ParseError,
-              "wrong number of arguments (#{elements.length} for 1..#{element_uses.length})"
+              "#{id} has only #{element_uses.length} elements"
           end
 
           element_idx  = "00"
           element_uses.zip(elements) do |e_use, (e_tag, e_val)|
             element_idx.succ!
+            designator = "#{id}#{element_idx}"
 
             if e_use.repeatable?
-              # repeatable composite or non-composite
+              # Repeatable composite or non-composite
               unless e_tag == :repeated or (e_tag.blank? and e_val.blank?)
                 raise Exceptions::ParseError,
-                  "#{id}#{element_idx} is a repeatable element"
+                  "#{designator} is a repeatable element"
               end
 
-              element_toks << repeated_tok(e_val || [], e_use)
+              element_toks << repeated_tok(e_val || [], e_use, designator)
             elsif e_use.composite?
-              # non-repeatable composite
               unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
                 raise Exceptions::ParseError,
-                  "#{id}#{element_idx} is a composite element"
+                  "#{id}#{element_idx} is a non-repeatable composite element"
               end
 
-              element_toks << composite_tok(e_val || [], e_use)
+              element_toks << composite_tok(e_val || [], e_use, designator)
             else
-              # non-repeatable non-composite
+              # The actual value is in e_tag
               unless e_val.nil?
                 raise Exceptions::ParseError,
-                  "#{id}#{element_idx} is a simple element"
+                  "#{id}#{element_idx} is a non-repeatable simple element"
               end
 
-              element_toks << simple_tok(e_tag, e_use)
+              element_toks << simple_tok(e_tag)
             end
           end
         end
@@ -144,26 +144,26 @@ module Stupidedi
       end
 
       # @return [Reader::RepeatedElementTok]
-      def repeated_tok(elements, element_use)
+      def repeated_tok(elements, element_use, designator)
         element_toks = []
 
         if element_use.composite?
           elements.each do |e_tag, e_val|
             unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
               raise Exceptions::ParseError,
-                "@todo is a composite element"
+                "#{designator} is a composite element"
             end
 
-            element_toks << composite_tok(e_val || [], element_use)
+            element_toks << composite_tok(e_val || [], element_use, designator)
           end
         else
           elements.each do |e_tag, e_val|
             unless e_val.nil?
               raise Exceptions::ParseError,
-                "@todo is a simple element"
+                "#{designator} is a simple element"
             end
 
-            element_toks << simple_tok(e_tag, element_use)
+            element_toks << simple_tok(e_tag)
           end
         end
 
@@ -171,12 +171,12 @@ module Stupidedi
       end
 
       # @return [Reader::CompositeElementTok]
-      def composite_tok(components, composite_use)
+      def composite_tok(components, composite_use, designator)
         component_uses = composite_use.definition.component_uses
 
         if components.length > component_uses.length
           raise Exceptions::ParseError,
-            "wrong number of arguments (#{components.length} for 1..#{component_uses.length})"
+            "#{designator} has only #{component_uses.length} components"
         end
 
         component_idx  = "0"
@@ -186,22 +186,22 @@ module Stupidedi
 
           unless c_val.nil?
             raise Exceptions::ParseError,
-              "@todo is a component element"
+              "#{designator}-#{component_idx} is a component element"
           end
 
-          component_toks << component_tok(c_tag, c_use)
+          component_toks << component_tok(c_tag)
         end
 
         Reader::CompositeElementTok.build(component_toks, nil, nil)
       end
 
       # @return [Reader::ComponentElementTok]
-      def component_tok(value, composite_use)
+      def component_tok(value)
         Reader::ComponentElementTok.build(value, nil, nil)
       end
 
       # @return [Reader::SimpleElementTok]
-      def simple_tok(value, element_use)
+      def simple_tok(value)
         Reader::SimpleElementTok.build(value, nil, nil)
       end
 
@@ -242,7 +242,7 @@ module Stupidedi
       def copy(changes = {})
         @separators   = changes.fetch(:separators, @separators)
         @segment_dict = changes.fetch(:segment_dict, @segment_dict)
-        return self
+        self
       end
     end
 

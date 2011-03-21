@@ -26,58 +26,74 @@ module Stupidedi
           # state in @states that can accept this token.
           if instructions.empty?
             m = "Unexpected segment #{segment_tok.id}"
-            s = FailureState.new(m, segment_tok, state)
-            errors << s
+            errors << FailureState.new(m, segment_tok, state)
             next
           end
 
+          mutable =
+            @states.length == 1 and instructions.length == 1
+
           instructions.each do |i|
             if i.push.nil?
-              s = state.
-                pop(i.pop_count).
-                drop(i.drop_count).
-                add(segment_tok, i.segment_use)
 
-              states << s
+              if mutable
+                state = state.
+                  pop!(i.pop_count).
+                  drop!(i.drop_count).
+                  add!(segment_tok, i.segment_use)
+              else
+                state = state.
+                  pop(i.pop_count).
+                  drop(i.drop_count).
+                  add(segment_tok, i.segment_use)
+              end
+
+              states << state
 
               unless reader.nil? or i.pop_count.zero?
                 # More general than checking if segment_tok is an ISE/GE segment
-                if not reader.separators.eql?(s.separators)
+                if not reader.separators.eql?(state.separators)
                   reader = reader.copy \
-                    :separators   => s.separators,
-                    :segment_dict => s.segment_dict
-                elsif not reader.segment_dict.eql?(s.segment_dict)
+                    :separators   => state.separators,
+                    :segment_dict => state.segment_dict
+                elsif not reader.segment_dict.eql?(state.segment_dict)
                   reader = reader.copy \
-                    :separators   => s.separators,
-                    :segment_dict => s.segment_dict
+                    :separators   => state.separators,
+                    :segment_dict => state.segment_dict
                 end
               end
             else
-              s = state.
-                pop(i.pop_count).
-                drop(i.drop_count)
+              if mutable
+                state = state.
+                  pop!(i.pop_count).
+                  drop!(i.drop_count)
+              else
+                state = state.
+                  pop(i.pop_count).
+                  drop(i.drop_count)
+              end
 
               # Note Instruction#push returns a subclass of AbstractState,
               # which has a concrete constructor method named "push", that
               # links the new instance to the parent {state}
-              s = i.push.push(segment_tok, i.segment_use, s, reader)
+              state = i.push.push(segment_tok, i.segment_use, state, reader)
 
-              if s.failure?
-                errors << s
+              if state.failure?
+                errors << state
               else
-                states << s
+                states << state
               end
 
               unless reader.nil?
                 # More general than checking if segment_tok is an ISA/GS segment
-                if not reader.separators.eql?(s.separators)
+                if not reader.separators.eql?(state.separators)
                   reader = reader.copy \
-                    :separators   => s.separators,
-                    :segment_dict => s.segment_dict
-                elsif not reader.segment_dict.eql?(s.segment_dict)
+                    :separators   => state.separators,
+                    :segment_dict => state.segment_dict
+                elsif not reader.segment_dict.eql?(state.segment_dict)
                   reader = reader.copy \
-                    :separators   => s.separators,
-                    :segment_dict => s.segment_dict
+                    :separators   => state.separators,
+                    :segment_dict => state.segment_dict
                 end
               end
             end

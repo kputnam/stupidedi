@@ -56,9 +56,17 @@ module Stupidedi
       end
 
       # @return [SegmentVal]
-      def append_element(element_val)
+      def append(element_val)
         copy(:element_vals => element_val.snoc(@element_vals))
       end
+      alias append_element append
+
+      # @return [SegmentVal]
+      def append!(element_val)
+        @element_vals = element_val.snoc(@element_vals)
+        self
+      end
+      alias append_element! append!
 
       # @private
       def pretty_print(q)

@@ -47,52 +47,62 @@ module Stupidedi
 
       # @group Querying the Position
       ########################################################################
+      
+      # The {Position} value that describes the position of the input stream
+      #
+      # @return [Position]
+      abstract :position
 
-      # Returns the current position as the number of elements previously read
+      # The current position as the number of elements previously read
       #
       # @return [Integer]
-      abstract :offset
+      delegate :offset, :to => :position
 
-      # Returns the line of the current position
+      # The line of the current position
       #
       # @return [Integer]
-      abstract :line
+      delegate :line, :to => :position
 
-      # Returns the column of the current position. The column resets to +0+
-      # each time a newline is read
+      # The column of the current position. The column resets to `0` each time
+      # a newline is read
       #
       # @return [Integer]
-      abstract :column
+      delegate :column, :to => :position
+
+      # The file name, URI, etc that identifies the input stream
+      #
+      # @return [String]
+      delegate :path, :to => :position
 
       # @group Reading the Input
       ########################################################################
 
-      # Read the first +n+ elements
+      # Read the first `n` elements
       #
-      # @param [Integer] n number of elements to read (+n >= 0+)
+      # @param [Integer] n number of elements to read (`n >= 0`)
       abstract :take
 
       # Read a single element at the given index. Result is undefined unless
       # the input contains enough elements, which can be tested with
       # {#defined_at?}
       #
-      # @param [Integer] n the index of the element to read (+n >= 0+)
+      # @param [Integer] n the index of the element to read (`n >= 0`)
       abstract :at
 
-      # Returns the smallest +n+, where {#at}+(n)+ == +element+
+      # Returns the smallest `n`, where {#at}`(n)` == `element`
       #
       # @param [Object] element the element to find in the input
       #
       # @return [Integer]
-      # @return nil if +element+ is not present in the input
+      # @return nil if `element` is not present in the input
       abstract :index, :args => %w(value)
 
       # @group Advancing the Cursor
       ########################################################################
 
-      # Advance the cursor forward +n+ elements
+      # Advance the cursor forward `n` elements
       #
-      # @param [Integer] n the number of elements to advance (+n >= 0+)
+      # @param [Integer] n the number of elements to advance (`n >= 0`)
       #
       # @return [AbstractInput] new object with advanced cursor
       abstract :drop, :args => %w(n)
@@ -100,10 +110,10 @@ module Stupidedi
       # @group Testing the Input
       ########################################################################
 
-      # True if the input contains enough elements such that {#at}+(n)+ is
+      # True if the input contains enough elements such that {#at}`(n)` is
       # defined
       #
-      # @param [Integer] n the index to test (+n >= 0+)
+      # @param [Integer] n the index to test (`n >= 0`)
       abstract :defined_at?, :args => %w(n)
 
       # True if no elements remain in the input

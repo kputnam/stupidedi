@@ -35,12 +35,18 @@ module Stupidedi
 
       # @return [InterchangeVal]
       def append(child_val)
-        unless child_val.is_a?(FunctionalGroupVal) or child_val.is_a?(Values::SegmentVal)
-          raise TypeError, child_val.class.name
-        end
-
         copy(:child_vals => child_val.snoc(@child_vals))
       end
+      alias append_segment append
+      alias append_functional_group_val append
+
+      # @return [InterchangeVal]
+      def append!(child_val)
+        @child_vals = child_val.snoc(@child_vals)
+        self
+      end
+      alias append_segment! append!
+      alias append_functional_group_val! append!
 
       # @private
       def pretty_print(q)

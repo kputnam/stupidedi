@@ -37,6 +37,18 @@ module Stupidedi
       def add(segment_tok, segment_use)
         raise "@todo: FailureState#add"
       end
+
+      def pop!(count)
+        raise "@todo: FailureState#pop!"
+      end
+
+      def drop!(count)
+        raise "@todo: FailureState#drop!"
+      end
+
+      def add!(segment_tok, segment_use)
+        raise "@todo: FailureState#add!"
+      end
     end
 
   end

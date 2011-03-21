@@ -48,6 +48,14 @@ module Stupidedi
       def append(element_val)
         copy(:element_vals => element_val.snoc(@element_vals))
       end
+      alias append_element append
+
+      # @return [RepeatedElementVal]
+      def append!(element_val)
+        @element_vals = element_val.snoc(@element_vals)
+        self
+      end
+      alias append_element! append!
 
       # @return [void]
       def pretty_print(q)

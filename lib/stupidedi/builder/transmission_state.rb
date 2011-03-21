@@ -46,6 +46,9 @@ module Stupidedi
         raise "@todo: TransmissionState#parent"
       end
 
+      #########################################################################
+      # @group Nondestructive Methods
+
       def add(segment_tok, segment_use)
         raise "@todo: TransmissionState#add"
       end
@@ -72,6 +75,27 @@ module Stupidedi
           raise "@todo: TransmissionState#drop"
         end
       end
+
+      # @endgroup
+      #########################################################################
+
+      #########################################################################
+      # @group Destructive Methods
+
+      alias add! add
+      alias pop! pop
+
+      # @return [TransmissionState]
+      def merge!(child)
+        @value.unshift(child)
+        self
+      end
+
+      alias drop! drop
+
+      # @endgroup
+      #########################################################################
+
     end
 
   end

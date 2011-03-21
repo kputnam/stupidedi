@@ -2,14 +2,10 @@ require "stupidedi"
 require "ruby-prof"
 
 config = Stupidedi::Config.new
-
 config.interchange.register("00501") { Stupidedi::Dictionaries::Interchanges::FiveOhOne::InterchangeDef }
-
 config.functional_group.register("005010") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::FunctionalGroupDef }
-
 config.transaction_set.register("005010", "HP", "835") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
 config.transaction_set.register("005010", "HC", "837") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
-
 config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835 }
 config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837 }
 

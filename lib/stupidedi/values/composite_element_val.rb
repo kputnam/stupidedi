@@ -56,9 +56,17 @@ module Stupidedi
       end
 
       # @return [CompositeElementVal]
-      def append_component(component_val)
+      def append(component_val)
         copy(:component_vals => component_val.snoc(@component_vals))
       end
+      alias append_component append
+
+      # @return [CompositeElementVal]
+      def append!(component_val)
+        @component_vals = component_val.snoc(@component_vals)
+        self
+      end
+      alias append_component! append!
 
       # @return [RepeatedElementVal]
       def repeated

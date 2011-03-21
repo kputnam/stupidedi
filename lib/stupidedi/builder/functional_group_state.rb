@@ -30,6 +30,9 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict)
       end
 
+      #########################################################################
+      # @group Nondestructive Methods
+
       # @return [AbstractState]
       def pop(count)
         if count.zero?
@@ -57,6 +60,44 @@ module Stupidedi
       def merge(child)
         copy(:value => @value.append(child))
       end
+
+      # @endgroup
+      #########################################################################
+
+      #########################################################################
+      # @group Destructive Methods
+
+      # @return [AbstractState]
+      def pop!(count)
+        if count.zero?
+          self
+        else
+          @parent.merge!(@value).pop!(count - 1)
+        end
+      end
+
+      # @return [FunctionalGroupState]
+      def drop!(count)
+        unless count.zero?
+          @instructions = @instructions.drop(count)
+        end
+        self
+      end
+
+      # @return [FunctionalGroupState]
+      def add!(segment_tok, segment_use)
+        @value.append!(segment(segment_tok, segment_use))
+        self
+      end
+
+      # @return [FunctionalGroupState]
+      def merge!(child)
+        @value.append!(child)
+        self
+      end
+
+      # @endgroup
+      #########################################################################
     end
 
     class << FunctionalGroupState

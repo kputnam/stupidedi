@@ -21,6 +21,9 @@ module Stupidedi
       # @return [Integer]
       attr_reader :column
 
+      # @return [String]
+      attr_reader :path
+
       def initialize(io, offset = 0, line = 1, column = 1, size = io.stat.size)
         @io, @offset, @line, @column, @size = io, offset, line, column, size
       end
@@ -103,6 +106,23 @@ module Stupidedi
         end
       end
 
+      # @return [void]
+      def pretty_print(q)
+        q.text("FileInput")
+        q.group(2, "(", ")") do
+          preview = take(4)
+          preview = if preview.empty?
+                      "EOF"
+                    elsif preview.length <= 3
+                      preview.inspect
+                    else
+                      (preview.take(3) << "...").inspect
+                    end
+
+          q.text preview
+          q.text " at line #{@line}, column #{@column}, offset #{@offset}, file #{File.basename(@io.path)}"
+        end
+      end
     end
 
   end

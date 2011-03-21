@@ -26,6 +26,9 @@ module Stupidedi
           changes.fetch(:instructions, @instructions)
       end
 
+      #########################################################################
+      # @group Nondestructive Methods
+
       # @return [AbstractState]
       def pop(count)
         if count.zero?
@@ -53,6 +56,44 @@ module Stupidedi
       def merge(child)
         copy(:value => @value.append(child))
       end
+
+      # @endgroup
+      #########################################################################
+
+      #########################################################################
+      # @group Destructive Methods
+
+      # @return [AbstractState]
+      def pop!(count)
+        if count.zero?
+          self
+        else
+          @parent.merge!(@value).pop!(count - 1)
+        end
+      end
+
+      # @return [TableState]
+      def drop!(count)
+        unless count.zero?
+          @instructions = @instructions.drop(count)
+        end
+        self
+      end
+
+      # @return [TableState]
+      def add!(segment_tok, segment_use)
+        @value.append!(segment(segment_tok, segment_use))
+        self
+      end
+
+      # @return [TableState]
+      def merge!(child)
+        @value.append!(child)
+        self
+      end
+
+      # @endgroup
+      #########################################################################
     end
 
     class << TableState
