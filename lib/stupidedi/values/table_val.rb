@@ -56,7 +56,7 @@ module Stupidedi
       alias append_loop! append!
       alias append_segment! append!
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @definition.try{|t| "[#{t.id}]" }
         q.text("TableVal#{id}")
@@ -72,7 +72,12 @@ module Stupidedi
         end
       end
 
-      # @private
+      # @return [String]
+      def inspect
+        "TableVal(#{@child_vals.map(&:inspect).join(', ')})"
+      end
+
+      # @return [Boolean]
       def ==(other)
         other.definition == @definition and
         other.child_vals == @child_vals

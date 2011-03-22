@@ -26,6 +26,10 @@ module Stupidedi
           changes.fetch(:instructions, @instructions)
       end
 
+      def pinch
+        @parent.merge(@value).pinch
+      end
+
       #########################################################################
       # @group Nondestructive Methods
 

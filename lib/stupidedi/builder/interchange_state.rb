@@ -34,6 +34,10 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict)
       end
 
+      def pinch
+        @value
+      end
+
       #########################################################################
       # @group Nondestructive Methods
 

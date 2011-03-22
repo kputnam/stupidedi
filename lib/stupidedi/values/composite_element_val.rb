@@ -73,7 +73,7 @@ module Stupidedi
         RepeatedElementVal.new(@definition, [self], @parent)
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
         q.text("CompositeElementVal#{id}")
@@ -94,7 +94,7 @@ module Stupidedi
         end
       end
 
-      # @private
+      # @return [Boolean]
       def ==(other)
         other.definition     == @definition and
         other.component_vals == @component_vals

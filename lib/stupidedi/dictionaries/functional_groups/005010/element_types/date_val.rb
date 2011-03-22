@@ -177,7 +177,7 @@ module Stupidedi
                 cutoff((::Date.today.year - nn).modulo(100), century)
               end
 
-              # @private
+              # @return [String]
               def inspect
                 id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "DT.value#{id}(XX#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"

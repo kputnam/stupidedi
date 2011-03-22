@@ -68,7 +68,7 @@ module Stupidedi
       end
       alias append_element! append!
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
 
@@ -86,7 +86,12 @@ module Stupidedi
         end
       end
 
-      # @private
+      # @return [String]
+      def inspect
+        @definition.id
+      end
+
+      # @return [Boolean]
       def ==(other)
         other.definition   == @definition and
         other.element_vals == @element_vals

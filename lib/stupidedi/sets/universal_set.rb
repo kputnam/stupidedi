@@ -6,7 +6,6 @@ module Stupidedi
     # @private
     UniversalSet = Class.new(RelativeComplement) do
 
-      # @private
       def initialize
       end
 

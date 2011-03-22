@@ -27,7 +27,7 @@ module Stupidedi
         @code_list        = CodeListConfig.new
       end
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         q.text "Config"
         q.group 2, "(", ")" do

@@ -12,7 +12,7 @@ module Stupidedi
       # @return [SegmentVal, CompositeElementVal]
       attr_reader :parent
 
-      # @return [SimpleElementUse, ComponentElementUse
+      # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 
       def initialize(definition, parent, usage)

@@ -18,7 +18,7 @@ module Stupidedi
                 true
               end
 
-              # @private
+              # @return [String]
               def inspect
                 def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "AN.empty#{def_id}"

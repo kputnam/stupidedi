@@ -84,6 +84,10 @@ module Stupidedi
         @machine.value
       end
 
+      def pinch
+        @machine.pinch
+      end
+
     private
 
       def method_missing(name, *args)

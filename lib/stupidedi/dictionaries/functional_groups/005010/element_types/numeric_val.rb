@@ -74,7 +74,7 @@ module Stupidedi
                 end
               end
 
-              # @private
+              # @return [String]
               def inspect
                 def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
                 "Nn.value#{def_id}(#{@value.to_s('F')})"

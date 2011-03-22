@@ -50,7 +50,7 @@ module Stupidedi
       alias append_segment! append!
       alias append_functional_group_val! append!
 
-      # @private
+      # @return [void]
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}]" }
         q.text "InterchangeVal#{id}"
@@ -64,6 +64,11 @@ module Stupidedi
             q.pp e
           end
         end
+      end
+
+      # @return [String]
+      def inspect
+        "InterchangeVal(#{@child_vals.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]

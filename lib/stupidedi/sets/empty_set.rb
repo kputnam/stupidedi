@@ -5,7 +5,6 @@ module Stupidedi
     # @private
     EmptySet = Class.new(RelativeSet) do
 
-      # @private
       def initialize
       end
 

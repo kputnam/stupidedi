@@ -7,7 +7,6 @@ module Stupidedi
     #
     class FunctionalGroupVal < Values::AbstractVal
       include Values::SegmentValGroup
-      include Inspect
 
       # @return [FunctionalGroupDef]
       attr_reader :definition
@@ -98,6 +97,11 @@ module Stupidedi
             q.pp e
           end
         end
+      end
+
+      # @return [String]
+      def inspect
+        "FunctionalGroupVal(#{@child_vals.map(&:inspect).join(', ')})"
       end
     end
 

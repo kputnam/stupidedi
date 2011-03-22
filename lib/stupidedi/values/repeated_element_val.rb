@@ -73,7 +73,7 @@ module Stupidedi
         end
       end
 
-      # @private
+      # @return [Boolean]
       def ==(other)
         other.definition   == @definition and
         other.element_vals == @element_vals

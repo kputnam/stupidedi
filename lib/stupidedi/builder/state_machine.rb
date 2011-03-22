@@ -157,6 +157,12 @@ module Stupidedi
           @states.head.value
         end
       end
+
+      def pinch
+        if @states.length == 1
+          @states.head.pinch
+        end
+      end
     end
 
     class << StateMachine

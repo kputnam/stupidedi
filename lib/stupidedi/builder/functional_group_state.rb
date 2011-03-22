@@ -30,6 +30,10 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict)
       end
 
+      def pinch
+        @parent.merge(@value).pinch
+      end
+
       #########################################################################
       # @group Nondestructive Methods
 

@@ -24,6 +24,9 @@ module Stupidedi
       # @return [AbstractState]
       abstract :add, :args => %w(segment_tok segment_use)
 
+      # @return [Values::InterchangeVal]
+      abstract :pinch
+
       # @return [Reader::Separators]
       def separators
         parent.separators
