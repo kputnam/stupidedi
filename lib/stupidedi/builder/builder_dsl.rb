@@ -3,6 +3,8 @@ module Stupidedi
 
     class BuilderDsl
 
+      SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
+
       def initialize(config)
         @machine = StateMachine.build(config)
         @reader  = DslReader.new(Reader::Separators.empty,
@@ -36,16 +38,22 @@ module Stupidedi
       # @group Element Placeholders
 
       # Generates a blank element
+      #
+      # @return [void]
       def blank
         nil
       end
 
       # @see Schema::ElementReq#forbidden?
+      #
+      # @return [void]
       def not_used
         @__not_used ||= :not_used.cons
       end
 
       # @see Schema::SimpleElementUse#allowed_values
+      #
+      # @return [void]
       def default
         @__default ||= :default.cons
       end
@@ -73,7 +81,7 @@ module Stupidedi
     private
 
       def method_missing(name, *args)
-        if name.to_s.upcase =~ /^[A-Z][A-Z0-9]{1,2}$/
+        if SEGMENT_ID =~ name.to_s
           segment!(name, *args)
         else
           super

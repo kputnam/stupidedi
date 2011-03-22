@@ -1,6 +1,10 @@
 module Stupidedi
   module Envelope
 
+    #
+    # @see X222.pdf B.1.1.3.13 Functional Group
+    # @see X222.pdf B.1.1.4.2 Functional Groups
+    #
     class FunctionalGroupVal < Values::AbstractVal
       include Values::SegmentValGroup
       include Inspect

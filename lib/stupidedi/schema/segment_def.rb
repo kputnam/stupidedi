@@ -1,6 +1,9 @@
 module Stupidedi
   module Schema
 
+    #
+    # @see X222.pdf B.1.1.3.4 Data Segment
+    #
     class SegmentDef
       include Inspect
 

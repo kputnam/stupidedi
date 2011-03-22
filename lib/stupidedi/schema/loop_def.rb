@@ -1,7 +1,10 @@
 module Stupidedi
   module Schema
 
-    # @see X222 B.1.3.12.4 Loops of Data Segments
+    #
+    # @see X222.pdf 2.2.2 Loops
+    # @see X222.pdf B.1.3.12.4 Loops of Data Segments
+    #
     class LoopDef
       include Inspect
 

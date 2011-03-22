@@ -21,6 +21,9 @@ module Stupidedi
     #
     # @see http://www.disa.org/x12org/subcommittees/dev/pdf/X12RELEASESCHED.pdf
     #
+    # @see X222.pdf B.1.1.3.13 Functional Group
+    # @see X222.pdf B.1.1.4.2 Functional Groups
+    #
     class FunctionalGroupDef
       include Inspect
 

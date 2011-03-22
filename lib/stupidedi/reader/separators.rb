@@ -1,6 +1,9 @@
 module Stupidedi
   module Reader
 
+    #
+    # @see X222.pdf B.1.1.2.5 Delimiters
+    #
     class Separators
 
       # @return [String]

@@ -1,6 +1,10 @@
 module Stupidedi
   module Values
 
+    #
+    # @see X222.pdf B.1.1.3.12.2 Data Segment Groups
+    # @see X222.pdf B.1.1.3.12.4 Loops of Data Segments
+    #
     class LoopVal < AbstractVal
       include SegmentValGroup
 

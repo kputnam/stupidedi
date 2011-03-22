@@ -2,6 +2,10 @@ module Stupidedi
   module Dictionaries
     module FunctionalGroups
       module FiftyTen
+
+        #
+        # @see X222.pdf B.1.1.3.5 Syntax Notes
+        #
         module SyntaxNotes
 
           #

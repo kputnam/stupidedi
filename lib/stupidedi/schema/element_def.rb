@@ -50,7 +50,9 @@ module Stupidedi
       end
     end
 
+    #
     # @see X222 B.1.1.3.3 Composite Data Structure
+    #
     class CompositeElementDef < AbstractElementDef
 
       # @return [Array<ComponentElementUse>]
@@ -133,7 +135,7 @@ module Stupidedi
         component_uses = args.take_while{|x| x.is_a?(AbstractElementUse) }
         syntax_notes   = args.drop(component_uses.length)
 
-        new(id, name, description, component_uses, syntax_notes, parent = nil)
+        new(id, name, description, component_uses, syntax_notes)
       end
 
       # @endgroup

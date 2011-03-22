@@ -17,7 +17,8 @@ module Stupidedi
     #   NOT USED
     #   SITUATIONAL
     #
-    # @see X222 2.2.1 Industry Usage
+    # @see X222.pdf 2.2.1 Industry Usage
+    #
     class ElementReq
 
       def initialize(required, forbidden, to_s)

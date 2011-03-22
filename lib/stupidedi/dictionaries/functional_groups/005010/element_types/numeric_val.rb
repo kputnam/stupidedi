@@ -4,6 +4,9 @@ module Stupidedi
       module FiftyTen
         module ElementTypes
 
+          #
+          # @see X222.pdf B.1.1.3.1.1 Numeric
+          #
           class NumericVal < Values::SimpleElementVal
 
             #

@@ -4,6 +4,9 @@ module Stupidedi
       module FiftyTen
         module ElementTypes
 
+          #
+          # @see X222.pdf B.1.1.3.1.6 Time
+          #
           class TimeVal < Values::SimpleElementVal
 
             #

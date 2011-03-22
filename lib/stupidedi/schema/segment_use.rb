@@ -1,10 +1,14 @@
 module Stupidedi
   module Schema
 
+    #
+    # @see X222.pdf B.1.1.3.12.5 Data Segments in a Transaction Set
+    #
     class SegmentUse
       include Inspect
 
       # @see X222 B.1.1.3.12.7 Data Segment Position
+      #
       # @return [Integer]
       attr_reader :position
 
@@ -12,11 +16,13 @@ module Stupidedi
       attr_reader :definition
 
       # @see X222 B.1.1.3.12.6 Data Segment Requirement Designators
+      #
       # @return [SegmentReq]
       attr_reader :requirement
 
       # @see X222 B.1.3.12.3 Repeated Occurrences of Single Data Segments
       # @see X222 B.1.3.12.8 Data Segment Occurrence
+      #
       # @return [RepeatCount]
       attr_reader :repeat_count
 

@@ -8,7 +8,9 @@ module Stupidedi
     #   C - Conditional (if first then all)
     #   L - List Conditional (if first than at least one more)
     #
-    # @see X222 B.1.1.3.9 Condition Designator
+    # @see X222.pdf B.1.1.3.5 Syntax Notes
+    # @see X222.pdf B.1.1.3.9 Condition Designator
+    #
     class SyntaxNote
       # @return [Array<SimpleElementUse, CompositeElementUse>]
       abstract :element_uses

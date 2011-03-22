@@ -1,7 +1,9 @@
 module Stupidedi
   module Values
 
+    #
     # @see X222 B.1.1.3.1 Data Element
+    #
     class SimpleElementVal < AbstractVal
 
       # @return [SimpleElementDef]
