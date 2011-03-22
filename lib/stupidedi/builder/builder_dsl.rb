@@ -2,6 +2,7 @@ module Stupidedi
   module Builder
 
     class BuilderDsl
+      include Inspect
 
       SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
 
@@ -76,6 +77,11 @@ module Stupidedi
         end
 
         self
+      end
+
+      # @return [Values::AbstractVal]
+      def value
+        @machine.value
       end
 
     private

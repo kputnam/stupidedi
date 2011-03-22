@@ -57,7 +57,12 @@ method call should be the elements of the segment.
           "333666999",          # control number
           "1",                  # acknowledgement request
           "T",                  # usage indicator
-          "~")                  # segment terminator
+          ":")                  # component separator
+
+> _Note_: The repetition separator "^" and component separator ":" have no
+> special meaning when generating X12. These elements are only meaningful to
+> Stupidedi when parsing X12 from an input stream (see
+> [Parsing X12](Parsing.html)).
 
 Alternatively, the [`#segment!`][4] method can be used to avoid the overhead of
 method lookup incurred by `method_missing`.
@@ -71,51 +76,53 @@ is parsed from a file), but certain element types can be constructed from other
 types of Ruby values.
 
 The description of each element type below pertains to the `FiftyTen` functional
-group definition. The `SimpleElementDef` and `SimpleElementVal` classes define
-the minimal interfaces that are extended by subclasses like `AN` and `StringVal`.
-See the [`FiftyTen::ElementTypes`][5] namespace for more examples.
+group definition. The [`SimpleElementDef`][6] and [`SimpleElementVal`][7] classes
+define the minimal interfaces that are extended by subclasses like `AN` and
+`StringVal`. See the [`FiftyTen::ElementTypes`][5] namespace for more examples.
 
   [5]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes.html
+  [6]: ../../Stupidedi/Schema/SimpleElementDef.html
+  [7]: ../../Stupidedi/Values/SimpleElementVal.html
 
 #### Strings
 
 String elements (declared with type `AN`) can be constructed from any value that
-responds to `#to_s`. The constructed element is a [`StringVal`][6].
+responds to `#to_s`. The constructed element is a [`StringVal`][8].
 
-  [6]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/StringVal.html
+  [8]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/StringVal.html
 
 #### Identifiers
 
 Identifier elements (declared with type `ID`) can be constructed from any value
-that responds to `#to_s`. The constructed element is an [`IdentifierVal`][7].
+that responds to `#to_s`. The constructed element is an [`IdentifierVal`][9].
 
-  [7]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/IdentifierVal.html
+  [9]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/IdentifierVal.html
 
 #### Dates
 
 Date elements (declared with type `DT`) can be constructed from a `String` of
 either six or eight characters, and from any value that responds to `#year`,
 `#month`, and `#day`. This includes the `Date`, `Time`, and `DateTime` classes
-included with the standard Ruby libraries. The constructed element is a [`DateVal`][8].
+included with the standard Ruby libraries. The constructed element is a [`DateVal`][10].
 
-  [8]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/DateVal.html
+  [10]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/DateVal.html
 
 #### Times
 
 Time elements (declared with type `TM`) can be constructed from a `String` of
 either two, four, six, or more than six characters, and from the `Time` and
-`DateTime` values. The constructed element is a [`TimeVal`][9].
+`DateTime` values. The constructed element is a [`TimeVal`][11].
 
-  [9]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/TimeVal.html
+  [11]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/TimeVal.html
 
 #### Numbers
 
 Numeric and decimal elements (declared with type `Nn` and `R`, respectively) can
 be constructed from any value that responds to `#to_d`. The constructed element
-is a [`NumericVal`][10] or [`DecimalVal`][11].
+is a [`NumericVal`][12] or [`DecimalVal`][13].
 
-  [10]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/NumericVal.html
-  [11]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/DecimalVal.html
+  [12]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/NumericVal.html
+  [13]: ../../Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/DecimalVal.html
 
 ### Composite Elements
 
@@ -168,7 +175,7 @@ both generate the same segment.
 
 ### Default Elements
 
-Certain elements are declared with a single value in [`#allowed_values`][13].
+Certain elements are declared with a single value in [`#allowed_values`][15].
 These are usually qualifier elements, like `NM102`, whose value adds little
 readability. These values can be inferred by [`Builder::BuilderDsl`][1] when the
 `#default` placeholder is used. For example, when generating the X222 837P, the
@@ -178,19 +185,19 @@ following statements generate the same segment.
 
     b.BHT(b.default, "00", control_number, Time.now.utc, Time.now.utc, "CH")
 
-When a default value cannot be inferred, a [`ParseError`][12] is thrown. Note
+When a default value cannot be inferred, a [`ParseError`][14] is thrown. Note
 that repeated and composite elements cannot be generated by `#default` -- only
 simple and component elements.
 
-  [12]: ../../Stupidedi/Exceptions/ParseError.html
-  [13]: ../../Stupidedi/Schema/SimpleElementUse.html#allowed_values-instance_method
+  [14]: ../../Stupidedi/Exceptions/ParseError.html
+  [15]: ../../Stupidedi/Schema/SimpleElementUse.html#allowed_values-instance_method
 
 ### Unused Elements
 
 For elements that are declared to never be sent, `nil` or `#blank` will generate
 the empty element; however using `#not_used` may be more self-documenting. If
 `Builder::BuilderDsl` determines that the element is not declared as such, it
-will raise a [`ParseError`][12]. For example the X221 835 document declares ST03
+will raise a [`ParseError`][14]. For example the X221 835 document declares ST03
 with `NOT USED`:
 
     b.ST("835", "1234", b.not_used)
@@ -205,10 +212,10 @@ and have the correct number and type of elements.
 ### Segment Order
 
 The order in which segments may occur is defined by the [`TransactionSetDef`][3]
-and [`InterchangeDef`][2]. Internally, an instance of [`Builder::StateMachine`][14]
+and [`InterchangeDef`][2]. Internally, an instance of [`Builder::StateMachine`][16]
 is used to both incrementally build the parse tree and keep track of which
 segments can occur from the given state. The `#successors` method will return
-one or more [`InstructionTable`][15] values that enumerate the segments that may
+one or more [`InstructionTable`][17] values that enumerate the segments that may
 occur in the current state:
 
     pp b.sucessors
@@ -231,19 +238,19 @@ occur in the current state:
      15: Instruction[IEA: Interchange Cont..](pop: 5, drop: 2),
      16: Instruction[ISA](pop: 6, drop: 0, push: InterchangeState))]
 
-  [14]: ../../Stupidedi/Builder/StateMachine.html
-  [15]: ../../Stupidedi/Builder/InstructionTable.html
+  [16]: ../../Stupidedi/Builder/StateMachine.html
+  [17]: ../../Stupidedi/Builder/InstructionTable.html
 
 The above output pertains to the X222 837 implementation guide. The output shows
 a single active `InstructionTable` and the segments it is able to accept. For
-more information about how the parser works, see the [Parser Design Document][16].
+more information about how the parser works, see the [Parser Design Document][18].
 Attempting to generate a segment that is not a member of at least one of the
-instruction tables will cause a [`ParseError`][12] to be raised.
+instruction tables will cause a [`ParseError`][14] to be raised.
 
     b.N3("SUITE 111", "1234 OCEAN BLVD")
     #=> Segment N3 cannot occur here (Stupidedi::Exceptions::ParseError)
 
-  [16]: design/Parser.md
+  [18]: design/Parser.md
 
 ### Element Types
 
@@ -251,7 +258,7 @@ The [`InterchangeDef`][2] or [`TransactionSetDef`][3] classes both respond to
 `#segment_dict`, which allows looking up a `SegmentDef` by segment identifier.
 The `SegmentDef` indicates the number of elements and their types (composite,
 repeated, simple).  This information allows `Builder::BuilderDsl` to raise a
-[`ParseError`][12] on the following conditions:
+[`ParseError`][14] on the following conditions:
 
 Generating a composite element instead of a simple or repeated element:
 

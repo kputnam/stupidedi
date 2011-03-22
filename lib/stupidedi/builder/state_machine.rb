@@ -2,6 +2,7 @@ module Stupidedi
   module Builder
 
     class StateMachine
+      include Inspect
 
       # @return [Array<AbstractState>]
       attr_reader :states
@@ -136,6 +137,25 @@ module Stupidedi
       # True if the state machine cannot recover from failing to parse a token
       def stuck?
         @states.empty?
+      end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text "StateMachine"
+        q.group(2, "(", ")") do
+          q.breakable ""
+          q.pp @errors
+          q.text ","
+          q.breakable
+          q.pp @states
+        end
+      end
+
+      # @return [Values::AbstractVal]
+      def value
+        if @states.length == 1
+          @states.head.value
+        end
       end
     end
 

@@ -2,10 +2,8 @@ module Stupidedi
   module Builder
 
     class AbstractState
+      include Inspect
 
-      # Each {AbstractState} subclass is responsible for building up a specific
-      # type of node from the {Values} or {Envelope} namespace.
-      #
       # @return [Values::AbstractVal]
       abstract :value
 

@@ -135,7 +135,7 @@ module Stupidedi
         component_uses = args.take_while{|x| x.is_a?(AbstractElementUse) }
         syntax_notes   = args.drop(component_uses.length)
 
-        new(id, name, description, component_uses, syntax_notes)
+        new(id, name, description, component_uses, syntax_notes, nil)
       end
 
       # @endgroup

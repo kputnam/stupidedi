@@ -2,6 +2,7 @@ module Stupidedi
   module Builder
 
     class Instruction
+      include Inspect
 
       # The segment identifier to which this {Instruction} applies
       #

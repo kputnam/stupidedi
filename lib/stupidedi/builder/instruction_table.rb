@@ -2,6 +2,7 @@ module Stupidedi
   module Builder
 
     class InstructionTable
+      include Inspect
 
       class NonEmpty < InstructionTable
 
@@ -182,10 +183,13 @@ module Stupidedi
     end
 
     class << InstructionTable
+
+      # @return [InstructionTable::Empty]
       def empty
         InstructionTable::Empty
       end
 
+      # @return [InstructionTable::NonEmpty]
       def build(instructions)
         InstructionTable::Empty.push(instructions)
       end
