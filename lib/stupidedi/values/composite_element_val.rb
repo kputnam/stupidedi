@@ -10,7 +10,8 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<SimpleElementVal>]
-      attr_reader :component_vals
+      attr_reader :children
+      alias component_vals children
 
       # @return [SegmentVal]
       attr_reader :parent
@@ -18,14 +19,14 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :usage
 
-      def initialize(definition, component_vals, parent, usage)
-        @definition, @component_vals, @parent, @usage =
-          definition, component_vals, parent, usage
+      def initialize(definition, children, parent, usage)
+        @definition, @children, @parent, @usage =
+          definition, children, parent, usage
 
         # Delay re-parenting until the entire value tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @component_vals = component_vals.map{|x| x.copy(:parent => self) }
+          @children = children.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -33,20 +34,20 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:component_vals, @component_vals),
+          changes.fetch(:children, @children),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @parent)
       end
 
       def empty?
-        @component_vals.all?(&:empty?)
+        @children.all?(&:empty?)
       end
 
       # @return [SimpleElementVal]
       def at(n)
         if @definition.component_element_uses.defined_at?(n)
-          if @component_vals.defined_at?(n)
-            @component_vals.at(n)
+          if @children.defined_at?(n)
+            @children.at(n)
           else
             @definition.component_element_uses.at(n).empty
           end
@@ -57,13 +58,13 @@ module Stupidedi
 
       # @return [CompositeElementVal]
       def append(component_val)
-        copy(:component_vals => component_val.snoc(@component_vals))
+        copy(:children => component_val.snoc(@children))
       end
       alias append_component append
 
       # @return [CompositeElementVal]
       def append!(component_val)
-        @component_vals = component_val.snoc(@component_vals)
+        @children = component_val.snoc(@children)
         self
       end
       alias append_component! append!
@@ -83,7 +84,7 @@ module Stupidedi
         else
           q.group(2, "(", ")") do
             q.breakable ""
-            @component_vals.each do |e|
+            @children.each do |e|
               unless q.current_group.first?
                 q.text ", "
                 q.breakable
@@ -96,8 +97,8 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        other.definition     == @definition and
-        other.component_vals == @component_vals
+        other.definition == @definition and
+        other.children == @children
       end
     end
 

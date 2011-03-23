@@ -31,6 +31,7 @@ module Stupidedi
   autoload :Schema,       "stupidedi/schema"
   autoload :Values,       "stupidedi/values"
   autoload :Writer,       "stupidedi/writer"
+  autoload :Zipper,       "stupidedi/zipper"
 
   autoload :Sets,             "stupidedi/sets"
   autoload :Either,           "stupidedi/either"

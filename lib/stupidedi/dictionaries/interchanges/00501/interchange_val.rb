@@ -8,8 +8,8 @@ module Stupidedi
           # @return [Reader::Separators]
           attr_reader :separators
 
-          def initialize(definition, child_vals, separators = nil)
-            super(definition, child_vals)
+          def initialize(definition, children, separators = nil)
+            super(definition, children)
 
             @separators =
               if separators.nil?
@@ -31,7 +31,7 @@ module Stupidedi
           def copy(changes = {})
             self.class.new \
               changes.fetch(:definition, definition),
-              changes.fetch(:child_vals, child_vals),
+              changes.fetch(:children, children),
               changes.fetch(:separators, @separators)
           end
 

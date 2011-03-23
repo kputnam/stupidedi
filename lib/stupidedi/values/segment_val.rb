@@ -8,7 +8,8 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<ElementVal>]
-      attr_reader :element_vals
+      attr_reader :children
+      alias element_vals children
 
       # @return [LoopVal, TableVal, FunctionalGroupVal, InterchangeVal]
       attr_reader :parent
@@ -16,14 +17,14 @@ module Stupidedi
       # @return [SegmentUse]
       attr_reader :usage
 
-      def initialize(definition, element_vals, parent, usage)
-        @definition, @element_vals, @parent, @usage =
-          definition, element_vals, parent, usage
+      def initialize(definition, children, parent, usage)
+        @definition, @children, @parent, @usage =
+          definition, children, parent, usage
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @element_vals = element_vals.map{|x| x.copy(:parent => self) }
+          @children = children.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -31,13 +32,13 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:element_vals, @element_vals),
+          changes.fetch(:children, @children),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
       end
 
       def empty?
-        @element_vals.all?(&:empty?)
+        @children.all?(&:empty?)
       end
 
       def defined_at?(n)
@@ -48,8 +49,8 @@ module Stupidedi
       def at(n)
         raise IndexError unless @definition.nil? or defined_at?(n)
 
-        if @element_vals.defined_at?(n)
-          @element_vals.at(n)
+        if @children.defined_at?(n)
+          @children.at(n)
         else
           @definition.element_uses.at(n).definition.blank
         end
@@ -57,13 +58,13 @@ module Stupidedi
 
       # @return [SegmentVal]
       def append(element_val)
-        copy(:element_vals => element_val.snoc(@element_vals))
+        copy(:children => element_val.snoc(@children))
       end
       alias append_element append
 
       # @return [SegmentVal]
       def append!(element_val)
-        @element_vals = element_val.snoc(@element_vals)
+        @children = element_val.snoc(@children)
         self
       end
       alias append_element! append!
@@ -76,7 +77,7 @@ module Stupidedi
         q.group(2, "(", ")") do
           q.breakable ""
 
-          @element_vals.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ", "
               q.breakable
@@ -94,7 +95,7 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         other.definition   == @definition and
-        other.element_vals == @element_vals
+        other.children == @children
       end
     end
 

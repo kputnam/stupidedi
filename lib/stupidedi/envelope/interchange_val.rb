@@ -13,38 +13,38 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<SegmentVal, FunctionalGroupVal>]
-      attr_reader :child_vals
+      attr_reader :children
 
       # @return [#segment, #element, #repetition, #component]
       abstract :separators
 
-      def initialize(definition, child_vals)
-        @definition, @child_vals =
-          definition, child_vals
+      def initialize(definition, children)
+        @definition, @children =
+          definition, children
       end
 
       # @return [InterchangeVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:child_vals, @child_vals)
+          changes.fetch(:children, @children)
       end
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @child_vals.select{|x| x.is_a?(Values::SegmentVal) }
+        @children.select{|x| x.is_a?(Values::SegmentVal) }
       end
 
       # @return [InterchangeVal]
       def append(child_val)
-        copy(:child_vals => child_val.snoc(@child_vals))
+        copy(:children => child_val.snoc(@children))
       end
       alias append_segment append
       alias append_functional_group_val append
 
       # @return [InterchangeVal]
       def append!(child_val)
-        @child_vals = child_val.snoc(@child_vals)
+        @children = child_val.snoc(@children)
         self
       end
       alias append_segment! append!
@@ -56,7 +56,7 @@ module Stupidedi
         q.text "InterchangeVal#{id}"
         q.group 2, "(", ")" do
           q.breakable ""
-          @child_vals.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ", "
               q.breakable
@@ -68,13 +68,13 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "InterchangeVal(#{@child_vals.map(&:inspect).join(', ')})"
+        "InterchangeVal(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
       def ==(other)
         other.definition == @definition and
-        other.child_vals == @child_vals
+        other.children == @children
       end
     end
 

@@ -10,7 +10,8 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<ElementVal>]
-      attr_reader :element_vals
+      attr_reader :children
+      alias element_vals children
 
       # @return [SegmentVal]
       attr_reader :parent
@@ -18,16 +19,16 @@ module Stupidedi
       # @return [Schema::SimpleElementUse, Schema::CompositeElementUse
       attr_reader :usage
 
-      delegate :at, :defined_at?, :length, :to => :@element_vals
+      delegate :at, :defined_at?, :length, :to => :@children
 
-      def initialize(definition, element_vals, parent, usage)
-        @definition, @element_vals, @parent, @usage =
-          definition, element_vals, parent, usage
+      def initialize(definition, children, parent, usage)
+        @definition, @children, @parent, @usage =
+          definition, children, parent, usage
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @element_vals = element_vals.map{|x| x.copy(:parent => self) }
+          @children = children.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -35,24 +36,24 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:element_vals, @element_vals),
+          changes.fetch(:children, @children),
           changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
       end
 
       def empty?
-        @element_vals.all(&:empty?)
+        @children.all(&:empty?)
       end
 
       # @return [RepeatedElementVal]
       def append(element_val)
-        copy(:element_vals => element_val.snoc(@element_vals))
+        copy(:children => element_val.snoc(@children))
       end
       alias append_element append
 
       # @return [RepeatedElementVal]
       def append!(element_val)
-        @element_vals = element_val.snoc(@element_vals)
+        @children = element_val.snoc(@children)
         self
       end
       alias append_element! append!
@@ -63,7 +64,7 @@ module Stupidedi
         q.text("RepeatedElementVal#{id}")
         q.group(2, "(", ")") do
           q.breakable ""
-          @element_vals.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ", "
               q.breakable
@@ -76,7 +77,7 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         other.definition   == @definition and
-        other.element_vals == @element_vals
+        other.children == @children
       end
     end
 
@@ -90,8 +91,8 @@ module Stupidedi
       end
 
       # @return [RepeatedElementVal]
-      def build(definition, element_vals, parent, element_use)
-        RepeatedElementVal.new(definition, element_vals, parent, element_use)
+      def build(definition, children, parent, element_use)
+        RepeatedElementVal.new(definition, children, parent, element_use)
       end
 
       # @endgroup

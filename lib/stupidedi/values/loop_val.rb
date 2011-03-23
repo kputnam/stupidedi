@@ -12,19 +12,19 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<SegmentVal, LoopVal>]
-      attr_reader :child_vals
+      attr_reader :children
 
       # @return [LoopVal, TableVal]
       attr_reader :parent
 
-      def initialize(definition, child_vals, parent)
-        @definition, @child_vals, @parent =
-          definition, child_vals, parent
+      def initialize(definition, children, parent)
+        @definition, @children, @parent =
+          definition, children, parent
 
         # Delay re-parenting until the entire value tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @child_vals = child_vals.map{|x| x.copy(:parent => self) }
+          @children = children.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -32,29 +32,29 @@ module Stupidedi
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:child_vals, @child_vals),
+          changes.fetch(:children, @children),
           changes.fetch(:parent, @parent)
       end
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @child_vals.select{|x| x.is_a?(SegmentVal) }
+        @children.select{|x| x.is_a?(SegmentVal) }
       end
 
       def empty?
-        @child_vals.all(&:empty?)
+        @children.all(&:empty?)
       end
 
       # @return [LoopVal]
       def append(child_val)
-        copy(:child_vals => child_val.snoc(@child_vals))
+        copy(:children => child_val.snoc(@children))
       end
       alias append_loop append
       alias append_segment append
 
       # @return [LoopVal]
       def append!(child_val)
-        @child_vals = child_val.snoc(@child_vals)
+        @children = child_val.snoc(@children)
         self
       end
       alias append_loop! append!
@@ -66,7 +66,7 @@ module Stupidedi
         q.text("LoopVal#{id}")
         q.group(2, "(", ")") do
           q.breakable ""
-          @child_vals.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ","
               q.breakable
@@ -78,13 +78,13 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "LoopVal(#{@child_vals.map(&:inspect).join(', ')})"
+        "LoopVal(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
       def ==(other)
         other.definition == @definition and
-        other.child_vals == @child_vals
+        other.children == @children
       end
     end
 

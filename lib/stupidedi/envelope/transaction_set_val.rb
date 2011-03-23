@@ -8,33 +8,33 @@ module Stupidedi
       attr_reader :definition
 
       # @return [Array<TableVal>]
-      attr_reader :child_vals
+      attr_reader :children
 
       # @return [FunctionalGroupVal]
       attr_reader :parent
 
-      def initialize(definition, child_vals, parent)
-        @definition, @child_vals, @parent =
-          definition, child_vals, parent
+      def initialize(definition, children, parent)
+        @definition, @children, @parent =
+          definition, children, parent
       end
 
       # @return [TransactionSetVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:child_vals, @child_vals),
+          changes.fetch(:children, @children),
           changes.fetch(:parent, @parent)
       end
 
       # @return [TransactionSetVal]
       def append(child_val)
-        copy(:child_vals => child_val.snoc(@child_vals))
+        copy(:children => child_val.snoc(@children))
       end
       alias append_table append
 
       # @return [TransactionSetVal]
       def append!(child_val)
-        @child_vals = child_val.snoc(@child_vals)
+        @children = child_val.snoc(@children)
         self
       end
       alias append_table! append!
@@ -45,7 +45,7 @@ module Stupidedi
         q.text("TransactionSetVal#{id}")
         q.group(2, "(", ")") do
           q.breakable ""
-          @child_vals.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ","
               q.breakable
@@ -57,13 +57,13 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "InterchangeVal(#{@child_vals.map(&:inspect).join(', ')})"
+        "InterchangeVal(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
       def ==(other)
         other.definition == @definition and
-        other.child_vals == @child_vals
+        other.children == @children
       end
     end
 
