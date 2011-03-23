@@ -4,11 +4,9 @@ module Stupidedi
     class AbstractState
       include Inspect
 
-      # @return [Values::AbstractVal]
-      abstract :value
+      # @return [Zipper::AbstractCursor]
+      abstract :zipper
 
-      # The state whose {#value} is the parent of this state's {#value}.
-      #
       # @return [AbstractState]
       abstract :parent
 
@@ -24,8 +22,13 @@ module Stupidedi
       # @return [AbstractState]
       abstract :add, :args => %w(segment_tok segment_use)
 
-      # @return [Values::InterchangeVal]
-      abstract :pinch
+      def pop(count)
+        if count.zero?
+          self
+        else
+          parent.copy(:zipper => zipper.up).pop(count - 1)
+        end
+      end
 
       # @return [Reader::Separators]
       def separators
@@ -51,15 +54,15 @@ module Stupidedi
         q.text self.class.name.split('::').last
         q.group(2, "(", ")") do
           q.breakable ""
-          q.pp value
+          q.pp zipper.node
         end
       end
 
     private
 
       # @return [Values::SegmentVal]
-      def segment(segment_tok, segment_use, parent = nil)
-        AbstractState.segment(segment_tok, segment_use, parent)
+      def segment(segment_tok, segment_use)
+        AbstractState.segment(segment_tok, segment_use)
       end
     end
 
@@ -83,7 +86,7 @@ module Stupidedi
       # @group SegmentVal Construction
 
       # @return [Values::SegmentVal]
-      def segment(segment_tok, segment_use, parent = nil)
+      def segment(segment_tok, segment_use)
         segment_def  = segment_use.definition
         element_uses = segment_def.element_uses
         element_toks = segment_tok.element_toks
@@ -96,7 +99,7 @@ module Stupidedi
           element_vals <<
             if element_tok.nil?
               if element_use.repeatable?
-                Values::RepeatedElementVal.empty(element_use.definition, parent, element_use)
+                Values::RepeatedElementVal.empty(element_use.definition, element_use)
               else
                 element_use.empty
               end
@@ -105,44 +108,44 @@ module Stupidedi
             end
         end
 
-        segment_use.value(element_vals, parent)
+        segment_use.value(element_vals)
       end
 
       # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
-      def element(designator, element_use, element_tok, parent = nil)
+      def element(designator, element_use, element_tok)
         if element_use.simple?
           if element_use.repeatable?
             element_toks = element_tok.element_toks
             element_vals = element_toks.map do |element_tok|
-              simple_element(designator, element_use, element_tok, parent)
+              simple_element(designator, element_use, element_tok)
             end
 
-            repeated_element(designator, element_use, element_vals, parent)
+            repeated_element(designator, element_use, element_vals)
           else
-            simple_element(designator, element_use, element_tok, parent)
+            simple_element(designator, element_use, element_tok)
           end
         else
           if element_use.repeatable?
             element_toks = element_tok.element_toks
             element_vals = element_toks.map do |element_tok|
-              composite_element(designator, element_use, element_tok, parent)
+              composite_element(designator, element_use, element_tok)
             end
 
-            repeated_element(designator, element_use, element_vals, parent)
+            repeated_element(designator, element_use, element_vals)
           else
-            composite_element(designator, element_use, element_tok, parent)
+            composite_element(designator, element_use, element_tok)
           end
         end
       end
 
       # @return [Values::RepeatedElementVal]
-      def repeated_element(designator, element_use, element_vals, parent = nil)
+      def repeated_element(designator, element_use, element_vals)
         # @todo: Position
-        Values::RepeatedElementVal.build(element_use.definition, element_vals, parent, element_use)
+        Values::RepeatedElementVal.build(element_use.definition, element_vals, element_use)
       end
 
       # @return [Values::CompositeElementVal]
-      def composite_element(designator, composite_use, composite_tok, parent = nil)
+      def composite_element(designator, composite_use, composite_tok)
         composite_def  = composite_use.definition
         component_uses = composite_def.component_uses
         component_toks = composite_tok.component_toks
@@ -161,11 +164,11 @@ module Stupidedi
         end
 
         # @todo: Position
-        composite_use.value(component_vals, parent)
+        composite_use.value(component_vals)
       end
 
       # @return [Values::SimpleElementVal]
-      def simple_element(designator, element_use, element_tok, parent = nil)
+      def simple_element(designator, element_use, element_tok)
         # We don't validate that element_tok is simple because the TokenReader
         # will always produce a SimpleElementTok given a SimpleElementUse from
         # the SegmentDef. On the other hand, the BuilderDsl API will throw an
@@ -177,24 +180,24 @@ module Stupidedi
           allowed_vals = element_use.allowed_values
 
           if element_use.requirement.forbidden?
-            element_use.empty(parent)
+            element_use.empty
           elsif allowed_vals.empty?
-            element_use.empty(parent)
+            element_use.empty
           elsif allowed_vals.size == 1
-            element_use.value(allowed_vals.first, parent)
+            element_use.value(allowed_vals.first)
           else
             raise Exceptions::ParseError,
               "Element #{designator} cannot be inferred"
           end
         elsif element_tok.value == :not_used
           if element_use.requirement.forbidden?
-            element_use.empty(parent)
+            element_use.empty
           else
             raise Exceptions::ParseError,
               "Element #{designator} is not forbidden"
           end
         else
-          element_use.value(element_tok.value, parent)
+          element_use.value(element_tok.value)
         end
       end
 

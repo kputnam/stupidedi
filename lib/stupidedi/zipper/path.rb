@@ -41,6 +41,10 @@ module Stupidedi
       def first?
         true
       end
+
+      def inspect
+        "root"
+      end
     end.new
 
     # @private
@@ -66,6 +70,10 @@ module Stupidedi
 
       def first?
         @left.empty?
+      end
+
+      def inspect
+        "#{@parent.inspect}/#{@left.length}"
       end
     end
 

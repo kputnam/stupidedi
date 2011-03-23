@@ -48,16 +48,15 @@ module Stupidedi
 
               delegate :to_i, :to_d, :to_f, :to_s, :to => :@value
 
-              def initialize(value, definition, parent, usage)
+              def initialize(value, definition, usage)
                 @value = value
-                super(definition, parent, usage)
+                super(definition, usage)
               end
 
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent),
                   changes.fetch(:usage, usage)
               end
 
@@ -176,31 +175,31 @@ module Stupidedi
             # @group Constructors
 
             # @return [DecimalVal::Empty]
-            def empty(definition, parent, usage)
-              DecimalVal::Empty.new(definition, parent, usage)
+            def empty(definition, usage)
+              DecimalVal::Empty.new(definition, usage)
             end
 
             # @return [DecimalVal::Empty, DecimalVal::NonEmpty]
-            def value(object, definition, parent, usage)
+            def value(object, definition, usage)
               if object.blank?
-                DecimalVal::Empty.new(definition, parent, usage)
+                DecimalVal::Empty.new(definition, usage)
               elsif object.respond_to?(:to_d)
-                DecimalVal::NonEmpty.new(object.to_d, definition, parent, usage)
+                DecimalVal::NonEmpty.new(object.to_d, definition, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
             end
 
             # @return [DecimalVal::Empty, DecimalVal::NonEmpty]
-            def parse(string, definition, parent, usage)
+            def parse(string, definition, usage)
               if string.blank?
-                DecimalVal::Empty.new(definition, parent, usage)
+                DecimalVal::Empty.new(definition, usage)
               else
-                DecimalVal::NonEmpty.new(string.to_d, definition, parent, usage)
+                DecimalVal::NonEmpty.new(string.to_d, definition, usage)
               end
             rescue ArgumentError
               # @todo
-              DecimalVal::Empty.new(definition, parent, usage)
+              DecimalVal::Empty.new(definition, usage)
             end
 
             # @endgroup

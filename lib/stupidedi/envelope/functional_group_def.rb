@@ -67,13 +67,8 @@ module Stupidedi
       end
 
       # @return [FunctionalGroupVal]
-      def value(header_segment_vals, transaction_set_vals, trailer_segment_uses, parent = nil)
-        FunctionalGroupVal.new(self, segment_vals, transaction_set_vals, parent)
-      end
-
-      # @return [FunctionalGroupVal]
-      def empty(parent = nil)
-        FunctionalGroupVal.new(self, [], [], parent)
+      def empty
+        FunctionalGroupVal.new(self, [], [])
       end
 
       # @return [void]

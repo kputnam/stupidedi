@@ -14,20 +14,16 @@ module Stupidedi
       # @return [Array<SegmentVal, TransactionSetVal>]
       attr_reader :children
 
-      # @return [InterchangeVal]
-      attr_reader :parent
-
-      def initialize(definition, children, parent)
-        @definition, @children, @parent =
-          definition, children, parent
+      def initialize(definition, children)
+        @definition, @children =
+          definition, children
       end
 
       # @return [FunctionalGroupVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:children, @children),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:children, @children)
       end
 
       # @return false
@@ -39,21 +35,6 @@ module Stupidedi
       def segment_vals
         @children.select{|x| x.is_a?(Values::SegmentVal) }
       end
-
-      # @return [FunctionalGroupVal]
-      def append(child_val)
-        copy(:children => child_val.snoc(@children))
-      end
-      alias append_segment append
-      alias append_transaction_set_val append
-
-      # @return [FunctionalGroupVal]
-      def append!(child_val)
-        @children = child_val.snoc(@children)
-        self
-      end
-      alias append_segment! append!
-      alias append_transaction_set_val! append!
 
       # @return [String, nil]
       def version
@@ -106,7 +87,13 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "FunctionalGroupVal(#{@children.map(&:inspect).join(', ')})"
+        "Group(#{@children.map(&:inspect).join(', ')})"
+      end
+
+      def ==(other)
+        eql?(other) or
+          (other.definition == @definition or
+           other.children   == @children)
       end
     end
 

@@ -54,13 +54,12 @@ module Stupidedi
       end
 
       # @return [Values::SegmentVal]
-      def empty(parent = nil, usage = nil)
-        Values::SegmentVal.new(self, [], parent, usage)
+      def empty(usage)
+        Values::SegmentVal.new(self, [], usage)
       end
 
-      # @return [Values::SegmentVal]
-      def value(element_vals, parent = nil, usage = nil)
-        Values::SegmentVal.new(self, element_vals, parent, usage)
+      def value(element_vals, usage)
+        Values::SegmentVal.new(self, element_vals, usage)
       end
 
       # @return [void]

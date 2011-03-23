@@ -14,15 +14,15 @@ module Stupidedi
 
       # @return [Integer]
       def depth
-        @path.depth
+        path.depth
       end
 
       def first?
-        @path.first?
+        path.first?
       end
 
       def last?
-        @path.last?
+        path.last?
       end
 
       abstract :leaf?
@@ -38,13 +38,30 @@ module Stupidedi
       # @return [MemoizedCursor]
       def down
         if leaf?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot descend into leaf node"
         end
 
-        head, *tail = @node.children
+        @__down ||= begin
+          head, *tail = @node.children
 
-        MemoizedCursor.new(head,
-          Hole.new([], @path, tail), self)
+          MemoizedCursor.new(head,
+            Hole.new([], @path, tail), self)
+        end
+      end
+
+      # @return [AbstractCursor]
+      def dangle
+        if node.leaf?
+          raise Exceptions::ZipperError,
+            "cannot descend into leaf node"
+        end
+
+        if leaf?
+          DanglingCursor.new(self)
+        else
+          down
+        end
       end
 
       # @return [AbstractCursor]
@@ -55,6 +72,12 @@ module Stupidedi
 
       # @return [AbstractCursor]
       abstract :prev
+
+      # @return [AbstractCursor]
+      abstract :first
+
+      # @return [AbstractCursor]
+      abstract :last
 
       # @return [RootCursor]
       def root
@@ -78,35 +101,23 @@ module Stupidedi
       # @return [EditedCursor]
       def prepend_child(child)
         if node.leaf?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot add child to leaf node"
         end
 
-        children =
-          if child.leaf?
-            []
-          else
-            child.children
-          end
-
         EditedCursor.new(child,
-          Hole.new([], path, children), self)
+          Hole.new([], path, node.children), self)
       end
 
       # @return [EditedCursor]
       def append_child(child)
         if node.leaf?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot add child to leaf node"
         end
 
-        children =
-          if child.leaf?
-            []
-          else
-            child.children
-          end
-
         EditedCursor.new(child,
-          Hole.new(children, path, []), self)
+          Hole.new(node.children, path, []), self)
       end
 
       # @return [AbstractCursor]

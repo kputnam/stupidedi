@@ -41,16 +41,15 @@ module Stupidedi
 
               delegate :to_d, :to_s, :to_f, :length, :to => :@value
 
-              def initialize(string, definition, parent, usage)
+              def initialize(string, definition, usage)
                 @value = string
-                super(definition, parent, usage)
+                super(definition, usage)
               end
 
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent),
                   changes.fetch(:usage, usage)
               end
 
@@ -81,27 +80,27 @@ module Stupidedi
             # @group Constructors
 
             # @return [StringVal::Empty]
-            def empty(definition, parent, usage)
-              StringVal::Empty.new(definition, parent, usage)
+            def empty(definition, usage)
+              StringVal::Empty.new(definition, usage)
             end
 
             # @return [StringVal::Empty, StringVal::NonEmpty]
-            def value(object, definition, parent, usage)
+            def value(object, definition, usage)
               if object.blank?
-                StringVal::Empty.new(definition, parent, usage)
+                StringVal::Empty.new(definition, usage)
               elsif object.respond_to?(:to_s)
-                StringVal::NonEmpty.new(object.to_s, definition, parent, usage)
+                StringVal::NonEmpty.new(object.to_s, definition, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
             end
 
             # @return [StringVal::Empty, StringVal::NonEmpty]
-            def parse(string, definition, parent, usage)
+            def parse(string, definition, usage)
               if string.blank?
-                StringVal::Empty.new(definition, parent, usage)
+                StringVal::Empty.new(definition, usage)
               else
-                StringVal::NonEmpty.new(string, definition, parent, usage)
+                StringVal::NonEmpty.new(string, definition, usage)
               end
             end
 

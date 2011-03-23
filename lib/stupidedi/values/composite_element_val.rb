@@ -13,21 +13,12 @@ module Stupidedi
       attr_reader :children
       alias component_vals children
 
-      # @return [SegmentVal]
-      attr_reader :parent
-
       # @return [CompositeElementUse]
       attr_reader :usage
 
-      def initialize(definition, children, parent, usage)
-        @definition, @children, @parent, @usage =
-          definition, children, parent, usage
-
-        # Delay re-parenting until the entire value tree has a root
-        # to prevent unnecessarily copying objects
-        unless parent.nil?
-          @children = children.map{|x| x.copy(:parent => self) }
-        end
+      def initialize(definition, children, usage)
+        @definition, @children, @usage =
+          definition, children, usage
       end
 
       # @return [CompositeElementVal]
@@ -35,8 +26,7 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children),
-          changes.fetch(:parent, @parent),
-          changes.fetch(:usage, @parent)
+          changes.fetch(:usage, @usage)
       end
 
       # @return false
@@ -61,23 +51,10 @@ module Stupidedi
         end
       end
 
-      # @return [CompositeElementVal]
-      def append(component_val)
-        copy(:children => component_val.snoc(@children))
-      end
-      alias append_component append
-
-      # @return [CompositeElementVal]
-      def append!(component_val)
-        @children = component_val.snoc(@children)
-        self
-      end
-      alias append_component! append!
-
-      # @return [RepeatedElementVal]
-      def repeated
-        RepeatedElementVal.new(@definition, [self], @parent)
-      end
+    # # @return [RepeatedElementVal]
+    # def repeated
+    #   RepeatedElementVal.new(@definition, [self])
+    # end
 
       # @return [void]
       def pretty_print(q)
@@ -102,8 +79,9 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        other.definition == @definition and
-        other.children == @children
+        eql?(other) or 
+         (other.definition == @definition and
+          other.children   == @children)
       end
     end
 

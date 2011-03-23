@@ -10,13 +10,13 @@ module Stupidedi
       abstract :simple?
 
       # @return [SimpleElementVal, CompositeElementVal]
-      def empty(parent = nil)
-        definition.empty(parent, self)
+      def empty
+        definition.empty(self)
       end
 
       # @return [SimpleElementVal, CompositeElementVal]
-      def value(value, parent = nil)
-        definition.value(value, parent, self)
+      def value(object)
+        definition.value(object, self)
       end
 
       def composite?
@@ -62,8 +62,8 @@ module Stupidedi
       end
 
       # @return [SimpleElementVal]
-      def parse(string, parent = nil)
-        definition.parse(string, parent, self)
+      def parse(string)
+        definition.parse(string, self)
       end
 
       def repeatable?
@@ -117,8 +117,8 @@ module Stupidedi
       end
 
       # @return [SimpleElementVal]
-      def parse(string, parent = nil)
-        definition.parse(string, parent, self)
+      def parse(string)
+        definition.parse(string, self)
       end
 
       def repeatable?

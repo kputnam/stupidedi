@@ -42,9 +42,9 @@ module Stupidedi
 
               delegate :to_s, :length, :=~, :match, :include?, :to => :@value
 
-              def initialize(value, definition, parent, usage)
+              def initialize(value, definition, usage)
                 @value = value
-                super(definition, parent, usage)
+                super(definition, usage)
               end
 
               # @return [NonEmpty]
@@ -52,7 +52,6 @@ module Stupidedi
                 self.class.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:definition, definition),
-                  changes.fetch(:parent, parent),
                   changes.fetch(:usage, usage)
               end
 
@@ -83,27 +82,27 @@ module Stupidedi
             # @group Constructors
 
             # @return [IdentifierVal::Empty]
-            def empty(definition, parent, usage)
-              IdentifierVal::Empty.new(definition, parent, usage)
+            def empty(definition, usage)
+              IdentifierVal::Empty.new(definition, usage)
             end
 
             # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
-            def value(object, definition, parent, usage)
+            def value(object, definition, usage)
               if object.blank?
-                IdentifierVal::Empty.new(definition, parent, usage)
+                IdentifierVal::Empty.new(definition, usage)
               elsif object.respond_to?(:to_s)
-                IdentifierVal::NonEmpty.new(object.to_s, definition, parent, usage)
+                IdentifierVal::NonEmpty.new(object.to_s, definition, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
             end
 
             # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
-            def parse(string, definition, parent, usage)
+            def parse(string, definition, usage)
               if string.blank?
-                IdentifierVal::Empty.new(definition, parent, usage)
+                IdentifierVal::Empty.new(definition, usage)
               else
-                IdentifierVal::NonEmpty.new(string, definition, parent, usage)
+                IdentifierVal::NonEmpty.new(string, definition, usage)
               end
             end
 

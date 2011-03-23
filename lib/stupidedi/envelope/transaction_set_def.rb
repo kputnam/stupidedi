@@ -28,13 +28,8 @@ module Stupidedi
       end
 
       # @return [TransactionSetVal]
-      def value(header_segment_vals, parent = nil)
-        TransactionSetVal.new(self, @table_defs.head.value(header_segment_vals, [], []).cons, parent)
-      end
-
-      # @return [TransactionSetVal]
-      def empty(parent = nil)
-        TransactionSetVal.new(self, [], parent)
+      def empty
+        TransactionSetVal.new(self, [])
       end
 
       # @return [SegmentUse]

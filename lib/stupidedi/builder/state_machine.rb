@@ -31,22 +31,12 @@ module Stupidedi
             next
           end
 
-          mutable =
-            @states.length == 1 and instructions.length == 1
-
           instructions.each do |i|
             if i.push.nil?
-              if mutable
-                state = state.
-                  pop!(i.pop_count).
-                  drop!(i.drop_count).
-                  add!(segment_tok, i.segment_use)
-              else
-                state = state.
-                  pop(i.pop_count).
-                  drop(i.drop_count).
-                  add(segment_tok, i.segment_use)
-              end
+              state = state.
+                pop(i.pop_count).
+                drop(i.drop_count).
+                add(segment_tok, i.segment_use)
 
               states << state
 
@@ -63,15 +53,9 @@ module Stupidedi
                 end
               end
             else
-              if mutable
-                state = state.
-                  pop!(i.pop_count).
-                  drop!(i.drop_count)
-              else
-                state = state.
-                  pop(i.pop_count).
-                  drop(i.drop_count)
-              end
+              state = state.
+                pop(i.pop_count).
+                drop(i.drop_count)
 
               # Note Instruction#push returns a subclass of AbstractState,
               # which has a concrete constructor method named "push", that
@@ -95,7 +79,6 @@ module Stupidedi
                   :segment_dict => state.segment_dict
               end
             end
-
           end
         end
 
@@ -151,16 +134,10 @@ module Stupidedi
         end
       end
 
-      # @return [Values::AbstractVal]
-      def value
+      # @return [Zipper::AbstractCursor]
+      def zipper
         if @states.length == 1
-          @states.head.value
-        end
-      end
-
-      def pinch
-        if @states.length == 1
-          @states.head.pinch
+          @states.head.zipper
         end
       end
     end
@@ -171,12 +148,7 @@ module Stupidedi
 
       # @return [StateMachine]
       def build(config)
-        separators   = Reader::Separators.empty
-        segment_dict = Reader::SegmentDict.empty
-
-        state = TransmissionState.new(config, separators, segment_dict)
-
-        StateMachine.new(state.cons, [])
+        StateMachine.new(TransmissionState.build(config).cons, [])
       end
 
       # @endgroup

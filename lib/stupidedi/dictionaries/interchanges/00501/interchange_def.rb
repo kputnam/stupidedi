@@ -19,16 +19,15 @@ module Stupidedi
             FiveOhOne::InterchangeVal.new(self, [])
           end
 
-          # @return [InterchangeVal]
-          def value(segment_val)
-            FiveOhOne::InterchangeVal.new(self, segment_val.cons)
-          end
-
           # @endgroup
           #####################################################################
 
           def segment_dict
             SegmentDefs
+          end
+
+          def separators(isa)
+            Reader::Separators.new(isa.at(15).to_s, isa.at(10).to_s, nil, nil)
           end
         end.new "00501",
           # Interchange header

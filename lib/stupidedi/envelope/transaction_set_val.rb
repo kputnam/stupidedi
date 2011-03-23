@@ -10,39 +10,22 @@ module Stupidedi
       # @return [Array<TableVal>]
       attr_reader :children
 
-      # @return [FunctionalGroupVal]
-      attr_reader :parent
-
-      def initialize(definition, children, parent)
-        @definition, @children, @parent =
-          definition, children, parent
+      def initialize(definition, children)
+        @definition, @children =
+          definition, children
       end
 
       # @return [TransactionSetVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:children, @children),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:children, @children)
       end
 
       # @return false
       def leaf?
         false
       end
-
-      # @return [TransactionSetVal]
-      def append(child_val)
-        copy(:children => child_val.snoc(@children))
-      end
-      alias append_table append
-
-      # @return [TransactionSetVal]
-      def append!(child_val)
-        @children = child_val.snoc(@children)
-        self
-      end
-      alias append_table! append!
 
       # @return [void]
       def pretty_print(q)
@@ -62,13 +45,14 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "TransactionSetVal(#{@children.map(&:inspect).join(', ')})"
+        "Transaction(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
       def ==(other)
-        other.definition == @definition and
-        other.children == @children
+        eql?(other) or
+         (other.definition == @definition and
+          other.children   == @children)
       end
     end
 

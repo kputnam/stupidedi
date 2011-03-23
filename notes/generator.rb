@@ -10,9 +10,9 @@ config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::
 config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837 }
 
 b = Stupidedi::Builder::BuilderDsl.new(config)
-b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", "~")
-b. GS("HP", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X221")
-b. ST("835", "1234", b.not_used)
+#.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", "~")
+#. GS("HP", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X221")
+#. ST("835", "1234", b.not_used)
 
 b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", "~")
 b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
@@ -36,6 +36,8 @@ b.NM1("IL", "1", "BACON", "KEVIN", "", "", "", "MI", "222334444")
 b. N3("236 N MAIN ST")
 b. N4("MIAMI", "FL", "33413")
 b.DMG("D8", "19431022", "M")
+
+z = b.instance_variable_get(:@machine).states.head.zipper
 
 #b.GS("HP", "SENDER ID", "RECEIVER ID", "19990531", "0030", "1", "X", "005010X221")
 #b.ST("835", "4321")

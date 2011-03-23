@@ -50,12 +50,14 @@ module Stupidedi
 
       # @return [void]
       def next
-        raise Exceptions::ZipperError
+        raise Exceptions::ZipperError,
+          "root has no siblings"
       end
 
       # @return [void]
       def prev
-        raise Exceptions::ZipperError
+        raise Exceptions::ZipperError,
+          "root has no siblings"
       end
 
       # @return [RootCursor]
@@ -65,7 +67,8 @@ module Stupidedi
 
       # @return [void]
       def up
-        raise Exceptions::ZipperError
+        raise Exceptions::ZipperError,
+          "root has no parent"
       end
 
       # @endgroup
@@ -76,12 +79,14 @@ module Stupidedi
 
       # @return [void]
       def append(node)
-        raise Exceptions::ZipperError
+        raise Exceptions::ZipperError,
+          "root has no siblings"
       end
 
       # @return [void]
       def prepend(node)
-        raise Exceptions::ZipperError
+        raise Exceptions::ZipperError,
+          "root has no siblings"
       end
 
       # @return [RootCursor]
@@ -91,7 +96,8 @@ module Stupidedi
 
       # @return [void]
       def delete
-        raise Exceptions::ZipperError
+        raise Exceptions::ZipperError,
+          "cannot delete root"
       end
     end
 

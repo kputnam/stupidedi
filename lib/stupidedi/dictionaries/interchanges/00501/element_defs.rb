@@ -17,9 +17,9 @@ module Stupidedi
 
             delegate :to_s, :to => :@value
 
-            def initialize(value, definition, parent, usage)
+            def initialize(value, definition, usage)
               @value = value
-              super(definition, parent, usage)
+              super(definition, usage)
             end
 
             # @return [SeparatorElementVal]
@@ -27,7 +27,6 @@ module Stupidedi
               SeparatorElementVal.new \
                 changes.fetch(:value, @value),
                 changes.fetch(:definition, definition),
-                changes.fetch(:parent, parent),
                 changes.fetch(:usage, usage)
             end
 
@@ -43,18 +42,18 @@ module Stupidedi
             # @group Constructor Methods
 
             # @raise NoMethodError
-            def empty(definition, parent, usage)
+            def empty(definition, usage)
               raise NoMethodError, "@todo"
             end
 
             # @return [SeparatorElementVal]
-            def value(character, definition, parent, usage)
-              SeparatorElementVal.new(character, definition, parent, usage)
+            def value(character, definition, usage)
+              SeparatorElementVal.new(character, definition, usage)
             end
 
             # @return [SeparatorElementVal]
-            def parse(character, definition, parent, usage)
-              SeparatorElementVal.new(character, definition, parent, usage)
+            def parse(character, definition, usage)
+              SeparatorElementVal.new(character, definition, usage)
             end
 
             # @endgroup

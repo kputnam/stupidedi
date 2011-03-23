@@ -9,13 +9,8 @@ module Stupidedi
         # Singleton
         FunctionalGroupDef = Class.new(Envelope::FunctionalGroupDef) do
           # @return [FunctionalGroupVal]
-          def empty(parent = nil)
-            FunctionalGroupVal.new(self, [], parent)
-          end
-
-          # @return [FunctionalGroupVal]
-          def value(segment_val, parent = nil)
-            FunctionalGroupVal.new(self, segment_val.cons, parent)
+          def empty
+            FunctionalGroupVal.new(self, [])
           end
 
           # @return [Module]

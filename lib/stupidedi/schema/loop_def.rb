@@ -72,13 +72,8 @@ module Stupidedi
       end
 
       # @return [LoopVal]
-      def value(segment_val, parent = nil)
-        Values::LoopVal.new(self, segment_val.cons, parent)
-      end
-
-      # @return [LoopVal]
-      def empty(parent = nil)
-        Values::LoopVal.new(self, [], parent)
+      def empty
+        Values::LoopVal.new(self, [])
       end
 
       # @return [void]

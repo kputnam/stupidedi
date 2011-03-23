@@ -55,13 +55,12 @@ module Stupidedi
       end
 
       # @return [SegmentVal]
-      def empty(parent = nil)
-        definition.empty(parent, self)
+      def empty
+        definition.empty(self)
       end
 
-      # @return [SegmentVal]
-      def value(element_vals, parent = nil)
-        definition.value(element_vals, parent, self)
+      def value(element_vals)
+        definition.value(element_vals, self)
       end
 
       # @return [void]

@@ -48,18 +48,18 @@ module Stupidedi
             end
 
             # @return [Values::SimpleElementVal]
-            def parse(string, parent = nil, usage = nil)
-              companion.parse(string, self, parent, usage)
+            def parse(string, usage)
+              companion.parse(string, self, usage)
             end
 
             # @return [Values::SimpleElementVal]
-            def value(object, parent = nil, usage = nil)
-              companion.value(object, self, parent, usage)
+            def value(object, usage)
+              companion.value(object, self, usage)
             end
 
             # @return [Values::SimpleElementVal]
-            def empty(parent = nil, usage = nil)
-              companion.empty(self, parent, usage)
+            def empty(usage)
+              companion.empty(self, usage)
             end
 
             # @return [void]

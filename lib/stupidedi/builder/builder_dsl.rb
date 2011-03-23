@@ -79,13 +79,9 @@ module Stupidedi
         self
       end
 
-      # @return [Values::AbstractVal]
-      def value
-        @machine.value
-      end
-
-      def pinch
-        @machine.pinch
+      # @return [Zipper::AbstractCursor]
+      def zipper
+        @machine.zipper
       end
 
     private

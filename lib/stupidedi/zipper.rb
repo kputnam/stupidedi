@@ -1,6 +1,7 @@
 module Stupidedi
   module Zipper
     autoload :AbstractCursor, "stupidedi/zipper/abstract_cursor"
+    autoload :DanglingCursor, "stupidedi/zipper/dangling_cursor"
     autoload :EditedCursor,   "stupidedi/zipper/edited_cursor"
     autoload :MemoizedCursor, "stupidedi/zipper/memoized_cursor"
     autoload :RootCursor,     "stupidedi/zipper/root_cursor"

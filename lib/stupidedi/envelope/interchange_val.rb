@@ -40,21 +40,6 @@ module Stupidedi
         @children.select{|x| x.is_a?(Values::SegmentVal) }
       end
 
-      # @return [InterchangeVal]
-      def append(child_val)
-        copy(:children => child_val.snoc(@children))
-      end
-      alias append_segment append
-      alias append_functional_group_val append
-
-      # @return [InterchangeVal]
-      def append!(child_val)
-        @children = child_val.snoc(@children)
-        self
-      end
-      alias append_segment! append!
-      alias append_functional_group_val! append!
-
       # @return [void]
       def pretty_print(q)
         id = @definition.try{|d| "[#{d.id}]" }
@@ -73,13 +58,14 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "InterchangeVal(#{@children.map(&:inspect).join(', ')})"
+        "Interchange(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
       def ==(other)
-        other.definition == @definition and
-        other.children == @children
+        eql?(other) or
+         (other.definition == @definition and
+          other.children   == @children)
       end
     end
 

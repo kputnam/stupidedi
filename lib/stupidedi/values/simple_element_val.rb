@@ -15,16 +15,15 @@ module Stupidedi
       # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 
-      def initialize(definition, parent, usage)
-        @definition, @parent, @usage =
-          definition, parent, usage
+      def initialize(definition, usage)
+        @definition, @usage =
+          definition, usage
       end
 
       # @return [SimpleElementVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
       end
 
@@ -35,7 +34,7 @@ module Stupidedi
 
       # @return [RepeatedElementVal]
       def repeated
-        RepeatedElementVal.new(@definition, [self], @parent)
+        RepeatedElementVal.new(@definition, [self])
       end
     end
 

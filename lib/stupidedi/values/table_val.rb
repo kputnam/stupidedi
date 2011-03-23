@@ -10,26 +10,16 @@ module Stupidedi
       # @return [Array<SegmentVal, LoopVal>]
       attr_reader :children
 
-      # @return [TransactionSetVal]
-      attr_reader :parent
-
-      def initialize(definition, children, parent)
-        @definition, @children, @parent =
-          definition, children, parent
-
-        # Delay re-parenting until the entire definition tree has a root
-        # to prevent unnecessarily copying objects
-        unless parent.nil?
-          @children = children.map{|x| x.copy(:parent => self) }
-        end
+      def initialize(definition, children)
+        @definition, @children =
+          definition, children
       end
 
       # @return [TableVal]
       def copy(changes = {})
         self.class.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:children, @children),
-          changes.fetch(:parent, @parent)
+          changes.fetch(:children, @children)
       end
 
       # @return false
@@ -45,21 +35,6 @@ module Stupidedi
       def empty?
         @children.all(&:empty?)
       end
-
-      # @return [TableVal]
-      def append(child_val)
-        copy(:children => child_val.snoc(@children))
-      end
-      alias append_loop append
-      alias append_segment append
-
-      # @return [TableVal]
-      def append!(child_val)
-        @children = child_val.snoc(@children)
-        self
-      end
-      alias append_loop! append!
-      alias append_segment! append!
 
       # @return [void]
       def pretty_print(q)
@@ -79,13 +54,14 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "TableVal(#{@children.map(&:inspect).join(', ')})"
+        "Table(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
       def ==(other)
-        other.definition == @definition and
-        other.children == @children
+        eql?(other) or
+         (other.definition == @definition and
+          other.children   == @children)
       end
     end
 

@@ -3,9 +3,8 @@ module Stupidedi
 
     class LoopState < AbstractState
 
-      # @return [Values::LoopVal]
-      attr_reader :value
-      alias loop_val value
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
 
       # @return [TableState, LoopState]
       attr_reader :parent
@@ -13,33 +12,17 @@ module Stupidedi
       # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(value, parent, instructions)
-        @value, @parent, @instructions =
-          value, parent, instructions
+      def initialize(zipper, parent, instructions)
+        @zipper, @parent, @instructions =
+          zipper, parent, instructions
       end
 
       # @return [LoopState]
       def copy(changes = {})
         LoopState.new \
-          changes.fetch(:value, @value),
+          changes.fetch(:zipper, @zipper),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
-      end
-
-      def pinch
-        @parent.merge(@value).pinch
-      end
-
-      #########################################################################
-      # @group Nondestructive Methods
-
-      # @return [AbstractState]
-      def pop(count)
-        if count.zero?
-          self
-        else
-          @parent.merge(@value).pop(count - 1)
-        end
       end
 
       # @return [LoopState]
@@ -53,62 +36,23 @@ module Stupidedi
 
       # @return [LoopState]
       def add(segment_tok, segment_use)
-        copy(:value => @value.append(segment(segment_tok, segment_use)))
+        copy(:zipper => @zipper.append(segment(segment_tok, segment_use)))
       end
-
-      # @return [LoopState]
-      def merge(child)
-        copy(:value => @value.append(child))
-      end
-
-      # @endgroup
-      #########################################################################
-
-      #########################################################################
-      # @group Destructive Methods
-
-      # @return [AbstractState]
-      def pop!(count)
-        if count.zero?
-          self
-        else
-          @parent.merge!(@value).pop!(count - 1)
-        end
-      end
-
-      # @return [LoopState]
-      def drop!(count)
-        unless count.zero?
-          @instructions = @instructions.drop(count)
-        end
-        self
-      end
-
-      # @return [LoopState]
-      def add!(segment_tok, segment_use)
-        @value.append!(segment(segment_tok, segment_use))
-        self
-      end
-
-      # @return [LoopState]
-      def merge!(child)
-        @value.append!(child)
-        self
-      end
-
-      # @endgroup
-      #########################################################################
     end
 
     class << LoopState
 
       # @return [LoopState]
-      def push(segment_tok, segment_use, parent, reader = nil)
+      def push(segment_tok, segment_use, parent, reader)
         segment_val = segment(segment_tok, segment_use)
         loop_def    = segment_use.parent
-        loop_val    = loop_def.value(segment_val, parent.value)
+        loop_val    = loop_def.empty
 
-        LoopState.new(loop_val, parent,
+        zipper = parent.zipper.
+          append(loop_val).
+          append_child(segment_val)
+
+        LoopState.new(zipper, parent,
           parent.instructions.push(instructions(loop_def)))
       end
 

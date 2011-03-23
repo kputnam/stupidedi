@@ -6,6 +6,9 @@ module Stupidedi
 
       class NonEmpty < InstructionTable
 
+        # @return [Array<Instruction>]
+        attr_reader :instructions
+
         def initialize(instructions, pop)
           @instructions, @pop = instructions.freeze, pop
 

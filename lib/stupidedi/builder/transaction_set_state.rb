@@ -3,9 +3,8 @@ module Stupidedi
 
     class TransactionSetState < AbstractState
 
-      # @return [Envelope::TransactionSetVal]
-      attr_reader :value
-      alias transaction_set_val value
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
 
       # @return [FunctionalGroupState]
       attr_reader :parent
@@ -13,33 +12,17 @@ module Stupidedi
       # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(value, parent, instructions)
-        @value, @parent, @instructions =
-          value, parent, instructions
+      def initialize(zipper, parent, instructions)
+        @zipper, @parent, @instructions =
+          zipper, parent, instructions
       end
 
       # @return [TransactionSetState]
       def copy(changes = {})
         TransactionSetState.new \
-          changes.fetch(:value, @value),
+          changes.fetch(:zipper, @zipper),
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
-      end
-
-      def pinch
-        @parent.merge(@value).pinch
-      end
-
-      #########################################################################
-      # @group Nondestructive Methods
-
-      # @return [AbstractState]
-      def pop(count)
-        if count.zero?
-          self
-        else
-          @parent.merge(@value).pop(count - 1)
-        end
       end
 
       # @return [TransactionSetState]
@@ -53,60 +36,16 @@ module Stupidedi
 
       # @return [TransactionSetState]
       def add(segment_tok, segment_use)
-        copy(:value => @value.append(segment(segment_tok, segment_use)))
+        copy(:zipper => @zipper.append(segment(segment_tok, segment_use)))
       end
-
-      # @return [TransactionSetState]
-      def merge(child)
-        copy(:value => @value.append(child))
-      end
-
-      # @endgroup
-      #########################################################################
-
-      #########################################################################
-      # @group Destructive Methods
-
-      # @return [AbstractState]
-      def pop!(count)
-        if count.zero?
-          self
-        else
-          @parent.merge!(@value).pop!(count - 1)
-        end
-      end
-
-      # @return [TransactionSetState]
-      def drop!(count)
-        unless count.zero?
-          @instructions = @instructions.drop(count)
-        end
-        self
-      end
-
-      # @return [TransactionSetState]
-      def add!(segment_tok, segment_use)
-        @value.append!(segment(segment_tok, segment_use))
-        self
-      end
-
-      # @return [TransactionSetState]
-      def merge!(child)
-        @value.append!(child)
-        self
-      end
-
-      # @endgroup
-      #########################################################################
-
     end
 
     class << TransactionSetState
 
       # @return [TransactionSetState]
-      def push(segment_tok, segment_use, parent, reader = nil)
+      def push(segment_tok, segment_use, parent, reader)
         # GS01: Functional Identifier Code
-        fgcode = parent.value.at(:GS).head.at(0).to_s
+        fgcode = parent.fgcode
 
         # ST01: Transaction Set Identifier Code
         txcode = segment_tok.element_toks.at(0).try(:value)
@@ -116,7 +55,7 @@ module Stupidedi
 
         if version.blank? or version.is_a?(Symbol)
           # GS08: Version / Release / Industry Identifier Code
-          version = parent.value.at(:GS).head.at(7).to_s
+          version = parent.zipper.node.at(7).to_s
         end
 
         unless parent.config.transaction_set.defined_at?(version, fgcode, txcode)
@@ -126,12 +65,16 @@ module Stupidedi
         end
 
         envelope_def = parent.config.transaction_set.at(version, fgcode, txcode)
-        envelope_val = envelope_def.empty(parent.value)
+        envelope_val = envelope_def.empty
         segment_use  = envelope_def.entry_segment_use
 
+        zipper = parent.zipper.
+          append(envelope_val).
+          dangle
+
         TableState.push(segment_tok, segment_use,
-          TransactionSetState.new(envelope_val, parent,
-            parent.instructions.push(instructions(envelope_def))))
+          TransactionSetState.new(zipper, parent,
+            parent.instructions.push(instructions(envelope_def))), reader)
       end
 
     private

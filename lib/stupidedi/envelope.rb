@@ -8,5 +8,7 @@ module Stupidedi
 
     autoload :TransactionSetDef,  "stupidedi/envelope/transaction_set_def"
     autoload :TransactionSetVal,  "stupidedi/envelope/transaction_set_val"
+
+    autoload :Transmission,       "stupidedi/envelope/transmission"
   end
 end

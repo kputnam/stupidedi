@@ -58,13 +58,8 @@ module Stupidedi
       end
 
       # @return [Values::TableVal]
-      def value(segment_val, parent = nil)
-        Values::TableVal.new(self, segment_val.cons, parent)
-      end
-
-      # @return [Values::TableVal]
-      def empty(parent = nil)
-        Values::TableVal.new(self, [], parent)
+      def empty
+        Values::TableVal.new(self, [])
       end
 
       # @return [void]

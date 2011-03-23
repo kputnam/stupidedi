@@ -35,18 +35,6 @@ module Stupidedi
       #########################################################################
       # @group Traversal Methods
 
-      # @return [MemoizedCursor]
-      def down
-        if leaf?
-          raise Exceptions::ZipperError
-        end
-
-        head, *tail = @node.children
-
-        MemoizedCursor.new(head,
-          Hole.new([], @path, tail), self)
-      end
-
       # @return [AbstractCursor]
       def up
         node =
@@ -63,7 +51,8 @@ module Stupidedi
       # @return [EditedCursor]
       def next
         if last?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot move to next after last node"
         end
 
         head, *tail = @path.right
@@ -75,13 +64,38 @@ module Stupidedi
       # @return [EditedCursor]
       def prev
         if first?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot move to prev before first node"
         end
 
         head, *tail = @path.left
 
         EditedCursor.new(head,
           Hole.new(tail, @path.parent, @node.cons(@path.right)), @parent)
+      end
+
+      # @return [EditedCursor]
+      def first
+        if first?
+          return self
+        end
+
+        right = @path.left.init.reverse.concat(@node.cons(@path.right))
+
+        EditedCursor.new(@path.left.last,
+          Hole.new([], @path.parent, right), @parent)
+      end
+
+      # @return [EditedCursor]
+      def last
+        if last?
+          return self
+        end
+
+        left = @node.cons(@path.right.init.reverse).concat(@path.left)
+
+        EditedCursor.new(@path.right.last,
+          Hole.new(left, @path.parent, []), @parent)
       end
 
       # @endgroup
@@ -97,7 +111,7 @@ module Stupidedi
       end
 
       # @return [EditedCursor]
-      def prepend
+      def prepend(node)
         EditedCursor.new(node,
           Hole.new(@path.left, @path.parent, @node.cons(@path.right)), @parent)
       end

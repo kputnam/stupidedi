@@ -43,7 +43,8 @@ module Stupidedi
       # @return [MemoizedCursor]
       def next
         if last?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot move to next after last node"
         end
 
         head, *tail = @path.right
@@ -55,13 +56,38 @@ module Stupidedi
       # @return [MemoizedCursor]
       def prev
         if first?
-          raise Exceptions::ZipperError
+          raise Exceptions::ZipperError,
+            "cannot move to prev before first node"
         end
 
         head, *tail = @path.left
 
         MemoizedCursor.new(head,
           Hole.new(tail, @path.parent, @node.cons(@path.right)), @parent)
+      end
+
+      # @return [MemoizedCursor]
+      def first
+        if first?
+          return self
+        end
+
+        right = @path.left.init.reverse.concat(@node.cons(@path.right))
+
+        MemoizedCursor.new(@path.left.last,
+          Hole.new([], @path.parent, right), @parent)
+      end
+
+      # @return [MemoizedCursor]
+      def last
+        if last?
+          return self
+        end
+
+        left = @node.cons(@path.right.init.reverse).concat(@path.left)
+
+        MemoizedCursor.new(@path.right.last,
+          Hole.new(left, @path.parent, []), @parent)
       end
 
       # @endgroup

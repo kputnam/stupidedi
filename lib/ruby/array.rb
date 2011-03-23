@@ -46,7 +46,7 @@ class Array
   #
   # @return [Array]
   def init(n = 1)
-    raise ArgumentError, "n (#{n}) must be positive" if n < 0
+    raise ArgumentError, "n must be positive" if n < 0
     slice(0..-(n + 1)) or []
   end
 
@@ -59,7 +59,7 @@ class Array
   #
   # @return [Array]
   def drop(n)
-    raise ArgumentError, "n (#{n}) must be positive" if n < 0
+    raise ArgumentError, "n must be positive" if n < 0
     slice(n..-1) or []
   end
 
@@ -67,7 +67,7 @@ class Array
   #
   # @return [Array]
   def take(n)
-    raise ArgumentError, "n (#{n}) must be positive" if n < 0
+    raise ArgumentError, "n must be positive" if n < 0
     slice(0, n) or []
   end
 

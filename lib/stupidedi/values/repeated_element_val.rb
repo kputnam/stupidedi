@@ -13,23 +13,14 @@ module Stupidedi
       attr_reader :children
       alias element_vals children
 
-      # @return [SegmentVal]
-      attr_reader :parent
-
       # @return [Schema::SimpleElementUse, Schema::CompositeElementUse
       attr_reader :usage
 
       delegate :at, :defined_at?, :length, :to => :@children
 
-      def initialize(definition, children, parent, usage)
-        @definition, @children, @parent, @usage =
-          definition, children, parent, usage
-
-        # Delay re-parenting until the entire definition tree has a root
-        # to prevent unnecessarily copying objects
-        unless parent.nil?
-          @children = children.map{|x| x.copy(:parent => self) }
-        end
+      def initialize(definition, children, usage)
+        @definition, @children, @usage =
+          definition, children, usage
       end
 
       # @return [RepeatedElementVal]
@@ -37,7 +28,6 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children),
-          changes.fetch(:parent, @parent),
           changes.fetch(:usage, @usage)
       end
 
@@ -49,19 +39,6 @@ module Stupidedi
       def empty?
         @children.all(&:empty?)
       end
-
-      # @return [RepeatedElementVal]
-      def append(element_val)
-        copy(:children => element_val.snoc(@children))
-      end
-      alias append_element append
-
-      # @return [RepeatedElementVal]
-      def append!(element_val)
-        @children = element_val.snoc(@children)
-        self
-      end
-      alias append_element! append!
 
       # @return [void]
       def pretty_print(q)
@@ -81,8 +58,9 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        other.definition   == @definition and
-        other.children == @children
+        eql?(other)
+         (other.definition == @definition and
+          other.children   == @children)
       end
     end
 
@@ -91,13 +69,13 @@ module Stupidedi
       # @group Constructor Methods
 
       # @return [RepeatedElementVal]
-      def empty(definition, parent, element_use)
-        RepeatedElementVal.new(definition, [], parent, element_use)
+      def empty(definition, element_use)
+        RepeatedElementVal.new(definition, [], element_use)
       end
 
       # @return [RepeatedElementVal]
-      def build(definition, children, parent, element_use)
-        RepeatedElementVal.new(definition, children, parent, element_use)
+      def build(definition, children, element_use)
+        RepeatedElementVal.new(definition, children, element_use)
       end
 
       # @endgroup
