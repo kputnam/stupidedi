@@ -3,26 +3,31 @@ module Stupidedi
 
     class Cursor
 
-      # @return [AbstractNode]
+      # @return [Object]
       attr_reader :node
 
-      # @return [AbstractPath]
-      attr_reader :path
+      # @private
+      # @return [Cursor]
+      attr_reader :parent
 
-      def initialize(node, path)
-        @node, @path =
-          node, path
+      def initialize(node, parent, path)
+        @node, @parent, @path =
+          node, parent, path
       end
 
       #########################################################################
-      # @group Location Methods
+      # @group Predicate Methods
+
+      def depth
+        @path.depth
+      end
 
       def first?
-        @path.predecessors.empty?
+        @path.first?
       end
 
       def last?
-        @path.successors.empty?
+        @path.last?
       end
 
       def leaf?
@@ -41,30 +46,35 @@ module Stupidedi
 
       # @return [Cursor]
       def prev
-        @path.prev(@node)
+        @path.prev(@node, @parent)
       end
 
       # @return [Cursor]
       def next
-        @path.next(@node)
+        @path.next(@node, @parent)
       end
 
       # @return [Cursor]
       def up
-      # Cursor.new(@node.copy(:children => @path.up), @path.parent)
+        @path.up(@node, @parent)
       end
 
       # @return [Cursor]
       def down
+        if leaf?
+          raise Exceptions::ZipperError,
+            "No child nodes"
+        end
+
         head, *tail = @node.children
-        Cursor.new(head,
+        Cursor.new(head, self,
           Hole.new([], @path, tail))
       end
 
       # @return [Cursor]
       def root
         cursor = self
-        cursor = cursor.up until cursor.path.root?
+        cursor = cursor.up until cursor.root?
         cursor
       end
 
@@ -76,21 +86,33 @@ module Stupidedi
 
       # @return [Cursor]
       def replace(node)
-        Cursor.new(node, @path)
+        Cursor.new(node, @parent, @path)
       end
 
+      # @return [Cursor]
       def append(node)
-        Cursor.new(@node, @path.append(node))
+        Cursor.new(@node, @parent, @path.append(node))
       end
 
+      # @return [Cursor]
       def prepend(node)
-        Cursor.new(@node, @path.prepend(node))
+        Cursor.new(@node, @parent, @path.prepend(node))
       end
 
+      # @return [Cursor]
       def push(node)
-        Cursor.new(node, Hole.new([], @path.parent, @node.children))
+        children =
+          if node.leaf?
+            []
+          else
+            node.children
+          end
+
+        Cursor.new(node, self,
+          Hole.new([], @path.parent, children))
       end
 
+      # @return [Cursor]
       def delete
         if @path.root?
           raise Exceptions::ZipperError,
@@ -100,16 +122,18 @@ module Stupidedi
         if not @path.successors.empty?
           # Move to the next successor
           head, *tail = @path.successors
-          Cursor.new(head,
+
+          Cursor.new(head, @parent,
             Hole.new(@path.predecessors, @path.parent, tail))
         elsif not @path.predecessors.empty?
           # Move to the next predecessors
           head, *tail = @path.predecessors
-          Cursor.new(head,
+
+          Cursor.new(head, @parent,
             Hole.new(tail, @path.parent, @path.successors))
         else
           # Move to the parent
-          Cursor.new(@node.parent.copy(:children => []), @path.parent)
+          @path.up(nil, @parent)
         end
       end
 
@@ -121,25 +145,16 @@ module Stupidedi
         q.text "Cursor"
         q.group(2, "(", ")") do
           q.breakable ""
-          q.pp @node
+          q.text @path.inspect
           q.text ","
           q.breakable
-          q.pp @path
+          q.pp @node
         end
       end
 
       # @return [String]
       def inspect
-        "Cursor(#{@node.inspect}, #{@path.inspect})"
-      end
-
-    end
-
-    class << Cursor
-
-      # @return [Cursor]
-      def build(node)
-        new(node, Root)
+        "Cursor(#{@path.inspect}, #{@node.inspect})"
       end
     end
 

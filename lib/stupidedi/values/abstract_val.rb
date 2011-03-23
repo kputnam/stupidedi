@@ -10,6 +10,8 @@ module Stupidedi
       # @see X222.pdf B.1.3.10 Absence of Data
       abstract :empty?
 
+      abstract :leaf?
+
       def present?
         not empty?
       end

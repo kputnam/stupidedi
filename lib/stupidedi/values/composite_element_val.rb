@@ -39,6 +39,11 @@ module Stupidedi
           changes.fetch(:usage, @parent)
       end
 
+      # @return false
+      def leaf?
+        false
+      end
+
       def empty?
         @children.all?(&:empty?)
       end

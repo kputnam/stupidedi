@@ -30,6 +30,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return false
+      def leaf?
+        false
+      end
+
       # @return [Array<SegmentVal>]
       def segment_vals
         @children.select{|x| x.is_a?(Values::SegmentVal) }

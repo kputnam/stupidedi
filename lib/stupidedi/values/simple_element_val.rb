@@ -28,6 +28,11 @@ module Stupidedi
           changes.fetch(:usage, @usage)
       end
 
+      # @return true
+      def leaf?
+        true
+      end
+
       # @return [RepeatedElementVal]
       def repeated
         RepeatedElementVal.new(@definition, [self], @parent)

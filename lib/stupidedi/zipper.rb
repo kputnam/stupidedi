@@ -6,4 +6,13 @@ module Stupidedi
     autoload :Hole,         "stupidedi/zipper/path"
     autoload :Root,         "stupidedi/zipper/path"
   end
+
+  class << Zipper
+
+    # @return [Cursor]
+    def build(node)
+      Zipper::Cursor.new(node, nil, Zipper::Root)
+    end
+  end
+
 end

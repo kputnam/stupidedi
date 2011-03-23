@@ -26,6 +26,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return false
+      def leaf?
+        false
+      end
+
       # @return [TransactionSetVal]
       def append(child_val)
         copy(:children => child_val.snoc(@children))
@@ -57,7 +62,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "InterchangeVal(#{@children.map(&:inspect).join(', ')})"
+        "TransactionSetVal(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]
