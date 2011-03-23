@@ -1,6 +1,9 @@
 module Stupidedi
   module Zipper
-    autoload :Cursor, "stupidedi/zipper/cursor"
+    autoload :AbstractCursor, "stupidedi/zipper/abstract_cursor"
+    autoload :EditedCursor,   "stupidedi/zipper/edited_cursor"
+    autoload :MemoizedCursor, "stupidedi/zipper/memoized_cursor"
+    autoload :RootCursor,     "stupidedi/zipper/root_cursor"
 
     autoload :AbstractPath, "stupidedi/zipper/path"
     autoload :Hole,         "stupidedi/zipper/path"
@@ -11,7 +14,7 @@ module Stupidedi
 
     # @return [Cursor]
     def build(node)
-      Zipper::Cursor.new(node, nil, Zipper::Root)
+      Zipper::RootCursor.new(node)
     end
   end
 
