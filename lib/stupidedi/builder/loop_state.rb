@@ -24,20 +24,6 @@ module Stupidedi
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
       end
-
-      # @return [LoopState]
-      def drop(count)
-        if count.zero?
-          self
-        else
-          copy(:instructions => @instructions.drop(count))
-        end
-      end
-
-      # @return [LoopState]
-      def add(segment_tok, segment_use)
-        copy(:zipper => @zipper.append(segment(segment_tok, segment_use)))
-      end
     end
 
     class << LoopState

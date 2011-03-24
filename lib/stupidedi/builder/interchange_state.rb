@@ -32,20 +32,6 @@ module Stupidedi
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict)
       end
-
-      # @return [InterchangeState]
-      def drop(count)
-        if count.zero?
-          self
-        else
-          copy(:instructions => @instructions.drop(count))
-        end
-      end
-
-      # @return [InterchangeState]
-      def add(segment_tok, segment_use)
-        copy(:zipper => @zipper.append(segment(segment_tok, segment_use)))
-      end
     end
 
     class << InterchangeState

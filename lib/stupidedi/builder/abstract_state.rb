@@ -14,20 +14,26 @@ module Stupidedi
       abstract :instructions
 
       # @return [AbstractState]
-      abstract :pop, :args => %w(count)
-
-      # @return [AbstractState]
-      abstract :drop, :args => %w(count)
-
-      # @return [AbstractState]
-      abstract :add, :args => %w(segment_tok segment_use)
-
       def pop(count)
         if count.zero?
           self
         else
           parent.copy(:zipper => zipper.up).pop(count - 1)
         end
+      end
+
+      # @return [AbstractState]
+      def drop(count)
+        if count.zero?
+          self
+        else
+          copy(:instructions => instructions.drop(count))
+        end
+      end
+
+      # @return [AbstractState]
+      def add(segment_tok, segment_use)
+        copy(:zipper => zipper.append(segment(segment_tok, segment_use)))
       end
 
       # @return [Reader::Separators]

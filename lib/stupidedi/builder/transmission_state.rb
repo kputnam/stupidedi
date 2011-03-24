@@ -34,11 +34,13 @@ module Stupidedi
       end
 
       def parent
-        raise "@todo: TransmissionState#parent"
+        raise Exceptions::ParseError,
+          "TransmissionState#parent should not be called"
       end
 
       def add(segment_tok, segment_use)
-        raise "@todo: TransmissionState#add"
+        raise Exceptions::ParseError,
+          "TransmissionState#add should not be called"
       end
 
       # @return [TransmissionState]
@@ -46,7 +48,8 @@ module Stupidedi
         if count.zero?
           self
         else
-          raise "@todo: TransmissionState#pop"
+          raise Exceptions::ParseError,
+            "TransmissionState#pop should not be called"
         end
       end
 
@@ -55,7 +58,8 @@ module Stupidedi
         if count.zero?
           self
         else
-          raise "@todo: TransmissionState#drop"
+          raise Exceptions::ParseError,
+            "TransmissionState#drop should not be called"
         end
       end
     end

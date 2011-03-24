@@ -24,20 +24,6 @@ module Stupidedi
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions)
       end
-
-      # @return [TransactionSetState]
-      def drop(count)
-        if count.zero?
-          self
-        else
-          copy(:instructions => @instructions.drop(count))
-        end
-      end
-
-      # @return [TransactionSetState]
-      def add(segment_tok, segment_use)
-        copy(:zipper => @zipper.append(segment(segment_tok, segment_use)))
-      end
     end
 
     class << TransactionSetState
@@ -55,7 +41,7 @@ module Stupidedi
 
         if version.blank? or version.is_a?(Symbol)
           # GS08: Version / Release / Industry Identifier Code
-          version = parent.zipper.node.at(7).to_s
+          version = parent.version
         end
 
         unless parent.config.transaction_set.defined_at?(version, fgcode, txcode)

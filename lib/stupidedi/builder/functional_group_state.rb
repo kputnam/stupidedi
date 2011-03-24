@@ -18,9 +18,12 @@ module Stupidedi
       # @return [String]
       attr_reader :fgcode
 
-      def initialize(zipper, parent, instructions, segment_dict, fgcode)
-        @zipper, @parent, @instructions, @segment_dict, @fgcode =
-          zipper, parent, instructions, segment_dict, fgcode
+      # @return [String]
+      attr_reader :version
+
+      def initialize(zipper, parent, instructions, segment_dict, fgcode, version)
+        @zipper, @parent, @instructions, @segment_dict, @fgcode, @version =
+          zipper, parent, instructions, segment_dict, fgcode, version
       end
 
       # @return [FunctionalGroupState]
@@ -30,21 +33,8 @@ module Stupidedi
           changes.fetch(:parent, @parent),
           changes.fetch(:instructions, @instructions),
           changes.fetch(:segment_dict, @segment_dict),
-          changes.fetch(:fgcode, @fgcode)
-      end
-
-      # @return [FunctionalGroupState]
-      def drop(count)
-        if count.zero?
-          self
-        else
-          copy(:instructions => @instructions.drop(count))
-        end
-      end
-
-      # @return [FunctionalGroupState]
-      def add(segment_tok, segment_use)
-        copy(:zipper => @zipper.append(segment(segment_tok, segment_use)))
+          changes.fetch(:fgcode, @fgcode),
+          changes.fetch(:version, @version)
       end
     end
 
@@ -55,24 +45,26 @@ module Stupidedi
         # GS08: Version / Release / Industry Identifier Code
         version = segment_tok.element_toks.at(7).try{|t| t.value.slice(0, 6) }
 
+        # GS01: Functional Identifier Code
+        fgcode = segment_tok.element_toks.at(0).try{|t| t.value }
+
         unless parent.config.functional_group.defined_at?(version)
           return FailureState.new("Unknown functional group version #{version}",
             segment_tok, parent)
         end
 
         envelope_def = parent.config.functional_group.at(version)
-        segment_use  = envelope_def.entry_segment_use
-        segment_val  = segment(segment_tok, segment_use)
         envelope_val = envelope_def.empty
-        
+        segment_use  = envelope_def.entry_segment_use
+
         zipper = parent.zipper.
           append(envelope_val).
-          append_child(segment_val)
+          append_child(segment(segment_tok, segment_use))
 
         FunctionalGroupState.new(zipper, parent,
           parent.instructions.push(instructions(envelope_def)),
           parent.segment_dict.push(envelope_val.segment_dict),
-          segment_val.at(0).to_s)
+          fgcode, version)
       end
 
     private
