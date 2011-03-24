@@ -58,11 +58,14 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
-        q.text("CompositeElementVal#{id}")
+        id = @definition.try do |d|
+          ansi.bold("[#{d.id}: #{d.name}]")
+        end
+
+        q.text(ansi.composite("CompositeElementVal#{id}"))
 
         if empty?
-          q.text ".empty"
+          q.text(ansi.composite(".empty"))
         else
           q.group(2, "(", ")") do
             q.breakable ""
@@ -79,7 +82,7 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        eql?(other) or 
+        eql?(other) or
          (other.definition == @definition and
           other.children   == @children)
       end

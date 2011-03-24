@@ -42,16 +42,22 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try{|e| "[#{e.id}]" }
-        q.text("RepeatedElementVal#{id}")
-        q.group(2, "(", ")") do
-          q.breakable ""
-          @children.each do |e|
-            unless q.current_group.first?
-              q.text ", "
-              q.breakable
+        if @children.empty?
+          id = @definition.try do |d|
+            ansi.bold("[#{d.id.to_s}: #{d.name.to_s}]")
+          end
+          q.text(ansi.repeated("RepeatedElementVal#{id}"))
+        else
+          q.text(ansi.repeated("RepeatedElementVal"))
+          q.group(2, "(", ")") do
+            q.breakable ""
+            @children.each do |e|
+              unless q.current_group.first?
+                q.text ", "
+                q.breakable
+              end
+              q.pp e
             end
-            q.pp e
           end
         end
       end

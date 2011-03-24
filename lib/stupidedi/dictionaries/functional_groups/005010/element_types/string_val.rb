@@ -20,13 +20,16 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "AN.empty#{def_id}"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("AN.empty#{id}")
               end
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(self.class)
+                other.is_a?(Empty)
               end
             end
 
@@ -46,6 +49,7 @@ module Stupidedi
                 super(definition, usage)
               end
 
+              # @return [NonEmpty]
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
@@ -53,23 +57,27 @@ module Stupidedi
                   changes.fetch(:usage, usage)
               end
 
+              # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "AN.value#{def_id}(#{@value})"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("AN.value#{id}") << "(#{@value})"
               end
 
               def empty?
                 false
               end
 
-              # @note Not commutative
               # @return [Boolean]
               def ==(other)
-                if other.is_a?(self.class)
-                  @value == other.value
-                else
-                  @value == other
-                end
+                eql?(other) or
+                 (if other.is_a?(NonEmpty)
+                    other.value == @value
+                  else
+                    other == @value
+                  end)
               end
             end
 
@@ -92,15 +100,6 @@ module Stupidedi
                 StringVal::NonEmpty.new(object.to_s, definition, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
-              end
-            end
-
-            # @return [StringVal::Empty, StringVal::NonEmpty]
-            def parse(string, definition, usage)
-              if string.blank?
-                StringVal::Empty.new(definition, usage)
-              else
-                StringVal::NonEmpty.new(string, definition, usage)
               end
             end
 

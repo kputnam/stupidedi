@@ -4,6 +4,7 @@ require "date"
 
 require "blankslate"   if RUBY_VERSION < "1.9"
 require "called_from"  if RUBY_VERSION < "1.9"
+require "term/ansicolor"
 
 # Monkey patches
 
@@ -22,6 +23,7 @@ require "ruby/to_d"
 module Stupidedi
   autoload :Builder,      "stupidedi/builder"
   autoload :Config,       "stupidedi/config"
+  autoload :Color,        "stupidedi/color"
   autoload :Dictionaries, "stupidedi/dictionaries"
   autoload :Editor,       "stupidedi/editor"
   autoload :Envelope,     "stupidedi/envelope"

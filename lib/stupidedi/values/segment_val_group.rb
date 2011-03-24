@@ -16,6 +16,11 @@ module Stupidedi
         segment_vals.all?(&:empty?)
       end
 
+      # @return false
+      def leaf?
+        false
+      end
+
       # @return [Array<SegmentVal>]
       def at(n)
         raise IndexError unless definition.nil? or defined_at?(n)

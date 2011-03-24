@@ -20,13 +20,16 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "TM.empty#{def_id}"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("TM.empty#{id}")
               end
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(self.class)
+                other.is_a?(Empty)
               end
             end
 
@@ -57,7 +60,7 @@ module Stupidedi
 
               # @return [NonEmpty]
               def copy(changes = {})
-                self.class.new \
+                NonEmpty.new \
                   changes.fetch(:hour, @hour),
                   changes.fetch(:minute, @minute),
                   changes.fetch(:second, @second),
@@ -79,18 +82,23 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
                 hh =   @hour.try{|h| '%02d' % h } || 'hh'
                 mm = @minute.try{|m| '%02d' % m } || 'mm'
                 ss = @second.try(:to_s) || 'ss'
-                "TM.value#{def_id}(#{hh}:#{mm}:#{ss})"
+
+                ansi.element("TM.value#{id}") << "(#{hh}:#{mm}:#{ss})"
               end
 
               # @return [Boolean]
               def ==(other)
-                other.hour   == @hour   and
-                other.minute == @minute and
-                other.second == @second
+                eql?(other) or
+                 (other.hour   == @hour   and
+                  other.minute == @minute and
+                  other.second == @second)
               end
             end
 
@@ -110,14 +118,6 @@ module Stupidedi
               if object.blank?
                 TimeVal::Empty.new(definition, usage)
 
-              elsif object.is_a?(Time)
-                TimeVal::NonEmpty.new(object.hour, object.min, object.sec + (object.usec / 1000000.0),
-                                      definition, usage)
-
-              elsif object.is_a?(DateTime)
-                TimeVal::NonEmpty.new(object.hour, object.min, object.sec + object.sec_fraction.to_f,
-                                      definition, usage)
-
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 hour   = object.to_s.slice(0, 2).to_i
                 minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
@@ -128,29 +128,19 @@ module Stupidedi
                 end
 
                 TimeVal::NonEmpty.new(hour, minute, second, definition, usage)
+
+              elsif object.is_a?(Time)
+                TimeVal::NonEmpty.new(object.hour, object.min,
+                                      object.sec + (object.usec / 1000000.0),
+                                      definition, usage)
+
+              elsif object.is_a?(DateTime)
+                TimeVal::NonEmpty.new(object.hour, object.min,
+                                      object.sec + object.sec_fraction.to_f,
+                                      definition, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            # @return [TimeVal::NonEmpty, TimeVal::Empty]
-            def parse(string, definition, usage)
-              if string.blank?
-                TimeVal::Empty.new(definition, usage)
-              else
-                hour   = string.slice(0, 2).to_i
-                minute = string.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                second = string.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
-
-                if decimal = string.slice(6..-1)
-                  second += "0.#{decimal}".to_f
-                end
-
-                TimeVal::NonEmpty.new(hour, minute, second, definition, usage)
-              end
-            rescue ArgumentError
-              # @todo
-              TimeVal::Empty.new(definition, usage)
             end
 
             # @endgroup

@@ -46,7 +46,7 @@ module Stupidedi
         CodeList::Internal.new(hash)
       end
 
-      def external(id)
+      def external(id, *ignored)
         CodeList::External.new(id)
       end
     end

@@ -31,11 +31,6 @@ module Stupidedi
       def leaf?
         true
       end
-
-      # @return [RepeatedElementVal]
-      def repeated
-        RepeatedElementVal.new(@definition, [self])
-      end
     end
 
   end

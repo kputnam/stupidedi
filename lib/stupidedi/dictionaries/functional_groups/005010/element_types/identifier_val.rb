@@ -21,8 +21,11 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "ID.empty#{def_id}"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("ID.empty#{id}")
               end
 
               # @return [Boolean]
@@ -61,17 +64,21 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "ID.value#{def_id}(#{@value})"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("ID.value#{id}") << "(#{@value})"
               end
 
-              # @note Not commutative, because String doesn't call coerce
+              # @return [Boolean]
               def ==(other)
-                if other.is_a?(self.class)
-                  @value == other.value
-                else
-                  @value == other
-                end
+                eql?(other) or
+                 (if other.is_a?(self.class)
+                    other.value == @value
+                  else
+                    other == @value
+                  end)
               end
             end
 
@@ -94,15 +101,6 @@ module Stupidedi
                 IdentifierVal::NonEmpty.new(object.to_s, definition, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
-              end
-            end
-
-            # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
-            def parse(string, definition, usage)
-              if string.blank?
-                IdentifierVal::Empty.new(definition, usage)
-              else
-                IdentifierVal::NonEmpty.new(string, definition, usage)
               end
             end
 

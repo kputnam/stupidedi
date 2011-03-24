@@ -52,9 +52,11 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try{|d| "[#{d.id}: #{d.name}]" }
+        id = @definition.try do |d|
+          ansi.bold("[#{d.id}: #{d.name}]")
+        end
 
-        q.text("SegmentVal#{id}")
+        q.text(ansi.segment("SegmentVal#{id}"))
         q.group(2, "(", ")") do
           q.breakable ""
           @children.each do |e|
@@ -69,7 +71,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        @definition.id
+        ansi.segment(ansi.bold(@definition.id.to_s))
       end
 
       # @return [Boolean]

@@ -38,7 +38,7 @@ module Stupidedi
       # @return [AbstractCursor]
       def up
         node =
-          @parent.node.copy(:children => 
+          @parent.node.copy(:children =>
             @path.left.reverse.concat(@node.cons(@path.right)))
 
         if parent.root?
@@ -60,7 +60,7 @@ module Stupidedi
         EditedCursor.new(head,
           Hole.new(@node.cons(@path.left), @path.parent, tail), @parent)
       end
-      
+
       # @return [EditedCursor]
       def prev
         if first?
@@ -138,7 +138,7 @@ module Stupidedi
         else
           # Deleting the only child
           parent =
-            @parent.node.copy(:children => 
+            @parent.node.copy(:children =>
               @path.left.reverse.concat(@path.right))
 
           EditedCursor.new(parent, @path.parent, @parent.parent)

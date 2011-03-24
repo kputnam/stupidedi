@@ -163,7 +163,8 @@ module Stupidedi
           E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
             s::CodeList.build(
               "835" => "Health Care Claim Payment/Advice",
-              "837" => "Health Care Claim"))
+              "837" => "Health Care Claim",
+              "999" => "Implementation Acknowledgement"))
 
           E156  = t::ID.new(:E156 , "State or Province Code"               , 2, 2,
             s::CodeList.external("22"))

@@ -20,6 +20,9 @@ module Stupidedi
       # @return [InterchangeVal]
       abstract :empty
 
+      # @return [Reader::Separators]
+      abstract :separators, :args => %w(isa_segment_val)
+
       def initialize(id, header_segment_uses, trailer_segment_uses)
         @id, @header_segment_uses, @trailer_segment_uses =
           id, header_segment_uses, trailer_segment_uses
@@ -40,7 +43,7 @@ module Stupidedi
 
       # @return [Array<SegmentUse>]
       def segment_uses
-        @__segment_uses ||= @header_segment_uses + @trailer_segment_uses
+        @header_segment_uses + @trailer_segment_uses
       end
 
       # @return [void]

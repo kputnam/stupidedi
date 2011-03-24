@@ -7,6 +7,7 @@ module Stupidedi
     #
     class FunctionalGroupVal < Values::AbstractVal
       include Values::SegmentValGroup
+      include Color
 
       # @return [FunctionalGroupDef]
       attr_reader :definition
@@ -24,11 +25,6 @@ module Stupidedi
         self.class.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children)
-      end
-
-      # @return false
-      def leaf?
-        false
       end
 
       # @return [Array<SegmentVal>]
@@ -71,8 +67,11 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try{|d| "[#{d.id}]" }
-        q.text "FunctionalGroupVal#{id}"
+        id = @definition.try do |d|
+          ansi.bold("[#{d.id.to_s}]")
+        end
+
+        q.text(ansi.envelope("FunctionalGroupVal#{id}"))
         q.group 2, "(", ")" do
           q.breakable ""
           @children.each do |e|
@@ -87,7 +86,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "Group(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Group") << "(#{@children.map(&:inspect).join(', ')})"
       end
 
       def ==(other)

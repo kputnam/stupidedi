@@ -2,6 +2,7 @@ module Stupidedi
   module Envelope
 
     class Transmission
+      include Color
 
       # @return [Array<InterchangeVal>]
       attr_reader :children
@@ -25,7 +26,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        q.text "Transmission"
+        q.text(ansi.envelope("Transmission"))
         q.group(2, "(", ")") do
           q.breakable ""
           @children.each do |e|
@@ -40,7 +41,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "Transmission(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Transmission") << "(#{@children.map(&:inspect).join(', ')})"
       end
     end
 

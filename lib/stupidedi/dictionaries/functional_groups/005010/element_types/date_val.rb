@@ -20,8 +20,11 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "DT.empty#{id}"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("DT.empty#{id}")
               end
 
               # @return [Boolean]
@@ -96,16 +99,20 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "DT.value#{id}(#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("DT.value#{id}") << "(#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
               end
 
               # @note Not commutative
               # @return [Boolean]
               def ==(other)
-                @day   == other.day  and
-                @year  == other.year and
-                @month == other.month
+                eql?(other) or
+                 (@day   == other.day  and
+                  @year  == other.year and
+                  @month == other.month)
               end
             end
 
@@ -131,7 +138,7 @@ module Stupidedi
 
               # @return [Improper]
               def copy(changes = {})
-                self.class.new \
+                Improper.new \
                   changes.fetch(:year, @year),
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
@@ -177,16 +184,20 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "DT.value#{id}(XX#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("DT.value#{id}") << "(XX#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
               end
 
               # @note Not commutative
               # @return [Boolean]
               def ==(other)
-                @day   == other.day  and
-                @year  == other.year and
-                @month == other.month
+                eql?(other) or
+                 (@day   == other.day  and
+                  @year  == other.year and
+                  @month == other.month)
               end
             end
 
@@ -207,8 +218,6 @@ module Stupidedi
                 DateVal::Empty.new(definition, usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
-                return DateVal::Empty.new(definition, usage) if object.blank?
-
                 day   = object.to_s.slice(-2, 2)
                 month = object.to_s.slice(-4, 2)
                 year  = object.to_s.slice( 0..-5)
@@ -219,38 +228,18 @@ module Stupidedi
                   DateVal::Proper.new(year, month, day, definition, usage)
                 end
 
+              elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
+                DateVal::Proper.new(object.year, object.month, object.day, definition, usage)
+
               elsif object.is_a?(DateVal::Improper)
                 DateVal::Improper.new(object.year, object.month, object.day, definition, usage)
 
               elsif object.is_a?(DateVal::Empty)
                 DateVal::Empty.new(definition, usage)
 
-              elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-                DateVal::Proper.new(object.year, object.month, object.day, definition, usage)
-
               else
                 raise ArgumentError, "Cannot convert #{object.class} to DateVal"
               end
-            end
-
-            # @return [DateVal::Empty, DateVal::Proper, DateVal::Improper]
-            def parse(string, definition, usage)
-              if string.blank?
-                DateVal::Empty.new(definition, usage)
-              else
-                day   = string.slice(-2, 2)
-                month = string.slice(-4, 2)
-                year  = string.slice( 0..-5)
-
-                if year.length < 4
-                  DateVal::Improper.new(year, month, day, definition, usage)
-                else
-                  DateVal::Proper.new(year, month, day, definition, usage)
-                end
-              end
-            rescue ArgumentError
-              # @todo
-              DateVal::Empty.new(definition, usage)
             end
 
             # @endgroup

@@ -130,7 +130,7 @@ module Stupidedi
         else
           # Deleting the only child
           parent =
-            @parent.node.copy(:children => 
+            @parent.node.copy(:children =>
               @path.left.reverse.concat(@path.right))
 
           EditedCursor.new(parent, @path.parent, @parent.parent)

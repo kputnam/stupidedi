@@ -7,7 +7,7 @@ module Stupidedi
     #
     class InterchangeVal < Values::AbstractVal
       include Values::SegmentValGroup
-      include Inspect
+      include Color
 
       # @return [InterchangeDef]
       attr_reader :definition
@@ -30,11 +30,6 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
-      # @return false
-      def leaf?
-        false
-      end
-
       # @return [Array<SegmentVal>]
       def segment_vals
         @children.select{|x| x.is_a?(Values::SegmentVal) }
@@ -42,8 +37,11 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try{|d| "[#{d.id}]" }
-        q.text "InterchangeVal#{id}"
+        id = @definition.try do |d|
+          ansi.bold("[#{d.id.to_s}]")
+        end
+
+        q.text(ansi.envelope("InterchangeVal#{id}"))
         q.group 2, "(", ")" do
           q.breakable ""
           @children.each do |e|
@@ -58,7 +56,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "Interchange(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Interchange") << "(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]

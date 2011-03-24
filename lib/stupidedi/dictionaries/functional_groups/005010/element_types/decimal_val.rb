@@ -26,8 +26,11 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                " R.empty#{def_id}"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element(" R.empty#{id}")
               end
 
               # @return [Boolean]
@@ -53,6 +56,7 @@ module Stupidedi
                 super(definition, usage)
               end
 
+              # @return [NonEmpty]
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
@@ -80,8 +84,11 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                " R.value#{def_id}(#{@value.to_s('F')})"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element(" R.value#{id}") << "(#{@value.to_s('F')})"
               end
 
               # @group Mathematical Operators
@@ -188,18 +195,6 @@ module Stupidedi
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            # @return [DecimalVal::Empty, DecimalVal::NonEmpty]
-            def parse(string, definition, usage)
-              if string.blank?
-                DecimalVal::Empty.new(definition, usage)
-              else
-                DecimalVal::NonEmpty.new(string.to_d, definition, usage)
-              end
-            rescue ArgumentError
-              # @todo
-              DecimalVal::Empty.new(definition, usage)
             end
 
             # @endgroup

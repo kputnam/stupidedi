@@ -42,8 +42,11 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try{|l| "[#{l.id}]" }
-        q.text("LoopVal#{id}")
+        id = @definition.try do |d|
+          ansi.bold("[#{d.id.to_s}]")
+        end
+
+        q.text(ansi.loop("LoopVal#{id}"))
         q.group(2, "(", ")") do
           q.breakable ""
           @children.each do |e|
@@ -58,7 +61,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "Loop(#{@children.map(&:inspect).join(', ')})"
+        ansi.loop("Loop") << "(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]

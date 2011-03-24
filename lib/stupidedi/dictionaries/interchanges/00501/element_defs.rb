@@ -31,8 +31,8 @@ module Stupidedi
             end
 
             def inspect
-              id = definition.try{|d| "[#{d.id}]" }
-              "SeparatorElementVal.value#{id}(#{@value})"
+              id = definition.try{|d| ansi.bold("[#{d.id}]") }
+              ansi.element("SeparatorElementVal.value#{id}") << "(#{@value})"
             end
           end
 
@@ -63,7 +63,12 @@ module Stupidedi
           I01 = t::ID.new(:I01, "Authorization Information Qualifier",    2,  2,
             s::CodeList.build(
               "00" => "No Authorization Information Present (No Meaningful Information in I02)",
-              "03" => "Additional Data Identification"))
+              "01" => "UCS Communications ID",
+              "02" => "EDX Communications ID",
+              "03" => "Additional Data Identification",
+              "04" => "Rail Communication ID",
+              "05" => "Deparment of Defense (DoD) Communication Identifier",
+              "06" => "United States Federal Government Communication Identifier"))
 
           I02 = t::AN.new(:I02, "Authorization Information",             10, 10)
 
@@ -80,10 +85,10 @@ module Stupidedi
               "02" => "SCAC (Standard Carrier Alpha Code)",
               "03" => "FMC (Federal Maritime Commission)",
               "04" => "IATA (International Air Transport Association)",
-              "07" => "Global Location Number (GLN)",
+              "07" => s::CodeList.external("583"),
               "08" => "UCC EDI Communications ID (Comm ID)",
               "09" => "X.121 (CCITT)",
-              "10" => "Department of Defense (DoD) Activity Address Code",
+              "10" => s::CodeList.external("350"),
               "11" => "DEA (Drug Enforcement Administration)",
               "12" => "Phone (Telephone Companies)",
               "13" => "UCS Code (The UCS Code is a Code Used for UCS Transmissions; it includes the Area Code and Telephone Number of a Modem; it Does Not Include Punctation, Blanks, or Access Code)",
@@ -91,15 +96,15 @@ module Stupidedi
               "15" => "Petroleum Accountants Society of Canada Company Code",
               "16" => "Duns Number With 4-Character Suffix",
               "17" => "American Bankers Association (ABA) Transit Routing Number (Including Check Digit, 9 Digit)",
-              "18" => "Association of American Railroads (AAR) Standard Distribution Code",
-              "19" => "EDI Council of Australia (EDICA) Communications ID Number (COMM ID)",
+              "18" => s::CodeList.external("420"),
+              "19" => s::CodeList.external("421"),
               "20" => s::CodeList.external("121"),
-              "21" => "Integrated Postsecondary Education Data System, or (IPEDS)",
-              "22" => "Federal Interagency Commission on Education, or FICE",
-              "23" => "National Center for Education Statistics Common Core of Data 12-Digit Number of Pre-K-Grade 12 institutes, or NCES",
-              "24" => "The College Board's Admission Testing Program 4-Digit Code of Postsecondary Institutes, or ATP",
-              "25" => "ACT, Inc. 4-Digit Code of Postsecondary Institutions",
-              "26" => "Statistics of Canada List of Postsecondary Institutions",
+              "21" => s::CodeList.external("422"),
+              "22" => s::CodeList.external("423"),
+              "23" => s::CodeList.external("424"),
+              "24" => s::CodeList.external("425"),
+              "25" => s::CodeList.external("426"),
+              "26" => s::CodeList.external("296", "300"),
               "27" => "Carrier Identification Number as assigned by Health Care Financing Administration (HCFA)",
               "28" => "Fiscal Intermediary Identification Number as assigned by Health Care Financing Administration (HCFA)",
               "29" => "Medicare Provider and Supplier Identification Number as assigned by Health Care Financing Administration (HCFA)",
@@ -109,13 +114,13 @@ module Stupidedi
               "33" => "National Association of Insurance Commissioners Company Code (NAIC)",
               "34" => "Medicaid Provider and Supplier Identification Number as assigned by individual State Medicaid Agencies in conjunction with Health Care Financing Administration (HCFA)",
               "35" => "Statistics Canada Canadian College Student Information System Institution Codes",
-              "36" => "Statistics Canada University Student Information System Instution Codes",
-              "37" => "Society of Property Information Compilers and Analysts",
-              "38" => "The College Board and ACT, Inc 6-Digit Code List of Secondary Information",
-              "AM" => "Association Mexicana del Codigo de Producto (AMECOP) Communication ID",
+              "36" => s::CodeList.external("300"),
+              "37" => s::CodeList.external("573"),
+              "38" => s::CodeList.external("862"),
+              "AM" => s::CodeList.external("497"),
               "NR" => "National Retail Merchants Association (NRMA) Assigned",
-              "SA" => "User Identification Number as assigned by the Safety and Fitness Electronic Records (SAFER) System",
-              "SN" => "Standard Address Number",
+              "SA" => s::CodeList.external("851"),
+              "SN" => s::CodeList.external("42"),
               "ZZ" => "Mutually Defined"))
 
           I06 = t::AN.new(:I06, "Interchange Sender ID",                 15, 15)

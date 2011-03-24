@@ -20,8 +20,11 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "Nn.empty#{def_id}"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("Nn.empty#{id}")
               end
 
               # @return [Boolean]
@@ -69,18 +72,21 @@ module Stupidedi
                   return self, other.to_d
                 else
                   # Fail, other.call(self) is still other.call(self)
-                  raise TypeError, "#{other.class} can't be coerced into #{self.class}"
+                  raise TypeError, "#{other.class} can't be coerced into NumericVal"
                 end
               end
 
               # @return [String]
               def inspect
-                def_id = definition.try{|d| "[#{'% 5s' % d.id}: #{d.name}]" }
-                "Nn.value#{def_id}(#{@value.to_s('F')})"
+                id = definition.try do |d|
+                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                end
+
+                ansi.element("Nn.value#{id}") << "(#{@value.to_s('F')})"
               end
 
-              # @group Mathematical Operators
               #################################################################
+              # @group Mathematical Operators
 
               # @return [NonEmpty]
               def /(other)
@@ -161,6 +167,7 @@ module Stupidedi
               end
 
               # @endgroup
+            ###################################################################
             end
 
           end
@@ -183,18 +190,6 @@ module Stupidedi
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end
-            end
-
-            # @return [NumericVal::Empty, NumericVal::NonEmpty]
-            def parse(string, definition, usage)
-              if string.blank?
-                NumericVal::Empty.new(definition, usage)
-              else
-                NumericVal::NonEmpty.new(string.to_d, definition, usage)
-              end
-            rescue ArgumentError
-              # @todo
-              NumericVal::Empty.new(definition, usage)
             end
 
             # @endgroup

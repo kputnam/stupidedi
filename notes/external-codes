@@ -1,5 +1,3 @@
-#  77: "X12 Directories"
-
 4: ABA Routing Number
 - E20
 - E60/13
@@ -40,6 +38,10 @@ x E771/010
 
 60: (DFI) Identification Number
 x E507
+
+77: X12 Directories
+- E721
+- E725
 
 91: Canadian Financial Institution Branch and Institution Number
 x E66/CF

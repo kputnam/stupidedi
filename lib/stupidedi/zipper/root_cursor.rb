@@ -14,7 +14,6 @@ module Stupidedi
           node, Root
       end
 
-
       #########################################################################
       # @group Query Methods
 

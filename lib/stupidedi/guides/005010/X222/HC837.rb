@@ -740,7 +740,7 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Description"),
                   b::Element(e::NotUsed,     "REFERENCE IDENTIFIER"))),
 
-              d::LoopDef.build("2310E AMBULANCE DROP-OFF LOCATION",
+              d::LoopDef.build("2310E AMBULANCE PICK-UP LOCATION",
                 d::RepeatCount.bounded(1),
                 b::Segment(2500, s::NM1, "Ambulance Pick-up Location",
                   r::Situational, d::RepeatCount.bounded(1),

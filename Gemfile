@@ -2,6 +2,7 @@ source "http://rubygems.org"
 
 gem "blankslate", :platforms => [:ruby_18, :mri_18, :mingw_18]
 gem "called_from", :platforms => [:ruby_18, :mri_18, :mingw_18]
+gem "term-ansicolor"
 
 group :development do
   gem "rake",       "~> 0.8.7"
