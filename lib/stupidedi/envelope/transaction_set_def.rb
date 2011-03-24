@@ -21,7 +21,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        self.class.new \
+        TransactionSetDef.new \
           changes.fetch(:functional_group, @functional_group),
           changes.fetch(:id, @id),
           changes.fetch(:table_defs, @table_defs)

@@ -14,9 +14,11 @@ module Stupidedi
 
       # @return [Array<InstructionTable>]
       def successors
-        @machine.states.inject([]) do |list, s|
-          list << s.instructions
+        tables = []
+        @machine.states.each do |s|
+          tables << s.instructions
         end
+        tables
       end
 
       #########################################################################
@@ -62,11 +64,6 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      # @return [void]
-      def pretty_print(q)
-        q.pp @machine
-      end
-
       # @return [BuilderDsl]
       def segment!(name, *args)
         @reader = @machine.input!(segment_tok(name, args), @reader)
@@ -84,6 +81,11 @@ module Stupidedi
         @machine.zipper
       end
 
+      # @return [void]
+      def pretty_print(q)
+        q.pp @machine
+      end
+
     private
 
       def method_missing(name, *args)
@@ -94,8 +96,8 @@ module Stupidedi
         end
       end
 
-      #########################################################################
       # @group TokenVal Constructors
+      #########################################################################
 
       # @return [Reader::SegmentTok]
       def segment_tok(id, elements)
@@ -221,22 +223,6 @@ module Stupidedi
 
       # @endgroup
       #########################################################################
-
-      # We can use a much faster implementation provided by the "called_from"
-      # gem, but this only compiles against Ruby 1.8. Use this implementation
-      # when its available, but fall back to the slow Kernel.caller method if
-      # we have to
-      if ::Kernel.respond_to?(:called_from)
-        def caller(depth = 2)
-          ::Kernel.called_from(depth)
-        end
-      else
-        def caller(depth = 2)
-          ::Kernel.caller.at(depth)
-        end
-      end
-
-      private :caller
     end
 
     # @private

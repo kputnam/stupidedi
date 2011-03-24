@@ -33,7 +33,7 @@ module Stupidedi
 
       # @return [AbsoluteSet]
       def copy(changes = {})
-        self.class.new \
+        AbsoluteSet.new \
           changes.fetch(:mask, @mask),
           changes.fetch(:universe, @universe)
       end
@@ -72,7 +72,7 @@ module Stupidedi
 
       # @return [AbsoluteSet] other
       def replace(other)
-        if other.is_a?(self.class) and other.universe.eql?(@universe)
+        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           other
         else
           copy(:mask => as_mask(other, true))
@@ -88,8 +88,8 @@ module Stupidedi
         end
       end
 
-      #########################################################################
       # @group Set Operations
+      #########################################################################
 
       # @return [AbsoluteSet]
       def map
@@ -139,7 +139,7 @@ module Stupidedi
 
       # @return [AbsoluteSet]
       def union(other)
-        if other.is_a?(self.class) and other.universe.eql?(@universe)
+        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask | other.mask)
         else
           copy(:mask => @mask | as_mask(other))
@@ -148,7 +148,7 @@ module Stupidedi
 
       # @return [AbsoluteSet]
       def intersection(other)
-        if other.is_a?(self.class) and other.universe.eql?(@universe)
+        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask & other.mask)
         else
           copy(:mask => @mask & as_mask(other))
@@ -157,7 +157,7 @@ module Stupidedi
 
       # @return [AbsoluteSet]
       def difference(other)
-        if other.is_a?(self.class) and other.universe.eql?(@universe)
+        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:copy => @mask & ~other.mask)
         else
           copy(:copy => @mask & ~as_mask(other))
@@ -166,7 +166,7 @@ module Stupidedi
 
       # @return [AbsoluteSet]
       def symmetric_difference(other)
-        if other.is_a?(self.class) and other.universe.eql?(@universe)
+        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:copy => @mask ^ other.mask)
         else
           copy(:copy => @mask ^ as_mask(other))
@@ -176,12 +176,12 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      #########################################################################
       # @group Set Ordering
+      #########################################################################
 
       # @return [Boolean]
       def ==(other)
-        if other.is_a?(self.class) and other.universe.eql?(@universe)
+        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           @mask == other.mask
         elsif other.is_a?(Enumerable) or other.is_a?(Set)
           @mask == as_mask(other)
@@ -247,8 +247,8 @@ module Stupidedi
     end
 
     class << AbsoluteSet
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [AbsoluteSet]
       def build(values)

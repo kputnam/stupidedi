@@ -30,7 +30,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(self.class)
+                other.is_a?(Empty)
               end
             end
 
@@ -52,7 +52,7 @@ module Stupidedi
 
               # @return [NonEmpty]
               def copy(changes = {})
-                self.class.new \
+                NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
               end
@@ -73,7 +73,7 @@ module Stupidedi
               # @return [Boolean]
               def ==(other)
                 eql?(other) or
-                 (if other.is_a?(self.class)
+                 (if other.is_a?(NonEmpty)
                     other.value == @value
                   else
                     other == @value
@@ -84,8 +84,8 @@ module Stupidedi
           end
 
           class << IdentifierVal
+            # @group Constructor Methods
             ###################################################################
-            # @group Constructors
 
             # @return [IdentifierVal::Empty]
             def empty(usage)

@@ -11,8 +11,8 @@ module Stupidedi
         r = FunctionalGroups::FiftyTen::ElementReqs
 
         InterchangeDef = Class.new(Envelope::InterchangeDef) do
+          # @group Constructor Methods
           #####################################################################
-          # group Constructor Methods
 
           # @return [InterchangeVal]
           def empty
@@ -22,10 +22,12 @@ module Stupidedi
           # @endgroup
           #####################################################################
 
+          # @return [Module]
           def segment_dict
             SegmentDefs
           end
 
+          # @return [Reader::Separators]
           def separators(isa)
             Reader::Separators.new(isa.at(15).to_s, isa.at(10).to_s, nil, nil)
           end

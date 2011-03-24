@@ -5,8 +5,8 @@ module Stupidedi
     end
 
     class << Input
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [Input]
       def build(o, *args)

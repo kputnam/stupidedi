@@ -35,7 +35,7 @@ module Stupidedi
 
       # @return [TableDef]
       def copy(changes = {})
-        self.class.new \
+        TableDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:position, @position),
           changes.fetch(:repeatable, @repeatable),
@@ -93,8 +93,8 @@ module Stupidedi
     end
 
     class << TableDef
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [TableDef]
       def header(id, *children)

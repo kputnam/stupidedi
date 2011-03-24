@@ -25,7 +25,7 @@ module Stupidedi
 
       # @return [InterchangeVal]
       def copy(changes = {})
-        self.class.new \
+        InterchangeVal.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children)
       end

@@ -31,10 +31,12 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :parse, :args => %w(string)
 
+      # @return true
       def simple?
         true
       end
 
+      # @return false
       def composite?
         false
       end
@@ -76,9 +78,9 @@ module Stupidedi
         end
       end
 
-      # @return [ElementDef]
+      # @return [CompositeElementDef]
       def copy(changes = {})
-        self.class.new \
+        CompositeElementDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:name, @name),
           changes.fetch(:description, @description),
@@ -87,10 +89,12 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return false
       def simple?
         false
       end
 
+      # @return true
       def composite?
         true
       end
@@ -127,8 +131,8 @@ module Stupidedi
     end
 
     class << CompositeElementDef
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [CompositeElementDef]
       def build(id, name, description, *args)

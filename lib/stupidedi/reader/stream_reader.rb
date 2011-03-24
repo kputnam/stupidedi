@@ -2,14 +2,14 @@ module Stupidedi
   module Reader
 
     #
-    # The StreamReader is intended to scan the input for a valid ISA segment,
-    # after which the TokenReader class can be used to tokenize the remaining
+    # The {StreamReader} is intended to scan the input for a valid ISA segment,
+    # after which the {TokenReader} class can be used to tokenize the remaining
     # input.
     #
     # Because X12 specifications have no bearing on what happens outside the
-    # interchange envelope (from ISA to ISE), out-of-band data like blank lines,
-    # human readable text, etc can occur between interchanges. This reader is
-    # built to deal with that problem.
+    # interchange envelope (from `ISE` to `ISA`), out-of-band data like blank
+    # lines, human readable text, etc can occur between interchanges. This
+    # reader is designed to deal with that problem.
     #
     class StreamReader
       include Inspect
@@ -22,7 +22,7 @@ module Stupidedi
 
       # @return [StreamReader]
       def copy(changes = {})
-        self.class.new(changes.fetch(:input, @input))
+        StreamReader.new(changes.fetch(:input, @input))
       end
 
       # True if there is no remaining input
@@ -58,7 +58,7 @@ module Stupidedi
       # the meaning of the elements, like the repetition separator or the
       # component separator, because these are interchange version-dependent.
       #
-      # @return [Either<Result<..., TokenReader>>]
+      # @return [Either<Result<SegmentTok TokenReader>>]
       def read_segment
         consume_isa.flatmap do |rest|
           # The character after "ISA" is defined to be the element separator
@@ -150,7 +150,7 @@ module Stupidedi
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-          self.class.new(@input.drop(n))
+          StreamReader.new(@input.drop(n))
         end
       end
 

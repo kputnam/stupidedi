@@ -143,8 +143,8 @@ module Stupidedi
     end
 
     class << StateMachine
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [StateMachine]
       def build(config)

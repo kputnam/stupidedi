@@ -23,10 +23,12 @@ module Stupidedi
         @table = Hash.new
       end
 
+      # @return [void]
       def register(version, &constructor)
         @table[version] = constructor
       end
 
+      # @return [FunctionalGroupDef]
       def at(version)
         @table[version].call
       end

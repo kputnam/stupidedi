@@ -15,8 +15,12 @@ config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::
 input     = Stupidedi::Reader::Input.build(File.open(ARGV.first))
 tokenizer = Stupidedi::Reader::StreamReader.new(input)
 parser    = Stupidedi::Builder::StateMachine.build(config)
+
+start = Time.now
 parser.read!(tokenizer)
-pp parser.zipper.root.node
+stop  = Time.now
+puts stop - start
+#p parser.zipper.root.node
 
 #result = RubyProf.profile do
 #  parser.read!(tokenizer)

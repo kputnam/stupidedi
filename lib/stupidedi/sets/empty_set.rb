@@ -1,7 +1,6 @@
 module Stupidedi
   module Sets
 
-    # Singleton
     # @private
     EmptySet = Class.new(RelativeSet) do
 
@@ -52,8 +51,8 @@ module Stupidedi
         true
       end
 
-      #########################################################################
       # @group Set Operations
+      #########################################################################
 
       # @return self
       def map
@@ -98,8 +97,8 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      #########################################################################
       # @group Set Ordering
+      #########################################################################
 
       def ==(other)
         eql?(other) or other.empty?

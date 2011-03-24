@@ -186,6 +186,8 @@ module Stupidedi
     end
 
     class << InstructionTable
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [InstructionTable::Empty]
       def empty
@@ -196,6 +198,9 @@ module Stupidedi
       def build(instructions)
         InstructionTable::Empty.push(instructions)
       end
+
+      # @endgroup
+      #########################################################################
     end
   end
 end

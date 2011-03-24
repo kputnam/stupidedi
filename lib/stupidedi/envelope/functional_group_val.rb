@@ -22,7 +22,7 @@ module Stupidedi
 
       # @return [FunctionalGroupVal]
       def copy(changes = {})
-        self.class.new \
+        FunctionalGroupVal.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children)
       end

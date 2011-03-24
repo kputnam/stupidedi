@@ -35,6 +35,8 @@ module Stupidedi
     end
 
     class << InterchangeState
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [InterchangeState]
       def push(segment_tok, segment_use, parent, reader = nil)
@@ -61,6 +63,9 @@ module Stupidedi
           reader.separators.merge(envelope_def.separators(segment_val)),
           reader.segment_dict.push(envelope_val.segment_dict))
       end
+
+      # @endgroup
+      #########################################################################
 
     private
 

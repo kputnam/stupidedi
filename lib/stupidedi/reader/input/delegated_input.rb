@@ -20,7 +20,7 @@ module Stupidedi
 
       # @return [DelegatedInput]
       def drop(n)
-        raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
+        raise ArgumentError, "n must be positive" unless n >= 0
 
         suffix = delegate.drop(n)
         prefix = delegate.take(n)
@@ -42,7 +42,7 @@ module Stupidedi
 
       # @return [DelegatedInput]
       def copy(changes = {})
-        self.class.new \
+        DelegatedInput.new \
           changes.fetch(:delegate, @delegate),
           changes.fetch(:offset, @offset),
           changes.fetch(:line, @line),

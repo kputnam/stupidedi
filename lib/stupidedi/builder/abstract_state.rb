@@ -18,7 +18,7 @@ module Stupidedi
         if count.zero?
           self
         else
-          parent.copy(:zipper => zipper.up).pop(count - 1)
+          @parent.copy(:zipper => zipper.up).pop(count - 1)
         end
       end
 
@@ -73,9 +73,8 @@ module Stupidedi
     end
 
     class << AbstractState
-
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # This method constructs a new instance of (a subclass of) {AbstractState}
       # and pushes it above {#parent} onto a nested stack-like structure. The
@@ -88,8 +87,8 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      #########################################################################
       # @group SegmentVal Construction
+      #########################################################################
 
       # @return [Values::SegmentVal]
       def segment(segment_tok, segment_use)
@@ -210,8 +209,8 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      #########################################################################
       # @group Instruction Generation
+      #########################################################################
 
       # @return [Array<Instruction>]
       def sequence(segment_uses, start = 0)

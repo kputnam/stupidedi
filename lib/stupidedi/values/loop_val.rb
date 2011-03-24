@@ -21,7 +21,7 @@ module Stupidedi
 
       # @return [LoopVal]
       def copy(changes = {})
-        self.class.new \
+        LoopVal.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children)
       end

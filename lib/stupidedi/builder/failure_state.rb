@@ -10,44 +10,44 @@ module Stupidedi
       attr_reader :segment_tok
 
       # @return [String]
-      attr_reader :value
-      alias explanation value
+      attr_reader :explanation
 
-      def initialize(value, segment_tok, parent)
-        @value, @segment_tok, @parent =
-          value, segment_tok, parent
+      def initialize(explanation, segment_tok, parent)
+        @explanation, @segment_tok, @parent =
+          explanation, segment_tok, parent
       end
 
+      # @return true
       def failure?
         true
       end
 
+      # @return nil
       def instructions
-        []
+        nil
       end
 
+      # @return [Zipper::AbstractZipper]
+      def zipper
+        @parent.zipper
+      end
+
+      # @return [void]
       def pop(count)
-        raise "@todo: FailureState#pop"
+        raise Exceptions::ParseError,
+          "FailureState#pop should not be called"
       end
 
+      # @return [void]
       def drop(count)
-        raise "@todo: FailureState#drop"
+        raise Exceptions::ParseError,
+          "FailureState#drop should not be called"
       end
 
+      # @return [void]
       def add(segment_tok, segment_use)
-        raise "@todo: FailureState#add"
-      end
-
-      def pop!(count)
-        raise "@todo: FailureState#pop!"
-      end
-
-      def drop!(count)
-        raise "@todo: FailureState#drop!"
-      end
-
-      def add!(segment_tok, segment_use)
-        raise "@todo: FailureState#add!"
+        raise Exceptions::ParseError,
+          "FailureState#add should not be called"
       end
     end
 

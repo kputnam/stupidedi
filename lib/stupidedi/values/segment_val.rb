@@ -20,7 +20,7 @@ module Stupidedi
 
       # @return [SegmentVal]
       def copy(changes = {})
-        self.class.new \
+        SegmentVal.new \
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
       end

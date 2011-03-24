@@ -16,14 +16,14 @@ module Stupidedi
         end
       end
 
-      # Using an immutable singleton instance for efficiency
+      # @private
       Once = Class.new(Bounded) do
         def initialize
           @max = 1
         end
       end.new
 
-      # Using an immutable singleton instance for efficiency
+      # @private
       Unbounded = Class.new(RepeatCount) do
         def include?(n)
           true
@@ -36,8 +36,8 @@ module Stupidedi
     end
 
     class << RepeatCount
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       def bounded(n)
         if n < 1

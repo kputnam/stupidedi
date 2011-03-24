@@ -1,6 +1,7 @@
 class Object
 
   # @group List Constructors
+  #############################################################################
 
   # Prepend the item to the front of a new list
   #
@@ -29,11 +30,19 @@ class Object
   # @group Combinators
 
   # Yields `self` to a block argument
+  #
+  # @example
+  #   nil.bind{|a| a.nil? }   #=> true
+  #   100.bind{|a| a.nil? }   #=> false
+  #
   def bind
     yield self
   end
 
   # Yields `self` to a side-effect block argument and return `self`
+  #
+  # @example:
+  #   100.bind{|a| puts "debug: #{a}" }   #=> 100
   #
   # @return self
   def tap
@@ -42,6 +51,7 @@ class Object
   end
 
   # @endgroup
+  #############################################################################
 
   # Return the "eigenclass" where singleton methods reside
   #

@@ -35,7 +35,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(self.class)
+                other.is_a?(Empty)
               end
             end
 
@@ -58,7 +58,7 @@ module Stupidedi
 
               # @return [NonEmpty]
               def copy(changes = {})
-                self.class.new \
+                NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
               end
@@ -69,15 +69,12 @@ module Stupidedi
 
               # @return [Array(NonEmpty, Numeric)]
               def coerce(other)
-                if other.is_a?(::Numeric)
-                  # Re-evaluate other.call(self) as self.op(other)
-                  return self, other
-                elsif other.is_a?(NumericVal)
-                  # Re-evaluate other.call(self) as self.op(other)
+                if other.respond_to?(:to_d)
+                  # Re-evaluate other.call(self) as self.op(other.to_d)
                   return self, other.to_d
                 else
                   # Fail, other.call(self) is still other.call(self)
-                  raise TypeError, "#{other.class} can't be coerced into #{self.class}"
+                  raise TypeError, "#{other.class} can't be coerced into #{NonEmpty}"
                 end
               end
 
@@ -95,56 +92,32 @@ module Stupidedi
 
               # @return [NonEmpty]
               def /(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value / other.value)
-                else
-                  copy(:value => (@value / other).to_d)
-                end
+                copy(:value => (@value / other).to_d)
               end
 
               # @return [NonEmpty]
               def +(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value + other.value)
-                else
-                  copy(:value => (@value + other).to_d)
-                end
+                copy(:value => (@value + other).to_d)
               end
 
               # @return [NonEmpty]
               def -(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value - other.value)
-                else
-                  copy(:value => (@value - other).to_d)
-                end
+                copy(:value => (@value - other).to_d)
               end
 
               # @return [NonEmpty]
               def **(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value ** other.value)
-                else
-                  copy(:value => (@value ** other).to_d)
-                end
+                copy(:value => (@value ** other).to_d)
               end
 
               # @return [NonEmpty]
               def *(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value * other.value)
-                else
-                  copy(:value => (@value * other).to_d)
-                end
+                copy(:value => (@value * other).to_d)
               end
 
               # @return [NonEmpty]
               def %(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value % other.value)
-                else
-                  copy(:value => (@value % other).to_d)
-                end
+                copy(:value => (@value % other).to_d)
               end
 
               # @return [NonEmpty]
@@ -164,7 +137,7 @@ module Stupidedi
 
               # @return [-1, 0, +1]
               def <=>(other)
-                if other.is_a?(DecimalVal) or other.is_a?(NumericVal)
+                if other.respond_to?(:value)
                   @value <=> other.value
                 else
                   @value <=> other
@@ -177,8 +150,8 @@ module Stupidedi
           end
 
           class << DecimalVal
+            # @group Constructor Methods
             ###################################################################
-            # @group Constructors
 
             # @return [DecimalVal::Empty]
             def empty(usage)

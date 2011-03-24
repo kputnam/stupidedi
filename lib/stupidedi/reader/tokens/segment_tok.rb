@@ -10,10 +10,10 @@ module Stupidedi
       # @return [Array<CompositeElementTok, SimpleElementTok>]
       attr_reader :element_toks
 
-      # @todo
+      # @return [Position]
       attr_reader :start
 
-      # @todo
+      # @return [Position]
       attr_reader :remainder
 
       def initialize(id, element_toks, start, remainder)
@@ -31,9 +31,16 @@ module Stupidedi
     end
 
     class << SegmentTok
+      # @group Constructor Methods
+      #########################################################################
+
+      # @return [SegmentTok]
       def build(id, element_toks, start, remainder)
         new(id, element_toks, start, remainder)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

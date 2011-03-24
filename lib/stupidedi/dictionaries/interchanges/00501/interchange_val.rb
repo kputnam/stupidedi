@@ -11,11 +11,12 @@ module Stupidedi
 
           # @return [InterchangeVal]
           def copy(changes = {})
-            self.class.new \
+            InterchangeVal.new \
               changes.fetch(:definition, definition),
               changes.fetch(:children, children)
           end
 
+          # @return [Module]
           def segment_dict
             definition.segment_dict
           end

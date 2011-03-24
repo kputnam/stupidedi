@@ -20,7 +20,7 @@ module Stupidedi
 
       # @return [TokenReader]
       def copy(changes = {})
-        self.class.new \
+        TokenReader.new \
           changes.fetch(:input, @input),
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict)
@@ -361,7 +361,7 @@ module Stupidedi
         unless @input.defined_at?(n-1)
           raise IndexError, "Less than #{n} characters available"
         else
-          self.class.new(@input.drop(n), @separators, @segment_dict)
+          TokenReader.new(@input.drop(n), @separators, @segment_dict)
         end
       end
 
@@ -396,7 +396,7 @@ module Stupidedi
         Either.success(Reader::Success.new(value, remainder))
       end
 
-      def segment(segment_id, start, remainder, elements = [])
+      def segment(segment_id, start, remainder, elements)
         SegmentTok.build(segment_id, elements, start, remainder)
       end
 

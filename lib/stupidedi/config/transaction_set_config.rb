@@ -50,13 +50,12 @@ module Stupidedi
       #   table.register("005010", "FA", "997") { Standards::FA997 }
       #   table.register("005010", "FA", "999") { Standards::FA999 }
       #
+      # @return [void]
       def register(version, function, transaction, &constructor)
         @table[Array[version, function, transaction]] = constructor
       end
 
-      # @param version      ST03 or GS08
-      # @param function     GS01
-      # @param transaction  ST01
+      # @return [TransactionSetDef]
       def at(version, function, transaction)
         @table[Array[version, function, transaction]].call
       end

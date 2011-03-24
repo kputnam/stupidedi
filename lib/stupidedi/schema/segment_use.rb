@@ -42,7 +42,7 @@ module Stupidedi
 
       # @return [SegmentUse]
       def copy(changes = {})
-        self.class.new \
+        SegmentUse.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:position, @position),
           changes.fetch(:requirement, @requirement),

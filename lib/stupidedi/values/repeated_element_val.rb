@@ -25,7 +25,7 @@ module Stupidedi
 
       # @return [RepeatedElementVal]
       def copy(changes = {})
-        self.class.new \
+        RepeatedElementVal.new \
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
       end

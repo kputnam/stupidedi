@@ -319,6 +319,8 @@ module Stupidedi
     end
 
     class << ConstraintTable
+      # @group Constructor Methods
+      #########################################################################
 
       # Given a list of {Instruction} values for the same segment identifier,
       # this method constructs the appropriate concrete subclass of
@@ -350,6 +352,9 @@ module Stupidedi
 
         return ConstraintTable::ValueBased.new(instructions)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

@@ -31,6 +31,7 @@ module Stupidedi
         @table = Hash.new
       end
 
+      #
       # @example
       #   table = InterchangeConfig.new
       #
@@ -39,11 +40,12 @@ module Stupidedi
       #   table.register("00401") { FourOhOne::InterchangeDef }
       #   table.register("00304") { ThreeOhFour::InterchangeDef }
       #
+      # @return [void]
       def register(version, &constructor)
         @table[version] = constructor
       end
 
-      # @param version  ISA12
+      # @return [InterchangeDef]
       def at(version)
         @table[version].call
       end

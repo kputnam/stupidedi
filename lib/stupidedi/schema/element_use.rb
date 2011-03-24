@@ -53,7 +53,7 @@ module Stupidedi
 
       # @return [SimpleElementUse]
       def copy(changes = {})
-        self.class.new \
+        SimpleElementUse.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:requirement, @requirement),
           changes.fetch(:repeat_count, @repeat_count),
@@ -70,6 +70,7 @@ module Stupidedi
         @repeat_count.try{|r| r.include?(2) }
       end
 
+      # @return true
       def simple?
         true
       end
@@ -116,24 +117,26 @@ module Stupidedi
         end
       end
 
-      # @return [SimpleElementVal]
-      def parse(string)
-        definition.parse(string, self)
-      end
-
-      def repeatable?
-        false
-      end
-
       # @return [ComponentElementUse]
       def copy(changes =  {})
-        self.class.new \
+        ComponentElementUse.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:requirement, @requirement),
           changes.fetch(:allowed_values, @allowed_values),
           changes.fetch(:parent, @parent)
       end
 
+      # @return [SimpleElementVal]
+      def parse(string)
+        definition.parse(string, self)
+      end
+
+      # @return false
+      def repeatable?
+        false
+      end
+
+      # @return true
       def simple?
         true
       end
@@ -177,7 +180,7 @@ module Stupidedi
 
       # @return [CompositeElementUse]
       def copy(changes = {})
-        self.class.new \
+        CompositeElementUse.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:requirement, @requirement),
           changes.fetch(:repeat_count, @repeat_count),
@@ -188,6 +191,7 @@ module Stupidedi
         @repeat_count.try{|r| r.include?(2) }
       end
 
+      # @return false
       def simple?
         false
       end

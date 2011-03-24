@@ -27,6 +27,8 @@ module Stupidedi
     end
 
     class << TableState
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [TableState]
       def push(segment_tok, segment_use, parent, reader)
@@ -61,6 +63,9 @@ module Stupidedi
               parent.instructions.push(itable.instructions)), reader)
         end
       end
+
+      # @endgroup
+      #########################################################################
 
     private
 

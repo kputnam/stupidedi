@@ -29,7 +29,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(self.class)
+                other.is_a?(Empty)
               end
             end
 
@@ -63,11 +63,8 @@ module Stupidedi
 
               # @return [Array(NonEmpty, Numeric)]
               def coerce(other)
-                if other.is_a?(::Numeric)
-                  # Re-evaluate other.call(self) as self.op(other)
-                  return self, other
-                elsif other.is_a?(DecimalVal)
-                  # Re-evaluate other.call(self) as self.op(other)
+                if other.respond_to?(:to_d)
+                  # Re-evaluate other.call(self) as self.op(other.to_d)
                   return self, other.to_d
                 else
                   # Fail, other.call(self) is still other.call(self)
@@ -84,61 +81,37 @@ module Stupidedi
                 ansi.element("Nn.value#{id}") << "(#{@value.to_s('F')})"
               end
 
-              #################################################################
               # @group Mathematical Operators
+              #################################################################
 
               # @return [NonEmpty]
               def /(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value / other.value)
-                else
-                  copy(:value => (@value / other).to_d)
-                end
+                copy(:value => (@value / other).to_d)
               end
 
               # @return [NonEmpty]
               def +(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value + other.value)
-                else
-                  copy(:value => (@value + other).to_d)
-                end
+                copy(:value => (@value + other).to_d)
               end
 
               # @return [NonEmpty]
               def -(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value - other.value)
-                else
-                  copy(:value => (@value - other).to_d)
-                end
+                copy(:value => (@value - other).to_d)
               end
 
               # @return [NonEmpty]
               def **(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value ** other.value)
-                else
-                  copy(:value => (@value ** other).to_d)
-                end
+                copy(:value => (@value ** other).to_d)
               end
 
               # @return [NonEmpty]
               def *(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value * other.value)
-                else
-                  copy(:value => (@value * other).to_d)
-                end
+                copy(:value => (@value * other).to_d)
               end
 
               # @return [NonEmpty]
               def %(other)
-                if other.is_a?(self.class)
-                  copy(:value => @value % other.value)
-                else
-                  copy(:value => (@value % other).to_d)
-                end
+                copy(:value => (@value % other).to_d)
               end
 
               # @return [NonEmpty]
@@ -158,7 +131,7 @@ module Stupidedi
 
               # @return [-1, 0, +1]
               def <=>(other)
-                if other.is_a?(NumericVal) or other.is_a?(DecimalVal)
+                if other.respond_to?(:value)
                   @value <=> other.value
                 else
                   @value <=> other
@@ -166,14 +139,14 @@ module Stupidedi
               end
 
               # @endgroup
-            ###################################################################
+              #################################################################
             end
 
           end
 
           class << NumericVal
+            # @group Constructor Methods
             ###################################################################
-            # @group Constructors
 
             # @return [NumericVal::Empty]
             def empty(usage)

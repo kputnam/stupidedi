@@ -1,8 +1,6 @@
 module Stupidedi
   module Sets
 
-    # Singleton
-    #
     # @private
     UniversalSet = Class.new(RelativeComplement) do
 
@@ -53,8 +51,8 @@ module Stupidedi
         end
       end
 
-      #########################################################################
       # @group Set Operations
+      #########################################################################
 
       # @return [AbstractSet]
       def intersection(other)
@@ -99,8 +97,8 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      #########################################################################
       # @group Set Ordering
+      #########################################################################
 
       # @return [Boolean]
       def proper_subset?(other)

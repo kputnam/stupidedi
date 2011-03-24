@@ -11,7 +11,7 @@ class Array
     x
   end
 
-  # True if {#at} is defined for the given `n`
+  # True if `#at` is defined for the given `n`
   #
   # @example
   #   [1, 2, 3].defined_at?(0)    #=> true
@@ -21,8 +21,8 @@ class Array
     n < length
   end
 
-  #############################################################################
   # @group Selection
+  #############################################################################
 
   # Selects all elements except the first.
   #
@@ -85,8 +85,8 @@ class Array
   # @endgroup
   #############################################################################
 
-  #############################################################################
   # @group Filtering
+  #############################################################################
 
   # Drops the longest prefix of elements that satisfy the predicate.
   #
@@ -156,5 +156,4 @@ class Array
 
   # @endgroup
   #############################################################################
-
 end

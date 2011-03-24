@@ -23,7 +23,7 @@ module Stupidedi
 
       # @return [CompositeElementVal]
       def copy(changes = {})
-        self.class.new \
+        CompositeElementVal.new \
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
       end

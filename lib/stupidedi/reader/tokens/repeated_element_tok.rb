@@ -31,11 +31,16 @@ module Stupidedi
     end
 
     class << RepeatedElementTok
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [RepeatedElementTok]
       def build(element_toks)
-        RepeatedElementTok.new(element_toks)
+        new(element_toks)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

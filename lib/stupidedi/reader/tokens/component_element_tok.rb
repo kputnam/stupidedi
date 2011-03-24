@@ -7,10 +7,10 @@ module Stupidedi
       # @return [String]
       attr_reader :value
 
-      # @todo
+      # @return [Position]
       attr_reader :start
 
-      # @todo
+      # @return [Position]
       attr_reader :remainder
 
       def initialize(value, start, remainder)
@@ -32,9 +32,16 @@ module Stupidedi
     end
 
     class << ComponentElementTok
+      # @group Constructor Methods
+      #########################################################################
+
+      # @return [ComponentElementTok]
       def build(value, start, remainder)
         new(value, start, remainder)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

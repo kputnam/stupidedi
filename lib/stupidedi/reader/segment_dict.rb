@@ -41,7 +41,7 @@ module Stupidedi
 
         # @return [SegmentDict]
         def copy(changes = {})
-          self.class.new \
+          NonEmpty.new \
             changes.fetch(:top, @top),
             changes.fetch(:pop, @pop)
         end
@@ -90,7 +90,7 @@ module Stupidedi
         end
       end
 
-      # Singleton instance
+      # @private
       Empty = Class.new(SegmentDict) do
         def top
           raise TypeError, "empty stack"
@@ -149,13 +149,21 @@ module Stupidedi
     end
 
     class << SegmentDict
+      # @group Constructor Methods
+      #########################################################################
+
+      # @return [SegmentDict::Empty]
       def empty
         SegmentDict::Empty
       end
 
+      # @return [SegmentDict::NonEmpty]
       def build(top)
         SegmentDict::Empty.push(top)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
     SegmentDict.eigenclass.send(:protected, :new)

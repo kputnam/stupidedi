@@ -39,15 +39,12 @@ module Stupidedi
 
     class << self
 
-      # Returns non-nil if c does not belong to the extended or basic character
-      # set.
+      # Returns true if `character` does not belong to the extended or basic
+      # character set.
       #
-      # @note This does not match the specification of control characters given
-      #   in X12.5, but I haven't seen the actual usage of control characters.
-      #   So for our purposes, they basically are characters that we want to
-      #   ignore.
-      #
-      # @param [String] character
+      # @see X222.pdf B.1.1.2.2 Basic Characters
+      # @see X222.pdf B.1.1.2.2 Extended Characters
+      # @see X222.pdf B.1.1.2.4 Control Characters
       def is_control_character?(character)
         not Reader::C_EITHER.include?(character)
       end

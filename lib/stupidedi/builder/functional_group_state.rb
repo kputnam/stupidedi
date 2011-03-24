@@ -39,6 +39,8 @@ module Stupidedi
     end
 
     class << FunctionalGroupState
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [FunctionalGroupState]
       def push(segment_tok, segment_use, parent, reader = nil)
@@ -66,6 +68,9 @@ module Stupidedi
           parent.segment_dict.push(envelope_val.segment_dict),
           fgcode, version)
       end
+
+      # @endgroup
+      #########################################################################
 
     private
 

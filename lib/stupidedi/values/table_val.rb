@@ -17,7 +17,7 @@ module Stupidedi
 
       # @return [TableVal]
       def copy(changes = {})
-        self.class.new \
+        TableVal.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children)
       end

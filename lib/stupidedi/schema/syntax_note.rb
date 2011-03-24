@@ -14,6 +14,12 @@ module Stupidedi
     class SyntaxNote
       # @return [Array<SimpleElementUse, CompositeElementUse>]
       abstract :element_uses
+
+      # @return [SyntaxNote]
+      def copy(changes = {})
+        # @todo
+        self
+      end
     end
 
   end

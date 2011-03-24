@@ -27,6 +27,8 @@ module Stupidedi
     end
 
     class << LoopState
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [LoopState]
       def push(segment_tok, segment_use, parent, reader)
@@ -41,6 +43,9 @@ module Stupidedi
         LoopState.new(zipper, parent,
           parent.instructions.push(instructions(loop_def)))
       end
+
+      # @endgroup
+      #########################################################################
 
     private
 

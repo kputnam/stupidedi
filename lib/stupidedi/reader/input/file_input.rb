@@ -44,7 +44,7 @@ module Stupidedi
 
       # @return [FileInput]
       def drop(n)
-        raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
+        raise ArgumentError, "n must be positive" unless n >= 0
 
         @io.seek(@offset)
         prefix = @io.read(n)
@@ -67,7 +67,7 @@ module Stupidedi
 
       # @return [FileInput]
       def copy(changes = {})
-        self.class.new \
+        FileInput.new \
           changes.fetch(:io, @io),
           changes.fetch(:offset, @offset),
           changes.fetch(:line, @line),
@@ -83,7 +83,7 @@ module Stupidedi
 
       # @return [String]
       def at(n)
-        raise ArgumentError, "n (#{n}) must be positive" unless n >= 0
+        raise ArgumentError, "n must be positive" unless n >= 0
 
         @io.seek(@offset + n)
         @io.read(1)

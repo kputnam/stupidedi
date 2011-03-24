@@ -4,13 +4,13 @@ module Stupidedi
     class SimpleElementTok
       include Inspect
 
-      # @todo
+      # @return [String, Object]
       attr_reader :value
 
-      # @todo
+      # @return [Position]
       attr_reader :start
 
-      # @todo
+      # @return [Position]
       attr_reader :remainder
 
       def initialize(value, start, remainder)
@@ -40,9 +40,15 @@ module Stupidedi
     end
 
     class << SimpleElementTok
+      # @group Constructor Methods
+      #########################################################################
+
       def build(value, start, remainder)
         new(value, start, remainder)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

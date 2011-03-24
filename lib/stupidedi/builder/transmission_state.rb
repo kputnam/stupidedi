@@ -25,7 +25,7 @@ module Stupidedi
 
       # @return [TransmissionState]
       def copy(changes = {})
-        self.class.new \
+        TransmissionState.new \
           changes.fetch(:config, @config),
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
@@ -65,6 +65,8 @@ module Stupidedi
     end
 
     class << TransmissionState
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [TransmissionState]
       def build(config)
@@ -74,6 +76,15 @@ module Stupidedi
             InstructionTable.build(
               Instruction.new(:ISA, nil, 0, 0, InterchangeState).cons),
             Zipper.build(Envelope::Transmission.new).dangle)
+      end
+
+      # @endgroup
+      #########################################################################
+
+      # @return [void]
+      def push(segment_tok, segment_use, parent, reader)
+        raise Exceptions::ParseError,
+          "TransmissionState.push should not be called"
       end
     end
 

@@ -2,32 +2,33 @@ class Module
 
   # Creates an abstract method
   #
-  # @return [void]
-  #
   # @example
   #   class Collection
   #     abstract :size
   #     abstract :add, :args => %w(item)
   #   end
   #
+  # @return [void]
   def abstract(name, *params)
     if params.last.is_a?(Hash)
       # abstract :method, :args => %w(a b c)
       params = params.last[:args]
     end
 
-    file, line = caller.first.split(':')
+    file, line, = Stupidedi.caller
 
     if params.empty?
       class_eval(<<-RUBY, file, line.to_i - 1)
         def #{name}(*args)
-          raise NoMethodError, "Method #{name} is declared abstract"
+          raise NoMethodError,
+            "Method #{name} is abstract"
         end
       RUBY
     else
       class_eval(<<-RUBY, file, line.to_i - 1)
         def #{name}(*args)
-          raise NoMethodError, "Method #{name}(#{params.join(', ')}) is declared abstract"
+          raise NoMethodError,
+            "Method #{name}(#{params.join(', ')}) is abstract"
         end
       RUBY
     end
@@ -35,8 +36,6 @@ class Module
 
   # Creates a method (or methods) that delegates messages to an instance
   # variable or another instance method.
-  #
-  # @return [void]
   #
   # @example
   #   class WrappedCollection
@@ -47,16 +46,19 @@ class Module
   #     end
   #   end
   #
+  # @return [void]
   def delegate(*params)
     unless params.last.is_a?(Hash)
-      raise ArgumentError, "Last argument must be :to => ..."
+      raise ArgumentError,
+        "Last argument must be :to => ..."
     end
 
     methods = params.init
     target  = params.last.fetch(:to) or
-      raise ArgumentError, ":to cannot be nil"
+      raise ArgumentError,
+        ":to => ... cannot be nil"
 
-    file, line = caller.first.split(':')
+    file, line, = Stupidedi.caller
 
     for m in methods
       if m.to_s =~ /=$/

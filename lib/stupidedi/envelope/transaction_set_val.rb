@@ -18,7 +18,7 @@ module Stupidedi
 
       # @return [TransactionSetVal]
       def copy(changes = {})
-        self.class.new \
+        TransactionSetVal.new \
           changes.fetch(:definition, @definition),
           changes.fetch(:children, @children)
       end

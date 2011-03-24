@@ -41,7 +41,7 @@ module Stupidedi
 
       # @return [LoopDef]
       def copy(changes = {})
-        self.class.new \
+        LoopDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:repeat_count, @repeat_count),
           changes.fetch(:header_segment_uses, @header_segment_uses),
@@ -107,8 +107,8 @@ module Stupidedi
     end
 
     class << LoopDef
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [LoopDef]
       def build(id, repeat_count, *children)

@@ -29,7 +29,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(self.class)
+                other.is_a?(Empty)
               end
             end
 
@@ -202,8 +202,8 @@ module Stupidedi
           end
 
           class << DateVal
+            # @group Constructor Methods
             ###################################################################
-            # @group Constructors
 
             # @return [DateVal::Empty]
             def empty(usage)

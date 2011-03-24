@@ -51,7 +51,7 @@ module Stupidedi
 
               # @return [NonEmpty]
               def copy(changes = {})
-                self.class.new \
+                NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
               end
@@ -83,8 +83,8 @@ module Stupidedi
           end
 
           class << StringVal
+            # @group Constructor Methods
             ###################################################################
-            # @group Constructors
 
             # @return [StringVal::Empty]
             def empty(usage)

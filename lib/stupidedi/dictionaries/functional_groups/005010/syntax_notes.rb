@@ -12,9 +12,6 @@ module Stupidedi
           # Paired or Multiple
           #
           class P < Schema::SyntaxNote
-            def copy(changes = {})
-              self
-            end
           end
 
           class << P
@@ -27,9 +24,6 @@ module Stupidedi
           # Required
           #
           class R < Schema::SyntaxNote
-            def copy(changes = {})
-              self
-            end
           end
 
           class << R
@@ -42,9 +36,6 @@ module Stupidedi
           # Exclusion
           #
           class E < Schema::SyntaxNote
-            def copy(changes = {})
-              self
-            end
           end
 
           class << E
@@ -57,9 +48,6 @@ module Stupidedi
           # Conditional
           #
           class C < Schema::SyntaxNote
-            def copy(changes = {})
-              self
-            end
           end
 
           class << C
@@ -72,9 +60,6 @@ module Stupidedi
           # List Conditional
           #
           class L < Schema::SyntaxNote
-            def copy(changes = {})
-              self
-            end
           end
 
           class << L

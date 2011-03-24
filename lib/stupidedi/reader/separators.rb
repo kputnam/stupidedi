@@ -40,15 +40,23 @@ module Stupidedi
           other.segment    || @segment
       end
 
+      # @return [String]
       def inspect
         "Separators(#{@component.inspect}, #{@repetition.inspect}, #{@element.inspect}, #{@segment.inspect})"
       end
     end
 
     class << Separators
+      # @group Constructor Methods
+      #########################################################################
+
+      # @return [Separators]
       def empty
-        Separators.new(nil, nil, nil, nil)
+        new(nil, nil, nil, nil)
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end

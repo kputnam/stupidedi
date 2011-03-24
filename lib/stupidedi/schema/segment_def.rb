@@ -39,7 +39,7 @@ module Stupidedi
 
       # @return [SegmentDef]
       def copy(changes = {})
-        self.class.new \
+        SegmentDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:name, @name),
           changes.fetch(:purpose, @purpose),
@@ -80,8 +80,8 @@ module Stupidedi
     end
 
     class << SegmentDef
-      #########################################################################
       # @group Constructor Methods
+      #########################################################################
 
       # @return [SegmentDef]
       def build(id, name, purpose, *args)

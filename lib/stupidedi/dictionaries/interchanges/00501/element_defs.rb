@@ -36,9 +36,8 @@ module Stupidedi
           end
 
           class << SeparatorElementVal
-
-            ###################################################################
             # @group Constructor Methods
+            ###################################################################
 
             # @raise NoMethodError
             def empty(definition, usage)

@@ -30,7 +30,7 @@ module Stupidedi
 
       # @return [InterchangeDef]
       def copy(changes = {})
-        self.class.new \
+        InterchangeDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)

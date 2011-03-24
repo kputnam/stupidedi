@@ -8,7 +8,7 @@ module Stupidedi
     #
     # The {DelegatedInput} subclass wraps values that already implement the
     # interface, like {String} and {Array}. The {FileInput} subclass wraps
-    # opened IO streams like File, and possibly others.
+    # opened `IO` streams like `File`, and possibly others.
     #
     # @example Reading the input
     #   input = Input.from_string("abc")

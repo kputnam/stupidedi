@@ -27,6 +27,8 @@ module Stupidedi
     end
 
     class << TransactionSetState
+      # @group Constructor Methods
+      #########################################################################
 
       # @return [TransactionSetState]
       def push(segment_tok, segment_use, parent, reader)
@@ -62,6 +64,9 @@ module Stupidedi
           TransactionSetState.new(zipper, parent,
             parent.instructions.push(instructions(envelope_def))), reader)
       end
+
+      # @endgroup
+      #########################################################################
 
     private
 

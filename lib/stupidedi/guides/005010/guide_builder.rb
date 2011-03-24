@@ -15,8 +15,8 @@ module Stupidedi
           transaction_set_def.copy(:table_defs => table_defs)
         end
 
-        #######################################################################
         # @group Element Constraints
+        #######################################################################
 
         # @param [String, ...] values
         def Values(*values)
@@ -36,8 +36,8 @@ module Stupidedi
         # @endgroup
         #######################################################################
 
-        #######################################################################
         # @group Definition Constructors
+        #######################################################################
 
         # @param [Schema::ElementReq] requirement
         # @param [String] name
@@ -124,25 +124,26 @@ module Stupidedi
         # @return [Schema::SimpleElementUse]
         def mod_element(element_use, requirement, name, arguments)
           unless requirement.is_a?(Schema::ElementReq)
-            raise ArgumentError,
+            raise Exceptions::InvalidSchemaError,
               "First argument to Element must be a Schema::ElementReq but got #{requirement.inspect}"
           end
 
           unless name.is_a?(String)
-            raise ArgumentError,
+            raise Exceptions::InvalidSchemaError,
               "Element name must be a String"
           end
 
           changes = Hash.new
           changes[:requirement] = requirement
-          changes[:definition] = element_use.definition.copy(:name => name)
+          changes[:definition]  = element_use.definition.copy(:name => name)
 
           repeat_count = arguments.select{|x| x.is_a?(Schema::RepeatCount) }
 
           if repeat_count.length == 1
             changes[:repeat_count] = repeat_count.head
           elsif repeat_count.length > 1
-            raise ArgumentError, "RepeatCount specified more than once for this Element"
+            raise Exceptions::InvalidSchemaError,
+              "RepeatCount specified more than once for this Element"
           end
 
           allowed_values = arguments.select{|x| x.is_a?(Array) and x.head == :Values }
@@ -150,7 +151,8 @@ module Stupidedi
           if allowed_values.length == 1
             changes[:allowed_values] = element_use.allowed_values.replace(allowed_values.head.last)
           elsif allowed_values.length > 1
-            raise ArgumentError, "Values specified more than once for this Element"
+            raise Exceptions::InvalidSchemaError,
+              "Values specified more than once for this Element"
           end
 
           max_length = arguments.select{|x| x.is_a?(Array) and x.head == :MaxLength }
@@ -158,7 +160,8 @@ module Stupidedi
           if max_length.length == 1
             changes[:max_length] = max_length.head
           elsif max_length.length > 1
-            raise ArgumentError, "MaxLength specified more than once for this Element"
+            raise Exceptions::InvalidSchemaError,
+              "MaxLength specified more than once for this Element"
           end
 
           element_use.copy(changes)
