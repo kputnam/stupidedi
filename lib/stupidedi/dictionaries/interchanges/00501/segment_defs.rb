@@ -13,22 +13,22 @@ module Stupidedi
           m = FunctionalGroups::FiftyTen::ElementReqs
 
           autoload :ISA,
-            "stupidedi/dictionaries/interchanges/00501/segment_defs/isa"
+            "stupidedi/dictionaries/interchanges/00501/segment_defs/ISA"
 
           autoload :IEA,
-            "stupidedi/dictionaries/interchanges/00501/segment_defs/iea"
+            "stupidedi/dictionaries/interchanges/00501/segment_defs/IEA"
 
           autoload :ISB,
-            "stupidedi/dictionaries/interchanges/00501/segment_defs/isb"
+            "stupidedi/dictionaries/interchanges/00501/segment_defs/ISB"
 
           autoload :ISE,
-            "stupidedi/dictionaries/interchanges/00501/segment_defs/ise"
+            "stupidedi/dictionaries/interchanges/00501/segment_defs/ISE"
 
           autoload :TA1,
-            "stupidedi/dictionaries/interchanges/00501/segment_defs/ta1"
+            "stupidedi/dictionaries/interchanges/00501/segment_defs/TA1"
 
           autoload :TA3,
-            "stupidedi/dictionaries/interchanges/00501/segment_defs/ta3"
+            "stupidedi/dictionaries/interchanges/00501/segment_defs/TA3"
 
         end
       end
