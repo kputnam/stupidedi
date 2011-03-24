@@ -37,11 +37,11 @@ b. N3("236 N MAIN ST")
 b. N4("MIAMI", "FL", "33413")
 b.DMG("D8", "19431022", "M")
 
-z = b.instance_variable_get(:@machine).states.head.zipper
+z = b.zipper
+pp z.root
 
 #b.GS("HP", "SENDER ID", "RECEIVER ID", "19990531", "0030", "1", "X", "005010X221")
 #b.ST("835", "4321")
 
-pp b
-
-pp b.successors
+# pp b
+# pp b.successors

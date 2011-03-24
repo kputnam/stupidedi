@@ -4,6 +4,7 @@ module Stupidedi
     class BuilderDsl
       include Inspect
 
+      # @private
       SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
 
       def initialize(config)

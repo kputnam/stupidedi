@@ -45,17 +45,18 @@ module Stupidedi
       # @return [FunctionalGroupState]
       def push(segment_tok, segment_use, parent, reader = nil)
         # GS08: Version / Release / Industry Identifier Code
-        version = segment_tok.element_toks.at(7).try{|t| t.value.slice(0, 6) }
+        gscode  = segment_tok.element_toks.at(7).try{|t| t.value.slice(0, 6) }
+        version = segment_tok.element_toks.at(7).try(:value)
 
         # GS01: Functional Identifier Code
         fgcode = segment_tok.element_toks.at(0).try{|t| t.value }
 
-        unless parent.config.functional_group.defined_at?(version)
-          return FailureState.new("Unknown functional group version #{version}",
+        unless parent.config.functional_group.defined_at?(gscode)
+          return FailureState.new("Unknown functional group version #{gscode}",
             segment_tok, parent)
         end
 
-        envelope_def = parent.config.functional_group.at(version)
+        envelope_def = parent.config.functional_group.at(gscode)
         envelope_val = envelope_def.empty
         segment_use  = envelope_def.entry_segment_use
 
