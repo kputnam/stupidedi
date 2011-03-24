@@ -1,7 +1,7 @@
 module Stupidedi
   module Guides
     module FiftyTen
-      module X231
+      module X231A1
 
         b = GuideBuilder
         d = Schema
@@ -16,7 +16,7 @@ module Stupidedi
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("999")),
               b::Element(e::Required,    "Transaction Set Control Number"),
-              b::Element(e::Required,    "Implementation Guide Version Name", b::Values("005010X231"))),
+              b::Element(e::Required,    "Implementation Guide Version Name", b::Values("005010X231A1"))),
             b::Segment(200, s::AK1, "Functional Group Response Header",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Functional Identifier Code"),
@@ -51,9 +51,7 @@ module Stupidedi
                     b::Element(e::Required,    "Element Position in Segment"),
                     b::Element(e::Situational, "Component Data Element Position in Composite"),
                     b::Element(e::Situational, "Repeating Data Element Position")),
-                  b::Element(e::Situational, "REFERENCE IN SEGMENT",
-                    b::Element(e::Required,     "Data Element Reference Number"),
-                    b::Element(e::Situational,  "Component Data Element Reference Number"))),
+                  b::Element(e::NotUsed,     "REFERENCE IN SEGMENT")),
                 b::Segment(500, s::CTX, "Business Unit Identifier",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "CONTEXT IDENTIFICATION",
@@ -88,18 +86,16 @@ module Stupidedi
                       b::Element(e::Required,    "Element Position in Segment"),
                       b::Element(e::Situational, "Component Data Element Position in Composite"),
                       b::Element(e::Situational, "Repeating Data Element Position")),
-                    b::Element(e::Situational, "REFERENCE IN SEGMENT",
-                      b::Element(e::Required,     "Data Element Reference Number"),
-                      b::Element(e::Situational,  "Component Data Element Reference Number"))))),
+                    b::Element(e::NotUsed,     "REFERENCE IN SEGMENT")))),
 
               b::Segment(800, s::IK5, "Implementation Transaction Set Response Trailer",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Transaction Set Acknowledgement Code", b::Values("A", "E", "M", "R", "W", "X")),
-                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I6")),
-                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I6")),
-                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I6")),
-                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I6")),
-                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I6")))),
+                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I5", "I6")),
+                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I5", "I6")),
+                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I5", "I6")),
+                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I5", "I6")),
+                b::Element(e::Situational, "Implementation Transaction Set Syntax Error Code", b::Values("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "23", "24", "25", "26", "27", "I5", "I6")))),
 
             b::Segment( 900, s::AK9, "Functional Group Response Trailer",
               r::Required, d::RepeatCount.bounded(1),

@@ -22,8 +22,8 @@ module Stupidedi
         q.pp(:composite.cons(@component_toks))
       end
 
-      def repeat(composite_tok)
-        RepeatedElementTok.new([composite_tok, self])
+      def repeated
+        RepeatedElementTok.new(self.cons)
       end
 
       def repeated?

@@ -22,8 +22,8 @@ module Stupidedi
         q.pp(:simple.cons(@value.cons))
       end
 
-      def repeat(element)
-        RepeatedElementTok.new([element, self])
+      def repeated
+        RepeatedElementTok.new(self.cons)
       end
 
       def repeated?

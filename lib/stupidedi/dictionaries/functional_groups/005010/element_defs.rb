@@ -180,12 +180,15 @@ module Stupidedi
               "CJ" => s::CodeList.external("135"),
               "DC" => s::CodeList.external("897"),
               "DX" => s::CodeList.external("131"),
+              "EN" => "EAN/UCC - 13",
+              "EO" => "EAN/UCC - 8",
               "ER" => s::CodeList.external("576"),
               "HC" => s::CodeList.external("130"),
               "HP" => s::CodeList.external("716"),
               "ID" => s::CodeList.external("131"),
               "IP" => s::CodeList.external("896"),
               "IV" => s::CodeList.external("513"),
+              "HI" => "HIBC (Health Care Industry Bar Code) Supplier Labeling Standard Primary Data Message",
               "LB" => s::CodeList.external("663"),
               "N1" => s::CodeList.external("240"),
               "N2" => s::CodeList.external("240"),
@@ -194,8 +197,11 @@ module Stupidedi
               "N5" => s::CodeList.external("240"),
               "N6" => s::CodeList.external("240"),
               "NU" => s::CodeList.external("132"),
-              "UI" => "U.P.C. Consumer Package (1-5-5)",
+              "ON" => "Customer Order Number",
               "TD" => s::CodeList.external("359"),
+              "UI" => "U.P.C. Consumer Package (1-5-5)",
+              "UK" => "GTIN 14-digit Data Structure",
+              "UP" => "UCC - 12",
               "RB" => s::CodeList.external("132"),
               "WK" => s::CodeList.external("843")))
 
@@ -544,7 +550,9 @@ module Stupidedi
               "E" => "Accepted, But Errors Were Noted",
               "M" => "Rejected, Message Authentication Code (MAC) Failed",
               "P" => "Partially Accepted, At Least One Transaction Set Was Rejected",
-              "R" => "Rejected"))
+              "R" => "Rejected",
+              "W" => "Rejected, Assurance Failed Validity Tests",
+              "X" => "Rejected, Content After Decryption Could Not Be Analyzed"))
 
           E716  = t::ID.new(:E716 , "Functional Group Syntax Error Code"   , 1, 3,
             s::CodeList.build(

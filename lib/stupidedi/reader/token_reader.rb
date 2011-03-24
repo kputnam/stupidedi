@@ -134,7 +134,7 @@ module Stupidedi
           read_simple_element
         else
           element_use = element_uses.head
-          repeatable  = element_use.repeat_count.include?(2)
+          repeatable  = element_use.repeatable?
 
           if element_uses.head.composite?
             read_composite_element(repeatable)
@@ -266,12 +266,13 @@ module Stupidedi
             # the delimiter because the next reader can use the delimiter to
             # know which token to next expect.
             token = simple(buffer, @input, @input.drop(position))
+            token = token.repeated if repeatable
             return result(token, advance(position - 1))
           when @separators.repetition
             if repeatable
               token = simple(buffer, @input, @input.drop(position))
               rest  = advance(position).read_simple_element(repeatable)
-              return rest.map{|r| r.map{|e| e.repeat(token) }}
+              return rest.map{|r| r.map{|e| e.repeated(token) }}
             else
               # @todo: Read this as data but sound the alarms
             end
@@ -330,10 +331,11 @@ module Stupidedi
             case b.value
             when @separators.segment,
                  @separators.element
+              token = token.repeated if repeatable
               result(token, a.remainder)
             when @separators.repetition
               b.remainder.read_composite_element.map do |r|
-                r.map{|e| e.repeat(token) }
+                r.map{|e| e.repeated(token) }
               end
             end
           end

@@ -299,6 +299,7 @@ module Stupidedi
         # @return [String, nil]
         def deconstruct(element_toks, m, n)
           element_tok = element_toks.at(m)
+          element_tok = element_tok.element_toks.at(0) if element_tok.repeated?
 
           if element_tok.blank?
             nil

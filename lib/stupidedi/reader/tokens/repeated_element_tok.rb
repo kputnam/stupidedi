@@ -12,7 +12,7 @@ module Stupidedi
         @element_toks = element_toks
       end
 
-      def repeat(element_tok)
+      def repeated(element_tok)
         @element_toks.unshift(element_tok)
         self
       end
