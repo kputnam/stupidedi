@@ -54,12 +54,12 @@ module Stupidedi
 
             # @return [Values::SimpleElementVal]
             def value(object, usage)
-              companion.value(object, self, usage)
+              companion.value(object, usage)
             end
 
             # @return [Values::SimpleElementVal]
             def empty(usage)
-              companion.empty(self, usage)
+              companion.empty(usage)
             end
 
             # @return [void]

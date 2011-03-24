@@ -12,11 +12,11 @@ module Stupidedi
           end
 
           class << BinaryVal
-            def empty(definition)
+            def empty(usage)
               raise NoMethodError, "@todo"
             end
 
-            def value(object, definition)
+            def value(object, usage)
               raise NoMethodError, "@todo"
             end
           end

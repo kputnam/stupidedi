@@ -7,7 +7,7 @@ module Stupidedi
     class CompositeElementVal < AbstractVal
 
       # @return [CompositeElementDef]
-      attr_reader :definition
+      delegate :definition, :to => :@usage
 
       # @return [Array<SimpleElementVal>]
       attr_reader :children
@@ -16,15 +16,14 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :usage
 
-      def initialize(definition, children, usage)
-        @definition, @children, @usage =
-          definition, children, usage
+      def initialize(children, usage)
+        @children, @usage =
+          children, usage
       end
 
       # @return [CompositeElementVal]
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:definition, @definition),
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
       end
@@ -40,25 +39,20 @@ module Stupidedi
 
       # @return [SimpleElementVal]
       def at(n)
-        if @definition.component_element_uses.defined_at?(n)
+        if definition.component_element_uses.defined_at?(n)
           if @children.defined_at?(n)
             @children.at(n)
           else
-            @definition.component_element_uses.at(n).empty
+            definition.component_element_uses.at(n).empty
           end
         else
           raise IndexError
         end
       end
 
-    # # @return [RepeatedElementVal]
-    # def repeated
-    #   RepeatedElementVal.new(@definition, [self])
-    # end
-
       # @return [void]
       def pretty_print(q)
-        id = @definition.try do |d|
+        id = definition.try do |d|
           ansi.bold("[#{d.id}: #{d.name}]")
         end
 
@@ -83,7 +77,7 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         eql?(other) or
-         (other.definition == @definition and
+         (other.definition == definition and
           other.children   == @children)
       end
     end

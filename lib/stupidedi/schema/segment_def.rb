@@ -55,11 +55,11 @@ module Stupidedi
 
       # @return [Values::SegmentVal]
       def empty(usage)
-        Values::SegmentVal.new(self, [], usage)
+        Values::SegmentVal.new([], usage)
       end
 
       def value(element_vals, usage)
-        Values::SegmentVal.new(self, element_vals, usage)
+        Values::SegmentVal.new(element_vals, usage)
       end
 
       # @return [void]
@@ -75,14 +75,6 @@ module Stupidedi
             end
             q.pp e
           end
-
-        # @syntax_notes.each do |e|
-        #   unless q.current_group.first?
-        #     q.text ","
-        #     q.breakable
-        #   end
-        #   q.pp e
-        # end
         end
       end
     end

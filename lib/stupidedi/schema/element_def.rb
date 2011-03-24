@@ -102,12 +102,12 @@ module Stupidedi
 
       # @return [CompositeElementVal]
       def value(component_vals, usage)
-        Values::CompositeElementVal.new(self, component_vals || [], usage)
+        Values::CompositeElementVal.new(component_vals, usage)
       end
 
       # @return [CompositeElementVal]
       def empty(usage)
-        Values::CompositeElementVal.new(self, [], usage)
+        Values::CompositeElementVal.new([], usage)
       end
 
       # @return [void]

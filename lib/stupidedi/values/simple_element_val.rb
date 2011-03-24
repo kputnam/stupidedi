@@ -7,7 +7,7 @@ module Stupidedi
     class SimpleElementVal < AbstractVal
 
       # @return [SimpleElementDef]
-      attr_reader :definition
+      delegate :definition, :to => :@usage
 
       # @return [SegmentVal, CompositeElementVal]
       attr_reader :parent
@@ -15,15 +15,13 @@ module Stupidedi
       # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 
-      def initialize(definition, usage)
-        @definition, @usage =
-          definition, usage
+      def initialize(usage)
+        @usage = usage
       end
 
       # @return [SimpleElementVal]
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:definition, @definition),
           changes.fetch(:usage, @usage)
       end
 

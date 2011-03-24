@@ -42,7 +42,7 @@ module Stupidedi
             class NonEmpty < TimeVal
               attr_reader :hour, :minute, :second
 
-              def initialize(hour, minute, second, definition, usage)
+              def initialize(hour, minute, second, usage)
                 @hour, @minute, @second = hour, minute, second
 
                 valid   = (  hour.nil? or hour.between?(0, 24))
@@ -55,7 +55,7 @@ module Stupidedi
                   raise ArgumentError, "Invalid time #{inspect}"
                 end
 
-                super(definition, usage)
+                super(usage)
               end
 
               # @return [NonEmpty]
@@ -64,7 +64,6 @@ module Stupidedi
                   changes.fetch(:hour, @hour),
                   changes.fetch(:minute, @minute),
                   changes.fetch(:second, @second),
-                  changes.fetch(:definition, definition),
                   changes.fetch(:usage, usage)
               end
 
@@ -109,14 +108,14 @@ module Stupidedi
             # @group Constructors
 
             # Creates an empty time value.
-            def empty(definition, usage)
-              TimeVal::Empty.new(definition, usage)
+            def empty(usage)
+              TimeVal::Empty.new(usage)
             end
 
             # @return [TimeVal::NonEmpty, TimeVal::Empty]
-            def value(object, definition, usage)
+            def value(object, usage)
               if object.blank?
-                TimeVal::Empty.new(definition, usage)
+                TimeVal::Empty.new(usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 hour   = object.to_s.slice(0, 2).to_i
@@ -127,17 +126,17 @@ module Stupidedi
                   second += "0.#{decimal}".to_f
                 end
 
-                TimeVal::NonEmpty.new(hour, minute, second, definition, usage)
+                TimeVal::NonEmpty.new(hour, minute, second, usage)
 
               elsif object.is_a?(Time)
                 TimeVal::NonEmpty.new(object.hour, object.min,
                                       object.sec + (object.usec / 1000000.0),
-                                      definition, usage)
+                                      usage)
 
               elsif object.is_a?(DateTime)
                 TimeVal::NonEmpty.new(object.hour, object.min,
                                       object.sec + object.sec_fraction.to_f,
-                                      definition, usage)
+                                      usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end

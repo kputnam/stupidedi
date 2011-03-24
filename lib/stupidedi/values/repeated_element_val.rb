@@ -7,7 +7,7 @@ module Stupidedi
     class RepeatedElementVal < AbstractVal
 
       # @return [CompositeElementDef, SimpleElementDef]
-      attr_reader :definition
+      delegate :definition, :to => :@usage
 
       # @return [Array<ElementVal>]
       attr_reader :children
@@ -18,15 +18,14 @@ module Stupidedi
 
       delegate :at, :defined_at?, :length, :to => :@children
 
-      def initialize(definition, children, usage)
-        @definition, @children, @usage =
-          definition, children, usage
+      def initialize(children, usage)
+        @children, @usage =
+          children, usage
       end
 
       # @return [RepeatedElementVal]
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:definition, @definition),
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
       end
@@ -43,7 +42,7 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         if @children.empty?
-          id = @definition.try do |d|
+          id = definition.try do |d|
             ansi.bold("[#{d.id.to_s}: #{d.name.to_s}]")
           end
           q.text(ansi.repeated("RepeatedElementVal#{id}"))
@@ -65,7 +64,7 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         eql?(other)
-         (other.definition == @definition and
+         (other.definition == definition and
           other.children   == @children)
       end
     end
@@ -75,13 +74,13 @@ module Stupidedi
       # @group Constructor Methods
 
       # @return [RepeatedElementVal]
-      def empty(definition, element_use)
-        RepeatedElementVal.new(definition, [], element_use)
+      def empty(element_use)
+        RepeatedElementVal.new([], element_use)
       end
 
       # @return [RepeatedElementVal]
-      def build(definition, children, element_use)
-        RepeatedElementVal.new(definition, children, element_use)
+      def build(children, element_use)
+        RepeatedElementVal.new(children, element_use)
       end
 
       # @endgroup

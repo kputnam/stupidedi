@@ -17,16 +17,15 @@ module Stupidedi
 
             delegate :to_s, :to => :@value
 
-            def initialize(value, definition, usage)
+            def initialize(value, usage)
               @value = value
-              super(definition, usage)
+              super(usage)
             end
 
             # @return [SeparatorElementVal]
             def copy(changes = {})
               SeparatorElementVal.new \
                 changes.fetch(:value, @value),
-                changes.fetch(:definition, definition),
                 changes.fetch(:usage, usage)
             end
 
@@ -47,13 +46,13 @@ module Stupidedi
             end
 
             # @return [SeparatorElementVal]
-            def value(character, definition, usage)
-              SeparatorElementVal.new(character, definition, usage)
+            def value(character, usage)
+              SeparatorElementVal.new(character, usage)
             end
 
             # @return [SeparatorElementVal]
-            def parse(character, definition, usage)
-              SeparatorElementVal.new(character, definition, usage)
+            def parse(character, usage)
+              SeparatorElementVal.new(character, usage)
             end
 
             # @endgroup

@@ -44,16 +44,15 @@ module Stupidedi
 
               delegate :to_d, :to_s, :to_f, :length, :to => :@value
 
-              def initialize(string, definition, usage)
+              def initialize(string, usage)
                 @value = string
-                super(definition, usage)
+                super(usage)
               end
 
               # @return [NonEmpty]
               def copy(changes = {})
                 self.class.new \
                   changes.fetch(:value, @value),
-                  changes.fetch(:definition, definition),
                   changes.fetch(:usage, usage)
               end
 
@@ -88,16 +87,16 @@ module Stupidedi
             # @group Constructors
 
             # @return [StringVal::Empty]
-            def empty(definition, usage)
-              StringVal::Empty.new(definition, usage)
+            def empty(usage)
+              StringVal::Empty.new(usage)
             end
 
             # @return [StringVal::Empty, StringVal::NonEmpty]
-            def value(object, definition, usage)
+            def value(object, usage)
               if object.blank?
-                StringVal::Empty.new(definition, usage)
+                StringVal::Empty.new(usage)
               elsif object.respond_to?(:to_s)
-                StringVal::NonEmpty.new(object.to_s, definition, usage)
+                StringVal::NonEmpty.new(object.to_s, usage)
               else
                 raise TypeError, "Cannot convert #{object.class} to #{self}"
               end

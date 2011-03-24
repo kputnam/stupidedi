@@ -5,7 +5,7 @@ module Stupidedi
     class SegmentVal < AbstractVal
 
       # @return [SegmentDef]
-      attr_reader :definition
+      delegate :definition, :to => :@usage
 
       # @return [Array<ElementVal>]
       attr_reader :children
@@ -13,15 +13,14 @@ module Stupidedi
       # @return [SegmentUse]
       attr_reader :usage
 
-      def initialize(definition, children, usage)
-        @definition, @children, @usage =
-          definition, children, usage
+      def initialize(children, usage)
+        @children, @usage =
+          children, usage
       end
 
       # @return [SegmentVal]
       def copy(changes = {})
         self.class.new \
-          changes.fetch(:definition, @definition),
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
       end
@@ -36,23 +35,23 @@ module Stupidedi
       end
 
       def defined_at?(n)
-        @definition.try{|d| d.element_uses.defined_at?(n) }
+        definition.element_uses.defined_at?(n)
       end
 
       # @return [SimpleElementVal, CompositeElementVal, RepeatedElementVal]
       def at(n)
-        raise IndexError unless @definition.nil? or defined_at?(n)
+        raise IndexError unless defined_at?(n)
 
         if @children.defined_at?(n)
           @children.at(n)
         else
-          @definition.element_uses.at(n).definition.blank
+          definition.element_uses.at(n).definition.blank
         end
       end
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try do |d|
+        id = definition.try do |d|
           ansi.bold("[#{d.id}: #{d.name}]")
         end
 
@@ -71,13 +70,13 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.segment(ansi.bold(@definition.id.to_s))
+        ansi.segment(ansi.bold(definition.id.to_s))
       end
 
       # @return [Boolean]
       def ==(other)
         eql?(other) or
-         (other.definition == @definition and
+         (other.definition == definition and
           other.children   == @children)
       end
     end

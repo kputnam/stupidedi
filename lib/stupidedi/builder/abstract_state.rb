@@ -74,8 +74,8 @@ module Stupidedi
 
     class << AbstractState
 
-      # @group Constructor Methods
       #########################################################################
+      # @group Constructor Methods
 
       # This method constructs a new instance of (a subclass of) {AbstractState}
       # and pushes it above {#parent} onto a nested stack-like structure. The
@@ -105,7 +105,7 @@ module Stupidedi
           element_vals <<
             if element_tok.nil?
               if element_use.repeatable?
-                Values::RepeatedElementVal.empty(element_use.definition, element_use)
+                Values::RepeatedElementVal.empty(element_use)
               else
                 element_use.empty
               end
@@ -147,7 +147,7 @@ module Stupidedi
       # @return [Values::RepeatedElementVal]
       def repeated_element(designator, element_use, element_vals)
         # @todo: Position
-        Values::RepeatedElementVal.build(element_use.definition, element_vals, element_use)
+        Values::RepeatedElementVal.build(element_vals, element_use)
       end
 
       # @return [Values::CompositeElementVal]
@@ -169,7 +169,6 @@ module Stupidedi
             end
         end
 
-        # @todo: Position
         composite_use.value(component_vals)
       end
 
@@ -203,6 +202,7 @@ module Stupidedi
               "Element #{designator} is not forbidden"
           end
         else
+          # @todo: element_use.parse/value
           element_use.value(element_tok.value)
         end
       end
