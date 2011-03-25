@@ -222,7 +222,7 @@ module Stupidedi
 
         # Unfortunately, computing our size is O(|U|) and other.size
         # might be O(|V|) so this is O(2*|U| + |V|) or O(2*|V| + |U|)
-        if other.is_a?(Set) and (other.infinite? or size < other.size)
+        if other.is_a?(AbstractSet) and (other.infinite? or size < other.size)
           @universe.each do |value, n|
             if other.include?(value)
               mask |= (1 << n)

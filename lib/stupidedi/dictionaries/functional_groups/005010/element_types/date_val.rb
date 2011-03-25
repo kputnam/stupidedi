@@ -46,10 +46,18 @@ module Stupidedi
             # directly instantiated -- instead use the {DateVal.value} constructor
             #
             class Proper < DateVal
-              attr_reader :year, :month, :day
+
+              # @return [Integer]
+              attr_reader :year
+
+              # @return [Integer]
+              attr_reader :month
+
+              # @return [Integer]
+              attr_reader :day
 
               def initialize(year, month, day, usage)
-                @year, @month, @day = year.to_i, month.to_i, day.to_i
+                @year, @month, @day = year, month, day
 
                 begin
                   # Check that date is valid
@@ -90,8 +98,15 @@ module Stupidedi
                   hour, minute, second = hour.hour, hour.minute, hour.second
                 end
 
-                Time.utc(@year, @month, @day,
-                         *[hour, minute, second].take_until(&:nil?).map(&:to_f))
+                if not second.nil?
+                  Time.utc(@year, @month, @day, hour, minute, second)
+                elsif not minute.nil?
+                  Time.utc(@year, @month, @day, hour, minute)
+                elsif not hour.nil?
+                  Time.utc(@year, @month, @day, hour)
+                else
+                  Time.utc(@year, @month, @day)
+                end
               end
 
               # @return [Proper] self
@@ -137,10 +152,18 @@ module Stupidedi
             # method {DateVal.value}
             #
             class Improper < DateVal
-              attr_reader :year, :month, :day
+
+              # @return [Integer]
+              attr_reader :year
+
+              # @return [Integer]
+              attr_reader :month
+
+              # @return [Integer]
+              attr_reader :day
 
               def initialize(year, month, day, usage)
-                @year, @month, @day = year.to_i, month.to_i, day.to_i
+                @year, @month, @day = year, month, day
 
                 # Check that date is reasonably valid
                 unless @year.between?(0, 99) and @month.between?(1, 12) and @day.between?(1, 31)
@@ -240,14 +263,14 @@ module Stupidedi
                 DateVal::Empty.new(usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
-                day   = object.to_s.slice(-2, 2)
-                month = object.to_s.slice(-4, 2)
+                day   = object.to_s.slice(-2, 2).to_i
+                month = object.to_s.slice(-4, 2).to_i
                 year  = object.to_s.slice( 0..-5)
 
                 if year.length < 4
-                  DateVal::Improper.new(year, month, day, usage)
+                  DateVal::Improper.new(year.to_i, month, day, usage)
                 else
-                  DateVal::Proper.new(year, month, day, usage)
+                  DateVal::Proper.new(year.to_i, month, day, usage)
                 end
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
@@ -255,9 +278,6 @@ module Stupidedi
 
               elsif object.is_a?(DateVal::Improper)
                 DateVal::Improper.new(object.year, object.month, object.day, usage)
-
-              elsif object.is_a?(DateVal::Empty)
-                DateVal::Empty.new(usage)
 
               else
                 raise ArgumentError, "Cannot convert #{object.class} to DateVal"

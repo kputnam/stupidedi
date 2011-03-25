@@ -48,7 +48,15 @@ module Stupidedi
             # instead, use the {TimeVal.value} constructor.
             #
             class NonEmpty < TimeVal
-              attr_reader :hour, :minute, :second
+
+              # @return [Integer]
+              attr_reader :hour
+
+              # @return [Integer]
+              attr_reader :minute
+
+              # @return [Integer, BigDecimal]
+              attr_reader :second
 
               def initialize(hour, minute, second, usage)
                 @hour, @minute, @second = hour, minute, second
@@ -80,11 +88,17 @@ module Stupidedi
               end
 
               # @return [Time]
-              def to_time(date)
-                Time.utc(date.year,
-                         date.month,
-                         date.day,
-                         *[@hour, @minute, @second].take_until(&:nil?))
+              def to_time(date, minute = nil, second = nil)
+                minute = @minute || minute
+                second = @second || second
+
+                if not second.nil?
+                  Time.utc(date.year, date.month, date.day, @hour, minute, second.to_f)
+                elsif not minute.nil?
+                  Time.utc(date.year, date.month, date.day, @hour, minute)
+                else
+                  Time.utc(date.year, date.month, date.day, @hour)
+                end
               end
 
               # @return [String]
@@ -101,9 +115,9 @@ module Stupidedi
                   end
                 end
 
-                hh =   @hour.try{|h| '%02d' % h } || 'hh'
-                mm = @minute.try{|m| '%02d' % m } || 'mm'
-                ss = @second.try(:to_s) || 'ss'
+                hh =   @hour.try{|h| "%02d" % h }  || "hh"
+                mm = @minute.try{|m| "%02d" % m }  || "mm"
+                ss = @second.try{|s| s.to_s("F") } || "ss"
 
                 ansi.element("TM.value#{id}") << "(#{hh}:#{mm}:#{ss})"
               end
@@ -139,7 +153,7 @@ module Stupidedi
                 second = object.to_s.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
 
                 if decimal = object.to_s.slice(6..-1)
-                  second += "0.#{decimal}".to_f
+                  second += "0.#{decimal}".to_d
                 end
 
                 TimeVal::NonEmpty.new(hour, minute, second, usage)

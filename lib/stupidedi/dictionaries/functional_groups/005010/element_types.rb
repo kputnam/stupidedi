@@ -119,6 +119,8 @@ module Stupidedi
             "stupidedi/dictionaries/functional_groups/005010/element_types/identifier_val"
 
           class ID < SimpleElementDef
+
+            # @return [Schema::CodeList]
             attr_reader :code_list
 
             def initialize(id, name, min_length, max_length, code_list = nil, description = nil, parent = nil)

@@ -51,7 +51,7 @@ module Stupidedi
               # @return [String]
               attr_reader :value
 
-              delegate :to_s, :length, :=~, :match, :include?, :to => :@value
+              delegate :to_s, :to_str, :length, :=~, :match, :include?, :to => :@value
 
               def initialize(value, usage)
                 @value = value
@@ -83,7 +83,19 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("ID.value#{id}") << "(#{@value})"
+                codes = definition.code_list
+
+                if codes.try(&:internal?)
+                  if codes.defined_at?(@value)
+                    value = "#{@value}: " << ansi.dark(codes.at(@value))
+                  else
+                    value = ansi.red("#{@value}: " << ansi.bold("Invalid Value"))
+                  end
+                else
+                  value = @value
+                end
+
+                ansi.element("ID.value#{id}") << "(#{value})"
               end
 
               # @return [Boolean]

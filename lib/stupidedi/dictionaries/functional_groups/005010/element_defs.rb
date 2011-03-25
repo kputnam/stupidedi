@@ -401,7 +401,9 @@ module Stupidedi
 
           E479  = t::ID.new(:E479 , "Functional Identifier Code"           , 2, 2,
             s::CodeList.build(
-              "FA" => "Functional or Implementation Acknowledgment Transaction Sets (997, 999)"))
+              "FA" => "Functional or Implementation Acknowledgment Transaction Sets (997, 999)",
+              "HC" => "Health Care Claim (837)",
+              "HP" => "Health Care Claim Payment/Advice (835)"))
 
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
             s::CodeList.build(
@@ -646,8 +648,8 @@ module Stupidedi
 
           E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
             s::CodeList.build(
-              "0" => "No Subordinate HL Segment in This Hierarchical Structure.",
-              "1" => "Additional Subordinate HL Data Segment in This Hierarchical Structure."))
+              "0" => "No Subordinate HL Segment in This Hierarchical Structure",
+              "1" => "Additional Subordinate HL Data Segment in This Hierarchical Structure"))
 
           E737  = t::ID.new(:E737 , "Measurement Reference ID Code"        , 2, 2,
             s::CodeList.build(

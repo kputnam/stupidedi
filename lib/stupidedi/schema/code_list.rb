@@ -29,6 +29,8 @@ module Stupidedi
       end
 
       class External < CodeList
+
+        # @return [String]
         attr_reader :id
 
         def initialize(id)
@@ -37,6 +39,10 @@ module Stupidedi
 
         def external?
           true
+        end
+
+        def to_str
+          "CodeList.external(#{@id})"
         end
       end
     end
