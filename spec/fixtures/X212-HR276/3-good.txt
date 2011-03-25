@@ -1,0 +1,26 @@
+Business Scenario 3 - Information Receiver Level Status - Request
+
+ABC Insurance is a Medicare Part A Fiscal Intermediary. XYZ Service is a Clearinghouse. Home Hospital uses XYZ Service to submit electronic claims and claim status requests to ABC Insurance. 
+The following example represents the 276 transmission XYZ Service sent to ABC requesting the status of one claim.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HR*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X212~
+ST*276*0001*005010X212~
+BHT*0010*13*ABC276XXX*20050915*1425~
+HL*1**20*1~
+NM1*PR*2*ABC INSURANCE*****PI*12345~
+HL*2*1*21*1~
+NM1*41*2*XYZ SERVICE*****46*X67E~
+HL*3*2*19*1~
+NM1*1P*2*HOME HOSPITAL*****XX*1666666668~
+HL*4*3*22*0~
+DMG*D8*19301210*M~
+NM1*IL*1*SMITH*FRED****MI*123456789A~
+TRN*1*ABCXYZ1~
+REF*BLT*111~
+REF*EJ*SM123456~
+AMT*T3*8513.88~
+DTP*472*RD8*20050831-20050906~
+SE*17*0001~
+GE*1*1~
+IEA*1*000000905~

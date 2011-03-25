@@ -11,6 +11,10 @@ module Stupidedi
 
       autoload :GuideBuilder, "stupidedi/guides/005010/guide_builder"
 
+      module X214
+        autoload :HN277,  "stupidedi/guides/005010/X214-HN277"
+      end
+
       module X221
         autoload :HP835,  "stupidedi/guides/005010/X221-HP835"
       end

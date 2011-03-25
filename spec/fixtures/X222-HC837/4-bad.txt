@@ -1,0 +1,67 @@
+Example 4- Medicare Secondary Payer Example (COB)
+
+Errors Found in File 5010X222-4
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HC'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H20617:The value '0100000009' does not match the format for a "HIPAA National Provider ID (NPI)"
+* B51124:This Zip Code is not valid for this State.
+* H25377:The 'Billing Provider Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H20204:Code Value 'G2' at element 'REF01' is valid in the X12 standard, but not in this HIPAA implementation
+* H20204:Code Value 'B' at element 'CLM10' is valid in the X12 standard, but not in this HIPAA implementation
+* W40362:The 'Referring Provider Name' without 'Prior Authorization or Referral Number' is allowed, but should not be used unless necessary.
+* H46000:The 'Referring Provider Secondary Identification' is not allowed because the National Provider Identifier has been mandated as the only valid provider identifier for HIPAA transactions
+* H20617:The value '9090909090' does not match the format for a "HIPAA National Provider ID (NPI)"
+* H46000:The 'Rendering Provider Secondary Identification' is not allowed because the National Provider Identifier has been mandated as the only valid provider identifier for HIPAA transactions
+* H20204:Code Value 'F2' at element 'AMT01' is valid in the X12 standard, but not in this HIPAA implementation
+* H10023:Unexpected segment (DMG)
+* H20204:Code Value 'B' at element 'OI04' is valid in the X12 standard, but not in this HIPAA implementation
+* H20205:Incomplete loop (2330B). Missing HIPAA-required N4 (Other Payer City, State, ZIP Code).
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*0002*005010X222~
+BHT*0019*00*000001142*20050214*115101*CH~
+NM1*41*2*SPECIALISTS*****46*1111111~
+PER*IC*SUE*TE*8005558888~
+NM1*40*2*MEDICARE PENNSYLVANIA*****46*10234~
+HL*1**20*1~
+NM1*85*2*SPECIALISTS*****XX*0100000009~
+N3*5 MAP COURT~
+N4*MAYNE*PA*21236~
+REF*EI*890123456~
+REF*G2*110101~
+HL*2*1*22*0~
+SBR*S*18**MEDICARE*12****MB~
+NM1*IL*1*MEDYUM*WAYNE*M***MI*102200221B1~
+N3*1010 THOUSAND OAK LANE~
+N4*MAYN*PA*17089~
+DMG*D8*19560110*M~
+NM1*PR*2*MEDICARE*****PI*10234~
+N3*5232 MAYNE~
+N4*LYGHT*PA*17009~
+CLM*101KEN6055*120***11:B:1*Y*A*Y*Y*B~
+HI*BK:71516*BF:71906~
+NM1*DN*1*BRYHT*LEE*T~
+REF*1G*B01010~
+NM1*82*1*HENZES*JACK****XX*9090909090~
+PRV*PE*PXC*207X00000X~
+REF*G2*110102XXX~
+SBR*P*01**COMMERCE*****CI~
+AMT*D*80~
+AMT*F2*15~
+DMG*D8*19601222*F~
+OI***Y*B**Y~
+NM1*IL*1*MEDYUM*CAROL****MI*COM188-404777~
+N3*PO BOX 45~
+N4*MAYN*PA*17089~
+NM1*PR*2*COMMERCE*****PI*59999~
+LX*1~
+SV1*HC:99203:25*120*UN*1***1:2~
+DTP*472*D8*20050119~
+SVD*59999*80*HC:99203:25**1~
+CAS*CO*42*25~
+CAS*PR*2*15~
+DTP*573*D8*20050128~
+SE*44*0002~
+GE*1*1~
+IEA*1*000000905~

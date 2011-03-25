@@ -1,0 +1,55 @@
+Business Scenario 3c
+
+The primary payer received a claim for $541.00. They allowed $400 and paid $375.00. The primary payer applied $141.00 as a contractual adjustment as part of the provider’s fee schedule.The patient owed a co-pay of $25.00. YTDAW as the secondary payer allowed $550.00.This amount is $9.00 more than charged.The secondary payer paid $34.00.The impact of the primary payer’s payment on the secondary payer is $516.00 which was $141.00 contractual adjustment and $375.00 payment.
+
+Errors Found in File 835 5010X221-3c
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HP'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* W10046:Syntax Error for BPR02, trailing zeros following the decimal point should be suppressed.
+* B51124:This Zip Code is not valid for this State.
+* H50010:Invalid ZIP Code ('11114'), not in USPS tables.
+* W25219:The value of FI is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* H20600:The value '3UR334563' does not match the format for a "Federal Tax Identification Number"
+* B51124:This Zip Code is not valid for this State.
+* H46336:Coverage Amount AMT sgement (AMT01= "AU") was expected since the claim paid amount (CLP04) was not zero.
+* W45225:Class of Contract Code is recommended in PPO situations or whenever the provider's payment is impacted bya health plan contract.
+* W25219:The value of BS is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* W25222:When the provider doesn't have an NPI, the Tax ID is the preferred ID for the Rendering Provider.
+* H46339:An AMT segment reporting the Allowed Amount (AMT01=B6) was expected since the service paid amount is greater than zero (SVC03>0).
+* H10602:Assuming Sub-Element Delimiter is > rather than : in SVC01
+* W22004:Your data contains character(s) from the extended character set which may only be used by agreement between communicating parties.
+* H51000:The Procedure Code '55669' is not a valid CPT or HCPCS Code for this Date of Service.
+* W25229:Generally, this should be code value HPI since most providers are mandated to have a National Provider Identifier.
+* H20204:Code Value 'AU' at element 'AMT01' is valid in the X12 standard, but not in this HIPAA implementation
+* H10904:Number of Included Segments '38' does not match actual segment count '25'.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X221~
+ST*835*0001~
+BPR*I*34.00*C*CHK************20050318~
+TRN*1*0063158ABC*1566339911~
+REF*EV*030240928~
+DTM*405*20050318~
+N1*PR*YOUR TAX DOLLARS AT WORK~
+N3*481A00 DEER RUN ROAD~
+N4*WEST PALM BCH*FL*11114~
+N1*PE*ATONEWITHHEALTH*FI*3UR334563~
+N3*3501 JOHNSON STREET~
+N4*SUNSHINE*FL*12345~
+REF*PQ*11861~
+LX*1~
+CLP*0001000055*2*541*34**12*50650619501~
+NM1*QC*1*BURCK*RAYMOND*W***MI*987654321~
+NM1*82*2*PROFESSIONAL TEST 1*****BS*34426~
+DTM*232*20050202~
+DTM*233*20050202~
+SVC*HC>55669*541*34**1~
+DTM*472*20050202~
+CAS*OA*23*516~
+CAS*OA*94*-9~
+REF*1B*44280~
+AMT*AU*550~
+SE*38*0001~
+GE*1*1~
+IEA*1*000000905~

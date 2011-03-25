@@ -1,0 +1,32 @@
+Business Scenario 4 - Claim Level Status with NCPDP Reject/Payment Code - Request
+
+ABC Insurance is a Medicaid Fiscal Agent. XYZ Service is a Clearinghouse. Home Hospital Pharmacy uses XYZ Service to submit electronic claims and claim status requests to ABC Insurance.
+
+The following is a 276 transmission XYZ Services sent to ABC Insurance requesting the status of a pharmacy claim.
+
+Errors Found in File 276 5010X212-4
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HR'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H24402:The value '1666666662' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X212~
+ST*276*0001*005010X212~
+BHT*0010*13*ABC276XXX*20060415*1425~
+HL*1**20*1~
+NM1*PR*2*ABC INSURANCE*****PI*12345~
+HL*2*1*21*1~
+NM1*41*2*XYZ SERVICE*****46*X67E~
+HL*3*2*19*1~
+NM1*1P*2*HOME HOSPITAL PHARMACY*****XX*1666666662~
+HL*4*3*22*0~
+DMG*D8*19301210*M~
+NM1*IL*1*SMITH*FRED****MI*123456789012~
+TRN*1*ABCXYZ1~
+REF*XZ*7654321~
+AMT*T3*85~
+DTP*472*D8*20060301~
+SE*16*0001~
+GE*1*1~
+IEA*1*000000905~

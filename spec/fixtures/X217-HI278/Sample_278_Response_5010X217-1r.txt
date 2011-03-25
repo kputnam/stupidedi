@@ -1,0 +1,34 @@
+Business Scenario 1 - Referral - Response to the Request for Review
+
+This example represents a response for a standard referral to a specialist from Dr. Gardener, who is a primary care physician, to Maryland Capital Insurance.
+
+Errors Found in File 278 Response 5010X217-1r
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* W25219:The value of 46 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* W25235:It is recommended that the Patient Account Number (REF01=EJ) be returned.
+* W25219:The value of 34 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* H54213:'987654321' is not a valid Social Security Number.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X217~
+ST*278*0001*005010X217~
+BHT*0007*11*A12345*20050502*1102*18~
+HL*1**20*1~
+NM1*X3*2*MARYLAND CAPITAL INSURANCE COMPANY*****46*789312~
+HL*2*1*21*1~
+NM1*1P*1*GARDENER*JAMES****46*8189991234~
+HL*3*2*22*1~
+NM1*IL*1*SMITH*JOE****MI*12345678901~
+HL*4*3*EV*0~
+TRN*2*111099*9012345678~
+UM*SC*I*3*11:B~
+HCR*A1*AUTH0001~
+DTP*AAH*RD8*20050502-20050602~
+HI*BF:41090:D8:20050430~
+HSD*VS*1~
+NM1*SJ*1*WATSON*SUSAN****34*987654321~
+PER*IC**TE*4029993456~
+SE*18*0001~
+GE*1*1~
+IEA*1*000000905~

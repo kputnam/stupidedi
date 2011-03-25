@@ -55,27 +55,45 @@ module Stupidedi
           E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 3,
             s::CodeList.build(
-              "40" => "Receiver",
-              "41" => "Submitter",
-              "45" => "Drop-off Location",
-              "74" => "Corrected Insured",
-              "77" => "Service Location",
-              "82" => "Rendering Provider",
-              "85" => "Billing Provider",
-              "87" => "Pay-to Provider",
-              "98" => "Receiver",
-              "DK" => "Ordering Physician",
-              "DN" => "Referring Provider",
-              "DQ" => "Supervising Physician",
-              "GB" => "Other Insured",
-              "IL" => "Insured or Subscriber",
-              "P3" => "Primary Care Provider",
-              "PE" => "Payee",
-              "PR" => "Payer",
-              "PW" => "Pickup Address",
-              "TT" => "Transfer To",
-              "QB" => "Purchase Service Provider",
-              "QC" => "Patient"))
+              "03"  => "Dependent",
+              "1P"  => "Provider",
+              "1Z"  => "Home Health Care",
+              "36"  => "Employer",
+              "40"  => "Receiver",
+              "41"  => "Submitter",
+              "45"  => "Drop-off Location",
+              "71"  => "Attending Physician",
+              "72"  => "Operating Physician",
+              "73"  => "Other Physician",
+              "74"  => "Corrected Insured",
+              "77"  => "Service Location",
+              "82"  => "Rendering Provider",
+              "85"  => "Billing Provider",
+              "87"  => "Pay-to Provider",
+              "98"  => "Receiver",
+              "AY"  => "Clearinghouse",
+              "DK"  => "Ordering Physician",
+              "DN"  => "Referring Provider",
+              "DQ"  => "Supervising Physician",
+              "FA"  => "Facility",
+              "GB"  => "Other Insured",
+              "HK"  => "Subscriber",
+              "IL"  => "Insured or Subscriber",
+              "LI"  => "Independent Lab",
+              "MSC" => "Mammography Screening Center",
+              "P3"  => "Primary Care Provider",
+              "PE"  => "Payee",
+              "PR"  => "Payer",
+              "PRP" => "Primary Payer",
+              "PW"  => "Pickup Address",
+              "TT"  => "Transfer To",
+              "QB"  => "Purchase Service Provider",
+              "QC"  => "Patient",
+              "QD"  => "Responsible Party",
+              "SEP" => "Secondary Payer",
+              "TL"  => "Testing Laboratory",
+              "TTP" => "Tertiary Payer",
+              "TU"  => "Third Party Repricing Organization (TPO)"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -100,6 +118,7 @@ module Stupidedi
               "1G"  => "Provider UPIN Number",
               "1H"  => "CHAMPUS Identification Number",
               "1J"  => "Facility ID Number",
+              "1K"  => "Payor's Claim Number",
               "1L"  => "Group or Policy Number",
               "1S"  => "Ambulatory Patient Group (APG) Number",
               "1W"  => "Member Identification Number",
@@ -117,6 +136,7 @@ module Stupidedi
               "AP"  => "Ambulatory Payment Classification",
               "APC" => s::CodeList.external("468"),
               "BB"  => "Authorization Number",
+              "BLT" => "Billing Type",
               "BT"  => "Batch Number",
               "CE"  => "Class of Contract Code",
               "CPT" => s::CodeList.external("133"),
@@ -134,6 +154,7 @@ module Stupidedi
               "F4"  => "Facility Certification Number",
               "F5"  => "Medicare Version Code",
               "F8"  => "Original Reference Number",
+              "FJ"  => "Line Item Control Number",
               "FY"  => "Claim Office Number",
               "G1"  => "Prior Authorization Number",
               "G2"  => "Provider Commercial Number",
@@ -162,6 +183,7 @@ module Stupidedi
           E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 3)
           E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
             s::CodeList.build(
+              "277" => "Health Care Information Status Notification",
               "835" => "Health Care Claim Payment/Advice",
               "837" => "Health Care Claim",
               "999" => "Implementation Acknowledgement"))
@@ -218,7 +240,10 @@ module Stupidedi
               "U" => "Split Payment and Remittance",
               "X" => "Handling Party's Option to Split Payment and Remittance"))
 
-          E306  = t::ID.new(:E306 , "Action Code"                          , 1, 2)
+          E306  = t::ID.new(:E306 , "Action Code"                          , 1, 2,
+            s::CodeList.build(
+              "U"  => "Reject",
+              "WQ" => "Accept"))
 
           E309  = t::ID.new(:E309 , "Location Qualifier"                   , 1, 2,
             s::CodeList.build(
@@ -237,6 +262,7 @@ module Stupidedi
           E353  = t::ID.new(:E353 , "Transaction Set Purpose Code"         , 2, 2,
             s::CodeList.build(
               "00" => "Original",
+              "08" => "Status",
               "18" => "Reissue"))
 
           E355  = t::ID.new(:E355 , "Unit or Basis for Measurement Code"   , 2, 2,
@@ -279,6 +305,7 @@ module Stupidedi
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
             s::CodeList.build(
+              "009" => "Process",
               "011" => "Shipped",
               "036" => "Expiration",
               "050" => "Received",
@@ -383,8 +410,10 @@ module Stupidedi
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
             s::CodeList.external("881"))
 
-          E481  = t::ID.new(:E481 , "Trace Type Code"                      , 1, 2)
-            # 1 Current Transaction Trace Numbers
+          E481  = t::ID.new(:E481 , "Trace Type Code"                      , 1, 2,
+            s::CodeList.build(
+              "1" => "Current Transaction Trace Numbers",
+              "2" => "Referenced Transaction Trace Numbers"))
 
           E499  = t::AN.new(:E499 , "Condition Value"                      , 1, 10)
           E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
@@ -414,6 +443,8 @@ module Stupidedi
               "NL"  => "Negative Ledger Balance",
               "T"   => "Tax",
               "T2"  => "Total Claim Before Taxes",
+              "YU"  => "In Process",
+              "YY"  => "Returned",
               "ZK"  => "Federal Medicare or Medicaid Payment Mandate Category 1",
               "ZL"  => "Federal Medicare or Medicaid Payment Mandate Category 2",
               "ZM"  => "Federal Medicare or Medicaid Payment Mandate Category 3",
@@ -514,7 +545,11 @@ module Stupidedi
             s::CodeList.build(
               "31" => "Subrogation Demand",
               "CH" => "Chargeable",
-              "RP" => "Reporting"))
+              "DG" => "Response",
+              "NO" => "Notice",
+              "RP" => "Reporting",
+              "RQ" => "Request",
+              "TH" => "Receipt Acknowledgement Advice"))
 
           E648  = t::ID.new(:E648 , "Price Multiplier Qualifier"           , 3, 3)
           E649  = t:: R.new(:E649 , "Multiplier"                           , 1, 10)
@@ -522,6 +557,8 @@ module Stupidedi
           E669  = t::ID.new(:E669 , "Currency Market/Exchnage Code"        , 3, 3)
           E673  = t::ID.new(:E673 , "Quantity Qualifier"                   , 2, 2,
             s::CodeList.build(
+              "90" => "Acknowledged Quantity",
+              "AA" => "Unacknowledged Quantity",
               "CA" => "Covered - Actual",
               "CD" => "Co-insured - Actual",
               "FL" => "Units",
@@ -532,6 +569,8 @@ module Stupidedi
               "OU" => "Outlier Days",
               "PS" => "Prescription",
               "PT" => "Patients",
+              "QA" => "Quantity Approved",
+              "QC" => "Quantity Disapproved",
               "VS" => "Visits",
               "ZK" => "Federal Medicare or Medicaid Payment Mandate Category 1",
               "ZL" => "Federal Medicare or Medicaid Payment Mandate Category 2",
@@ -598,9 +637,12 @@ module Stupidedi
           E734  = t::AN.new(:E734 , "Hierarchical Parent ID Number"        , 1, 12)
           E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 2,
             s::CodeList.build(
+              "19" => "Provider of Service",
               "20" => "Information Source",
+              "21" => "Information Receiver",
               "22" => "Subscriber",
-              "23" => "Dependent"))
+              "23" => "Dependent",
+              "PT" => "Patient"))
 
           E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
             s::CodeList.build(
@@ -729,7 +771,8 @@ module Stupidedi
           E954  = t:: R.new(:E954 , "Percentage as Decimal"                , 1,  10)
           E1005 = t::ID.new(:E1005, "Hierarchical Structure Code"          , 4, 4,
             s::CodeList.build(
-              "0019" => "Information Source, Subscriber, Dependent"))
+              "0019" => "Information Source, Subscriber, Dependent",
+              "0085" => "Information Source, Information Receiver, Provider of Service, Patient"))
 
           E1018 = t:: R.new(:E1018, "Exponent"                             , 1, 15)
           E1028 = t::AN.new(:E1028, "Claim Submitter's Identifier"         , 1, 38)

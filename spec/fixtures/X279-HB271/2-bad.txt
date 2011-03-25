@@ -1,0 +1,22 @@
+Example 1 – Error Response
+
+The request validation segment is used in this example to indicate that the provider is not eligible for inquiries.
+
+Errors Found in File 271 5010X279-2
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HB'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H11402:HL segment marked as having children but in fact has none','HL segment n marked as having children but in fact has none
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X279~
+ST*271*4323*005010X279~
+BHT*0022*11*10001234*20060501*1319~
+HL*1**20*1~
+NM1*PR*2*ABC COMPANY*****PI*842610001~
+HL*2*1*21*1~
+NM1*1P*2*BONE AND JOINT CLINIC*****SV*2000035~
+AAA*Y**50*N~
+SE*8*4323~
+GE*1*1~
+IEA*1*000000905~

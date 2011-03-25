@@ -1,0 +1,29 @@
+Scenario Three Description 
+
+This example illustrates a premium payer using a third party payroll processor. The 820 transaction is set to have the remittance information and the dollars travel on separately.
+
+Errors Found in File 820 5010X218-3
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H20600:The value '1231555555' does not match the format for a "Federal Tax Identification Number"
+* H25446:Code '24' expected but not received for a HIPAA Compliant Implementation.
+* H25450:SAC Segment was expected but not found because IT1 segment is present.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X218~
+ST*820*0002*005010X218~
+BPR*U*20000*C*ACH*CCP*01*934257813*DA*1234587*1231555555**01*025677833*DA*99887766*20070620~
+TRN*3*12345*1231555555~
+REF*14*673001~
+REF*2F*0004369123~
+N1*PE*DEF HEALTHCARE CO*FI*998216353~
+N1*PR*ABC PLASTICS*FI*1231555555~
+ENT*1*2L*FI*000057811~
+RMR*IK*0004369123*PI*20000~
+IT1*1~
+SLN*1**O*100*IE~
+SLN*2**O*75*PR~
+SLN*3**O*125*10~
+SE*14*0002~
+GE*1*1~
+IEA*1*000000905~

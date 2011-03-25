@@ -12,15 +12,17 @@ module Stupidedi
       #########################################################################
       # @group Query Methods
 
-      # @return [Integer]
+      # (see AbstractPath#depth)
       def depth
         path.depth
       end
 
+      # (see AbstractPath#first?)
       def first?
         path.first?
       end
 
+      # (see AbstractPath#last?)
       def last?
         path.last?
       end

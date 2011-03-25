@@ -1,0 +1,69 @@
+Business Scenario 2- Two Claims for the Same Provider
+
+For both claims, the patient is the subscriber and the transaction is being directly submitted from the provider to the payer.This example contains two claims for the same provider.
+
+Errors Found in File 5010X223A1-2
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HC'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H24402:The value '1234567890' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+* H25377:The 'Billing Provider Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H20203:Element CLM06 is present, though marked 'Not Used'
+* H25405:The Admission Source Is required for all inpatient and outpatient services.
+* H46000:The 'Attending Provider Secondary Identification' is not allowed because the National Provider Identifier has been mandated as the only valid provider identifier for HIPAA transactions
+* W24413:Submitters are encouraged to routinely send a Line Item Control Number on all service lines.
+* H20617:The value '9999999999' does not match the format for a "HIPAA National Provider ID (NPI)"
+* H52003:Attending Provider Specialty Code '363LP0200N' not found in Taxonomy Code Table
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X223A1~
+ST*837*987654*005010X223A1~
+BHT*0019*00*0123*20050630*0932*CH~
+NM1*41*2*JONES HOSPITAL*****46*12345~
+PER*IC*JANE DOE*TE*1112223333~
+NM1*40*2*TRICARE*****46*99999~
+HL*1**20*1~
+PRV*BI*PXC*282N00000X~
+NM1*85*2*JONES HOSPITAL*****XX*1234567890~
+N3*225 MAIN STREET~
+N4*ANYWHERE*PA*17111~
+REF*EI*123456789~
+HL*2*1*22*0~
+SBR*P*18*******CH~
+NM1*IL*1*DOE*JOHN*T***MI*030005074~
+N3*125 CITY AVENUE~
+N4*ANYWHERE*PA*17111~
+DMG*D8*19681111*M~
+NM1*PR*2*TRICARE*****PI*99999~
+CLM*756048Q*89.95***13:A:1*Y*C*Y*Y~
+DTP*434*RD8*20050315-20050315~
+CL1***01~
+HI*BK:3669~
+HI*BF:4019*BF:79431~
+NM1*71*1*JONES*JOHN*J***XX*1122334455~
+REF*1G*U12345~
+LX*1~
+SV2*0305*HC:85025*13.39*UN*1~
+DTP*472*D8*20050315~
+LX*2~
+SV2*0730*HC:93010*76.56*UN*3~
+DTP*472*D8*20050315~
+HL*3*1*22*0~
+SBR*P*18*******CH~
+NM1*IL*1*SMITH*JOE****MI*123405074~
+N3*5 MAIN STREET~
+N4*ANYWHERE*PA*17111~
+DMG*D8*19621210*M~
+NM1*PR*2*TRICARE*****PI*99999~
+CLM*756049Q*50***13:A:1*Y*C*Y*Y~
+DTP*434*RD8*20050401-20050401~
+CL1***01~
+HI*BK:30000~
+NM1*71*1*JONES*JUDY*J***XX*9999999999~
+PRV*AT*PXC*363LP0200N~
+LX*1~
+SV2*0300*HC:85087*50*UN*1~
+DTP*472*D8*20050401~
+SE*48*987654~
+GE*1*1~
+IEA*1*000000905~

@@ -1,0 +1,50 @@
+Example 6 - Chiropractic Example 
+
+The patient is the subscriber. The payer is Medicare Part B. The claim is submitted directly to Medicare by the provider.
+
+Errors Found in File 5010X222-6
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HC'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H24402:The value '1234567890' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+* H25377:The 'Billing Provider Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H20205:Incomplete loop (2010BB). Missing HIPAA-required N4 (Payer City, State, ZIP Code).
+* H10602:Assuming Sub-Element Delimiter is > rather than : in CLM05
+* W22004:Your data contains character(s) from the extended character set which may only be used by agreement between communicating parties.
+* H10602:Assuming Sub-Element Delimiter is > rather than : in HI01
+* H10602:Assuming Sub-Element Delimiter is > rather than : in SV101
+* H10904:Number of Included Segments '31' does not match actual segment count '29'.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*3701*005010X222~
+BHT*0019*00*007227*20050215*075420*CH~
+NM1*41*2*DAVID GREEN*****46*S01057~
+PER*IC*KATHY SMITH*TE*4105558888~
+NM1*40*2*MEDICARE PART B MARYLAND*****46*12345~
+HL*1**20*1~
+NM1*85*1*GREENE*DAVID*M***XX*1234567890~
+N3*1264 OAKWOOD AVE~
+N4*BALTIMORE*MD*21236~
+REF*EI*987654321~
+PER*IC*DR*TE*4105551212~
+HL*2*1*22*0~
+SBR*P*18*******MB~
+NM1*IL*1*WILLIAMSON*MATTHEW*J***MI*123456789A~
+N3*128 BROADCREEK~
+N4*BALTIMORE*MD*21234~
+DMG*D8*19250110*M~
+NM1*PR*2*MEDICARE PART B MARYLAND*****PI*C12345~
+CLM*125WILL*145.5***11>B>1*Y*A*Y*Y~
+DTP*454*D8*20050115~
+DTP*453*D8*20050110~
+DTP*455*D8*20050113~
+CR2********A**CHRONIC PAIN AND DISCOMFORT~
+HI*BK>7215~
+LX*1~
+SV1*HC>98940*145.5*UN*1***1~
+DTP*472*D8*20050215~
+REF*6R*01~
+SE*31*3701~
+GE*1*1~
+IEA*1*000000905~

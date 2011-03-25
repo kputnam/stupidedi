@@ -1,0 +1,29 @@
+Example 1 - Request
+
+The Subscriber is the patient. A generic request by a clinic for the patient's eligibility.
+
+This is an example of an eligibility request from a clinic to a payer processed in Real Time. The clinic is inquiring if the patient has coverage.
+
+Errors Found in File 270 5010X279-1
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HS'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* W25219:The value of SV is only to be used if the provider is not a covered health care provider under the NPI mandate.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X279~
+ST*270*1234*005010X279~
+BHT*0022*13*10001234*20060501*1319~
+HL*1**20*1~
+NM1*PR*2*ABC COMPANY*****PI*842610001~
+HL*2*1*21*1~
+NM1*1P*2*BONE AND JOINT CLINIC*****SV*2000035~
+HL*3*2*22*0~
+TRN*1*93175-012547*9877281234~
+NM1*IL*1*SMITH*ROBERT****MI*11122333301~
+DMG*D8*19430519~
+DTP*291*D8*20060501~
+EQ*30~
+SE*13*1234~
+GE*1*1~
+IEA*1*000000905~

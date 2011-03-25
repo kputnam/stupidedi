@@ -1,0 +1,25 @@
+Business Case Scenario 6 - Cancel a Dependent 
+
+The subscriber is canceling coverage for an over-age dependent.
+
+Errors Found in File 834 5010X220-6
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H25518:Code '24' is requried for a HIPAA compliant transaction.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X220~
+ST*834*0001*005010X220~
+BGN*00*12456*19980520*1200****2~
+REF*38*ABCD012354~
+N1*P5**FI*999888777~
+N1*IN**FI*654456654~
+INS*N*19*024*07*A~
+REF*0F*123456789~
+REF*1L*123456001~
+DTP*357*D8*19960801~
+NM1*IL*1*DOE*JAMES*E***34*103229876~
+DMG*D8*19770816*M~
+SE*12*0001~
+GE*1*1~
+IEA*1*000000905~

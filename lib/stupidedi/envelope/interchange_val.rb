@@ -42,7 +42,7 @@ module Stupidedi
         end
 
         q.text(ansi.envelope("InterchangeVal#{id}"))
-        q.group 2, "(", ")" do
+        q.group(2, "(", ")") do
           q.breakable ""
           @children.each do |e|
             unless q.current_group.first?

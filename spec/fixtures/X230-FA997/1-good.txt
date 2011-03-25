@@ -1,0 +1,16 @@
+The following example describes a 997 transaction set that is responding to a functional group that was received containing two 837 transaction sets. The first transaction set conformed fully with the X12 standard, while the second contained errors.
+
+ISA*00*          *00*          *ZZ*123456789      *ZZ*987654321      *041117*1024*^*00501*000000286*0*P*:~
+GS*FA*RCVR*SNDR*20041117*1024*287*X*005010X230~
+ST*997*2870001*005010X230~
+AK1*HC*17456*005010~
+AK2*837*0001~
+AK5*A~
+AK2*837*0002~
+AK3*CLM*22**8~
+AK4*1*1028*1~
+AK5*R*5~
+AK9*P*2*2*1~
+SE*10*2870001~
+GE*1*287~
+IEA*1*000000286~

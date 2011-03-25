@@ -1,0 +1,56 @@
+Example 9 - Anesthesia 
+
+The patient is the subscriber. The payer is Medicare. The claim is billed directly to Medicare.
+
+Errors Found in File 5010X222-9
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HC'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H24402:The value '2366554859' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+* H25377:The 'Billing Provider Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H20205:Incomplete loop (2010BB). Missing HIPAA-required N4 (Payer City, State, ZIP Code).
+* H10602:Assuming Sub-Element Delimiter is > rather than : in CLM05
+* W22004:Your data contains character(s) from the extended character set which may only be used by agreement between communicating parties.
+* H10602:Assuming Sub-Element Delimiter is > rather than : in HI01
+* H20617:The value '5678912345' does not match the format for a "HIPAA National Provider ID (NPI)"
+* H20204:Code Value 'ZZ' at element 'PRV02' is valid in the X12 standard, but not in this HIPAA implementation
+* H46000:The 'Rendering Provider Secondary Identification' is not allowed because the National Provider Identifier has been mandated as the only valid provider identifier for HIPAA transactions
+* B20617:Currently the "HIPAA National Provider ID (NPI)" is only being issued with the first digit equal to 1 or 2, with 3 and 4 reserved for future assignment
+* H20617:The value '432198765' does not match the format for a "HIPAA National Provider ID (NPI)"
+* H25377:The 'Laboratory or Facility Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H10602:Assuming Sub-Element Delimiter is > rather than : in SV101
+* B45272:Use of MJ in SV103 indicates Anesthesia Administration, which requires the presence of the Anesthesia Related Surgical Procedure (2300 HI01 = BP).
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*0001*005010X222~
+BHT*0019*00*0123*20050117*1023*CH~
+NM1*41*2*PROVIDER MEDICAL GROUP*****46*N305~
+PER*IC*NINA*TE*6155551212*EX*911~
+NM1*40*2*ABC PAYER*****46*05440~
+HL*1**20*1~
+NM1*85*2*PROVIDER MEDICAL GROUP*****XX*2366554859~
+N3*1234 WEST END AVE~
+N4*NASHVILLE*TN*37232~
+REF*EI*756473826~
+HL*2*1*22*0~
+SBR*P*18*******MB~
+NM1*IL*1*JONES*MARGARET****MI*123456789A~
+N3*123 RAINBOW ROAD~
+N4*NASHVILLE*TN*37232~
+DMG*D8*19740303*F~
+NM1*PR*2*ABC PAYER*****PI*05440~
+CLM*153829140*827***22>B>1*Y*A*Y*Y~
+HI*BK>36616~
+NM1*82*1*TOWNSEND*JACOB*E***XX*5678912345~
+PRV*PE*ZZ*207L00000X~
+REF*1G*A41234~
+NM1*77*2*PROVIDER OP HOSP*****XX*432198765~
+N3*345 MAIN DRIVE~
+N4*NASHVILLE*TN*37232~
+LX*1~
+SV1*HC>00142>QK>QS>P1*827*MJ*61***1~
+DTP*472*D8*20050112~
+SE*29*0001~
+GE*1*1~
+IEA*1*000000905~

@@ -1,0 +1,25 @@
+Example 2 - Request
+
+The patient is the dependent of a subscriber. 
+
+Generic request by a physician for the patient's eligibility. This is an example of an eligibility request from an individual provider to a payer. The physician is inquiring if the patient has coverage.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HS*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X279~
+ST*270*1235*005010X279~
+BHT*0022*13*10001235*20060501*1320~
+HL*1**20*1~
+NM1*PR*2*ABC COMPANY*****PI*842610001~
+HL*2*1*21*1~
+NM1*1P*1*JONES*MARCUS****XX*1232343560~
+HL*3*2*22*1~
+NM1*IL*1******MI*11122333301~
+HL*4*3*23*0~
+TRN*1*93175-012547*9877281234~
+NM1*03*1*SMITH*MARY~
+DMG*D8*19781014~
+DTP*291*D8*20060501~
+EQ*30~
+SE*15*1235~
+GE*1*1~
+IEA*1*000000905~

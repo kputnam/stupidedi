@@ -1,0 +1,36 @@
+Scenario Four Description 
+
+This example illustrates a premium payer, using a third party payroll processor, sending an 820 transaction set where the remittance information and the dollars travel on separate paths. The payment detail will list each individual employee, the policy numbers, payment amounts and adjustment amounts.
+
+Errors Found in File 820 5010X218-4
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H23028:At least one Individual Premium Remittance Detail (2300B RMR) must contain either Invoice Received 'IK' or Invoice Not Received 'AZ' in the Reference Identification Qualifier (RMR01).
+* H23028:At least one Individual Premium Remittance Detail (2300B RMR) must contain either Invoice Received 'IK' or Invoice Not Received 'AZ' in the Reference Identification Qualifier (RMR01).
+* H23025:For HIPAA Health Premium Payments the code 'IK' is REQUIRED when an invoice has been received from a health plan.
+* H23028:At least one Individual Premium Remittance Detail (2300B RMR) must contain either Invoice Received 'IK' or Invoice Not Received 'AZ' in the Reference Identification Qualifier (RMR01).
+* H23025:For HIPAA Health Premium Payments the code 'IK' is REQUIRED when an invoice has been received from a health plan.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X218~
+ST*820*0002*005010X218~
+BPR*U*20000*C*ACH*CCP*01*934257813*DA*1234587*1231555555**01*025677833*DA*99887766*20070620~
+TRN*3*12345*1231555555~
+REF*14*673001~
+REF*2F*0004369123~
+N1*PE*DEF HEALTHCARE CO*FI*998216353~
+N1*PR*ABC PLASTICS*FI*000057811~
+ENT*1*2J*34*190206123~
+NM1*EY*1*SMITH*JOHN****EI*123456~
+RMR*CT*190206123**7000~
+ENT*2*2J*34*163910163~
+NM1*EY*1*JONES*MARY****EI*793016~
+RMR*CT*163910163**10000*11000~
+ADX*-1000*52~
+ENT*3*2J*34*179203456~
+NM1*EY*1*JOHNSON*JOE****EI*934213~
+RMR*CT*179203456**3000*3100~
+ADX*-100*52~
+SE*19*0002~
+GE*1*1~
+IEA*1*000000905~

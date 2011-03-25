@@ -1,0 +1,75 @@
+Property and Casualty Business Scenario 1- Automobile Accident 
+
+Provider to P&C Payer Bill Transmission The patient is not the subscriber. The claim is submitted from the billing provider directly to the property and casualty insurance company. The auto accident occurred in California.
+
+Errors Found in File 5010X223A1-5
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HC'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H25423:The Implementation Convention Reference value must be '005010X223A1'.
+* W22004:Your data contains character(s) from the extended character set which may only be used by agreement between communicating parties.
+* H11204:Code Value 'pxc' not used for element 'PRV02'
+* H52000:Provider Specialty Code '203BA0200N' not found in Taxonomy Code Table.
+* H24402:The value '2365259638' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+* B51124:This Zip Code is not valid for this State.
+* H25377:The 'Billing Provider Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H50010:Invalid ZIP Code ('99998'), not in USPS tables.
+* H20205:Incomplete loop (2010BA). Missing HIPAA-required N4 (Subscriber City, State, ZIP Code).
+* H20205:Incomplete loop (2010BB). Missing HIPAA-required N4 (Payer City, State, ZIP Code).
+* B51124:This Zip Code is not valid for this State.
+* H25378:The Property and Casualty Claim Number is not a HIPAA requirement.
+* H20203:Element CLM06 is present, though marked 'Not Used'
+* H51115:'1' is not a valid Patient Status Code
+* H24402:The value '2533698543' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+* W24413:Submitters are encouraged to routinely send a Line Item Control Number on all service lines.
+* W24413:Submitters are encouraged to routinely send a Line Item Control Number on all service lines.
+* W24413:Submitters are encouraged to routinely send a Line Item Control Number on all service lines.
+* W24413:Submitters are encouraged to routinely send a Line Item Control Number on all service lines.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X223A1~
+ST*837*557766*005010X223~
+BHT*0019*00*0324*20051111*1800*CH~
+NM1*41*2*HALL OF FAME MEMORIAL HOSPITAL*****46*737373737~
+PER*IC*kate casey*TE*7152569877~
+NM1*40*2*HEISMAN INSURANCE COMPANY*****46*999888777~
+HL*1**20*1~
+PRV*BI*pxc*203BA0200N~
+NM1*85*2*HALL OF FAME MEMORIAL HOSPITAL*****XX*2365259638~
+N3*1 CANTON ROAD~
+N4*BROKEN FIELD*CA*99998~
+REF*EI*737373737~
+HL*2*1*22*1~
+SBR*P********AM~
+NM1*IL*1*HOWLING*HAL****MI*B999777791G~
+NM1*PR*2*HEISMAN INSURANCE COMPANY*****PI*999888777~
+HL*3*2*23*0~
+PAT*21~
+NM1*QC*1*MEXICO*RON~
+N3*32 BUFFALO RUN~
+N4*ROCKING HORSE*CA*99666~
+DMG*D8*19480601*M~
+REF*Y4*32323232~
+CLM*67236695521*545***13:A:1*Y*A*Y*Y~
+DTP*434*RD8*20051031-20051101~
+CL1*3*7*1~
+REF*LU*CA~
+HI*BK:8842~
+HI*PR:8842~
+HI*BN:E9750*BN:E9860~
+NM1*71*1*LOMBARDO*VINCENT****XX*2533698543~
+LX*1~
+SV2*0450*HC:98765*150*UN*1~
+DTP*472*D8*20051031~
+LX*2~
+SV2*0360*HC:26591*75*UN*1~
+DTP*472*D8*20051031~
+LX*3~
+SV2*0312*HC:86225*100*UN*2~
+DTP*472*D8*20051031~
+LX*4~
+SV2*0360*HC:99283*220*UN*1~
+DTP*472*D8*20051031~
+SE*43*557766~
+GE*1*1~
+IEA*1*000000905~

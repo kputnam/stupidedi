@@ -1,0 +1,35 @@
+Business Case Scenario 1 - Enroll an Employee in Multiple Health Care Insurance Products 
+
+The subscriber is enrolling in three health care products -- health, dental, and vision. The subscriber also has Coordination of Benefits (COB) with another insurance company.
+
+Errors Found in File 834 5010X220-1
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H25518:Code '24' is requried for a HIPAA compliant transaction.
+* H10913:Transaction Set Control Number '12345' does not match ST02's '0001'.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X220~
+ST*834*0001*005010X220~
+BGN*00*12456*19980520*1200****2~
+N1*P5**FI*999888777~
+N1*IN**FI*654456654~
+INS*Y*18*021*20*A***FT~
+REF*0F*123456789~
+REF*1L*123456001~
+DTP*356*D8*19960523~
+NM1*IL*1*DOE*JOHN*P***34*123456789~
+PER*IP**HP*7172343334*WP*7172341240~
+N3*100 MARKET ST*APT 3G~
+N4*CAMP HILL*PA*17011**CY*CUMBERLAND~
+DMG*D8*19400816*M~
+HD*021**HLT~
+DTP*348*D8*19960601~
+COB*P*890111*5~
+HD*021**DEN~
+DTP*348*D8*19960601~
+HD*021**VIS~
+DTP*348*D8*19960601~
+SE*21*12345~
+GE*1*1~
+IEA*1*000000905~

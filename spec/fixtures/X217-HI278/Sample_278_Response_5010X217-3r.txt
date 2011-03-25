@@ -1,0 +1,44 @@
+Business Scenario 3 - Behavioral Health Emergency Admission - Response to the Request for Review
+
+This example represents the response to a request for review from Capital Insurance to General Hospital. In this case, Capital Insurance has pended the admission request. An admission summary to must be delivered by telephone before the response will be delivered.
+
+Errors Found in File 278 Response 5010X217-3r
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H20009:Requester Name Suffix was not expected because the Entity is not a person
+* H10006:Value '8189991234' is too long.
+* H11204:Code Value '8189991234' not used for element 'NM108'
+* W25219:The value of 8189991234 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* H10046:Syntax error: NM108 was found but NM109 was missing. X12 syntax rule: 'P0809' - if one element is present, all must be present.
+* H24391:Missing HIPAA Required 'NM109'.
+* W25235:It is recommended that the Patient Account Number (REF01=EJ) be returned.
+* W23023:Admission Date (DTP-01 = 435) is recommended if requesting an admission review (UM01=AR)
+* H10005:Value '987654321' is too short for 'TRN03'
+* W25219:The value of 46 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* W25219:The value of 24 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* W25219:The value of 24 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X217~
+ST*278*0001*005010X217~
+BHT*0007*11*YZZ345*20050502*1102*19~
+HL*1**20*1~
+NM1*X3*2*CAPITAL INSURANCE COMPANY*****46*789312~
+PER*IC**TE*3936533000~
+HL*2*1*21*1~
+NM1*FA*2*GENERAL HOSPITAL****46*8189991234~
+HL*3*2*22*1~
+NM1*IL*1*SMITH*MARY****MI*12345678901~
+HL*4*3*EV*0~
+TRN*2*YZZ099*987654321~
+UM*AR*I*A4*21:B**03~
+HCR*A4**0U~
+REF*NT*P20030216001~
+HI*BF:29603:D8:20050429~
+PWK*AS*VO~
+NM1*FA*2*GENERAL HOSPITAL*****46*987654321~
+NM1*71*1*JONES*MARCUS****24*453667654~
+NM1*SJ*1*BROWN*JACOB****24*123454545~
+SE*20*0001~
+GE*1*1~
+IEA*1*000000905~

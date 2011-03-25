@@ -1,0 +1,46 @@
+Business Scenario 2 - Admission for Surgery - Request for Review
+
+This example represents the request for review (Health Services Review) from Dr. Watson, who is a specialist provider to Maryland Capital Insurance. The request is for hospitalization for a patient.
+
+Errors Found in File 278 Request 5010X217-2
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H11204:Code Value 'XX' not used for element 'GS01'
+* W25219:The value of 34 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* H54212:'98765432' is too short for a Social Security Number.
+* H20627:The value '9012345678' does not match the format for a "Trace Assigning Entity Identifier"
+* W25219:The value of 24 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* H25515:The Service Type Code at the Service Level (2000F/UM) was found but was not expected because it must be different than that at the Patient Event Level (2000E/UM) or the SV1, SV2 or SV3 segments are not sent.
+* W25219:The value of 34 is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* H54213:'987654321' is not a valid Social Security Number.
+* H52001:Referring Provider Specialty Code '203BS0133X' not found in Taxonomy Code Table
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X217~
+ST*278*0001*005010X217~
+BHT*0007*13*B56789*20050502*1430~
+HL*1**20*1~
+NM1*X3*2*MARYLAND CAPITAL INSURANCE COMPANY*****46*789312~
+HL*2*1*21*1~
+NM1*1P*1*WATSON*SUSAN****34*98765432~
+PER*IC**TE*4029993456~
+HL*3*2*22*1~
+NM1*IL*1*SMITH*JOE****MI*12345678901~
+HL*4*3*EV*1~
+TRN*1*97021001*9012345678~
+UM*AR*I*2*21:B*****Y~
+DTP*435*D8*20050516~
+HI*BF:41090:D8:20050125~
+HSD*DY*7~
+CL1*2~
+NM1*FA*2*MONTGOMERY HOSPITAL*****24*000012121~
+N3*475 MAIN STREET~
+N4*ANYTOWN*PA*19087~
+HL*5*4*SS*0~
+UM*HS*I*2~
+DTP*472*D8*20050516~
+SV2**HC:33510~
+NM1*SJ*1*WATSON*SUSAN****34*987654321~
+PRV*PE*PXC*203BS0133X~
+SE*26*0001~
+GE*1*1~
+IEA*1*000000905~

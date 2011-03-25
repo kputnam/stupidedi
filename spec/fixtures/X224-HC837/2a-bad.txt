@@ -1,0 +1,52 @@
+Coordination of Benefits (COB) The patient is not the subscriber; payers are commercial health insurance companies. 
+
+Example 2.A. - Coordination of Benefits (COB). The patient is not the subscriber. VAN submits claim on behalf of billing provider to Payer A. Payer A adjudicated the claim and transmits an 835 to the billing provider. The VAN then submits a second claim on behalf of the billing provider to Payer B (receiver).
+
+Errors Found in File 5010X224A1-2a
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HC'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* H25421:The Implementation Convention Reference value must be '005010X224A1'
+* B20617:Currently the "HIPAA National Provider ID (NPI)" is only being issued with the first digit equal to 1 or 2, with 3 and 4 reserved for future assignment
+* H24402:The value '4567890123' fails the check digit algorithm for the "HIPAA National Provider ID (NPI)"
+* H25377:The 'Billing Provider Postal Zone or ZIP Code' must be the nine digit Zip code.
+* H20205:Incomplete loop (2010BA). Missing HIPAA-required N4 (Subscriber City, State, ZIP Code).
+* H20205:Incomplete loop (2010BB). Missing HIPAA-required N4 (Payer City, State, ZIP Code).
+* H24391:Missing HIPAA Required 'CLM07'.
+* B40328:This CLM09 code conflicts with the Privacy Rule. According to the Office of Civil Rights, the only code that should be used is 'Y'.
+* H20617:The value '6789012345' does not match the format for a "HIPAA National Provider ID (NPI)"
+* W45216:It is recommended that the Line Item Control Number is submitted for each service line.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X224A1~
+ST*837*0002*005010X224~
+BHT*0019*00*0123*20061123*1023*CH~
+NM1*41*2*PREMIER BILLING SERVICE*****46*567890~
+PER*IC*JERRY*TE*7176149999~
+NM1*40*2*KEY INSURANCE COMPANY*****46*999996666~
+HL*1**20*1~
+NM1*85*2*DENTAL ASSOCIATES*****XX*4567890123~
+N3*234 SEAWAY ST~
+N4*MIAMI*FL*33111~
+REF*EI*587654321~
+HL*2*1*22*1~
+SBR*P********CI~
+NM1*IL*1*SMITH*JANE****MI*JS00111223333~
+NM1*PR*2*KEY INSURANCE COMPANY*****PI*999996666~
+HL*3*2*23*0~
+PAT*19~
+NM1*QC*1*SMITH*TED~
+N3*236 N MAIN ST~
+N4*MIAMI*FL*33413~
+DMG*D8*19920501*M~
+CLM*26403774*200***11:B:1*Y**Y*I~
+DTP*472*D8*20061109~
+REF*D9*111222333444~
+NM1*82*1*KILDARE*BEN****XX*6789012345~
+PRV*PE*PXC*1223P0221X~
+LX*1~
+SV3*AD:D3320*200****1~
+TOO*JP*5~
+SE*29*0002~
+GE*1*1~
+IEA*1*000000905~

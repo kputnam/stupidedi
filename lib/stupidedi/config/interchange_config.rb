@@ -57,7 +57,7 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         q.text "InterchangeConfig"
-        q.group 2, "(", ")" do
+        q.group(2, "(", ")") do
           q.breakable ""
           @table.keys.each do |e|
             unless q.current_group.first?
