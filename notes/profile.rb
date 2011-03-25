@@ -11,6 +11,7 @@ config.functional_group.register("005010") { Stupidedi::Dictionaries::Functional
 config.transaction_set.register("005010", "HP", "835") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
 config.transaction_set.register("005010", "HC", "837") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
 
+config.transaction_set.register("005010X214", "HN", "277") { Stupidedi::Guides::FiftyTen::X214::HN277 }
 config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835 }
 config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837 }
 config.transaction_set.register("005010X231", "FA", "999") { Stupidedi::Guides::FiftyTen::X231::FA999 }
@@ -27,7 +28,11 @@ parser    = Stupidedi::Builder::StateMachine.build(config)
 parser.read!(tokenizer)
 #stop  = Time.now
 #puts stop - start
-pp parser.zipper.root.node
+if parser.stuck?
+  pp parser.errors
+else
+  pp parser.zipper.root.node
+end
 
 #result = RubyProf.profile do
 #  parser.read!(tokenizer)

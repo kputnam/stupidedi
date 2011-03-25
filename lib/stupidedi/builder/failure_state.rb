@@ -49,6 +49,24 @@ module Stupidedi
         raise Exceptions::ParseError,
           "FailureState#add should not be called"
       end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text("FailureState")
+        q.group(2, "(", ")") do
+          q.breakable ""
+
+          q.pp @explanation
+          q.text ","
+          q.breakable
+
+          q.pp @segment_tok
+          q.text ","
+          q.breakable
+
+          q.pp zipper.node
+        end
+      end
     end
 
   end

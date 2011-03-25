@@ -38,32 +38,52 @@ module Stupidedi
         @base = base
       end
 
-      def element(*args, &block)
-        black(*args, &block)
+      def noop(string = "", &block)
+        if block_given?
+          yield
+        else
+          string
+        end
       end
 
-      def repeated(*args, &block)
-        black(*args, &block)
+      def element(string = "", &block)
+        black(string, &block)
       end
 
-      def composite(*args, &block)
-        black(*args, &block)
+      def required(string = "", &block)
+        bold(string, &block)
       end
 
-      def segment(*args, &block)
-        magenta(*args, &block)
+      def optional(string = "", &block)
+        dark(white(string, &block))
       end
 
-      def loop(*args, &block)
-        yellow(*args, &block)
+      def forbidden(string = "", &block)
+        noop(string, &block)
       end
 
-      def table(*args, &block)
-        yellow(*args, &block)
+      def repeated(string = "", &block)
+        black(string, &block)
       end
 
-      def envelope(*args, &block)
-        yellow(*args, &block)
+      def composite(string = "", &block)
+        black(string, &block)
+      end
+
+      def segment(string = "", &block)
+        magenta(string, &block)
+      end
+
+      def loop(string = "", &block)
+        yellow(string, &block)
+      end
+
+      def table(string = "", &block)
+        yellow(string, &block)
+      end
+
+      def envelope(string = "", &block)
+        yellow(string, &block)
       end
 
     private

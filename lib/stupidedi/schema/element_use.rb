@@ -4,6 +4,11 @@ module Stupidedi
     class AbstractElementUse
       include Inspect
 
+      delegate :forbidden?, :required?, :to => :requirement
+
+      # @return [ElementReq]
+      abstract :requirement
+
       # @return [SimpleElementDef, CompositeElementDef]
       abstract :definition
 

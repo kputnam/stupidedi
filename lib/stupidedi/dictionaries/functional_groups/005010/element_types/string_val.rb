@@ -20,8 +20,16 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
-                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
                 end
 
                 ansi.element("AN.empty#{id}")
@@ -58,8 +66,16 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
-                  ansi.bold("[#{'% 5s' % d.id}: #{d.name}]")
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
                 end
 
                 ansi.element("AN.value#{id}") << "(#{@value})"
