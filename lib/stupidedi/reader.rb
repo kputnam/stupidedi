@@ -23,30 +23,85 @@ module Stupidedi
     autoload :FileInput,      "stupidedi/reader/input/file_input"
 
     # @private
-    R_BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
+    # @return [Regexp]
+    R_BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/.freeze
 
     # @private
-    R_EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
+    # @return [Regexp]
+    R_EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/.freeze
 
     # @private
-    R_EITHER   = Regexp.union(R_BASIC, R_EXTENDED)
+    # @return [Regexp]
+    R_EITHER   = Regexp.union(R_BASIC, R_EXTENDED).freeze
 
     # @private
-    C_BYTES    = (0..255).inject(""){|string, c| string << c }
+    # @return [String]
+    C_BYTES    = (0..255).inject(""){|string, c| string << c }.freeze
 
     # @private
-    C_EITHER   = (C_BYTES.scan(R_EITHER)).inject({}){|h,c| h[c] = nil; h }
+    # @return [Hash]
+    H_BASIC    = C_BYTES.scan(R_BASIC).inject({}){|h,c| h[c] = nil; h }.freeze
+
+    # @private
+    # @return [Hash]
+    H_EXTENDED = C_BYTES.scan(R_EXTENDED).inject({}){|h,c| h[c] = nil; h }.freeze
+
+    # @private
+    # @return [Hash]
+    H_EITHER   = C_BYTES.scan(R_EITHER).inject({}){|h,c| h[c] = nil; h }.freeze
+
+    # @private
+    # @return [Regexp]
+    #_CONTROL  = Regexp.new("[^#{Regexp.quote(H_EITHER.keys.join)}]")
 
     class << self
 
       # Returns true if `character` does not belong to the extended or basic
       # character set.
       #
-      # @see X222.pdf B.1.1.2.2 Basic Characters
-      # @see X222.pdf B.1.1.2.2 Extended Characters
       # @see X222.pdf B.1.1.2.4 Control Characters
       def is_control_character?(character)
-        not Reader::C_EITHER.include?(character)
+        not H_EITHER.include?(character)
+      end
+
+      # @private
+      # @see X222.pdf B.1.1.2.2 Basic Characters
+      def is_basic_character?(character)
+        H_BASIC.include?(character)
+      end
+
+      # @private
+      # @see X222.pdf B.1.1.2.2 Extended Characters
+      def is_extended_character?(character)
+        H_EXTENDED.include?(character)
+      end
+
+      # @private
+      def has_extended_characters?(string)
+        R_EXTENDED =~ string
+      end
+
+      # @private
+      def has_control_characters?(string)
+        #_CONTROL =~ string
+      end
+
+      # @return [Character]
+      # @private
+      def basic_characters
+        H_BASIC.keys
+      end
+
+      # @return [Character]
+      # @private
+      def extended_characters
+        H_EXTENDED.keys
+      end
+
+      # @return [Character]
+      # @private
+      def control_characters
+        C_BYTES.split(//) - H_EITHER.keys
       end
     end
 

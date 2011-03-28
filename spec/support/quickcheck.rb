@@ -1,9 +1,10 @@
-
+#
 # This class is designed to be subclassed, to avoid polluting the minimal
 # base class. Subclasses can add parameters with the macro "has_parameter",
 # and parameters are inherited when subclassing.
 #
-# Based on https://github.com/hayeah/rantly
+# @see https://github.com/hayeah/rantly
+#
 class QuickCheck
 
   module Macro
@@ -21,12 +22,12 @@ class QuickCheck
       Property.new(self, &setup)
     end
 
-    # Generate +count+ values, returning nil
+    # Generate `count` values, returning nil
     def each(count, limit = 10, &block)
       singleton.each(count, limit, &block)
     end
 
-    # Generate an array of +count+ values
+    # Generate an array of `count` values
     def map(count, limit = 10, &block)
       singleton.map(count, limit, &block)
     end
@@ -82,7 +83,6 @@ class QuickCheck
   private
 
     PROGRESS = %w(% $ @ # &)
-  # PROGRESS = ["-", "\\", "|", "/"]
 
     if $stdout.tty?
       def progress(completed, total)
@@ -97,25 +97,32 @@ class QuickCheck
   class GuardFailure < StandardError; end
 
   class NoMoreTries < StandardError
-    attr_reader :limit, :tries
+
+    # @return [Integer]
+    attr_reader :limit
+
+    # @return [Integer]
+    attr_reader :tries
 
     def initialize(limit, tries)
       @limit, @tries = limit, tries
     end
 
+    # @return [String]
     def to_s
       "Exceeded limit #{limit}: #{tries} failed guards"
     end
   end
 
+  # Controls the size of sized generators: array, string
   has_parameter :size, 6
 
-  # Generate +count+ values, returning nil
+  # Generate `count` values, returning nil
   def each(count, limit = 10, &setup)
     generate(count, limit, setup)
   end
 
-  # Generate an array of +count+ values
+  # Generate an array of `count` values
   def map(count, limit = 10, &setup)
     acc = []; generate(count, limit, setup) {|x| acc << x }; acc
   end
@@ -145,17 +152,18 @@ class QuickCheck
   end
 
   def guard(condition)
-    raise GuardFailure.new unless condition
+    raise GuardFailure unless condition
   end
 
-  # Called with a block, sets +parameters+ temporarily while evaluating the block, and
-  # returns the value of the block. Without a block, this permanently sets +parameters+
+  # Called with a block, sets `parameters` temporarily while evaluating the
+  # block, and returns the value of the block. Without a block, this permanently
+  # sets `parameters`
   def with(*parameters)
     parameters = Hash[*parameters]
 
     if block_given?
       # Copy current parameters to a safe place
-      previous = instance_variables.grep(/@_parameter/).inject({}) do |hash, name|
+      prev = instance_variables.grep(/@_parameter/).inject({}) do |hash, name|
         hash.update(name => instance_variable_get(name))
       end
 
@@ -169,7 +177,7 @@ class QuickCheck
         instance_variables.each{|name| remove_instance_variable(name)  }
 
         # Restore previous parameters from the copy
-        previous.each{|name, value| instance_variable_set(name, value) }
+        prev.each{|name, value| instance_variable_set(name, value) }
       end
     else
       parameters.each{|name, value| instance_variable_set("@_parameter_#{name}", value) }
@@ -199,7 +207,7 @@ class QuickCheck
     when Numeric
       rand(hi + 1 - lo) + lo
     when Range
-      # OPTIMIZE: to_a is wasteful, we could instead iterate lo.succ a random number of times
+      # @todo: #to_a is wasteful for large Ranges
       lo.to_a.bind{|a| a[between(0, a.length - 1)] }
     end
   end
@@ -209,7 +217,7 @@ class QuickCheck
     rand(2) == 0
   end
 
-  # Generates a sized array by iteratively evaluating +block+
+  # Generates a sized array by iteratively evaluating `block`
   def array(&block)
     acc = []; size.times { acc << instance_eval(&block) }; acc
   end
@@ -235,6 +243,8 @@ class QuickCheck
   end
 
   # Generate a weighted value by calling the tail of each element
+  #
+  # @example
   #   freq [1, :literal, "one"],
   #        [2, :string],
   #        [3, :string, :alpha],
@@ -268,12 +278,14 @@ class QuickCheck
     values[between(0, values.length - 1)]
   end
 
-  # Executes +call+ on a random element from the given array of values
+  # Executes `call` on a random element from the given array of values
   def branch(generators)
     call(choose(generators))
   end
 
   # Executes the given generator
+  #
+  # @example
   #   call(:integer)
   #   call(:choose, [1,2,3])
   #   call([:choose, [1,2,3]])

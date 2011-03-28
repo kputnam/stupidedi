@@ -1,19 +1,21 @@
 begin
-  # https://github.com/dchelimsky/rspec
-  require 'spec'
+  # RSpec-1: https://github.com/dchelimsky/rspec
+  require "spec"
 rescue LoadError
-  # https://github.com/rspec/rspec
-  require 'rspec'
+  # RSpec-2: https://github.com/rspec/rspec
+  require "rspec"
 end
 
-spec = File.expand_path(File.dirname(__FILE__))
+specdir = File.expand_path(File.dirname(__FILE__))
 
-$:.unshift(spec)
+$:.unshift(specdir)
 $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 require "stupidedi"
 
 # Require supporting files with custom matchers and macros
-Dir["#{spec}/support/**/*.rb"].each{|f| require f.slice(spec.length + 1 .. -1) }
+Dir["#{specdir}/support/**/*.rb"].each do |f|
+  require f.slice(specdir.length + 1 .. -1)
+end
 
 RSpec.configure do |config|
   config.include(EitherMatchers)

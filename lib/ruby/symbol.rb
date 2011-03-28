@@ -8,7 +8,8 @@ class Symbol
     #   [-1, -2, -3].map(&:abs)   #=> [1, 2, 3]
     #
     def to_proc
-      lambda{|receiver| call(receiver) }
+    # lambda{|receiver| call(receiver) }
+      lambda{|receiver, *args| receiver.__send__(self, *args) }
     end
   end
 

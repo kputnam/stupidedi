@@ -1,12 +1,14 @@
-require 'support/quickcheck'
+require "support/quickcheck"
 
 class QuickCheck
+
+  #
+  #
+  #
   class SerializedEdi < ::QuickCheck
 
-    has_parameter :element_separator,    "*"
-    has_parameter :segment_terminator,   "~"
-    has_parameter :component_separator,  ":"
-    has_parameter :repetition_separator, "^"
+    has_parameter :separators,
+      Stupidedi::Reader::Separators.new(":", "^", "*", "~")
 
     module Macro
       def property(&setup)
@@ -15,196 +17,283 @@ class QuickCheck
     end
 
     def is_delimiter?(c)
-      segment_terminator   == c or
-      element_separator    == c or
-      component_separator  == c or
-      repetition_separator == c
+      separators.segment    == c or
+      separators.element    == c or
+      separators.component  == c or
+      separators.repetition == c
     end
 
+    # @return [Delegators::Char]
     def char
       Delegators::Char.new(self)
     end
 
+    # @return [Delegators::Stream]
     def stream
       Delegators::Stream.new(self)
     end
 
+    # @return [Delegators::SimpleElement]
+    # @return [String]
     def element(element_def = nil)
       delegator = Delegators::SimpleElement.new(self)
 
+      if element_def.respond_to?(:min_length)
+        min = element_def.min_length
+        max = element_def.max_length
+      end
+
       case element_def
-      when nil then delegator
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::Nn then delegator.nn
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::R  then delegator.r
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::ID then delegator.id
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::AN then delegator.an
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::DT then with(:size, choose([element_def.min_length, element_def.max_length])) { delegator.dt }
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::TM then with(:size, choose([element_def.min_length, element_def.max_length])) { delegator.tm }
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::CompositeElementDef then composite(element_def)
-      else raise ArgumentError, "Expected nil or certain SimpleElementDefs but got #{element_def.inspect}"
+      when nil
+        delegator
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::Nn
+        with(:size, choose([min, max])) { delegator.nn }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::R
+        with(:size, choose([min, max])) { delegator.r  }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::ID
+        with(:size, choose([min, max])) { delegator.id }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::AN
+        with(:size, choose([min, max])) { delegator.an }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::DT
+        with(:size, choose([min, max])) { delegator.dt }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::TM
+        with(:size, choose([min, max])) { delegator.tm }
+      when Stupidedi::FiftyTen::Definitions::ElementTypes::CompositeElementDef
+        composite(element_def)
+      else
+        raise ArgumentError
       end
     end
 
+    # @return [Delegators::CompositeElement]
+    # @return [String]
     def composite(element_def = nil)
       case element_def
       when nil
         Delegators::CompositeElement.new(self)
-      when Stupidedi::FiftyTen::Definitions::ElementTypes::CompositeElementDef
+      when Stupidedi::Schema::CompositeElementDef
         # Generate each component element
-        es = element_def.component_element_uses.map do |eu|
-          if eu.required?
-            value { element eu.element_def }
+        elements = element_def.component_element_uses.map do |use|
+          if use.required?
+            value { element(use.definition) }
           else
-            value { choose [element(eu.element_def), element.blank] }
+            value { choose([element(use.definition), element.blank]) }
           end
         end
 
         # Collapse the suffix of blank elements
-        suffix, es = es.reverse.span(&:empty?)
-        es.reverse.join(component_separator)
+        suffix, elements = elements.reverse.split_until(&:empty?)
+        elements.reverse.join(separators.component)
       else
-        raise ArgumentError, "Expected nil or CompositeElementDef but got #{element_def.inspect}"
+        raise ArgumentError
       end
     end
 
+    # @return [Delegators::Segment]
     def segment
       Delegators::Segment.new(self)
     end
 
+    # @return [Delegators::Document]
     def document
       Delegators::Document.new(self)
     end
 
+    # @return [Delegators::Current]
     def current
       Delegators::Current.new(self)
     end
 
-    class Delegator < BlankSlate
+    #
+    #
+    #
+    class Delegator < Stupidedi::BlankSlate
       def initialize(quickcheck)
         @quickcheck = quickcheck
       end
 
+    private
+
       def method_missing(name, *args, &block)
-        @quickcheck.send(name, *args, &block)
+        @quickcheck.__send__(name, *args, &block)
       end
     end
 
+    #
+    #
+    #
     module Delegators
+
+      #
+      #
+      #
       class Char < Delegator
-        ##
+
         # Generate a single basic character
+        #
+        # @return [Character]
         def basic
-          choose(Stupidedi::Reader.basic_characters).tap{|c| guard !is_delimiter?(c) }
+          choose(Stupidedi::Reader.basic_characters).tap{|c| guard(!is_delimiter?(c)) }
         end
 
-        ##
         # Generate a single control character
+        #
+        # @return [Character]
         def control
-          choose(Stupidedi::Reader.control_characters).tap{|c| guard !is_delimiter?(c) }
+          choose(Stupidedi::Reader.control_characters).tap{|c| guard(!is_delimiter?(c)) }
         end
 
-        ##
         # Generate a single extended character
+        #
+        # @return [Character]
         def extended
-          choose(Stupidedi::Reader.extended_characters).tap{|c| guard !is_delimiter?(c) }
+          choose(Stupidedi::Reader.extended_characters).tap{|c| guard(!is_delimiter?(c)) }
         end
 
-        ##
         # Generate a single delimiter character
+        #
+        # @return [Character]
         def delimiter
-          choose [segment_terminator,
-                  element_separator,
-                  component_separator,
-                  repetition_separator]
+          choose [separators.segment,
+                  separators.element,
+                  separators.component,
+                  separators.repetition]
         end
       end
 
+      #
+      #
+      #
       class Stream < Delegator
-        ##
+
         # Generate a sized string of control characters
+        #
+        # @return [String]
         def control
-          array { char.control }.join
+          (1..size).inject(""){|s,_| s << char.control }
         end
 
-        ##
         # Generate a sized string of basic characters
+        #
+        # @return [String]
         def basic
-          array { char.basic }.join
+          (1..size).inject(""){|s,_| s << char.basic }
         end
 
-        ##
         # Generate a sized string of extended characters
+        #
+        # @return [String]
         def extended
-          array { char.extended }.join
+          (1..size).inject(""){|s,_| s << char.extended }
         end
 
-        ##
         # Generate a sized string of spaces
+        #
+        # @return [String]
         def space(length = size)
           " " * length
         end
 
-        ##
         # Randomly insert control characters into the string
-        #   OPTIMIZE: this seems slow, but profile it first
+        #
+        # @return [String]
         def agitate(string)
-          string.split(//).bind{|cs| map(cs.length + 1) { choose ["", char.control] }.zip(cs).flatten.join }
+          cs = string.split(//)
+
+          # Generate `cs.length + 1` control characters
+          xs = (0..cs.length).inject([]){|s,_| s << choose(["", char.control]) }
+
+          agitated = ""
+          xs.zip(cs){|pad, c| agitated << pad << c.to_s }
+
+          agitated
         end
 
-        ##
-        # Pad the ends of the string with random spaces
+        # Pad the ends of the string with sized random spaces. The combined
+        # length of the left and right padding is `sized`
+        #
+        # @return [String]
         def pad(string)
-          with(:size, between(0, size)) { space } << string <<
-          with(:size, between(0, size)) { space }
+          left  = space(between(0, size))
+          right = space(between(0, size - left.length))
+          left << string << right
         end
       end
 
+      #
+      #
+      #
       class SimpleElement < Delegator
+
+        # Generate a string representing a blank element
+        #
+        # @return [String]
         def blank
           ""
         end
 
-        ##
-        # Generate a sized string representing a numeric value (Nn)
+        # Generate a sized string representing a non-empty numeric element (Nn).
+        # The leading sign character is not counted against `size`
+        #
+        # @return [String]
         def nn
-          choose(["", "+", "-"]) + string(:digit)
+          choose(["", "+", "-"]) << string(:digit)
         end
 
-        ##
-        # Generate a sized string representing a decimal value (R)
+        # Generate a sized string representing a non-empty decimal element (R).
+        # The leading sign character, optional exponent (E) indicator and its
+        # sign character are not counted against `size`
+        #
+        # @return [String]
         def r(length = size)
-          decimal  = with(:size, between(0, length)) { string :digit }
-          exponent = with(:size, between(0, decimal.length)) { string :digit }
-          whole    = with(:size, length - decimal.length - exponent.length) { string :digit }
+          decimal  = with(:size, between(0, length)) { string(:digit) }
+          exponent = with(:size, between(0, decimal.length)) { string(:digit) }
+          whole    = with(:size, length - decimal.length - exponent.length) { string(:digit) }
 
-          decimal  = (decimal.empty?) ? choose(["", "."]) : ".#{decimal}"
-          exponent = "E#{choose ["", "-", "+"]}#{exponent}" unless exponent.empty?
-          whole    = "#{choose ["", "-", "+"]}#{whole}"
+          decimal =
+            if decimal.empty?
+              choose(["", "."])
+            else
+              ".#{decimal}"
+            end
+
+          unless exponent.empty?
+            exponent = "E#{choose(["", "-", "+"])}#{exponent}"
+          end
+
+          whole = "#{choose(["", "-", "+"])}#{whole}"
 
           "#{whole}#{decimal}#{exponent}"
         end
 
-        ##
-        # Generate a sized string representing an identifier value (ID)
+        # Generate a sized string representing an identifier element (ID)
+        #
+        # @return [String]
         def id
-          array { choose [char.basic, char.extended] }.join.tap{|s| guard s !~ /^\s+$/ }
+          (1..size).inject("") do |s,_|
+            s << choose([char.basic, char.extended])
+          end.tap{|s| guard(!s.blank?) }
         end
 
-        ##
-        # Generate a sized string representing a string value (AN)
+        # Generate a sized string representing a string element (AN)
+        #
+        # @return [String]
         def an
-          array { choose [char.basic, char.extended, " "] }.join.tap{|s| guard s !~ /^\s+$/ }
+          (1..size).inject("") do |s,_|
+            s << choose([char.basic, char.extended])
+          end.tap{|s| guard(!s.blank?) }
         end
 
-        ##
         # Generate a sized string representing a date (DT)
+        #
+        # @return [String]
         def dt
           year  = between(0, 9999)
           month = between(1, 12)
           day   = between(1, 31)
 
           # Ensure this is a valid date
-          guard begin Date.civil(year, month, day); rescue ArgumentError; false end
+          guard(begin Date.civil(year, month, day); rescue ArgumentError; false end)
 
           case size
           when 6 then "%02d%02d%02d" % [year.modulo(100), month, day]
@@ -213,8 +302,9 @@ class QuickCheck
           end
         end
 
-        ##
         # Generate a sized string representing a time (TM)
+        #
+        # @return [String]
         def tm
           case size
           when 2 then "%02d" % between(0, 23)
@@ -230,59 +320,68 @@ class QuickCheck
         end
       end
 
+      #
+      #
+      #
       class CompositeElement < Delegator
+        # @todo
       end
 
+      #
+      #
+      #
       class Segment < Delegator
-        # Generate a functional header segment
-        def gs
+
+        # @private
+        SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
+
+        def generate(name, *elements)
+          # @todo
+        end
+
+      private
+
+        def method_missing(name, *arguments, &block)
+          if SEGMENT_ID =~ name.to_s
+            generate(name)
+          else
+            super
+          end
         end
       end
 
+      #
+      #
+      #
       class Document < Delegator
-        ##
-        # Generate four random delimiters with the restriction that they
-        # cannot be control characters, spaces, tabs, numbers, letters,
-        # underscores, or numerical symbols.
+
+        # Generate four random delimiters with the restriction that they cannot
+        # be control characters, spaces, tabs, numbers, letters, underscores, or
+        # numerical symbols, and each delimiter must be unique.
+        #
+        # @return [Reader::Separators]
         def delimiters
           possible  = Stupidedi::Reader.basic_characters
-          possible += Stupidedi::Reader.extended_characters
+          possible << Stupidedi::Reader.extended_characters
           possible -= QuickCheck::Characters.of(/[ \t0-9a-z_.+-]/i)
 
-          chars = with(:size, 4) { array { choose(possible) }}
-          guard chars.uniq.size == 4
+          delimiters = []
 
-          Hash[:element_separator    => chars[0],
-               :segment_terminator   => chars[1],
-               :component_separator  => chars[2],
-               :repetition_separator => chars[3]]
-        end
+          4.times do
+            delimiters << value do
+              choose(possible).tap{|x| guard(!delimiters.include?(x)) }
+            end
+          end
 
-        def transaction_set
-          choose [{:function_id => "HS", :industry_id => "005010X279", :transaction_set_id => "270", :name => "Eligibility Inquiry"          },
-                  {:function_id => "HB", :industry_id => "005010X279", :transaction_set_id => "271", :name => "Eligibility Response"         },
-                  {:function_id => "HR", :industry_id => "005010X212", :transaction_set_id => "276", :name => "Status Request"               },
-                  {:function_id => "HN", :industry_id => "005010X212", :transaction_set_id => "277", :name => "Status Notification"          },
-                  {:function_id => "HP", :industry_id => "005010X221", :transaction_set_id => "835", :name => "Remittance Advice"            },
-                  {:function_id => "HC", :industry_id => "005010X222", :transaction_set_id => "837", :name => "Claim: Professional"          },
-                  {:function_id => "HC", :industry_id => "005010X223", :transaction_set_id => "837", :name => "Claim: Institutional"         },
-                  {:function_id => "HC", :industry_id => "005010X224", :transaction_set_id => "837", :name => "Claim: Dential"               },
-                  {:function_id => "FA", :industry_id => "005010X230", :transaction_set_id => "997", :name => "Functional Acknowledgment"    },
-                  {:function_id => "FA", :industry_id => "005010X231", :transaction_set_id => "999", :name => "Implementation Acknowledgment"}]
+          Stupidedi::Reader::Sepatarors.new(*delimiters)
         end
       end
 
+      #
+      #
+      #
       class Current < Delegator
-        def delimiters
-          Hash[:element_separator    => element_separator,
-               :segment_terminator   => segment_terminator,
-               :component_separator  => component_separator,
-               :repetition_separator => repetition_separator]
-        end
-
-        def isa
-          Stupidedi::Interchange::FiveOhOne::InterchangeHeader.default(delimiters)
-        end
+        # @todo
       end
 
     end

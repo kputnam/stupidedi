@@ -11,13 +11,13 @@ describe Stupidedi::Reader do
     it "excludes extended characters" do
       b = Stupidedi::Reader.basic_characters
       e = Stupidedi::Reader.extended_characters
-      (b - (b - e)).should == []
+      (b - (b - e)).should be_empty
     end
 
     it "excludes control characters" do
       b = Stupidedi::Reader.basic_characters
       c = Stupidedi::Reader.control_characters
-      (b - (b - c)).should == []
+      (b - (b - c)).should be_empty
     end
 
     it "includes uppercase letters" do
@@ -69,13 +69,13 @@ describe Stupidedi::Reader do
     it "excludes basic characters" do
       e = Stupidedi::Reader.extended_characters
       b = Stupidedi::Reader.basic_characters
-      (e - (e - b)).should == []
+      (e - (e - b)).should be_empty
     end
 
     it "excludes control characters" do
       e = Stupidedi::Reader.extended_characters
       c = Stupidedi::Reader.control_characters
-      (e - (e - c)).should == []
+      (e - (e - c)).should be_empty
     end
 
     it "includes lowercase letters" do
@@ -156,13 +156,13 @@ describe Stupidedi::Reader do
     it "excludes basic characters" do
       c = Stupidedi::Reader.control_characters
       b = Stupidedi::Reader.basic_characters
-      (c - (c - b)).should == []
+      (c - (c - b)).should be_empty
     end
 
     it "excludes extended characters" do
       c = Stupidedi::Reader.control_characters
       e = Stupidedi::Reader.extended_characters
-      (c - (c - e)).should == []
+      (c - (c - e)).should be_empty
     end
   end
 end
