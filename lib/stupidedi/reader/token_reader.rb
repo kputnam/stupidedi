@@ -26,6 +26,11 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict)
       end
 
+      # @return false
+      def stream?
+        false
+      end
+
       # @return [StreamReader]
       def stream
         StreamReader.new(@input)
@@ -118,25 +123,32 @@ module Stupidedi
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
             when @separators.element
-              rest = b.remainder.read_elements(element_uses)
+              rest = b.remainder.read_elements(a.value, element_uses)
               rest.map{|c| c.map{|es| segment(a.value, @input, c.remainder.input, es) }}
             when @separators.segment
+              remainder =
+                if a.value == :IEA
+                  a.remainder.stream
+                else
+                  a.remainder
+                end
+
               # Consume the segment terminator
-              result(segment(a.value, @input, b.remainder.input), b.remainder)
+              result(segment(a.value, @input, b.remainder.input), remainder)
             end
           end
         end
       end
 
       # @return [Either<Result<Array<SimpleElementTok, CompositeElementTok>, TokenReader>>]
-      def read_elements(element_uses)
+      def read_elements(segment_id, element_uses)
         if element_uses.empty?
           read_simple_element
         else
           element_use = element_uses.head
           repeatable  = element_use.repeatable?
 
-          if element_uses.head.composite?
+          if element_use.composite?
             read_composite_element(repeatable)
           else
             read_simple_element(repeatable)
@@ -145,12 +157,19 @@ module Stupidedi
           a.remainder.read_delimiter.flatmap do |b|
             case b.value
             when @separators.segment
+              remainder =
+                if segment_id == :IEA
+                  b.remainder.stream
+                else
+                  b.remainder
+                end
+
               # This is the last element before the segment terminator, make
               # it into a singleton list and _do_ consume the delimiter
-              result(a.value.cons, b.remainder)
+              result(a.value.cons, remainder)
             when @separators.element
               # There is another element following the delimiter
-              rest = b.remainder.read_elements(element_uses.tail)
+              rest = b.remainder.read_elements(segment_id, element_uses.tail)
               rest.map{|c| c.map{|es| a.value.cons(es) }}
             end
           end

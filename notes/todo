@@ -6,9 +6,15 @@ of SimpleElementVal raise exceptions for badly formatted input, which will blow
 up the parser -- this is fine for programmatic X12 generation but not when we're
 reading a file.
 
-Fix the StateMachine's handling of Reader. When ISE is read, the TokenReader
-should be "downcast" to StreamReader. Otherwise we don't correctly skip non-X12
-data from the input stream between interchanges.
+Implement an automated FA999 Functional Acknowledgement generator that accepts
+any FunctionalGroupVal as input. This will be useful for writing integration
+tests, but more importantly it will create use cases that will require changes
+to Reader and Builder to gracefully handle more unhappy-paths.
+
+Change Builder to start from an empty Envelope::TransactionSet (ST/SE), so the
+outer envelopes can be constructed independently. This will require some smarts
+to detect when the TransactionSetDef might use repetition separators because not
+all InterchangeDefs have support for it.
 
 Improve the tree traversal API. This is hard to conceive, but perhaps working on
 the Editor code will reveal the key problems. Perhaps something like zipper that
@@ -36,6 +42,10 @@ Reader::TokenReader. This would reduce wasteful object creation.
 
 DONE
 -------------------------------------------------------------------------------
+
+Fix the StateMachine's handling of Reader. When ISE is read, the TokenReader
+should be "downcast" to StreamReader. Otherwise we don't correctly skip non-X12
+data from the input stream between interchanges.
 
 Colorized pretty printer output. Definitions and meta-data should be separately
 colored (to blend in with the background), element values should stand out, and

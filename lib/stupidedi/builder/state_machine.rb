@@ -40,7 +40,7 @@ module Stupidedi
 
               states << state
 
-              unless i.pop_count.zero?
+              unless i.pop_count.zero? or reader.stream?
                 # More general than checking if segment_tok is an ISE/GE segment
                 if not reader.separators.eql?(state.separators)
                   reader = reader.copy \

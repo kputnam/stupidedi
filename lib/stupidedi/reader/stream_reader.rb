@@ -20,9 +20,9 @@ module Stupidedi
         @input = input
       end
 
-      # @return [StreamReader]
-      def copy(changes = {})
-        StreamReader.new(changes.fetch(:input, @input))
+      # @return true
+      def stream?
+        true
       end
 
       # True if there is no remaining input

@@ -52,8 +52,16 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = definition.try do |d|
-          ansi.bold("[#{d.id}: #{d.name}]")
+        id = definition.bind do |d|
+          "[#{d.id}: #{d.name}]".bind do |s|
+            if usage.forbidden?
+              ansi.forbidden(s)
+            elsif usage.required?
+              ansi.required(s)
+            else
+              ansi.optional(s)
+            end
+          end
         end
 
         q.text(ansi.composite("CompositeElementVal#{id}"))
