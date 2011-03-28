@@ -223,13 +223,13 @@ module Stupidedi
           object
         elsif object.is_a?(Hash)
           if object.empty?
-            EmptySet.build
+            NullSet.build
           else
             new(object)
           end
         elsif object.is_a?(Enumerable)
           if object.empty?
-            EmptySet.build
+            NullSet.build
           else
             new(object.inject({}){|h,o| h[o] = true; h })
           end

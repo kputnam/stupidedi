@@ -27,9 +27,9 @@ module Stupidedi
         false
       end
 
-      # @return EmptySet
+      # @return NullSet
       def complement
-        EmptySet.build
+        NullSet.build
       end
 
       # @return Infinity

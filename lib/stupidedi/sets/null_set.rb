@@ -2,19 +2,19 @@ module Stupidedi
   module Sets
 
     # @private
-    EmptySet = Class.new(RelativeSet) do
+    NullSet = Class.new(RelativeSet) do
 
       def initialize
       end
 
-      # @return [EmptySet]
+      # @return [NullSet]
       def build
         self
       end
 
       # @return [void]
       def inspect
-        "EmptySet"
+        "NullSet"
       end
 
       # @return [void]

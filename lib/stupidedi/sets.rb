@@ -3,7 +3,7 @@ module Stupidedi
   module Sets
     autoload :AbstractSet,        "stupidedi/sets/abstract_set"
     autoload :AbsoluteSet,        "stupidedi/sets/absolute_set"
-    autoload :EmptySet,           "stupidedi/sets/empty_set"
+    autoload :NullSet,            "stupidedi/sets/null_set"
     autoload :RelativeComplement, "stupidedi/sets/relative_complement"
     autoload :RelativeSet,        "stupidedi/sets/relative_set"
     autoload :UniversalSet,       "stupidedi/sets/universal_set"
@@ -27,9 +27,9 @@ module Stupidedi
       Sets::UniversalSet.build
     end
 
-    # @return [Sets::EmptySet]
+    # @return [Sets::NullSet]
     def empty
-      Sets::EmptySet.build
+      Sets::NullSet.build
     end
 
     # @return [Sets::AbsoluteSet]
