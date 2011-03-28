@@ -40,6 +40,10 @@ module Stupidedi
         @input.empty?
       end
 
+      # If `s` is a prefix of {#input}, then `s` is skipped and the remaining
+      # input is returned as a new `TokenReader` wrapped by `Either.success`.
+      # Otherwise, an {Either::Failure} is returned.
+      #
       # @return [Either<TokenReader>]
       def consume_prefix(s)
         return success(self) if s.empty?
@@ -67,6 +71,10 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
+      # If `s` occurs within {#input}, then the input up to and including `s`
+      # is skipped and the remaining input is returned as a new `TokenReader`
+      # wrapped by `Either.success`. Otherwise, {Either::Failure} is returned.
+      #
       # @return [Either<TokenReader>]
       def consume(s)
         return success(self) if s.empty?
@@ -92,6 +100,11 @@ module Stupidedi
         failure("Reached end of input without finding #{s.inspect}")
       end
 
+      # Returns a single character and the remaining input as a {Result} with
+      # a `value` of the character and a `remainder` of the reamining input as
+      # a new instance of {TokenReader}. If {#input} has less than a single
+      # character, returns an {Either::Failure}
+      #
       # @return [Either<Result<String>>]
       def read_character
         position = 0
@@ -139,6 +152,22 @@ module Stupidedi
           end
         end
       end
+
+      # @return [void]
+      def pretty_print(q)
+        q.text("TokenReader")
+        q.group(2, "(", ")") do
+          q.breakable ""
+
+          q.pp @input
+          q.text ","
+          q.breakable
+
+          q.pp @separators
+        end
+      end
+
+    private
 
       # @return [Either<Result<Array<SimpleElementTok, CompositeElementTok>, TokenReader>>]
       def read_elements(segment_id, element_uses)
@@ -360,22 +389,6 @@ module Stupidedi
           end
         end
       end
-
-      # @return [void]
-      def pretty_print(q)
-        q.text("TokenReader")
-        q.group(2, "(", ")") do
-          q.breakable ""
-
-          q.pp @input
-          q.text ","
-          q.breakable
-
-          q.pp @separators
-        end
-      end
-
-    private
 
       # @return [TokenReader]
       def advance(n)

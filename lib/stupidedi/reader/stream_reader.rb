@@ -64,7 +64,7 @@ module Stupidedi
           # The character after "ISA" is defined to be the element separator
           rest.read_character.flatmap do |a|
             separators = Separators.new(nil, nil, a.value, nil)
-            remaining  = Either.success(TokenReader.new(a.remainder.input, separators))
+            remaining  = success(TokenReader.new(a.remainder.input, separators))
             elements   = []
 
             # Read 15 simple elements into an array. Consume/discard the element

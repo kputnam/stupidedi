@@ -3,8 +3,8 @@ require "spec_helper"
 describe Stupidedi::Reader::Success do
   include QuickCheck::Macro
 
-  def mkreader(*args)
-    Stupidedi::Reader::Success.new(*args)
+  def mkreader(value, remainder)
+    Stupidedi::Reader::Result.success(value, remainder)
   end
 
   describe "#value" do

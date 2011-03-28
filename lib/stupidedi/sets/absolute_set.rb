@@ -158,18 +158,18 @@ module Stupidedi
       # @return [AbsoluteSet]
       def difference(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
-          copy(:copy => @mask & ~other.mask)
+          copy(:mask => @mask & ~other.mask)
         else
-          copy(:copy => @mask & ~as_mask(other))
+          copy(:mask => @mask & ~as_mask(other))
         end
       end
 
       # @return [AbsoluteSet]
       def symmetric_difference(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
-          copy(:copy => @mask ^ other.mask)
+          copy(:mask => @mask ^ other.mask)
         else
-          copy(:copy => @mask ^ as_mask(other))
+          copy(:mask => @mask ^ as_mask(other))
         end
       end
 

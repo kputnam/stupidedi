@@ -12,7 +12,7 @@ module Stupidedi
       # @return [Integer]
       attr_reader :column
 
-      delegate :defined_at?, :empty?, :take, :at, :index, :to => :@delegate
+      delegate :defined_at?, :empty?, :take, :at, :index, :==, :to => :@delegate
 
       def initialize(delegate, offset = 0, line = 1, column = 1)
         @delegate, @offset, @line, @column = delegate, offset, line, column
@@ -22,8 +22,8 @@ module Stupidedi
       def drop(n)
         raise ArgumentError, "n must be positive" unless n >= 0
 
-        suffix = delegate.drop(n)
-        prefix = delegate.take(n)
+        suffix = @delegate.drop(n)
+        prefix = @delegate.take(n)
 
         length = prefix.length
         count  = prefix.count("\n")

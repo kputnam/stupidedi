@@ -9,88 +9,40 @@ describe Stupidedi::Reader::StreamReader do
     Stupidedi::Reader::Input.from_string(string)
   end
 
-  describe "#empty?" do
-    context "with no input available" do
-      specify { stream.new("").should be_empty }
-    end
+  describe "#stream?" do
+    it "returns true"
+  end
 
-    context "with some input available" do
-      specify { stream.new("a").should_not be_empty }
-    end
+  describe "#empty?" do
+    context "with no input available"
+    context "with some input available"
   end
 
   describe "#read_character" do
     context "with no input available" do
-      specify { stream.new("").read_character.should_not be_defined }
-
-      it "produces an error message" do
-        stream.new("").read_character.explanation.should == "Less than one character available"
-      end
-
+      it "produces an error message"
       it "encodes the error position"
     end
 
-    context %[with one input character "a" available] do
-      subject { stream.new("a").read_character }
-
-      it { should be_defined }
-
-      specify { subject.map{|r| r.should be_a(success) }}
-      specify { subject.map{|r| r.value.should == "a" }}
-
-      specify { subject.map{|r| r.remainder.should be_a(stream) }}
-      specify { subject.map{|r| r.remainder.should be_empty }}
-    end
-
-    context %[with more than one input character "abc" available] do
-      subject { stream.new("abc").read_character }
-
-      it { should be_defined }
-
-      specify { subject.map{|r| r.should be_a(success) }}
-      specify { subject.map{|r| r.value.should == "a" }}
-
-      specify { subject.map{|r| r.remainder.should be_a(stream) }}
-      specify { subject.map{|r| r.remainder.should_not be_empty  }}
-      specify { subject.map{|r| r.remainder.input.should == "bc" }}
-    end
+    context "with only one input character available"
+    context "with more than one input character available"
   end
 
-  describe "#read_interchange_header" do
-    context "with a valid 00501-version input" do
-      let(:isa) { "ISA*00*          *01*SECRET    *ZZ*SUBMITTERS ID  *ZZ*RECEIVERS ID   *030101*1253*^*00501*000000905*1*T*:~" }
-      subject   { stream.new(isa).read_interchange_header }
-
-      it { should be_defined }
-
-      specify { subject.map{|r| r.value.should be_a(Stupidedi::Interchange::FiveOhOne::InterchangeHeader) }}
-      specify { subject.map{|r| r.value.element_separator.should == "*" }}
-      specify { subject.map{|r| r.value.segment_terminator.should == "~" }}
-      specify { subject.map{|r| r.value.component_separator.should == ":" }}
-      specify { subject.map{|r| r.value.repetition_separator.should == "^" }}
-
-      specify { subject.map{|r| r.remainder.should be_defined }}
-      specify { subject.map{|r| r.remainder.map{|s| s.should respond_to(:read_functional_group_header) }}}
-
-      context "with no further input" do
-        specify { subject.map{|r| r.remainder.map{|s| s.should be_empty }}}
-      end
-
-      context %[with further input "xyz"] do
-        subject { stream.new(isa + "xyz").read_interchange_header }
-        specify { subject.should be_defined }
-        specify { subject.map{|r| r.remainder.map{|s| s.should_not be_empty   }}}
-        specify { subject.map{|r| r.remainder.map{|s| s.input.should == "xyz" }}}
-      end
+  describe "#consume_character" do
+    context "with no input available" do
+      it "produces an error message"
+      it "encodes the error position"
     end
 
-    context "with a valid 00401-version input" do
-      pending
-    end
+    context "with only one input character available"
+    context "with more than one input character available"
+  end
 
-    context "with invalid input" do
-      pending
-    end
+  describe "#read_segment" do
+    context "with no input available"
+    context "with an isa segment at the start of input"
+    context "with an isa segment after the start of input"
+    context "with input that doesnt have an isa segment"
   end
 
 end

@@ -11,12 +11,12 @@ module Stupidedi
 
       # @return [Result::Success]
       def success(value, remainder)
-        Result::Success.new(value, remainder)
+        Success.new(value, remainder)
       end
 
       # @return [Result::Failure]
       def failure(reason, remainder)
-        Result::Failure.new(reason, remainder)
+        Failure.new(reason, remainder)
       end
 
       # @endgroup

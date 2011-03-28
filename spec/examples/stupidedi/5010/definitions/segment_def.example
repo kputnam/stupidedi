@@ -1,5 +1,0 @@
-require "spec_helper"
-
-describe Stupidedi::FiftyTen::Definitions::SegmentDef do
-  pending
-end

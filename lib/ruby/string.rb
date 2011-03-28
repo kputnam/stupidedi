@@ -10,6 +10,7 @@ class String
   #
   # @return [String]
   def at(n)
+    raise ArgumentError, "n must be positive" if n < 0
     self[n, 1] unless n >= length
   end
 
@@ -23,6 +24,7 @@ class String
   #
   # @return [String]
   def drop(n)
+    raise ArgumentError, "n must be positive" if n < 0
     (length >= n) ? self[n..-1] : ""
   end
 
@@ -36,6 +38,7 @@ class String
   #
   # @return [String]
   def take(n)
+    raise ArgumentError, "n must be positive" if n < 0
     self[0, n]
   end
 

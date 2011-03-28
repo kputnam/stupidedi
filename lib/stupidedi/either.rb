@@ -12,10 +12,10 @@ module Stupidedi
     # @group Filter Methods
 
     # @return [Either]
-    abstract :select, :args => %w(explanation='select' &block)
+    abstract :select, :args => %w(reason='select' &block)
 
     # @return [Either]
-    abstract :reject, :args => %w(explanation='reject' &block)
+    abstract :reject, :args => %w(reason='reject' &block)
 
     # @endgroup
     ###########################################################################
@@ -62,20 +62,20 @@ module Stupidedi
       # @return [Either]
       # @yieldparam value
       # @yieldreturn [Boolean]
-      def select(explanation = "select")
+      def select(reason = "select")
         if yield(@value)
           self
         else
-          Either.failure(explanation)
+          Either.failure(reason)
         end
       end
 
       # @return [Either]
       # @yieldparam value
       # @yieldreturn [Boolean]
-      def reject(explanation = "reject")
+      def reject(reason = "reject")
         if yield(@value)
-          Either.failure(explanation)
+          Either.failure(reason)
         else
           self
         end
@@ -136,10 +136,11 @@ module Stupidedi
     end
 
     class Failure < Either
-      attr_accessor :explanation
 
-      def initialize(explanation)
-        @explanation = explanation
+      attr_reader :reason
+
+      def initialize(reason)
+        @reason = reason
       end
 
       # @return [Failure]
@@ -156,12 +157,12 @@ module Stupidedi
       # @group Filter Methods
 
       # @return [Failure]
-      def select(explanation = nil)
+      def select(reason = nil)
         self
       end
 
       # @return [Failure]
-      def reject(explanation = nil)
+      def reject(reason = nil)
         self
       end
 
@@ -182,10 +183,10 @@ module Stupidedi
       end
 
       # @return [Either]
-      # @yieldparam explanation
+      # @yieldparam reason
       # @yieldreturn [Either]
       def or
-        result = yield(@explanation)
+        result = yield(@reason)
 
         if result.is_a?(Either)
           result
@@ -195,10 +196,10 @@ module Stupidedi
       end
 
       # @return [Failure]
-      # @yieldparam explanation
-      # @yieldreturn explanation
+      # @yieldparam reason
+      # @yieldreturn reason
       def explain
-        Either.failure(yield(@explanation))
+        Either.failure(yield(@reason))
       end
 
       # @endgroup
@@ -206,7 +207,7 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        other.is_a?(self.class) and other.explanation == @explanation
+        other.is_a?(self.class) and other.reason == @reason
       end
 
       # @return [void]
@@ -214,13 +215,13 @@ module Stupidedi
         q.text("Either.failure")
         q.group(2, "(", ")") do
           q.breakable ""
-          q.pp @explanation
+          q.pp @reason
         end
       end
 
       # @return [Fatal]
       def fatal
-        Fatal.new(@explanation)
+        Fatal.new(@reason)
       end
     end
 
@@ -248,8 +249,8 @@ module Stupidedi
     end
 
     # @return [Failure]
-    def failure(explanation)
-      Either::Failure.new(explanation)
+    def failure(reason)
+      Either::Failure.new(reason)
     end
 
     # @endgroup

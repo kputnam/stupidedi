@@ -1,10 +1,10 @@
 require "spec_helper"
 
-describe Stupidedi::Input do
+describe Stupidedi::Reader::Input do
   include QuickCheck::Macro
 
   def input(*args)
-    Stupidedi::Input.from_delegate(*args)
+    Stupidedi::Reader::Input.build(*args)
   end
 
   describe "#offset" do
@@ -67,7 +67,7 @@ describe Stupidedi::Input do
   describe "#drop(n)" do
     context "when n is zero" do
       it "returns itself" do
-        input("abc").drop(0).should == input("abc")
+        input("abc").drop(0).should == "abc"
       end
     end
 

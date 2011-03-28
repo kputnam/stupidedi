@@ -60,7 +60,7 @@ module Stupidedi
       def -(other) difference(other) end
 
       # @return [Set]
-      def ~(other) complement(other) end
+      def ~; complement end
 
       # @return [Set]
       def ^(other) symmetric_difference(other) end

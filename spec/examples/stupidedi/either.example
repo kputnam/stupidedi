@@ -10,10 +10,10 @@ describe Stupidedi::Either do
     Stupidedi::Either.failure(value)
   end
 
-  describe "#explanation" do
+  describe "#reason" do
     context "on failure" do
       it "returns the value given to the constructor" do
-        mkfailure("a").explanation.should == "a"
+        mkfailure("a").reason.should == "a"
       end
     end
   end
@@ -22,13 +22,13 @@ describe Stupidedi::Either do
     let(:failure) { mkfailure("a") }
 
     context "on success" do
-      context "when explanation == success.value" do
+      context "when reason == success.value" do
         it "is false" do
           failure.should_not == mksuccess("a")
         end
       end
 
-      context "when explanation != success.value" do
+      context "when reason != success.value" do
         it "is false" do
           failure.should_not == mksuccess("b")
         end
@@ -36,13 +36,13 @@ describe Stupidedi::Either do
     end
 
     context "on failure" do
-      context "when explanation == failure.explanation" do
+      context "when reason == failure.reason" do
         it "is true" do
           failure.should == mkfailure("a")
         end
       end
 
-      context "when explanation != failure.explanation" do
+      context "when reason != failure.reason" do
         it "is false" do
           failure.should_not == mkfailure("b")
         end
@@ -68,13 +68,13 @@ describe Stupidedi::Either do
     end
 
     context "on failure" do
-      context "when value == failure.explanation" do
+      context "when value == failure.reason" do
         it "is false" do
           success.should_not == mkfailure("a")
         end
       end
 
-      context "when value != failure.explanation" do
+      context "when value != failure.reason" do
         it "is false" do
           success.should_not == mkfailure("b")
         end
@@ -98,13 +98,13 @@ describe Stupidedi::Either do
     end
 
     context "on failure" do
-      context "when explanation == other" do
+      context "when reason == other" do
         it "is false" do
           mksuccess("a").should_not == "a"
         end
       end
 
-      context "when explanation != other" do
+      context "when reason != other" do
         it "is false" do
           mksuccess("a").should_not == "b"
         end
@@ -112,7 +112,7 @@ describe Stupidedi::Either do
     end
   end
 
-  describe "#select(explanation, &predicate)" do
+  describe "#select(reason, &predicate)" do
     context "on success" do
       it "yields the wrapped value" do
         lambda { mksuccess("a").select{|*a| raise a.inspect }}.should raise_error('["a"]')
@@ -130,30 +130,30 @@ describe Stupidedi::Either do
           mksuccess("a").select { false }.should_not be_defined
         end
 
-        context "when explanation is given" do
-          it "returns a failure with the given explanation" do
-            mksuccess("a").select("criteria not met") { false }.explanation.
+        context "when reason is given" do
+          it "returns a failure with the given reason" do
+            mksuccess("a").select("criteria not met") { false }.reason.
               should == "criteria not met"
           end
         end
 
-        context "when explanation is not given" do
-          it "returns a failure with a default explanation" do
-            mksuccess("a").select { false }.explanation.should == "select"
+        context "when reason is not given" do
+          it "returns a failure with a default reason" do
+            mksuccess("a").select { false }.reason.should == "select"
           end
         end
       end
     end
 
     context "on failure" do
-      context "when explanation is given" do
+      context "when reason is given" do
         it "returns itself" do
           either = mkfailure("a")
           either.select("a") { false }.should eq(either)
         end
       end
 
-      context "when explanation is not given" do
+      context "when reason is not given" do
         it "returns itself" do
           either = mkfailure("a")
           either.select.should eq(either)
@@ -166,7 +166,7 @@ describe Stupidedi::Either do
     end
   end
 
-  describe "#reject(explanation, &predicate)" do
+  describe "#reject(reason, &predicate)" do
     context "on success" do
       it "yields the wrapped value" do
         lambda { mksuccess("a").reject{|*a| raise a.inspect }}.should raise_error('["a"]')
@@ -177,16 +177,16 @@ describe Stupidedi::Either do
           mksuccess("a").reject { true }.should_not be_defined
         end
 
-        context "when explanation is given" do
-          it "returns a failure with the given explanation" do
-            mksuccess("a").reject("criteria not met") { true }.explanation.
+        context "when reason is given" do
+          it "returns a failure with the given reason" do
+            mksuccess("a").reject("criteria not met") { true }.reason.
               should == "criteria not met"
           end
         end
 
-        context "when explanation is not given" do
-          it "returns a failure with a default explanation" do
-            mksuccess("a").reject { true }.explanation.should == "reject"
+        context "when reason is not given" do
+          it "returns a failure with a default reason" do
+            mksuccess("a").reject { true }.reason.should == "reject"
           end
         end
       end
@@ -200,14 +200,14 @@ describe Stupidedi::Either do
     end
 
     context "on failure" do
-      context "when explanation is given" do
+      context "when reason is given" do
         it "returns itself" do
           either = mkfailure("a")
           either.reject("criteria not met").should eq(either)
         end
       end
 
-      context "when explanation is not given" do
+      context "when reason is not given" do
         it "returns itself" do
           either = mkfailure("a")
           either.reject.should eq(either)
@@ -280,7 +280,7 @@ describe Stupidedi::Either do
         mkfailure("a").explain { "b" }.should_not be_defined
       end
 
-      it "yields the wrapped explanation" do
+      it "yields the wrapped reason" do
         lambda { mkfailure("a").explain{|*a| raise a.inspect }}.should raise_error('["a"]')
       end
 
@@ -304,7 +304,7 @@ describe Stupidedi::Either do
     end
 
     context "on failure" do
-      it "yields the wrapped explanation" do
+      it "yields the wrapped reason" do
         lambda { mkfailure("a").or{|*a| raise a.inspect }}.should raise_error('["a"]')
       end
 
