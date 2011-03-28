@@ -13,8 +13,8 @@ module Stupidedi
     # operations, instead of using operations on a Hash.
     #
     # This data type is not suitable for sets whose elements belong to an
-    # infinite universe of values, as each set requires +2**|U|+ bits of storage
-    # where +|U|+ is the size of the universe. Operations on sets that belong to
+    # infinite universe of values, as each set requires `2**|U|` bits of storage
+    # where `|U|` is the size of the universe. Operations on sets that belong to
     # different universes do not currently attempt to merge the two universe
     # sets, as this probably a better use case for {RelativeSet}.
     #

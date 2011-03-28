@@ -105,7 +105,7 @@ module Stupidedi
                          segment_id,
                          segment_pos,
                          ls.at(0),
-                         @builder.composite(element_pos, component_pos, repeated_pos)
+                         @builder.composite(element_pos, component_pos, repeated_pos),
                          @builder.composite(element_id, component_id))
 
             # 269: TRN02
@@ -151,7 +151,7 @@ module Stupidedi
                            segment_id,
                            segment_pos,
                            ls.at(0),
-                           @builder.composite(element_pos, component_pos, repeated_pos)
+                           @builder.composite(element_pos, component_pos, repeated_pos),
                            @builder.composite(element_id, component_id))
             end
           end

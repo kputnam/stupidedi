@@ -1,5 +1,4 @@
 # encoding: UTF-8
-
 require "spec_helper"
 
 describe Stupidedi::Sets::AbsoluteSet do
@@ -124,12 +123,11 @@ describe Stupidedi::Sets::AbsoluteSet do
       (@subset | ~@subset).should == @full
     end
 
-    # @todo: check this property
-    specify "A ⊖ ¬A = A" do
-    # (@full ^ ~@full).should == @full
-    # (@empty ^ ~@empty).should == @empty
-    # (@single ^ ~@single).should == @single
-    # (@subset ^ ~@subset).should == @subset
+    specify "A ⊖ ¬A = U" do
+      (@full ^ ~@full).should == @full
+      (@empty ^ ~@empty).should == @full
+      (@single ^ ~@single).should == @full
+      (@subset ^ ~@subset).should == @full
     end
 
     specify "A ∖ ¬A = A" do

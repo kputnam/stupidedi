@@ -23,9 +23,6 @@ can use qualifier values to search for specific instances of SegmentUse
 Fix the error handling with Reader::TokenReader so StateMachine can know when
 reading a segment failed due to EOF at an expected or unexpected boundary.
 
-Code lookup values in pretty printer output. This will force a design choice on
-where the CodeConfig is bound -- globally, to the parse tree, or parameterized?
-
 Create a new AbstractState that bypasses the parse tree. This will be useful
 when we want to skip an entire transaction, functional group, or interchange.
 
@@ -42,6 +39,9 @@ Reader::TokenReader. This would reduce wasteful object creation.
 
 DONE
 -------------------------------------------------------------------------------
+
+Code lookup values in pretty printer output. This will force a design choice on
+where the CodeConfig is bound -- globally, to the parse tree, or parameterized?
 
 Fix the StateMachine's handling of Reader. When ISE is read, the TokenReader
 should be "downcast" to StreamReader. Otherwise we don't correctly skip non-X12

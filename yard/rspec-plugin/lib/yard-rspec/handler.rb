@@ -2,6 +2,8 @@ class RSpecDescribeHandler < YARD::Handlers::Ruby::Base
   handles method_call(:describe)
   
   def process
+    return unless statement.last.last
+
     describes = statement.parameters.first.jump(:string_content).source
 
     # Remove the argument list from describe "#method(a, b, &c)"
@@ -25,6 +27,8 @@ class RSpecContextHandler < YARD::Handlers::Ruby::Base
   handles method_call(:context)
 
   def process
+    return unless statement.last.last
+
     if owner.is_a?(Hash)
       context = statement.parameters.first.jump(:string_content).source
       context = owner[:context] + context + " "

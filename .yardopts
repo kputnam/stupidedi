@@ -10,3 +10,6 @@
 --title 'Stupidedi Documentation'
 
 --markup markdown
+
+lib/**/*.rb
+spec/examples/**/*.example
