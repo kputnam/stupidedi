@@ -104,6 +104,48 @@ describe Stupidedi::Sets::AbsoluteSet do
     end
   end
 
+  describe "#reject(&block)" do
+    specify "A.reject{|a| false } = A" do
+      null.reject{|a| false }.should == null
+      single.reject{|a| false }.should == single
+      subset.reject{|a| false }.should == subset
+      universe.reject{|a| false }.should == universe
+    end
+
+    property("A.reject{|a| false } = A") do
+      mksubset(universe)
+    end.check do |subset|
+      subset.reject{|a| false }.should == subset
+    end
+
+    specify "A.reject{|a| true } = ∅" do
+      null.reject{|a| true }.should == null
+      single.reject{|a| true }.should == null
+      subset.reject{|a| true }.should == null
+      universe.reject{|a| true }.should == null
+    end
+
+    property("A.reject{|a| true } = ∅") do
+      mksubset(universe)
+    end.check do |subset|
+      subset.reject{|a| true }.should == null
+    end
+
+    specify "A.reject{|a| a != b } = {b}, given b ∈ U, A ≠ ∅" do
+      single.reject{|a| a != "a" }.should == %w(a)
+      subset.reject{|a| a != subset.first }.should == [subset.first]
+      universe.reject{|a| a != "a" }.should == %w(a)
+    end
+
+    property("A.reject{|a| a != b } = {b}, given b ∈ U, A ≠ ∅") do
+      subset  = mksubset(universe)
+      element = choose(subset.to_a)
+      [subset, element]
+    end.check do |subset, e|
+      subset.reject{|a| a != e }.should == [e]
+    end
+  end
+
   describe "#include?(element)" do
     specify "x ∉ ∅, for all x" do
       null.include?("a").should be_false
