@@ -36,16 +36,16 @@ describe "Symbol#to_proc" do
     [a, b, c].inject(&:merge).should == {:a => 20, :b => 30, :c => 30, :d => 30}
   end
 
-  it "calls n-ary methods", :random => true do
-    property { map(between(0, 10)) { integer }}.check do |as|
-      :call.to_proc.call(lambda{|*bs| bs }, *as).should == as
-    end
+  property("calls n-ary methods") do
+    map(between(0, 10)) { integer }
+  end.check do |as|
+    :call.to_proc.call(lambda{|*bs| bs }, *as).should == as
   end
 
-  it "calls n-ary methods", :random => true do
-    property { map(between(0, 10)) { integer }}.check do |as|
-      :call.to_proc.call(lambda{|*bs| bs.length }, *as).should == as.length
-    end
+  property("calls n-ary methods") do
+    map(between(0, 10)) { integer }
+  end.check do |as|
+    :call.to_proc.call(lambda{|*bs| bs.length }, *as).should == as.length
   end
 
   it "shortens the syntax when passing n-ary blocks", :ruby => 1.8 do

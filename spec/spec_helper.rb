@@ -1,3 +1,5 @@
+require "pp"
+
 begin
   # RSpec-1: https://github.com/dchelimsky/rspec
   require "spec"

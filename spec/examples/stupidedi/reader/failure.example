@@ -8,14 +8,18 @@ describe Stupidedi::Reader::Failure do
   end
 
   describe "#reason" do
-    it "is the value given to the constructor", :random => true do
-      property { string }.check {|s| failure(s, "remainder").reason.should eq(s) }
+    property("is the value given to the constructor") do
+      string
+    end.check do |s|
+      failure(s, "remainder").reason.should eq(s)
     end
   end
 
   describe "#remainder" do
-    it "is the value given to the constructor", :random => true do
-      property { string }.check {|s| failure("reason", s).remainder.should eq(s) }
+    property("is the value given to the constructor") do
+      string
+    end.check do |s|
+      failure("reason", s).remainder.should eq(s)
     end
   end
 

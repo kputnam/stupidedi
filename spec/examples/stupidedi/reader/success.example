@@ -31,12 +31,12 @@ describe Stupidedi::Reader::Success do
     it "preserves the remainder"
   end
 
-  it "is splattable", :random => true do
-    property { [string, string] }.check do |value, remainder|
-      a, b = *mkreader(value, remainder)
-      a.should == value
-      b.should == remainder
-    end
+  property("is splattable") do
+    [string, string]
+  end.check do |value, remainder|
+    a, b = *mkreader(value, remainder)
+    a.should == value
+    b.should == remainder
   end
 
 end

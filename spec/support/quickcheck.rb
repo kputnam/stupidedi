@@ -6,90 +6,65 @@
 # @see https://github.com/hayeah/rantly
 #
 class QuickCheck
+  autoload :Characters,
+    File.expand_path(File.dirname(__FILE__) + "/quickcheck/characters")
 
+  autoload :Property,
+    File.expand_path(File.dirname(__FILE__) + "/quickcheck/property")
+
+  def initialize
+    @bindings = []
+  end
+end
+
+class << QuickCheck
+  def property(name, base, &setup)
+    QuickCheck::Property.new(name, base, new, &setup)
+  end
+
+  # Generate `count` values, returning nil
+  def each(count, limit = 10, &block)
+    new.each(count, limit, &block)
+  end
+
+  # Generate an array of `count` values
+  def map(count, limit = 10, &block)
+    new.map(count, limit, &block)
+  end
+
+  # Generate a single value
+  def value(limit = 10,  &block)
+    new.value(limit, &block)
+  end
+
+  def generate(count, limit, setup, &block)
+    new.generate(count, limit, setup, &block)
+  end
+
+  # @return [Class]
+  def default
+    @default ||= (superclass == Object) ?
+      Class.new.new :
+      Class.new(superclass).new
+  end
+
+  # @return [void]
+  def has_parameter(name, value)
+    scope = self
+    define_method(name) { instance_variable_get("@_parameter_#{name}") || scope.default.send(name) }
+    default.class.send(:define_method, name) { value }
+  end
+end
+
+class QuickCheck
   module Macro
-    def property(&setup)
-      QuickCheck.property(&setup)
-    end
-  end
-
-  class << self
-    def singleton
-      @singleton ||= new
+    def self.included(base)
+      base.extend(ClassMethods)
     end
 
-    def property(&setup)
-      Property.new(self, &setup)
-    end
-
-    # Generate `count` values, returning nil
-    def each(count, limit = 10, &block)
-      singleton.each(count, limit, &block)
-    end
-
-    # Generate an array of `count` values
-    def map(count, limit = 10, &block)
-      singleton.map(count, limit, &block)
-    end
-
-    # Generate a single value
-    def value(limit = 10,  &block)
-      singleton.value(limit, &block)
-    end
-
-    def generate(count, limit, setup, &block)
-      singleton.generate(count, limit, setup, &block)
-    end
-
-    def default
-      @default ||= (superclass == Object) ? Class.new.new : Class.new(superclass).new
-    end
-
-    def has_parameter(name, value)
-      scope = self
-      define_method(name) { instance_variable_get("@_parameter_#{name}") || scope.default.send(name) }
-      default.class.send(:define_method, name) { value }
-    end
-  end
-
-  class Property
-    def initialize(q, &setup)
-      @q, @setup = q, setup
-    end
-
-    def check(cases = 100, limit = 10)
-      begin
-        count = 0
-        input = nil
-
-        unless block_given?
-          @q.generate(cases, limit, @setup) { count += 1; progress(count, cases) }
-        else
-          @q.generate(cases, limit, @setup) do |input|
-            yield input
-            count += 1
-            progress(count, cases)
-          end
-        end
-      rescue
-        seed = srand # Get the previous seed by setting it
-        srand(seed)  # And restore it to the original value
-
-        $!.message << " -- with seed #{seed} after #{count} successes, on #{input.inspect}"
-        raise $!
-      end
-    end
-
-  private
-
-    PROGRESS = %w(% $ @ # &)
-
-    if $stdout.tty?
-      def progress(completed, total)
-        print((completed == total) ? "" : "#{PROGRESS[completed % 4]}\010")
-      end
-    else
-      def progress(completed, total)
+    module ClassMethods
+      def property(name, &setup)
+        QuickCheck.property(name, self, &setup)
       end
     end
   end
@@ -136,6 +111,8 @@ class QuickCheck
     retries  = count * limit
     failures = successes = 0
 
+    @bindings.push(eval("self", block.binding))
+
     while successes < count
       raise NoMoreTries.new(count * limit, failures) if retries < 0
 
@@ -149,6 +126,8 @@ class QuickCheck
         yield(value) if block_given?
       end
     end
+
+    @bindings.pop
   end
 
   def guard(condition)
@@ -174,7 +153,10 @@ class QuickCheck
         yield
       ensure
         # Remove all the parameters
-        instance_variables.each{|name| remove_instance_variable(name)  }
+        instance_variables.each do |name|
+          next unless /^@_parameter_/ =~ name
+          remove_instance_variable(name)
+        end
 
         # Restore previous parameters from the copy
         prev.each{|name, value| instance_variable_set(name, value) }
@@ -219,7 +201,11 @@ class QuickCheck
 
   # Generates a sized array by iteratively evaluating `block`
   def array(&block)
-    acc = []; size.times { acc << instance_eval(&block) }; acc
+    @bindings.push(eval("self", block.binding))
+
+    (1..size).inject([]) {|a,_| a << instance_eval(&block) }.tap do
+      @bindings.pop
+    end
   end
 
   # Generates a character the given character class
@@ -297,36 +283,23 @@ class QuickCheck
     when Array
       send(generator.head, *generator.tail)
     when Proc
-      instance_eval { generator.call(*args) }
+      @bindings.push(eval("self", generate.binding))
+
+      instance_eval { generator.call(*args) }.tap do
+        @bindings.pop
+      end
     else
       raise ArgumentError, "unrecognized generator type #{generator.inspect}"
     end
   end
 
-  module Characters
-    class << self
-      ASCII = (0..127).inject(""){|string, n| string << n }
-      ALL   = (0..255).inject(""){|string, n| string << n }
+private
 
-      def of(regexp, set = ALL)
-        set.scan(regexp)
-      end
+  def method_missing(name, *args, &block)
+    unless @bindings.empty?
+      @bindings.last.__send__(name, *args, &block)
+    else
+      super
     end
-
-    CLASSES = Hash[
-      :alnum  => Characters.of(/[[:alnum:]]/),
-      :alpha  => Characters.of(/[[:alpha:]]/),
-      :blank  => Characters.of(/[[:blank:]]/),
-      :cntrl  => Characters.of(/[[:cntrl:]]/),
-      :digit  => Characters.of(/[[:digit:]]/),
-      :graph  => Characters.of(/[[:graph:]]/),
-      :lower  => Characters.of(/[[:lower:]]/),
-      :print  => Characters.of(/[[:print:]]/),
-      :punct  => Characters.of(/[[:punct:]]/),
-      :space  => Characters.of(/[[:space:]]/),
-      :upper  => Characters.of(/[[:upper:]]/),
-      :xdigit => Characters.of(/[[:xdigit:]]/),
-      :ascii  => (class << self; ASCII; end),
-      :any    => (class << self; ALL;   end)]
   end
 end

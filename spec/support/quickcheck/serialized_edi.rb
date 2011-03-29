@@ -7,14 +7,23 @@ class QuickCheck
   #
   class SerializedEdi < ::QuickCheck
 
-    has_parameter :separators,
-      Stupidedi::Reader::Separators.new(":", "^", "*", "~")
-
+    #
+    #
+    #
     module Macro
-      def property(&setup)
-        SerializedEdi.property(&setup)
+      def self.included(base)
+        base.extend(ClassMethods)
+      end
+
+      module ClassMethods
+        def property(name, &setup)
+          QuickCheck.property(name, self, &setup)
+        end
       end
     end
+
+    has_parameter :separators,
+      Stupidedi::Reader::Separators.new(":", "^", "*", "~")
 
     def is_delimiter?(c)
       separators.segment    == c or

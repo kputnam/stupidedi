@@ -27,32 +27,26 @@ describe Stupidedi::Reader::Input do
 
   describe "#defined_at?(n)" do
     context "when n is less than input length" do
-      it "is true", :random => true do
-        property do
-          with(:size, between(1, 25)) { [string, between(0, size - 1)] }
-        end.check do |s, n|
-          input(s).defined_at?(n).should be_true
-        end
+      property("is true") do
+        with(:size, between(1, 25)) { [string, between(0, size - 1)] }
+      end.check do |s, n|
+        input(s).defined_at?(n).should be_true
       end
     end
 
     context "when n is equal to input length" do
-      it "is false", :random => true do
-        property do
-          with(:size, between(0, 25)) { [string, size] }
-        end.check do |s, n|
-          input(s).defined_at?(n).should be_false
-        end
+      property("is false") do
+        with(:size, between(0, 25)) { [string, size] }
+      end.check do |s, n|
+        input(s).defined_at?(n).should be_false
       end
     end
 
     context "when n is greater than input length" do
-      it "is false", :random => true do
-        property do
-          with(:size, between(0, 25)) { [string, size + integer.abs] }
-        end.check do |s, n|
-          input(s).defined_at?(n).should be_false
-        end
+      property("is false") do
+        with(:size, between(0, 25)) { [string, size + integer.abs] }
+      end.check do |s, n|
+        input(s).defined_at?(n).should be_false
       end
     end
   end
@@ -82,14 +76,12 @@ describe Stupidedi::Reader::Input do
         input("abc", 10).drop(25).offset.should == 13
       end
 
-      it "updates the input offset", :random => true do
-        property do
-          with(:size, between(0, 25)) do
-            [string, between(size + 1, 1000), between(10, 1000)]
-          end
-        end.check do |s, n, offset|
-          input(s, offset).drop(n).offset.should == offset + s.length
+      property("updates the input offset") do
+        with(:size, between(0, 25)) do
+          [string, between(size + 1, 1000), between(10, 1000)]
         end
+      end.check do |s, n, offset|
+        input(s, offset).drop(n).offset.should == offset + s.length
       end
 
       it "returns an empty input" do
@@ -102,28 +94,24 @@ describe Stupidedi::Reader::Input do
         input("abc", 10).drop(2).offset.should == 12
       end
 
-      it "updates the input offset", :random => true do
-        property do
-          with(:size, between(0, 25)) do
-            [string, between(0, size), between(10, 1000)]
-          end
-        end.check do |s, n, offset|
-          input(s, offset).drop(n).offset.should == offset + n
+      property("updates the input offset") do
+        with(:size, between(0, 25)) do
+          [string, between(0, size), between(10, 1000)]
         end
+      end.check do |s, n, offset|
+        input(s, offset).drop(n).offset.should == offset + n
       end
 
       it "returns an input with the first n elements removed" do
         input(%w(a b c d)).drop(3).should == %w(d)
       end
 
-      it "returns an input with the first n elements removed", :random => true do
-        property do
-          with(:size, between(0, 25)) do
-            [string, between(0, size)]
-          end
-        end.check do |s, n|
-          input(s).drop(n).should == s.slice(n..-1)
+      property("returns an input with the first n elements removed") do
+        with(:size, between(0, 25)) do
+          [string, between(0, size)]
         end
+      end.check do |s, n|
+        input(s).drop(n).should == s.slice(n..-1)
       end
     end
   end

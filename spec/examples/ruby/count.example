@@ -4,10 +4,10 @@ describe "Enumerable#count" do
   include QuickCheck::Macro
 
   context "with no given arguments" do
-    it "returns #length" do
-      property { with(:size, between(0, 20)) { array { integer }}}.check do |enumerable|
-        enumerable.count.should == enumerable.length
-      end
+    property("returns #length") do
+      with(:size, between(0, 20)) { array { integer }}
+    end.check do |enumerable|
+      enumerable.count.should == enumerable.length
     end
   end
 
@@ -29,10 +29,10 @@ describe "Enumerable#count" do
         %w(a b c d e f).count { false }.should == 0
       end
 
-      it "returns 0", :random => true do
-        property { with(:size, between(0, 20)) { array { integer }}}.check do |enumerable|
-          enumerable.count { false }.should == 0
-        end
+      property("returns 0") do
+        with(:size, between(0, 20)) { array { integer }}
+      end.check do |enumerable|
+        enumerable.count { false }.should == 0
       end
     end
 
@@ -41,10 +41,10 @@ describe "Enumerable#count" do
         %w(a b c d e f).count { true }.should == 6
       end
 
-      it "returns #length", :random => true do
-        property { with(:size, between(0, 20)) { array { integer }}}.check do |enumerable|
-          enumerable.count { true }.should == enumerable.length
-        end
+      property("returns #length") do
+        with(:size, between(0, 20)) { array { integer }}
+      end.check do |enumerable|
+        enumerable.count { true }.should == enumerable.length
       end
     end
 
@@ -53,16 +53,14 @@ describe "Enumerable#count" do
         %w(a bc d ef g hi).count{|s| s.length == 2 }.should == 3
       end
 
-      it "returns the number of elements that satisfy the predicate", :random => true do
-        property do
-          divisor    = choose([1,2,3,4])
-          enumerable = with(:size, between(0, 20)) { array { integer }}
+      property("returns the number of elements that satisfy the predicate") do
+        divisor    = choose([1,2,3,4])
+        enumerable = with(:size, between(0, 20)) { array { integer }}
 
-          [enumerable, divisor]
-        end.check do |enumerable, divisor|
-          enumerable.count{|n| n.modulo(divisor).zero? }.should ==
-            enumerable.inject(0){|sum,n| sum + ((n.modulo(divisor).zero?) ? 1 : 0) }
-        end
+        [enumerable, divisor]
+      end.check do |enumerable, divisor|
+        enumerable.count{|n| n.modulo(divisor).zero? }.should ==
+          enumerable.inject(0){|sum,n| sum + ((n.modulo(divisor).zero?) ? 1 : 0) }
       end
     end
 

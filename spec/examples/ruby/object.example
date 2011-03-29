@@ -15,11 +15,11 @@ describe "Object#cons" do
       "a".cons(%w(b c d)).should == %w(a b c d)
     end
 
-    it "prepends the object" do
-      property { [character, array { character }] }.check do |a, as|
-        a.cons(as).length.should == 1 + as.length
-        a.cons(as).first.should  == a
-      end
+    property("prepends the object") do
+      [character, array { character }]
+    end.check do |a, as|
+      a.cons(as).length.should == 1 + as.length
+      a.cons(as).first.should  == a
     end
 
     it "does not modify the argument" do
