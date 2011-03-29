@@ -3,22 +3,43 @@ module Stupidedi
 
     class DelegatedInput < AbstractInput
 
-      # @return [Integer]
-      attr_reader :offset
-
-      # @return [Integer]
-      attr_reader :line
-
-      # @return [Integer]
-      attr_reader :column
-
-      delegate :defined_at?, :empty?, :take, :at, :index, :==, :to => :@delegate
-
       def initialize(delegate, offset = 0, line = 1, column = 1)
         @delegate, @offset, @line, @column = delegate, offset, line, column
       end
 
-      # @return [DelegatedInput]
+      # @group Querying the Position
+      ########################################################################
+
+      # (see AbstractInput#offset)
+      attr_reader :offset
+
+      # (see AbstractInput#line)
+      attr_reader :line
+
+      # (see AbstractInput#column)
+      attr_reader :column
+
+      # (see AbstractInput#position)
+      def position
+        Position.new(@offset, @line, @column, nil)
+      end
+
+      # @group Reading the Input
+      ########################################################################
+
+      # (see AbstractInput#take)
+      delegate :take, :to => :@delegate
+
+      # (see AbstractInput#at)
+      delegate :at, :to => :@delegate
+
+      # (see AbstractInput#index)
+      delegate :index, :to => :@delegate
+
+      # @group Advancing the Cursor
+      ########################################################################
+
+      # (see AbstractInput#drop)
       def drop(n)
         raise ArgumentError, "n must be positive" unless n >= 0
 
@@ -40,18 +61,20 @@ module Stupidedi
              :column   => column)
       end
 
-      # @return [DelegatedInput]
-      def copy(changes = {})
-        DelegatedInput.new \
-          changes.fetch(:delegate, @delegate),
-          changes.fetch(:offset, @offset),
-          changes.fetch(:line, @line),
-          changes.fetch(:column, @column)
-      end
+      # @group Testing the Input
+      ########################################################################
 
-      def position
-        Position.new(@offset, @line, @column, nil)
-      end
+      # (see AbstractInput#defined_at?)
+      delegate :defined_at?, :to => :@delegate
+
+      # (see AbstractInput#empty?)
+      delegate :empty?, :to => :@delegate
+
+      # (see AbstractInput#==)
+      delegate :==, :to => :@delegate
+
+      # @endgroup
+      ########################################################################
 
       # @return [void]
       def pretty_print(q)
@@ -69,6 +92,17 @@ module Stupidedi
           q.text preview
           q.text " at line #{@line}, column #{@column}, offset #{@offset}"
         end
+      end
+
+    private
+
+      # @return [DelegatedInput]
+      def copy(changes = {})
+        DelegatedInput.new \
+          changes.fetch(:delegate, @delegate),
+          changes.fetch(:offset, @offset),
+          changes.fetch(:line, @line),
+          changes.fetch(:column, @column)
       end
     end
 

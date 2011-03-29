@@ -35,7 +35,7 @@ module Stupidedi
     end
 
     class << InterchangeState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [InterchangeState]

@@ -1,0 +1,73 @@
+require "spec_helper"
+
+describe Stupidedi::Reader::Separators do
+
+  let(:empty) { Stupidedi::Reader::Separators.empty }
+
+  describe ".empty" do
+    it "returns Separators(nil, nil, nil, nil)" do
+      empty.element.should be_nil
+      empty.segment.should be_nil
+      empty.component.should be_nil
+      empty.repetition.should be_nil
+    end
+  end
+
+  describe "#merge(other)" do
+    let(:first) do
+      empty.copy(:element => "a",
+                 :segment => "b",
+                 :component => "c",
+                 :repetition => "d")
+    end
+
+    context "if other.element.nil?" do
+      it "then a.merge(b).element == a.element" do
+        first.merge(empty).element.should == first.element
+      end
+    end
+
+    context "if not other.element.nil?" do
+      it "then a.merge(b).element == b.element" do
+        first.merge(empty.copy(:element => "A")).element.should == "A"
+      end
+    end
+
+    context "if other.segment.nil?" do
+      it "then a.merge(b).segment == a.segment" do
+        first.merge(empty).segment.should == first.segment
+      end
+    end
+
+    context "if not other.segment.nil?" do
+      it "then a.merge(b).segment == b.segment" do
+        first.merge(empty.copy(:segment => "A")).segment.should == "A"
+      end
+    end
+
+    context "if other.component.nil?" do
+      it "then a.merge(b).component == a.component" do
+        first.merge(empty).component.should == first.component
+      end
+    end
+
+    context "if not other.component.nil?" do
+      it "then a.merge(b).component == b.component" do
+        first.merge(empty.copy(:component => "A")).component.should == "A"
+      end
+    end
+
+    context "if other.repetition.nil?" do
+      it "then a.merge(b).repetition == a.repetition" do
+        first.merge(empty).repetition.should == first.repetition
+      end
+    end
+
+    context "if not other.repetition.nil?" do
+      it "then a.merge(b).repetition == b.repetition" do
+        first.merge(empty.copy(:repetition => "A")).repetition.should == "A"
+      end
+    end
+  end
+  
+end

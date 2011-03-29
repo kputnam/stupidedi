@@ -134,7 +134,7 @@ module Stupidedi
           end
 
           class << TimeVal
-            # @group Constructor Methods
+            # @group Constructors
             ###################################################################
 
             # Creates an empty time value.

@@ -27,7 +27,7 @@ module Stupidedi
     end
 
     class << LoopState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [LoopState]

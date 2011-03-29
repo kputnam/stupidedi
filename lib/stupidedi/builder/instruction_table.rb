@@ -186,7 +186,7 @@ module Stupidedi
     end
 
     class << InstructionTable
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [InstructionTable::Empty]

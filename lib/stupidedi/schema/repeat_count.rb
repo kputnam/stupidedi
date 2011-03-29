@@ -36,7 +36,7 @@ module Stupidedi
     end
 
     class << RepeatCount
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       def bounded(n)

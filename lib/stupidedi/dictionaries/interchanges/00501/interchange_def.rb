@@ -11,7 +11,7 @@ module Stupidedi
         r = FunctionalGroups::FiftyTen::ElementReqs
 
         InterchangeDef = Class.new(Envelope::InterchangeDef) do
-          # @group Constructor Methods
+          # @group Constructors
           #####################################################################
 
           # @return [InterchangeVal]

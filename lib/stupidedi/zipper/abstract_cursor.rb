@@ -10,7 +10,7 @@ module Stupidedi
       abstract :path
 
       #########################################################################
-      # @group Query Methods
+      # @group Querying the Tree Location
 
       # (see AbstractPath#depth)
       def depth
@@ -35,7 +35,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Traversal Methods
+      # @group Traversing the Tree
 
       # @return [MemoizedCursor]
       def down
@@ -92,7 +92,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Editing Methods
+      # @group Editing the Tree
 
       # @return [EditedCursor]
       abstract :append, :args => %w(node)

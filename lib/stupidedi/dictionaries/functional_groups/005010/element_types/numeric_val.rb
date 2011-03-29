@@ -161,7 +161,7 @@ module Stupidedi
           end
 
           class << NumericVal
-            # @group Constructor Methods
+            # @group Constructors
             ###################################################################
 
             # @return [NumericVal::Empty]

@@ -1,0 +1,90 @@
+# encoding: UTF-8
+require "spec_helper"
+
+describe Float do
+  describe "#to_d" do
+    include QuickCheck::Macro
+
+    # This fails inexplicably in Ruby 1.9.2, but works when
+    # other specs aren't run. It also behaves as expected
+    # in "rake console"...
+    property("raises an error", :ruby => "1.8") do
+      float
+    end.check do |f|
+      lambda { f.to_d }.should raise_error
+    end
+  end
+end
+
+describe Integer do
+  describe "#to_d" do
+    include QuickCheck::Macro
+
+    property("= n") do
+      integer
+    end.check{|n| n.should == n.to_d }
+
+    property("is a BigDecimal") do
+      integer
+    end.check{|n| n.to_d.should be_a(BigDecimal) }
+  end
+end
+
+describe Rational do
+  describe "#to_d" do
+    include QuickCheck::Macro
+
+    property("≈ n") do
+      Rational(integer, integer)
+    end.check{|r| r.to_d.should be_within(1e-10).of(r) }
+
+    property("is a BigDecimal") do
+      Rational(integer, integer)
+    end.check{|r| r.to_d.should be_a(BigDecimal) }
+  end
+end
+
+describe BigDecimal do
+  describe "#to_d" do
+    include QuickCheck::Macro
+
+    property("= n") do
+      integer.to_d
+    end.check{|b| b.to_d.should == b }
+  end
+end
+
+describe String do
+  describe "#to_d" do
+    include QuickCheck::Macro
+
+    context "when string has a valid format" do
+      property("= BigDecimal(s)") do
+        Rational(integer, integer).to_d.to_s("F")
+      end.check{|s| s.to_d.should == BigDecimal(s) }
+
+      property("= BigDecimal(s)") do
+        Rational(integer, integer).to_d.to_s
+      end.check{|s| s.to_d.should == BigDecimal(s) }
+
+      property("= BigDecimal(s)") do
+        integer.to_s
+      end.check{|s| s.to_d.should == BigDecimal(s) }
+
+      property("= BigDecimal(s)") do
+        Rational(integer, integer).to_f.to_s
+      end.check{|s| s.to_d.should == BigDecimal(s) }
+    end
+
+    context "when string has an invalid format" do
+      # This fails inexplicably in Ruby 1.9.2, but works when
+      # other specs aren't run. It also behaves as expected
+      # in "rake console"...
+      property("raises an error", :ruby => "1.8") do
+        string
+      end.check do |s|
+        lambda { s.to_d }.should raise_error
+      end
+    end
+  end
+end

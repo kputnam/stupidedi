@@ -15,7 +15,7 @@ module Stupidedi
       end
 
       #########################################################################
-      # @group Query Methods
+      # @group Query the Tree Location
 
       # @return 0
       def depth
@@ -45,7 +45,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Traversal Methods
+      # @group Traversing the Tree
 
       # @return [void]
       def next
@@ -74,7 +74,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Editing Methods
+      # @group Editing the Tree
 
       # @return [void]
       def append(node)

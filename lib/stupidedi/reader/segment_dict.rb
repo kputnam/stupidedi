@@ -149,7 +149,7 @@ module Stupidedi
     end
 
     class << SegmentDict
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [SegmentDict::Empty]

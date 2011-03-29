@@ -48,7 +48,7 @@ module Stupidedi
     end
 
     class << CodeList
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [CodeList::Internal]

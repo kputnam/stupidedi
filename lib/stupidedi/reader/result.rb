@@ -6,7 +6,7 @@ module Stupidedi
     end
 
     class << Result
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [Result::Success]

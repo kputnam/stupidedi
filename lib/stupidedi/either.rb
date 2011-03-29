@@ -9,7 +9,7 @@ module Stupidedi
     abstract :defined?
 
     ###########################################################################
-    # @group Filter Methods
+    # @group Filtering the Value
 
     # @return [Either]
     abstract :select, :args => %w(reason='select' &block)
@@ -21,7 +21,7 @@ module Stupidedi
     ###########################################################################
 
     ###########################################################################
-    # @group Combinator Methods
+    # @group Transforming the Value
 
     # @return [Either]
     abstract :map, :args => %w(&block)
@@ -57,7 +57,7 @@ module Stupidedi
       end
 
       #########################################################################
-      # @group Filter Methods
+      # @group Filtering the Value
 
       # @return [Either]
       # @yieldparam value
@@ -85,7 +85,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Combinator Methods
+      # @group Transforming the Value
 
       # @return [Success]
       # @yieldparam value
@@ -154,7 +154,7 @@ module Stupidedi
       end
 
       #########################################################################
-      # @group Filter Methods
+      # @group Filtering the Value
 
       # @return [Failure]
       def select(reason = nil)
@@ -170,7 +170,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Combinator Methods
+      # @group Transforming the Value
 
       # @return [Failure]
       def map
@@ -241,7 +241,7 @@ module Stupidedi
 
   class << Either
     ###########################################################################
-    # @group Constructor Methods
+    # @group Constructors
 
     # @return [Success]
     def success(value)

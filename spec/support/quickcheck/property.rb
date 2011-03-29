@@ -39,35 +39,53 @@ class QuickCheck
           return
         end
 
-        begin
-          count = 0
+        count = 0
 
-          if block.nil?
+        if block.nil?
+          begin
             property.qc.generate(cases, limit, property.setup) do
               count += 1
               property.progress(count, cases)
             end
-          elsif block.arity == 1
-            property.qc.generate(cases, limit, property.setup) do |input|
+          rescue
+            seed = srand # Get the previous seed by setting it
+            srand(seed)  # But immediately restore it
+
+            $!.message << " -- with srand #{seed} after #{count} successes"
+            raise $!
+          end
+        elsif block.arity == 1
+          property.qc.generate(cases, limit, property.setup) do |input|
+            begin
               instance_exec(input, &block)
 
               count += 1
               property.progress(count, cases)
+            rescue
+              seed = srand # Get the previous seed by setting it
+              srand(seed)  # But immediately restore it
+
+              $!.message << " -- with srand #{seed} after #{count} successes, input: #{input.inspect}"
+              raise $!
             end
-          else
-            property.qc.generate(cases, limit, property.setup) do |input|
+          end
+
+        else
+          property.qc.generate(cases, limit, property.setup) do |input|
+            begin
               instance_exec(*input, &block)
 
               count += 1
               property.progress(count, cases)
+            rescue
+              seed = srand # Get the previous seed by setting it
+              srand(seed)  # But immediately restore it
+
+              $!.message << " -- with srand #{seed} after #{count} successes, input: #{input.inspect}"
+              raise $!
             end
           end
-        rescue
-          seed = srand # Get the previous seed by setting it
-          srand(seed)  # But immediately restore it
 
-          $!.message << " -- with seed #{seed} after #{count} successes"
-          raise $!
         end
       end
     end

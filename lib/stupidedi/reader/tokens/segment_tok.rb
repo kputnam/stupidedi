@@ -31,7 +31,7 @@ module Stupidedi
     end
 
     class << SegmentTok
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [SegmentTok]

@@ -39,7 +39,7 @@ module Stupidedi
     end
 
     class << FunctionalGroupState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [FunctionalGroupState]

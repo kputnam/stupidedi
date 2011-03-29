@@ -27,7 +27,7 @@ module Stupidedi
     end
 
     class << TransactionSetState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [TransactionSetState]

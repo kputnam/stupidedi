@@ -143,7 +143,7 @@ module Stupidedi
     end
 
     class << StateMachine
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [StateMachine]

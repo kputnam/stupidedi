@@ -99,7 +99,7 @@ module Stupidedi
           end
 
           class << StringVal
-            # @group Constructor Methods
+            # @group Constructors
             ###################################################################
 
             # @return [StringVal::Empty]

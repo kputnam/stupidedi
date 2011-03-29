@@ -12,7 +12,7 @@ module Stupidedi
       end
 
       #########################################################################
-      # @group Query Methods
+      # @group Querying the Tree Location
 
       def leaf?
         true
@@ -38,7 +38,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Traversal Methods
+      # @group Traversing the Tree
 
       # @return [AbstractCursor]
       def up
@@ -69,7 +69,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Editing Methods
+      # @group Editing the Tree
 
       # @return [EditedCursor]
       def append(node)

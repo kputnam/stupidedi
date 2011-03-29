@@ -320,7 +320,7 @@ module Stupidedi
     end
 
     class << ConstraintTable
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # Given a list of {Instruction} values for the same segment identifier,

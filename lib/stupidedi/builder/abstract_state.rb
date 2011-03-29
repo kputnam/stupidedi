@@ -13,6 +13,9 @@ module Stupidedi
       # @return [InstructionTable]
       abstract :instructions
 
+      # @group State Traversal
+      #########################################################################
+
       # @return [AbstractState]
       def pop(count)
         if count.zero?
@@ -35,6 +38,9 @@ module Stupidedi
       def add(segment_tok, segment_use)
         copy(:zipper => zipper.append(segment(segment_tok, segment_use)))
       end
+
+      # @endgroup
+      #########################################################################
 
       # @return [Reader::Separators]
       def separators
@@ -73,7 +79,7 @@ module Stupidedi
     end
 
     class << AbstractState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # This method constructs a new instance of (a subclass of) {AbstractState}

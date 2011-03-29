@@ -18,6 +18,7 @@ module Stupidedi
     autoload :SimpleElementTok,     "stupidedi/reader/tokens/simple_element_tok"
 
     autoload :Input,          "stupidedi/reader/input"
+    autoload :Position,       "stupidedi/reader/position"
     autoload :AbstractInput,  "stupidedi/reader/input/abstract_input"
     autoload :DelegatedInput, "stupidedi/reader/input/delegated_input"
     autoload :FileInput,      "stupidedi/reader/input/file_input"

@@ -65,7 +65,7 @@ module Stupidedi
     end
 
     class << TransmissionState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [TransmissionState]

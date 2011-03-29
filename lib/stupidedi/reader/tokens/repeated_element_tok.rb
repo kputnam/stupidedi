@@ -31,7 +31,7 @@ module Stupidedi
     end
 
     class << RepeatedElementTok
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [RepeatedElementTok]

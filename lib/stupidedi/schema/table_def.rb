@@ -93,7 +93,7 @@ module Stupidedi
     end
 
     class << TableDef
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [TableDef]

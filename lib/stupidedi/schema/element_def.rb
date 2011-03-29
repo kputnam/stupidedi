@@ -131,7 +131,7 @@ module Stupidedi
     end
 
     class << CompositeElementDef
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [CompositeElementDef]

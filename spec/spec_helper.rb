@@ -33,4 +33,6 @@ RSpec.configure do |config|
 
 # config.filter_run(:random => true)
 # config.filter_run(:focus  => true)
+
+# srand 44182052595481443184625304627718313206
 end

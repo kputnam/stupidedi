@@ -229,7 +229,7 @@ module Stupidedi
     end
 
     class << RelativeSet
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [RelativeSet]

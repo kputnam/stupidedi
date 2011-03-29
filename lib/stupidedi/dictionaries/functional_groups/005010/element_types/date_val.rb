@@ -249,7 +249,7 @@ module Stupidedi
           end
 
           class << DateVal
-            # @group Constructor Methods
+            # @group Constructors
             ###################################################################
 
             # @return [DateVal::Empty]

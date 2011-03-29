@@ -5,7 +5,7 @@ module Stupidedi
     end
 
     class << Input
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [Input]

@@ -71,7 +71,7 @@ module Stupidedi
 
     class << RepeatedElementVal
       #########################################################################
-      # @group Constructor Methods
+      # @group Constructors
 
       # @return [RepeatedElementVal]
       def empty(element_use)

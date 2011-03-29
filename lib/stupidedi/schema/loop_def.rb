@@ -107,7 +107,7 @@ module Stupidedi
     end
 
     class << LoopDef
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [LoopDef]

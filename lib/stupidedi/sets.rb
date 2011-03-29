@@ -10,7 +10,7 @@ module Stupidedi
   end
 
   class << Sets
-    # @group Constructor Methods
+    # @group Constructors
     ###########################################################################
 
     # @return [Sets::AbstractSet]

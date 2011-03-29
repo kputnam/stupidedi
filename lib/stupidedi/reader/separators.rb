@@ -2,6 +2,9 @@ module Stupidedi
   module Reader
 
     #
+    # Stores the separators used to tokenize X12 from an input stream and
+    # serialize it to an output stream.
+    #
     # @see X222.pdf B.1.1.2.5 Delimiters
     #
     class Separators
@@ -32,6 +35,8 @@ module Stupidedi
           changes.fetch(:segment, @segment)
       end
 
+      # Creates a new value that has the separators from `other`, when they
+      # are not nil, and will use separators from `self` otherwise.
       def merge(other)
         Separators.new \
           other.component  || @component,
@@ -47,7 +52,7 @@ module Stupidedi
     end
 
     class << Separators
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [Separators]

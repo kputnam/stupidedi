@@ -64,7 +64,7 @@ module Stupidedi
       # @return [Integer]
       delegate :line, :to => :position
 
-      # The column of the current position. The column resets to `0` each time
+      # The column of the current position. The column resets to `1` each time
       # a newline is read
       #
       # @return [Integer]
@@ -81,14 +81,14 @@ module Stupidedi
       # Read the first `n` elements
       #
       # @param [Integer] n number of elements to read (`n >= 0`)
-      abstract :take
+      abstract :take, :args => %w(n)
 
       # Read a single element at the given index. Result is undefined unless
       # the input contains enough elements, which can be tested with
       # {#defined_at?}
       #
       # @param [Integer] n the index of the element to read (`n >= 0`)
-      abstract :at
+      abstract :at, :args => %w(n)
 
       # Returns the smallest `n`, where {#at}`(n)` == `element`
       #
@@ -105,7 +105,7 @@ module Stupidedi
       #
       # @param [Integer] n the number of elements to advance (`n >= 0`)
       #
-      # @return [AbstractInput] new object with advanced cursor
+      # @return [AbstractInput] new object with the remaining input
       abstract :drop, :args => %w(n)
 
       # @group Testing the Input
@@ -119,6 +119,11 @@ module Stupidedi
 
       # True if no elements remain in the input
       abstract :empty?
+
+      # True if `other` equals the remaining input
+      #
+      # @return [Boolean]
+      abstract :==, :args => %w(other)
     end
 
   end

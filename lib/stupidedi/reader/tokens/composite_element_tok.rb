@@ -40,7 +40,7 @@ module Stupidedi
     end
 
     class << CompositeElementTok
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [CompositeElementTok]

@@ -271,7 +271,7 @@ module Stupidedi
     end
 
     class << AbsoluteSet
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [AbsoluteSet]

@@ -112,7 +112,7 @@ module Stupidedi
           end
 
           class << IdentifierVal
-            # @group Constructor Methods
+            # @group Constructors
             ###################################################################
 
             # @return [IdentifierVal::Empty]

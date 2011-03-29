@@ -166,7 +166,7 @@ module Stupidedi
           end
 
           class << DecimalVal
-            # @group Constructor Methods
+            # @group Constructors
             ###################################################################
 
             # @return [DecimalVal::Empty]

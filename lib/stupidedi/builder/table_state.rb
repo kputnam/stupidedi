@@ -27,7 +27,7 @@ module Stupidedi
     end
 
     class << TableState
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [TableState]

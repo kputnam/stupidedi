@@ -80,7 +80,7 @@ module Stupidedi
     end
 
     class << SegmentDef
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       # @return [SegmentDef]

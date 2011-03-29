@@ -40,7 +40,7 @@ module Stupidedi
     end
 
     class << SimpleElementTok
-      # @group Constructor Methods
+      # @group Constructors
       #########################################################################
 
       def build(value, start, remainder)
