@@ -3,25 +3,25 @@ require "spec_helper"
 describe Stupidedi::Reader::Input do
   include QuickCheck::Macro
 
-  def input(*args)
+  def mkinput(*args)
     Stupidedi::Reader::Input.build(*args)
   end
 
   describe "#offset" do
     it "returns the value given to the constructor" do
-      input("", 10, 20, 30).offset.should == 10
+      mkinput("", 10, 20, 30).offset.should == 10
     end
   end
 
   describe "#line" do
     it "returns the value given to the constructor" do
-      input("", 10, 20, 30).line.should == 20
+      mkinput("", 10, 20, 30).line.should == 20
     end
   end
 
   describe "#column" do
     it "returns the value given to the constructor" do
-      input("", 10, 20, 30).column.should == 30
+      mkinput("", 10, 20, 30).column.should == 30
     end
   end
 
@@ -30,7 +30,7 @@ describe Stupidedi::Reader::Input do
       property("is true") do
         with(:size, between(1, 25)) { [string, between(0, size - 1)] }
       end.check do |s, n|
-        input(s).defined_at?(n).should be_true
+        mkinput(s).defined_at?(n).should be_true
       end
     end
 
@@ -38,7 +38,7 @@ describe Stupidedi::Reader::Input do
       property("is false") do
         with(:size, between(0, 25)) { [string, size] }
       end.check do |s, n|
-        input(s).defined_at?(n).should be_false
+        mkinput(s).defined_at?(n).should be_false
       end
     end
 
@@ -46,34 +46,34 @@ describe Stupidedi::Reader::Input do
       property("is false") do
         with(:size, between(0, 25)) { [string, size + integer.abs] }
       end.check do |s, n|
-        input(s).defined_at?(n).should be_false
+        mkinput(s).defined_at?(n).should be_false
       end
     end
   end
 
   describe "#empty?" do
     it "when the input is empty" do
-      input("").should be_empty
-      input([]).should be_empty
+      mkinput("").should be_empty
+      mkinput([]).should be_empty
     end
   end
 
   describe "#drop(n)" do
     context "when n is zero" do
       it "returns itself" do
-        input("abc").drop(0).should == "abc"
+        mkinput("abc").drop(0).should == "abc"
       end
     end
 
     context "when n is negative" do
       it "raises an error" do
-        lambda { input("abc").drop(-1) }.should raise_error
+        lambda { mkinput("abc").drop(-1) }.should raise_error
       end
     end
 
     context "when less than n elements are available" do
       it "updates the input offset" do
-        input("abc", 10).drop(25).offset.should == 13
+        mkinput("abc", 10).drop(25).offset.should == 13
       end
 
       property("updates the input offset") do
@@ -81,17 +81,17 @@ describe Stupidedi::Reader::Input do
           [string, between(size + 1, 1000), between(10, 1000)]
         end
       end.check do |s, n, offset|
-        input(s, offset).drop(n).offset.should == offset + s.length
+        mkinput(s, offset).drop(n).offset.should == offset + s.length
       end
 
       it "returns an empty input" do
-        input("abc", 10).drop(10).should be_empty
+        mkinput("abc", 10).drop(10).should be_empty
       end
     end
 
     context "when n elements are available" do
       it "updates the input offset" do
-        input("abc", 10).drop(2).offset.should == 12
+        mkinput("abc", 10).drop(2).offset.should == 12
       end
 
       property("updates the input offset") do
@@ -99,11 +99,11 @@ describe Stupidedi::Reader::Input do
           [string, between(0, size), between(10, 1000)]
         end
       end.check do |s, n, offset|
-        input(s, offset).drop(n).offset.should == offset + n
+        mkinput(s, offset).drop(n).offset.should == offset + n
       end
 
       it "returns an input with the first n elements removed" do
-        input(%w(a b c d)).drop(3).should == %w(d)
+        mkinput(%w(a b c d)).drop(3).should == %w(d)
       end
 
       property("returns an input with the first n elements removed") do
@@ -111,7 +111,7 @@ describe Stupidedi::Reader::Input do
           [string, between(0, size)]
         end
       end.check do |s, n|
-        input(s).drop(n).should == s.slice(n..-1)
+        mkinput(s).drop(n).should == s.slice(n..-1)
       end
     end
   end
@@ -119,31 +119,31 @@ describe Stupidedi::Reader::Input do
   describe "#take(n)" do
     context "when n is zero" do
       it "returns an empty value" do
-        input("abc").take(0).should == ""
+        mkinput("abc").take(0).should == ""
       end
 
       it "returns an empty value" do
-        input(%w(a b c)).take(0).should == []
+        mkinput(%w(a b c)).take(0).should == []
       end
     end
 
     context "when n is negative" do
       it "raises an error" do
-        lambda { input("abc").take(-1) }.should raise_error
+        lambda { mkinput("abc").take(-1) }.should raise_error
       end
     end
 
     context "when less than n elements are available" do
       it "returns all available elements" do
-        input("ab").take(3).should == "ab"
+        mkinput("ab").take(3).should == "ab"
       end
 
       it "returns all available elements" do
-        input(%w(a b)).take(3).should == %w(a b)
+        mkinput(%w(a b)).take(3).should == %w(a b)
       end
 
       it "does not update the input offset" do
-        input("abc", 500).tap do |x|
+        mkinput("abc", 500).tap do |x|
           x.take(4)
         end.offset.should == 500
       end
@@ -151,15 +151,15 @@ describe Stupidedi::Reader::Input do
 
     context "when n elements are available" do
       it "returns the first n elements" do
-        input("abc").take(2).should == "ab"
+        mkinput("abc").take(2).should == "ab"
       end
 
       it "returns the first n elements" do
-        input(%w(a b c)).take(2).should == %w(a b)
+        mkinput(%w(a b c)).take(2).should == %w(a b)
       end
 
       it "does not update the input offset" do
-        input("abc", 500).tap do |x|
+        mkinput("abc", 500).tap do |x|
           x.take(2)
         end.offset.should == 500
       end
@@ -169,21 +169,21 @@ describe Stupidedi::Reader::Input do
   describe "#at(n)" do
     context "when n is negative" do
       it "raises an error" do
-        lambda { input("abc").at(-1) }.should raise_error
+        lambda { mkinput("abc").at(-1) }.should raise_error
       end
     end
 
     context "when the input is defined_at?(n)" do
       it "returns the element at index n" do
-        input("abc").at(2).should == "c"
+        mkinput("abc").at(2).should == "c"
       end
 
       it "returns the element at index n" do
-        input(%w(a b c)).at(2).should == "c"
+        mkinput(%w(a b c)).at(2).should == "c"
       end
 
       it "does not update the input offset" do
-        input("abc", 500).tap do |x|
+        mkinput("abc", 500).tap do |x|
           x.at(5)
         end.offset.should == 500
       end
@@ -191,15 +191,15 @@ describe Stupidedi::Reader::Input do
 
     context "when the input is not defined_at?(n)" do
       it "returns nil" do
-        input("abc").at(3).should be_nil
+        mkinput("abc").at(3).should be_nil
       end
 
       it "returns nil" do
-        input(%w(a b c)).at(3).should be_nil
+        mkinput(%w(a b c)).at(3).should be_nil
       end
 
       it "does not update the input offset" do
-        input("abc", 500).tap do |x|
+        mkinput("abc", 500).tap do |x|
           x.at(1)
         end.offset.should == 500
       end
@@ -209,15 +209,15 @@ describe Stupidedi::Reader::Input do
   describe "#index(search)" do
     context "when search is an element in the input" do
       it "returns the smallest index" do
-        input("abcabc").index("b").should == 1
-        input(%w(a b c a b c)).index("b").should == 1
+        mkinput("abcabc").index("b").should == 1
+        mkinput(%w(a b c a b c)).index("b").should == 1
       end
     end
 
     context "when search is not an element in the input" do
       it "returns nil" do
-        input("abc").index("d").should be_nil
-        input(%w(a b c)).index("d").should be_nil
+        mkinput("abc").index("d").should be_nil
+        mkinput(%w(a b c)).index("d").should be_nil
       end
     end
   end

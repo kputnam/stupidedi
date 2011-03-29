@@ -57,9 +57,6 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
 
     unless node
       log.debug "Unknown node #{owner[:describes]} for spec defined in #{statement.file} near line #{statement.line}"
-      # statement.file
-      # statement.line
-      # owner[:describes]
       return
     end
 
@@ -74,5 +71,43 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
             file: statement.file,
             line: statement.line,
             source: source ]
+  end
+end
+
+class RSpecCheckHandler < YARD::Handlers::Ruby::Base
+  handles method_call(:check)
+
+  def process
+    return unless owner.is_a?(Hash)
+    return unless statement.first
+
+    parse_block(statement.first, owner: owner.merge(source: statement.source))
+  end
+end
+
+class RSpecPropertyHandler < YARD::Handlers::Ruby::Base
+  handles method_call(:property)
+
+  def process
+    return unless owner.is_a?(Hash)
+    return unless owner[:source] and owner[:describes]
+
+    node = YARD::Registry.resolve(nil, owner[:describes], true)
+    spec = if statement.parameters
+             statement.parameters.first.jump(:string_content).source
+           else
+             "untitled property"
+           end
+
+    unless node
+      log.debug "Unknown node #{owner[:describes]} for spec defined in #{statement.file} near line #{statement.line}"
+      return
+    end
+
+    (node[:specifications] ||= []) << \
+      Hash[ name: owner[:context] + spec,
+            file: statement.file,
+            line: statement.line,
+            source: owner[:source].strip ]
   end
 end

@@ -22,7 +22,7 @@ describe "Object#cons" do
       a.cons(as).first.should  == a
     end
 
-    it "does not modify the argument" do
+    it "does not destructively modify the argument" do
       array = %w(b c d)
         "a".cons(array)
       array.should == %w(b c d)
@@ -42,7 +42,7 @@ describe "Object#snoc" do
       "d".snoc(%w(a b c)).should == %w(a b c d)
     end
 
-    it "does not modify the argument" do
+    it "does not destructively modify the argument" do
       array = %w(a b c)
         "d".snoc(array)
       array.should == %w(a b c)

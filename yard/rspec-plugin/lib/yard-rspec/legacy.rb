@@ -52,9 +52,6 @@ class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
 
     unless node
       log.debug "Unknown node #{owner[:describes]} for spec defined in #{parser.file} near line #{statement.line}"
-      # parser.file
-      # statement.line
-      # owner[:describes]
       return
     end
 
@@ -68,3 +65,30 @@ class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
   end
 end
 
+class LegacyRSpecPropertyHandler < YARD::Handlers::Ruby::Legacy::Base
+  MATCH = /\A(?:property)\(?(['"])(.+?)\1(?:.*?)\s+(?:do|\{)/
+
+  handles MATCH
+  handles /\A(?:property)\s+(?:do|\{)/
+
+  def process
+    return unless owner.is_a?(Hash)
+    return unless owner[:describes]
+
+    node = YARD::Registry.resolve(nil, owner[:describes], true)
+    spec = statement.tokens.to_s[MATCH, 2] || "untitled spec"
+
+    unless node
+      log.debug "Unknown node #{owner[:describes]} for spec defined in #{parser.file} near line #{statement.line}"
+      return
+    end
+
+    source = statement.to_s.strip
+
+    (node[:specifications] ||= []) << \
+      Hash[ :name => owner[:context] + spec,
+            :file => parser.file,
+            :line => statement.line,
+            :source => source ]
+  end
+end

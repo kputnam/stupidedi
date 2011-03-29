@@ -5,82 +5,87 @@ describe Stupidedi::Sets::AbsoluteSet do
   include QuickCheck::Macro
 
   def mksubset(universe)
-    universe.copy(:mask => between(0, 2**universe.size-1))
+    universe.copy(:mask => rand(2**universe.size))
   end
 
   def mksingleton(universe)
+    universe.copy(:mask => (2**rand(universe.size + 1) >> 1))
   end
 
-  before do
-    @items    = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z)
-    @universe = Stupidedi::Sets.absolute(@items)
+  let(:items) { %w(a b c d e f g h i j k l m n o p q r s t u v w x y z) }
 
-    @single = @universe.copy(:mask => 0b00000000000000000000000001)
-    @subset = @universe.copy(:mask => 0b10101010101010101010101010)
-    @null   = @universe.copy(:mask => 0b00000000000000000000000000)
-  end
+  let(:universe) { Stupidedi::Sets.absolute(items) }
+  let(:single)   { universe.copy(:mask => 0b00000000000000000000000001) }
+  let(:subset)   { universe.copy(:mask => 0b10101010101010101010101010) }
+  let(:null)     { universe.copy(:mask => 0b00000000000000000000000000) }
 
   describe "#to_a" do
   end
 
   describe "#map(&block)" do
     specify "A.map{|a| a } = A" do
-      @null.map{|a| a }.should == @null
-      @single.map{|a| a }.should == @single
-      @subset.map{|a| a }.should == @subset
-      @universe.map{|a| a }.should == @universe
+      null.map{|a| a }.should == null
+      single.map{|a| a }.should == single
+      subset.map{|a| a }.should == subset
+      universe.map{|a| a }.should == universe
+    end
+
+    property("A.map{|a| a } = A") do
+      mksubset(universe)
+    end.check do |subset|
+      subset.map{|a| a }.should == subset
     end
 
     specify "A.map{|a| b } = ∅, given b ∉ U" do
-      @null.map{|a| "A" }.should == @null
-      @single.map{|a| "A" }.should == @null
-      @subset.map{|a| "A" }.should == @null
-      @universe.map{|a| "A" }.should == @null
+      null.map{|a| "A" }.should == null
+      single.map{|a| "A" }.should == null
+      subset.map{|a| "A" }.should == null
+      universe.map{|a| "A" }.should == null
     end
 
     specify "A.map{|a| b } = {b}, given b ∈ U, A ≠ ∅" do
-      @single.map{|a| "a" }.to_a.should == %w(a)
-      @subset.map{|a| @subset.first }.to_a.should == [@subset.first]
-      @universe.map{|a| "z" }.to_a.should == %w(z)
+      single.map{|a| "a" }.to_a.should == %w(a)
+      subset.map{|a| subset.first }.to_a.should == [subset.first]
+      universe.map{|a| "z" }.to_a.should == %w(z)
     end
   end
 
   describe "#select(&block)" do
     specify "A.select{|a| true } = A" do
-      @null.select{|a| true }.should == @null
-      @single.select{|a| true }.should == @single
-      @subset.select{|a| true }.should == @subset
-      @universe.select{|a| true }.should == @universe
+      null.select{|a| true }.should == null
+      single.select{|a| true }.should == single
+      subset.select{|a| true }.should == subset
+      universe.select{|a| true }.should == universe
     end
 
     specify "A.select{|a| false } = ∅" do
-      @null.select{|a| false }.should be_empty
-      @single.select{|a| false }.should be_empty
-      @subset.select{|a| false }.should be_empty
-      @universe.select{|a| false }.should be_empty
+      null.select{|a| false }.should be_empty
+      single.select{|a| false }.should be_empty
+      subset.select{|a| false }.should be_empty
+      universe.select{|a| false }.should be_empty
     end
 
     specify "A.select{|a| a == b } = {b}, given b ∈ U, A ≠ ∅" do
-      @single.select{|a| a == "a" }.to_a.should == %w(a)
-      @subset.select{|a| a == @subset.first }.to_a.should == [@subset.first]
-      @universe.select{|a| a == "a" }.to_a.should == %w(a)
+      single.select{|a| a == "a" }.to_a.should == %w(a)
+      subset.select{|a| a == subset.first }.to_a.should == [subset.first]
+      universe.select{|a| a == "a" }.to_a.should == %w(a)
     end
   end
 
   describe "#include?(element)" do
     specify "x ∉ ∅, for all x" do
-      @null.include?("a").should be_false
-      @null.include?("A").should be_false
+      null.include?("a").should be_false
+      null.include?("A").should be_false
     end
 
     specify "x ∉ A, for all x ∉ U" do
-      @single.include?("A").should be_false
-      @subset.include?("A").should be_false
-      @universe.include?("A").should be_false
+      single.include?("A").should be_false
+      subset.include?("A").should be_false
+      universe.include?("A").should be_false
     end
 
     specify "a ∈ {a}, for all x" do
-      @single.include?("a").should be_true
+      single.include?("a").should be_true
     end
 
     specify "a ∈ A, for all {a} ⊆ A"
@@ -88,60 +93,60 @@ describe Stupidedi::Sets::AbsoluteSet do
 
   describe "#finite?" do
     it "is true" do
-      @null.finite?.should be_true
-      @single.finite?.should be_true
-      @subset.finite?.should be_true
-      @universe.finite?.should be_true
+      null.finite?.should be_true
+      single.finite?.should be_true
+      subset.finite?.should be_true
+      universe.finite?.should be_true
     end
   end
 
   describe "#empty?" do
     specify "∅.empty? is true" do
-      @null.empty?.should be_true
+      null.empty?.should be_true
     end
 
     specify "{a}.empty? is false" do
-      @single.empty?.should be_false
+      single.empty?.should be_false
     end
   end
 
   describe "#size" do
     specify "∅.size == 0" do
-      @null.size == 0
+      null.size == 0
     end
 
     specify "{a}.size == 1" do
-      @single.size.should == 1
+      single.size.should == 1
     end
   end
 
   describe "#complement" do
     specify "A ∩ ¬A = ∅" do
-      (@null & ~@null).should == @null
-      (@single & ~@single).should == @null
-      (@subset & ~@subset).should == @null
-      (@universe & ~@universe).should == @null
+      (null & ~null).should == null
+      (single & ~single).should == null
+      (subset & ~subset).should == null
+      (universe & ~universe).should == null
     end
 
     specify "A ∪ ¬A = U" do
-      (@null | ~@null).should == @universe
-      (@single | ~@single).should == @universe
-      (@subset | ~@subset).should == @universe
-      (@universe | ~@universe).should == @universe
+      (null | ~null).should == universe
+      (single | ~single).should == universe
+      (subset | ~subset).should == universe
+      (universe | ~universe).should == universe
     end
 
     specify "A ⊖ ¬A = U" do
-      (@null ^ ~@null).should == @universe
-      (@single ^ ~@single).should == @universe
-      (@subset ^ ~@subset).should == @universe
-      (@universe ^ ~@universe).should == @universe
+      (null ^ ~null).should == universe
+      (single ^ ~single).should == universe
+      (subset ^ ~subset).should == universe
+      (universe ^ ~universe).should == universe
     end
 
     specify "A ∖ ¬A = A" do
-      (@null - ~@null).should == @null
-      (@single - ~@single).should == @single
-      (@subset - ~@subset).should == @subset
-      (@universe - ~@universe).should == @universe
+      (null - ~null).should == null
+      (single - ~single).should == single
+      (subset - ~subset).should == subset
+      (universe - ~universe).should == universe
     end
 
     specify "x ∉ ¬A, for all x ∉ U"
@@ -149,19 +154,19 @@ describe Stupidedi::Sets::AbsoluteSet do
     specify "x ∉ ¬A, for all x ∈ U and x ∈ A"
 
     specify "¬U = ∅" do
-      (~@universe).should == @null
+      (~universe).should == null
     end
 
     specify "¬∅ = U" do
-      (~@null).should == @universe
+      (~null).should == universe
     end
 
     # Identity
     specify "¬(¬A) = A" do
-      (~(~@null)).should == @null
-      (~(~@single)).should == @single
-      (~(~@subset)).should == @subset
-      (~(~@universe)).should == @universe
+      (~(~null)).should == null
+      (~(~single)).should == single
+      (~(~subset)).should == subset
+      (~(~universe)).should == universe
     end
 
     # De Morgan's Laws
@@ -188,34 +193,34 @@ describe Stupidedi::Sets::AbsoluteSet do
 
     # Idempotent
     specify "A ∪ A = A" do
-      (@null + @null).should == @null
-      (@single + @single).should == @single
-      (@subset + @subset).should == @subset
-      (@universe + @universe).should == @universe
+      (null + null).should == null
+      (single + single).should == single
+      (subset + subset).should == subset
+      (universe + universe).should == universe
     end
 
     # Domination
     specify "A ∪ U = U" do
-      (@null + @universe).should == @universe
-      (@single + @universe).should == @universe
-      (@subset + @universe).should == @universe
-      (@universe + @universe).should == @universe
+      (null + universe).should == universe
+      (single + universe).should == universe
+      (subset + universe).should == universe
+      (universe + universe).should == universe
     end
 
     # Complement
     specify "A ∪ ¬A = U" do
-      (@null | ~@null).should == @universe
-      (@single | ~@single).should == @universe
-      (@subset | ~@subset).should == @universe
-      (@universe | ~@universe).should == @universe
+      (null | ~null).should == universe
+      (single | ~single).should == universe
+      (subset | ~subset).should == universe
+      (universe | ~universe).should == universe
     end
 
     # Identity
     specify "A ∪ ∅ = A" do
-      (@null + @null).should == @null
-      (@single + @null).should == @single
-      (@subset + @null).should == @subset
-      (@universe + @null).should == @universe
+      (null + null).should == null
+      (single + null).should == single
+      (subset + null).should == subset
+      (universe + null).should == universe
     end
 
     # Distributive
@@ -234,10 +239,10 @@ describe Stupidedi::Sets::AbsoluteSet do
     specify "x ∉ A ∩ B, for all x ∉ B"
 
     specify "A ∩ U = A" do
-      (@null & @universe).should == @null
-      (@single & @universe).should == @single
-      (@subset & @universe).should == @subset
-      (@universe & @universe).should == @universe
+      (null & universe).should == null
+      (single & universe).should == single
+      (subset & universe).should == subset
+      (universe & universe).should == universe
     end
 
     specify "A ∩ B = B, given B ⊇ A"
@@ -248,26 +253,26 @@ describe Stupidedi::Sets::AbsoluteSet do
 
     # Idempotent
     specify "A ∩ A = A" do
-      (@null & @null).should == @null
-      (@single & @single).should == @single
-      (@subset & @subset).should == @subset
-      (@universe & @universe).should == @universe
+      (null & null).should == null
+      (single & single).should == single
+      (subset & subset).should == subset
+      (universe & universe).should == universe
     end
 
     # Domination
     specify "A ∩ ∅ = ∅" do
-      (@null & @null).should == @null
-      (@single & @null).should == @null
-      (@subset & @null).should == @null
-      (@universe & @null).should == @null
+      (null & null).should == null
+      (single & null).should == null
+      (subset & null).should == null
+      (universe & null).should == null
     end
 
     # Complement
     specify "A ∩ ¬A = ∅" do
-      (@null & ~@null).should == @null
-      (@single & ~@single).should == @null
-      (@subset & ~@subset).should == @null
-      (@universe & ~@universe).should == @null
+      (null & ~null).should == null
+      (single & ~single).should == null
+      (subset & ~subset).should == null
+      (universe & ~universe).should == null
     end
 
     # Distributive
@@ -286,38 +291,38 @@ describe Stupidedi::Sets::AbsoluteSet do
     specify "x ∉ A ∖ B, for all x ∈ B"
 
     specify "U ∖ A = ¬A" do
-      (@universe - @null).should == ~@null
-      (@universe - @single).should == ~@single
-      (@universe - @subset).should == ~@subset
-      (@universe - @universe).should == ~@universe
+      (universe - null).should == ~null
+      (universe - single).should == ~single
+      (universe - subset).should == ~subset
+      (universe - universe).should == ~universe
     end
 
     specify "∅ ∖ A = ∅" do
-      (@null - @null).should == @null
-      (@null - @single).should == @null
-      (@null - @subset).should == @null
-      (@null - @universe).should == @null
+      (null - null).should == null
+      (null - single).should == null
+      (null - subset).should == null
+      (null - universe).should == null
     end
 
     specify "A ∖ A = ∅" do
-      (@null - @null).should == @null
-      (@single - @single).should == @null
-      (@subset - @subset).should == @null
-      (@universe - @universe).should == @null
+      (null - null).should == null
+      (single - single).should == null
+      (subset - subset).should == null
+      (universe - universe).should == null
     end
 
     specify "A ∖ ∅ = A" do
-      (@null - @null).should == @null
-      (@single - @null).should == @single
-      (@subset - @null).should == @subset
-      (@universe - @null).should == @universe
+      (null - null).should == null
+      (single - null).should == single
+      (subset - null).should == subset
+      (universe - null).should == universe
     end
 
     specify "A ∖ U = ∅" do
-      (@null - @universe).should == @null
-      (@single - @universe).should == @null
-      (@subset - @universe).should == @null
-      (@universe - @universe).should == @null
+      (null - universe).should == null
+      (single - universe).should == null
+      (subset - universe).should == null
+      (universe - universe).should == null
     end
 
     specify "A ∖ B = A, given A ∩ B = ∅"
@@ -336,25 +341,25 @@ describe Stupidedi::Sets::AbsoluteSet do
 
   describe "#symmetric_difference(other)" do
     specify "A ⊖ A = ∅" do
-      (@null ^ @null).should == @null
-      (@single ^ @single).should == @null
-      (@subset ^ @subset).should == @null
-      (@universe ^ @universe).should == @null
+      (null ^ null).should == null
+      (single ^ single).should == null
+      (subset ^ subset).should == null
+      (universe ^ universe).should == null
     end
 
-    # @todo: check this property
+    # todo: check this property
     specify "A ⊖ U = ∅" do
-    # (@universe ^ @universe).should == @null
-    # (@null ^ @universe).should == @null
-    # (@single ^ @universe).should == @null
-    # (@subset ^ @universe).should == @null
+    # (universe ^ universe).should == null
+    # (null ^ universe).should == null
+    # (single ^ universe).should == null
+    # (subset ^ universe).should == null
     end
 
     specify "A ⊖ ∅ = A" do
-      (@null ^ @null).should == @null
-      (@single ^ @null).should == @single
-      (@subset ^ @null).should == @subset
-      (@universe ^ @null).should == @universe
+      (null ^ null).should == null
+      (single ^ null).should == single
+      (subset ^ null).should == subset
+      (universe ^ null).should == universe
     end
 
     specify "A ⊖ B = (A ∖ B) ∪ (B ∖ A)"
@@ -368,10 +373,10 @@ describe Stupidedi::Sets::AbsoluteSet do
   describe "#subset?(other)" do
     # Reflexivity
     specify "A ⊆ A" do
-      @null.should <= @null
-      @single.should <= @single
-      @subset.should <= @subset
-      @universe.should <= @universe
+      null.should <= null
+      single.should <= single
+      subset.should <= subset
+      universe.should <= universe
     end
 
     # Antisymmetry
@@ -383,18 +388,18 @@ describe Stupidedi::Sets::AbsoluteSet do
 
     # Existence of a Least Element
     specify "∅ ⊆ A" do
-      @null.should <= @null
-      @null.should <= @single
-      @null.should <= @subset
-      @null.should <= @universe
+      null.should <= null
+      null.should <= single
+      null.should <= subset
+      null.should <= universe
     end
 
     # Existence of a Greatest Element
     specify "A ⊆ U" do
-      @null.should <= @universe
-      @single.should <= @universe
-      @subset.should <= @universe
-      @universe.should <= @universe
+      null.should <= universe
+      single.should <= universe
+      subset.should <= universe
+      universe.should <= universe
     end
 
     # Existence of Joins
@@ -412,10 +417,10 @@ describe Stupidedi::Sets::AbsoluteSet do
   describe "#==(other)" do
     # Reflexive
     specify "A = A" do
-      @null.should == @null
-      @single.should == @single
-      @subset.should == @subset
-      @universe.should == @universe
+      null.should == null
+      single.should == single
+      subset.should == subset
+      universe.should == universe
     end
 
     # Symmetric

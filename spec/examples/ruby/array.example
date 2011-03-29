@@ -3,10 +3,8 @@ require 'spec_helper'
 describe Array do
   include QuickCheck::Macro
 
-  module LocalMacros
-    def self.mkarray(n)
-      (1..n).to_a.bind{|as| as.concat(as.init.reverse) }
-    end
+  def mkarray(n)
+    (1..n).to_a.bind{|as| as.concat(as.init.reverse) }
   end
 
   describe "#head" do
@@ -176,7 +174,7 @@ describe Array do
       end
 
       property("is an empty array") do
-        LocalMacros.mkarray(between(0, 10))
+        mkarray(between(0, 10))
       end.check do |as|
         as.drop_while { true }.should == []
       end
@@ -188,7 +186,7 @@ describe Array do
       end
 
       property("is the original array") do
-        LocalMacros.mkarray(between(0, 10))
+        mkarray(between(0, 10))
       end.check do |as|
         as.drop_while { false }.should == as
       end
@@ -200,7 +198,7 @@ describe Array do
       end
 
       property("contains all except the first element") do
-        LocalMacros.mkarray(between(2, 10))
+        mkarray(between(2, 10))
       end.check do |as|
         as.drop_while{|x| x <= 1 }.should == as.tail
       end
@@ -212,7 +210,7 @@ describe Array do
       end
 
       property("contains all except the first two elements") do
-        LocalMacros.mkarray(between(3, 10))
+        mkarray(between(3, 10))
       end.check do |as|
         as.drop_while {|x| x <= 2 }.should == as.tail.tail
       end
@@ -316,7 +314,7 @@ describe Array do
       end
 
       property("is the original array") do
-        LocalMacros.mkarray(between(0, 10))
+        mkarray(between(0, 10))
       end.check do |as|
         as.take_while { true }.should == as
       end
@@ -328,7 +326,7 @@ describe Array do
       end
 
       property("is the empty array") do
-        LocalMacros.mkarray(between(1, 10))
+        mkarray(between(1, 10))
       end.check do |as|
         as.take_while { false }.should == []
       end
@@ -340,7 +338,7 @@ describe Array do
       end
 
       property("contains only the first element") do
-        LocalMacros.mkarray(between(2, 10))
+        mkarray(between(2, 10))
       end.check do |as|
         as.take_while{|x| x <= 1 }.should == as[0, 1]
       end
@@ -352,7 +350,7 @@ describe Array do
       end
 
       property("contains only the first two elements") do
-        LocalMacros.mkarray(between(3, 10))
+        mkarray(between(3, 10))
       end.check do |as|
         as.take_while {|x| x <= 2 }.should == as[0, 2]
       end

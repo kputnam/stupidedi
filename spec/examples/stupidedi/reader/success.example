@@ -21,13 +21,12 @@ describe Stupidedi::Reader::Success do
 
   describe "#map" do
     it "returns another result" do
-      mkreader("a", "b").map { }.should be_a(Stupidedi::Reader::Success)
+      mkreader("a", "b").map { }.
+        should be_a(Stupidedi::Reader::Success)
     end
 
     it "yields the value"
-
     it "changes the value"
-
     it "preserves the remainder"
   end
 

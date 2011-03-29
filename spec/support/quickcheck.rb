@@ -6,11 +6,8 @@
 # @see https://github.com/hayeah/rantly
 #
 class QuickCheck
-  autoload :Characters,
-    File.expand_path(File.dirname(__FILE__) + "/quickcheck/characters")
-
-  autoload :Property,
-    File.expand_path(File.dirname(__FILE__) + "/quickcheck/property")
+  autoload :Characters, "support/quickcheck/characters"
+  autoload :Property,   "support/quickcheck/property"
 
   def initialize
     @bindings = []
@@ -18,8 +15,8 @@ class QuickCheck
 end
 
 class << QuickCheck
-  def property(name, base, &setup)
-    QuickCheck::Property.new(name, base, new, &setup)
+  def property(base, *args, &setup)
+    QuickCheck::Property.new(base, new, *args, &setup)
   end
 
   # Generate `count` values, returning nil
@@ -63,8 +60,8 @@ class QuickCheck
     end
 
     module ClassMethods
-      def property(name, &setup)
-        QuickCheck.property(name, self, &setup)
+      def property(*args, &setup)
+        QuickCheck.property(self, *args, &setup)
       end
     end
   end

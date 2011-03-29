@@ -19,6 +19,7 @@ require "ruby/string"
 require "ruby/blank"
 require "ruby/try"
 require "ruby/to_d"
+require "ruby/instance_exec"
 
 module Stupidedi
   autoload :Builder,      "stupidedi/builder"
