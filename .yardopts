@@ -5,7 +5,7 @@
 --files 'doc/*.md'
 
 --load ./yard/rspec-plugin/lib/yard-rspec.rb
---load ./yard/ppm-plugin/lib/yard-ppm.rb
+--load ./yard/meta-plugin/lib/yard-meta.rb
 
 --title 'Stupidedi Documentation'
 

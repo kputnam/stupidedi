@@ -34,9 +34,13 @@ class QuickCheck
       end
 
       @base.it(*args) do
+        if property.setup.nil?
+          pending
+          return
+        end
+
         begin
           count = 0
-          input = nil
 
           if block.nil?
             property.qc.generate(cases, limit, property.setup) do
@@ -62,7 +66,7 @@ class QuickCheck
           seed = srand # Get the previous seed by setting it
           srand(seed)  # But immediately restore it
 
-          $!.message << " -- with seed #{seed} after #{count} successes, on #{input.inspect}"
+          $!.message << " -- with seed #{seed} after #{count} successes"
           raise $!
         end
       end

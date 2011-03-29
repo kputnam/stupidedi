@@ -3,7 +3,7 @@
 Specifications:
 ---------------
 
-<% for spec in object[:specifications] %>
-<%= indent wrap("- " + spec[:name]) %>
+<% for spec in object[:specifications].map{|s| s[:name] }.uniq %>
+<%= indent wrap("- " + spec) %>
 <% end %>
 <% end %>

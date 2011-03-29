@@ -1,22 +1,37 @@
-<% if object[:specifications] %>
+<%
+if object[:specifications]
+  lists = {}
+  specs = []
+
+  for spec in object[:specifications]
+    if lists.include?(spec[:name])
+      lists[spec[:name]] << spec
+    else
+      note   = lists[spec[:name]] = [spec]
+      specs << [spec[:name], note]
+    end
+  end
+%>
 <div class="tags">
   <h3>Specifications:</h3>
   <ul class="specs">
-    <% for spec in object[:specifications] %>
-      <li><%= spec[:name] %>
+    <% for name, sources in specs %>
+      <li><%= name %>
         <div class="source_code">
           <table>
+            <% for source in sources %>
             <tr>
               <td>
                 <pre class="lines">
 
-<%= (1..spec[:source].split("\n").size).map {|i| spec[:line] + i }.join("\n") %></pre>
+<%= (1..source[:source].split("\n").size).map {|i| source[:line] + i }.join("\n") %></pre>
               </td>
               <td>
-                <pre class="code"><span class="info file"># File '<%= h spec[:file] %>', line <%= spec[:line] %></span>
-<% if spec[:source] =~ /\S/ %><%= html_syntax_highlight format_source(spec[:source]) %></pre><% end %>
+                <pre class="code"><span class="info file"># File '<%= h source[:file] %>', line <%= source[:line] %></span>
+<% if source[:source] =~ /\S/ %><%= html_syntax_highlight format_source(source[:source]) %></pre><% end %>
               </td>
             </tr>
+          <% end %>
           </table>
         </div>
       </li>

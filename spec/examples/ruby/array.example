@@ -441,7 +441,7 @@ describe Array do
     end
   end
 
-  describe "#span" do
+  describe "#split_until" do
     pending
   end
 
