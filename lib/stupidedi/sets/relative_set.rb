@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Stupidedi
   module Sets
 
@@ -50,13 +52,7 @@ module Stupidedi
 
       # @return [AbstractSet]
       def replace(other)
-        if other.is_a?(AbstractSet)
-          other
-        elsif other.is_a?(Array)
-          RelativeSet.build(other)
-        else
-          raise TypeError, "Argument must be an AbstractSet or an Array"
-        end
+        Sets.build(other)
       end
 
       # @return [Integer]
@@ -91,104 +87,104 @@ module Stupidedi
 
       # @return [RelativeComplement]
       def complement
-        RelativeComplement.build(self)
+        RelativeComplement.new(self)
       end
 
       # @return [AbstractSet]
       def intersection(other)
-        if other.is_a?(RelativeSet)
-          # A & B
-          if size <= other.size
-            RelativeSet.new(@hash.clone.delete_if{|o,_| not other.include?(o) })
-          else
+        if other.is_a?(RelativeComplement)
+          # A ∩ ¬B = ¬B ∩ A
+          other.intersection(self)
+        elsif other.is_a?(AbstractSet)
+          if other.is_a?(RelativeSet) and size > other.size
+            # For efficiency, iterate the smaller of the two sets: A ∩ B = B ∩ A
             other.intersection(self)
-          end
-        elsif other.is_a?(Array)
-          # A & B
-          if other.empty?
-            self
+          elsif other.empty?
+            # A ∩ ∅ = ∅
+            NullSet.build
           else
-            RelativeSet.build(to_a & other)
-          end
-        elsif other.is_a?(RelativeComplement)
-          # A & ~B = A - B
-          if other.complement.empty?
-            self
-          else
-            RelativeSet.new(@hash.clone.delete_if{|o,_| not other.include?(o) })
+            hash = @hash.clone.delete_if{|o,_| not other.include?(o) }
+
+            if hash.empty?
+              NullSet.build
+            else
+              RelativeSet.new(hash)
+            end
           end
         else
-          raise TypeError, "Argument must be an AbstractSet or an Array"
+          intersection(Sets.build(other))
         end
       end
 
       # @return [AbstractSet]
       def union(other)
-        if other.is_a?(RelativeSet)
-          # A | B
-          if other.empty?
-            self
-          elsif size >= other.size
-            RelativeSet.new(other.inject(@hash.clone){|h,o| h[o] = true; h })
+        if other.is_a?(RelativeComplement)
+          # A ∪ ¬B = ¬B ∪ A
+          other.union(self)
+        elsif other.is_a?(AbstractSet)
+          unless other.is_a?(RelativeSet) and size < other.size
+            hash = other.inject(@hash.clone){|h,o| h[o] = true; h }
+
+            if hash.empty?
+              NullSet.build
+            else
+              RelativeSet.new(hash)
+            end
           else
-            other.union(self)
+            # For efficiency, iterate the smaller of the two sets: A ∪ B = B ∪ A
+            if other.empty?
+              self
+            else
+              other.union(self)
+            end
           end
-        elsif other.is_a?(Array)
-          # A | B
-          if other.empty?
-            self
-          else
-            RelativeSet.new(other.inject(@hash.clone){|h,o| h[o] = true; h })
-          end
-        elsif other.is_a?(RelativeComplement)
-          # A | ~B = ~(B - A)
-          difference(other.complement).complement
         else
-          raise TypeError, "Argument must be an AbstractSet or an Array"
+          union(Sets.build(other))
         end
       end
 
       # @return [AbstractSet]
       def difference(other)
-        if other.is_a?(RelativeSet)
-          # A - B = A & ~B
-          if other.empty?
-            self
-          else
-            RelativeSet.new(@hash.clone.delete_if{|o,_| other.include?(o) })
-          end
-        elsif other.is_a?(Array)
-          # A - B = A & ~B
-          if other.empty?
-            self
-          else
-            RelativeSet.build(to_a - other)
-          end
-        elsif other.is_a?(RelativeComplement)
-          # A - ~B = A & B
+        if other.is_a?(RelativeComplement)
+          # A ∖ ¬B = A ∩ B
           intersection(other.complement)
+        elsif other.is_a?(AbstractSet)
+          if other.empty?
+            self
+          else
+            # A ∖ B = A ∩ ¬B
+            hash = @hash.clone.delete_if{|o,_| other.include?(o) }
+
+            if hash.empty?
+              NullSet.build
+            else
+              RelativeSet.new(hash)
+            end
+          end
         else
-          raise TypeError, "Argument must be an AbstractSet or an Array"
+          difference(Sets.build(other))
         end
       end
 
       # @return [AbstractSet]
       def symmetric_difference(other)
-        if other.is_a?(RelativeSet) or other.is_a?(Array)
-          # A ^ B = (A | B) - (A & B) = (A - B) | (B - A)
-          # A ^ B = (A | B) - (A & B) = (A - B) | (B - A)
+        if other.is_a?(RelativeComplement)
+          # A ⊖ ~B = (A ∖ ¬B) | (¬B ∖ A)
+          #        = (A ∩ B)  | (¬B ∩ ¬A)
+          #        = (B ∖ ¬A) | (¬A ∖ B)
+          #        = ~A ⊖ B
+          intersection(other.complement).
+            union(other.intersection(complement))
+        else
+          # A ⊖ B = (A ∖ B) | (B ∖ A)
+          #       = (A ∪ B) - (A ∩ B)
+          other = Sets.build(other)
+
           if other.empty?
             self
           else
-            difference(other).
-              union(RelativeSet.build(other).difference(self))
+            union(other).difference(intersection(other))
           end
-        elsif other.is_a?(RelativeComplement)
-          # A ^ ~B = (A - ~B) | (~B - A) = (B & A) | (~B & ~A) = ~A ^ B
-          difference(other).
-            union(other.difference(self))
-        else
-          raise TypeError, "Argument must be an AbstractSet or an Array"
         end
       end
 
@@ -201,16 +197,35 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         eql?(other) or
-          (other.size == size and
-           if other.is_a?(RelativeSet)
-             @hash.keys == other.to_a
-           elsif other.is_a?(Array)
-             @hash.keys == other
-           end)
+          (other.is_a?(Enumerable) and
+           @hash.keys == other.to_a)
       end
 
       # @endgroup
       #########################################################################
+
+      # @return [void]
+      def pretty_print(q)
+        q.text("RelativeSet[#{size}]")
+        q.group(2, "(", ")") do
+          q.breakable ""
+
+          elements = to_a
+          elements.take(5).each do |e|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp e
+          end
+
+          if elements.length > 5
+            q.text ","
+            q.breakable
+            q.text "..."
+          end
+        end
+      end
     end
 
     class << RelativeSet
@@ -221,15 +236,11 @@ module Stupidedi
       def build(object)
         if object.is_a?(RelativeSet)
           object
-        elsif object.is_a?(Hash)
-          if object.empty?
-            NullSet.build
-          else
-            new(object)
-          end
         elsif object.is_a?(Enumerable)
           if object.empty?
             NullSet.build
+          elsif object.is_a?(Hash)
+            new(object)
           else
             new(object.inject({}){|h,o| h[o] = true; h })
           end

@@ -19,7 +19,15 @@ module Stupidedi
         object
       elsif object.is_a?(Enumerable)
         Sets::RelativeSet.build(object)
+      else
+        raise TypeError,
+          "Argument must be an AbstractSet or Enumerable"
       end
+    end
+
+    # @return [Sets::AbstractSet]
+    def complement(other)
+      build(object).complement
     end
 
     # @return [Sets::UniversalSet]

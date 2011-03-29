@@ -74,6 +74,9 @@ module Stupidedi
       def replace(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           other
+        elsif other.is_a?(AbstractSet) and other.infinite?
+          raise ArgumentError,
+            "Cannot replace AbsoluteSet with #{other.class}"
         else
           copy(:mask => as_mask(other, true))
         end
@@ -141,6 +144,8 @@ module Stupidedi
       def union(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask | other.mask)
+        elsif other.is_a?(AbstractSet) and other.infinite?
+          other.union(self)
         else
           copy(:mask => @mask | as_mask(other))
         end
@@ -150,6 +155,8 @@ module Stupidedi
       def intersection(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask & other.mask)
+        elsif other.is_a?(AbstractSet) and other.infinite?
+          other.intersection(self)
         else
           copy(:mask => @mask & as_mask(other))
         end
@@ -159,6 +166,8 @@ module Stupidedi
       def difference(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask & ~other.mask)
+        elsif other.is_a?(AbstractSet) and other.infinite?
+          intersection(other.complement)
         else
           copy(:mask => @mask & ~as_mask(other))
         end
@@ -168,6 +177,8 @@ module Stupidedi
       def symmetric_difference(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask ^ other.mask)
+        elsif other.is_a?(AbstractSet) and other.infinite?
+          other.symmetric_difference(self)
         else
           copy(:mask => @mask ^ as_mask(other))
         end
@@ -183,6 +194,8 @@ module Stupidedi
       def ==(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           @mask == other.mask
+        elsif other.is_a?(AbstractSet) and other.infinite?
+          false
         elsif other.is_a?(Enumerable) or other.is_a?(Set)
           @mask == as_mask(other)
         end

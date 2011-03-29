@@ -20,6 +20,34 @@ describe Stupidedi::Sets::AbsoluteSet do
   let(:null)     { universe.copy(:mask => 0b00000000000000000000000000) }
 
   describe "#to_a" do
+    specify "|A| == |A.to_a|" do
+      null.size.should == null.to_a.size
+      single.size.should == single.to_a.size
+      subset.size.should == subset.to_a.size
+      universe.size.should == universe.to_a.size
+    end
+
+    property("if x ∉ A then x ∉ A.to_a") do
+      a = mksubset(universe)
+      [a, a.to_a]
+    end.check do |a, to_a|
+      universe.each do |x|
+        unless a.include?(x)
+          to_a.should_not include(x)
+        end
+      end
+    end
+
+    property("if x ∈ A then x ∈ A.to_a") do
+      a = mksubset(universe)
+      [a, a.to_a]
+    end.check do |a, to_a|
+      universe.each do |x|
+        if a.include?(x)
+          to_a.should include(x)
+        end
+      end
+    end
   end
 
   describe "#map(&block)" do
@@ -148,49 +176,49 @@ describe Stupidedi::Sets::AbsoluteSet do
 
   describe "#include?(element)" do
     specify "x ∉ ∅, for all x" do
-      null.include?("a").should be_false
-      null.include?("A").should be_false
+      null.should_not include("a")
+      null.should_not include("A")
     end
 
     specify "x ∉ A, for all x ∉ U" do
-      single.include?("A").should be_false
-      subset.include?("A").should be_false
-      universe.include?("A").should be_false
+      single.should_not include("A")
+      subset.should_not include("A")
+      universe.should_not include("A")
     end
 
     specify "a ∈ {a}, for all a" do
-      single.include?("a").should be_true
+      single.should include("a")
     end
 
     property("a ∈ {a}, for all a") do
       mksingleton(universe)
     end.check do |singleton|
-      singleton.include?(singleton.first).should be_true
+      singleton.should include(singleton.first)
     end
 
     property("x ∉ A, for all x ∈ ¬A") do
       mksubset(universe)
     end.check do |a|
-      (~a).each{|e| a.include?(e).should_not be_true }
+      (~a).each{|e| a.should_not include(e) }
     end
   end
 
   describe "#finite?" do
     it "is true" do
-      null.finite?.should be_true
-      single.finite?.should be_true
-      subset.finite?.should be_true
-      universe.finite?.should be_true
+      null.should be_finite
+      single.should be_finite
+      subset.should be_finite
+      universe.should be_finite
     end
   end
 
   describe "#empty?" do
     specify "∅.empty? is true" do
-      null.empty?.should be_true
+      null.should be_empty
     end
 
     specify "{a}.empty? is false" do
-      single.empty?.should be_false
+      single.should_not be_empty
     end
   end
 
@@ -258,22 +286,22 @@ describe Stupidedi::Sets::AbsoluteSet do
     end
 
     specify "x ∉ ¬A, for all x ∉ U" do
-      (~null).include?("A").should be_false
-      (~single).include?("A").should be_false
-      (~subset).include?("A").should be_false
-      (~universe).include?("A").should be_false
+      (~null).should_not include("A")
+      (~single).should_not include("A")
+      (~subset).should_not include("A")
+      (~universe).should_not include("A")
     end
 
     property("x ∈ ¬A, for all x ∈ U and x ∉ A") do
       mksubset(universe)
     end.check do |a|
-      (~a).each{|e| a.include?(e).should be_false }
+      (~a).each{|e| a.should_not include(e) }
     end
 
     property("x ∉ ¬A, for all x ∈ U and x ∈ A") do
       mksubset(universe)
     end.check do |a|
-      a.each{|e| (~a).include?(e).should be_false }
+      a.each{|e| (~a).should_not include(e) }
     end
 
     specify "¬U = ∅" do
@@ -315,7 +343,7 @@ describe Stupidedi::Sets::AbsoluteSet do
     property("B = ¬A, given A ∪ B = U and A ∩ B = ∅") do
       # Create a smaller universe, because the chances of choosing
       # two random subsets from 2**26 possible, that happen to be
-      # complements of each other is very small.
+      # disjoint is very small.
       universe = Stupidedi::Sets.absolute(%w(a b c d e f))
 
       a = mksubset(universe)
@@ -336,7 +364,7 @@ describe Stupidedi::Sets::AbsoluteSet do
       b = mksubset(universe)
       [a, b, (a | b)]
     end.check do |a, b, union|
-      a.each{|x| union.include?(x).should be_true }
+      a.each{|x| union.should include(x) }
     end
 
     property("x ∈ A ∪ B, for all x ∈ B") do
@@ -344,7 +372,7 @@ describe Stupidedi::Sets::AbsoluteSet do
       b = mksubset(universe)
       [a, b, (a | b)]
     end.check do |a, b, union|
-      b.each{|x| union.include?(x).should be_true }
+      b.each{|x| union.should include(x) }
     end
 
     property("x ∉ A ∪ B, for all x ∉ A and x ∉ B") do
@@ -354,7 +382,7 @@ describe Stupidedi::Sets::AbsoluteSet do
     end.check do |a, b, union|
       universe.each do |x|
         unless a.include?(x) or b.include?(x)
-          union.include?(x).should be_false
+          union.should_not include(x)
         end
       end
     end
@@ -404,7 +432,7 @@ describe Stupidedi::Sets::AbsoluteSet do
     property("A ∪ B ⊃ A, given A ∩ B = ∅") do
       # Create a smaller universe, because the chances of choosing
       # two random subsets from 2**26 possible, that happen to be
-      # subsets of each other is very small.
+      # disjoint is very small.
       universe = Stupidedi::Sets.absolute(%w(a b c d e f))
 
       a = mksubset(universe)
@@ -475,12 +503,89 @@ describe Stupidedi::Sets::AbsoluteSet do
     end.check do |a, b, c|
       ((a | b) | c).should == (a | (b | c))
     end
+
+    context "when other is a RelativeSet" do
+      context "when other ⊆ U" do
+        it "is defined" do
+          other = Stupidedi::Sets.build(%w(a b c))
+          (subset | other).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "when other ⊈ U" do
+        it "throws an error" do
+          other = Stupidedi::Sets.build(%w(a A b B))
+          lambda { subset | other }.should \
+            raise_error(/Universe does not contain element/)
+        end
+      end
+    end
+
+    context "when other is a RelativeComplement" do
+      it "is defined" do
+        other = Stupidedi::Sets.universal
+        (subset | other).should == other
+      end
+
+      it "is defined" do
+        other = ~Stupidedi::Sets.build(%w(A B C))
+        (subset | other).should == other
+      end
+    end
+
+    context "when other is an Array" do
+      context "when other ⊆ U" do
+        it "is defined" do
+          (subset | %w(a b c d)).
+            should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "when other ⊈ U" do
+        it "throws an error" do
+          lambda { subset | %w(a A b B) }.should \
+            raise_error(/Universe does not contain element/)
+        end
+      end
+    end
   end
 
   describe "#intersection(other)" do
-    specify "x ∈ A ∩ B, for all x ∈ A and x ∈ B"
-    specify "x ∉ A ∩ B, for all x ∉ A"
-    specify "x ∉ A ∩ B, for all x ∉ B"
+    property("x ∈ A ∩ B, for all x ∈ A and x ∈ B") do
+      a = mksubset(universe)
+      b = mksubset(universe)
+      [a, b, (a & b)]
+    end.check do |a, b, intersection|
+      a.each do |x|
+        if b.include?(x)
+          intersection.should include(x)
+        end
+      end
+    end
+
+    property("x ∉ A ∩ B, for all x ∉ A") do
+      a = mksubset(universe)
+      b = mksubset(universe)
+      [a, b, (a & b)]
+    end.check do |a, b, intersection|
+      universe.each do |x|
+        unless a.include?(x)
+          intersection.should_not include(x)
+        end
+      end
+    end
+
+    property("x ∉ A ∩ B, for all x ∉ B") do
+      a = mksubset(universe)
+      b = mksubset(universe)
+      [a, b, (a & b)]
+    end.check do |a, b, intersection|
+      universe.each do |x|
+        unless b.include?(x)
+          intersection.should_not include(x)
+        end
+      end
+    end
 
     specify "A ∩ U = A" do
       (null & universe).should == null
@@ -573,9 +678,39 @@ describe Stupidedi::Sets::AbsoluteSet do
   end
 
   describe "#difference(other)" do
-    specify "x ∈ A ∖ B, for all x ∈ A and x ∉ B"
-    specify "x ∉ A ∖ B, for all x ∉ A"
-    specify "x ∉ A ∖ B, for all x ∈ B"
+    property("x ∈ A ∖ B, for all x ∈ A and x ∉ B") do
+      a = mksubset(universe)
+      b = mksubset(universe)
+      [a, b, (a - b)]
+    end.check do |a, b, difference|
+      a.each do |x|
+        unless b.include?(x)
+          difference.should include(x)
+        end
+      end
+    end
+
+    property("x ∉ A ∖ B, for all x ∉ A") do
+      a = mksubset(universe)
+      b = mksubset(universe)
+      [a, b, (a - b)]
+    end.check do |a, b, difference|
+      universe.each do |x|
+        unless a.include?(x)
+          difference.should_not include(x)
+        end
+      end
+    end
+
+    property("x ∉ A ∖ B, for all x ∈ B") do
+      a = mksubset(universe)
+      b = mksubset(universe)
+      [a, b, (a - b)]
+    end.check do |a, b, difference|
+      b.each do |x|
+        difference.include?(x).should be_false
+      end
+    end
 
     specify "U ∖ A = ¬A" do
       (universe - null).should == ~null
@@ -684,12 +819,11 @@ describe Stupidedi::Sets::AbsoluteSet do
       (universe ^ universe).should == null
     end
 
-    # todo: check this property
-    specify "A ⊖ U = ∅" do
-    # (universe ^ universe).should == null
-    # (null ^ universe).should == null
-    # (single ^ universe).should == null
-    # (subset ^ universe).should == null
+    specify "A ⊖ U = ¬A" do
+      (null ^ universe).should == ~null
+      (single ^ universe).should == ~single
+      (subset ^ universe).should == ~subset
+      (universe ^ universe).should == ~universe
     end
 
     specify "A ⊖ ∅ = A" do
@@ -746,11 +880,46 @@ describe Stupidedi::Sets::AbsoluteSet do
     end
 
     # Antisymmetry
-    specify "A ⊆ B and B ⊆ A, given A = B"
-    specify "A = B, given A ⊆ B and B ⊆ A"
+    property("A ⊆ B and B ⊆ A, given A = B") do
+      universe = Stupidedi::Sets.absolute(%w(a b c d e f))
+
+      a = mksubset(universe)
+      b = mksubset(universe)
+      guard(a == b)
+
+      [a, b]
+    end.check(5, 200) do |a, b|
+      a.should <= b
+      b.should <= a
+    end
+
+    property("A = B, given A ⊆ B and B ⊆ A") do
+      universe = Stupidedi::Sets.absolute(%w(a b c d e f))
+
+      a = mksubset(universe)
+      b = mksubset(universe)
+      guard(a <= b)
+      guard(b <= a)
+
+      [a, b]
+    end.check(5, 200) do |a, b|
+      a.should == b
+    end
 
     # Transitivity
-    specify "A ⊆ B, given A ⊆ B and B ⊆ C"
+    property("A ⊆ C, given A ⊆ B and B ⊆ C") do
+      universe = Stupidedi::Sets.absolute(%w(a b c d e f))
+
+      a = mksubset(universe)
+      b = mksubset(universe)
+      c = mksubset(universe)
+      guard(a <= b)
+      guard(b <= c)
+
+      [a, b, c]
+    end.check(5, 200) do |a, b, c|
+      a.should <= c
+    end
 
     # Existence of a Least Element
     specify "∅ ⊆ A" do
@@ -769,15 +938,86 @@ describe Stupidedi::Sets::AbsoluteSet do
     end
 
     # Existence of Joins
-    specify "A ⊆ A ∪ B"
-    specify "A ∪ B ⊆ C, given C ⊆ A and C ⊆ B"
+    property("A ⊆ A ∪ B") do
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      a.should <= (a | b)
+    end
+
+    # Existence of meets
+    property("A ∪ B ⊇ C, given C ⊆ A and C ⊆ B") do
+      universe = Stupidedi::Sets.absolute(%w(a b c d e f))
+
+      a = mksubset(universe)
+      b = mksubset(universe)
+      c = mksubset(universe)
+      guard(c <= a)
+      guard(c <= b)
+
+      [a, b, c]
+    end.check(5, 200) do |a, b, c|
+      (a | b).should >= c
+    end
 
     # Equivalent Statements
-    specify "A ⊆ B"
-    specify "A ∩ B = A"
-    specify "A ∪ B = B"
-    specify "A ∖ B = ∅"
-    specify "¬B ⊆ ¬A"
+    property("A ⊆ B => ...") do
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      if a <= b
+        (a & b).should == a
+        (a | b).should == b
+        (a - b).should == null
+        (~b).should <= (~a)
+      end
+    end
+
+    # Equivalent Statements
+    property("A ∩ B = A => ...") do
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      if (a & b) == a
+        a.should <= b
+        (a | b).should == b
+        (a - b).should == null
+        (~b).should <= (~a)
+      end
+    end
+
+    # Equivalent Statements
+    property("A ∪ B = B => ...") do
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      if (a | b) == b
+        a.should <= b
+        (a & b).should == a
+        (a - b).should == null
+        (~b).should <= (~a)
+      end
+    end
+
+    # Equivalent Statements
+    property("A ∖ B = ∅ => ...") do
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      if (a - b) == null
+        a.should <= b
+        (a & b).should == a
+        (a | b).should == b
+        (~b).should <= (~a)
+      end
+    end
+
+    # Equivalent Statements
+    property("¬B ⊆ ¬A => ...") do
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      if (~b) <= (~a)
+        a.should <= b
+        (a & b).should == a
+        (a | b).should == b
+        (a - b).should == null
+      end
+    end
   end
 
   describe "#==(other)" do
@@ -790,10 +1030,24 @@ describe Stupidedi::Sets::AbsoluteSet do
     end
 
     # Symmetric
-    specify "if A = B then B = A"
+    property("if A = B then B = A") do
+      universe = Stupidedi::Sets.absolute(%w(a b c d e f))
+      [mksubset(universe), mksubset(universe)]
+    end.check do |a, b|
+      if a == b
+        b.should == a
+      end
+    end
 
     # Transitive
-    specify "if A = B and B = C then A = C"
+    property("if A = B and B = C then A = C") do
+      universe = Stupidedi::Sets.absolute(%w(a b c d e f))
+      [mksubset(universe), mksubset(universe), mksubset(universe)]
+    end.check do |a, b, c|
+      if a == b and b == c
+        a.should == c
+      end
+    end
   end
 
   describe "#replace(other)" do

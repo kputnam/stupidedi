@@ -2,6 +2,10 @@ module Stupidedi
   module Reader
 
     class TokenReader
+
+      # @private
+      SEGMENT_ID =  /\A[A-Z][A-Z0-9]{1,2}\Z/
+
       include Inspect
 
       # @return [String, Input]
@@ -167,7 +171,7 @@ module Stupidedi
         end
       end
 
-    private
+    protected
 
       # @return [Either<Result<Array<SimpleElementTok, CompositeElementTok>, TokenReader>>]
       def read_elements(segment_id, element_uses)
@@ -252,7 +256,7 @@ module Stupidedi
 
         # We only arrive here if {character} is a delimiter, or if we read
         # three characters into {buffer} and an additional into {character}
-        if buffer =~ /\A[A-Z][A-Z0-9]{1,2}\Z/
+        if buffer =~ SEGMENT_ID
           remainder = advance(position - 1)
 
           case character

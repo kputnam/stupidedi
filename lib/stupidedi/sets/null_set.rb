@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Stupidedi
   module Sets
 
@@ -71,26 +73,31 @@ module Stupidedi
 
       # @return UniversalSet
       def complement
+        # ¬∅ = U
         UniversalSet.build
       end
 
       # @return self
       def intersection(other)
+        # ∅ ∩ A = ∅
         self
       end
 
       # @return [Set] other
       def union(other)
+        # ∅ ∪ A = A
         Sets.build(other)
       end
 
       # @return self
       def difference(other)
+        # ∅ ∖ A = A
         self
       end
 
       # @return [Set] other
       def symmetric_difference(other)
+        # ∅ ⊖ A = A
         Sets.build(other)
       end
 

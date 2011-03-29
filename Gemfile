@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "blankslate", :platforms => [:ruby_18, :mri_18, :mingw_18]
+gem "blankslate",  :platforms => [:ruby_18, :mri_18, :mingw_18]
 gem "called_from", :platforms => [:ruby_18, :mri_18, :mingw_18]
 gem "term-ansicolor"
 

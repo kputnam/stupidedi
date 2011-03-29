@@ -3,6 +3,7 @@ if object[:specifications]
   lists = {}
   specs = []
 
+  # Group specifications by name, while preserving their pre-existing order
   for spec in object[:specifications]
     if lists.include?(spec[:name])
       lists[spec[:name]] << spec
@@ -24,11 +25,11 @@ if object[:specifications]
               <td>
                 <pre class="lines">
 
-<%= (1..source[:source].split("\n").size).map {|i| source[:line] + i }.join("\n") %></pre>
+<%= (1 .. 1+source[:source].count("\n")).map{|i| source[:line] + i }.join("\n") %></pre>
               </td>
               <td>
                 <pre class="code"><span class="info file"># File '<%= h source[:file] %>', line <%= source[:line] %></span>
-<% if source[:source] =~ /\S/ %><%= html_syntax_highlight format_source(source[:source]) %></pre><% end %>
+<% if source[:source] =~ /\S/ %><%= html_syntax_highlight(format_source(source[:source])) %></pre><% end %>
               </td>
             </tr>
           <% end %>
