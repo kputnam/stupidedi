@@ -32,10 +32,12 @@ module Stupidedi
         @hash.keys
       end
 
+      # (see AbstractSet#include?)
       def include?(object)
         @hash.include?(object)
       end
 
+      # (see AbstractSet#finite?)
       # @return true
       def finite?
         true
@@ -45,16 +47,17 @@ module Stupidedi
         @hash.at(@hash.keys.first)
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#replace)
       def replace(other)
         Sets.build(other)
       end
 
-      # @return [Integer]
+      # (see AbstractSet#size)
       def size
         @hash.size
       end
 
+      # (see AbstractSet#empty?)
       def empty?
         @hash.empty?
       end
@@ -80,12 +83,13 @@ module Stupidedi
         RelativeSet.new(@hash.clone.delete_if{|o,_| yield(o) })
       end
 
+      # (see AbstractSet#complement)
       # @return [RelativeComplement]
       def complement
         RelativeComplement.new(self)
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#intersection)
       def intersection(other)
         if other.is_a?(RelativeComplement)
           # A ∩ ¬B = ¬B ∩ A
@@ -111,7 +115,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#intersection)
       def union(other)
         if other.is_a?(RelativeComplement)
           # A ∪ ¬B = ¬B ∪ A
@@ -138,7 +142,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#difference)
       def difference(other)
         if other.is_a?(RelativeComplement)
           # A ∖ ¬B = A ∩ B
@@ -161,7 +165,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#symmetric_difference)
       def symmetric_difference(other)
         if other.is_a?(RelativeComplement)
           # A ⊖ ~B = (A ∖ ¬B) | (¬B ∖ A)
@@ -189,7 +193,7 @@ module Stupidedi
       # @group Set Ordering
       #########################################################################
 
-      # @return [Boolean]
+      # (see AbstractSet#==)
       def ==(other)
         eql?(other) or
           (other.is_a?(Enumerable) and

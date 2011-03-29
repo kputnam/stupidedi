@@ -13,31 +13,35 @@ module Stupidedi
         @complement = complement
       end
 
-      # @return [void]
+      # @return [String]
       def inspect
         "RelativeComplement(#{@complement.inspect})"
       end
 
+      # (see AbstractSet#include?)
       def include?(object)
         not @complement.include?(object)
       end
 
+      # (see AbstractSet#size)
       # @return Infinity
       def size
         1.0 / 0.0
       end
 
+      # (see AbstractSet#finite?)
       # @return false
       def finite?
         false
       end
 
+      # (see AbstractSet#empty?)
       # @return false
       def empty?
         false
       end
 
-      # @return [AbstractSet] other
+      # (see AbstractSet#replace)
       def replace(other)
         Sets.build(other)
       end
@@ -45,13 +49,13 @@ module Stupidedi
       # @group Set Operations
       #########################################################################
 
-      # @return [AbstractSet]
+      # (see AbstractSet#complement)
       def complement
         # ¬(¬A) = A
         @complement
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#intersection)
       def intersection(other)
         if other.is_a?(RelativeComplement)
           # ¬A ∩ ¬B = ¬(A ∪ B)
@@ -62,7 +66,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#union)
       def union(other)
         if other.is_a?(RelativeComplement)
           # ¬A ∪ ¬B = ¬(A ∩ B)
@@ -73,7 +77,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#symmetric_difference)
       def symmetric_difference(other)
         if other.is_a?(RelativeComplement)
           # ¬A ⊖ ¬B = (¬A ∖ ¬B) ∪ (¬B ∖ ¬A)
@@ -92,7 +96,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbstractSet]
+      # (see AbstractSet#difference)
       def difference(other)
         if other.is_a?(RelativeComplement)
           # ¬A ∖ ¬B = ¬A ∩ B = B ∖ A
@@ -109,17 +113,17 @@ module Stupidedi
       # @group Set Ordering
       #########################################################################
 
-      # @return [Boolean]
+      # (see AbstractSet#proper_subset?)
       def proper_subset?(other)
         other.is_a?(RelativeComplement) and intersection(other) == self
       end
 
-      # @return [Boolean]
+      # (see AbstractSet#proper_superset?)
       def proper_superset?(other)
         other.is_a?(RelativeComplement) and intersection(other) == other
       end
 
-      # @return [Boolean]
+      # (see AbstractSet#==)
       def ==(other)
         eql?(other) or
          (other.is_a?(RelativeComplement) and complement == other.complement)

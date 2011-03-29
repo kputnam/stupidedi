@@ -10,13 +10,13 @@ module Stupidedi
     class AbstractSet
       include Inspect
 
-      # True if the set includes the given +object+
+      # True if the set includes the given `object`
       abstract :include?, :args => %w(object)
 
-      # True if {#size} +< Infinity+
+      # True if {#size} `< Infinity`
       abstract :finite?
 
-      # True if {#size} +== 0+
+      # True if {#size} `== 0`
       abstract :empty?
 
       # Returns the number of elements in the set
@@ -24,7 +24,7 @@ module Stupidedi
       # @return [Numeric]
       abstract :size
 
-      # @return [Set]
+      # @return [AbstractSet]
       abstract :replace, :args => %w(other)
 
       # True if the set contains infinitely many elements
@@ -35,50 +35,38 @@ module Stupidedi
       # @group Set Operations
       #########################################################################
 
-      # @return [Set]
+      # @return [AbstractSet]
       abstract :complement
 
-      # @return [Set]
+      # @return [AbstractSet]
       abstract :union, :args => %w(other)
 
-      # @return [Set]
+      # @return [AbstractSet]
       abstract :difference, :args => %w(other)
 
-      # @return [Set]
+      # @return [AbstractSet]
       abstract :symmetric_difference, :args => %w(other)
 
-      # @return [Set]
+      # @return [AbstractSet]
       abstract :intersection, :args => %w(other)
 
-      # @return [Set]
+      # @return [AbstractSet]
       def |(other) union(other) end
 
-      # @return [Set]
+      # @return [AbstractSet]
       def +(other) union(other) end
 
-      # @return [Set]
+      # @return [AbstractSet]
       def -(other) difference(other) end
 
-      # @return [Set]
+      # @return [AbstractSet]
       def ~; complement end
 
-      # @return [Set]
+      # @return [AbstractSet]
       def ^(other) symmetric_difference(other) end
 
-      # @return [Set]
+      # @return [AbstractSet]
       def  &(other) intersection(other) end
-
-      # @return [Set]
-      def <(other) proper_subset?(other) end
-
-      # @return [Set]
-      def >(other) proper_superset?(other) end
-
-      # @return [Set]
-      def <=(other) subset?(other) end
-
-      # @return [Set]
-      def >=(other) superset?(other) end
 
       # @endgroup
       #########################################################################
@@ -88,6 +76,18 @@ module Stupidedi
 
       # @return [Boolean]
       abstract :==, :args => %w(other)
+
+      # @return [Boolean]
+      def <(other) proper_subset?(other) end
+
+      # @return [Boolean]
+      def >(other) proper_superset?(other) end
+
+      # @return [Boolean]
+      def <=(other) subset?(other) end
+
+      # @return [Boolean]
+      def >=(other) superset?(other) end
 
       def subset?(other)
         intersection(other) == self

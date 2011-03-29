@@ -55,22 +55,22 @@ module Stupidedi
         end
       end
 
-      # @return [Boolean]
+      # (see AbstractSet#finite?)
       def finite?
         true
       end
 
-      # @return [Boolean]
+      # (see AbstractSet#empty?)
       def empty?
         @mask.zero?
       end
 
-      # @return [Integer]
+      # (see AbstractSet#size)
       def size
         @universe.inject(0){|size, (value, n)| size + @mask[n] }
       end
 
-      # @return [AbsoluteSet] other
+      # (see AbstractSet#replace)
       def replace(other)
         if other.is_a?(AbstractSet)
           other
@@ -79,7 +79,7 @@ module Stupidedi
         end
       end
 
-      # @return [Boolean]
+      # (see AbstractSet#include?)
       def include?(element)
         if n = @universe.at(element)
           # Same as (@mask & (1 << n)).zero? but potentially eliminates
@@ -136,12 +136,12 @@ module Stupidedi
         copy(:mask => mask)
       end
 
-      # @return [AbsoluteSet]
+      # (see AbstractSet#complement)
       def complement
         copy(:mask => ~@mask & ((1 << @universe.size) - 1))
       end
 
-      # @return [AbsoluteSet]
+      # (see AbstractSet#union)
       def union(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask | other.mask)
@@ -152,7 +152,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbsoluteSet]
+      # (see AbstractSet#intersection)
       def intersection(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask & other.mask)
@@ -163,7 +163,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbsoluteSet]
+      # (see AbstractSet#difference)
       def difference(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask & ~other.mask)
@@ -174,7 +174,7 @@ module Stupidedi
         end
       end
 
-      # @return [AbsoluteSet]
+      # (see AbstractSet#symmetric_difference)
       def symmetric_difference(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           copy(:mask => @mask ^ other.mask)
@@ -191,7 +191,7 @@ module Stupidedi
       # @group Set Ordering
       #########################################################################
 
-      # @return [Boolean]
+      # (see AbstractSet#==)
       def ==(other)
         if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
           @mask == other.mask

@@ -11,7 +11,7 @@ end
 describe String do
   describe "#blank?" do
     context "if string contains non-whitespace characters" do
-      it "then is false" do
+      specify "then is string.blank? is false" do
         "abc".should_not be_blank
         "  x".should_not be_blank
         " x ".should_not be_blank
@@ -20,13 +20,13 @@ describe String do
     end
 
     context "if string is #empty?" do
-      it "then is true" do
+      specify "then string.blank? is true" do
         "".should be_blank
       end
     end
 
     context "if string contains only whitespace characters" do
-      it "then is true" do
+      specify "then string.blank? is true" do
         "  ".should be_blank
         "\t".should be_blank
         "\n".should be_blank
@@ -39,14 +39,14 @@ end
 
 describe Enumerable do
   describe "#blank?" do
-    context "if #empty?" do
-      it "then is true" do
+    context "if enum.empty?" do
+      specify "then enum.blank? is true" do
         [].should be_blank
       end
     end
 
-    context "if not #empty?" do
-      it "then is false" do
+    context "if not enum.empty?" do
+      specify "then enum.blank? is false" do
         [0].should_not be_blank
       end
     end
