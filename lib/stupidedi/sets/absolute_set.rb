@@ -72,11 +72,8 @@ module Stupidedi
 
       # @return [AbsoluteSet] other
       def replace(other)
-        if other.is_a?(AbsoluteSet) and other.universe.eql?(@universe)
+        if other.is_a?(AbstractSet)
           other
-        elsif other.is_a?(AbstractSet) and other.infinite?
-          raise ArgumentError,
-            "Cannot replace AbsoluteSet with #{other.class}"
         else
           copy(:mask => as_mask(other, true))
         end
@@ -100,8 +97,12 @@ module Stupidedi
 
         @universe.each do |value, n|
           unless @mask[n].zero?
-            if m = @universe.at(yield(value))
+            value = yield(value)
+
+            if m = @universe.at(value)
               mask |= (1 << m)
+            else
+              raise "Universe does not contain element #{value.inspect}"
             end
           end
         end
@@ -147,7 +148,7 @@ module Stupidedi
         elsif other.is_a?(AbstractSet) and other.infinite?
           other.union(self)
         else
-          copy(:mask => @mask | as_mask(other))
+          copy(:mask => @mask | as_mask(other, true))
         end
       end
 
@@ -158,7 +159,7 @@ module Stupidedi
         elsif other.is_a?(AbstractSet) and other.infinite?
           other.intersection(self)
         else
-          copy(:mask => @mask & as_mask(other))
+          copy(:mask => @mask & as_mask(other, false))
         end
       end
 
@@ -169,7 +170,7 @@ module Stupidedi
         elsif other.is_a?(AbstractSet) and other.infinite?
           intersection(other.complement)
         else
-          copy(:mask => @mask & ~as_mask(other))
+          copy(:mask => @mask & ~as_mask(other, false))
         end
       end
 
@@ -180,7 +181,7 @@ module Stupidedi
         elsif other.is_a?(AbstractSet) and other.infinite?
           other.symmetric_difference(self)
         else
-          copy(:mask => @mask ^ as_mask(other))
+          copy(:mask => @mask ^ as_mask(other, true))
         end
       end
 
@@ -196,8 +197,8 @@ module Stupidedi
           @mask == other.mask
         elsif other.is_a?(AbstractSet) and other.infinite?
           false
-        elsif other.is_a?(Enumerable) or other.is_a?(Set)
-          @mask == as_mask(other)
+        elsif other.is_a?(Enumerable)
+          @mask == as_mask(other, false) and size == other.size
         end
       end
 
@@ -227,17 +228,29 @@ module Stupidedi
         end
       end
 
+      # @return [String]
+      def inspect
+        "AbsoluteSet(#{to_a.map(&:inspect).join(', ')})"
+      end
+
     private
 
       # @return [Integer]
-      def as_mask(other, strict = false)
+      def as_mask(other, strict)
         mask = 0
+        size = 0
 
         if other.is_a?(AbstractSet) and @universe.size < other.size
           @universe.each do |value, n|
             if other.include?(value)
               mask |= (1 << n)
+              size += 1
             end
+          end
+
+          if strict and size < other.size
+            # other is not a subset of @universe
+            raise "Universe does not contain all elements from #{other.inspect}"
           end
         else
           # We might land here if other is an Array, since its probably
@@ -246,7 +259,7 @@ module Stupidedi
           other.each do |x|
             if n = @universe.at(x)
               mask |= (1 << n)
-            else
+            elsif strict
               raise "Universe does not contain element #{x.inspect}"
             end
           end

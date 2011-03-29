@@ -23,11 +23,6 @@ module Stupidedi
       end
 
       # @return [void]
-      def inspect
-        "RelativeSet(#{to_a.join(', ')})"
-      end
-
-      # @return [void]
       def each
         @hash.keys.each{|o| yield o }
       end
@@ -225,6 +220,11 @@ module Stupidedi
             q.text "..."
           end
         end
+      end
+
+      # @return [String]
+      def inspect
+        "RelativeSet(#{to_a.map(&:inspect).join(', ')})"
       end
     end
 

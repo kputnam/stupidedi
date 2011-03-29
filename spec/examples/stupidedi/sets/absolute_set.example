@@ -50,6 +50,22 @@ describe Stupidedi::Sets::AbsoluteSet do
     end
   end
 
+  describe "#first" do
+    property("{x}.first = x") do
+      x = choose(universe.to_a)
+      a = universe & [x]
+      [a, x]
+    end.check do |a, x|
+      a.first.should == x
+    end
+
+    property("A.first ∈ A") do
+      mksubset(universe)
+    end.check do |a|
+      a.should include(a.first)
+    end
+  end
+
   describe "#map(&block)" do
     specify "A.map{|a| a } = A" do
       null.map{|a| a }.should == null
@@ -64,17 +80,15 @@ describe Stupidedi::Sets::AbsoluteSet do
       subset.map{|a| a }.should == subset
     end
 
-    specify "A.map{|a| b } = ∅, given b ∉ U" do
-      null.map{|a| "A" }.should == null
-      single.map{|a| "A" }.should == null
-      subset.map{|a| "A" }.should == null
-      universe.map{|a| "A" }.should == null
-    end
+    specify "A.map{|a| b } raises an error, given b ∉ U and A ≠ ∅" do
+      lambda { single.map{|a| "A" }}.should \
+        raise_error(/Universe does not contain element/)
 
-    property("A.map{|a| b } = ∅, given b ∉ U") do
-      mksubset(universe)
-    end.check do |subset|
-      subset.map{|a| "A" }.should == null
+      lambda { subset.map{|a| "A" }}.should \
+        raise_error(/Universe does not contain element/)
+
+      lambda { universe.map{|a| "A" }}.should \
+        raise_error(/Universe does not contain element/)
     end
 
     specify "A.map{|a| b } = {b}, given b ∈ U, A ≠ ∅" do
@@ -186,11 +200,11 @@ describe Stupidedi::Sets::AbsoluteSet do
       universe.should_not include("A")
     end
 
-    specify "a ∈ {a}, for all a" do
+    specify "x ∈ {x}, for all x" do
       single.should include("a")
     end
 
-    property("a ∈ {a}, for all a") do
+    property("x ∈ {x}, for all x") do
       mksingleton(universe)
     end.check do |singleton|
       singleton.should include(singleton.first)
@@ -217,7 +231,7 @@ describe Stupidedi::Sets::AbsoluteSet do
       null.should be_empty
     end
 
-    specify "{a}.empty? is false" do
+    specify "{x}.empty? is false" do
       single.should_not be_empty
     end
   end
@@ -227,7 +241,7 @@ describe Stupidedi::Sets::AbsoluteSet do
       null.size == 0
     end
 
-    specify "{a}.size == 1" do
+    specify "{x}.size == 1" do
       single.size.should == 1
     end
   end
@@ -504,47 +518,85 @@ describe Stupidedi::Sets::AbsoluteSet do
       ((a | b) | c).should == (a | (b | c))
     end
 
-    context "when other is a RelativeSet" do
-      context "when other ⊆ U" do
-        it "is defined" do
-          other = Stupidedi::Sets.build(%w(a b c))
-          (subset | other).should be_a(Stupidedi::Sets::AbsoluteSet)
+    context "if B is a RelativeSet" do
+      context "and B ⊆ U" do
+        property("then A ∪ B = A ∪ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+
+          (a | b).should == (a | r)
+          (a | r).should == (a | b)
+          (a | r).should be_a(Stupidedi::Sets::AbsoluteSet)
         end
       end
 
-      context "when other ⊈ U" do
-        it "throws an error" do
-          other = Stupidedi::Sets.build(%w(a A b B))
-          lambda { subset | other }.should \
-            raise_error(/Universe does not contain element/)
+      context "and B ⊈ U" do
+        property("then A ∪ B raises an error") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+
+          lambda { a | r }.should \
+            raise_error(/Universe does not contain/)
         end
       end
     end
 
-    context "when other is a RelativeComplement" do
-      it "is defined" do
-        other = Stupidedi::Sets.universal
-        (subset | other).should == other
-      end
+    context "if B is a RelativeComplement" do
+      context "and ¬B ⊆ U" do
+        property("then A ∪ B = B ∪ A") do
+          a = mksubset(universe)
+          b = mksubset(universe)
 
-      it "is defined" do
-        other = ~Stupidedi::Sets.build(%w(A B C))
-        (subset | other).should == other
-      end
-    end
-
-    context "when other is an Array" do
-      context "when other ⊆ U" do
-        it "is defined" do
-          (subset | %w(a b c d)).
-            should be_a(Stupidedi::Sets::AbsoluteSet)
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a | b).should == b | a
+          (a | b).should be_a(Stupidedi::Sets::RelativeComplement)
         end
       end
 
-      context "when other ⊈ U" do
-        it "throws an error" do
-          lambda { subset | %w(a A b B) }.should \
-            raise_error(/Universe does not contain element/)
+      context "and ¬B ⊈ U" do
+        property("then A ∪ B = B ∪ A") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a | b).should == b | a
+          (a | b).should be_a(Stupidedi::Sets::RelativeComplement)
+        end
+      end
+    end
+
+    context "if B is an Array" do
+      context "and B ⊆ U" do
+        property("then A ∪ B = A ∪ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = b.to_a
+
+          (a | b).should == (a | r)
+          (a | r).should == (a | b)
+          (a | r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ∪ B raises an error") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = b.to_a
+
+          lambda { a | r }.should \
+            raise_error(/Universe does not contain/)
         end
       end
     end
@@ -674,6 +726,93 @@ describe Stupidedi::Sets::AbsoluteSet do
       [mksubset(universe), mksubset(universe), mksubset(universe)]
     end.check do |a, b, c|
       ((a & b) & c).should == (a & (b & c))
+    end
+
+    context "if B is a RelativeSet" do
+      context "and B ⊆ U" do
+        property("then A ∩ B = A ∩ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+
+          (a & b).should == (a & r)
+          (a & r).should == (a & b)
+          (a & r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ∩ B = A ∩ Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)       # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+
+          (a & b).should == (a & r)
+          (a & r).should == (a & b)
+          (a & r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+    end
+
+    context "if B is a RelativeComplement" do
+      context "and ¬B ⊆ U" do
+        property("then A ∩ B = B ∩ A") do
+          a = mksubset(universe)
+          b = mksubset(universe)
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a & b).should == b & a
+          (a & b).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and ¬B ⊈ U" do
+        property("then A ∩ B = B ∩ A") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a & b).should == b & a
+          (a & b).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+    end
+
+    context "if B is an Array" do
+      context "and B ⊆ U" do
+        property("then A ∩ B = A ∩ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = b.to_a
+
+          (a & b).should == (a & r)
+          (a & r).should == (a & b)
+          (a & r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ∩ B = A ∩ Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = b.to_a                              # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+
+          (a & b).should == (a & r)
+          (a & r).should == (a & b)
+          (a & r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
     end
   end
 
@@ -809,6 +948,93 @@ describe Stupidedi::Sets::AbsoluteSet do
     end.check do |a, b|
       (~(b - a)).should == (a | ~b)
     end
+
+    context "if B is a RelativeSet" do
+      context "and B ⊆ U" do
+        property("then A ∖ B = A ∖ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+
+          (a - b).should == (a - r)
+          (a - r).should == (a - b)
+          (a - r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ∖ B = A ∖ Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)       # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+
+          (a - b).should == (a - r)
+          (a - r).should == (a - b)
+          (a - r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+    end
+
+    context "if B is a RelativeComplement" do
+      context "and ¬B ⊆ U" do
+        property("then A ∖ B = A ∩ ¬B") do
+          a = mksubset(universe)
+          b = mksubset(universe)
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a - b).should == (a & ~b)
+          (a - b).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and ¬B ⊈ U" do
+        property("then A ∖ B = A ∩ ¬B") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a - b).should == (a & ~b)
+          (a - b).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+    end
+
+    context "if B is an Array" do
+      context "and B ⊆ U" do
+        property("then A ∖ B = A ∖ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = b.to_a
+
+          (a - b).should == (a - r)
+          (a - r).should == (a - b)
+          (a - r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ∖ B = A ∖ Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = b.to_a                              # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+
+          (a - b).should == (a - r)
+          (a - r).should == (a - b)
+          (a - r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+    end
   end
 
   describe "#symmetric_difference(other)" do
@@ -867,6 +1093,89 @@ describe Stupidedi::Sets::AbsoluteSet do
       [mksubset(universe), mksubset(universe), mksubset(universe)]
     end.check do |a, b, c|
       (a & (b ^ c)).should == ((a & b) ^ (a & c))
+    end
+
+    context "if B is a RelativeSet" do
+      context "and B ⊆ U" do
+        property("then A ⊖ B = A ⊖ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+
+          (a ^ b).should == (a ^ r)
+          (a ^ r).should == (a ^ b)
+          (a ^ r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ⊖ B raises an error") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+
+          lambda { a ^ r }.should \
+            raise_error(/Universe does not contain/)
+        end
+      end
+    end
+
+    context "if B is a RelativeComplement" do
+      context "and ¬B ⊆ U" do
+        property("then A ⊖ B = B ⊖ A") do
+          a = mksubset(universe)
+          b = mksubset(universe)
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a ^ b).should == b ^ a
+          (a ^ b).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and ¬B ⊈ U" do
+        property("then A ⊖ B = B ⊖ A") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a ^ b).should == b ^ a
+          (a ^ b).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+    end
+
+    context "if B is an Array" do
+      context "and B ⊆ U" do
+        property("then A ⊖ B = A ⊖ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = b.to_a
+
+          (a ^ b).should == (a ^ r)
+          (a ^ r).should == (a ^ b)
+          (a ^ r).should be_a(Stupidedi::Sets::AbsoluteSet)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ⊖ B raises an error") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = b.to_a
+
+          lambda { a ^ r }.should \
+            raise_error(/Universe does not contain/)
+        end
+      end
     end
   end
 
@@ -1018,6 +1327,78 @@ describe Stupidedi::Sets::AbsoluteSet do
         (a - b).should == null
       end
     end
+
+    context "if B is a RelativeSet" do
+      context "and B ⊆ U" do
+        property("then A ⊆ B = A ⊆ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+          (a <= b).should == (a <= r)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ⊈ B = A ⊆ Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)       # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+          (a <= b).should == (a <= r)
+        end
+      end
+    end
+
+    context "if B is a RelativeComplement(C)" do
+      context "and C ⊆ U" do
+        property("then A ⊆ ¬C ≡ A ∩ C = ∅") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, c|
+          b = Stupidedi::Sets.complement(c.to_a)
+          (a <= b).should == ((a & c) == null)
+        end
+      end
+
+      context "and C ⊈ U" do
+        property("then A ⊆ ¬C ≡ A ∩ C = ∅") do
+          a = mksubset(universe)
+          c = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, c]
+        end.check do |a, c|
+          b = Stupidedi::Sets.complement(c.to_a)
+          (a <= b).should == ((a & c) == null)
+        end
+      end
+    end
+
+    context "when B is an Array" do
+      context "and B ⊆ U" do
+        property("then A ⊆ B = A ⊆ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = b.to_a
+          (a <= b).should == (a <= r)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A ⊆ B = A ⊆ Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = b.to_a                              # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+
+          (a <= b).should == (a <= r)
+        end
+      end
+    end
   end
 
   describe "#==(other)" do
@@ -1048,9 +1429,149 @@ describe Stupidedi::Sets::AbsoluteSet do
         a.should == c
       end
     end
+
+    context "if B is a RelativeSet" do
+      context "and B ⊆ U" do
+        property("then A = B ≡ A = Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)
+          (a == b).should == (a == r)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A = B ≡ A = Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = Stupidedi::Sets.build(b.to_a)       # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+          (a == b).should == (a == r)
+        end
+      end
+    end
+
+    context "if B is a RelativeComplement" do
+      context "and ¬B ⊆ U" do
+        property("then A = B ≡ B = A") do
+          a = mksubset(universe)
+          b = mksubset(universe)
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a == b).should == (b == a)
+        end
+      end
+
+      context "and ¬B ⊈ U" do
+        property("then A = B ≡ B = A") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+
+          [a, Stupidedi::Sets.complement(b.to_a)]
+        end.check do |a, b|
+          (a == b).should == (b == a)
+        end
+      end
+    end
+
+    context "if B is an Array" do
+      context "and B ⊆ U" do
+        property("then A = B ≡ A = Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          r = b.to_a
+          (a == b).should == (a == r)
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A = B ≡ A = Sets.absolute(B ∩ U, U)") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          r = b.to_a                              # B
+          b = universe.select{|x| b.include?(x) } # B ∩ U
+
+          (a == b).should == (a == r)
+        end
+      end
+    end
   end
 
   describe "#replace(other)" do
+    context "if B is an AbsoluteSet" do
+      context "and B.universe = U" do
+        property("then A.replace(B) = B") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          a.replace(b).should == b
+        end
+      end
+
+      context "and B.universe ≠ U" do
+        property("then A.replace(B) = B") do
+          a = mksubset(universe)
+          b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                                universe.to_a.map(&:upcase)))
+          [a, b]
+        end.check do |a, b|
+          a.replace(b).should == b
+        end
+      end
+    end
+
+    context "if B is a RelativeSet" do
+      property("then A.replace(B) = B") do
+        a = mksubset(universe)
+        b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                              universe.to_a.map(&:upcase)))
+        [a, Stupidedi::Sets.build(b.to_a)]
+      end.check do |a, b|
+        a.replace(b).should == b
+      end
+    end
+
+    context "if B is a RelativeComplement" do
+      property("then A.replace(B) = B") do
+        a = mksubset(universe)
+        b = mksubset(Stupidedi::Sets.absolute(universe.to_a +
+                                              universe.to_a.map(&:upcase)))
+        [a, Stupidedi::Sets.complement(b.to_a)]
+      end.check do |a, b|
+        a.replace(b).should == b
+      end
+    end
+
+    context "if B is an Array" do
+      context "and B ⊆ U" do
+        property("then A.replace(B) ≡ Sets.absolute(B, U)") do
+          [mksubset(universe), mksubset(universe)]
+        end.check do |a, b|
+          a.replace(b.to_a).should == b
+        end
+      end
+
+      context "and B ⊈ U" do
+        property("then A.replace(B) raises an error") do
+          a = mksubset(universe)
+          b = mksubset(universe)
+          c = mksubset(universe)
+          guard(!c.empty?)
+
+          [a, (b.to_a | c.to_a.map(&:upcase))]
+        end.check do |a, b|
+          lambda { a.replace(b) }.should \
+            raise_error(/Universe does not contain/)
+        end
+      end
+    end
   end
 
 end

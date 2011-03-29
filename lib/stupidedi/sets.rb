@@ -27,7 +27,7 @@ module Stupidedi
 
     # @return [Sets::AbstractSet]
     def complement(other)
-      build(object).complement
+      build(other).complement
     end
 
     # @return [Sets::UniversalSet]
@@ -41,8 +41,12 @@ module Stupidedi
     end
 
     # @return [Sets::AbsoluteSet]
-    def absolute(other)
-      Sets::AbsoluteSet.build(other)
+    def absolute(other, universe = other)
+      if universe.eql?(other)
+        Sets::AbsoluteSet.build(universe)
+      else
+        Sets::AbsoluteSet.build(universe).intersection(other)
+      end
     end
 
     # @endgroup

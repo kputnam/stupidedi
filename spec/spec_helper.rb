@@ -31,6 +31,6 @@ RSpec.configure do |config|
   # Skip platform-specific examples unless our platform matches
   config.filter_run_excluding(:ruby => lambda{|n| RUBY_VERSION !~ /^#{n}/ })
 
-# config.filter_run(:random  => true)
-# config.filter_run(:focused => true)
+# config.filter_run(:random => true)
+# config.filter_run(:focus  => true)
 end
