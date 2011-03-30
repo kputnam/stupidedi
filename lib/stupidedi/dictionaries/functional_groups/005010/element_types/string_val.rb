@@ -10,10 +10,60 @@ module Stupidedi
           class StringVal < Values::SimpleElementVal
 
             #
+            #
+            #
+            class Invalid < StringVal
+
+              # @return [Object]
+              attr_reader :value
+
+              def initialize(value, usage)
+                super(usage)
+                @value = value
+              end
+
+              def valid?
+                false
+              end
+
+              def empty?
+                false
+              end
+
+              # @return [String]
+              def inspect
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
+                end
+
+                ansi.element("AN.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+              end
+
+              # @return [Boolean]
+              def ==(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
+              end
+            end
+
+            #
             # Empty string value. Shouldn't be directly instantiated -- instead,
             # use the {StringVal.empty} constructor.
             #
             class Empty < StringVal
+
+              def valid?
+                true
+              end
+
               def empty?
                 true
               end
@@ -81,6 +131,10 @@ module Stupidedi
                 ansi.element("AN.value#{id}") << "(#{@value})"
               end
 
+              def valid?
+                true
+              end
+
               def empty?
                 false
               end
@@ -102,19 +156,28 @@ module Stupidedi
             # @group Constructors
             ###################################################################
 
-            # @return [StringVal::Empty]
+            # @return [StringVal]
             def empty(usage)
               StringVal::Empty.new(usage)
             end
 
-            # @return [StringVal::Empty, StringVal::NonEmpty]
+            # @return [StringVal]
             def value(object, usage)
               if object.blank?
                 StringVal::Empty.new(usage)
               elsif object.respond_to?(:to_s)
                 StringVal::NonEmpty.new(object.to_s, usage)
               else
-                raise TypeError, "Cannot convert #{object.class} to #{self}"
+                StringVal::Invalid.new(object, usage)
+              end
+            end
+
+            # @return [StringVal]
+            def parse(string, usage)
+              if string.blank?
+                StringVal::Empty.new(usage)
+              else
+                StringVal::NonEmpty.new(string.to_s, usage)
               end
             end
 
@@ -125,6 +188,7 @@ module Stupidedi
           # Prevent direct instantiation of abstract class StringVal
           StringVal.eigenclass.send(:protected, :new)
           StringVal::Empty.eigenclass.send(:public, :new)
+          StringVal::Invalid.eigenclass.send(:public, :new)
           StringVal::NonEmpty.eigenclass.send(:public, :new)
         end
 

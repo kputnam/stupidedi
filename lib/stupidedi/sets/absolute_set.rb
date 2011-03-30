@@ -31,6 +31,7 @@ module Stupidedi
         @mask, @universe = mask, universe.freeze
       end
 
+      # @private
       # @return [AbsoluteSet]
       def copy(changes = {})
         AbsoluteSet.new \
@@ -38,6 +39,8 @@ module Stupidedi
           changes.fetch(:universe, @universe)
       end
 
+      # Returns a single element from the set, with no guarantees about which
+      # element. If the set is {#empty?}, the return value is undefined.
       def first
         @universe.each do |value, n|
           unless @mask[n].zero?
@@ -46,6 +49,8 @@ module Stupidedi
         end
       end
 
+      # Yields each element in the set to the implicit block argument
+      #
       # @return [void]
       def each
         @universe.each do |value, n|
@@ -185,9 +190,6 @@ module Stupidedi
         end
       end
 
-      # @endgroup
-      #########################################################################
-
       # @group Set Ordering
       #########################################################################
 
@@ -202,7 +204,7 @@ module Stupidedi
         end
       end
 
-      # @endgroup
+      # @group Pretty Printing
       #########################################################################
 
       # @return [void]
@@ -232,6 +234,9 @@ module Stupidedi
       def inspect
         "AbsoluteSet(#{to_a.map(&:inspect).join(', ')})"
       end
+
+      # @endgroup
+      #########################################################################
 
     private
 

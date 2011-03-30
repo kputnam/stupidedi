@@ -12,11 +12,6 @@ module Stupidedi
         self
       end
 
-      # @return [String]
-      def inspect
-        "UniversalSet"
-      end
-
       # @return true
       def include?(object)
         true
@@ -75,9 +70,6 @@ module Stupidedi
         Sets.complement(other)
       end
 
-      # @endgroup
-      #########################################################################
-
       # @group Set Ordering
       #########################################################################
 
@@ -94,6 +86,14 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         eql?(other)
+      end
+
+      # @group Pretty Printing
+      #########################################################################
+
+      # @return [String]
+      def inspect
+        "UniversalSet"
       end
 
       # @endgroup

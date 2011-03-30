@@ -1,6 +1,5 @@
 require "spec_helper"
 
-
 describe Stupidedi::Reader::TokenReader do
   include QuickCheck::SerializedEdi::Macro
 
@@ -240,7 +239,7 @@ describe Stupidedi::Reader::TokenReader do
         either.reason.remainder.should == "~ABC"
         either.reason.reason.should =~ /Found "~" instead of segment identifier/
       end
-      
+
       it "returns a failure" do
         # Segment ID cannot start with a number
         reader = mkreader("0ABC")

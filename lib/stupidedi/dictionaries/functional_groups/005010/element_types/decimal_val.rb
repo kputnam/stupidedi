@@ -16,10 +16,60 @@ module Stupidedi
                       \Z/ix
 
             #
+            #
+            #
+            class Invalid < DecimalVal
+
+              # @return [Object]
+              attr_reader :value
+
+              def initialize(value, usage)
+                super(usage)
+                @value = value
+              end
+
+              def valid?
+                false
+              end
+
+              def empty?
+                false
+              end
+
+              # @return [String]
+              def inspect
+                id = definition.try do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
+                end
+
+                ansi.element(" R.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+              end
+
+              # @return [Boolean]
+              def ==(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
+              end
+            end
+
+            #
             # Empty numeric value. Shouldn't be directly instantiated -- instead
             # use the {DecimalVal.value} and {DecimalVal.empty} constructors.
             #
             class Empty < DecimalVal
+
+              def valid?
+                true
+              end
+
               def empty?
                 true
               end
@@ -69,6 +119,10 @@ module Stupidedi
                 NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
+              end
+
+              def valid?
+                true
               end
 
               def empty?
@@ -169,19 +223,36 @@ module Stupidedi
             # @group Constructors
             ###################################################################
 
-            # @return [DecimalVal::Empty]
+            # @return [DecimalVal]
             def empty(usage)
               DecimalVal::Empty.new(usage)
             end
 
-            # @return [DecimalVal::Empty, DecimalVal::NonEmpty]
+            # @return [DecimalVal]
             def value(object, usage)
               if object.blank?
                 DecimalVal::Empty.new(usage)
               elsif object.respond_to?(:to_d)
-                DecimalVal::NonEmpty.new(object.to_d, usage)
+                begin
+                  DecimalVal::NonEmpty.new(object.to_d, usage)
+                rescue ArgumentError
+                  DecimalVal::Invalid.new(object, usage)
+                end
               else
-                raise TypeError, "Cannot convert #{object.class} to #{self}"
+                DecimalVal::Invalid.new(object, usage)
+              end
+            end
+
+            # @return [DecimalVal]
+            def parse(string, usage)
+              if string.blank?
+                DecimalVal::Empty.new(usage)
+              else
+                begin
+                  DecimalVal::NonEmpty.new(string.to_d, usage)
+                rescue ArgumentError
+                  DecimalVal::Invalid.new(string, usage)
+                end
               end
             end
 
@@ -192,6 +263,7 @@ module Stupidedi
           # Prevent direct instantiation of abstract class DecimalVal
           DecimalVal.eigenclass.send(:protected, :new)
           DecimalVal::Empty.eigenclass.send(:public, :new)
+          DecimalVal::Invalid.eigenclass.send(:public, :new)
           DecimalVal::NonEmpty.eigenclass.send(:public, :new)
 
         end

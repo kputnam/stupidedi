@@ -16,6 +16,10 @@ module Stupidedi
       def present?
         not empty?
       end
+
+      def blank?
+        empty?
+      end
     end
 
   end

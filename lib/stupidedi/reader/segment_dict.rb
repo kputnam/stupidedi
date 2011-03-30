@@ -29,6 +29,7 @@ module Stupidedi
       # True if the stack of dictionaries is empty
       abstract :empty?
 
+      # @private
       class NonEmpty < SegmentDict
         attr_reader :top
 
@@ -126,6 +127,7 @@ module Stupidedi
         end
       end.new
 
+      # @private
       class Constants
         def initialize(namespace)
           @namespace = namespace

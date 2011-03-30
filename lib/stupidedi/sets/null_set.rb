@@ -14,15 +14,16 @@ module Stupidedi
         self
       end
 
-      # @return [void]
-      def inspect
-        "NullSet"
-      end
-
+      # Yields each element in the set to the implicit block argument. Since
+      # there are no elements, the block is never executed
+      #
       # @return [void]
       def each
       end
 
+      # Returns an {Array} containing each element in this set. Since there are
+      # no elements, the {Array} is empty
+      #
       # @return [Array]
       def to_a
         []
@@ -101,9 +102,6 @@ module Stupidedi
         Sets.build(other)
       end
 
-      # @endgroup
-      #########################################################################
-
       # @group Set Ordering
       #########################################################################
 
@@ -111,7 +109,16 @@ module Stupidedi
         eql?(other) or other.empty?
       end
 
+      # @group Pretty Printing
+      #########################################################################
+
+      # @return [String]
+      def inspect
+        "NullSet"
+      end
+
       # @endgroup
+      #########################################################################
     end.new
 
   end

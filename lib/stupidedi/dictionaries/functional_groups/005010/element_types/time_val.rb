@@ -10,10 +10,60 @@ module Stupidedi
           class TimeVal < Values::SimpleElementVal
 
             #
+            #
+            #
+            class Invalid < TimeVal
+
+              # @return [Object]
+              attr_reader :value
+
+              def initialize(value, usage)
+                super(usage)
+                @value = value
+              end
+
+              def valid?
+                false
+              end
+
+              def empty?
+                false
+              end
+
+              # @return [String]
+              def inspect
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
+                end
+
+                ansi.element("TM.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+              end
+
+              # @return [Boolean]
+              def ==(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
+              end
+            end
+
+            #
             # Empty time value. Shouldn't be directly instantiated -- instead,
             # use the {TimeVal.empty} constructor.
             #
             class Empty < TimeVal
+
+              def valid?
+                true
+              end
+
               def empty?
                 true
               end
@@ -67,11 +117,11 @@ module Stupidedi
                 valid &&= (second.nil? or not minute.nil?)
                 valid &&= (second.nil? or second.between?(0, 60))
 
-                unless valid
-                  raise ArgumentError, "Invalid time #{inspect}"
-                end
-
                 super(usage)
+
+                unless valid
+                  raise Exceptions::InvalidElementError, "Invalid time #{inspect}"
+                end
               end
 
               # @return [NonEmpty]
@@ -81,6 +131,10 @@ module Stupidedi
                   changes.fetch(:minute, @minute),
                   changes.fetch(:second, @second),
                   changes.fetch(:usage, usage)
+              end
+
+              def valid?
+                true
               end
 
               def empty?
@@ -137,12 +191,12 @@ module Stupidedi
             # @group Constructors
             ###################################################################
 
-            # Creates an empty time value.
+            # @return [TimeVal]
             def empty(usage)
               TimeVal::Empty.new(usage)
             end
 
-            # @return [TimeVal::NonEmpty, TimeVal::Empty]
+            # @return [TimeVal]
             def value(object, usage)
               if object.blank?
                 TimeVal::Empty.new(usage)
@@ -168,8 +222,29 @@ module Stupidedi
                                       object.sec + object.sec_fraction.to_f,
                                       usage)
               else
-                raise TypeError, "Cannot convert #{object.class} to #{self}"
+                TimeVal::Invalid.new(object, usage)
               end
+            rescue Exceptions::InvalidElementError
+              TimeVal::Invalid.new(object, usage)
+            end
+
+            # @return [TimeVal]
+            def parse(string, usage)
+              if string.blank?
+                TimeVal::Empty.new(usage)
+              else
+                hour   = string.slice(0, 2).to_i
+                minute = string.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
+                second = string.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
+
+                if decimal = string.slice(6..-1)
+                  second += "0.#{decimal}".to_d
+                end
+
+                TimeVal::NonEmpty.new(hour, minute, second, usage)
+              end
+            rescue Exceptions::InvalidElementError
+              TimeVal::Invalid.new(string, usage)
             end
 
             # @endgroup
@@ -179,6 +254,7 @@ module Stupidedi
           # Prevent direct instantiation of abstract class TimeVal
           TimeVal.eigenclass.send(:protected, :new)
           TimeVal::Empty.eigenclass.send(:public, :new)
+          TimeVal::Invalid.eigenclass.send(:public, :new)
           TimeVal::NonEmpty.eigenclass.send(:public, :new)
         end
       end

@@ -132,45 +132,6 @@ describe Stupidedi::Reader::DelegatedInput do
       it "returns an input with the first n elements removed" do
         mkinput(%w(a b c d)).drop(3).should == %w(d)
       end
-      
-      property("increments the line count") do
-        string = array { with(:size, between(0, 15)) { string }}.join("\n")
-        n      = between(0, string.length * 2)
-        offset = integer
-        line   = integer
-
-        [string, n, offset, line]
-      end.check do |s, n, o, l|
-        mkinput(s, o, l).drop(n).line.should == l + s.take(n).count("\n")
-      end
-
-      it "calculates the column" do
-        mkinput("abc\nxyz").drop(0).column.should == 1
-        mkinput("abc\nxyz").drop(1).column.should == 2
-        mkinput("abc\nxyz").drop(2).column.should == 3
-        mkinput("abc\nxyz").drop(3).column.should == 4
-        mkinput("abc\nxyz").drop(4).column.should == 1
-        mkinput("abc\nxyz").drop(5).column.should == 2
-        mkinput("abc\nxyz").drop(6).column.should == 3
-      end
-
-      property("calculates the column") do
-        string = array { with(:size, between(0, 50)) { string }}.join("\n")
-        n      = between(0, string.length * 2)
-        offset = integer
-        line   = integer
-        column = integer
-
-        [string, n, offset, line, column]
-      end.check do |s, n, o, l, c|
-        prefix = s.take(n)
-
-        if prefix.include?("\n")
-          mkinput(s, o, l, c).drop(n).column.should == prefix.length - prefix.rindex("\n")
-        else
-          mkinput(s, o, l, c).drop(n).column.should == c + prefix.length
-        end
-      end
 
       property("returns an input with the first n elements removed") do
         with(:size, between(0, 25)) do
@@ -178,6 +139,46 @@ describe Stupidedi::Reader::DelegatedInput do
         end
       end.check do |s, n|
         mkinput(s).drop(n).should == s.drop(n)
+      end
+    end
+
+    property("increments the line count") do
+      string = array { with(:size, between(0, 15)) { string }}.join("\n")
+      n      = between(0, string.length * 2)
+      offset = integer
+      line   = integer
+
+      [string, n, offset, line]
+    end.check do |s, n, o, l|
+      mkinput(s, o, l).drop(n).line.should == l + s.take(n).count("\n")
+    end
+
+    it "calculates the column" do
+      input = mkinput("abc\nxyz")
+      input.drop(0).column.should == 1
+      input.drop(1).column.should == 2
+      input.drop(2).column.should == 3
+      input.drop(3).column.should == 4
+      input.drop(4).column.should == 1
+      input.drop(5).column.should == 2
+      input.drop(6).column.should == 3
+    end
+
+    property("calculates the column") do
+      string = array { with(:size, between(0, 50)) { string }}.join("\n")
+      n      = between(0, string.length * 2)
+      offset = integer
+      line   = integer
+      column = integer
+
+      [string, n, offset, line, column]
+    end.check do |s, n, o, l, c|
+      prefix = s.take(n)
+
+      if prefix.include?("\n")
+        mkinput(s, o, l, c).drop(n).column.should == prefix.length - prefix.rindex("\n")
+      else
+        mkinput(s, o, l, c).drop(n).column.should == c + prefix.length
       end
     end
   end

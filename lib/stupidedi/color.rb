@@ -46,6 +46,10 @@ module Stupidedi
         end
       end
 
+      def invalid(string = "", &block)
+        red(bold(string, &block))
+      end
+
       def element(string = "", &block)
         black(string, &block)
       end

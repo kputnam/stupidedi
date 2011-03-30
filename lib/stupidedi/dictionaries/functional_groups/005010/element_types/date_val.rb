@@ -10,10 +10,58 @@ module Stupidedi
           class DateVal < Values::SimpleElementVal
 
             #
+            #
+            #
+            class Invalid < DateVal
+
+              # @return [Object]
+              attr_reader :value
+
+              def initialize(value, usage)
+                super(usage)
+                @value = value
+              end
+
+              def valid?
+                false
+              end
+
+              def empty?
+                false
+              end
+
+              def inspect
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
+                end
+
+                ansi.element("DT.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+              end
+
+              def ==(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
+              end
+            end
+
+            #
             # Empty date value. Shouldn't be directly instantiated -- instead,
             # use the {DateVal.empty} constructor.
             #
             class Empty < DateVal
+
+              def valid?
+                true
+              end
+
               def empty?
                 true
               end
@@ -63,8 +111,8 @@ module Stupidedi
                   # Check that date is valid
                   ::Date.civil(@year, @month, @day)
                 rescue ArgumentError
-                  raise ArgumentError,
-                    "Invalid date year(#{year}) month(#{month}) day(#{day})"
+                  raise Exceptions::InvalidElementError,
+                    "Invalid date year: #{year}, month: #{month}, day: #{day}"
                 end
 
                 super(usage)
@@ -77,6 +125,10 @@ module Stupidedi
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
                   changes.fetch(:usage, usage)
+              end
+
+              def valid?
+                true
               end
 
               def empty?
@@ -167,8 +219,8 @@ module Stupidedi
 
                 # Check that date is reasonably valid
                 unless @year.between?(0, 99) and @month.between?(1, 12) and @day.between?(1, 31)
-                  raise ArgumentError,
-                    "Invalid date year(#{year}) month(#{month}) day(#{day})"
+                  raise Exceptions::InvalidElementError,
+                    "Invalid date year: #{year}, month: #{month}, day: #{day}"
                 end
 
                 super(usage)
@@ -181,6 +233,10 @@ module Stupidedi
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
                   changes.fetch(:usage, usage)
+              end
+
+              def valid?
+                true
               end
 
               def empty?
@@ -257,20 +313,26 @@ module Stupidedi
               DateVal::Empty.new(usage)
             end
 
-            # @return [DateVal::Empty, DateVal::Proper, DateVal::Improper]
+            # @return [DateVal]
             def value(object, usage)
               if object.blank?
                 DateVal::Empty.new(usage)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
-                day   = object.to_s.slice(-2, 2).to_i
-                month = object.to_s.slice(-4, 2).to_i
-                year  = object.to_s.slice( 0..-5)
+                string = object.to_s
 
-                if year.length < 4
-                  DateVal::Improper.new(year.to_i, month, day, usage)
+                if string.length < 6
+                  DateVal::Invalid.new(object, usage)
                 else
-                  DateVal::Proper.new(year.to_i, month, day, usage)
+                  day   = string.slice(-2, 2).to_i
+                  month = string.slice(-4, 2).to_i
+                  year  = string.slice( 0..-5)
+
+                  if year.length < 4
+                    DateVal::Improper.new(year.to_i, month, day, usage)
+                  else
+                    DateVal::Proper.new(year.to_i, month, day, usage)
+                  end
                 end
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
@@ -280,8 +342,30 @@ module Stupidedi
                 DateVal::Improper.new(object.year, object.month, object.day, usage)
 
               else
-                raise ArgumentError, "Cannot convert #{object.class} to DateVal"
+                DateVal::Invalid.new(object, usage)
               end
+
+            rescue Exceptions::InvalidElementError
+              DateVal::Invalid.new(object, usage)
+            end
+
+            # @return [DateVal]
+            def parse(string, usage)
+              if string.length < 6
+                DateVal::Invalid.new(string, usage)
+              else
+                day   = string.slice(-2, 2).to_i
+                month = string.slice(-4, 2).to_i
+                year  = string.slice( 0..-5)
+
+                if year.length < 4
+                  DateVal::Improper.new(year.to_i, month, day, usage)
+                else
+                  DateVal::Proper.new(year.to_i, month, day, usage)
+                end
+              end
+            rescue Exceptions::InvalidElementError
+              DateVal::Invalid.new(string, usage)
             end
 
             # @endgroup
@@ -292,6 +376,7 @@ module Stupidedi
           DateVal.eigenclass.send(:protected, :new)
           DateVal::Empty.eigenclass.send(:public, :new)
           DateVal::Proper.eigenclass.send(:public, :new)
+          DateVal::Invalid.eigenclass.send(:public, :new)
           DateVal::Improper.eigenclass.send(:public, :new)
 
         end

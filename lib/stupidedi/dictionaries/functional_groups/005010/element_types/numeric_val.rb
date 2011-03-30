@@ -10,10 +10,60 @@ module Stupidedi
           class NumericVal < Values::SimpleElementVal
 
             #
+            #
+            #
+            class Invalid < NumericVal
+
+              # @return [Object]
+              attr_reader :value
+
+              def initialize(value, usage)
+                super(usage)
+                @value = value
+              end
+
+              def valid?
+                false
+              end
+
+              def empty?
+                false
+              end
+
+              # @return [String]
+              def inspect
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
+                end
+
+                ansi.element("Nn.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+              end
+
+              # @return [Boolean]
+              def ==(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
+              end
+            end
+
+            #
             # Empty numeric value. Shouldn't be directly instantiated -- instead
             # use the {NumericVal.value} and {NumericVal.empty} constructors.
             #
             class Empty < NumericVal
+
+              def valid?
+                true
+              end
+
               def empty?
                 true
               end
@@ -63,6 +113,10 @@ module Stupidedi
                 NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
+              end
+
+              def valid?
+                true
               end
 
               def empty?
@@ -164,20 +218,33 @@ module Stupidedi
             # @group Constructors
             ###################################################################
 
-            # @return [NumericVal::Empty]
+            # @return [NumericVal]
             def empty(usage)
               NumericVal::Empty.new(usage)
             end
 
-            # @return [NumericVal::Empty, NumericVal::NonEmpty]
+            # @return [NumericVal]
             def value(object, usage)
               if object.blank?
                 NumericVal::Empty.new(usage)
               elsif object.respond_to?(:to_d)
                 NumericVal::NonEmpty.new(object.to_d, usage)
               else
-                raise TypeError, "Cannot convert #{object.class} to #{self}"
+                NumericVal::Invalid.new(string, usage)
               end
+            rescue ArgumentError
+              NumericVal::Invalid.new(string, usage)
+            end
+
+            # @return [NumericVal]
+            def value(string, usage)
+              if string.blank?
+                NumericVal::Empty.new(usage)
+              else
+                NumericVal::NonEmpty.new(string.to_d, usage)
+              end
+            rescue ArgumentError
+              NumericVal::Invalid.new(string, usage)
             end
 
             # @endgroup
@@ -187,6 +254,7 @@ module Stupidedi
           # Prevent direct instantiation of abstract class NumericVal
           NumericVal.eigenclass.send(:protected, :new)
           NumericVal::Empty.eigenclass.send(:public, :new)
+          NumericVal::Invalid.eigenclass.send(:public, :new)
           NumericVal::NonEmpty.eigenclass.send(:public, :new)
         end
 

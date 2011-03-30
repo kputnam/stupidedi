@@ -411,7 +411,7 @@ module Stupidedi
       end
 
       def failure(message, remainder = @input)
-        Either.failure(Reader::Failure.new(message, remainder))
+        Either.failure(Result.failure(message, remainder))
       end
 
       def success(value)
@@ -419,7 +419,7 @@ module Stupidedi
       end
 
       def result(value, remainder)
-        Either.success(Reader::Success.new(value, remainder))
+        Either.success(Result.success(value, remainder))
       end
 
       def segment(segment_id, start, remainder, elements = [])

@@ -9,6 +9,8 @@ module Stupidedi
       # @return [SimpleElementDef]
       delegate :definition, :to => :@usage
 
+      abstract :valid?
+
       # @return [SegmentVal, CompositeElementVal]
       attr_reader :parent
 

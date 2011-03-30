@@ -4,22 +4,16 @@ module Stupidedi
       module FiftyTen
         module ElementTypes
 
-          #
-          # @see X222.pdf B.1.1.3.1.7 Binary
-          #
-          class BinaryVal < Values::SimpleElementVal
-            # @todo
-          end
+        # #
+        # # @see X222.pdf B.1.1.3.1.7 Binary
+        # #
+        # class BinaryVal < Values::SimpleElementVal
+        #   # @todo
+        # end
 
-          class << BinaryVal
-            def empty(usage)
-              raise NoMethodError, "@todo"
-            end
-
-            def value(object, usage)
-              raise NoMethodError, "@todo"
-            end
-          end
+        # class << BinaryVal
+        #   # @todo
+        # end
 
         end
       end

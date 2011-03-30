@@ -10,11 +10,61 @@ module Stupidedi
           class IdentifierVal < Values::SimpleElementVal
 
             #
+            #
+            #
+            class Invalid < IdentifierVal
+
+              # @return [Object]
+              attr_reader :value
+
+              def initialize(value, usage)
+                super(usage)
+                @value = value
+              end
+
+              def valid?
+                false
+              end
+
+              def empty?
+                false
+              end
+
+              # @return [String]
+              def inspect
+                id = definition.bind do |d|
+                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                    if usage.forbidden?
+                      ansi.forbidden(s)
+                    elsif usage.required?
+                      ansi.required(s)
+                    else
+                      ansi.optional(s)
+                    end
+                  end
+                end
+
+                ansi.element("ID.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+              end
+
+              # @return [Boolean]
+              def ==(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
+              end
+            end
+
+            #
             # Empty identifier value. Shouldn't be directly instantiated --
             # instead, use the {IdentifierVal.empty} and {IdentifierVal.value}
             # constructors
             #
             class Empty < IdentifierVal
+
+              def valid?
+                false
+              end
+
               def empty?
                 true
               end
@@ -63,6 +113,10 @@ module Stupidedi
                 NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
+              end
+
+              def valid?
+                true
               end
 
               def empty?
@@ -115,19 +169,28 @@ module Stupidedi
             # @group Constructors
             ###################################################################
 
-            # @return [IdentifierVal::Empty]
+            # @return [IdentifierVal]
             def empty(usage)
               IdentifierVal::Empty.new(usage)
             end
 
-            # @return [IdentifierVal::Empty, IdentifierVal::NonEmpty]
+            # @return [IdentifierVal]
             def value(object, usage)
               if object.blank?
                 IdentifierVal::Empty.new(usage)
               elsif object.respond_to?(:to_s)
                 IdentifierVal::NonEmpty.new(object.to_s, usage)
               else
-                raise TypeError, "Cannot convert #{object.class} to #{self}"
+                IdentifierVal::Invalid.new(object, usage)
+              end
+            end
+
+            # @return [IdentifierVal]
+            def parse(string, usage)
+              if string.blank?
+                IdentifierVal::Empty.new(usage)
+              else
+                IdentifierVal::NonEmpty.new(string, usage)
               end
             end
 
@@ -138,6 +201,7 @@ module Stupidedi
           # Prevent direct instantiation of abstract class IdentifierVal
           IdentifierVal.eigenclass.send(:protected, :new)
           IdentifierVal::Empty.eigenclass.send(:public, :new)
+          IdentifierVal::Invalid.eigenclass.send(:public, :new)
           IdentifierVal::NonEmpty.eigenclass.send(:public, :new)
         end
 

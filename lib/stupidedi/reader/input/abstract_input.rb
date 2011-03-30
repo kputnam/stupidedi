@@ -11,17 +11,20 @@ module Stupidedi
     # opened `IO` streams like `File`, and possibly others.
     #
     # @example Reading the input
-    #   input = Input.from_string("abc")
+    #   input = Input.build("abc")
     #   input.at(0)           #=> "a"
+    #   input.take(3)         #=> "abc"
     #
     #   input = input.drop(1) #=> #<DelegatedInput ...>
     #   input.at(0)           #=> "b"
+    #   input.take(3)         #=> "bc"
     #
     #   input = input.drop(1) #=> #<DelegatedInput ...>
     #   input.at(0)           #=> "c"
+    #   input.take(3)         #=> "c"
     #
     # @example Querying the position
-    #   input = Input.from_string("abc\ndef\nghi")
+    #   input = Input.build("abc\ndef\nghi")
     #   input.offset  #=> 0
     #   input.line    #=> 1
     #   input.column  #=> 1

@@ -4,18 +4,13 @@ module Stupidedi
   module Sets
 
     #
-    # This data type encodes the complement of a {RelativeSet}, which is an
-    # infinite and non-enumerable set of values.
+    # This data type is an infinite and non-enumerable set of values that
+    # encodes the complement of a {RelativeSet}
     #
     class RelativeComplement < AbstractSet
 
       def initialize(complement)
         @complement = complement
-      end
-
-      # @return [String]
-      def inspect
-        "RelativeComplement(#{@complement.inspect})"
       end
 
       # (see AbstractSet#include?)
@@ -107,9 +102,6 @@ module Stupidedi
         end
       end
 
-      # @endgroup
-      #########################################################################
-
       # @group Set Ordering
       #########################################################################
 
@@ -127,6 +119,14 @@ module Stupidedi
       def ==(other)
         eql?(other) or
          (other.is_a?(RelativeComplement) and complement == other.complement)
+      end
+
+      # @group Pretty Printing
+      #########################################################################
+
+      # @return [String]
+      def inspect
+        "RelativeComplement(#{@complement.inspect})"
       end
 
       # @endgroup

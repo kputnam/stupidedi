@@ -69,5 +69,5 @@ describe Stupidedi::Reader::Separators do
       end
     end
   end
-  
+
 end

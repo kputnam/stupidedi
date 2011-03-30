@@ -86,6 +86,10 @@ Benchmark.bmbm(10) do |bm|
   # bm.report("inline") { (N/10).times { call_stack_inline }}
   # bm.report("named")  { (N/10).times { call_stack_named  }}
   # bm.report("caller") { (N/10).times { call_stack_caller }}
-    bm.report("..from") { (10).times { call_stack_called_from }}
+  # bm.report("..from") { (10).times { call_stack_called_from }}
   # bm.report("nil")    { (N/10).times { implicit_return   }}
+
+  puts "g. How expensive are indirect method calls using __send__?"
+  bm.report("__send__") { N.times { __send__(:two, 1, 2) }}
+  bm.report("direct")   { N.times { two(1, 2) }}
 end

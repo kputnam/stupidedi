@@ -22,11 +22,15 @@ module Stupidedi
         @hash = hash
       end
 
+      # Yields each element in the set to the implicit block argument.
+      #
       # @return [void]
       def each
         @hash.keys.each{|o| yield o }
       end
 
+      # Returns an {Array} containing each element in this set
+      #
       # @return [Array]
       def to_a
         @hash.keys
@@ -38,11 +42,14 @@ module Stupidedi
       end
 
       # (see AbstractSet#finite?)
+      #
       # @return true
       def finite?
         true
       end
 
+      # Returns a single element from the set, with no guarantees about which
+      # element. If the set is {#empty?}, the return value is undefined.
       def first
         @hash.at(@hash.keys.first)
       end
@@ -187,9 +194,6 @@ module Stupidedi
         end
       end
 
-      # @endgroup
-      #########################################################################
-
       # @group Set Ordering
       #########################################################################
 
@@ -200,7 +204,7 @@ module Stupidedi
            @hash.keys == other.to_a)
       end
 
-      # @endgroup
+      # @group Pretty Printing
       #########################################################################
 
       # @return [void]
@@ -230,6 +234,9 @@ module Stupidedi
       def inspect
         "RelativeSet(#{to_a.map(&:inspect).join(', ')})"
       end
+
+      # @endgroup
+      #########################################################################
     end
 
     class << RelativeSet
