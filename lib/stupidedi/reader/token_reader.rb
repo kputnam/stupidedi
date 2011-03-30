@@ -145,9 +145,9 @@ module Stupidedi
             when @separators.segment
               remainder =
                 if a.value == :IEA
-                  a.remainder.stream
+                  b.remainder.stream
                 else
-                  a.remainder
+                  b.remainder
                 end
 
               # Consume the segment terminator
@@ -156,22 +156,6 @@ module Stupidedi
           end
         end
       end
-
-      # @return [void]
-      def pretty_print(q)
-        q.text("TokenReader")
-        q.group(2, "(", ")") do
-          q.breakable ""
-
-          q.pp @input
-          q.text ","
-          q.breakable
-
-          q.pp @separators
-        end
-      end
-
-  # protected
 
       # @return [Either<Result<Array<SimpleElementTok, CompositeElementTok>, TokenReader>>]
       def read_elements(segment_id, element_uses)
@@ -264,15 +248,11 @@ module Stupidedi
                @separators.element
             # Don't consume the delimiter
             result(buffer.upcase.to_sym, remainder)
-          when @separators.repetition
-            failure("Found repetition separator following segment identifier", remainder)
-          when @separators.component
-            failure("Found component separator following segment identifier", remainder)
           else
-            failure("Found #{character.inspect} following segment identifier", remainder)
+            failure("Found #{character.inspect} following segment identifier")
           end
         else
-          failure("Found #{buffer.inspect} instead of segment identifier")
+          failure("Found #{(buffer + character).inspect} instead of segment identifier")
         end
       end
 
@@ -386,13 +366,15 @@ module Stupidedi
               token = token.repeated if repeatable
               result(token, a.remainder)
             when @separators.repetition
-              b.remainder.read_composite_element.map do |r|
+              b.remainder.read_composite_element(repeatable).map do |r|
                 r.map{|e| e.repeated(token) }
               end
             end
           end
         end
       end
+
+    private
 
       # @return [TokenReader]
       def advance(n)
@@ -403,19 +385,25 @@ module Stupidedi
         end
       end
 
+      # @return [void]
+      def pretty_print(q)
+        q.text("TokenReader")
+        q.group(2, "(", ")") do
+          q.breakable ""
+
+          q.pp @input
+          q.text ","
+          q.breakable
+
+          q.pp @separators
+        end
+      end
+
       def is_delimiter?(character)
         character == @separators.segment   or
         character == @separators.element   or
         character == @separators.component or
         character == @separators.repetition
-      end
-
-      def is_basic?(character)
-        Reader.is_basic_character?(character)
-      end
-
-      def is_extended?(character)
-        Reader.is_extended_character?(character)
       end
 
       def is_control?(character)
@@ -434,7 +422,7 @@ module Stupidedi
         Either.success(Reader::Success.new(value, remainder))
       end
 
-      def segment(segment_id, start, remainder, elements)
+      def segment(segment_id, start, remainder, elements = [])
         SegmentTok.build(segment_id, elements, start, remainder)
       end
 

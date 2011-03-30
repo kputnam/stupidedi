@@ -16,8 +16,8 @@ class QuickCheck
       end
 
       module ClassMethods
-        def property(name, &setup)
-          QuickCheck.property(name, self, &setup)
+        def property(*args, &setup)
+          QuickCheck.property(self, *args, &setup)
         end
       end
     end
