@@ -171,7 +171,7 @@ module Stupidedi
         end
       end
 
-    protected
+  # protected
 
       # @return [Either<Result<Array<SimpleElementTok, CompositeElementTok>, TokenReader>>]
       def read_elements(segment_id, element_uses)
