@@ -13,6 +13,9 @@ module Stupidedi
 
   class << Zipper
 
+    # @group Constructors
+    ###########################################################################
+
     # @return [Cursor]
     def build(node)
       Zipper::RootCursor.new(node)

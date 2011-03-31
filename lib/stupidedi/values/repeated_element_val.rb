@@ -4,12 +4,12 @@ module Stupidedi
     #
     # @see X222.pdf B.1.1.3.2 Repeating Data Elements
     #
-    class RepeatedElementVal < AbstractVal
+    class RepeatedElementVal < AbstractElementVal
 
       # @return [CompositeElementDef, SimpleElementDef]
       delegate :definition, :to => :@usage
 
-      # @return [Array<ElementVal>]
+      # @return [Array<AbstractElementVal>]
       attr_reader :children
       alias element_vals children
 

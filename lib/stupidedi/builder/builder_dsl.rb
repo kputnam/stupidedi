@@ -35,9 +35,6 @@ module Stupidedi
         :composite.cons(components.cons)
       end
 
-      # @endgroup
-      #########################################################################
-
       #########################################################################
       # @group Element Placeholders
 

@@ -4,7 +4,7 @@ module Stupidedi
     #
     # @see X222.pdf B.1.1.3.3 Composite Data Structure
     #
-    class CompositeElementVal < AbstractVal
+    class CompositeElementVal < AbstractElementVal
 
       # @return [CompositeElementDef]
       delegate :definition, :to => :@usage

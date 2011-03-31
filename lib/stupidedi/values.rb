@@ -1,6 +1,7 @@
 module Stupidedi
   module Values
     autoload :AbstractVal,          "stupidedi/values/abstract_val"
+    autoload :AbstractElementVal,   "stupidedi/values/abstract_element_val"
     autoload :CompositeElementVal,  "stupidedi/values/composite_element_val"
     autoload :LoopVal,              "stupidedi/values/loop_val"
     autoload :RepeatedElementVal,   "stupidedi/values/repeated_element_val"

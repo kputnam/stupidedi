@@ -7,7 +7,7 @@ module Stupidedi
       # @return [SegmentDef]
       delegate :definition, :to => :@usage
 
-      # @return [Array<ElementVal>]
+      # @return [Array<AbstractElementVal>]
       attr_reader :children
 
       # @return [SegmentUse]

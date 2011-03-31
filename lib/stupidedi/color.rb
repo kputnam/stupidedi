@@ -22,12 +22,8 @@ module Stupidedi
 
       stubs.each do |name|
         instance_eval(<<-RUBY, __FILE__, __LINE__)
-          def #{name}(string = "")
-            if block_given?
-              yield
-            else
-              string
-            end
+          def #{name}(string)
+            string
           end
         RUBY
       end
@@ -38,62 +34,58 @@ module Stupidedi
         @base = base
       end
 
-      def noop(string = "", &block)
-        if block_given?
-          yield
-        else
-          string
-        end
+      def noop(string)
+        string
       end
 
-      def invalid(string = "", &block)
-        red(bold(string, &block))
+      def invalid(string)
+        red(bold(string))
       end
 
-      def element(string = "", &block)
-        black(string, &block)
+      def element(string)
+        black(string)
       end
 
-      def required(string = "", &block)
-        bold(string, &block)
+      def required(string)
+        bold(string)
       end
 
-      def optional(string = "", &block)
-        dark(white(string, &block))
+      def optional(string)
+        dark(white(string))
       end
 
-      def forbidden(string = "", &block)
-        noop(string, &block)
+      def forbidden(string)
+        noop(string)
       end
 
-      def repeated(string = "", &block)
-        black(string, &block)
+      def repeated(string)
+        black(string)
       end
 
-      def composite(string = "", &block)
-        black(string, &block)
+      def composite(string)
+        black(string)
       end
 
-      def segment(string = "", &block)
-        magenta(string, &block)
+      def segment(string)
+        magenta(string)
       end
 
-      def loop(string = "", &block)
-        yellow(string, &block)
+      def loop(string)
+        yellow(string)
       end
 
-      def table(string = "", &block)
-        yellow(string, &block)
+      def table(string)
+        yellow(string)
       end
 
-      def envelope(string = "", &block)
-        yellow(string, &block)
+      def envelope(string)
+        yellow(string)
       end
 
     private
 
-      def method_missing(name, *args, &block)
-        @base.__send__(name, *args, &block)
+      def method_missing(name, *args)
+        @base.__send__(name, *args)
       end
     end
 

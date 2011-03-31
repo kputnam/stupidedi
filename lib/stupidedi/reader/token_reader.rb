@@ -305,11 +305,11 @@ module Stupidedi
               token = simple(buffer, @input, @input.drop(position))
               rest  = advance(position).read_simple_element(repeatable)
               return rest.map{|r| r.map{|e| e.repeated(token) }}
-            else
-              # @todo: Read this as data but sound the alarms
+          # else
+          #   # @todo: Read this as data but sound the alarms
             end
-          when @separators.component
-            # @todo: Read this as data but sound the alarms
+        # when @separators.component
+        #   # @todo: Read this as data but sound the alarms
           end
 
           buffer << character
@@ -343,8 +343,8 @@ module Stupidedi
               # Don't consume the repetition separator
               token = component(buffer, @input, @input.drop(position))
               return result(token, advance(position - 1))
-            else
-              # @todo: Read this as data but sound the alarms
+          # else
+          #   # @todo: Read this as data but sound the alarms
             end
           end
 

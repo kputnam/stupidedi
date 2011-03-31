@@ -4,7 +4,7 @@ module Stupidedi
     #
     # @see X222 B.1.1.3.1 Data Element
     #
-    class SimpleElementVal < AbstractVal
+    class SimpleElementVal < AbstractElementVal
 
       # @return [SimpleElementDef]
       delegate :definition, :to => :@usage
