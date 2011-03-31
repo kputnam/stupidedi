@@ -33,7 +33,7 @@ module Stupidedi
   autoload :Reader,       "stupidedi/reader"
   autoload :Schema,       "stupidedi/schema"
   autoload :Values,       "stupidedi/values"
-# autoload :Writer,       "stupidedi/writer"
+  autoload :Writer,       "stupidedi/writer"
   autoload :Zipper,       "stupidedi/zipper"
 
   autoload :Sets,             "stupidedi/sets"

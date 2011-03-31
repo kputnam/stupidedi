@@ -86,6 +86,10 @@ module Stupidedi
                 ansi.element("ID.empty#{id}")
               end
 
+              def to_s
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
                 other.is_a?(Empty)

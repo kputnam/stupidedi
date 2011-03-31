@@ -14,6 +14,8 @@ module Stupidedi
 
       abstract :simple?
 
+      abstract :component?
+
       # @return [SimpleElementVal, CompositeElementVal]
       def empty
         definition.empty(self)
@@ -78,6 +80,11 @@ module Stupidedi
       # @return true
       def simple?
         true
+      end
+
+      # @return false
+      def component?
+        false
       end
 
       # @return [void]
@@ -146,6 +153,11 @@ module Stupidedi
         true
       end
 
+      # @return true
+      def component?
+        true
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text("ComponentElementUse")
@@ -198,6 +210,11 @@ module Stupidedi
 
       # @return false
       def simple?
+        false
+      end
+
+      # @return false
+      def component?
         false
       end
 

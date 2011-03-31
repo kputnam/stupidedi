@@ -85,6 +85,10 @@ module Stupidedi
                 ansi.element("TM.empty#{id}")
               end
 
+              def to_s
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
                 other.is_a?(Empty)
@@ -174,6 +178,10 @@ module Stupidedi
                 ss = @second.try{|s| s.to_s("F") } || "ss"
 
                 ansi.element("TM.value#{id}") << "(#{hh}:#{mm}:#{ss})"
+              end
+
+              def to_s
+                "#{@hour}#{@minute}#{@second}"
               end
 
               # @return [Boolean]

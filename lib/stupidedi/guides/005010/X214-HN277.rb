@@ -234,7 +234,7 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Free-form Information")),
                 b::Segment(1210, s::QTY, "Total Rejected Quantity",
                   r::Situational, d::RepeatCount.bounded(1),
-                  b::Element(e::Required,    "Quantity Qualifier", b::Values("AA")),
+                  b::Element(e::Required,    "Quantity Qualifier", b::Values("QC")),
                   b::Element(e::Required,    "Total Rejected Quantity"),
                   b::Element(e::NotUsed,     "COMPOSITE UNIT OF MEASURE"),
                   b::Element(e::NotUsed,     "Free-form Information")),

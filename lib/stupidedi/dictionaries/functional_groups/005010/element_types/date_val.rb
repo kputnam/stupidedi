@@ -46,6 +46,10 @@ module Stupidedi
                 ansi.element("DT.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
               end
 
+              def to_s
+                @value.to_s
+              end
+
               def ==(other)
                 eql?(other) or
                   (other.is_a?(Invalid) and @value == other.value)
@@ -81,6 +85,10 @@ module Stupidedi
                 end
 
                 ansi.element("DT.empty#{id}")
+              end
+
+              def to_s
+                ""
               end
 
               # @return [Boolean]
@@ -185,7 +193,11 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
+                ansi.element("DT.value#{id}") << "(#{'%04d-%02d-%02d' % [@year, @month, @day]})"
+              end
+
+              def to_s
+                '%04d%02d%02d' % [@year, @month, @day]
               end
 
               # @note Not commutative
@@ -289,7 +301,11 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(XX#{'%02d' % @year}-#{'%02d' % @month}-#{'%02d' % @day})"
+                ansi.element("DT.value#{id}") << "(XX#{'%02d-%02d-%02d' % [@year, @month, @day]})"
+              end
+
+              def to_s
+                '%04d%02d%02d' % [@year, @month, @day]
               end
 
               # @note Not commutative

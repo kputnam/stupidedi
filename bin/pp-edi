@@ -36,5 +36,6 @@ if parser.stuck?
   pp parser.errors
   exit 1
 else
-  pp parser.zipper.root.node
+# pp parser.zipper.root.node
+  puts Stupidedi::Writer::HtmlWriter.new.write(parser.zipper.root.node)
 end
