@@ -46,6 +46,7 @@ module Stupidedi
                 ansi.element("DT.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
               end
 
+              # @return [String]
               def to_s
                 @value.to_s
               end
@@ -87,6 +88,7 @@ module Stupidedi
                 ansi.element("DT.empty#{id}")
               end
 
+              # @return [String]
               def to_s
                 ""
               end
@@ -196,6 +198,7 @@ module Stupidedi
                 ansi.element("DT.value#{id}") << "(#{'%04d-%02d-%02d' % [@year, @month, @day]})"
               end
 
+              # @return [String]
               def to_s
                 '%04d%02d%02d' % [@year, @month, @day]
               end
@@ -304,6 +307,7 @@ module Stupidedi
                 ansi.element("DT.value#{id}") << "(XX#{'%02d-%02d-%02d' % [@year, @month, @day]})"
               end
 
+              # @return [String]
               def to_s
                 '%04d%02d%02d' % [@year, @month, @day]
               end

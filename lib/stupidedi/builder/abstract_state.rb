@@ -207,7 +207,6 @@ module Stupidedi
               "Element #{designator} is not forbidden"
           end
         else
-          # @todo: element_use.parse/value
           element_use.value(element_tok.value)
         end
       end

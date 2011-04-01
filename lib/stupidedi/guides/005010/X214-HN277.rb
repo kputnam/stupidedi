@@ -397,7 +397,7 @@ module Stupidedi
                     b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8", "RD8")),
                     b::Element(e::Required,    "Service Line Date")))))),
 
-          d::TableDef.detail("Table 2 - Patient Detail",
+          d::TableDef.detail("Table 3 - Summary",
             b::Segment(2700, s::SE, "Transaction Set Trailer",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Segment Count"),

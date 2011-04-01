@@ -85,6 +85,7 @@ module Stupidedi
                 ansi.element("AN.empty#{id}")
               end
 
+              # @return [String]
               def to_s
                 ""
               end

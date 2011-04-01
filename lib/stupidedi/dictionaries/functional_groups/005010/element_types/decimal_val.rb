@@ -91,6 +91,7 @@ module Stupidedi
                 ansi.element(" R.empty#{id}")
               end
 
+              # @return [String]
               def to_s
                 ""
               end
@@ -111,7 +112,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to_s, :to => :@value
+              delegate :to_i, :to_d, :to_f, :to => :@value
 
               def initialize(value, usage)
                 @value = value
@@ -126,7 +127,8 @@ module Stupidedi
               end
 
               def valid?
-                true
+                # False for NaN and +/- Infinity
+                @value.finite?
               end
 
               def empty?
@@ -158,7 +160,16 @@ module Stupidedi
                   end
                 end
 
-                ansi.element(" R.value#{id}") << "(#{@value.to_s('F')})"
+                ansi.element(" R.value#{id}") << "(#{to_s})"
+              end
+
+              # @return [String]
+              def to_s
+                if false #definition.precision.present?
+                  @value.round(definition.precision).to_s("F")
+                else
+                  @value.to_s("F")
+                end.gsub(/\.0$/, "")
               end
 
               # @group Mathematical Operators

@@ -22,9 +22,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
-      # @return false
-      def leaf?
-        false
+      # (see AbstractVal#table?)
+      # @return true
+      def table?
+        true
       end
 
       # @return [Array<SegmentVal>]

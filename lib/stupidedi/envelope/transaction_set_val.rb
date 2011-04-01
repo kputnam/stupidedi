@@ -23,6 +23,12 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
+      # (see AbstractSet#transaction_set?)
+      # @return true
+      def transaction_set?
+        true
+      end
+
       # @return [Array<SegmentVal>]
       def segment_vals
         @children.select{|x| x.is_a?(Values::SegmentVal) }

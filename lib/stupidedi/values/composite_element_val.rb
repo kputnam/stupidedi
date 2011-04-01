@@ -33,6 +33,12 @@ module Stupidedi
         false
       end
 
+      # (see AbstractVal#composite?)
+      # @return true
+      def composite?
+        true
+      end
+
       def empty?
         @children.all?(&:empty?)
       end

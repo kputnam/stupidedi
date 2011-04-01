@@ -27,6 +27,12 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
+      # (see Values::AbstractVal#functional_group?)
+      # @return true
+      def functional_group?
+        true
+      end
+
       # @return [Array<SegmentVal>]
       def segment_vals
         @children.select{|x| x.is_a?(Values::SegmentVal) }

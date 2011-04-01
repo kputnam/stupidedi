@@ -5,6 +5,7 @@ module Stupidedi
     autoload :EditedCursor,   "stupidedi/zipper/edited_cursor"
     autoload :MemoizedCursor, "stupidedi/zipper/memoized_cursor"
     autoload :RootCursor,     "stupidedi/zipper/root_cursor"
+    autoload :SegmentCursor,  "stupidedi/zipper/segment_cursor"
 
     autoload :AbstractPath, "stupidedi/zipper/path"
     autoload :Hole,         "stupidedi/zipper/path"

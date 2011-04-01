@@ -49,7 +49,7 @@ module Stupidedi
 
             # @return [Values::SimpleElementVal]
             def parse(string, usage)
-              companion.parse(string, self, usage)
+              companion.parse(string, usage)
             end
 
             # @return [Values::SimpleElementVal]
@@ -167,6 +167,8 @@ module Stupidedi
             "stupidedi/dictionaries/functional_groups/005010/element_types/numeric_val"
 
           class Nn < SimpleElementDef
+
+            # @return [Integer]
             attr_reader :precision
 
             def initialize(id, name, min_length, max_length, precision, description = nil, parent = nil)

@@ -2,7 +2,6 @@ require "bigdecimal"
 require "time"
 require "date"
 
-require "blankslate"   if RUBY_VERSION < "1.9"
 require "called_from"  if RUBY_VERSION < "1.9"
 require "term/ansicolor"
 

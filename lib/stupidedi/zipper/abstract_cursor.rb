@@ -39,12 +39,12 @@ module Stupidedi
 
       # @return [MemoizedCursor]
       def down
-        if leaf?
-          raise Exceptions::ZipperError,
-            "cannot descend into leaf node"
-        end
-
         @__down ||= begin
+          if leaf?
+            raise Exceptions::ZipperError,
+              "cannot descend into leaf node"
+          end
+
           head, *tail = @node.children
 
           MemoizedCursor.new(head,

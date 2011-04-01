@@ -85,6 +85,7 @@ module Stupidedi
                 ansi.element("Nn.empty#{id}")
               end
 
+              # @return [String]
               def to_s
                 ""
               end
@@ -105,7 +106,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to_s, :to => :@value
+              delegate :to_i, :to_d, :to_f, :to => :@value
 
               def initialize(value, usage)
                 @value = value
@@ -152,7 +153,13 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("Nn.value#{id}") << "(#{@value.to_s('F')})"
+                ansi.element("Nn.value#{id}") << "(#{to_s})"
+              end
+
+              # @return [String]
+              def to_s
+                # The number of fractional digits is implied by usage.precision
+                (@value * (10 ** definition.precision)).to_i.to_s
               end
 
               # @group Mathematical Operators
@@ -232,7 +239,10 @@ module Stupidedi
               if object.blank?
                 NumericVal::Empty.new(usage)
               elsif object.respond_to?(:to_d)
-                NumericVal::NonEmpty.new(object.to_d, usage)
+                # The number of fractional digits is implied by usage.precision
+                factor = 10 ** usage.definition.precision
+
+                NumericVal::NonEmpty.new(object.to_d / factor, usage)
               else
                 NumericVal::Invalid.new(string, usage)
               end
@@ -241,11 +251,14 @@ module Stupidedi
             end
 
             # @return [NumericVal]
-            def value(string, usage)
+            def parse(string, usage)
               if string.blank?
                 NumericVal::Empty.new(usage)
               else
-                NumericVal::NonEmpty.new(string.to_d, usage)
+                # The number of fractional digits is implied by usage.precision
+                factor = 10 ** usage.definition.precision
+
+                NumericVal::NonEmpty.new(string.to_d / factor, usage)
               end
             rescue ArgumentError
               NumericVal::Invalid.new(string, usage)

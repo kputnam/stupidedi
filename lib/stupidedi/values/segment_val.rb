@@ -30,6 +30,12 @@ module Stupidedi
         false
       end
 
+      # (see AbstractVal#segment?)
+      # @return true
+      def segment?
+        true
+      end
+
       def empty?
         @children.all?(&:empty?)
       end

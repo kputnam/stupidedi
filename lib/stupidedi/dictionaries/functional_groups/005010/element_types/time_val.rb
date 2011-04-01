@@ -85,6 +85,7 @@ module Stupidedi
                 ansi.element("TM.empty#{id}")
               end
 
+              # @return [String]
               def to_s
                 ""
               end
@@ -180,6 +181,7 @@ module Stupidedi
                 ansi.element("TM.value#{id}") << "(#{hh}:#{mm}:#{ss})"
               end
 
+              # @return [String]
               def to_s
                 "#{@hour}#{@minute}#{@second}"
               end

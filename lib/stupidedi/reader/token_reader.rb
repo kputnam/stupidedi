@@ -374,17 +374,6 @@ module Stupidedi
         end
       end
 
-    private
-
-      # @return [TokenReader]
-      def advance(n)
-        unless @input.defined_at?(n-1)
-          raise IndexError, "Less than #{n} characters available"
-        else
-          TokenReader.new(@input.drop(n), @separators, @segment_dict)
-        end
-      end
-
       # @return [void]
       def pretty_print(q)
         q.text("TokenReader")
@@ -396,6 +385,17 @@ module Stupidedi
           q.breakable
 
           q.pp @separators
+        end
+      end
+
+    private
+
+      # @return [TokenReader]
+      def advance(n)
+        unless @input.defined_at?(n-1)
+          raise IndexError, "Less than #{n} characters available"
+        else
+          TokenReader.new(@input.drop(n), @separators, @segment_dict)
         end
       end
 

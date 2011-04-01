@@ -42,52 +42,70 @@ module Stupidedi
 
       # @return [MemoizedCursor]
       def next
-        if last?
-          raise Exceptions::ZipperError,
-            "cannot move to next after last node"
+        @__next ||= begin
+          if last?
+            raise Exceptions::ZipperError,
+              "cannot move to next after last node"
+          end
+
+          head, *tail = @path.right
+
+          MemoizedCursor.new(head,
+            Hole.new(@node.cons(@path.left), @path.parent, tail), @parent)
         end
-
-        head, *tail = @path.right
-
-        MemoizedCursor.new(head,
-          Hole.new(@node.cons(@path.left), @path.parent, tail), @parent)
       end
 
       # @return [MemoizedCursor]
       def prev
-        if first?
-          raise Exceptions::ZipperError,
-            "cannot move to prev before first node"
+        @__prev ||= begin
+          if first?
+            raise Exceptions::ZipperError,
+              "cannot move to prev before first node"
+          end
+
+          head, *tail = @path.left
+
+          MemoizedCursor.new(head,
+            Hole.new(tail, @path.parent, @node.cons(@path.right)), @parent)
         end
-
-        head, *tail = @path.left
-
-        MemoizedCursor.new(head,
-          Hole.new(tail, @path.parent, @node.cons(@path.right)), @parent)
       end
 
       # @return [MemoizedCursor]
       def first
-        if first?
-          return self
-        end
+        @parent.down
 
-        right = @path.left.init.reverse.concat(@node.cons(@path.right))
+      # @note: The code below is correct but doesn't take advantage of values
+      # memoized by the parent. Temporarily here to evaluate its perfomance
+      # compared to the memoized call above.
+      #
+      # if first?
+      #   return self
+      # end
 
-        MemoizedCursor.new(@path.left.last,
-          Hole.new([], @path.parent, right), @parent)
+      # right = @path.left.init.reverse.concat(@node.cons(@path.right))
+
+      # MemoizedCursor.new(@path.left.last,
+      #   Hole.new([], @path.parent, right), @parent)
       end
 
       # @return [MemoizedCursor]
       def last
-        if last?
-          return self
-        end
+        current = self
+        current = current.next until current.last?
+        current
 
-        left = @node.cons(@path.right.init.reverse).concat(@path.left)
+      # @note: The code below is correct but doesn't take advantage of values
+      # memoized by the sibling. Temporarily here to evaluate its perfomance
+      # compared to the memoized call above.
+      #
+      # if last?
+      #   return self
+      # end
 
-        MemoizedCursor.new(@path.right.last,
-          Hole.new(left, @path.parent, []), @parent)
+      # left = @node.cons(@path.right.init.reverse).concat(@path.left)
+
+      # MemoizedCursor.new(@path.right.last,
+      #   Hole.new(left, @path.parent, []), @parent)
       end
 
       # @endgroup

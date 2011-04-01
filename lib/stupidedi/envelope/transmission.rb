@@ -1,7 +1,7 @@
 module Stupidedi
   module Envelope
 
-    class Transmission
+    class Transmission < Values::AbstractVal
       include Color
 
       # @return [Array<InterchangeVal>]

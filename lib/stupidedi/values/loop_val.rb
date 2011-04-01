@@ -26,9 +26,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
-      # @return false
-      def leaf?
-        false
+      # (see AbstractVal#loop?)
+      # @return true
+      def loop?
+        true
       end
 
       # @return [Array<SegmentVal>]

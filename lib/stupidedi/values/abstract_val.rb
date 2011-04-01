@@ -20,6 +20,42 @@ module Stupidedi
       def blank?
         empty?
       end
+
+      def interchange?
+        false
+      end
+
+      def functional_group?
+        false
+      end
+
+      def transaction_set?
+        false
+      end
+
+      def table?
+        false
+      end
+
+      def loop?
+        false
+      end
+
+      def segment?
+        false
+      end
+
+      def element?
+        false
+      end
+
+      def composite?
+        false
+      end
+
+      def component?
+        false
+      end
     end
 
   end
