@@ -21,6 +21,10 @@ module Stupidedi
         empty?
       end
 
+      def transmission?
+        false
+      end
+
       def interchange?
         false
       end
@@ -54,6 +58,10 @@ module Stupidedi
       end
 
       def component?
+        false
+      end
+
+      def repeated?
         false
       end
     end

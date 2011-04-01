@@ -12,10 +12,10 @@ module Stupidedi
         @zipper.node
       end
 
-      def next
+      def next(segment_id, *elements)
       end
 
-      def prev
+      def prev(segment_id, *elements)
       end
 
       # @return [SegmentCursor]

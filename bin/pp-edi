@@ -41,7 +41,7 @@ if parser.stuck?
   exit 1
 else
 # pp parser.zipper.root.node
-# puts Stupidedi::Writer::HtmlWriter.new.write(parser.zipper.root.node)
+  Stupidedi::Writer::Claredi.new(parser.zipper.root.node).write($stdout)
 
   puts stop - start
 end

@@ -35,6 +35,11 @@ module Stupidedi
         false
       end
 
+      # @return true
+      def repeated?
+        true
+      end
+
       def empty?
         @children.all(&:empty?)
       end

@@ -47,6 +47,11 @@ module Stupidedi
                 ansi.element("Nn.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
               end
 
+              # @return [String]
+              def to_s
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
                 eql?(other) or
@@ -244,10 +249,10 @@ module Stupidedi
 
                 NumericVal::NonEmpty.new(object.to_d / factor, usage)
               else
-                NumericVal::Invalid.new(string, usage)
+                NumericVal::Invalid.new(object, usage)
               end
             rescue ArgumentError
-              NumericVal::Invalid.new(string, usage)
+              NumericVal::Invalid.new(object, usage)
             end
 
             # @return [NumericVal]

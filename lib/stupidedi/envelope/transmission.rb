@@ -19,6 +19,10 @@ module Stupidedi
         false
       end
 
+      def transmission?
+        true
+      end
+
       # @return [Boolean]
       def ==(other)
         eql?(other) or other.children == @children

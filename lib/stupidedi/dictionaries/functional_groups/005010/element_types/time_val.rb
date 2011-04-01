@@ -47,6 +47,11 @@ module Stupidedi
                 ansi.element("TM.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
               end
 
+              # @return [String]
+              def to_s
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
                 eql?(other) or

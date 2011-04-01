@@ -75,33 +75,33 @@ module Stupidedi
 
       # @return [void]
       def build(node, out = "")
-        case node
-        when Envelope::Transmission
-          out << "<div class=transmission>\n"
-          node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+        if node.element?
 
-        when Envelope::InterchangeVal
-          out << "<div class=interchange><div class=label>Interchange #{node.definition.id}</div>\n"
-          node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          if node.composite?
+            out << "*"
+            tmp  = ""
+            node.children.each{|e| build(e, tmp) }
+            tmp.gsub!(/:*$/, "")
+            out << tmp
+          elsif node.component?
+            out << "#{node}:"
+          elsif node.repeated?
+            out << "^"
+            node.children.each{|e| build(e, out) }
+          else
+            out << "*#{node}"
+          end
 
-        when Envelope::FunctionalGroupVal
-          out << "<div class=functionalgr><div class=label>Functional Group #{node.definition.id}</div>\n"
-          node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+        elsif node.segment?
+          out << "<div class=segment><div class=label title='#{node.definition.name}'>"
+          out << '% 3s' % node.definition.id
+        # out << ": #{node.definition.name}</div></div>\n"
+          tmp  = ""
+          node.children.each{|e| build(e, tmp) }
+          tmp.gsub!(/\**$/, "")
+          out << "#{tmp}~</div></div>\n"
 
-        when Envelope::TransactionSetVal
-          out << "<div class=transaction><div class=label>Transaction Set #{node.definition.id}</div>\n"
-          node.children.each{|c| build(c, out) }
-          out << "</div>\n"
-
-        when Values::TableVal
-          out << "<div class=table><div class=label>#{node.definition.id}</div>\n"
-          node.children.each{|c| build(c, out) }
-          out << "</div>\n"
-
-        when Values::LoopVal
+        elsif node.loop?
           m = /^(\w+) (.+)$/.match(node.definition.id)
           id, name = m.captures
           name = name.split(/\s+/).map(&:capitalize).join(" ")
@@ -110,28 +110,30 @@ module Stupidedi
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
-        when Values::SegmentVal
-          out << "<div class=segment><div class=label>#{'% 3s' % node.definition.id}"
-        # out << ": #{node.definition.name}</div></div>\n"
-          node.children.each{|e| build(e, out) }
-          out.gsub!(/\**$/, "")
-          out << "~</div></div>\n"
+        elsif node.table?
+          out << "<div class=table><div class=label>#{node.definition.id}</div>\n"
+          node.children.each{|c| build(c, out) }
+          out << "</div>\n"
 
-        when Values::SimpleElementVal
-          if node.definition.parent.try(:component?)
-            out << "#{node}:"
-          else
-            out << "*#{node}"
-          end
+        elsif node.transaction_set?
+          out << "<div class=transaction><div class=label>Transaction Set #{node.definition.id}</div>\n"
+          node.children.each{|c| build(c, out) }
+          out << "</div>\n"
 
-        when Values::CompositeElementVal
-          out << "*"
-          node.children.each{|e| build(e, out) }
-          out.gsub!(/:*$/, "")
+        elsif node.functional_group?
+          out << "<div class=functionalgr><div class=label>Functional Group #{node.definition.id}</div>\n"
+          node.children.each{|c| build(c, out) }
+          out << "</div>\n"
 
-        when Values::RepeatedElementVal
-          out << "*"
-          node.children.each{|e| build(e, out) }
+        elsif node.interchange?
+          out << "<div class=interchange><div class=label>Interchange #{node.definition.id}</div>\n"
+          node.children.each{|c| build(c, out) }
+          out << "</div>\n"
+
+        elsif node.transmission?
+          out << "<div class=transmission>\n"
+          node.children.each{|c| build(c, out) }
+          out << "</div>\n"
         end
       end
     end

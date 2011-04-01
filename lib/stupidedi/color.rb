@@ -3,7 +3,7 @@ module Stupidedi
 
     def self.ansi
       @__ansi ||=
-        if defined?(::Term::ANSIColor)
+        if $stdout.tty? and defined?(::Term::ANSIColor)
           Wrapper.new(::Term::ANSIColor)
         else
           Wrapper.new(Stub)
