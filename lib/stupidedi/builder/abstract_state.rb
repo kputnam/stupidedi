@@ -26,9 +26,19 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         q.text self.class.name.split('::').last
+      # q.text "[#{zipper.node.class.name.split('::').last}]"
+      # q.text "[#{zipper.node.definition.id}]"
+
         q.group(2, "(", ")") do
           q.breakable ""
-          q.pp zipper.node
+
+          children.each do |e|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp e
+          end
         end
       end
 

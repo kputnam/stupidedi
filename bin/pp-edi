@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
-require "stupidedi"
 require "term/ansicolor" if ARGV.delete("-C")
+require "stupidedi"
 require "pp"
 
 config = Stupidedi::Config.new
@@ -39,10 +39,11 @@ end
 stop = Time.now
 
 if parser.stuck?
-  pp parser.errors
+  pp parser.halted
   exit 1
 else
-  pp parser.zipper.root.node
+  pp parser.root
+# pp parser.zipper.root.node
 # Stupidedi::Writer::Claredi.new(parser.zipper.root.node).write($stdout)
 
   puts stop - start

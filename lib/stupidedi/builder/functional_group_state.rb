@@ -56,8 +56,16 @@ module Stupidedi
         fgcode = segment_tok.element_toks.at(0).try(:value)
 
         unless config.functional_group.defined_at?(gscode)
-          raise Exceptions::ParseError,
-            "Unknown functional group version #{gscode}"
+          segment_val = Values::InvalidSegmentVal.new \
+            "Unknown functional group version #{gscode}", segment_tok
+
+          return zipper.append_child(
+            FailureState.new(
+              true,
+              parent.separators,
+              parent.segment_dict,
+              parent.instructions.push([]),
+              parent.zipper.append(segment_val)))
         end
 
         envelope_def = config.functional_group.at(gscode)

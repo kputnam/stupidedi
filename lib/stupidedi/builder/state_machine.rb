@@ -10,28 +10,34 @@ module Stupidedi
       # @return [Array<Zipper::AbstractCursor>]
       attr_reader :active
 
-      # @return [Array<FailureState>]
-      attr_reader :halted
-
-      def initialize(config, active, halted)
-        @config, @active, @halted = config, active, halted
+      def initialize(config, active)
+        @config, @active = config, active
       end
 
       # @return [Reader::TokenReader]
       def input!(segment_tok, reader)
         active = []
-        halted = []
 
         @active.each do |zipper|
           state        = zipper.node
           instructions = state.instructions.matches(segment_tok)
 
-          # No matching instructions means that this parse tree hit a dead end
-          # and cannot accept this token. Keep in mind there may be another
-          # state in @active that can accept this token.
           if instructions.empty?
-            halted << FailureState.new("Unexpected segment #{segment_tok.id}",
-              segment_tok, state.separators, state.segment_dict, state.zipper)
+            if state.leaf?
+              segment_val = Values::InvalidSegmentVal.new \
+                "Unexpected segment", segment_tok
+
+              active << zipper.append(
+                FailureState.new(
+                  false,
+                  state.separators,
+                  state.segment_dict,
+                  state.instructions,
+                  state.zipper.append(segment_val)))
+            else
+              active << zipper
+            end
+
             next
           end
 
@@ -40,13 +46,14 @@ module Stupidedi
               # There are two trees being edited in parallel. The first tree
               # has AbstractState nodes, and the second tree has AbstractVal
               # nodes.
-              z = zipper
-              t = zipper.node.zipper
               i = zipper.node.instructions
+              t = zipper.node.zipper
+              z = zipper
 
               op.pop_count.times do
-                z = z.up
                 t = t.up
+                z = z.up
+                z = z.replace(z.node.copy(:zipper => t))
               end
 
               # Create a new AbstractState node that has a new InstructionTable
@@ -62,7 +69,7 @@ module Stupidedi
               unless op.pop_count.zero? or reader.stream?
                 # More general than checking if segment_tok is an ISE/GE segment
                 unless reader.separators.eql?(successor.separators) \
-                   and reader.segment_dict.eql?(successor.segment_dict)
+                  and reader.segment_dict.eql?(successor.segment_dict)
                   reader = reader.copy \
                     :separators   => successor.separators,
                     :segment_dict => successor.segment_dict
@@ -72,13 +79,14 @@ module Stupidedi
               # There are two trees being edited in parallel. The first tree
               # has AbstractState nodes, and the second tree has AbstractVal
               # nodes.
-              z = zipper
-              t = zipper.node.zipper
               i = zipper.node.instructions
+              t = zipper.node.zipper
+              z = zipper
 
               op.pop_count.times do
-                z = z.up
                 t = t.up
+                z = z.up
+                z = z.replace(z.node.copy(:zipper => t))
               end
 
               # Create a new AbstractState node that has a new InstructionTable
@@ -95,7 +103,7 @@ module Stupidedi
 
               # More general than checking if segment_tok is an ISA/GS segment
               unless reader.separators.eql?(successor.separators) \
-                 and reader.segment_dict.eql?(successor.segment_dict)
+                and reader.segment_dict.eql?(successor.segment_dict)
                 reader = reader.copy \
                   :separators   => successor.separators,
                   :segment_dict => successor.segment_dict
@@ -104,9 +112,7 @@ module Stupidedi
           end
         end
 
-      # puts "#{segment_tok.id}: #{active.length}"
-
-        @halted.concat(halted)
+        # puts "#{segment_tok.id}: #{active.length}"
         @active = active
 
         return reader
@@ -141,7 +147,7 @@ module Stupidedi
 
       # True if the state machine cannot recover from failing to parse a token
       def stuck?
-        @active.empty?
+        false
       end
 
       def successors
@@ -153,9 +159,6 @@ module Stupidedi
         q.text "StateMachine"
         q.group(2, "(", ")") do
           q.breakable ""
-          q.pp @halted
-          q.text ","
-          q.breakable
           q.pp @active.map(&:node)
         end
       end
@@ -170,12 +173,21 @@ module Stupidedi
       # @return [StateMachine]
       def root
         active = []
-        @active.each do |state|
-          state = state.pop(state.depth)
-          active << state
+
+        @active.each do |zipper|
+          z = zipper
+          t = zipper.node.zipper
+
+          zipper.depth.times do
+            t = t.up
+            z = z.up
+            z = z.replace(z.node.copy(:zipper => t))
+          end
+
+          active << z
         end
 
-        StateMachine.new(active, @halted)
+        StateMachine.new(@config, active)
       end
     end
 
@@ -185,7 +197,7 @@ module Stupidedi
 
       # @return [StateMachine]
       def build(config)
-        StateMachine.new(config, Zipper.build(TransmissionState.build).cons, [])
+        StateMachine.new(config, Zipper.build(TransmissionState.build).cons)
       end
 
       # @endgroup

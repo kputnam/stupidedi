@@ -37,7 +37,6 @@ module Stupidedi
         def push(instructions)
           @__push[instructions] ||= begin
           # puts "#{object_id}.push(#{object_id})"
-            offset = instructions.length
             bottom = @instructions.map{|x| x.copy(:pop_count => x.pop_count + 1) }
 
             NonEmpty.new(instructions + bottom, self)
@@ -161,7 +160,8 @@ module Stupidedi
         end
 
         def matches(segment_tok)
-          raise "@todo"
+          raise Exceptions::ParseError,
+            "InstructionTable::Empty#matches should not be called"
         end
 
         # @return [Empty]
@@ -169,7 +169,7 @@ module Stupidedi
           if count.zero?
             self
           else
-            raise "@todo"
+            "InstructionTable::Empty#pop should not be called"
           end
         end
 

@@ -95,6 +95,10 @@ module Stupidedi
         @left.empty?
       end
 
+      def depth
+        1 + @parent.depth
+      end
+
       # @return [String]
       def inspect
         "#{@parent.inspect}/#{@left.length}"

@@ -12,42 +12,25 @@ module Stupidedi
       # @return [Zipper::AbstractCursor]
       attr_reader :zipper
 
-      # @return [String]
-      attr_reader :explanation
+      # @return [InstructionTable]
+      attr_reader :instructions
 
-      # @return [SegmentTok]
-      attr_reader :segment_tok
+      def initialize(container, separators, segment_dict, instructions, zipper)
+        @container, @separators, @segment_dict, @instructions, @zipper =
+          container, separators, segment_dict, instructions, zipper
+      end
 
-      def initialize(explanation, segment_tok, separators, segment_dict, zipper)
-        @separators, @segment, @explanation, @segment_tok, @zipper =
-          separators, segment_dict, explanation, segment_tok, zipper
+      def copy(changes = {})
+        FailureState.new \
+          changes.fetch(:container, @container),
+          changes.fetch(:separators, @separators),
+          changes.fetch(:segment_dict, @segment_dict),
+          changes.fetch(:instructions, @instructions),
+          changes.fetch(:zipper, @zipper)
       end
 
       def leaf?
-        true
-      end
-
-      # @return [InstructionTable]
-      def instructions
-        InstructionTable.empty
-      end
-
-      # @return [void]
-      def pretty_print(q)
-        q.text("FailureState")
-        q.group(2, "(", ")") do
-          q.breakable ""
-
-          q.pp @explanation
-          q.text ","
-          q.breakable
-
-          q.pp @segment_tok
-          q.text ","
-          q.breakable
-
-          q.pp @zipper.node
-        end
+        not @container
       end
     end
 

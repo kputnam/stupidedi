@@ -55,9 +55,17 @@ module Stupidedi
         end
 
         unless config.transaction_set.defined_at?(version, fgcode, txcode)
-          context = "#{fgcode} #{txcode} #{version}"
-          raise Exceptions::ParseError,
-            "Unknown transaction set #{context}"
+          context     = "#{fgcode} #{txcode} #{version}"
+          segment_val = Values::InvalidSegmentVal.new \
+            "Unknown transaction set #{context}", segment_tok
+
+          return zipper.append_child(
+            FailureState.new(
+              true,
+              parent.separators,
+              parent.segment_dict,
+              parent.instructions.push([]),
+              parent.zipper.append(segment_val)))
         end
 
         envelope_def = config.transaction_set.at(version, fgcode, txcode)
