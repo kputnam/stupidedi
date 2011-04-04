@@ -3,26 +3,34 @@ module Stupidedi
 
     class LoopState < AbstractState
 
-      # @return [Zipper::AbstractCursor]
-      attr_reader :zipper
+      # @return [Reader::Separators]
+      attr_reader :separators
 
-      # @return [TableState, LoopState]
-      attr_reader :parent
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
 
       # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(zipper, parent, instructions)
-        @zipper, @parent, @instructions =
-          zipper, parent, instructions
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
+      attr_reader :children
+
+      def initialize(separators, segment_dict, instructions, zipper, children)
+        @separators, @segment_dict, @instructions, @zipper, @children =
+          separators, segment_dict, instructions, zipper, children
       end
 
       # @return [LoopState]
       def copy(changes = {})
         LoopState.new \
+          changes.fetch(:separators, @separators),
+          changes.fetch(:segment_dict, @segment_dict),
+          changes.fetch(:instructions, @instructions),
           changes.fetch(:zipper, @zipper),
-          changes.fetch(:parent, @parent),
-          changes.fetch(:instructions, @instructions)
+          changes.fetch(:children, @children)
       end
     end
 
@@ -30,18 +38,19 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      # @return [LoopState]
-      def push(segment_tok, segment_use, parent, reader)
-        segment_val = segment(segment_tok, segment_use)
+      # @return [Zipper::AbstractCursor]
+      def push(zipper, parent, segment_tok, segment_use, config)
         loop_def    = segment_use.parent
         loop_val    = loop_def.empty
+        segment_val = mksegment(segment_tok, segment_use)
 
-        zipper = parent.zipper.
-          append(loop_val).
-          append_child(segment_val)
-
-        LoopState.new(zipper, parent,
-          parent.instructions.push(instructions(loop_def)))
+        zipper.append_child \
+          LoopState.new(
+            parent.separators,
+            parent.segment_dict,
+            parent.instructions.push(instructions(loop_def)),
+            parent.zipper.append(loop_val).append_child(segment_val),
+            [])
       end
 
       # @endgroup

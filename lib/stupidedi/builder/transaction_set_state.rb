@@ -3,26 +3,34 @@ module Stupidedi
 
     class TransactionSetState < AbstractState
 
-      # @return [Zipper::AbstractCursor]
-      attr_reader :zipper
+      # @return [Reader::Separators]
+      attr_reader :separators
 
-      # @return [FunctionalGroupState]
-      attr_reader :parent
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
 
       # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(zipper, parent, instructions)
-        @zipper, @parent, @instructions =
-          zipper, parent, instructions
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
+      attr_reader :children
+
+      def initialize(separators, segment_dict, instructions, zipper, children)
+        @separators, @segment_dict, @instructions, @zipper, @children =
+          separators, segment_dict, instructions, zipper, children
       end
 
       # @return [TransactionSetState]
       def copy(changes = {})
         TransactionSetState.new \
+          changes.fetch(:separators, @separators),
+          changes.fetch(:segment_dict, @segment_dict),
+          changes.fetch(:instructions, @instructions),
           changes.fetch(:zipper, @zipper),
-          changes.fetch(:parent, @parent),
-          changes.fetch(:instructions, @instructions)
+          changes.fetch(:children, @children)
       end
     end
 
@@ -31,7 +39,7 @@ module Stupidedi
       #########################################################################
 
       # @return [TransactionSetState]
-      def push(segment_tok, segment_use, parent, reader)
+      def push(zipper, parent, segment_tok, segment_use, config)
         # GS01: Functional Identifier Code
         fgcode = parent.fgcode
 
@@ -46,23 +54,25 @@ module Stupidedi
           version = parent.version
         end
 
-        unless parent.config.transaction_set.defined_at?(version, fgcode, txcode)
+        unless config.transaction_set.defined_at?(version, fgcode, txcode)
           context = "#{fgcode} #{txcode} #{version}"
-          return FailureState.new("Unknown transaction set #{context}",
-            segment_tok, parent)
+          raise Exceptions::ParseError,
+            "Unknown transaction set #{context}"
         end
 
-        envelope_def = parent.config.transaction_set.at(version, fgcode, txcode)
+        envelope_def = config.transaction_set.at(version, fgcode, txcode)
         envelope_val = envelope_def.empty
         segment_use  = envelope_def.entry_segment_use
 
-        zipper = parent.zipper.
-          append(envelope_val).
-          dangle
+        zipper = zipper.append_child \
+          TransactionSetState.new(
+            parent.separators,
+            parent.segment_dict,
+            parent.instructions.push(instructions(envelope_def)),
+            parent.zipper.append(envelope_val).dangle,
+            [])
 
-        TableState.push(segment_tok, segment_use,
-          TransactionSetState.new(zipper, parent,
-            parent.instructions.push(instructions(envelope_def))), reader)
+        TableState.push(zipper, zipper.node, segment_tok, segment_use, config)
       end
 
       # @endgroup

@@ -4,60 +4,22 @@ module Stupidedi
     class AbstractState
       include Inspect
 
+      # @return [Reader::Separators]
+      abstract :separators
+
+      # @return [Reader::SegmentDict]
+      abstract :segment_dict
+
       # @return [Zipper::AbstractCursor]
       abstract :zipper
 
-      # @return [AbstractState]
-      abstract :parent
+      # @return [Array<AbstractState>]
+      abstract :children
 
       # @return [InstructionTable]
       abstract :instructions
 
-      # @group State Traversal
-      #########################################################################
-
-      # @return [AbstractState]
-      def pop(count)
-        if count.zero?
-          self
-        else
-          @parent.copy(:zipper => zipper.up).pop(count - 1)
-        end
-      end
-
-      # @return [AbstractState]
-      def drop(count)
-        if count.zero?
-          self
-        else
-          copy(:instructions => instructions.drop(count))
-        end
-      end
-
-      # @return [AbstractState]
-      def add(segment_tok, segment_use)
-        copy(:zipper => zipper.append(segment(segment_tok, segment_use)))
-      end
-
-      # @endgroup
-      #########################################################################
-
-      # @return [Reader::Separators]
-      def separators
-        parent.separators
-      end
-
-      # @return [Reader::SegmentDict]
-      def segment_dict
-        parent.segment_dict
-      end
-
-      # @return [Config::RootConfig]
-      def config
-        parent.config
-      end
-
-      def failure?
+      def leaf?
         false
       end
 
@@ -87,17 +49,14 @@ module Stupidedi
       # stack structure is implicit, and it can be iterated by following each
       # state's {#parent}.
       #
-      # @return [AbstractState]
-      abstract :push, :args => %w(segment_tok segment_use parent reader)
-
-      # @endgroup
-      #########################################################################
+      # @return [Zipper::AbstractCursor]
+      abstract :push, :args => %w(zipper parent segment_tok segment_use config)
 
       # @group SegmentVal Construction
       #########################################################################
 
       # @return [Values::SegmentVal]
-      def segment(segment_tok, segment_use)
+      def mksegment(segment_tok, segment_use)
         segment_def  = segment_use.definition
         element_uses = segment_def.element_uses
         element_toks = segment_tok.element_toks
@@ -115,7 +74,7 @@ module Stupidedi
                 element_use.empty
               end
             else
-              element("#{segment_def.id}#{element_idx}", element_use, element_tok)
+              mkelement("#{segment_def.id}#{element_idx}", element_use, element_tok)
             end
         end
 
@@ -123,40 +82,40 @@ module Stupidedi
       end
 
       # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
-      def element(designator, element_use, element_tok)
+      def mkelement(designator, element_use, element_tok)
         if element_use.simple?
           if element_use.repeatable?
             element_toks = element_tok.element_toks
             element_vals = element_toks.map do |element_tok|
-              simple_element(designator, element_use, element_tok)
+              mksimple(designator, element_use, element_tok)
             end
 
-            repeated_element(designator, element_use, element_vals)
+            mkrepeated(designator, element_use, element_vals)
           else
-            simple_element(designator, element_use, element_tok)
+            mksimple(designator, element_use, element_tok)
           end
         else
           if element_use.repeatable?
             element_toks = element_tok.element_toks
             element_vals = element_toks.map do |element_tok|
-              composite_element(designator, element_use, element_tok)
+              mkcomposite(designator, element_use, element_tok)
             end
 
-            repeated_element(designator, element_use, element_vals)
+            mkrepeated(designator, element_use, element_vals)
           else
-            composite_element(designator, element_use, element_tok)
+            mkcomposite(designator, element_use, element_tok)
           end
         end
       end
 
       # @return [Values::RepeatedElementVal]
-      def repeated_element(designator, element_use, element_vals)
+      def mkrepeated(designator, element_use, element_vals)
         # @todo: Position
         Values::RepeatedElementVal.build(element_vals, element_use)
       end
 
       # @return [Values::CompositeElementVal]
-      def composite_element(designator, composite_use, composite_tok)
+      def mkcomposite(designator, composite_use, composite_tok)
         composite_def  = composite_use.definition
         component_uses = composite_def.component_uses
         component_toks = composite_tok.component_toks
@@ -170,7 +129,7 @@ module Stupidedi
             if component_tok.nil?
               component_use.empty
             else
-              simple_element("#{designator}-#{component_idx}", component_use, component_tok)
+              mksimple("#{designator}-#{component_idx}", component_use, component_tok)
             end
         end
 
@@ -178,7 +137,7 @@ module Stupidedi
       end
 
       # @return [Values::SimpleElementVal]
-      def simple_element(designator, element_use, element_tok)
+      def mksimple(designator, element_use, element_tok)
         # We don't validate that element_tok is simple because the TokenReader
         # will always produce a SimpleElementTok given a SimpleElementUse from
         # the SegmentDef. On the other hand, the BuilderDsl API will throw an

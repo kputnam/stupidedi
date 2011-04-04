@@ -48,9 +48,7 @@ module Stupidedi
 
         # Calling @io.read with more than the number of available bytes will
         # return nil, so we have to calculate how many bytes remain
-        m = @size - @offset
-
-        @io.read((n <= m) ? n : m)
+        @io.read((n <= @size) ? n : @size)
       end
 
       # (see AbstractInput#at)

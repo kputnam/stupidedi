@@ -15,11 +15,7 @@ module Stupidedi
 
       # @return [Array<InstructionTable>]
       def successors
-        tables = []
-        @machine.states.each do |s|
-          tables << s.instructions
-        end
-        tables
+        @machine.successors
       end
 
       #########################################################################
@@ -64,7 +60,7 @@ module Stupidedi
 
       # @return [BuilderDsl]
       def segment!(name, *args)
-        @reader = @machine.input!(segment_tok(name, args), @reader)
+        @reader = @machine.input!(mksegment_tok(name, args), @reader)
 
         if @machine.stuck?
           raise Exceptions::ParseError,
@@ -98,7 +94,7 @@ module Stupidedi
       #########################################################################
 
       # @return [Reader::SegmentTok]
-      def segment_tok(id, elements)
+      def mksegment_tok(id, elements)
         element_toks = []
 
         unless @reader.segment_dict.defined_at?(id)
@@ -111,7 +107,7 @@ module Stupidedi
                 "#{id}#{element_idx} is a simple element"
             end
 
-            element_toks << simple_tok(e_tag)
+            element_toks << mksimple_tok(e_tag)
           end
         else
           segment_def  = @reader.segment_dict.at(id)
@@ -134,14 +130,14 @@ module Stupidedi
                   "#{designator} is a repeatable element"
               end
 
-              element_toks << repeated_tok(e_val || [], e_use, designator)
+              element_toks << mkrepeated_tok(e_val || [], e_use, designator)
             elsif e_use.composite?
               unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
                 raise Exceptions::ParseError,
                   "#{id}#{element_idx} is a non-repeatable composite element"
               end
 
-              element_toks << composite_tok(e_val || [], e_use, designator)
+              element_toks << mkcomposite_tok(e_val || [], e_use, designator)
             else
               # The actual value is in e_tag
               unless e_val.nil?
@@ -149,7 +145,7 @@ module Stupidedi
                   "#{id}#{element_idx} is a non-repeatable simple element"
               end
 
-              element_toks << simple_tok(e_tag)
+              element_toks << mksimple_tok(e_tag)
             end
           end
         end
@@ -158,7 +154,7 @@ module Stupidedi
       end
 
       # @return [Reader::RepeatedElementTok]
-      def repeated_tok(elements, element_use, designator)
+      def mkrepeated_tok(elements, element_use, designator)
         element_toks = []
 
         if element_use.composite?
@@ -168,7 +164,7 @@ module Stupidedi
                 "#{designator} is a composite element"
             end
 
-            element_toks << composite_tok(e_val || [], element_use, designator)
+            element_toks << mkcomposite_tok(e_val || [], element_use, designator)
           end
         else
           elements.each do |e_tag, e_val|
@@ -177,7 +173,7 @@ module Stupidedi
                 "#{designator} is a simple element"
             end
 
-            element_toks << simple_tok(e_tag)
+            element_toks << mksimple_tok(e_tag)
           end
         end
 
@@ -185,7 +181,7 @@ module Stupidedi
       end
 
       # @return [Reader::CompositeElementTok]
-      def composite_tok(components, composite_use, designator)
+      def mkcomposite_tok(components, composite_use, designator)
         component_uses = composite_use.definition.component_uses
 
         if components.length > component_uses.length
@@ -203,19 +199,19 @@ module Stupidedi
               "#{designator}-#{component_idx} is a component element"
           end
 
-          component_toks << component_tok(c_tag)
+          component_toks << mkcomponent_tok(c_tag)
         end
 
         Reader::CompositeElementTok.build(component_toks, nil, nil)
       end
 
       # @return [Reader::ComponentElementTok]
-      def component_tok(value)
+      def mkcomponent_tok(value)
         Reader::ComponentElementTok.build(value, nil, nil)
       end
 
       # @return [Reader::SimpleElementTok]
-      def simple_tok(value)
+      def mksimple_tok(value)
         Reader::SimpleElementTok.build(value, nil, nil)
       end
 

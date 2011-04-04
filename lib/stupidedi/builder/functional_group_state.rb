@@ -3,17 +3,20 @@ module Stupidedi
 
     class FunctionalGroupState < AbstractState
 
-      # @return [Zipper::AbstractCursor]
-      attr_reader :zipper
+      # @return [Reader::Separators]
+      attr_reader :separators
 
-      # @return [InterchangeState]
-      attr_reader :parent
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
 
       # @return [InstructionTable]
       attr_reader :instructions
 
-      # @return [Reader::SegmentDict]
-      attr_reader :segment_dict
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
+      attr_reader :children
 
       # @return [String]
       attr_reader :fgcode
@@ -21,18 +24,19 @@ module Stupidedi
       # @return [String]
       attr_reader :version
 
-      def initialize(zipper, parent, instructions, segment_dict, fgcode, version)
-        @zipper, @parent, @instructions, @segment_dict, @fgcode, @version =
-          zipper, parent, instructions, segment_dict, fgcode, version
+      def initialize(separators, segment_dict, instructions, zipper, children, fgcode, version)
+        @separators, @segment_dict, @instructions, @zipper, @children, @fgcode, @version =
+          separators, segment_dict, instructions, zipper, children, fgcode, version
       end
 
       # @return [FunctionalGroupState]
       def copy(changes = {})
         FunctionalGroupState.new \
-          changes.fetch(:zipper, @zipper),
-          changes.fetch(:parent, @parent),
-          changes.fetch(:instructions, @instructions),
+          changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
+          changes.fetch(:instructions, @instructions),
+          changes.fetch(:zipper, @zipper),
+          changes.fetch(:children, @children),
           changes.fetch(:fgcode, @fgcode),
           changes.fetch(:version, @version)
       end
@@ -42,32 +46,32 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      # @return [FunctionalGroupState]
-      def push(segment_tok, segment_use, parent, reader = nil)
+      # @return [Zipper::AbstractCursor]
+      def push(zipper, parent, segment_tok, segment_use, config)
         # GS08: Version / Release / Industry Identifier Code
-        gscode  = segment_tok.element_toks.at(7).try{|t| t.value.slice(0, 6) }
         version = segment_tok.element_toks.at(7).try(:value)
+        gscode  = version.try(:slice, 0, 6)
 
         # GS01: Functional Identifier Code
-        fgcode = segment_tok.element_toks.at(0).try{|t| t.value }
+        fgcode = segment_tok.element_toks.at(0).try(:value)
 
-        unless parent.config.functional_group.defined_at?(gscode)
-          return FailureState.new("Unknown functional group version #{gscode}",
-            segment_tok, parent)
+        unless config.functional_group.defined_at?(gscode)
+          raise Exceptions::ParseError,
+            "Unknown functional group version #{gscode}"
         end
 
-        envelope_def = parent.config.functional_group.at(gscode)
+        envelope_def = config.functional_group.at(gscode)
         envelope_val = envelope_def.empty
         segment_use  = envelope_def.entry_segment_use
+        segment_val  = mksegment(segment_tok, segment_use)
 
-        zipper = parent.zipper.
-          append(envelope_val).
-          append_child(segment(segment_tok, segment_use))
-
-        FunctionalGroupState.new(zipper, parent,
-          parent.instructions.push(instructions(envelope_def)),
-          parent.segment_dict.push(envelope_val.segment_dict),
-          fgcode, version)
+        zipper.append_child \
+          FunctionalGroupState.new(
+            parent.separators,
+            parent.segment_dict.push(envelope_val.segment_dict),
+            parent.instructions.push(instructions(envelope_def)),
+            parent.zipper.append(envelope_val).append_child(segment_val),
+            [], fgcode, version)
       end
 
       # @endgroup

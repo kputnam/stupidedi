@@ -3,12 +3,6 @@ module Stupidedi
 
     class TransmissionState < AbstractState
 
-      # @return [Zipper::AbstractCursor]
-      attr_reader :zipper
-
-      # @return [Config::RootConfig]
-      attr_reader :config
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -18,49 +12,25 @@ module Stupidedi
       # @return [InstructionTable]
       attr_reader :instructions
 
-      def initialize(config, separators, segment_dict, instructions, zipper)
-        @config, @separators, @segment_dict, @instructions, @zipper =
-          config, separators, segment_dict, instructions, zipper
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
+      attr_reader :children
+
+      def initialize(separators, segment_dict, instructions, zipper, children)
+        @separators, @segment_dict, @instructions, @zipper, @children =
+          separators, segment_dict, instructions, zipper, children
       end
 
       # @return [TransmissionState]
       def copy(changes = {})
         TransmissionState.new \
-          changes.fetch(:config, @config),
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
-          changes.fetch(:zipper, @zipper)
-      end
-
-      def parent
-        raise Exceptions::ParseError,
-          "TransmissionState#parent should not be called"
-      end
-
-      def add(segment_tok, segment_use)
-        raise Exceptions::ParseError,
-          "TransmissionState#add should not be called"
-      end
-
-      # @return [TransmissionState]
-      def pop(count)
-        if count.zero?
-          self
-        else
-          raise Exceptions::ParseError,
-            "TransmissionState#pop should not be called"
-        end
-      end
-
-      # @return [TransmissionState]
-      def drop(count)
-        if count.zero?
-          self
-        else
-          raise Exceptions::ParseError,
-            "TransmissionState#drop should not be called"
-        end
+          changes.fetch(:zipper, @zipper),
+          changes.fetch(:children, @children)
       end
     end
 
@@ -69,23 +39,32 @@ module Stupidedi
       #########################################################################
 
       # @return [TransmissionState]
-      def build(config)
-        new(config,
-            Reader::Separators.empty,
+      def build
+        new(Reader::Separators.empty,
             Reader::SegmentDict.empty,
+
+            # Note: Constructing a new InstructionTable creates a separate cache
+            # for memoization, allowing garbage collection. We could choose to
+            # statically allocate a single table, instead.
             InstructionTable.build(
+              # We initially accept only a single segment. When reading the "ISA"
+              # segment, we push a new InterchangeState.
               Instruction.new(:ISA, nil, 0, 0, InterchangeState).cons),
-            Zipper.build(Envelope::Transmission.new).dangle)
+
+            # Create a new parse tree with a Transmission as the root, and descend
+            # to the placeholder where the first child node will be placed.
+            Zipper.build(Envelope::Transmission.new).dangle,
+            [])
+      end
+
+      # @return [void]
+      def push
+        raise Exceptions::ParseError,
+          "TransmissionState#push should not be called"
       end
 
       # @endgroup
       #########################################################################
-
-      # @return [void]
-      def push(segment_tok, segment_use, parent, reader)
-        raise Exceptions::ParseError,
-          "TransmissionState.push should not be called"
-      end
     end
 
   end

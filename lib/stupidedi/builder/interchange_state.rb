@@ -3,34 +3,34 @@ module Stupidedi
 
     class InterchangeState < AbstractState
 
-      # @return [Zipper::AbstractCursor]
-      attr_reader :zipper
-
-      # @return [TransmissionState]
-      attr_reader :parent
-
-      # @return [InstructionTable]
-      attr_reader :instructions
-
       # @return [Reader::Separators]
       attr_reader :separators
 
       # @return [Reader::SegmentDict]
       attr_reader :segment_dict
 
-      def initialize(zipper, parent, instructions, separators, segment_dict)
-        @zipper, @parent, @instructions, @separators, @segment_dict =
-          zipper, parent, instructions, separators, segment_dict
+      # @return [InstructionTable]
+      attr_reader :instructions
+
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
+      attr_reader :children
+
+      def initialize(separators, segment_dict, instructions, zipper, children)
+        @separators, @segment_dict, @instructions, @zipper, @children =
+          separators, segment_dict, instructions, zipper, children
       end
 
       # @return [InterchangeState]
       def copy(changes = {})
         InterchangeState.new \
-          changes.fetch(:zipper, @zipper),
-          changes.fetch(:parent, @parent),
-          changes.fetch(:instructions, @instructions),
           changes.fetch(:separators, @separators),
-          changes.fetch(:segment_dict, @segment_dict)
+          changes.fetch(:segment_dict, @segment_dict),
+          changes.fetch(:instructions, @instructions),
+          changes.fetch(:zipper, @zipper),
+          changes.fetch(:parent, @children)
       end
     end
 
@@ -38,30 +38,29 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      # @return [InterchangeState]
-      def push(segment_tok, segment_use, parent, reader = nil)
+      # @return [Zipper::AbstractCursor]
+      def push(zipper, parent, segment_tok, segment_use, config)
         # ISA12: Interchange Control Version Number
         version = segment_tok.element_toks.at(11).try(:value)
 
-        unless parent.config.interchange.defined_at?(version)
-          return FailureState.new("Unknown interchange version #{version}",
-            segment_tok, parent)
+        unless config.interchange.defined_at?(version)
+          raise Exceptions::ParseError,
+            "Unknown interchange version #{version}"
         end
 
         # Construct a SegmentVal and InterchangeVal around it
-        envelope_def = parent.config.interchange.at(version)
-        segment_use  = envelope_def.entry_segment_use
-        segment_val  = segment(segment_tok, segment_use)
+        envelope_def = config.interchange.at(version)
         envelope_val = envelope_def.empty
+        segment_use  = envelope_def.entry_segment_use
+        segment_val  = mksegment(segment_tok, segment_use)
 
-        zipper = parent.zipper.
-          append(envelope_val).
-          append_child(segment_val)
-
-        InterchangeState.new(zipper, parent,
-          parent.instructions.push(instructions(envelope_def)),
-          reader.separators.merge(envelope_def.separators(segment_val)),
-          reader.segment_dict.push(envelope_val.segment_dict))
+        zipper.append_child \
+          InterchangeState.new(
+            parent.separators.merge(envelope_def.separators(segment_val)),
+            parent.segment_dict.push(envelope_val.segment_dict),
+            parent.instructions.push(instructions(envelope_def)),
+            parent.zipper.append(envelope_val).append_child(segment_val),
+            [])
       end
 
       # @endgroup

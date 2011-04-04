@@ -88,8 +88,9 @@ module Stupidedi
 
               # @todo: Explain
               smallest = @instructions.length
-              @instructions.each do |i|
-                if smallest > i.drop_count and i.drop_count > 0
+              top = @instructions.take(@instructions.length - @pop.length)
+              top.each do |i|
+                unless i.drop_count.zero? or smallest < i.drop_count
                   smallest = i.drop_count
                 end
               end
@@ -110,7 +111,7 @@ module Stupidedi
 
                 NonEmpty.new(result, @pop)
               else
-              # puts "#{object_id}.drop(#{count} = drop(#{smallest}).drop(#{count - smallest})"
+              # puts "#{object_id}.drop(#{count}) = drop(#{smallest}).drop(#{count - smallest})"
                 drop(smallest).drop(count - smallest)
               end
             end
