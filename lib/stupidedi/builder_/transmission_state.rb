@@ -1,0 +1,55 @@
+module Stupidedi
+  module Builder
+
+    class TransmissionState < AbstractState
+
+      # @return [Reader::Separators]
+      attr_reader :separators
+
+      # @return [Reader::SegmentDict]
+      attr_reader :segment_dict
+
+      # @return [InstructionTable]
+      attr_reader :instructions
+
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
+      attr_reader :children
+
+      def initialize(separators, segment_dict, instructions, zipper, children)
+        @separators, @segment_dict, @instructions, @zipper, @children =
+          separators, segment_dict, instructions, zipper, children
+      end
+
+      # @return [TransmissionState]
+      def copy(changes = {})
+        TransmissionState.new \
+          changes.fetch(:separators, @separators),
+          changes.fetch(:segment_dict, @segment_dict),
+          changes.fetch(:instructions, @instructions),
+          changes.fetch(:zipper, @zipper),
+          changes.fetch(:children, @children)
+      end
+    end
+
+    class << TransmissionState
+      # @group Constructors
+      #########################################################################
+
+      # @return [TransmissionState]
+      def build
+        new(Reader::Separators.empty,
+            Reader::SegmentDict.empty,
+            InstructionTable.build(Instruction.new(:ISA, nil, 0, 0, InterchangeState).cons),
+            Zipper.build(Envelope::Transmission.new).dangle,
+            [])
+      end
+
+      # @endgroup
+      #########################################################################
+    end
+
+  end
+end
