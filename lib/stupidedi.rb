@@ -1,9 +1,7 @@
 require "bigdecimal"
 require "time"
 require "date"
-
-require "called_from"  if RUBY_VERSION < "1.9"
-require "term/ansicolor"
+require "term/ansicolor" if $stdout.tty?
 
 # Monkey patches
 
@@ -25,7 +23,7 @@ module Stupidedi
   autoload :Config,       "stupidedi/config"
   autoload :Color,        "stupidedi/color"
   autoload :Dictionaries, "stupidedi/dictionaries"
-# autoload :Editor,       "stupidedi/editor"
+  autoload :Editor,       "stupidedi/editor"
   autoload :Envelope,     "stupidedi/envelope"
   autoload :Exceptions,   "stupidedi/exceptions"
   autoload :Guides,       "stupidedi/guides"
@@ -47,7 +45,8 @@ module Stupidedi
   # gem, but this only compiles against Ruby 1.8. Use this implementation
   # when its available, but fall back to the slow Kernel.caller method if
   # we have to
-  if ::Kernel.respond_to?(:called_from)
+  if RUBY_VERSION < "1.9"
+    require "called_from"
     def self.caller(depth = 2)
       ::Kernel.called_from(depth)
     end

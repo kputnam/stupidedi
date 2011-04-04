@@ -45,7 +45,12 @@ module Stupidedi
       # @return [String]
       def take(n)
         @io.seek(@offset)
-        @io.read(n)
+
+        # Calling @io.read with more than the number of available bytes will
+        # return nil, so we have to calculate how many bytes remain
+        m = @size - @offset
+
+        @io.read((n <= m) ? n : m)
       end
 
       # (see AbstractInput#at)

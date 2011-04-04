@@ -51,7 +51,7 @@ module Stupidedi
       # Returns a single element from the set, with no guarantees about which
       # element. If the set is {#empty?}, the return value is undefined.
       def first
-        @hash.at(@hash.keys.first)
+        @hash.keys.first
       end
 
       # (see AbstractSet#replace)

@@ -11,6 +11,11 @@ module Stupidedi
         @parent = parent
       end
 
+      def node
+        raise Exceptions::ZipperError,
+          "DanglingCursor#node should not be called"
+      end
+
       # @group Querying the Tree Location
       #########################################################################
 
