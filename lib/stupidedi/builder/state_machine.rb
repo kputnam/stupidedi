@@ -3,6 +3,7 @@ module Stupidedi
 
     class StateMachine
       include Inspect
+      include Navigation
 
       # @return [Config::RootConfig]
       attr_reader :config
@@ -14,8 +15,38 @@ module Stupidedi
         @config, @active = config, active
       end
 
+      # @group Modifying the Tree
+      #########################################################################
+
       # @return [Reader::TokenReader]
-      def input!(segment_tok, reader)
+      def read!(reader)
+        remainder = Either.success(reader)
+
+        while remainder.defined?
+          remainder = remainder.flatmap{|x| x.read_segment }.map do |result|
+            # result.value: SegmentTok
+            # result.remainder: TokenReader
+            insert!(result.value, result.remainder)
+          end
+
+        # This block of code is used to profile the tokenizer
+        # remainder = remainder.flatmap do |x|
+        #   RubyProf.resume
+        #   y = x.read_segment
+        #   RubyProf.pause
+        #   y
+        # end.map do |result|
+        #   # result.value: SegmentTok
+        #   # result.remainder: TokenReader
+        #   input!(result.value, result.remainder)
+        # end
+        end
+
+        return remainder
+      end
+
+      # @return [Reader::TokenReader]
+      def insert!(segment_tok, reader)
         active = []
 
         @active.each do |zipper|
@@ -47,23 +78,23 @@ module Stupidedi
               # has AbstractState nodes, and the second tree has AbstractVal
               # nodes.
               i = zipper.node.instructions
-              t = zipper.node.zipper
-              z = zipper
+              v = zipper.node.zipper
+              s = zipper
 
               op.pop_count.times do
-                t = t.up
-                z = z.up
-                z = z.replace(z.node.copy(:zipper => t))
+                v = v.up
+                s = s.up
+                s = s.replace(s.node.copy(:zipper => v))
               end
 
               # Create a new AbstractState node that has a new InstructionTable
               # and also points to a new AbstractVal tree (with the new segment)
               segment = AbstractState.mksegment(segment_tok, op.segment_use)
-              state   = z.node.copy \
-                :zipper       => t.append(segment),
+              state   = s.node.copy \
+                :zipper       => v.append(segment),
                 :instructions => i.pop(op.pop_count).drop(op.drop_count)
 
-              active   << z.append(state)
+              active   << s.append(state)
               successor = active.last.node
 
               unless op.pop_count.zero? or reader.stream?
@@ -80,28 +111,28 @@ module Stupidedi
               # has AbstractState nodes, and the second tree has AbstractVal
               # nodes.
               i = zipper.node.instructions
-              t = zipper.node.zipper
-              z = zipper
+              v = zipper.node.zipper
+              s = zipper
 
               op.pop_count.times do
-                t = t.up
-                z = z.up
-                z = z.replace(z.node.copy(:zipper => t))
+                v = v.up
+                s = s.up
+                s = s.replace(s.node.copy(:zipper => v))
               end
 
               # Create a new AbstractState node that has a new InstructionTable
               # and also points to the AbstractVal tree constructed by children
-              # states (whose ancestor is z).
-              parent = z.node.copy \
-                :zipper       => t,
+              # states (whose ancestor is s).
+              parent = s.node.copy \
+                :zipper       => v,
                 :separators   => reader.separators,
                 :segment_dict => reader.segment_dict,
                 :instructions => i.pop(op.pop_count).drop(op.drop_count)
 
               # @todo: This is not elegant
-              z = z.append(parent) unless z.root?
+              s = s.append(parent) unless s.root?
 
-              active   << op.push.push(z, parent, segment_tok, op.segment_use, @config)
+              active   << op.push.push(s, parent, segment_tok, op.segment_use, @config)
               successor = active.last.node
 
               # More general than checking if segment_tok is an ISA/GS segment
@@ -121,70 +152,16 @@ module Stupidedi
         return reader
       end
 
-      # @return [Reader::TokenReader]
-      def read!(reader)
-        remainder = Either.success(reader)
-
-        while not stuck? and remainder.defined?
-          remainder = remainder.flatmap{|x| x.read_segment }.map do |result|
-            # result.value: SegmentTok
-            # result.remainder: TokenReader
-            input!(result.value, result.remainder)
-          end
-
-        # This block of code is used to profile the tokenizer
-        # remainder = remainder.flatmap do |x|
-        #   RubyProf.resume
-        #   y = x.read_segment
-        #   RubyProf.pause
-        #   y
-        # end.map do |result|
-        #   # result.value: SegmentTok
-        #   # result.remainder: TokenReader
-        #   input!(result.value, result.remainder)
-        # end
-        end
-
-        return remainder
-      end
-
-      # True if the state machine cannot recover from failing to parse a token
-      def stuck?
-        false
-      end
-
-      # @return [Array<InstructionTable>]
-      def successors
-        @active.map{|a| a.node.instructions }
-      end
+      # @endgroup
+      #########################################################################
 
       # @return [void]
       def pretty_print(q)
         q.text "StateMachine"
-        q.group(2, "(", ")") do
+        q.group 2, "(", ")" do
           q.breakable ""
           q.pp @active.map(&:node)
         end
-      end
-
-      # @return [StateMachine]
-      def root
-        active = []
-
-        @active.each do |zipper|
-          z = zipper
-          t = zipper.node.zipper
-
-          zipper.depth.times do
-            t = t.up
-            z = z.up
-            z = z.replace(z.node.copy(:zipper => t))
-          end
-
-          active << z
-        end
-
-        StateMachine.new(@config, active)
       end
     end
 

@@ -44,7 +44,7 @@ module Stupidedi
           parent.separators,
           parent.segment_dict,
           parent.instructions.push([]),
-          parent.zipper.dangle,
+          parent.zipper.dangle.last,
           [])
 
         InterchangeState.push(zipper, zipper.node, segment_tok, segment_use, config)

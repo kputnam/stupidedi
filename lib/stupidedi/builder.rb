@@ -14,6 +14,7 @@ module Stupidedi
     autoload :ConstraintTable,      "stupidedi/builder/constraint_table"
     autoload :InstructionTable,     "stupidedi/builder/instruction_table"
     autoload :Instruction,          "stupidedi/builder/instruction"
+    autoload :Navigation,           "stupidedi/builder/navigation"
     autoload :StateMachine,         "stupidedi/builder/state_machine"
   end
 end

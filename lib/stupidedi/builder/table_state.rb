@@ -67,7 +67,7 @@ module Stupidedi
             parent.separators,
             parent.segment_dict,
             parent.instructions.push(itable.instructions),
-            parent.zipper.append(table_val).dangle,
+            parent.zipper.append(table_val).dangle.last,
             [])
 
           LoopState.push(zipper, zipper.node, segment_tok, segment_use, config)

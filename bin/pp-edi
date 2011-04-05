@@ -26,25 +26,28 @@ config.transaction_set.register("005010X231A1", "FA", "997") { Stupidedi::Guides
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 
-for path in ARGV
+ARGV.each do |path|
   File.open(path) do |io|
-#   input     = Stupidedi::Reader::Input.build(io.read)
     input     = Stupidedi::Reader::Input.build(io)
     tokenizer = Stupidedi::Reader::StreamReader.new(input)
     result    = parser.read!(tokenizer)
-    pp result
   end
 end
 
 stop = Time.now
 
-if parser.stuck?
-  pp parser.halted
-  exit 1
-else
-  pp parser.root
-# pp parser.zipper.root.node
-# Stupidedi::Writer::Claredi.new(parser.zipper.root.node).write($stdout)
+#p parser.__send__(:roots)
 
-  puts stop - start
-end
+puts "first?: #{parser.first?}"
+puts "last?:  #{parser.last?}"
+puts
+#
+#puts "first.first?: #{parser.first.first?}"
+#puts "last.last?:   #{parser.last.last?}"
+#puts
+#
+#puts "first.node: #{parser.first.node.inspect}"
+#puts "last.node:  #{parser.last.node.inspect}"
+#puts
+
+puts stop - start

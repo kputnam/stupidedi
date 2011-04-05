@@ -58,13 +58,11 @@ module Stupidedi
       end
 
       def first
-        raise Exceptions::ZipperError,
-          "cannot move to first node"
+        self
       end
 
       def last
-        raise Exceptions::ZipperError,
-          "cannot move to last node"
+        self
       end
 
       # @group Editing the Tree

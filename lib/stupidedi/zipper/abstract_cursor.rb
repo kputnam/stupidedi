@@ -94,6 +94,16 @@ module Stupidedi
       # @return [EditedCursor]
       abstract :prepend, :args => %w(node)
 
+      # (see #append)
+      def insert_right(node)
+        append(node)
+      end
+
+      # (see #prepend)
+      def insert_left(node)
+        prepend(node)
+      end
+
       # @return [EditedCursor]
       def prepend_child(child)
         if node.leaf?
@@ -113,7 +123,7 @@ module Stupidedi
         end
 
         EditedCursor.new(child,
-          Hole.new(node.children, path, []), self)
+          Hole.new(node.children.reverse, path, []), self)
       end
 
       # @return [AbstractCursor]
