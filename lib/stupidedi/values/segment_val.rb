@@ -62,16 +62,16 @@ module Stupidedi
         end
 
         q.text(ansi.segment("SegmentVal#{id}"))
-        q.group(2, "(", ")") do
-          q.breakable ""
-          @children.each do |e|
-            unless q.current_group.first?
-              q.text ","
-              q.breakable
-            end
-            q.pp e
-          end
-        end
+      # q.group(2, "(", ")") do
+      #   q.breakable ""
+      #   @children.each do |e|
+      #     unless q.current_group.first?
+      #       q.text ","
+      #       q.breakable
+      #     end
+      #     q.pp e
+      #   end
+      # end
       end
 
       # @return [String]

@@ -28,8 +28,7 @@ start  = Time.now
 
 ARGV.each do |path|
   File.open(path) do |io|
-    input     = Stupidedi::Reader::Input.build(io)
-    tokenizer = Stupidedi::Reader::StreamReader.new(input)
+    tokenizer = Stupidedi::Reader.build(io)
     result    = parser.read!(tokenizer)
   end
 end

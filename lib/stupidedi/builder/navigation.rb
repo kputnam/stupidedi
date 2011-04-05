@@ -3,9 +3,6 @@ module Stupidedi
 
     module Navigation
 
-      # @group Navigating the Tree
-      #########################################################################
-
       # @return [Array<InstructionTable>]
       def successors
         @active.map{|a| a.node.instructions }
@@ -15,6 +12,33 @@ module Stupidedi
         @active.length == 1
       end
 
+      # Is this the first segment?
+      def first?
+        value = @active.head.node.zipper
+
+        until value.root?
+          return false unless value.first?
+          value = value.up
+        end
+
+        return true
+      end
+
+      # Is this the last segment?
+      def last?
+        value = @active.head.node.zipper
+
+        until value.root?
+          return false unless value.last?
+          value = value.up
+        end
+
+        return true
+      end
+
+      # @group Navigating the Tree
+      #########################################################################
+
       # @return [Values::AbstractVal]
       def node
         if deterministic?
@@ -22,42 +46,22 @@ module Stupidedi
         end
       end
 
-      def first?
-        state = @active.head
-        value = @active.head.node.zipper
-
-        until value.root?
-          return false unless value.first?
-          state = state.up
-          value = value.up
-        end
-
-        return true
-      end
-
-      def last?
-        state = @active.head
-        value = @active.head.node.zipper
-
-        until value.root?
-          return false unless value.last?
-          state = state.up
-          value = value.up
-        end
-
-        return true
-      end
-
       # @return [StateMachine]
       def first
         active = roots.map do |zipper|
           state = zipper
           value = zipper.node.zipper
+          xx(:first, value, state)
 
           until value.node.segment?
             value = value.down
             state = state.down
+            unless value.eql?(state.node.zipper)
+              state = state.replace(state.node.copy(:zipper => value))
+            end
+            xx(:first, value, state)
           end
+          puts
 
           state
         end
@@ -70,10 +74,15 @@ module Stupidedi
         active = roots.map do |zipper|
           state = zipper
           value = zipper.node.zipper
+          xx(:last, value, state)
 
           until value.node.segment?
             value = value.down.last
             state = state.down.last
+            unless value.eql?(state.node.zipper)
+              state = state.replace(state.node.copy(:zipper => value))
+            end
+            xx(:last, value, state)
           end
 
           state
@@ -83,51 +92,123 @@ module Stupidedi
       end
 
       # @return [StateMachine]
-      def forward
-        active = []
+      def forward(count = 1)
+        active = @active.map do |zipper|
+          state = zipper
+          value = zipper.node.zipper
+          xx(:forward, value, state)
 
-        @active.each do |zipper|
+          count.times do
+            while not value.root? and value.last?
+              value = value.up
+              state = state.up
+              unless value.eql?(state.node.zipper)
+                state = state.replace(state.node.copy(:zipper => value))
+              end
+              xx(:forward, value, state)
+            end
+
+            if value.root?
+              raise Exceptions::ZipperError,
+                "cannot move forward after last segment"
+            end
+
+            value = value.next
+            state = state.next
+            unless value.eql?(state.node.zipper)
+              state = state.replace(state.node.copy(:zipper => value))
+            end
+            xx(:forward, value, state)
+
+            until value.node.segment?
+              value = value.down
+              state = state.down
+              unless value.eql?(state.node.zipper)
+                state = state.replace(state.node.copy(:zipper => value))
+              end
+              xx(:forward, value, state)
+            end
+          end
+          puts
+
+          state
+        end
+
+        StateMachine.new(@config, active)
+      end
+
+      # @return [StateMachine]
+      def backward(count = 1)
+        active = @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
 
-          while not value.root? and value.last?
-            state = zipper.up
-            value = value.up
+          count.times do
+            while not value.root? and value.first?
+              value = value.up
+              state = state.up
+              unless value.eql?(state.node.zipper)
+                state = state.replace(state.node.copy(:zipper => value))
+              end
+              xx(:backward, value, state)
+            end
+
+            if value.root?
+              raise Exceptions::ZipperError,
+                "cannot move backward before first segment" 
+            end
+
+            state = state.prev
+            value = value.prev
+            unless value.eql?(state.node.zipper)
+              state = state.replace(state.node.copy(:zipper => value))
+            end
+            xx(:backward, value, state)
+
+            until value.node.segment?
+              value = value.down
+              state = state.down
+              unless value.eql?(state.node.zipper)
+                state = state.replace(state.node.copy(:zipper => value))
+              end
+              xx(:backward, value, state)
+            end
           end
 
-          if zipper.root?
-            raise Exceptions::ZipperError,
-              "Cannot move forward: end of tree"
-          end
-
-          state = state.next
-          value = value.next
+          state
         end
-      end
 
-      def backward
+        StateMachine.new(@config, active)
       end
 
     private
 
       # @return [Array<Zipper::AbstractCursor>]
       def roots
-        active = []
-
-        @active.each do |zipper|
+        @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
+          xx(:roots, value, state)
 
           zipper.depth.times do
             value = value.up
             state = state.up
-            state = state.replace(state.node.copy(:zipper => value))
+            unless value.eql?(state.node.zipper)
+              state = state.replace(state.node.copy(:zipper => value))
+            end
+            xx(:roots, value, state)
           end
+          puts
 
-          active << state
+          state
         end
+      end
 
-        active
+      def xx(label, value, state)
+        puts label
+        puts "  v: #{value.object_id} #{value.class.name.split('::').last}"
+        puts "  V: #{state.node.zipper.object_id} #{state.node.zipper.class.name.split('::').last}"
+        puts "  s: #{state.object_id} #{state.class.name.split('::').last}"
       end
 
     end

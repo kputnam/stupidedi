@@ -160,7 +160,7 @@ module Stupidedi
         q.text "StateMachine"
         q.group 2, "(", ")" do
           q.breakable ""
-          q.pp @active.map(&:node)
+          q.pp @active.map{|s| s.node.zipper.node }
         end
       end
     end

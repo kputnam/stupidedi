@@ -57,6 +57,17 @@ module Stupidedi
 
     class << self
 
+      # @group Constructors
+      #########################################################################
+
+      # @return [StreamReader]
+      def build(input)
+        StreamReader.new(Input.build(input))
+      end
+
+      # @endgroup
+      #########################################################################
+
       # Returns true if `character` does not belong to the extended or basic
       # character set.
       #
