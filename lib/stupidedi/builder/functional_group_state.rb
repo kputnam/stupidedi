@@ -59,13 +59,12 @@ module Stupidedi
           segment_val = Values::InvalidSegmentVal.new \
             "Unknown functional group version #{gscode}", segment_tok
 
-          return zipper.append_child(
-            FailureState.new(
-              true,
-              parent.separators,
-              parent.segment_dict,
-              parent.instructions.push([]),
-              parent.zipper.append(segment_val)))
+          return zipper.append_child(new(
+            true,
+            parent.separators,
+            parent.segment_dict,
+            parent.instructions.push([]),
+            parent.zipper.append(segment_val)))
         end
 
         envelope_def = config.functional_group.at(gscode)
@@ -73,13 +72,12 @@ module Stupidedi
         segment_use  = envelope_def.entry_segment_use
         segment_val  = mksegment(segment_tok, segment_use)
 
-        zipper.append_child \
-          FunctionalGroupState.new(
-            parent.separators,
-            parent.segment_dict.push(envelope_val.segment_dict),
-            parent.instructions.push(instructions(envelope_def)),
-            parent.zipper.append(envelope_val).append_child(segment_val),
-            [], fgcode, version)
+        zipper.append_child new(
+          parent.separators,
+          parent.segment_dict.push(envelope_val.segment_dict),
+          parent.instructions.push(instructions(envelope_def)),
+          parent.zipper.append(envelope_val).append_child(segment_val),
+          [], fgcode, version)
       end
 
       # @endgroup

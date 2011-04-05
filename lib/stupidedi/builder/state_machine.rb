@@ -98,6 +98,9 @@ module Stupidedi
                 :segment_dict => reader.segment_dict,
                 :instructions => i.pop(op.pop_count).drop(op.drop_count)
 
+              # @todo: This is not elegant
+              z = z.append(parent) unless z.root?
+
               active   << op.push.push(z, parent, segment_tok, op.segment_use, @config)
               successor = active.last.node
 
@@ -150,6 +153,7 @@ module Stupidedi
         false
       end
 
+      # @return [Array<InstructionTable>]
       def successors
         @active.map{|a| a.node.instructions }
       end
@@ -160,13 +164,6 @@ module Stupidedi
         q.group(2, "(", ")") do
           q.breakable ""
           q.pp @active.map(&:node)
-        end
-      end
-
-      # @return [Zipper::AbstractCursor]
-      def zipper
-        if @active.length == 1
-          @active.head.node.zipper
         end
       end
 
@@ -197,7 +194,7 @@ module Stupidedi
 
       # @return [StateMachine]
       def build(config)
-        StateMachine.new(config, Zipper.build(TransmissionState.build).cons)
+        StateMachine.new(config, StartState.start.cons)
       end
 
       # @endgroup

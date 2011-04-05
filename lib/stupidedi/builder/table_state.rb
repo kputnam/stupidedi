@@ -49,13 +49,12 @@ module Stupidedi
           itable = InstructionTable.build(instructions(table_def))
           itable = itable.drop(itable.at(segment_use).drop_count)
 
-          zipper.append_child \
-            TableState.new(
-              parent.separators,
-              parent.segment_dict,
-              parent.instructions.push(itable.instructions),
-              parent.zipper.append(table_val).append_child(segment_val),
-              [])
+          zipper.append_child new(
+            parent.separators,
+            parent.segment_dict,
+            parent.instructions.push(itable.instructions),
+            parent.zipper.append(table_val).append_child(segment_val),
+            [])
 
         when Schema::LoopDef
           table_def = segment_use.parent.parent
@@ -64,13 +63,12 @@ module Stupidedi
           itable = InstructionTable.build(instructions(table_def))
           itable = itable.drop(itable.at(segment_use).drop_count)
 
-          zipper = zipper.append_child \
-            TableState.new(
-              parent.separators,
-              parent.segment_dict,
-              parent.instructions.push(itable.instructions),
-              parent.zipper.append(table_val).dangle,
-              [])
+          zipper = zipper.append_child new(
+            parent.separators,
+            parent.segment_dict,
+            parent.instructions.push(itable.instructions),
+            parent.zipper.append(table_val).dangle,
+            [])
 
           LoopState.push(zipper, zipper.node, segment_tok, segment_use, config)
         end

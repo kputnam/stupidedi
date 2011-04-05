@@ -1,7 +1,7 @@
 module Stupidedi
   module Builder
 
-    class TransmissionState < AbstractState
+    class StartState < AbstractState
 
       # @return [Reader::Separators]
       attr_reader :separators
@@ -23,9 +23,9 @@ module Stupidedi
           separators, segment_dict, instructions, zipper, children
       end
 
-      # @return [TransmissionState]
+      # @return [StartState]
       def copy(changes = {})
-        TransmissionState.new \
+        StartState.new \
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
@@ -34,24 +34,29 @@ module Stupidedi
       end
     end
 
-    class << TransmissionState
-      # @group Constructors
-      #########################################################################
+    class << StartState
 
-      # @return [Zipper::AbstractCursor]
-      def push(zipper, parent, segment_tok, segment_use, config)
-        zipper = zipper.append_child new(
-          parent.separators,
-          parent.segment_dict,
-          parent.instructions.push([]),
-          parent.zipper.dangle,
+      # @return [StartState]
+      def build
+        new(
+          Reader::Separators.empty,
+          Reader::SegmentDict.empty,
+
+          InstructionTable.build(
+            # We initially accept only a single segment. When reading the "ISA"
+            # segment, we push a new InterchangeState.
+            Instruction.new(:ISA, nil, 0, 0, TransmissionState).cons),
+
+          # Create a new parse tree with a Transmission as the root, and descend
+          # to the placeholder where the first child node will be placed.
+          Zipper.build(Envelope::Transmission.new),
           [])
-
-        InterchangeState.push(zipper, zipper.node, segment_tok, segment_use, config)
       end
 
-      # @endgroup
-      #########################################################################
+      # @return [Zipper::AbstractCursor]
+      def start
+        Zipper.build(build)
+      end
     end
 
   end

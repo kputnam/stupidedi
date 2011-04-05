@@ -44,13 +44,12 @@ module Stupidedi
         loop_val    = loop_def.empty
         segment_val = mksegment(segment_tok, segment_use)
 
-        zipper.append_child \
-          LoopState.new(
-            parent.separators,
-            parent.segment_dict,
-            parent.instructions.push(instructions(loop_def)),
-            parent.zipper.append(loop_val).append_child(segment_val),
-            [])
+        zipper.append_child new(
+          parent.separators,
+          parent.segment_dict,
+          parent.instructions.push(instructions(loop_def)),
+          parent.zipper.append(loop_val).append_child(segment_val),
+          [])
       end
 
       # @endgroup
