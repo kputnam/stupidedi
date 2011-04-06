@@ -47,13 +47,15 @@ module Stupidedi
           segment_val = Values::InvalidSegmentVal.new \
             "Unknown interchange version #{version}", segment_tok
 
-          return zipper.append_child(
-            FailureState.new(
-              true,
-              parent.separators,
-              parent.segment_dict,
-              parent.instructions.push([]),
-              parent.zipper.append(segment_val)))
+          raise Exceptions::ParseError,
+            "Unknown interchange version #{version}"
+        # return zipper.append_child(
+        #   FailureState.new(
+        #     true,
+        #     parent.separators,
+        #     parent.segment_dict,
+        #     parent.instructions.push([]),
+        #     parent.zipper.append(segment_val)))
         end
 
         # Construct a SegmentVal and InterchangeVal around it

@@ -84,7 +84,7 @@ module Stupidedi
               op.pop_count.times do
                 v = v.up
                 s = s.up
-                s = s.replace(s.node.copy(:zipper => v))
+                s = s.replace(s.node.copy(:zipper => v)) # @optimize
               end
 
               # Create a new AbstractState node that has a new InstructionTable
@@ -94,16 +94,16 @@ module Stupidedi
                 :zipper       => v.append(segment),
                 :instructions => i.pop(op.pop_count).drop(op.drop_count)
 
-              active   << s.append(state)
-              successor = active.last.node
+              successor = s.append(state)
+              active   << successor
 
               unless op.pop_count.zero? or reader.stream?
                 # More general than checking if segment_tok is an ISE/GE segment
-                unless reader.separators.eql?(successor.separators) \
-                  and reader.segment_dict.eql?(successor.segment_dict)
+                unless reader.separators.eql?(successor.node.separators) \
+                  and reader.segment_dict.eql?(successor.node.segment_dict)
                   reader = reader.copy \
-                    :separators   => successor.separators,
-                    :segment_dict => successor.segment_dict
+                    :separators   => successor.node.separators,
+                    :segment_dict => successor.node.segment_dict
                 end
               end
             else
@@ -117,30 +117,30 @@ module Stupidedi
               op.pop_count.times do
                 v = v.up
                 s = s.up
-                s = s.replace(s.node.copy(:zipper => v))
+                s = s.replace(s.node.copy(:zipper => v)) # @optimize
               end
 
               # Create a new AbstractState node that has a new InstructionTable
               # and also points to the AbstractVal tree constructed by children
               # states (whose ancestor is s).
               parent = s.node.copy \
-                :zipper       => v,
-                :separators   => reader.separators,
-                :segment_dict => reader.segment_dict,
+                :zipper       => v, # @optimize
+                :children     => [],
+                :separators   => reader.separators, # @optimize
+                :segment_dict => reader.segment_dict, # @optimize
                 :instructions => i.pop(op.pop_count).drop(op.drop_count)
 
-              # @todo: This is not elegant
               s = s.append(parent) unless s.root?
 
-              active   << op.push.push(s, parent, segment_tok, op.segment_use, @config)
-              successor = active.last.node
+              successor = op.push.push(s, parent, segment_tok, op.segment_use, @config)
+              active   << successor
 
               # More general than checking if segment_tok is an ISA/GS segment
-              unless reader.separators.eql?(successor.separators) \
-                and reader.segment_dict.eql?(successor.segment_dict)
+              unless reader.separators.eql?(successor.node.separators) \
+                and reader.segment_dict.eql?(successor.node.segment_dict)
                 reader = reader.copy \
-                  :separators   => successor.separators,
-                  :segment_dict => successor.segment_dict
+                  :separators   => successor.node.separators,
+                  :segment_dict => successor.node.segment_dict
               end
             end
           end
@@ -157,10 +157,16 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        q.text "StateMachine"
+        q.text "StateMachine[#{@active.length}]"
         q.group 2, "(", ")" do
           q.breakable ""
-          q.pp @active.map{|s| s.node.zipper.node }
+          @active.each do |s|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp s.node.zipper.node
+          end
         end
       end
     end
@@ -171,7 +177,7 @@ module Stupidedi
 
       # @return [StateMachine]
       def build(config)
-        StateMachine.new(config, StartState.start.cons)
+        StateMachine.new(config, InitialState.start.cons)
       end
 
       # @endgroup

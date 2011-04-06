@@ -7,6 +7,9 @@ module Stupidedi
       # @private
       SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
 
+      # @return [StateMachine]
+      attr_reader :machine
+
       def initialize(config)
         @machine = StateMachine.build(config)
         @reader  = DslReader.new(Reader::Separators.empty,

@@ -31,9 +31,9 @@ module Stupidedi
       # remains in the successor table.
       #
       # Sibling structures that have the same position (as defined by their
-      # SegmentUse) will have equal drop_count values such that all of the
-      # sibling instructions remain in the successor table when any one of them
-      # is executed.
+      # {Schema::SegmentUse}) will have equal drop_count values such that all of
+      # the sibling instructions remain in the successor table when any one of
+      # them is executed.
       #
       # @return [Integer]
       attr_reader :drop_count
@@ -42,10 +42,10 @@ module Stupidedi
       # will then contain the segment.
       #
       # When a segment indicates the start of a child structure, the class
-      # indicated by this attribute is expected to respond to `push(segment_tok,
-      # segment_use, parent, reader)` by creating a new AbstractState.
+      # indicated by this attribute is expected to respond to `push` by
+      # creating a new {AbstractState}.
       #
-      # @return [Class<AbstractState>]
+      # @return [Zipper::AbstractCursor]
       attr_reader :push
 
       def initialize(segment_id, segment_use, pop, drop, push)

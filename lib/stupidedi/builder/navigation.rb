@@ -8,6 +8,12 @@ module Stupidedi
         @active.map{|a| a.node.instructions }
       end
 
+      def zipper
+        if deterministic?
+          @active.head.node.zipper
+        end
+      end
+
       def deterministic?
         @active.length == 1
       end
@@ -61,7 +67,7 @@ module Stupidedi
             end
             xx(:first, value, state)
           end
-          puts
+        # puts
 
           state
         end
@@ -129,7 +135,7 @@ module Stupidedi
               xx(:forward, value, state)
             end
           end
-          puts
+        # puts
 
           state
         end
@@ -166,8 +172,8 @@ module Stupidedi
             xx(:backward, value, state)
 
             until value.node.segment?
-              value = value.down
-              state = state.down
+              value = value.down.last
+              state = state.down.last
               unless value.eql?(state.node.zipper)
                 state = state.replace(state.node.copy(:zipper => value))
               end
@@ -198,17 +204,19 @@ module Stupidedi
             end
             xx(:roots, value, state)
           end
-          puts
+        # puts
 
           state
         end
       end
 
       def xx(label, value, state)
-        puts label
-        puts "  v: #{value.object_id} #{value.class.name.split('::').last}"
-        puts "  V: #{state.node.zipper.object_id} #{state.node.zipper.class.name.split('::').last}"
-        puts "  s: #{state.object_id} #{state.class.name.split('::').last}"
+      # puts label
+      # puts " ~v: #{state.node.zipper.object_id} #{state.node.zipper.class.name.split('::').last}"
+      # puts "  v: #{value.object_id} #{value.class.name.split('::').last}"
+      # puts "     #{value.node.inspect}"
+      # puts "  s: #{state.object_id} #{state.class.name.split('::').last}"
+      # puts "     #{state.node.inspect}"
       end
 
     end

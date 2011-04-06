@@ -35,18 +35,19 @@ end
 
 stop = Time.now
 
-#p parser.__send__(:roots)
+pp parser.zipper.root.node
 
-puts "first?: #{parser.first?}"
-puts "last?:  #{parser.last?}"
-puts
-#
-#puts "first.first?: #{parser.first.first?}"
-#puts "last.last?:   #{parser.last.last?}"
-#puts
-#
-#puts "first.node: #{parser.first.node.inspect}"
-#puts "last.node:  #{parser.last.node.inspect}"
-#puts
+begin
+  count  = 0
+  cursor = parser.first
+  while true
+    count += 1
 
-puts stop - start
+    break if cursor.last?
+    cursor = cursor.forward
+  end
+
+  puts "#{count} segments"
+end
+
+puts "%0.3f seconds" % (stop - start)

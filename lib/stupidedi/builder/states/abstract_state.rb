@@ -27,7 +27,7 @@ module Stupidedi
       def pretty_print(q)
         q.text self.class.name.split('::').last
       # q.text "[#{zipper.node.class.name.split('::').last}]"
-      # q.text "[#{zipper.node.definition.id}]" rescue nil
+      # q.text "[#{zipper.node.definition.id}]"
 
         q.group(2, "(", ")") do
           q.breakable ""

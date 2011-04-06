@@ -1,7 +1,7 @@
 module Stupidedi
   module Builder
 
-    class StartState < AbstractState
+    class InitialState < AbstractState
 
       # @return [Reader::Separators]
       attr_reader :separators
@@ -23,9 +23,9 @@ module Stupidedi
           separators, segment_dict, instructions, zipper, children
       end
 
-      # @return [StartState]
+      # @return [InitialState]
       def copy(changes = {})
-        StartState.new \
+        InitialState.new \
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
@@ -34,9 +34,9 @@ module Stupidedi
       end
     end
 
-    class << StartState
+    class << InitialState
 
-      # @return [StartState]
+      # @return [InitialState]
       def build
         new(
           Reader::Separators.empty,

@@ -59,13 +59,15 @@ module Stupidedi
           segment_val = Values::InvalidSegmentVal.new \
             "Unknown transaction set #{context}", segment_tok
 
-          return zipper.append_child(
-            FailureState.new(
-              true,
-              parent.separators,
-              parent.segment_dict,
-              parent.instructions.push([]),
-              parent.zipper.append(segment_val)))
+          raise Exception::ParseError,
+            "Unknown transaction set #{context}"
+        # return zipper.append_child(
+        #   FailureState.new(
+        #     true,
+        #     parent.separators,
+        #     parent.segment_dict,
+        #     parent.instructions.push([]),
+        #     parent.zipper.append(segment_val)))
         end
 
         envelope_def = config.transaction_set.at(version, fgcode, txcode)
