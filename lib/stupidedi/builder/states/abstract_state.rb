@@ -179,7 +179,7 @@ module Stupidedi
       #########################################################################
 
       # Builds a sequence of {Instruction} values that corresponds to the given
-      # sequence of `segment_uses`. 
+      # sequence of `segment_uses`.
       #
       # @return [Array<Instruction>]
       def sequence(segment_uses, offset = 0)

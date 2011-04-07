@@ -6,6 +6,8 @@ module Stupidedi
     autoload :InterchangeDef,     "stupidedi/envelope/interchange_def"
     autoload :InterchangeVal,     "stupidedi/envelope/interchange_val"
 
+    autoload :InvalidEnvelopeVal, "stupidedi/envelope/invalid_envelope_val"
+
     autoload :TransactionSetDef,  "stupidedi/envelope/transaction_set_def"
     autoload :TransactionSetVal,  "stupidedi/envelope/transaction_set_val"
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
-require "term/ansicolor" if ARGV.delete("-C")
 require "stupidedi"
 require "pp"
 
@@ -35,16 +34,16 @@ end
 
 stop = Time.now
 
-pp parser.zipper.root.node
+parser.zipper.map{|z| pp z.root.node  }.
+  or { puts "Non-deterministic state" }
 
 begin
   count  = 0
   cursor = parser.first
-  while true
-    count += 1
 
-    break if cursor.last?
-    cursor = cursor.forward
+  while cursor.defined?
+    count += 1
+    cursor = cursor.flatmap{|c| c.next }
   end
 
   puts "#{count} segments"

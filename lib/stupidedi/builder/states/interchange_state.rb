@@ -44,18 +44,11 @@ module Stupidedi
         version = segment_tok.element_toks.at(11).try(:value)
 
         unless config.interchange.defined_at?(version)
-          segment_val = Values::InvalidSegmentVal.new \
-            "Unknown interchange version #{version}", segment_tok
-
-          raise Exceptions::ParseError,
-            "Unknown interchange version #{version}"
-        # return zipper.append_child(
-        #   FailureState.new(
-        #     true,
-        #     parent.separators,
-        #     parent.segment_dict,
-        #     parent.instructions.push([]),
-        #     parent.zipper.append(segment_val)))
+          return FailureState.push(
+            zipper,
+            parent,
+            segment_tok,
+            "Unknown interchange version #{version}")
         end
 
         # Construct a SegmentVal and InterchangeVal around it

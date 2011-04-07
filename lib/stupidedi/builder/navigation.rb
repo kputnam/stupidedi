@@ -176,17 +176,16 @@ module Stupidedi
       # @return [Either<StateMachine>]
       def find(segment_id)
         segment_tok = Reader::SegmentTok.build(segment_id, [], nil, nil)
+        unreachable = true
         matches     = []
 
         @active.each do |zipper|
-          instructions = zipper.node.instructions.matches(segment_tok)
+          instructions  = zipper.node.instructions.matches(segment_tok)
+          unreachable &&= instructions.empty?
 
           instructions.each do |op|
-            pp op
-
             state = zipper
             value = zipper.node.zipper
-            start = zipper.node.instructions
 
             op.pop_count.times do
               value = value.up
@@ -195,7 +194,7 @@ module Stupidedi
 
             # The state we're searching for will have an ancestor state
             # with this instruction table
-            target = start.pop(op.pop_count).drop(op.drop_count)
+            target = zipper.node.instructions.pop(op.pop_count).drop(op.drop_count)
 
             until state.last?
               state = state.next
@@ -219,13 +218,21 @@ module Stupidedi
 
                 matches << state
                 break
+              elsif target.length > state.node.instructions.length
+                # The ancestor state isn't one of the rightward siblings, since
+                # the length of instruction tables is non-increasing as we move
+                # rightward
+                break
               end
             end
           end
         end
 
-        if matches.empty?
-          Either.failure("segment is not reachable")
+        if unreachable
+          raise Exceptions::ZipperError,
+            "segment #{segment_id} is not reachable"
+        elsif matches.empty?
+          Either.failure("segment does not occur")
         else
           Either.success(StateMachine.new(@config, matches))
         end

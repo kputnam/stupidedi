@@ -54,20 +54,16 @@ module Stupidedi
           instructions = state.instructions.matches(segment_tok)
 
           if instructions.empty?
-            if state.leaf?
-              segment_val = Values::InvalidSegmentVal.new \
-                "Unexpected segment", segment_tok
+            segment_val = Values::InvalidSegmentVal.new \
+              "Unexpected segment", segment_tok
 
-              active << zipper.append(
-                FailureState.new(
-                  false,
-                  state.separators,
-                  state.segment_dict,
-                  state.instructions,
-                  state.zipper.append(segment_val)))
-            else
-              active << zipper
-            end
+            active << zipper.append(
+              FailureState.new(
+                false,
+                state.separators,
+                state.segment_dict,
+                state.instructions,
+                state.zipper.append(segment_val), []))
 
             next
           end

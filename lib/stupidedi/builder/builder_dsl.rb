@@ -53,7 +53,7 @@ module Stupidedi
         nil
       end
 
-      # Generates a blank element and asserts that the element's usage 
+      # Generates a blank element and asserts that the element's usage
       # requirement is `NOT USED`
       #
       # @see Schema::ElementReq#forbidden?
