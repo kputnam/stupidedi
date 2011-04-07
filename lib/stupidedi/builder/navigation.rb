@@ -177,9 +177,12 @@ module Stupidedi
         @active.each do |zipper|
           segment_tok  = mksegment_tok(zipper.node.segment_dict, id, elements)
           instructions = zipper.node.instructions.matches(segment_tok, true)
+          matched      = false
           reachable  ||= !instructions.empty?
 
           instructions.each do |op|
+            break if matched
+
             state = zipper
             value = zipper.node.zipper
 
@@ -212,10 +215,11 @@ module Stupidedi
 
                 if op.segment_use.nil? or op.segment_use.eql?(_value.node.usage)
                   unless _value.eql?(_state.node.zipper)
-                    _state = _state.replace(state.node.copy(:zipper => _value))
+                    _state = _state.replace(_state.node.copy(:zipper => _value))
                   end
 
                   matches << _state
+                  matched  = true
                   break
                 end
               elsif target.length > state.node.instructions.length
