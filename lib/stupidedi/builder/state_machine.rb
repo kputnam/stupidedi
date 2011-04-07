@@ -18,35 +18,28 @@ module Stupidedi
       # @group Modifying the Tree
       #########################################################################
 
-      # @return [Reader::TokenReader]
-      def read!(reader)
+      # @return [(StateMachine, Either<Reader::TokenReader>)]
+      def read(reader)
+        machine   = self
         remainder = Either.success(reader)
 
         while remainder.defined?
           remainder = remainder.flatmap{|x| x.read_segment }.map do |result|
-            # result.value: SegmentTok
-            # result.remainder: TokenReader
-            insert!(result.value, result.remainder)
-          end
+            segment_tok = result.value
+            reader      = result.remainder
 
-        # This block of code is used to profile the tokenizer
-        # remainder = remainder.flatmap do |x|
-        #   RubyProf.resume
-        #   y = x.read_segment
-        #   RubyProf.pause
-        #   y
-        # end.map do |result|
-        #   # result.value: SegmentTok
-        #   # result.remainder: TokenReader
-        #   input!(result.value, result.remainder)
-        # end
+            machine, reader =
+              machine.insert(segment_tok, reader)
+
+            reader
+          end
         end
 
-        return remainder
+        return machine, remainder
       end
 
-      # @return [Reader::TokenReader]
-      def insert!(segment_tok, reader)
+      # @return [(StateMachine, Reader::TokenReader)]
+      def insert(segment_tok, reader)
         active = []
 
         @active.each do |zipper|
@@ -59,11 +52,12 @@ module Stupidedi
 
             active << zipper.append(
               FailureState.new(
-                false,
+                true,
                 state.separators,
                 state.segment_dict,
                 state.instructions,
-                state.zipper.append(segment_val), []))
+                state.zipper.append(segment_val),
+                []))
 
             next
           end
@@ -143,9 +137,8 @@ module Stupidedi
         end
 
         # puts "#{segment_tok.id}: #{active.length}"
-        @active = active
 
-        return reader
+        return StateMachine.new(@config, active), reader
       end
 
       # @endgroup

@@ -80,12 +80,8 @@ module Stupidedi
 
       # @return [BuilderDsl]
       def segment!(name, *elements)
-        @reader = @machine.input!(mksegment_tok(name, elements), @reader)
-
-        if @machine.stuck?
-          raise Exceptions::ParseError,
-            "Segment #{name} cannot occur here"
-        end
+        @machine, @reader =
+          @machine.input(mksegment_tok(name, elements), @reader)
 
         self
       end

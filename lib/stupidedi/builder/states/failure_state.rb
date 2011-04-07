@@ -18,14 +18,14 @@ module Stupidedi
       # @return [Array<FailureState>]
       attr_reader :children
 
-      def initialize(envelope, separators, segment_dict, instructions, zipper, children)
-        @envelope, @separators, @segment_dict, @instructions, @zipper, @children =
-          envelope, separators, segment_dict, instructions, zipper, children
+      def initialize(leaf, separators, segment_dict, instructions, zipper, children)
+        @leaf, @separators, @segment_dict, @instructions, @zipper, @children =
+          leaf, separators, segment_dict, instructions, zipper, children
       end
 
       def copy(changes = {})
         FailureState.new \
-          changes.fetch(:envelope, @envelope),
+          changes.fetch(:leaf, @leaf),
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
@@ -34,11 +34,13 @@ module Stupidedi
       end
 
       def leaf?
-        not @envelope
+        @leaf
       end
     end
 
     class << FailureState
+      # @group Constructors
+      #########################################################################
 
       # @return [Zipper::AbstractCursor]
       def push(zipper, parent, segment_tok, reason)
@@ -46,13 +48,16 @@ module Stupidedi
         segment_val  = Values::InvalidSegmentVal.new(reason, segment_tok)
 
         zipper.append_child new(
-          true,
+          false,
           parent.separators,
           parent.segment_dict,
           parent.instructions.push([]),
           parent.zipper.append(envelope_val).append_child(segment_val),
           [])
       end
+
+      # @endgroup
+      #########################################################################
     end
 
   end
