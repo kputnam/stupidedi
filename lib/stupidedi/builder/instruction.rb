@@ -71,6 +71,7 @@ module Stupidedi
           width = 18
           name  = @segment_use.definition.name
 
+          # Truncate the segment name to `width` characters
           if name.length > width - 2
             id << ": #{name.slice(0, width - 2)}.."
           else
@@ -80,7 +81,7 @@ module Stupidedi
 
         q.text "Instruction[#{'% 3s' % id}]"
 
-        q.group(2, "(", ")") do
+        q.group(6, "(", ")") do
           q.breakable ""
 
           q.text "pop: #{@pop_count},"

@@ -4,7 +4,7 @@ module Stupidedi
   # @example
   #   t = ThreadLocalVal("default")
   #   t.get           #=> "default"
-  #   t.set("value")
+  #   t.set("value")  #=> "value"
   #
   #   Thread.new { t.get }.value                  #=> "default"
   #   Thread.new { t.set(:vanish); t.get }.value  #=> :vanish
@@ -31,10 +31,20 @@ module Stupidedi
       end
     end
 
+    # @return value
     def set(value)
       @threads[Thread.current] = value
     end
 
+    def unset
+      @threads.delete(Thread.current)
+    end
+
+    def set?
+      @threads.include?(Thread.current)
+    end
+
+    # @return [void]
     def gc
       @threads = @threads.inject({}) do |threads, (t,v)|
         if t.alive?

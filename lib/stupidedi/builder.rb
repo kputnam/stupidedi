@@ -1,10 +1,13 @@
 module Stupidedi
   module Builder
-    autoload :BuilderDsl,           "stupidedi/builder/builder_dsl"
     autoload :ConstraintTable,      "stupidedi/builder/constraint_table"
     autoload :Instruction,          "stupidedi/builder/instruction"
     autoload :InstructionTable,     "stupidedi/builder/instruction_table"
+
+    autoload :BuilderDsl,           "stupidedi/builder/builder_dsl"
+    autoload :Generation,           "stupidedi/builder/generation"
     autoload :Navigation,           "stupidedi/builder/navigation"
+    autoload :Tokenization,         "stupidedi/builder/tokenization"
     autoload :StateMachine,         "stupidedi/builder/state_machine"
 
     autoload :AbstractState,        "stupidedi/builder/states/abstract_state"

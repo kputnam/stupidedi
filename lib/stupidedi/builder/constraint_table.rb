@@ -31,7 +31,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok)
+        def matches(segment_tok, strict)
           @instructions
         end
       end
@@ -45,7 +45,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok)
+        def matches(segment_tok, strict)
           @__matches ||= begin
             deepest = @instructions.head
 
@@ -62,9 +62,9 @@ module Stupidedi
 
       #
       # Chooses the subset of {Instruction} values based on the distinguishing
-      # values allowed by each {Schema::SegmentUse}. If none of the
-      # {Instruction} values have {Schema::SegmentUse} values that restrict
-      # allowed element values, it will behave identically to {Stub}.
+      # values allowed by each {Schema::SegmentUse}. If none of the Instruction
+      # values have {Schema::SegmentUse} values that restrict allowed element
+      # values, it will behave identically to {Stub}, returning all Instructions
       #
       class ValueBased < ConstraintTable
         def initialize(instructions)
@@ -72,16 +72,24 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok)
-          element_toks = segment_tok.element_toks
-
+        def matches(segment_tok, strict)
           @__basis ||= basis(deepest(@instructions))
           @__basis.head.each do |(n, m), map|
-            value = deconstruct(element_toks, n, m)
+            value = deconstruct(segment_tok.element_toks, n, m)
+
             unless value.nil?
-              match = map.at(value)
-              unless match.nil?
-                return match
+              singleton = map.at(value)
+
+              unless singleton.nil?
+                return singleton
+              else
+                if strict
+                  designator = "#{segment_tok.id}#{'%02d' % n}"
+                  designator << "-%02d" % m unless m.nil?
+
+                  raise Exceptions::ParseError,
+                    "value #{value.inspect} is not allowed in #{designator}"
+                end
               end
             end
           end

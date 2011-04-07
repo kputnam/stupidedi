@@ -69,7 +69,6 @@ module Stupidedi
           end
 
           unless value.eql?(state.node.zipper)
-            xx(:first, value, state)
             state = state.replace(state.node.copy(:zipper => value))
           end
 
@@ -91,7 +90,6 @@ module Stupidedi
           end
 
           unless value.eql?(state.node.zipper)
-            xx(:last, value, state)
             state = state.replace(state.node.copy(:zipper => value))
           end
 
@@ -127,7 +125,6 @@ module Stupidedi
           end
 
           unless value.eql?(state.node.zipper)
-            xx(:next, value, state)
             state = state.replace(state.node.copy(:zipper => value))
           end
 
@@ -163,7 +160,6 @@ module Stupidedi
           end
 
           unless value.eql?(state.node.zipper)
-            xx(:prev, value, state)
             state = state.replace(state.node.copy(:zipper => value))
           end
 
@@ -174,14 +170,14 @@ module Stupidedi
       end
 
       # @return [Either<StateMachine>]
-      def find(segment_id)
-        segment_tok = Reader::SegmentTok.build(segment_id, [], nil, nil)
-        unreachable = true
-        matches     = []
+      def find(id, *elements)
+        reachable = false
+        matches   = []
 
         @active.each do |zipper|
-          instructions  = zipper.node.instructions.matches(segment_tok)
-          unreachable &&= instructions.empty?
+          segment_tok  = mksegment_tok(zipper.node.segment_dict, id, elements)
+          instructions = zipper.node.instructions.matches(segment_tok, true)
+          reachable  ||= !instructions.empty?
 
           instructions.each do |op|
             state = zipper
@@ -206,18 +202,22 @@ module Stupidedi
                 # contain segments (eg, TransactionSetVal does not have child
                 # segments, it has TableVals which either contain a SegmentVal
                 # or a LoopVal that contains a SegmentVal)
-                until value.node.segment?
-                  value = value.down
-                  state = state.down
+                _value = value
+                _state = state
+
+                until _value.node.segment?
+                  _value = _value.down
+                  _state = _state.down
                 end
 
-                unless value.eql?(state.node.zipper)
-                  xx(:find, value, state)
-                  state = state.replace(state.node.copy(:zipper => value))
-                end
+                if op.segment_use.nil? or op.segment_use.eql?(_value.node.usage)
+                  unless _value.eql?(_state.node.zipper)
+                    _state = _state.replace(state.node.copy(:zipper => _value))
+                  end
 
-                matches << state
-                break
+                  matches << _state
+                  break
+                end
               elsif target.length > state.node.instructions.length
                 # The ancestor state isn't one of the rightward siblings, since
                 # the length of instruction tables is non-increasing as we move
@@ -228,11 +228,11 @@ module Stupidedi
           end
         end
 
-        if unreachable
-          raise Exceptions::ZipperError,
-            "segment #{segment_id} is not reachable"
+        if not reachable
+          raise Exceptions::ParseError,
+            "#{id} segment cannot be reached from the current state"
         elsif matches.empty?
-          Either.failure("segment does not occur")
+          Either.failure("#{id} segment does not occur")
         else
           Either.success(StateMachine.new(@config, matches))
         end

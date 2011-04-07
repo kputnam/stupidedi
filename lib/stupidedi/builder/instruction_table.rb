@@ -30,28 +30,28 @@ module Stupidedi
 
         # @return [Instruction]
         def at(segment_use)
-          @instructions.find{|x| x.segment_use.eql?(segment_use) }
+          @instructions.find{|op| op.segment_use.eql?(segment_use) }
         end
 
         # @return [InstructionTable]
         def push(instructions)
           @__push[instructions] ||= begin
-          # puts "#{object_id}.push(#{object_id})"
-            bottom = @instructions.map{|x| x.copy(:pop_count => x.pop_count + 1) }
+            bottom = @instructions.map do |op|
+              op.copy(:pop_count => op.pop_count + 1)
+            end
 
             NonEmpty.new(instructions + bottom, self)
           end
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok)
+        def matches(segment_tok, strict = false)
           @__matches ||= begin
-          # puts "#{object_id}.constraints"
             constraints = Hash.new
 
             # Group instructions by segment identifier
             grouped = Hash.new{|h,k| h[k] = [] }
-            @instructions.each{|x| grouped[x.segment_id] << x }
+            @instructions.each{|op| grouped[op.segment_id] << op }
 
             # For each group of instructions that have the same segment
             # id, build a constraint table that can distinguish them
@@ -63,7 +63,7 @@ module Stupidedi
           end
 
           if @__matches.defined_at?(segment_tok.id)
-            @__matches.at(segment_tok.id).matches(segment_tok)
+            @__matches.at(segment_tok.id).matches(segment_tok, strict)
           else
             []
           end
@@ -84,8 +84,9 @@ module Stupidedi
             self
           else
             @__drop[count] ||= begin
-
-              # @todo: Explain
+              # Calculate the fewest number of instructions we can drop. We
+              # drop this many to construct the next InstructionTable, from
+              # which we drop the remaining number of instructions.
               smallest = @instructions.length
               top = @instructions.take(@instructions.length - @pop.length)
               top.each do |i|
@@ -95,22 +96,19 @@ module Stupidedi
               end
 
               if smallest == count
-              # puts "#{object_id}.drop(#{count})"
-                if @pop.nil?
-                  drop   = @instructions.drop(count)
-                  result =
-                    drop.map{|x| x.copy(:drop_count => x.drop_count - count) }
-                else
-                  drop     = @instructions.drop(count)
-                  top, pop = drop.split_at(drop.length - @pop.length)
-                  result   =
-                    top.map{|x| x.copy(:drop_count => x.drop_count - count) }.
-                        concat(pop)
-                end
+                # There are no intermediate steps to take, because we can't drop
+                # any fewer than the given number of instructions.
+                remaining = @instructions.drop(count)
 
-                NonEmpty.new(result, @pop)
+                # Adjust the drop_count for each remaining instruction except
+                # those that belong to the parent InstructionTable @pop
+                top, pop = remaining.split_at(remaining.length - @pop.length)
+
+                top.map!{|op| op.copy(:drop_count => op.drop_count - count) }
+                top.concat(pop)
+
+                NonEmpty.new(top, @pop)
               else
-              # puts "#{object_id}.drop(#{count}) = drop(#{smallest}).drop(#{count - smallest})"
                 drop(smallest).drop(count - smallest)
               end
             end
@@ -183,7 +181,6 @@ module Stupidedi
           q.text "InstructionTable.empty"
         end
       end.new
-
     end
 
     class << InstructionTable
@@ -197,7 +194,7 @@ module Stupidedi
 
       # @return [InstructionTable::NonEmpty]
       def build(instructions)
-        InstructionTable::Empty.push(instructions)
+        empty.push(instructions)
       end
 
       # @endgroup
