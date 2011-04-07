@@ -3,13 +3,12 @@ module Stupidedi
 
     class EditedCursor < AbstractCursor
 
-      # @return [#leaf?, #children, #copy]
+      # (see AbstractCursor#node)
       attr_reader :node
 
       # @return [Hole]
       attr_reader :path
 
-      # @private
       # @return [AbstractCursor]
       attr_reader :parent
 
@@ -21,10 +20,12 @@ module Stupidedi
       # @group Querying the Tree Location
       #########################################################################
 
+      # (see AbstractCursor#leaf?)
       def leaf?
         @node.leaf? or @node.children.empty?
       end
 
+      # (see AbstractCursor#root?)
       def root?
         false
       end
@@ -32,6 +33,7 @@ module Stupidedi
       # @group Traversing the Tree
       #########################################################################
 
+      # (see AbstractCursor#up)
       # @return [AbstractCursor]
       def up
         node =
@@ -45,6 +47,7 @@ module Stupidedi
         end
       end
 
+      # (see AbstractCursor#next)
       # @return [EditedCursor]
       def next
         if last?
@@ -58,6 +61,7 @@ module Stupidedi
           Hole.new(@node.cons(@path.left), @path.parent, tail), @parent)
       end
 
+      # (see AbstractCursor#prev)
       # @return [EditedCursor]
       def prev
         if first?
@@ -71,6 +75,7 @@ module Stupidedi
           Hole.new(tail, @path.parent, @node.cons(@path.right)), @parent)
       end
 
+      # (see AbstractCursor#first)
       # @return [EditedCursor]
       def first
         if first?
@@ -83,6 +88,7 @@ module Stupidedi
           Hole.new([], @path.parent, right), @parent)
       end
 
+      # (see AbstractCursor#last)
       # @return [EditedCursor]
       def last
         if last?
@@ -98,23 +104,27 @@ module Stupidedi
       # @group Editing the Tree
       #########################################################################
 
+      # (see AbstractCursor#last)
       # @return [EditedCursor]
       def append(node)
         EditedCursor.new(node,
           Hole.new(@node.cons(@path.left), @path.parent, @path.right), @parent)
       end
 
+      # (see AbstractCursor#last)
       # @return [EditedCursor]
       def prepend(node)
         EditedCursor.new(node,
           Hole.new(@path.left, @path.parent, @node.cons(@path.right)), @parent)
       end
 
+      # (see AbstractCursor#last)
       # @return [EditedCursor]
       def replace(node)
         EditedCursor.new(node, @path, @parent)
       end
 
+      # (see AbstractCursor#last)
       # @return [EditedCursor]
       def delete
         if not last?
@@ -135,7 +145,7 @@ module Stupidedi
             @parent.node.copy(:children =>
               @path.left.reverse.concat(@path.right))
 
-          EditedCursor.new(parent, @path.parent, @parent.parent)
+          EditedCursor.new(parent, @path.parent, @parent.parent).dangle
         end
       end
 

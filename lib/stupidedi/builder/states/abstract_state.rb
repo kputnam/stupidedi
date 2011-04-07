@@ -54,11 +54,6 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      # This method constructs a new instance of (a subclass of) {AbstractState}
-      # and pushes it above {#parent} onto a nested stack-like structure. The
-      # stack structure is implicit, and it can be iterated by following each
-      # state's {#parent}.
-      #
       # @return [Zipper::AbstractCursor]
       abstract :push, :args => %w(zipper parent segment_tok segment_use config)
 
@@ -180,113 +175,122 @@ module Stupidedi
         end
       end
 
-      # @endgroup
-      #########################################################################
-
       # @group Instruction Generation
       #########################################################################
 
+      # Builds a sequence of {Instruction} values that corresponds to the given
+      # sequence of `segment_uses`. 
+      #
       # @return [Array<Instruction>]
-      def sequence(segment_uses, start = 0)
+      def sequence(segment_uses, offset = 0)
         instructions = []
         buffer       = []
-        count        = start
         last         = nil
 
-        segment_uses.each do |use|
-          unless last.nil? or use.position == last.position
-            d =
+        segment_uses.each do |s|
+          unless last.nil? or s.position == last.position
+            drop_count =
               if buffer.length == 1 and not last.repeatable?
-                count
+                offset
               else
-                count - buffer.length
+                offset - buffer.length
               end
 
-            buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, nil) }
+            buffer.each do |u|
+              instructions << Instruction.new(nil, u, 0, drop_count, nil)
+            end
+
             buffer.clear
           end
 
-          last  = use
-          count += 1
-          buffer << use
+          buffer << s
+          last    = s
+          offset += 1
         end
 
+        # Flush the buffer one last time
         unless buffer.empty?
-          d =
+          drop_count =
             if buffer.length == 1 and not last.repeatable?
-              count
+              offset
             else
-              count - buffer.length
+              offset - buffer.length
             end
 
-          buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, nil) }
+          buffer.each do |u|
+            instructions << Instruction.new(nil, u, 0, drop_count, nil)
+          end
         end
 
         instructions
       end
 
       # @return [Array<Instruction>]
-      def lsequence(loop_defs, start = 0)
+      def lsequence(loop_defs, offset = 0)
         instructions = []
         buffer       = []
-        count        = start
         last         = nil
 
         loop_defs.each do |l|
           unless last.nil? or l.entry_segment_use.position == last.entry_segment_use.position
-            d =
+            drop_count =
               if buffer.length == 1 and not last.repeatable?
-                count
+                offset
               else
-                count - buffer.length
+                offset - buffer.length
               end
 
-            buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, LoopState) }
+            buffer.each do |u|
+              instructions << Instruction.new(nil, u, 0, drop_count, LoopState)
+            end
             buffer.clear
           end
 
-          last = l
-          count += 1
           buffer << l.entry_segment_use
+          last    = l
+          offset += 1
         end
 
+        # Flush the buffer one last time
         unless buffer.nil?
-          d =
+          drop_count =
             if buffer.length == 1 and not last.repeatable?
-              count
+              offset
             else
-              count - buffer.length
+              offset - buffer.length
             end
 
-          buffer.each{|u| instructions << Instruction.new(nil, u, 0, d, LoopState) }
+          buffer.each do |u|
+            instructions << Instruction.new(nil, u, 0, drop_count, LoopState)
+          end
         end
 
         instructions
       end
 
       # @return [Array<Instruction>]
-      def tsequence(table_defs, start = 0)
+      def tsequence(table_defs, offset = 0)
         instructions = []
         buffer       = []
-        count        = start
         last         = nil
 
         table_defs.each do |t|
           unless last.nil? or t.position == last.position
-            d =
+            drop_count =
               if buffer.length == 1 and not last.repeatable?
-                count
+                offset
               else
-                count - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
+                offset - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
               end
 
             buffer.each do |b|
               if b.repeatable? and b.entry_segment_uses.length > 1
-                raise "@todo"
+                raise Exceptions::InvalidSchemaError,
+                  "@todo"
               end
 
               b.entry_segment_uses.each do |u|
-                instructions << Instruction.new(nil, u, 0, d, TableState)
+                instructions << Instruction.new(nil, u, 0, drop_count, TableState)
               end
             end
 
@@ -294,21 +298,21 @@ module Stupidedi
           end
 
           last    = t
-          count  += t.entry_segment_uses.length
+          offset += t.entry_segment_uses.length
           buffer << t
         end
 
         unless buffer.empty?
-          d =
+          drop_count =
             if buffer.length == 1 and not last.repeatable?
-              count
+              offset
             else
-              count - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
+              offset - buffer.inject(0){|n,b| n + b.entry_segment_uses.length }
             end
 
           buffer.each do |b|
             b.entry_segment_uses.each do |u|
-              instructions << Instruction.new(nil, u, 0, d, TableState)
+              instructions << Instruction.new(nil, u, 0, drop_count, TableState)
             end
           end
         end

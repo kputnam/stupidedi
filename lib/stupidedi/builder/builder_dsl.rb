@@ -16,20 +16,29 @@ module Stupidedi
                                  Reader::SegmentDict.empty)
       end
 
-      # @return [Array<InstructionTable>]
+      # (see Navigation#successors)
       def successors
         @machine.successors
+      end
+
+      # (see Navigation#zipper)
+      def zipper
+        @machine.zipper
       end
 
       #########################################################################
       # @group Element Constructors
 
       # Generates a repeated element (simple or composite)
+      #
+      # @return [void]
       def repeated(*elements)
         :repeated.cons(elements.cons)
       end
 
       # Generates a composite element
+      #
+      # @return [void]
       def composite(*components)
         :composite.cons(components.cons)
       end
@@ -44,6 +53,9 @@ module Stupidedi
         nil
       end
 
+      # Generates a blank element and asserts that the element's usage 
+      # requirement is `NOT USED`
+      #
       # @see Schema::ElementReq#forbidden?
       #
       # @return [void]
@@ -51,7 +63,12 @@ module Stupidedi
         @__not_used ||= :not_used.cons
       end
 
+      # Generates the only possible value an element may have, which may
+      # be blank. An exception is thrown if the element's usage requirement
+      # is optional, or if there are more than one allowed non-blank values.
+      #
       # @see Schema::SimpleElementUse#allowed_values
+      # @see Schema::ElementReq#forbidden?
       #
       # @return [void]
       def default
@@ -62,8 +79,8 @@ module Stupidedi
       #########################################################################
 
       # @return [BuilderDsl]
-      def segment!(name, *args)
-        @reader = @machine.input!(mksegment_tok(name, args), @reader)
+      def segment!(name, *elements)
+        @reader = @machine.input!(mksegment_tok(name, elements), @reader)
 
         if @machine.stuck?
           raise Exceptions::ParseError,
@@ -71,11 +88,6 @@ module Stupidedi
         end
 
         self
-      end
-
-      # @return [Zipper::AbstractCursor]
-      def zipper
-        @machine.zipper
       end
 
       # @return [void]

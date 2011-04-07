@@ -17,26 +17,27 @@ module Stupidedi
       # @group Query the Tree Location
       #########################################################################
 
-      # @return 0
+      # (see AbstractCursor#depth)
       def depth
         0
       end
 
-      # @return true
+      # (see AbstractCursor#first?)
       def first?
         true
       end
 
-      # @return true
+      # (see AbstractCursor#last?)
       def last?
         true
       end
 
+      # (see AbstractCursor#leaf?)
       def leaf?
         @node.leaf? or @node.children.empty?
       end
 
-      # @return true
+      # (see AbstractCursor#root?)
       def root?
         true
       end
@@ -44,53 +45,61 @@ module Stupidedi
       # @group Traversing the Tree
       #########################################################################
 
+      # (see AbstractCursor#next)
       # @return [void]
       def next
         raise Exceptions::ZipperError,
-          "root has no siblings"
+          "root node has no siblings"
       end
 
+      # (see AbstractCursor#prev)
       # @return [void]
       def prev
         raise Exceptions::ZipperError,
-          "root has no siblings"
+          "root node has no siblings"
       end
 
+      # (see AbstractCursor#root)
       # @return [RootCursor]
       def root
         self
       end
 
+      # (see AbstractCursor#up)
       # @return [void]
       def up
         raise Exceptions::ZipperError,
-          "root has no parent"
+          "root node has no parent"
       end
 
       # @group Editing the Tree
       #########################################################################
 
+      # (see AbstractCursor#append)
       # @return [void]
       def append(node)
         raise Exceptions::ZipperError,
-          "root has no siblings"
+          "root node has no siblings"
       end
 
+      # (see AbstractCursor#prepend)
       # @return [void]
       def prepend(node)
         raise Exceptions::ZipperError,
-          "root has no siblings"
+          "root node has no siblings"
       end
 
+      # (see AbstractCursor#replace)
       # @return [RootCursor]
       def replace(node)
         RootCursor.new(node)
       end
 
+      # (see AbstractCursor#delete)
       # @return [void]
       def delete
         raise Exceptions::ZipperError,
-          "cannot delete root"
+          "cannot delete root node"
       end
 
       # @endgroup

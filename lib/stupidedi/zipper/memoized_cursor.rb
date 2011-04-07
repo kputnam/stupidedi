@@ -70,19 +70,6 @@ module Stupidedi
       # @return [MemoizedCursor]
       def first
         @parent.down
-
-      # @note: The code below is correct but doesn't take advantage of values
-      # memoized by the parent. Temporarily here to evaluate its perfomance
-      # compared to the memoized call above.
-      #
-      # if first?
-      #   return self
-      # end
-
-      # right = @path.left.init.reverse.concat(@node.cons(@path.right))
-
-      # MemoizedCursor.new(@path.left.last,
-      #   Hole.new([], @path.parent, right), @parent)
       end
 
       # @return [MemoizedCursor]
@@ -90,19 +77,6 @@ module Stupidedi
         current = self
         current = current.next until current.last?
         current
-
-      # @note: The code below is correct but doesn't take advantage of values
-      # memoized by the sibling. Temporarily here to evaluate its perfomance
-      # compared to the memoized call above.
-      #
-      # if last?
-      #   return self
-      # end
-
-      # left = @node.cons(@path.right.init.reverse).concat(@path.left)
-
-      # MemoizedCursor.new(@path.right.last,
-      #   Hole.new(left, @path.parent, []), @parent)
       end
 
       # @group Editing the Tree
@@ -145,7 +119,7 @@ module Stupidedi
             @parent.node.copy(:children =>
               @path.left.reverse.concat(@path.right))
 
-          EditedCursor.new(parent, @path.parent, @parent.parent)
+          EditedCursor.new(parent, @path.parent, @parent.parent).dangle
         end
       end
 

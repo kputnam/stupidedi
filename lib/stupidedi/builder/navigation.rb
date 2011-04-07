@@ -8,12 +8,6 @@ module Stupidedi
         @active.map{|a| a.node.instructions }
       end
 
-      def zipper
-        if deterministic?
-          @active.head.node.zipper
-        end
-      end
-
       def deterministic?
         @active.length == 1
       end
@@ -42,109 +36,109 @@ module Stupidedi
         return true
       end
 
-      # @group Navigating the Tree
-      #########################################################################
-
-      # @return [Values::AbstractVal]
-      def node
+      # @return [Either<Zipper::AbstractCursor>]
+      def zipper
         if deterministic?
-          @active.head.node.zipper.node
+          Either.success(@active.head.node.zipper)
+        else
+          Either.failure("non-deterministic state")
         end
       end
 
-      # @return [StateMachine]
+      # @group Navigating the Tree
+      #########################################################################
+
+      # @return [Either<Values::AbstractVal>]
+      def node
+        if deterministic?
+          Either.success(@active.head.node.zipper.node)
+        else
+          Either.failure("non-deterministic state")
+        end
+      end
+
+      # @return [Either<StateMachine>]
       def first
         active = roots.map do |zipper|
           state = zipper
           value = zipper.node.zipper
-          xx(:first, value, state)
 
           until value.node.segment?
             value = value.down
             state = state.down
-            unless value.eql?(state.node.zipper)
-              state = state.replace(state.node.copy(:zipper => value))
-            end
-            xx(:first, value, state)
           end
-        # puts
+
+          unless value.eql?(state.node.zipper)
+            xx(:first, value, state)
+            state = state.replace(state.node.copy(:zipper => value))
+          end
 
           state
         end
 
-        StateMachine.new(@config, active)
+        Either.success(StateMachine.new(@config, active))
       end
 
-      # @return [StateMachine]
+      # @return [Either<StateMachine>]
       def last
         active = roots.map do |zipper|
           state = zipper
           value = zipper.node.zipper
-          xx(:last, value, state)
 
           until value.node.segment?
             value = value.down.last
             state = state.down.last
-            unless value.eql?(state.node.zipper)
-              state = state.replace(state.node.copy(:zipper => value))
-            end
+          end
+
+          unless value.eql?(state.node.zipper)
             xx(:last, value, state)
+            state = state.replace(state.node.copy(:zipper => value))
           end
 
           state
         end
 
-        StateMachine.new(@config, active)
+        Either.success(StateMachine.new(@config, active))
       end
 
       # @return [StateMachine]
-      def forward(count = 1)
+      def next(count = 1)
         active = @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
-          xx(:forward, value, state)
 
           count.times do
             while not value.root? and value.last?
               value = value.up
               state = state.up
-              unless value.eql?(state.node.zipper)
-                state = state.replace(state.node.copy(:zipper => value))
-              end
-              xx(:forward, value, state)
             end
 
             if value.root?
-              raise Exceptions::ZipperError,
-                "cannot move forward after last segment"
+              return Either.failure("cannot move to next after last segment")
             end
 
             value = value.next
             state = state.next
-            unless value.eql?(state.node.zipper)
-              state = state.replace(state.node.copy(:zipper => value))
-            end
-            xx(:forward, value, state)
 
             until value.node.segment?
               value = value.down
               state = state.down
-              unless value.eql?(state.node.zipper)
-                state = state.replace(state.node.copy(:zipper => value))
-              end
-              xx(:forward, value, state)
             end
           end
-        # puts
+
+          unless value.eql?(state.node.zipper)
+            xx(:next, value, state)
+            state = state.replace(state.node.copy(:zipper => value))
+          end
 
           state
         end
 
-        StateMachine.new(@config, active)
+        Either.success(StateMachine.new(@config, active))
       end
 
-      # @return [StateMachine]
-      def backward(count = 1)
+      # @return [Either<StateMachine>]
+      def prev(count = 1)
         active = @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
@@ -153,38 +147,88 @@ module Stupidedi
             while not value.root? and value.first?
               value = value.up
               state = state.up
-              unless value.eql?(state.node.zipper)
-                state = state.replace(state.node.copy(:zipper => value))
-              end
-              xx(:backward, value, state)
             end
 
             if value.root?
-              raise Exceptions::ZipperError,
-                "cannot move backward before first segment" 
+              return Either.failure("cannot move to prev before first segment")
             end
 
             state = state.prev
             value = value.prev
-            unless value.eql?(state.node.zipper)
-              state = state.replace(state.node.copy(:zipper => value))
-            end
-            xx(:backward, value, state)
 
             until value.node.segment?
               value = value.down.last
               state = state.down.last
-              unless value.eql?(state.node.zipper)
-                state = state.replace(state.node.copy(:zipper => value))
-              end
-              xx(:backward, value, state)
             end
+          end
+
+          unless value.eql?(state.node.zipper)
+            xx(:prev, value, state)
+            state = state.replace(state.node.copy(:zipper => value))
           end
 
           state
         end
 
-        StateMachine.new(@config, active)
+        Either.success(StateMachine.new(@config, active))
+      end
+
+      # @return [Either<StateMachine>]
+      def find(segment_id)
+        segment_tok = Reader::SegmentTok.build(segment_id, [], nil, nil)
+        matches     = []
+
+        @active.each do |zipper|
+          instructions = zipper.node.instructions.matches(segment_tok)
+
+          instructions.each do |op|
+            pp op
+
+            state = zipper
+            value = zipper.node.zipper
+            start = zipper.node.instructions
+
+            op.pop_count.times do
+              value = value.up
+              state = state.up
+            end
+
+            # The state we're searching for will have an ancestor state
+            # with this instruction table
+            target = start.pop(op.pop_count).drop(op.drop_count)
+
+            until state.last?
+              state = state.next
+              value = value.next
+
+              if target.eql?(state.node.instructions)
+                # Found the ancestor state. Often the segment belongs to this
+                # state, but some states correspond to values which indirectly
+                # contain segments (eg, TransactionSetVal does not have child
+                # segments, it has TableVals which either contain a SegmentVal
+                # or a LoopVal that contains a SegmentVal)
+                until value.node.segment?
+                  value = value.down
+                  state = state.down
+                end
+
+                unless value.eql?(state.node.zipper)
+                  xx(:find, value, state)
+                  state = state.replace(state.node.copy(:zipper => value))
+                end
+
+                matches << state
+                break
+              end
+            end
+          end
+        end
+
+        if matches.empty?
+          Either.failure("segment is not reachable")
+        else
+          Either.success(StateMachine.new(@config, matches))
+        end
       end
 
     private
@@ -194,17 +238,15 @@ module Stupidedi
         @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
-          xx(:roots, value, state)
 
           zipper.depth.times do
             value = value.up
             state = state.up
-            unless value.eql?(state.node.zipper)
-              state = state.replace(state.node.copy(:zipper => value))
-            end
-            xx(:roots, value, state)
           end
-        # puts
+
+          unless value.eql?(state.node.zipper)
+            state = state.replace(state.node.copy(:zipper => value))
+          end
 
           state
         end

@@ -6,20 +6,20 @@ module Stupidedi
       # @return [AbstractPath]
       abstract :parent
 
-      # Contains the subtree's leftward siblings, sorted nearest to furthest
+      # Contains the node's leftward siblings, sorted nearest to furthest
       #
       # @return [Array<#leaf?, #children, #copy>]
       abstract :left
 
-      # Contains the subtree's rightward siblings, sorted nearest to furthest
+      # Contains the node's rightward siblings, sorted nearest to furthest
       #
       # @return [Array<#leaf?, #children, #copy>]
       abstract :right
 
-      # True when the subtree has no rightward siblings
+      # True when the node has no rightward siblings
       abstract :last?
 
-      # True when the subtree has no leftward siblings
+      # True when the node has no leftward siblings
       abstract :first?
 
       # Distance from the root node
