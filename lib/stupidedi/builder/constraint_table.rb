@@ -73,12 +73,16 @@ module Stupidedi
 
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
+          invalid = true  # Were all possibly distinguishing elements invalid?
+          present = false # Were any possibly distinguishing elements present?
+
           @__basis ||= basis(deepest(@instructions))
           @__basis.head.each do |(n, m), map|
             value = deconstruct(segment_tok.element_toks, n, m)
 
             unless value.nil?
               singleton = map.at(value)
+              present   = true
 
               unless singleton.nil?
                 return singleton
@@ -87,23 +91,52 @@ module Stupidedi
                   designator = "#{segment_tok.id}#{'%02d' % n}"
                   designator << "-%02d" % m unless m.nil?
 
-                  raise Exceptions::ParseError,
-                    "value #{value.inspect} is not allowed in #{designator}"
+                  raise ArgumentError,
+                    "#{value.inspect} is not allowed in #{designator}"
                 end
               end
             end
           end
 
-          # @todo: If we reach this line, none of the elements present in the
-          # SegmentTok could distinguish its Instruction/SegmentUse alone. Now
-          # we should check @__basis.last for elements that can iteratively
-          # narrow down the search space. This is a bit complicated, since we
-          # should order the filters according to their probable effectiveness,
-          # so we might be able to terminate early without having to evaluate
-          # each one. For now, we'll just return all the instructions and hope
-          # that the grammar sorts it out after reading more tokens.
+          # If we reach this line, none of the present elements could, on its
+          # own, narrow the search space to a single Instruction. We now test
+          # the combination of elements to iteratively narrow the search space
+          space = @instructions
 
-          @instructions
+          # @todo: These filters should be ordered by probable effectiveness,
+          # so we narrow the search space by the largest amount in the fewest
+          # number of steps.
+          @__basis.last.each do |(n, m), map|
+            value = deconstruct(segment_tok.element_toks, n, m)
+
+            unless value.nil?
+              subset  = map.at(value)
+              present = true
+
+              unless subset.blank?
+                invalid = false
+                space  &= subset
+
+                if space.length <= 1
+                  return space
+                end
+              else
+                if strict
+                  designator = "#{segment_tok.id}#{'%02d' % n}"
+                  designator << "-%02d" % m unless m.nil?
+
+                  raise ArgumentError,
+                    "#{value.inspect} is not allowed in #{designator}"
+                end
+              end
+            end
+          end
+
+          if invalid and present
+            []
+          else
+            space
+          end
         end
 
       private
@@ -338,28 +371,26 @@ module Stupidedi
       # @param [Array<Instruction>] instructions
       # @return [ConstraintTable]
       def build(instructions)
-        unless instructions.length > 1
-          return ConstraintTable::Stub.new(instructions)
+        if instructions.length <= 1
+          ConstraintTable::Stub.new(instructions)
+        elsif instructions.any?{|i| i.segment_use.nil? }
+          # When one of the instructions has a nil segment_use, it means
+          # the SegmentUse is determined when pushing the new state. There
+          # isn't a way to know the segment constraints from here.
+          ConstraintTable::Stub.new(instructions)
+        else
+          segment_uses = instructions.map{|i| i.segment_use }
+
+          if segment_uses.map{|u| u.object_id }.uniq.length <= 1
+            # The same SegmentUse may appear more than once, because the
+            # segment can be placed at different levels in the tree. If
+            # all the instructions have the same SegmentUse, we can't use
+            # segment constraints to narrow down the instruction list.
+            ConstraintTable::DepthBased.new(instructions)
+          else
+            ConstraintTable::ValueBased.new(instructions)
+          end
         end
-
-        # When one of the instructions has a nil segment_use, it means
-        # the SegmentUse is determined when pushing the new state. There
-        # isn't a way to know the segment constraints from here.
-        if instructions.any?{|i| i.segment_use.nil? }
-          return ConstraintTable::Stub.new(instructions)
-        end
-
-        segment_uses = instructions.map{|i| i.segment_use }
-
-        # The same SegmentUse may appear more than once, because the
-        # segment can be placed at different levels in the tree. If
-        # all the instructions have the same SegmentUse, we can't use
-        # segment constraints to narrow down the instruction list.
-        unless segment_uses.map{|u| u.object_id }.uniq.length > 1
-          return ConstraintTable::DepthBased.new(instructions)
-        end
-
-        return ConstraintTable::ValueBased.new(instructions)
       end
 
       # @endgroup

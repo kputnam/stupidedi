@@ -32,7 +32,8 @@ module Stupidedi
                 id, name, min_length, max_length, description, parent
 
               if min_length > max_length
-                raise ArgumentError, "Minimum length cannot be greater than maximum length"
+                raise ArgumentError,
+                  "min_length cannot be greater than max_length"
               end
             end
 
@@ -92,12 +93,12 @@ module Stupidedi
 
               unless min_length == 6 or min_length == 8
                 raise ArgumentError,
-                  "Minimum length must be either 6 or 8"
+                  "min_length must be either 6 or 8"
               end
 
               unless max_length == 6 or max_length == 8
                 raise ArgumentError,
-                  "Maximum length must be either 6 or 8"
+                  "max_length must be either 6 or 8"
               end
             end
 
@@ -176,7 +177,7 @@ module Stupidedi
 
               if precision > max_length
                 raise ArgumentError,
-                  "Precision cannot be greater than maximum length"
+                  "precision cannot be greater than max_length"
               end
 
               @precision = precision
@@ -222,12 +223,12 @@ module Stupidedi
 
               unless min_length == 2 or min_length == 4 or min_length >= 6
                 raise ArgumentError,
-                  "Minimum length must be either 2, 4, 6, or greater"
+                  "min_length must be either 2, 4, 6, or greater"
               end
 
               unless max_length == 2 or max_length == 4 or max_length >= 6
                 raise ArgumentError,
-                  "Maximum length must be either 2, 4, 6, or greater"
+                  "max_length must be either 2, 4, 6, or greater"
               end
             end
 

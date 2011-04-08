@@ -21,7 +21,7 @@ module Stupidedi
         Sets::RelativeSet.build(object)
       else
         raise TypeError,
-          "Argument must be an AbstractSet or Enumerable"
+          "argument must be an AbstractSet or Enumerable"
       end
     end
 

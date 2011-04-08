@@ -21,14 +21,14 @@ class Module
       class_eval(<<-RUBY, file, line.to_i - 1)
         def #{name}(*args)
           raise NoMethodError,
-            "Method #{name} is abstract"
+            "method #{name} is abstract"
         end
       RUBY
     else
       class_eval(<<-RUBY, file, line.to_i - 1)
         def #{name}(*args)
           raise NoMethodError,
-            "Method #{name}(#{params.join(', ')}) is abstract"
+            "method #{name}(#{params.join(', ')}) is abstract"
         end
       RUBY
     end
@@ -50,7 +50,7 @@ class Module
   def delegate(*params)
     unless params.last.is_a?(Hash)
       raise ArgumentError,
-        "Last argument must be :to => ..."
+        "last argument must be :to => ..."
     end
 
     methods = params.init

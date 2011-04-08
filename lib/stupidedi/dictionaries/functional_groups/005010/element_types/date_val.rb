@@ -122,7 +122,7 @@ module Stupidedi
                   ::Date.civil(@year, @month, @day)
                 rescue ArgumentError
                   raise Exceptions::InvalidElementError,
-                    "Invalid date year: #{year}, month: #{month}, day: #{day}"
+                    "invalid date year: #{year}, month: #{month}, day: #{day}"
                 end
 
                 super(usage)
@@ -235,7 +235,7 @@ module Stupidedi
                 # Check that date is reasonably valid
                 unless @year.between?(0, 99) and @month.between?(1, 12) and @day.between?(1, 31)
                   raise Exceptions::InvalidElementError,
-                    "Invalid date year: #{year}, month: #{month}, day: #{day}"
+                    "invalid date year: #{year}, month: #{month}, day: #{day}"
                 end
 
                 super(usage)
@@ -268,7 +268,7 @@ module Stupidedi
               def cutoff(yy, century = ::Date.today.year / 100)
                 unless yy.between?(0, 99)
                   raise ArgumentError,
-                    "Cutoff year must be between 0 and 99 inclusive but was #{yy}"
+                    "cutoff year must be between 0 and 99 inclusive but was #{yy}"
                 end
 
                 if @year < yy
@@ -284,7 +284,7 @@ module Stupidedi
               def delta(nn, century = ::Date.today.year / 100)
                 unless nn.between?(0, 99)
                   raise ArgumentError,
-                    "N must be between 0 and 99, inclusive but was #{nn}"
+                    "nn must be between 0 and 99, inclusive"
                 end
 
                 cutoff((::Date.today.year - nn).modulo(100), century)

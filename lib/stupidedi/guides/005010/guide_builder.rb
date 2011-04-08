@@ -49,7 +49,7 @@ module Stupidedi
         def Segment(position, segment_def, name, requirement, repeat_count, *elements)
           unless elements.length == segment_def.element_uses.length
             raise Exceptions::InvalidSchemaError,
-              "Segment #{segment_def.id} has #{segment_def.element_uses.length}" <<
+              "segment #{segment_def.id} has #{segment_def.element_uses.length}" <<
               " elements but #{elements.length} arguments were specified"
           end
 
@@ -60,7 +60,7 @@ module Stupidedi
 
             unless e_tag == :Element
               raise Exceptions::InvalidSchemaError,
-                "Given argument for #{segment_def.id}#{element_index} must be Element(...)"
+                "given argument for #{segment_def.id}#{element_index} must be Element(...)"
             end
 
             if u.composite?
@@ -73,13 +73,13 @@ module Stupidedi
                 changes[:repeat_count] = e_repeat_count.head
               elsif e_repeat_count.length > 1
                 raise Exceptions::InvalidSchemaError,
-                  "More than one RepeatCount was specified"
+                  "more than one RepeatCount was specified"
               end
 
               unless e_requirement.forbidden?
                 unless e_arguments.length == u.definition.component_uses.length
                   raise Exceptions::InvalidSchemaError,
-                    "Composite element #{u.definition.id} at #{segment_def.id}" <<
+                    "composite element #{u.definition.id} at #{segment_def.id}" <<
                     "#{element_index} has #{u.definition.element_uses.length}" <<
                     " component elements but #{e_arguments.length} were given"
                 end
@@ -92,7 +92,7 @@ module Stupidedi
 
                   unless c_tag == :Element
                     raise Exceptions::InvalidSchemaError,
-                      "Given argument for #{segment_def.id}#{element_index}" <<
+                      "given argument for #{segment_def.id}#{element_index}" <<
                       "-#{component_index} must be Element(...)"
                   end
 
@@ -125,12 +125,12 @@ module Stupidedi
         def mod_element(element_use, requirement, name, arguments)
           unless requirement.is_a?(Schema::ElementReq)
             raise Exceptions::InvalidSchemaError,
-              "First argument to Element must be a Schema::ElementReq but got #{requirement.inspect}"
+              "first argument to Element must be a Schema::ElementReq but got #{requirement.inspect}"
           end
 
           unless name.is_a?(String)
             raise Exceptions::InvalidSchemaError,
-              "Element name must be a String"
+              "element name must be a String"
           end
 
           changes = Hash.new
@@ -143,7 +143,7 @@ module Stupidedi
             changes[:repeat_count] = repeat_count.head
           elsif repeat_count.length > 1
             raise Exceptions::InvalidSchemaError,
-              "RepeatCount specified more than once for this Element"
+              "more than one RepeatCount specified for this Element"
           end
 
           allowed_values = arguments.select{|x| x.is_a?(Array) and x.head == :Values }
@@ -152,7 +152,7 @@ module Stupidedi
             changes[:allowed_values] = element_use.allowed_values.replace(allowed_values.head.last)
           elsif allowed_values.length > 1
             raise Exceptions::InvalidSchemaError,
-              "Values specified more than once for this Element"
+              "more than one Values specified for this Element"
           end
 
           max_length = arguments.select{|x| x.is_a?(Array) and x.head == :MaxLength }
@@ -161,7 +161,7 @@ module Stupidedi
             changes[:max_length] = max_length.head
           elsif max_length.length > 1
             raise Exceptions::InvalidSchemaError,
-              "MaxLength specified more than once for this Element"
+              "more than one MaxLength specified for this Element"
           end
 
           element_use.copy(changes)

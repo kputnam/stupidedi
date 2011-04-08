@@ -159,7 +159,7 @@ module Stupidedi
 
         def matches(segment_tok)
           raise Exceptions::ParseError,
-            "InstructionTable::Empty#matches should not be called"
+            "empty stack"
         end
 
         # @return [Empty]
@@ -167,7 +167,7 @@ module Stupidedi
           if count.zero?
             self
           else
-            "InstructionTable::Empty#pop should not be called"
+            "empty stack"
           end
         end
 

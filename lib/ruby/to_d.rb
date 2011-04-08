@@ -76,6 +76,6 @@ class Float
     #
     # The programmer should convert the Float to a String using whatever
     # precision he chooses, and call #to_d on the String.
-    raise TypeError, "Cannot convert Float to BigDecimal"
+    raise TypeError, "cannot convert Float to BigDecimal"
   end
 end

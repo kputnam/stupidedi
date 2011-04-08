@@ -82,13 +82,13 @@ describe Stupidedi::Sets::AbsoluteSet do
 
     specify "A.map{|a| b } raises an error, given b ∉ U and A ≠ ∅" do
       lambda { single.map{|a| "A" }}.should \
-        raise_error(/Universe does not contain element/)
+        raise_error(/universe does not contain element/)
 
       lambda { subset.map{|a| "A" }}.should \
-        raise_error(/Universe does not contain element/)
+        raise_error(/universe does not contain element/)
 
       lambda { universe.map{|a| "A" }}.should \
-        raise_error(/Universe does not contain element/)
+        raise_error(/universe does not contain element/)
     end
 
     specify "A.map{|a| b } = {b}, given b ∈ U, A ≠ ∅" do
@@ -541,7 +541,7 @@ describe Stupidedi::Sets::AbsoluteSet do
           r = Stupidedi::Sets.build(b.to_a)
 
           lambda { a | r }.should \
-            raise_error(/Universe does not contain/)
+            raise_error(/universe does not contain/)
         end
       end
     end
@@ -596,7 +596,7 @@ describe Stupidedi::Sets::AbsoluteSet do
           r = b.to_a
 
           lambda { a | r }.should \
-            raise_error(/Universe does not contain/)
+            raise_error(/universe does not contain/)
         end
       end
     end
@@ -1118,7 +1118,7 @@ describe Stupidedi::Sets::AbsoluteSet do
           r = Stupidedi::Sets.build(b.to_a)
 
           lambda { a ^ r }.should \
-            raise_error(/Universe does not contain/)
+            raise_error(/universe does not contain/)
         end
       end
     end
@@ -1173,7 +1173,7 @@ describe Stupidedi::Sets::AbsoluteSet do
           r = b.to_a
 
           lambda { a ^ r }.should \
-            raise_error(/Universe does not contain/)
+            raise_error(/universe does not contain/)
         end
       end
     end
@@ -1568,7 +1568,7 @@ describe Stupidedi::Sets::AbsoluteSet do
           [a, (b.to_a | c.to_a.map(&:upcase))]
         end.check do |a, b|
           lambda { a.replace(b) }.should \
-            raise_error(/Universe does not contain/)
+            raise_error(/universe does not contain/)
         end
       end
     end

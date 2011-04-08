@@ -118,9 +118,9 @@ module Stupidedi
         # @todo: Ensure there is at least one SegmentUse in header
         if header.empty?
           raise Exceptions::InvalidSchemaError,
-            "LoopDef must start with a SegmentUse"
-        elsif header.head.repeat_count.include?(0)
-          "First SegmentUse in LoopDef must have RepeatCount.bounded(1)"
+            "first child must be a SegmentUse"
+        elsif header.head.repeat_count.include?(2)
+          "first child must have RepeatCount.bounded(1)"
         end
 
         new(id, repeat_count, header, loop_defs, trailer, nil)

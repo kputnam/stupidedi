@@ -66,13 +66,13 @@ module Stupidedi
               if s == buffer
                 return success(advance(position))
               else
-                return failure("Found #{buffer.inspect} instead of #{s.inspect}")
+                return failure("found #{buffer.inspect} instead of #{s.inspect}")
               end
             end
           end
         end
 
-        failure("Reached end of input without finding #{s.inspect}")
+        failure("reached end of input without finding #{s.inspect}")
       end
 
       # If `s` occurs within {#input}, then the input up to and including `s`
@@ -101,7 +101,7 @@ module Stupidedi
           end
         end
 
-        failure("Reached end of input without finding #{s.inspect}")
+        failure("reached end of input without finding #{s.inspect}")
       end
 
       # Returns a single character and the remaining input as a {Result} with
@@ -125,7 +125,7 @@ module Stupidedi
           return result(character, advance(position))
         end
 
-        failure("Less than one character available")
+        failure("less than one character available")
       end
 
       # @return [Either<Result<SegmentTok, TokenReader>>]
@@ -219,7 +219,7 @@ module Stupidedi
 
         while true
           unless @input.defined_at?(position)
-            return failure("Reached end of input without finding a segment identifier")
+            return failure("reached end of input without finding a segment identifier")
           end
 
           character = @input.at(position)
@@ -249,10 +249,10 @@ module Stupidedi
             # Don't consume the delimiter
             result(buffer.upcase.to_sym, remainder)
           else
-            failure("Found #{character.inspect} following segment identifier")
+            failure("found #{character.inspect} following segment identifier")
           end
         else
-          failure("Found #{(buffer + character).inspect} instead of segment identifier")
+          failure("found #{(buffer + character).inspect} instead of segment identifier")
         end
       end
 
@@ -271,11 +271,11 @@ module Stupidedi
           if is_delimiter?(character)
             return result(character, advance(position))
           else
-            return failure("Found #{character.inspect} instead of a delimiter")
+            return failure("found #{character.inspect} instead of a delimiter")
           end
         end
 
-        failure("Reached end of input without finding a delimiter")
+        failure("reached end of input without finding a delimiter")
       end
 
       # @return [Either<Result<SimpleElementToken, TokenReader>>]
@@ -315,7 +315,7 @@ module Stupidedi
           buffer << character
         end
 
-        failure("Reached end of input without finding a simple data element")
+        failure("reached end of input without finding a simple data element")
       end
 
       # @return [Either<Result<ComponentElementTok, TokenReader>>]
@@ -351,7 +351,7 @@ module Stupidedi
           buffer << character
         end
 
-        failure("Reached end of input without finding a component data element")
+        failure("reached end of input without finding a component data element")
       end
 
       # @return [Either<Result<CompositeElementTok, TokenReader>>]
@@ -393,7 +393,7 @@ module Stupidedi
       # @return [TokenReader]
       def advance(n)
         unless @input.defined_at?(n-1)
-          raise IndexError, "Less than #{n} characters available"
+          raise IndexError, "less than #{n} characters available"
         else
           TokenReader.new(@input.drop(n), @separators, @segment_dict)
         end

@@ -107,7 +107,7 @@ module Stupidedi
             if m = @universe.at(value)
               mask |= (1 << m)
             else
-              raise "Universe does not contain element #{value.inspect}"
+              raise "universe does not contain element #{value.inspect}"
             end
           end
         end
@@ -255,7 +255,8 @@ module Stupidedi
 
           if strict and size < other.size
             # other is not a subset of @universe
-            raise "Universe does not contain all elements from #{other.inspect}"
+            raise ArgumentError,
+              "universe does not contain all elements from #{other.inspect}"
           end
         else
           # We might land here if other is an Array, since its probably
@@ -265,7 +266,8 @@ module Stupidedi
             if n = @universe.at(x)
               mask |= (1 << n)
             elsif strict
-              raise "Universe does not contain element #{x.inspect}"
+              raise ArgumentError,
+                "universe does not contain element #{x.inspect}"
             end
           end
         end

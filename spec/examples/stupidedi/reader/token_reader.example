@@ -189,7 +189,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_character
         either.should_not be_defined
         either.reason.remainder.should == ""
-        either.reason.reason.should == "Less than one character available"
+        either.reason.reason.should =~ /less than one character available/
       end
     end
 
@@ -217,7 +217,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == ""
-        either.reason.reason.should =~ /Reached end of input/
+        either.reason.reason.should =~ /reached end of input/
       end
     end
 
@@ -228,7 +228,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "*ABC"
-        either.reason.reason.should =~ /Found "\*" instead of segment identifier/
+        either.reason.reason.should =~ /found "\*" instead of segment identifier/
       end
 
       it "returns a failure" do
@@ -237,7 +237,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "~ABC"
-        either.reason.reason.should =~ /Found "~" instead of segment identifier/
+        either.reason.reason.should =~ /found "~" instead of segment identifier/
       end
 
       it "returns a failure" do
@@ -246,7 +246,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "0ABC"
-        either.reason.reason.should =~ /Found "0ABC" instead of segment identifier/
+        either.reason.reason.should =~ /found "0ABC" instead of segment identifier/
       end
 
       it "returns a failure" do
@@ -255,7 +255,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "ABC:"
-        either.reason.reason.should =~ /Found ":" following segment identifier/
+        either.reason.reason.should =~ /found ":" following segment identifier/
       end
 
       it "returns a failure" do
@@ -264,7 +264,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "ABC^"
-        either.reason.reason.should =~ /Found "\^" following segment identifier/
+        either.reason.reason.should =~ /found "\^" following segment identifier/
       end
 
       it "returns a failure" do
@@ -273,7 +273,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "ABCD"
-        either.reason.reason.should =~ /Found "D" following segment identifier/
+        either.reason.reason.should =~ /found "D" following segment identifier/
       end
     end
 
@@ -283,7 +283,7 @@ describe Stupidedi::Reader::TokenReader do
         either = reader.read_segment
         either.should_not be_defined
         either.reason.remainder.should == "B"
-        either.reason.reason.should =~ /Reached end of input/
+        either.reason.reason.should =~ /reached end of input/
       end
     end
 

@@ -37,7 +37,7 @@ module Stupidedi
         unless @input.empty?
           result(@input.at(0), advance(1))
         else
-          failure("Less than one character available")
+          failure("less than one character available")
         end
       end
 
@@ -48,7 +48,7 @@ module Stupidedi
         unless @input.empty?
           success(advance(1))
         else
-          failure("Less than one character available")
+          failure("less than one character available")
         end
       end
 
@@ -92,7 +92,7 @@ module Stupidedi
                 # separator could be a control character.
                 x.remainder.stream.read_character.flatmap do |y|
                   if y.value == separators.element
-                    failure("Element separator and segment terminator must be distinct", x.remainder.input)
+                    failure("element separator and segment terminator must be distinct", x.remainder.input)
                   else
                     separators.segment = y.value
 
@@ -141,14 +141,14 @@ module Stupidedi
           end
         end
 
-        failure("Reached end of input before finding ISA segment identifier")
+        failure("reached end of input before finding ISA segment identifier")
       end
 
     private
 
       def advance(n)
         unless @input.defined_at?(n-1)
-          raise IndexError, "Less than #{n} characters available"
+          raise IndexError, "less than #{n} characters available"
         else
           StreamReader.new(@input.drop(n))
         end

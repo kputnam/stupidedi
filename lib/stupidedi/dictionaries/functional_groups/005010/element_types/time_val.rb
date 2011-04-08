@@ -130,7 +130,8 @@ module Stupidedi
                 super(usage)
 
                 unless valid
-                  raise Exceptions::InvalidElementError, "Invalid time #{inspect}"
+                  raise Exceptions::InvalidElementError,
+                    "invalid time #{inspect}"
                 end
               end
 

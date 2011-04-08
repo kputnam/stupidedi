@@ -161,14 +161,14 @@ module Stupidedi
             element_use.value(allowed_vals.first)
           else
             raise Exceptions::ParseError,
-              "Element #{designator} cannot be inferred"
+              "#{designator} cannot be inferred"
           end
         elsif element_tok.value == :not_used
           if element_use.requirement.forbidden?
             element_use.empty
           else
             raise Exceptions::ParseError,
-              "Element #{designator} is not forbidden"
+              "#{designator} is not forbidden"
           end
         else
           element_use.value(element_tok.value)

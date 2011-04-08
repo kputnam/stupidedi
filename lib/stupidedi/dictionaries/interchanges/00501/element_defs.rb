@@ -29,6 +29,14 @@ module Stupidedi
                 changes.fetch(:usage, usage)
             end
 
+            def valid?
+              true
+            end
+
+            def empty?
+              @value.empty?
+            end
+
             def inspect
               id = definition.try{|d| ansi.bold("[#{d.id}]") }
               ansi.element("SeparatorElementVal.value#{id}") << "(#{@value})"
@@ -41,7 +49,8 @@ module Stupidedi
 
             # @raise NoMethodError
             def empty(definition, usage)
-              raise NoMethodError, "@todo"
+              raise NoMethodError,
+                "SeparatorElementVal.empty should not be called"
             end
 
             # @return [SeparatorElementVal]
