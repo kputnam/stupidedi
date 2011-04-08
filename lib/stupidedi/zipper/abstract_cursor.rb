@@ -81,9 +81,22 @@ module Stupidedi
 
         cursor = down
         until n.zero?
-          cursor = cursor.left
-          n += 1
+          cursor = cursor.next
+          n -= 1
         end
+        cursor
+      end
+
+      # Recursively descend to each node's `nth` child
+      #
+      # @return [AbstractCursor]
+      def descendant(n, *ns)
+        cursor = self
+
+        n.cons(ns).each do |n|
+          cursor = cursor.child(n)
+        end
+
         cursor
       end
 

@@ -29,6 +29,10 @@ module Stupidedi
       def simple?
         true
       end
+
+      def composite?
+        false
+      end
     end
 
     class << ComponentElementTok

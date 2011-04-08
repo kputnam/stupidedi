@@ -28,6 +28,10 @@ module Stupidedi
       def blank?
         @element_toks.all?(&:blank?)
       end
+
+      def composite?
+        false
+      end
     end
 
     class << RepeatedElementTok

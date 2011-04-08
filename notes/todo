@@ -6,10 +6,22 @@ any FunctionalGroupVal as input. This will be useful for writing integration
 tests, but more importantly it will create use cases that will require changes
 to Reader and Builder to gracefully handle more unhappy-paths.
 
+Create an InstructionTable method that verifies the significance and validity of
+a given segment_tok. For instance, no qualifier is needed to locate 2000CA NM1
+when the current state is within 2000C. Therefore, the ConstraintTable does not
+validate the qualifier if one is given. In general, we want to know if a given
+pattern-matching token is guaranteed to match nothing.
+
+Enhance Navigation#find to filter *all* pattern-matching elements, since the
+InstructionTable doesn't work this way. We could use this to find the CLM whose
+control number is "FOO-KS 200" even though CLM01 is not an element in the basis
+for the ConstraintTable.
+
 Change Builder to start from an empty Envelope::TransactionSet (ST/SE), so the
 outer envelopes can be constructed independently. This will require some smarts
 to detect when the TransactionSetDef might use repetition separators because not
-all InterchangeDefs have support for it.
+all InterchangeDefs have support for it. This will also require a way to insert
+subtrees (safely, checking syntax) via the StateMachine.
 
 Fix the error handling with Reader::TokenReader so StateMachine can know when
 reading a segment failed due to EOF at an expected or unexpected boundary.

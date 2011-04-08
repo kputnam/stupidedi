@@ -214,6 +214,8 @@ module Stupidedi
                 end
 
                 if op.segment_use.nil? or op.segment_use.eql?(_value.node.usage)
+                  next if filter?(segment_tok, _value.node)
+
                   unless _value.eql?(_state.node.zipper)
                     _state = _state.replace(_state.node.copy(:zipper => _value))
                   end
@@ -243,6 +245,21 @@ module Stupidedi
       end
 
     private
+
+      def filter?(segment_tok, segment_val)
+        segment_tok.element_toks.zip(segment_val.children) do |e_tok, e_val|
+          if e_tok.simple?
+            return true unless e_tok.blank? or e_val == e_tok.value
+          elsif e_tok.composite?
+            e_tok.component_toks.zip(e_val.children) do |c_tok, c_val|
+              return true unless c_tok.blank? or c_val == c_tok.value
+            end
+          else
+            raise Exceptions::ParseError,
+              "only simple and component elements can be filtered"
+          end
+        end
+      end
 
       # @return [Array<Zipper::AbstractCursor>]
       def roots
