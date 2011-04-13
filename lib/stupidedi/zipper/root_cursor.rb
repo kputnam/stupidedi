@@ -44,6 +44,16 @@ module Stupidedi
 
       # @group Traversing the Tree
       #########################################################################
+      
+      # (see AbstractCursor#first)
+      def first
+        self
+      end
+
+      # (see AbstractCursor#last)
+      def last
+        self
+      end
 
       # (see AbstractCursor#next)
       # @return [void]
