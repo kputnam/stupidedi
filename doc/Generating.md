@@ -75,13 +75,13 @@ should be the elements of the segment.
           "T",                  # usage indicator
           ":")                  # component separator
 
-> _Note_: The repetition separator "^" and component separator ":" have no
+> _Note_: The repetition separator "&#136;" and component separator ":" have no
 > special meaning when generating X12. These elements are only meaningful to
 > Stupidedi when parsing X12 from an input stream (see
 > [Parsing X12](Parsing.html)).
 
-Alternatively, the [`#segment!`][5] method can be used to avoid the overhead of
-method lookup incurred by `method_missing`.
+Alternatively, the [`#segment!`][5] method can be used to avoid the method
+lookup overhead incurred by `method_missing`.
 
   [5]: ../../Stupidedi/Builder/BuilderDsl.html#segment!-instance_method
 

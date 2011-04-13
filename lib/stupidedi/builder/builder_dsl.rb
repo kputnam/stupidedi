@@ -3,6 +3,7 @@ module Stupidedi
 
     class BuilderDsl
       include Inspect
+      include Tokenization
 
       # @private
       SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
@@ -28,8 +29,18 @@ module Stupidedi
 
       # @return [BuilderDsl]
       def segment!(name, *elements)
-        segment_tok       = mksegment_tok(@reader.segment_dict, name, elements)
-        @machine, @reader = @machine.input(segment_tok, @reader)
+        segment_tok     = mksegment_tok(@reader.segment_dict, name, elements)
+        machine, reader = @machine.insert(segment_tok, @reader)
+
+        segments = machine.active.map{|s| s.node.zipper.node }
+        failures = segments.reject(&:valid?)
+
+        unless failures.empty?
+          raise failures.head.reason
+        end
+
+        @machine = machine
+        @reader  = reader
 
         self
       end

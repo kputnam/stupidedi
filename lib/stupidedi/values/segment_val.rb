@@ -30,6 +30,10 @@ module Stupidedi
         false
       end
 
+      def valid?
+        true
+      end
+
       # (see AbstractVal#segment?)
       # @return true
       def segment?

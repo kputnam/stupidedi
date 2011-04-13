@@ -48,7 +48,7 @@ module Stupidedi
             zipper,
             parent,
             segment_tok,
-            "Unknown interchange version #{version}")
+            "Unknown interchange version #{version.inspect}")
         end
 
         # Construct a SegmentVal and InterchangeVal around it

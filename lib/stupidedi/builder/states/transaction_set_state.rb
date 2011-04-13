@@ -55,13 +55,13 @@ module Stupidedi
         end
 
         unless config.transaction_set.defined_at?(version, fgcode, txcode)
-          context     = "#{fgcode} #{txcode} #{version}"
+          context = "#{fgcode.inspect} #{txcode.inspect} #{version.inspect}"
 
           return FailureState.push(
             zipper,
             parent,
             segment_tok,
-            "Unknown transaction set #{fgcode} #{txcode} #{version}")
+            "Unknown transaction set #{context}")
         end
 
         envelope_def = config.transaction_set.at(version, fgcode, txcode)

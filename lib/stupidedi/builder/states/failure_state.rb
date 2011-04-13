@@ -18,23 +18,18 @@ module Stupidedi
       # @return [Array<FailureState>]
       attr_reader :children
 
-      def initialize(leaf, separators, segment_dict, instructions, zipper, children)
-        @leaf, @separators, @segment_dict, @instructions, @zipper, @children =
-          leaf, separators, segment_dict, instructions, zipper, children
+      def initialize(separators, segment_dict, instructions, zipper, children)
+        @separators, @segment_dict, @instructions, @zipper, @children =
+          separators, segment_dict, instructions, zipper, children
       end
 
       def copy(changes = {})
         FailureState.new \
-          changes.fetch(:leaf, @leaf),
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
           changes.fetch(:zipper, @zipper),
           changes.fetch(:children, @zipper)
-      end
-
-      def leaf?
-        @leaf
       end
     end
 
@@ -48,7 +43,6 @@ module Stupidedi
         segment_val  = Values::InvalidSegmentVal.new(reason, segment_tok)
 
         zipper.append_child new(
-          false,
           parent.separators,
           parent.segment_dict,
           parent.instructions.push([]),
@@ -61,7 +55,6 @@ module Stupidedi
           "Unexpected segment", segment_tok
 
         new(
-          true,
           parent.separators,
           parent.segment_dict,
           parent.instructions,
