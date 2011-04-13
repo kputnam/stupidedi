@@ -3,8 +3,18 @@ require 'spec_helper'
 describe Array do
   include QuickCheck::Macro
 
+  # Creates an array with length `2*n-1` containing elements
+  # 1, 2, 3, ..., n-1, n, n-1, ..., 3, 2, 1
   def mkarray(n)
     (1..n).to_a.bind{|as| as.concat(as.init.reverse) }
+  end
+
+  describe "#defined_at?(n)" do
+    context "on an empty array" do
+      property("is false") do
+        integer
+      end.check{|n| [].should_not be_defined_at(n) }
+    end
   end
 
   describe "#head" do
@@ -35,7 +45,7 @@ describe Array do
     end
   end
 
-  describe "#tail" do
+  describe "#tail(n)" do
     context "of an empty array" do
       it "is an empty array" do
         [].tail.should == []
@@ -63,7 +73,7 @@ describe Array do
     end
   end
 
-  describe "#init" do
+  describe "#init(n)" do
     context "of an empty array" do
       it "is an empty array" do
         [].init.should == []
@@ -91,7 +101,7 @@ describe Array do
     end
   end
 
-  describe "#drop" do
+  describe "#drop(n)" do
     context "of an empty array" do
       it "is an empty array" do
         [].drop(10).should == []
@@ -218,10 +228,24 @@ describe Array do
   end
 
   describe "#drop_until" do
-    pending
+    context "when predicate is always satisfied" do
+      property("is the original array") do
+        mkarray(between(0, 10))
+      end.check do |as|
+        as.drop_until { true }.should == as
+      end
+    end
+
+    context "when predicate is never satisfied" do
+      property("is an empty array") do
+        mkarray(between(0, 10))
+      end.check do |as|
+        as.drop_until { false }.should == []
+      end
+    end
   end
 
-  describe "#take" do
+  describe "#take(n)" do
     context "from an empty array" do
       it "is an empty array" do
         [].take(10).should == []

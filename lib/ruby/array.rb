@@ -18,7 +18,7 @@ class Array
   #   [].defined_at?(0)           #=> false
   #
   def defined_at?(n)
-    n < length
+    n < length and -n <= length
   end
 
   # @group Selection
@@ -40,13 +40,13 @@ class Array
   # Selects all elements except the last `n` ones.
   #
   # @example
-  #   [1, 2, 3].tail      #=> [1, 2]
-  #   [1, 2, 3].tail(2)   #=> [1]
+  #   [1, 2, 3].init      #=> [1, 2]
+  #   [1, 2, 3].init(2)   #=> [1]
   #   [].tail             #=> []
   #
   # @return [Array]
   def init(n = 1)
-    raise ArgumentError, "n must be positive" if n < 0
+    raise ArgumentError, "n cannot be negative" if n < 0
     slice(0..-(n + 1)) or []
   end
 
@@ -59,7 +59,7 @@ class Array
   #
   # @return [Array]
   def drop(n)
-    raise ArgumentError, "n must be positive" if n < 0
+    raise ArgumentError, "n cannot be negative" if n < 0
     slice(n..-1) or []
   end
 
@@ -67,7 +67,7 @@ class Array
   #
   # @return [Array]
   def take(n)
-    raise ArgumentError, "n must be positive" if n < 0
+    raise ArgumentError, "n cannot be negative" if n < 0
     slice(0, n) or []
   end
 
@@ -79,6 +79,7 @@ class Array
   #
   # @return [(Array, Array)]
   def split_at(n)
+    n = length + n if n < 0
     return take(n), drop(n)
   end
 

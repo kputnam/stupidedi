@@ -17,42 +17,49 @@ module Stupidedi
     def initialize(value)
       @value   = value
       @threads = Hash.new
+      @cleaner = lambda {|key| @threads.delete(key) }
     end
 
     def get
-      @threads.fetch(Thread.current) do
+      @threads.fetch(key) do
         case @value
         when Numeric, Symbol, nil
           # These are immutable values and can't be cloned
           @value
         else
-          @threads[Thread.current] = @value.clone
+          finalizer(Thread.current)
+          @threads[key] = @value.clone
         end
       end
     end
 
     # @return value
     def set(value)
-      @threads[Thread.current] = value
+      unless @threads.include?(key)
+        finalizer(Thread.current)
+      end
+
+      @threads[key] = value
     end
 
     def unset
-      @threads.delete(Thread.current)
+      @threads.delete(key)
     end
 
     def set?
-      @threads.include?(Thread.current)
+      @threads.include?(key)
+    end
+
+  private
+
+    # @return [Numeric]
+    def key
+      Thread.current.object_id
     end
 
     # @return [void]
-    def gc
-      @threads = @threads.inject({}) do |threads, (t,v)|
-        if t.alive?
-          threads.update(t => v)
-        else
-          threads
-        end
-      end
+    def finalizer(thread)
+      ObjectSpace.define_finalizer(thread, @cleaner)
     end
 
   end
@@ -77,10 +84,12 @@ module Stupidedi
   #   counter.current #=> 50
   #
   class ThreadLocalHash
+    include Inspect
 
     def initialize(defaults = {})
       @defaults = defaults.clone
-      @clones   = Hash.new
+      @threads  = Hash.new
+      @cleaner  = lambda {|key| @threads.delete_if{|(t,_),_| t == key }}
 
       defaults.keys.each do |name|
         case defaults[name]
@@ -88,7 +97,7 @@ module Stupidedi
           # These are immutable values and can't be cloned
           instance_eval <<-RUBY
             def #{name}
-              @clones.fetch([Thread.current, :#{name}]) do
+              @threads.fetch([key, :#{name}]) do
                 @defaults[:#{name}]
               end
             end
@@ -96,8 +105,9 @@ module Stupidedi
         else
           instance_eval <<-RUBY
             def #{name}
-              @clones.fetch([Thread.current, :#{name}]) do
-                @clones[[Thread.current, :#{name}]] =
+              @threads.fetch([key, :#{name}]) do
+                finalizer(Thread.current)
+                @threads[[key, :#{name}]] =
                   @defaults[:#{name}].clone
               end
             end
@@ -106,36 +116,46 @@ module Stupidedi
 
         instance_eval <<-RUBY
           def #{name}=(value)
-            @clones[[Thread.current, :#{name}]] = value
+            unless @threads.include?(key)
+              finalizer(Thread.current)
+            end
+
+            @threads[[key, :#{name}]] = value
           end
         RUBY
       end
     end
 
     def [](name)
-      @clones.fetch([Thread.current, name]) do
+      @threads.fetch([Thread.current, name]) do
         case value = @defaults[name]
         when Numeric, Symbol, nil
           # These are immutable values and can't be cloned
           value
         else
-          @clones[[Thread.current, name]] = value.clone
+          finalizer(Thread.current)
+          @threads[[key, name]] = value.clone
         end
       end
     end
 
     def []=(name, value)
-      @clones[[Thread.current, name]] = value
+      unless @threads.include?(key)
+        finalizer(Thread.current)
+      end
+
+      @threads[[key, name]] = value
     end
 
-    def gc
-      @clones = @clones.inject({}) do |clones, ((t,n),v)|
-        if t.alive?
-          clones.update([t,n] => v)
-        else
-          clones
-        end
-      end
+  private
+
+    def key
+      Thread.current.object_id
+    end
+
+    # @return [void]
+    def finalizer(thread)
+      ObjectSpace.define_finalizer(thread, @cleaner)
     end
 
     def method_missing(name, value = (getter = true))
