@@ -1,5 +1,5 @@
 module Stupidedi
-  module Config
+  class Config
 
     #
     # The implementation version specified in GS08 and ST03 indicates which

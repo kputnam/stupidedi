@@ -1,5 +1,5 @@
 module Stupidedi
-  module Config
+  class Config
 
     #
     # The interchange control segments (ISA/ISE) are versioned independently

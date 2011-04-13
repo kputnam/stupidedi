@@ -12,11 +12,6 @@ when the current state is within 2000C. Therefore, the ConstraintTable does not
 validate the qualifier if one is given. In general, we want to know if a given
 pattern-matching token is guaranteed to match nothing.
 
-Enhance Navigation#find to filter *all* pattern-matching elements, since the
-InstructionTable doesn't work this way. We could use this to find the CLM whose
-control number is "FOO-KS 200" even though CLM01 is not an element in the basis
-for the ConstraintTable.
-
 Change Builder to start from an empty Envelope::TransactionSet (ST/SE), so the
 outer envelopes can be constructed independently. This will require some smarts
 to detect when the TransactionSetDef might use repetition separators because not
@@ -37,8 +32,16 @@ It might be most sensible to change AbstractState to accept already-built
 SegmentVals from the programmatic API in addition to SegmentToks from the
 Reader::TokenReader. This would reduce wasteful object creation.
 
+Reduce startup costs by Marshal'ing definition trees - requires eliminating
+anonymous classes which are used to instantiate singleton objects.
+
 DONE
 -------------------------------------------------------------------------------
+
+Enhance Navigation#find to filter *all* pattern-matching elements, since the
+InstructionTable doesn't work this way. We could use this to find the CLM whose
+control number is "FOO-KS 200" even though CLM01 is not an element in the basis
+for the ConstraintTable.
 
 Improve the tree traversal API. This is hard to conceive, but perhaps working on
 the Editor code will reveal the key problems. Perhaps something like zipper that

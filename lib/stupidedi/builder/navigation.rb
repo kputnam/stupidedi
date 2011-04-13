@@ -57,15 +57,92 @@ module Stupidedi
         end
       end
 
+      # @return [Either<Values::SegmentVal>]
+      def segment
+        node.flatmap do |s|
+          if s.segment?
+            Either.success(s)
+          else
+            Either.failure("not a segment")
+          end
+        end
+      end
+
+      # @return [Either<Values::AbstractElementVal>]
+      def element(m, n = nil, o = nil)
+        segment.flatmap do |s|
+          designator = s.definition.id.to_s
+          length     = s.definition.element_uses.length
+
+          unless m >= 1
+            raise ArgumentError,
+              "argument must be positive"
+          end
+
+          unless m <= length
+            raise ArgumentError,
+              "#{designator} segment has only #{length} elements"
+          end
+
+          designator << "%02d" % m
+          value       = s.children.at(m - 1)
+
+          if n.nil?
+            return Either.success(value)
+          elsif value.repeated?
+            unless n >= 1
+              raise ArgumentError,
+                "argument must be positive"
+            end
+
+            unless value.children.defined_at?(n - 1)
+              return Either.failure("#{designator} occurs only #{value.children.length} times")
+            end
+
+            value = value.children.at(n - 1)
+            n, o  = o, nil
+
+            return Either.success(value) if n.nil?
+          end
+
+          unless value.composite?
+            raise ArgumentError,
+              "#{designator} is a simple element"
+          end
+
+          unless o.nil?
+            raise ArgumentError,
+              "#{designator} is a non-repeatable composite element"
+          end
+
+          unless n >= 1
+            raise ArgumentError,
+              "argument must be positive"
+          end
+
+          length = s.definition.element_uses.at(m - 1).definition.component_uses.length
+          unless n <= length
+            raise ArgumentError,
+              "#{designator} has only #{length} components"
+          end
+
+          Either.success(value.children.at(n - 1))
+        end
+      end
+
       # @return [Either<StateMachine>]
       def first
         active = roots.map do |zipper|
           state = zipper
           value = zipper.node.zipper
 
-          until value.node.segment?
+          until value.node.segment? or value.leaf?
             value = value.down
             state = state.down
+          end
+
+          if value.leaf?
+            return Either.failure("no segments")
           end
 
           unless value.eql?(state.node.zipper)
@@ -84,9 +161,13 @@ module Stupidedi
           state = zipper
           value = zipper.node.zipper
 
-          until value.node.segment?
+          until value.node.segment? or value.leaf?
             value = value.down.last
             state = state.down.last
+          end
+
+          if value.leaf?
+            return Either.failure("no segments")
           end
 
           unless value.eql?(state.node.zipper)

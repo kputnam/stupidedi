@@ -68,7 +68,7 @@ module Stupidedi
             element_idx.succ!
 
             unless e_val.nil?
-              raise Exceptions::ParseError,
+              raise ArgumentError,
                 "#{id}#{element_idx} is assumed to be a simple element"
             end
 
@@ -79,7 +79,7 @@ module Stupidedi
           element_uses = segment_def.element_uses
 
           if elements.length > element_uses.length
-            raise Exceptions::ParseError,
+            raise ArgumentError,
               "#{id} segment has only #{element_uses.length} elements"
           end
 
@@ -91,14 +91,14 @@ module Stupidedi
             if e_use.repeatable?
               # Repeatable composite or non-composite
               unless e_tag == :repeated or (e_tag.blank? and e_val.blank?)
-                raise Exceptions::ParseError,
+                raise ArgumentError,
                   "#{designator} is a repeatable element"
               end
 
               element_toks << mkrepeated_tok(e_val || [], e_use, designator)
             elsif e_use.composite?
               unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
-                raise Exceptions::ParseError,
+                raise ArgumentError,
                   "#{id}#{element_idx} is a non-repeatable composite element"
               end
 
@@ -106,7 +106,7 @@ module Stupidedi
             else
               # The actual value is in e_tag
               unless e_val.nil?
-                raise Exceptions::ParseError,
+                raise ArgumentError,
                   "#{id}#{element_idx} is a non-repeatable simple element"
               end
 
@@ -125,7 +125,7 @@ module Stupidedi
         if element_use.composite?
           elements.each do |e_tag, e_val|
             unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
-              raise Exceptions::ParseError,
+              raise ArgumentError,
                 "#{designator} is a composite element"
             end
 
@@ -134,7 +134,7 @@ module Stupidedi
         else
           elements.each do |e_tag, e_val|
             unless e_val.nil?
-              raise Exceptions::ParseError,
+              raise ArgumentError,
                 "#{designator} is a simple element"
             end
 
@@ -150,7 +150,7 @@ module Stupidedi
         component_uses = composite_use.definition.component_uses
 
         if components.length > component_uses.length
-          raise Exceptions::ParseError,
+          raise ArgumentError,
             "#{designator} has only #{component_uses.length} components"
         end
 
@@ -160,7 +160,7 @@ module Stupidedi
           component_idx.succ!
 
           unless c_val.nil?
-            raise Exceptions::ParseError,
+            raise ArgumentError,
               "#{designator}-#{component_idx} is a component element"
           end
 

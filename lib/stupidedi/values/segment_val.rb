@@ -48,17 +48,6 @@ module Stupidedi
         definition.element_uses.defined_at?(n)
       end
 
-      # @return [SimpleElementVal, CompositeElementVal, RepeatedElementVal]
-      def at(n)
-        raise IndexError unless defined_at?(n)
-
-        if @children.defined_at?(n)
-          @children.at(n)
-        else
-          definition.element_uses.at(n).definition.blank
-        end
-      end
-
       # @return [void]
       def pretty_print(q)
         id = definition.try do |d|

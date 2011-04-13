@@ -40,6 +40,10 @@ module Stupidedi
         true
       end
 
+      def usage
+        nil
+      end
+
       # @return [void]
       def pretty_print(q)
         id = ansi.invalid("[#{@segment_tok.id}]")

@@ -37,7 +37,11 @@ module Stupidedi
       end
 
       #
-      # Chooses the {Instruction} that pops the fewest number of states.
+      # Chooses the {Instruction} that pops the fewest number of states. For
+      # example, in the X222 837P an HL segment signals the start of a new
+      # 2000 loop, but may or may not begin a new Table 2 -- the specifications
+      # aren't actually clear. This rule will avoid creating a new Table 2 if
+      # possible, and instead create a new 2000 loop under the current Table 2.
       #
       class DepthBased < ConstraintTable
         def initialize(instructions)
@@ -62,9 +66,9 @@ module Stupidedi
 
       #
       # Chooses the subset of {Instruction} values based on the distinguishing
-      # values allowed by each {Schema::SegmentUse}. If none of the Instruction
-      # values have {Schema::SegmentUse} values that restrict allowed element
-      # values, it will behave identically to {Stub}, returning all Instructions
+      # values allowed by each {Schema::SegmentUse}. For instance, there are
+      # often several loops that begin with `NM1`, which are distinguished by
+      # the qualifier in element `NM101`.
       #
       class ValueBased < ConstraintTable
         def initialize(instructions)
@@ -88,7 +92,7 @@ module Stupidedi
                 return singleton
               else
                 if strict
-                  designator = "#{segment_tok.id}#{'%02d' % n}"
+                  designator = "#{segment_tok.id}#{'%02d' % (n + 1)}"
                   designator << "-%02d" % m unless m.nil?
 
                   raise ArgumentError,
@@ -169,9 +173,13 @@ module Stupidedi
           disjoint_elements = []
           distinct_elements = []
 
+          # The first SegmentUse is used to represent the structure that must
+          # be shared by the others: number of elements and type of elements
           element_uses = instructions.head.segment_use.definition.element_uses
 
           # Iterate over each element across all SegmentUses (think columns)
+          #   NM1*[IL]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
+          #   NM1*[40]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
           element_uses.length.times do |n|
             if element_uses.at(n).composite?
               ms = 0 .. element_uses.at(n).definition.component_uses.length - 1
@@ -197,17 +205,17 @@ module Stupidedi
 
                 allowed_vals = element_use.allowed_values
 
-                # We want to know if every Instruction's set of allowed values
+                # We want to know if every instruction's set of allowed values
                 # is disjoint (with one another). Instead of comparing each set
                 # with every other set, which takes (N-1)! comparisons, we can
                 # do it in N steps.
                 disjoint &&= allowed_vals.disjoint?(total)
 
-                # We also want to know if one Instruction's set of allowed vals
+                # We also want to know if one instruction's set of allowed vals
                 # contains elements that aren't present in at least one other
-                # set. The opposite of this condition is easy to test: all sets
-                # contain the same elements (are equal). So we can similarly
-                # check this condition in N steps rather than (N-1)!
+                # set. The opposite condition is easy to test: all sets contain
+                # the same elements (are equal). So we can similarly, check this
+                # condition in N steps rather than (N-1)!
                 distinct ||= allowed_vals != last unless last.nil?
 
                 total = allowed_vals.union(total)
@@ -217,17 +225,17 @@ module Stupidedi
             # puts "#{n}.#{m}: disjoint(#{disjoint}) distinct(#{distinct})"
 
               if disjoint
-                # Since each Instruction's set of allowed values is disjoint, we
-                # can build a function/hash that returns the single Instruction
+                # Since each instruction's set of allowed values is disjoint, we
+                # can build a function/hash that returns the single instruction,
                 # given one of the values. When given a value outside the set of
                 # all (combined) values, it returns nil.
                 disjoint_elements << [[n, m], build_disjoint(total, n, m, instructions)]
               elsif distinct
-                # Not all Instructions have the same set of allowed values. So
+                # Not all instructions have the same set of allowed values. So
                 # we can build a function/hash that accepts one of the values
-                # and returns the subset of the Instructions where that value
+                # and returns the subset of the instructions where that value
                 # can occur. This might be some, none, or all of the original
-                # Instructions, so clearly this provides less information than
+                # instructions, so clearly this provides less information than
                 # if each allowed value set was disjoint.
 
               # distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
@@ -384,8 +392,9 @@ module Stupidedi
           if segment_uses.map{|u| u.object_id }.uniq.length <= 1
             # The same SegmentUse may appear more than once, because the
             # segment can be placed at different levels in the tree. If
-            # all the instructions have the same SegmentUse, we can't use
-            # segment constraints to narrow down the instruction list.
+            # all the instructions have the same SegmentUse, they also have
+            # the same element constraints so we can't use them to narrow
+            # down the instruction list.
             ConstraintTable::DepthBased.new(instructions)
           else
             ConstraintTable::ValueBased.new(instructions)

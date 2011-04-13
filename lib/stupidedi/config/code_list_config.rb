@@ -1,5 +1,5 @@
 module Stupidedi
-  module Config
+  class Config
 
     class CodeListConfig
       include Inspect

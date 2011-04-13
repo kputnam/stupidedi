@@ -1,5 +1,5 @@
 module Stupidedi
-  module Config
+  class Config
 
     #
     # The functional group segments (GS/GE) and the segments contained by that
