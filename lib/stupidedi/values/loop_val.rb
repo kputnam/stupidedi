@@ -32,11 +32,13 @@ module Stupidedi
         true
       end
 
+      # (see SegmentValGroup#segment_vals)
       # @return [Array<SegmentVal>]
       def segment_vals
         @children.select{|x| x.is_a?(SegmentVal) }
       end
 
+      # (see AbstractVal#empty?)
       def empty?
         @children.all(&:empty?)
       end

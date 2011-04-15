@@ -29,7 +29,7 @@ module Stupidedi
 
           # @return [Reader::Separators]
           def separators(isa)
-            Reader::Separators.new(isa.at(15).to_s, isa.at(10).to_s, nil, nil)
+            Reader::Separators.new(isa.element(16).to_s, isa.element(11).to_s, nil, nil)
           end
         end.new "00501",
           # Interchange header

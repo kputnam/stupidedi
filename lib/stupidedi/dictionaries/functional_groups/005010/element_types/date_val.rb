@@ -172,12 +172,22 @@ module Stupidedi
               end
 
               # @return [Proper] self
-              def cutoff(yy, century = nil)
+              def oldest(date)
                 self
               end
 
               # @return [Proper] self
-              def delta(nn, century = nil)
+              def newest(date)
+                self
+              end
+
+              # @return [Proper] self
+              def future
+                self
+              end
+
+              # @return [Proper] self
+              def past
                 self
               end
 
@@ -262,32 +272,91 @@ module Stupidedi
                 false
               end
 
-              # Converts this to a proper date
+              # Create a proper date using the given century `cc`
+              #
+              # @example
+              #   DateVal.value("501015").century(19) #=> DateVal.value("19501230")
               #
               # @return [Proper]
-              def cutoff(yy, century = ::Date.today.year / 100)
-                unless yy.between?(0, 99)
-                  raise ArgumentError,
-                    "cutoff year must be between 0 and 99 inclusive but was #{yy}"
-                end
-
-                if @year < yy
-                  century -= 1
-                end
-
-                Proper.new(100*century + @year, @month, @day, usage)
+              def century(cc)
+                Proper.new(100 * cc + @year, @month, @day, usage)
               end
 
-              # Converts this to a proper date
+              # Create a proper date which cannot be older than the given `date`
+              # and cannot be newer than one year after the given `date`.
+              #
+              # @example
+              #   DateVal.value("501015").oldest(Date.civil(1950, 10, 20)) #=> DateVal.value("20501015")
+              #   DateVal.value("501015").oldest(Date.civil(1950, 10, 15)) #=> DateVal.value("19501015")
+              #   DateVal.value("501015").oldest(Date.civil(1950, 10, 10)) #=> DateVal.value("19501015")
               #
               # @return [Proper]
-              def delta(nn, century = ::Date.today.year / 100)
-                unless nn.between?(0, 99)
-                  raise ArgumentError,
-                    "nn must be between 0 and 99, inclusive"
+              def oldest(date)
+                cc, yy = date.year.divmod(100)
+
+                if @year < yy
+                  century(cc + 1)
+                elsif @year > yy
+                  century(cc)
+                else
+                  if @month < date.month
+                    century(cc + 1)
+                  elsif @month > date.month
+                    century(cc)
+                  else
+                    if @day < date.day
+                      century(cc + 1)
+                    else
+                      century(cc)
+                    end
+                  end
                 end
 
-                cutoff((::Date.today.year - nn).modulo(100), century)
+              end
+
+              # Create a proper date which cannot be newer than the given `date`
+              # and cannot be older than one year before the given `date`.
+              #
+              # @example
+              #   DateVal.value("501015").newest(Date.civil(1950, 10, 20)) #=> DateVal.value("19501015")
+              #   DateVal.value("501015").newest(Date.civil(1950, 10, 15)) #=> DateVal.value("19501015")
+              #   DateVal.value("501015").newest(Date.civil(1950, 10, 10)) #=> DateVal.value("18501015")
+              #
+              # @return [Proper]
+              def newest(date)
+                cc, yy = date.year.divmod(100)
+
+                if @year < yy
+                  century(cc)
+                elsif @year > yy
+                  century(cc - 1)
+                else
+                  if @month < date.month
+                    century(cc)
+                  elsif @month > date.month
+                    century(cc - 1)
+                  else
+                    if @day <= date.day
+                      century(cc)
+                    else
+                      century(cc - 1)
+                    end
+                  end
+                end
+              end
+
+              # Create a proper date which cannot be newer than the current date
+              #
+              # @return [Proper]
+              def past
+                newest(Date.today)
+              end
+
+              # Create a proper date which cannot be older than the current date
+              #
+              # @return [Proper]
+              def future
+                oldest(Date.today)
               end
 
               # @return [String]

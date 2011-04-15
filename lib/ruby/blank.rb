@@ -10,6 +10,10 @@ class String
   def blank?
     self !~ /\S/
   end
+
+  def present?
+    self =~ /\S/
+  end
 end
 
 module Enumerable
@@ -23,6 +27,10 @@ module Enumerable
   def blank?
     empty?
   end
+
+  def present?
+    not empty?
+  end
 end
 
 class NilClass
@@ -34,6 +42,10 @@ class NilClass
   #
   def blank?
     true
+  end
+
+  def present?
+    false
   end
 end
 
@@ -47,5 +59,9 @@ class Object
   #
   def blank?
     false
+  end
+
+  def present?
+    true
   end
 end

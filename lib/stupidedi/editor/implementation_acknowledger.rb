@@ -3,16 +3,14 @@ module Stupidedi
 
     class ImplementationAcknowledger
 
-      def initialize(input, builder)
+      def initialize(zipper, builder)
         @builder = builder
-        @input   = input
+        @zipper  = zipper
       end
 
       def generate
         @builder.ST("999", @builder.blank, "005010X231")
 
-        # M ID(2/2), M N0(1/9), O AN(1/12)
-        #
         # GS01, GS06, and GS08 must all be present and valid. It is not clear
         # how to respond when these elements are not valid (eg not an allowed
         # value, not a number, too longo too short, etc) because copying the
@@ -21,8 +19,6 @@ module Stupidedi
                      gs.element(6), # GS06: Group Control Number
                      gs.element(8)) # GS08: Industry Identifier
 
-          # M ID(3/3), M AN(1/9), O AN(1/35)
-          #
           # ST01, ST02, and ST03 must all be present and valid. Like the AK1/GS
           # paradox, there isn't a way to generate a valid response when the
           # elements being acknowledged are not valid.
@@ -41,10 +37,10 @@ module Stupidedi
             #  7: Segment not in proper sequence
             #  8: Segment has data element errors
             # I4: Implementation "not used" segment present
-            # I6: Implementation situational segment missing
+            # I6: Implementation situationally required segment missing
             # I7: Implementation loop occurs under minimum times
             # I8: Implementation segment below minimum use
-            # I9: Implementation situational "not used" segment present
+            # I9: Implementation situationally "not used" segment present
 
           ### Required when IK304 = "I..."
           ##@builder.CTX(
@@ -86,9 +82,9 @@ module Stupidedi
               # I10: Implementation "not used" data element present
               # I11: Implementation too few repetitions
               # I12: Implementation pattern match failure
-              # I13: Implementation situational "not used" data element present
+              # I13: Implementation situationally "not used" data element present
               #  I6: Code value not used in implementation
-              #  I9: Implementation situational data element missing
+              #  I9: Implementation situationally required data element missing
 
             ### Required when IK404 = "I..."
             ##@builder.CTX(
@@ -154,7 +150,61 @@ module Stupidedi
 
     private
 
-      def validate(segment_val)
+      def validate(node)
+        if node.element?
+          if node.simple?
+            unless node.valid?
+              # 6: Invalid character in data element
+              # 8: Invalid date
+              # 9: Invalid time
+            end
+              #   3: Too many data elements
+              # I10: Implementation "not used" data element present
+              # I11: Implementation too few repetitions
+              # I12: Implementation pattern match failure
+              #  I6: Code value not used in implementation
+
+            if node.empty?
+              #   1: Required data element missing
+              #   2: Conditional required data element missing
+              #  I9: Implementation situationally required data element missing
+            else
+              #  10: Exclusion condition violated
+              # I13: Implementation situationally "not used" data element present
+
+              if node.too_long?
+                # 5: Data element too long
+              elsif node.too_short?
+                # 4: Data element too short
+              end
+
+              # 7: Invalid code value
+              unless node.allowed?
+              end
+            end
+          elsif node.repeated?
+              # 12: Too many repetitions
+          elsif node.composite?
+              # 13: Too many components
+          end
+        elsif node.segment?
+          if node.valid?
+          else
+            #  1: Unrecoginzed segment ID
+            #  2: Unexpected segment
+            #  6: Segment not defined in transaction set
+            #  7: Segment not in proper sequence
+            # I4: Implementation "not used" segment present
+          end
+            #  3: Required segment missing
+            #  4: Loop occurs over maximum times
+            #  5: Segment exceeds maximum use
+            #  8: Segment has data element errors
+            # I6: Implementation situationally required segment missing
+            # I7: Implementation loop occurs under minimum times
+            # I8: Implementation segment below minimum use
+            # I9: Implementation situationally "not used" segment present
+        end
       end
     end
 

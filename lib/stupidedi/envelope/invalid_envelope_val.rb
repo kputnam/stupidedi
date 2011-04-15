@@ -20,6 +20,10 @@ module Stupidedi
         false
       end
 
+      def valid?
+        false
+      end
+
       def empty?
         @children.all?(&:empty?)
       end

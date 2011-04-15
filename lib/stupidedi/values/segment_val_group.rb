@@ -12,10 +12,12 @@ module Stupidedi
       # @return [Array<SegmentVal>]
       abstract :segment_vals
 
+      # (see AbstractVal#empty?)
       def empty?
         segment_vals.all?(&:empty?)
       end
 
+      # (see AbstractVal#leaf?)
       # @return false
       def leaf?
         false

@@ -13,6 +13,10 @@ module Stupidedi
 
       abstract :leaf?
 
+      def valid?
+        true
+      end
+
       def present?
         not empty?
       end

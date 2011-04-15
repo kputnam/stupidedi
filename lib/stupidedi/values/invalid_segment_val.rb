@@ -21,6 +21,11 @@ module Stupidedi
           changes.fetch(:segment_tok, @segment_tok)
       end
 
+      # @return [Symbol]
+      def id
+        @segment_tok.id
+      end
+
       # @return true
       def leaf?
         true

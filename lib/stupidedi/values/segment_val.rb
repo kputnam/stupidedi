@@ -25,6 +25,11 @@ module Stupidedi
           changes.fetch(:usage, @usage)
       end
 
+      # @return [Symbol]
+      def id
+        definition.id
+      end
+
       # @return false
       def leaf?
         false
@@ -44,8 +49,19 @@ module Stupidedi
         @children.all?(&:empty?)
       end
 
-      def defined_at?(n)
-        definition.element_uses.defined_at?(n)
+      # @return [AbstractElementVal]
+      def element(n)
+        unless n > 0
+          raise ArgumentError,
+            "n must be positive"
+        end
+
+        if definition.element_uses.defined_at?(n - 1)
+          @children.at(n - 1)
+        else
+          raise ArgumentError,
+            "#{id} has only #{definition.element_uses.length} elements"
+        end
       end
 
       # @return [void]
