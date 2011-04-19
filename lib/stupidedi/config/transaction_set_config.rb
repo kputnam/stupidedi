@@ -52,16 +52,16 @@ module Stupidedi
       #
       # @return [void]
       def register(version, function, transaction, &constructor)
-        @table[Array[version, function, transaction]] = constructor
+        @table[Array[version, nil, transaction]] = constructor
       end
 
       # @return [TransactionSetDef]
       def at(version, function, transaction)
-        @table[Array[version, function, transaction]].call
+        @table[Array[version, nil, transaction]].call
       end
 
       def defined_at?(version, function, transaction)
-        @table.defined_at?([version, function, transaction])
+        @table.defined_at?([version, nil, transaction])
       end
 
       # @return [void]

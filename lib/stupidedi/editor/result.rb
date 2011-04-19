@@ -2,7 +2,7 @@ module Stupidedi
   module Editor
 
     class Result
-      def initialize(zipper, code, message)
+      def initialize(zipper, code, reason)
       end
     end
 
@@ -27,15 +27,7 @@ module Stupidedi
     end
 
     # 277 Claim Acknowledgment
-    class CSC < Result
-    end
-
-    # 277 Claim Acknowledgment
-    class CSCC < Result
-    end
-
-    # 277 Claim Acknowledgment
-    class EIC < Result
+    class ClaimStatus < Result
     end
 
   end
