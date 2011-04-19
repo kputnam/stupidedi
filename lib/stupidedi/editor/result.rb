@@ -2,7 +2,28 @@ module Stupidedi
   module Editor
 
     class Result
-      def initialize(zipper, code, reason)
+
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [String]
+      attr_reader :action
+
+      # @return [String]
+      attr_reader :code
+      
+      # @return [String]
+      attr_reader :reason
+
+      def initialize(zipper, action, code, reason)
+        @zipper, @action, @code, @reason =
+          zipper, action, code, reason
+      end
+
+      # @return [String]
+      def inspect
+        name = self.class.name.split('::').last
+        "#{name}(#{@reason}, #{@zipper.node.inspect})"
       end
     end
 

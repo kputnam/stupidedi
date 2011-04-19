@@ -1,6 +1,7 @@
 module Stupidedi
   module Editor
 
+    # Generates an FA 999 acknowledgement
     class ImplementationAcknowledger
 
       def initialize(zipper, builder)

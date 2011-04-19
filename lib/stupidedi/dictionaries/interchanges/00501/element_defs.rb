@@ -15,7 +15,7 @@ module Stupidedi
 
           class SeparatorElementVal < Values::SimpleElementVal
 
-            delegate :to_s, :to => :@value
+            delegate :to_s, :length, :to => :@value
 
             def initialize(value, usage)
               @value = value

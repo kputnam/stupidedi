@@ -17,6 +17,10 @@ module Stupidedi
         true
       end
 
+      def invalid?
+        not valid?
+      end
+
       def present?
         not empty?
       end

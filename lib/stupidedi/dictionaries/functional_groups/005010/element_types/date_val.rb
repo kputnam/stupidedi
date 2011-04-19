@@ -104,6 +104,7 @@ module Stupidedi
             # directly instantiated -- instead use the {DateVal.value} constructor
             #
             class Proper < DateVal
+              include Comparable
 
               # @return [Integer]
               attr_reader :year
@@ -119,7 +120,7 @@ module Stupidedi
 
                 begin
                   # Check that date is valid
-                  ::Date.civil(@year, @month, @day)
+                  @value = ::Date.civil(@year, @month, @day)
                 rescue ArgumentError
                   raise Exceptions::InvalidElementError,
                     "invalid date year: #{year}, month: #{month}, day: #{day}"
@@ -151,7 +152,7 @@ module Stupidedi
 
               # @return [Date]
               def to_date
-                Date.civil(@year, @month, @day)
+                @value
               end
 
               # @return [Time]
@@ -213,13 +214,23 @@ module Stupidedi
                 '%04d%02d%02d' % [@year, @month, @day]
               end
 
-              # @note Not commutative
-              # @return [Boolean]
-              def ==(other)
-                eql?(other) or
-                 (@day   == other.day  and
-                  @year  == other.year and
-                  @month == other.month)
+              # @return -1, 0, 1
+              def <=>(other)
+                if @year < other.year
+                  -1
+                elsif @year > other.year
+                  1
+                elsif @month < other.month
+                  -1
+                elsif @month > other.month
+                  1
+                elsif @day < other.day
+                  -1
+                elsif @day > other.day
+                  1
+                else
+                  0
+                end
               end
             end
 
