@@ -2,6 +2,8 @@ module Stupidedi
   module Editor
 
     class Result
+      def initialize(zipper, code, message)
+      end
     end
 
     # TA1 Interchange Acknowledgement

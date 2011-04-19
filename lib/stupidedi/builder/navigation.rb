@@ -36,7 +36,7 @@ module Stupidedi
         return true
       end
 
-      # @return [Either<Zipper::AbstractCursor>]
+      # @return [Either<Zipper::AbstractCursor<Values::AbstractVal>>]
       def zipper
         if deterministic?
           Either.success(@active.head.node.zipper)
@@ -48,31 +48,23 @@ module Stupidedi
       # @group Navigating the Tree
       #########################################################################
 
-      # @return [Either<Values::AbstractVal>]
-      def node
-        if deterministic?
-          Either.success(@active.head.node.zipper.node)
-        else
-          Either.failure("non-deterministic state")
-        end
-      end
-
-      # @return [Either<Values::SegmentVal>]
+      # @return [Either<Zipper::AbstractCursor<Values::SegmentVal>>]
       def segment
-        node.flatmap do |s|
-          if s.segment?
-            Either.success(s)
+        zipper.flatmap do |z|
+          if z.node.segment?
+            Either.success(z)
           else
             Either.failure("not a segment")
           end
         end
       end
 
-      # @return [Either<Values::AbstractElementVal>]
+      # @return [Either<Zipper::AbstractCUrsor<Values::AbstractElementVal>>]
       def element(m, n = nil, o = nil)
         segment.flatmap do |s|
-          designator = s.definition.id.to_s
-          length     = s.definition.element_uses.length
+          designator = s.node.id.to_s
+          definition = s.node.definition
+          length     = definition.element_uses.length
 
           unless m >= 1
             raise ArgumentError,
@@ -85,27 +77,27 @@ module Stupidedi
           end
 
           designator << "%02d" % m
-          value       = s.children.at(m - 1)
+          value       = s.child(m - 1)
 
           if n.nil?
             return Either.success(value)
-          elsif value.repeated?
+          elsif value.node.repeated?
             unless n >= 1
               raise ArgumentError,
                 "argument must be positive"
             end
 
-            unless value.children.defined_at?(n - 1)
-              return Either.failure("#{designator} occurs only #{value.children.length} times")
+            unless value.node.children.defined_at?(n - 1)
+              return Either.failure("#{designator} occurs only #{value.node.children.length} times")
             end
 
-            value = value.children.at(n - 1)
+            value = value.child(n - 1)
             n, o  = o, nil
 
             return Either.success(value) if n.nil?
           end
 
-          unless value.composite?
+          unless value.node.composite?
             raise ArgumentError,
               "#{designator} is a simple element"
           end
@@ -120,13 +112,13 @@ module Stupidedi
               "argument must be positive"
           end
 
-          length = s.definition.element_uses.at(m - 1).definition.component_uses.length
+          length = definition.element_uses.at(m - 1).definition.component_uses.length
           unless n <= length
             raise ArgumentError,
               "#{designator} has only #{length} components"
           end
 
-          Either.success(value.children.at(n - 1))
+          Either.success(value.child.at(n - 1))
         end
       end
 
