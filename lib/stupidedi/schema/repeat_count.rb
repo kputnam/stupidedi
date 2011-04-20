@@ -3,6 +3,10 @@ module Stupidedi
 
     class RepeatCount
       class Bounded < RepeatCount
+
+        # @return [Integer]
+        attr_reader :max
+
         def initialize(max)
           @max = max
         end

@@ -38,6 +38,9 @@ and ensure well-formedness. The configuration below links interchange version
       Stupidedi::Guides::FiftyTen::X222::HC837
     end
 
+    # Instantiate a new BuilderDsl
+    b = Stupidedi::Builder::BuilderDsl.new(config)
+
 [`InterchangeDef`][2] specifies which segments can occur directly in the
 interchange envelope (e.g. `ISA` and `ISE`), the order in which they can occur,
 and the definition of those segments.
@@ -59,8 +62,6 @@ The [`BuilderDsl`][1] API uses `method_missing` to dynamically respond to method
 calls. If the method name matches the format of a segment identifier, a segment
 is constructed and added to the parse tree. The arguments to the method call
 should be the elements of the segment.
-
-    b = Stupidedi::Builder::BuilderDsl.new(config)
 
     b.ISA("00", "",             # authorization information
           "00", "",             # authentication information
@@ -273,7 +274,7 @@ Attempting to generate a segment that is not a member of at least one of the
 instruction tables will cause a [`ParseError`][17] to be raised.
 
     b.N3("SUITE 111", "1234 OCEAN BLVD")
-    #=> Segment N3 cannot occur here (Stupidedi::Exceptions::ParseError)
+      #=> Segment N3 cannot occur here (Stupidedi::Exceptions::ParseError)
 
   [22]: design/Parser.md
 

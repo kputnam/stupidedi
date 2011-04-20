@@ -2,7 +2,7 @@ module Stupidedi
   module Editor
 
     # Generates a TA1 acknowledgment
-    class InterchangeAcknowledger
+    class InterchangeAck
     end
 
   end

@@ -2183,7 +2183,7 @@ module Stupidedi
               loop2300)),
 
           d::TableDef.detail("Table 2 - Patient Detail",
-            d::LoopDef.build("2000 PATIENT HIERARCHICAL LEVEL",
+            d::LoopDef.build("2000C PATIENT HIERARCHICAL LEVEL",
               d::RepeatCount.unbounded,
               b::Segment(10, s::HL, "Patient Hierachical Level",
                 r::Situational, d::RepeatCount.bounded(1),

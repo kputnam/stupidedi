@@ -7,12 +7,16 @@ module Stupidedi
       abstract :config
 
       def edit(id)
-        yield
+        if config.enabled?(id)
+          yield
+        end
       end
 
-    # def rewrite(id)
-    #   yield
-    # end
+      def rewrite(id)
+        if config.enabled?(id)
+          yield
+        end
+      end
     end
 
     class << AbstractEd

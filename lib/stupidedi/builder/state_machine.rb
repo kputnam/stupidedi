@@ -7,7 +7,7 @@ module Stupidedi
       include Generation
       include Tokenization
 
-      # @return [Config::RootConfig]
+      # @return [Config]
       attr_reader :config
 
       # @return [Array<Zipper::AbstractCursor>]

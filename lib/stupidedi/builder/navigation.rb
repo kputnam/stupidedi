@@ -36,6 +36,9 @@ module Stupidedi
         return true
       end
 
+      #
+      #########################################################################
+
       # @return [Either<Zipper::AbstractCursor<Values::AbstractVal>>]
       def zipper
         if deterministic?
@@ -44,9 +47,6 @@ module Stupidedi
           Either.failure("non-deterministic state")
         end
       end
-
-      # @group Navigating the Tree
-      #########################################################################
 
       # @return [Either<Zipper::AbstractCursor<Values::SegmentVal>>]
       def segment
@@ -87,6 +87,12 @@ module Stupidedi
                 "argument must be positive"
             end
 
+            limit = value.node.definition.repeat_count
+            unless limit.include?(n)
+              raise ArgumentError,
+                "#{designator} can only occur #{limit.max} times"
+            end
+
             unless value.node.children.defined_at?(n - 1)
               return Either.failure("#{designator} occurs only #{value.node.children.length} times")
             end
@@ -118,9 +124,12 @@ module Stupidedi
               "#{designator} has only #{length} components"
           end
 
-          Either.success(value.child.at(n - 1))
+          Either.success(value.child(n - 1))
         end
       end
+
+      # @group Navigating the Tree
+      #########################################################################
 
       # @return [Either<StateMachine>]
       def first
@@ -160,6 +169,39 @@ module Stupidedi
 
           if value.leaf?
             return Either.failure("no segments")
+          end
+
+          unless value.eql?(state.node.zipper)
+            state = state.replace(state.node.copy(:zipper => value))
+          end
+
+          state
+        end
+
+        Either.success(StateMachine.new(@config, active))
+      end
+
+      # @return [Either<StateMachine>]
+      def parent
+        active = @active.map do |zipper|
+          state = zipper
+          value = zipper.node.zipper
+
+          while value.first? and not value.root?
+            value = value.up
+            state = state.up
+          end
+
+          if value.root?
+            return Either.failure("no parent segment")
+          end
+
+          value = value.first
+          state = state.first
+
+          until value.node.segment?
+            value = value.down
+            state = state.down
           end
 
           unless value.eql?(state.node.zipper)
