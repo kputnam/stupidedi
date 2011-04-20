@@ -87,6 +87,7 @@ begin
 
   task :clobber_yard do
     rm_rf "doc/generated"
+    mkdir_p "doc/generated/images"
   end
 
 rescue LoadError

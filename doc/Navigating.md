@@ -171,7 +171,7 @@ that [`#element`][11] will raise an `ArgumentError` if, for instance, you try to
 access the sixth occurrence when the element definition declares the element can
 occur a maximum of five times.
 
-Making Bigger Jumps
+Taking Bigger Steps
 -------------------
 
 ### First Segment

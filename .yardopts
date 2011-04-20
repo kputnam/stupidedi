@@ -11,7 +11,7 @@
 
 --markup markdown
 
---asset doc/images
+--asset doc/images:images
 
 lib/**/*.rb
 spec/examples/**/*.example
