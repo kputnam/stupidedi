@@ -421,6 +421,8 @@ The [`Either`][8] datatype allows chaining via the [`#map`][16], [`#or`][18],
 [`#flatmap`][17], and [`#each`][19] methods. The use of each method is
 demonstrated in the following examples.
 
+#### Map
+
 The [`#map`][16] method transforms one `Either.success` into another
 `Either.success`. It leaves `Either.failure` values unaltered, passing
 them through.
@@ -444,6 +446,8 @@ them through.
     machine.find(:REF).map(&:id).map(&:to_s).map(&:length)
       #=> Either.success(3)
 
+#### Flatmap
+
 To transform one `Either.success` into another `Either`, which may be a success
 or failure, use the [`#flatmap`][17] method. Like [`#map`][16], it also leaves
 `Either.failure` values unaltered. This is an important technique to traverse
@@ -462,6 +466,8 @@ Provider Organization" of the first claim in the parse tree.
 Note that the value returned by the block given to [`#flatmap`][17] must return
 an instance of `Either` or a `TypeError` will be raised. The [`Object#try`][20]
 method is similar to [`#flatmap`][17] in many ways.
+
+#### Side Effects
 
 In cases where you do not want to transform the `Either` value, but only need to
 execute a side effect on `Either.success`, the [`#each`][19] method is suitable.
