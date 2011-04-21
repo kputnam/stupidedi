@@ -44,16 +44,13 @@ module Stupidedi
       end
 
       # @return [SimpleElementVal]
-      def at(n)
-        if definition.component_element_uses.defined_at?(n)
-          if @children.defined_at?(n)
-            @children.at(n)
-          else
-            definition.component_element_uses.at(n).empty
-          end
-        else
-          raise IndexError
+      def element(n)
+        unless n > 0
+          raise ArgumentError,
+            "n must be positive"
         end
+
+        @children.at(n)
       end
 
       # @return [void]

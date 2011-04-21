@@ -226,15 +226,12 @@ Searching for a segment that, according to the definition tree, cannot exist or
 is not reachable will cause [`#find`][14] to raise an exception. To be clear,
 [`#find`][14] only searches *forward* for segments, not backward.
 
-In the diagram above, __bold__ segments represent targets which can be reached
-from _preceeding_ elements linked by a dashed line.
-
 #### Sibling Segments
 
 <iframe src="images/837P-siblings.png" frameborder="no" scrolling="yes" height="430" width="100%"></iframe>
 
-Segments connected directly by a horizontal black line are siblings and are
-reachable using [`#find`][14]. For instance, from the third `NM1`, the `N3`,
+Segments connected directly by a horizontal dashed black line are siblings and
+are reachable using [`#find`][14]. For instance, from the third `NM1`, the `N3`,
 `N4`, and `REF` segments are reachable.
 
     # From 2000AA NM1 right one segment to N3
@@ -275,10 +272,11 @@ there are no segments in Loop 2000A that follow the child loops.
 <iframe src="images/837P-nephews.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
 
 Segments that occur as the _first_ direct child of a sibling node are nephews.
-The siblings that follow the first child are _not_ directly reachable, but they
-can be reached indirectly by chaining two calls to [`#find`][14]. For example,
-`GS` is a nephew of `ISA`, and `ST` has two nephews named `NM1`; but `BHT` is
-_not_ a nephew of `GS` because it is not the first child of its parent node.
+The siblings that _follow_ the first child are not directly reachable, but they
+can be reached indirectly by [chaining](#Chaining_Method_Calls) two calls to
+[`#find`][14]. For example, `GS` is a nephew of `ISA`, and `ST` has two nephews
+named `NM1`; but `BHT` is _not_ a nephew of `GS` because it is not the first
+child of its parent node.
 
     # From ST move left twice and down to NM1
     machine.find(:NM1)
@@ -350,11 +348,169 @@ segment from a given starting position.
 
 #### Element Constraints
 
+Finding the next segment by identifier alone is often not specific enough. For
+example, there are several different `NM1` segments that each have a different
+meaning -- one is a provider, another is the insurance company, another is the
+patient, etc. In the case of `NM1`, the first element is a qualifier that
+indicates the meaning. To find `NM1*QC` "Patient Name", you can iterate the
+reachable `NM1` segments and stop when you find the occurrence whose first
+element equals `41` or when there are no more `NM1` occurrences,
+
+    # Find the NM1 occurrence with "41" in the first element
+    position  = Either.success(machine)
+    searching = true
+
+    while searching and position.defined?
+      # Move position to the next NM1 segment
+      position = position.flatmap{|m| m.find(:NM1) }
+
+      # Check the constraint
+      position.each do |nm1|
+        nm1.element(1).each do |element|
+          # Stop the while loop if we found the match
+          searching = element.node != "QC"
+        end
+      end
+    end
+
+    # Success
+    searching
+      #=> false
+    position
+      #=> Either.success(StateMachine[1](SegmentVal[NM1](...)))
+
+    # Failure
+    searching
+      #=> true
+    position
+      #=> Either.failure("NM1 segment does not occur")
+
+There is a much simpler and less error-prone way, however. The [`#find`][14]
+method accepts a variable number of filter arguments. For instance, the above
+filter can be accomplished by calling,
+
+    machine.find(:NM1, "QC")
+
+Multiple constraints can be specified and `#blank` or `nil` should be used to
+indicate a wildcard, if needed. For instance to find the `NM1*PR` "Payer Name"
+that has a certain organization name in element `NM103`,
+
+    machine.find(:NM1, "PR", nil, "MEDICARE")
+
 #### Syntactic Constraints
+
+In addition to improving readability, [`#find`][14] checks the validity of your
+element constraints and raises an exception when you ask for something that is
+guaranteed never to occur in a valid parse tree. For instance, if you called
+`#find(:NM1, "XX")` from a position where there are no reachable `NM1` segments,
+
+    machine.find(:NM1, "XX")
+      #=> NM1 segment cannot be reached from the current state (ArgumentError)
+
+Or from a position where every reachable `NM1` segment is defined such that
+`"XX"` is not allowed,
+
+    machine.find(:NM1, "XX")
+      #=> "XX" is not allowed in NM101 (ArgumentError)
 
   [14]: Stupidedi/Builder/Navigation.html#find-instance_method
 
 ### Chaining Method Calls
 
-Nondeterminism
------------------------
+The [`Either`][8] datatype allows chaining via the [`#map`][16], [`#or`][18],
+[`#flatmap`][17], and [`#each`][19] methods. The use of each method is
+demonstrated in the following examples.
+
+The [`#map`][16] method transforms one `Either.success` into another
+`Either.success`. It leaves `Either.failure` values unaltered, passing
+them through.
+
+    result = machine.find(:REF).map do |ref|
+      # When a REF segment was found, this block is
+      # executed. The return value of this block is
+      # wrapped by Either.success. If a REF segment
+      # was not found, this block is not executed and
+      # the Either.failure is propogated by #map
+      ref.id
+    end
+
+    # Briefer syntax, implementing Symbol#to_proc
+    machine.find(:REF).map(&:id)
+      #=> Either.success(:REF)
+
+    machine.find(:REF).map(&:id).map(&:to_s)
+      #=> Either.success("REF")
+
+    machine.find(:REF).map(&:id).map(&:to_s).map(&:length)
+      #=> Either.success(3)
+
+To transform one `Either.success` into another `Either`, which may be a success
+or failure, use the [`#flatmap`][17] method. Like [`#map`][16], it also leaves
+`Either.failure` values unaltered. This is an important technique to traverse
+the parse tree. For instance, the following shows how to locate the "Billing
+Provider Organization" of the first claim in the parse tree.
+
+    machine.first.
+      flatmap{|x| x.find(:GS)                 }.
+      flatmap{|x| x.find(:ST)                 }.
+      flatmap{|x| x.find(:HL, nil, nil, "20") }.
+      flatmap{|x| x.find(:NM1, "85")          }.
+      flatmap{|x| x.element(3)                }.
+      map(&:node)
+      #=> Either.success(AN.value[E1035: Billing Provider Last or Organizational Name](BEN KILDARE SERVICE))
+
+Note that the value returned by the block given to [`#flatmap`][17] must return
+an instance of `Either` or a `TypeError` will be raised. The [`Object#try`][20]
+method is similar to [`#flatmap`][17] in many ways.
+
+In cases where you do not want to transform the `Either` value, but only need to
+execute a side effect on `Either.success`, the [`#each`][19] method is suitable.
+On `Either.success` values, it passes the wrapped value to the block and returns
+the original value, and it passes `Either.failure` values along without calling
+the block.
+
+    # Record GS06 Group Control Number
+    machine.first.flatmap{|x| x.find(:GS) }.each do |gs|
+      # The return value of this block is discarded
+      gs.element(6).each do |control|
+        @numbers << control.node.to_s
+      end
+    end #=> Either.success(StateMachine[1](SegmentVal[GS](...)))
+
+    # Contrived example
+    machine.first.
+      flatmap{|x| x.find(:GS) }.each{|x| puts "Hi, GS" }
+      flatmap{|x| x.find(:ST) }.each{|x| puts "Hi, ST" }
+      #=> Either.success(StateMachine[1](SegmentVal[ST](...)))
+
+The [`Object#tap`][21] method is similar to [`Either#each`][19] except `#tap`
+always calls the block, even on `nil`, while `#each` does not call the block
+on `Either.failure` values.
+
+#### Error Recovery
+
+When a method call earlier in the chain returns a `Either.failure`, the error
+will be propogated through the chain unless it the [`#or`][18] method is used to
+recover from the error.
+
+    result = machine.find(:ST).map do |st|
+      st.class
+    end.or do |reason|
+      # This block is executed if #find failed. The
+      # block must return an instance of Either, or
+      # a TypeError will be raised
+      Either.success(FalseClass)
+    end
+
+    # Result is guaranteed to be Either.success because
+    # of the block given to #or. The wrapped value then
+    # is StateMachine or FalseClass
+    result.defined?
+      #=> true
+
+  [16]: Stupidedi/Either.html#map-instance_method
+  [17]: Stupidedi/Either.html#flatmap-instance_method
+  [18]: Stupidedi/Either.html#or-instance_method
+  [19]: Stupidedi/Either.html#each-instance_method
+  [20]: Object.html#try-instance_method
+  [21]: Object.html#tap-instance_method

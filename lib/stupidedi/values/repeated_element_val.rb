@@ -16,7 +16,7 @@ module Stupidedi
       # @return [Schema::SimpleElementUse, Schema::CompositeElementUse
       attr_reader :usage
 
-      delegate :at, :defined_at?, :length, :to => :@children
+      delegate :defined_at?, :length, :to => :@children
 
       def initialize(children, usage)
         @children, @usage =
@@ -42,6 +42,19 @@ module Stupidedi
 
       def empty?
         @children.all(&:empty?)
+      end
+
+      def element(n, o = nil)
+        unless n > 0
+          raise ArgumentError,
+            "n must be positive"
+        end
+
+        unless o.nil?
+          @children.at(o - 1).element(o)
+        else
+          @children.at(o - 1)
+        end
       end
 
       # @return [void]

@@ -50,17 +50,16 @@ module Stupidedi
       end
 
       # @return [AbstractElementVal]
-      def element(n)
-        unless n > 0
+      def element(m, n = nil, o = nil)
+        unless m > 0
           raise ArgumentError,
-            "n must be positive"
+            "m must be positive"
         end
 
-        if definition.element_uses.defined_at?(n - 1)
-          @children.at(n - 1)
+        unless n.nil?
+          @children.at(m - 1).element(n, o)
         else
-          raise ArgumentError,
-            "#{id} has only #{definition.element_uses.length} elements"
+          @children.at(m - 1)
         end
       end
 
