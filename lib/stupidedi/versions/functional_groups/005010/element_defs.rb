@@ -401,9 +401,15 @@ module Stupidedi
 
           E479  = t::ID.new(:E479 , "Functional Identifier Code"           , 2, 2,
             s::CodeList.build(
-              "FA" => "Functional or Implementation Acknowledgment Transaction Sets (997, 999)",
-              "HC" => "Health Care Claim (837)",
-              "HP" => "Health Care Claim Payment/Advice (835)"))
+              "BE" => "Benefit Enrollment and Maintenance",
+              "FA" => "Functional or Implementation Acknowledgment Transaction Sets",
+              "HC" => "Health Care Claim",
+              "HI" => "Health Care Services Review Information",
+              "HN" => "Health Care Information Status Notification",
+              "HP" => "Health Care Claim Payment/Advice",
+              "HS" => "Eligibility, Coverage or Benefit Inquiry",
+              "HR" => "Health Care Claim Status Request",
+              "RA" => "Payment Order/Remittance Advice"))
 
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
             s::CodeList.build(

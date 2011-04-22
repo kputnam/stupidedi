@@ -9,6 +9,7 @@ module Stupidedi
           s = SegmentDefs
 
           HP835 = d::TransactionSetDef.build("HP", "835",
+            "Health Care Claim Payment/Advice",
 
             d::TableDef.header("Table 1 - Header",
               s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),

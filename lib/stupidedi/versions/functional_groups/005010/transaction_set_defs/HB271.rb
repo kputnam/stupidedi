@@ -9,6 +9,7 @@ module Stupidedi
           s = SegmentDefs
 
           HB271 = d::TransactionSetDef.build("HB", "271",
+            "Eligibility, Coverage, or Benefit Information",
 
             d::TableDef.header("Table 1 - Header",
               s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),

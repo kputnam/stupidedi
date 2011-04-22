@@ -9,6 +9,7 @@ module Stupidedi
           s = SegmentDefs
 
           FA999 = d::TransactionSetDef.build("FA", "999",
+            "Implementation Acknowledgment",
 
             d::TableDef.header("Table 1 - Header",
               s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),

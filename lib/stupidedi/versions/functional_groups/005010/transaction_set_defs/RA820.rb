@@ -9,6 +9,7 @@ module Stupidedi
           s = SegmentDefs
 
           RA820 = d::TransactionSetDef.build("RA", "820",
+            "Payment Order/Remittance Advice",
 
             d::TableDef.header("Table 1 - Header",
               s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),

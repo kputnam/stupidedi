@@ -4,6 +4,9 @@ $:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
 require "stupidedi"
 require "pp"
 
+# This will be auto-enabled, but -C forces color output
+require "term/ansicolor" if ARGV.delete("-C")
+
 config = Stupidedi::Config.new
 config.interchange.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
 config.functional_group.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }

@@ -8,14 +8,17 @@ module Stupidedi
       attr_reader :id
 
       # @return [String]
+      attr_reader :name
+
+      # @return [String]
       attr_reader :functional_group
 
       # @return [Array<TableDef>]
       attr_reader :table_defs
 
-      def initialize(functional_group, id, table_defs)
-        @functional_group, @id, @table_defs =
-          functional_group, id, table_defs
+      def initialize(functional_group, id, name, table_defs)
+        @functional_group, @id, @name, @table_defs =
+          functional_group, id, name, table_defs
 
         @table_defs = table_defs.map{|x| x.copy(:parent => self) }
       end
@@ -24,6 +27,7 @@ module Stupidedi
         TransactionSetDef.new \
           changes.fetch(:functional_group, @functional_group),
           changes.fetch(:id, @id),
+          changes.fetch(:name, @name),
           changes.fetch(:table_defs, @table_defs)
       end
 
@@ -66,8 +70,8 @@ module Stupidedi
     class << TransactionSetDef
 
       # @return [TransactionSetDef]
-      def build(functional_group, id, *table_defs)
-        new(functional_group, id, table_defs)
+      def build(functional_group, id, name, *table_defs)
+        new(functional_group, id, name, table_defs)
       end
     end
 
