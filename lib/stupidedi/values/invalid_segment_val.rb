@@ -45,6 +45,7 @@ module Stupidedi
         true
       end
 
+      # @return nil
       def usage
         nil
       end
@@ -52,15 +53,7 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         id = ansi.invalid("[#{@segment_tok.id}]")
-
         q.text(ansi.segment("InvalidSegmentVal#{id}"))
-      # q.group(2, "(", ")") do
-      #   q.breakable ""
-      #   q.text @reason
-      #   q.text ","
-      #   q.breakable
-      #   q.pp @segment_tok
-      # end
       end
 
       # @return [String]

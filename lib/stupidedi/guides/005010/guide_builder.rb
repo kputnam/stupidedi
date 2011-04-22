@@ -10,7 +10,7 @@ module Stupidedi
 
       class << GuideBuilder
 
-        # @return [Envelope::TransactionSetDef]
+        # @return [Schema::TransactionSetDef]
         def build(transaction_set_def, *table_defs)
           transaction_set_def.copy(:table_defs => table_defs)
         end

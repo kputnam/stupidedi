@@ -7,10 +7,10 @@ module Stupidedi
         r = ElementReqs
 
         # Singleton
-        FunctionalGroupDef = Class.new(Envelope::FunctionalGroupDef) do
+        FunctionalGroupDef = Class.new(Schema::FunctionalGroupDef) do
           # @return [FunctionalGroupVal]
           def empty
-            Envelope::FunctionalGroupVal.new(self, [])
+            Values::FunctionalGroupVal.new(self, [])
           end
 
           # @return [Module]

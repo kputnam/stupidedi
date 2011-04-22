@@ -1,5 +1,5 @@
 module Stupidedi
-  module Envelope
+  module Schema
 
     #
     # X12 standards are released three times yearly. The version codes sent in
@@ -69,9 +69,9 @@ module Stupidedi
         @header_segment_uses + @trailer_segment_uses
       end
 
-      # @return [FunctionalGroupVal]
+      # @return [Values::FunctionalGroupVal]
       def empty
-        FunctionalGroupVal.new(self, [], [])
+        Values::FunctionalGroupVal.new(self, [], [])
       end
 
       # @return [void]

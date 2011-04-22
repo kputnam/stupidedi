@@ -3,20 +3,20 @@ module Stupidedi
     module Interchanges
 
       #
-      # @see Envelope::InterchangeDef
+      # @see Values::InterchangeDef
       #
       module FiveOhOne
 
         s = Schema
         r = FunctionalGroups::FiftyTen::ElementReqs
 
-        InterchangeDef = Class.new(Envelope::InterchangeDef) do
+        InterchangeDef = Class.new(Schema::InterchangeDef) do
           # @group Constructors
           #####################################################################
 
           # @return [Values::InterchangeVal]
           def empty
-            Envelope::InterchangeVal.new(self, [])
+            Values::InterchangeVal.new(self, [])
           end
 
           # @endgroup

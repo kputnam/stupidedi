@@ -20,9 +20,6 @@ module Stupidedi
         autoload :FunctionalGroupDef,
           "stupidedi/versions/functional_groups/005010/functional_group_def"
 
-        autoload :FunctionalGroupVal,
-          "stupidedi/versions/functional_groups/005010/functional_group_val"
-
         autoload :SegmentDefs,
           "stupidedi/versions/functional_groups/005010/segment_defs"
 

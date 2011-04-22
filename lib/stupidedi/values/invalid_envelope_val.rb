@@ -1,9 +1,9 @@
 module Stupidedi
-  module Envelope
+  module Values
 
-    class InvalidEnvelopeVal < Values::AbstractVal
+    class InvalidEnvelopeVal < AbstractVal
 
-      # @return [Array<Values::SegmentVal>]
+      # @return [Array<SegmentVal>]
       attr_reader :children
 
       def initialize(children)
@@ -45,7 +45,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.invalid("InvalidEnvelope") <<
+        ansi.invalid("InvalidEnvelopeVal") <<
           "(#{@children.map(&:inspect).join(', ')})"
       end
     end

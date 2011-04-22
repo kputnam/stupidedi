@@ -4,6 +4,8 @@ module Stupidedi
     #
     # Generates TA1, IK502, and AK905 results
     #
+    # @see 
+    #
     class EnvelopeEd < AbstractEd
 
       declare :ISA01, :ISA02, :ISA03, :ISA04, :ISA05, :ISA06,

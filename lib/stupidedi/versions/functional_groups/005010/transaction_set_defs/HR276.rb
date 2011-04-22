@@ -5,11 +5,10 @@ module Stupidedi
         module TransactionSetDefs
 
           d = Schema
-          e = Envelope
           r = SegmentReqs
           s = SegmentDefs
 
-          HR276 = e::TransactionSetDef.build("HR", "276",
+          HR276 = d::TransactionSetDef.build("HR", "276",
 
             d::TableDef.header("Table 1 - Header",
               s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),

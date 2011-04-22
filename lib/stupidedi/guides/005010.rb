@@ -24,32 +24,32 @@ module Stupidedi
       end
 
       module X222
-        autoload :HC837,  "stupidedi/guides/005010/X222-HC837"
+        autoload :HC837P,  "stupidedi/guides/005010/X222-HC837P"
       end
 
       module X222A1
-        autoload :HC837,  "stupidedi/guides/005010/X222A1-HC837"
+        autoload :HC837P,  "stupidedi/guides/005010/X222A1-HC837P"
       end
 
-      module X223
-        autoload :HC837,  "stupidedi/guides/005010/X223-HC837"
-      end
+    # module X223
+    #   autoload :HC837I,  "stupidedi/guides/005010/X223-HC837I"
+    # end
 
-      module X223A1
-        autoload :HC837,  "stupidedi/guides/005010/X223A1-HC837"
-      end
+    # module X223A1
+    #   autoload :HC837I,  "stupidedi/guides/005010/X223A1-HC837I"
+    # end
 
-      module X224
-        autoload :HC837,  "stupidedi/guides/005010/X224-HC837"
-      end
+    # module X224
+    #   autoload :HC837D,  "stupidedi/guides/005010/X224-HC837D"
+    # end
 
-      module X224A1
-        autoload :HC837,  "stupidedi/guides/005010/X224A1-HC837"
-      end
+    # module X224A1
+    #   autoload :HC837D,  "stupidedi/guides/005010/X224A1-HC837D"
+    # end
 
-      module X224A2
-        autoload :HC837,  "stupidedi/guides/005010/X224A1-HC837"
-      end
+    # module X224A2
+    #   autoload :HC837D,  "stupidedi/guides/005010/X224A2-HC837D"
+    # end
 
       module X231
         autoload :FA999,  "stupidedi/guides/005010/X231-FA999"

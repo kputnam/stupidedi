@@ -1,12 +1,12 @@
 module Stupidedi
-  module Envelope
+  module Values
 
     #
     # @see X222.pdf B.1.1.3.13 Functional Group
     # @see X222.pdf B.1.1.4.2 Functional Groups
     #
-    class FunctionalGroupVal < Values::AbstractVal
-      include Values::SegmentValGroup
+    class FunctionalGroupVal < AbstractVal
+      include SegmentValGroup
       include Color
 
       # @return [FunctionalGroupDef]
@@ -27,7 +27,7 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
-      # (see Values::AbstractVal#functional_group?)
+      # (see AbstractVal#functional_group?)
       # @return true
       def functional_group?
         true
@@ -35,7 +35,7 @@ module Stupidedi
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @children.select{|x| x.is_a?(Values::SegmentVal) }
+        @children.select{|x| x.is_a?(SegmentVal) }
       end
 
       # @return [String, nil]

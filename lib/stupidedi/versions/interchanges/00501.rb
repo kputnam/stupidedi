@@ -16,9 +16,6 @@ module Stupidedi
         autoload :InterchangeDef,
           "stupidedi/versions/interchanges/00501/interchange_def"
 
-        autoload :InterchangeVal,
-          "stupidedi/versions/interchanges/00501/interchange_val"
-
       end
 
     end

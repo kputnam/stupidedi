@@ -1,12 +1,12 @@
 module Stupidedi
-  module Envelope
+  module Values
 
     #
     # @see X12-5.pdf 3.2.1 Basic Interchange Service Request
     # @see X222.pdf B.1.1.4.1 Interchange Control Structures
     #
-    class InterchangeVal < Values::AbstractVal
-      include Values::SegmentValGroup
+    class InterchangeVal < AbstractVal
+      include SegmentValGroup
       include Color
 
       # @return [InterchangeDef]
@@ -38,7 +38,7 @@ module Stupidedi
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @children.select{|x| x.is_a?(Values::SegmentVal) }
+        @children.select{|x| x.is_a?(SegmentVal) }
       end
 
       # @return [Module]

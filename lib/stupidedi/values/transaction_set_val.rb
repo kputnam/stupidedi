@@ -1,8 +1,8 @@
 module Stupidedi
-  module Envelope
+  module Values
 
-    class TransactionSetVal < Values::AbstractVal
-      include Values::SegmentValGroup
+    class TransactionSetVal < AbstractVal
+      include SegmentValGroup
       include Color
 
       # @return [TransactionSetDef]
@@ -31,7 +31,7 @@ module Stupidedi
 
       # @return [Array<SegmentVal>]
       def segment_vals
-        @children.select{|x| x.is_a?(Values::SegmentVal) }
+        @children.select{|x| x.is_a?(SegmentVal) }
       end
 
       # @return [void]

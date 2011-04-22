@@ -12,10 +12,7 @@ module Stupidedi
 
     autoload :AbstractEd,         "stupidedi/editor/abstract_ed"
     autoload :EnvelopeEd,         "stupidedi/editor/envelope_ed"
-    autoload :InterchangeEd,      "stupidedi/editor/interchange_ed"
-    autoload :FunctionalGroupEd,  "stupidedi/editor/functional_group_ed"
     autoload :TransactionSetEd,   "stupidedi/editor/transaction_set_ed"
-    autoload :GuideEd,            "stupidedi/editor/guide_ed"
 
     # TA1
     autoload :InterchangeAck,

@@ -24,7 +24,6 @@ module Stupidedi
   autoload :Color,        "stupidedi/color"
   autoload :Versions,     "stupidedi/versions"
   autoload :Editor,       "stupidedi/editor"
-  autoload :Envelope,     "stupidedi/envelope"
   autoload :Exceptions,   "stupidedi/exceptions"
   autoload :Guides,       "stupidedi/guides"
   autoload :Reader,       "stupidedi/reader"

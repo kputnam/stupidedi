@@ -39,7 +39,7 @@ module Stupidedi
 
       # @return [Zipper::AbstractCursor]
       def push(zipper, parent, segment_tok, reason)
-        envelope_val = Envelope::InvalidEnvelopeVal.new([])
+        envelope_val = Values::InvalidEnvelopeVal.new([])
         segment_val  = Values::InvalidSegmentVal.new(reason, segment_tok)
 
         zipper.append_child new(

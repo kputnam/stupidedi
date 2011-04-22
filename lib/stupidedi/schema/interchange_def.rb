@@ -1,5 +1,5 @@
 module Stupidedi
-  module Envelope
+  module Schema
 
     #
     # @see X12-5.pdf 3.2.1 Basic Interchange Service Request
@@ -17,7 +17,7 @@ module Stupidedi
       # @return [Array<SegmentUse>]
       attr_reader :trailer_segment_uses
 
-      # @return [InterchangeVal]
+      # @return [Values::InterchangeVal]
       abstract :empty
 
       # @return [Reader::Separators]

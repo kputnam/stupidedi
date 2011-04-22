@@ -38,62 +38,62 @@ module Stupidedi
         empty?
       end
 
-      # Is this an {Envelope::Transmission}?
+      # Is this a {Transmission}?
       def transmission?
         false
       end
 
-      # Is this an {Envelope::InterchangeVal}?
+      # Is this an {InterchangeVal}?
       def interchange?
         false
       end
 
-      # Is this an {Envelope::FunctionalGroupVal}?
+      # Is this an {FunctionalGroupVal}?
       def functional_group?
         false
       end
 
-      # Is this an {Envelope::TransactionSetVal}?
+      # Is this an {TransactionSetVal}?
       def transaction_set?
         false
       end
 
-      # Is this a {Values::TableVal}?
+      # Is this a {TableVal}?
       def table?
         false
       end
 
-      # Is this a {Values::LoopVal}?
+      # Is this a {LoopVal}?
       def loop?
         false
       end
 
-      # Is this a {Values::SegmentVal} or {Values::InvalidSegmentVal}?
+      # Is this a {SegmentVal} or {InvalidSegmentVal}?
       def segment?
         false
       end
 
-      # Is this a {Values::AbstractElementVal}?
+      # Is this a {AbstractElementVal}?
       def element?
         false
       end
 
-      # Is this a {Values::CompositeElementVal}?
+      # Is this a {CompositeElementVal}?
       def composite?
         false
       end
 
-      # Is this a component {Values::SimpleElementVal}?
+      # Is this a component {SimpleElementVal}?
       def component?
         false
       end
 
-      # Is this a {Values::RepeatedElementVal}?
+      # Is this a {RepeatedElementVal}?
       def repeated?
         false
       end
 
-      # Is this a non-component {Values::SimpleElementVal}?
+      # Is this a non-component {SimpleElementVal}?
       def simple?
         false
       end

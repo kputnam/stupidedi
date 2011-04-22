@@ -1,5 +1,5 @@
 module Stupidedi
-  module Envelope
+  module Schema
 
     class TransactionSetDef
       include Inspect
@@ -27,9 +27,9 @@ module Stupidedi
           changes.fetch(:table_defs, @table_defs)
       end
 
-      # @return [TransactionSetVal]
+      # @return [Values::TransactionSetVal]
       def empty
-        TransactionSetVal.new(self, [])
+        Values::TransactionSetVal.new(self, [])
       end
 
       # @return [SegmentUse]

@@ -49,7 +49,7 @@ module Stupidedi
 
           # Create a new parse tree with a Transmission as the root, and descend
           # to the placeholder where the first child node will be placed.
-          Zipper.build(Envelope::Transmission.new),
+          Zipper.build(Values::TransmissionVal.new),
           [])
       end
 

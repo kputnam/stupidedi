@@ -3,7 +3,7 @@ module Stupidedi
   #
   # When an exception is raised, in some cases `#inspect` is called on a
   # huge object graph to generate the message `"undefined method '...' for
-  # <Stupidedi::Envelope::TransactionSetDef:0x...>"`. This can take several
+  # <Stupidedi::Schema::TransactionSetDef:0x...>"`. This can take several
   # seconds, since `Object#inspect` descends recursively into each instance
   # variable.
   #

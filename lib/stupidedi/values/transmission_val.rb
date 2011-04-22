@@ -1,7 +1,7 @@
 module Stupidedi
-  module Envelope
+  module Values
 
-    class Transmission < Values::AbstractVal
+    class TransmissionVal < AbstractVal
       include Color
 
       # @return [Array<InterchangeVal>]
@@ -12,7 +12,7 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        Transmission.new(changes.fetch(:children, @children))
+        TransmissionVal.new(changes.fetch(:children, @children))
       end
 
       def leaf?
@@ -30,7 +30,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        q.text(ansi.envelope("Transmission"))
+        q.text(ansi.envelope("TransmissionVal"))
         q.group(2, "(", ")") do
           q.breakable ""
           @children.each do |e|
@@ -45,7 +45,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("Transmission") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("TransmissionVal") << "(#{@children.map(&:inspect).join(', ')})"
       end
     end
 

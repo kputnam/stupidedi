@@ -39,9 +39,9 @@ module Stupidedi
           autoload :RA820, # Payment Order/Remittance Advice
             "stupidedi/versions/functional_groups/005010/transaction_set_defs/RA820"
 
-          # 005010X220 Benefit Enrollment and Maintenance
-          autoload :BE834, # Benefit Enrollment and Maintenance
-            "stupidedi/versions/functional_groups/005010/transaction_set_defs/BE834"
+        # # 005010X220 Benefit Enrollment and Maintenance
+        # autoload :BE834, # Benefit Enrollment and Maintenance
+        #   "stupidedi/versions/functional_groups/005010/transaction_set_defs/BE834"
 
           # 005010X221 Health Care Claim Payment/Advice
           autoload :HP835, # Health Care Claim Payment/Advice
@@ -53,9 +53,9 @@ module Stupidedi
           autoload :HC837, # Health Care Claim
             "stupidedi/versions/functional_groups/005010/transaction_set_defs/HC837"
 
-          # 005010X230 Functional Acknowledgement
-          autoload :FA997, # Functional Acknowledgment
-            "stupidedi/versions/functional_groups/005010/transaction_set_defs/FA997"
+        # # 005010X230 Functional Acknowledgement
+        # autoload :FA997, # Functional Acknowledgment
+        #   "stupidedi/versions/functional_groups/005010/transaction_set_defs/FA997"
 
           # 005010X231 Functional Acknowledgement
           autoload :FA999, # Implementation Acknowledgment
