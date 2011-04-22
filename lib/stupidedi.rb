@@ -22,7 +22,7 @@ module Stupidedi
   autoload :Builder,      "stupidedi/builder"
   autoload :Config,       "stupidedi/config"
   autoload :Color,        "stupidedi/color"
-  autoload :Dictionaries, "stupidedi/dictionaries"
+  autoload :Versions,     "stupidedi/versions"
   autoload :Editor,       "stupidedi/editor"
   autoload :Envelope,     "stupidedi/envelope"
   autoload :Exceptions,   "stupidedi/exceptions"

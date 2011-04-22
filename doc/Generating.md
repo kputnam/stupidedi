@@ -22,14 +22,14 @@ and ensure well-formedness. The configuration below links interchange version
 
     config = Stupidedi::Config.new
 
-    # Link the "00501" value in ISA12 element to the interchange definition
+    # Link the "00501" value in ISA12 element to the 5010 interchange definition
     config.interchange.register("00501") do
-      Stupidedi::Dictionaries::Interchanges::FiveOhOne::InterchangeDef
+      Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef
     end
 
-    # Link the "005010" value in GS08 to the functional group definition
+    # Link the "005010" value in GS08 to the 5010 functional group definition
     config.functional_group.register("005010") do
-      Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::FunctionalGroupDef
+      Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef
     end
 
     # Link "005010X222" in GS08 or ST03, "HC" in GS01, and "837"
@@ -53,7 +53,6 @@ and the definition of _every_ segment that can occur _inside_ the envelope.
 groupings of segments (e.g. tables and loops), and the order in which segments
 and groups of segments may occur. The definition of each segment is given by the
 parent [`FunctionalGroupDef`][3].
-
 
 Generating a Segment
 --------------------
@@ -97,7 +96,7 @@ group definition. The [`SimpleElementDef`][7] and [`SimpleElementVal`][8] classe
 define the minimal interfaces that are extended by subclasses like `AN` and
 `StringVal`. See the [`FiftyTen::ElementTypes`][6] namespace for more examples.
 
-  [6]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes.html
+  [6]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes.html
   [7]: Stupidedi/Schema/SimpleElementDef.html
   [8]: Stupidedi/Values/SimpleElementVal.html
 
@@ -106,14 +105,14 @@ define the minimal interfaces that are extended by subclasses like `AN` and
 String elements (declared with type `AN`) can be constructed from any value that
 responds to `#to_s`. The constructed element is a [`StringVal`][9].
 
-  [9]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/StringVal.html
+  [9]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/StringVal.html
 
 #### Identifiers
 
 Identifier elements (declared with type `ID`) can be constructed from any value
 that responds to `#to_s`. The constructed element is an [`IdentifierVal`][10].
 
-  [10]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/IdentifierVal.html
+  [10]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/IdentifierVal.html
 
 #### Dates
 
@@ -123,7 +122,7 @@ either six or eight characters, and from any value that responds to `#year`,
 included with the standard Ruby libraries. The constructed element is a
 [`DateVal`][11].
 
-  [11]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/DateVal.html
+  [11]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/DateVal.html
 
 #### Times
 
@@ -131,7 +130,7 @@ Time elements (declared with type `TM`) can be constructed from a `String` of
 either two, four, six, or more than six characters, and from the `Time` and
 `DateTime` value types. The constructed element is a [`TimeVal`][12].
 
-  [12]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/TimeVal.html
+  [12]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/TimeVal.html
 
 #### Numbers
 
@@ -139,8 +138,8 @@ Numeric and decimal elements (declared with type `Nn` and `R`, respectively) can
 be constructed from any value that responds to `#to_d`. The constructed element
 is a [`NumericVal`][13] or [`DecimalVal`][14].
 
-  [13]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/NumericVal.html
-  [14]: Stupidedi/Dictionaries/FunctionalGroups/FiftyTen/ElementTypes/DecimalVal.html
+  [13]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/NumericVal.html
+  [14]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/DecimalVal.html
 
 ### Composite Elements
 
@@ -200,7 +199,7 @@ both generate the same segment.
 ### Default Elements
 
 Certain elements are declared with a single value in [`#allowed_values`][18].
-These are usually qualifier elements, like `NM102`, whose value adds little
+These are usually qualifier elements, like `NM103`, whose value adds little
 readability. These values can be inferred by [`BuilderDsl`][1] when the
 [`#default`][27] placeholder is used. For example, when generating the X222 837P
 the following statements generate the same segment.

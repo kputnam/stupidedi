@@ -2,6 +2,9 @@ module Stupidedi
   module Values
 
     #
+    # @abstract This must be subclassed to add type- and version-specific
+    #   functionality. For instance, DateVal adds `#day`, `#month`, etc.
+    #
     # @see X222 B.1.1.3.1 Data Element
     #
     class SimpleElementVal < AbstractElementVal
@@ -11,9 +14,6 @@ module Stupidedi
 
       abstract :valid?
 
-      # @return [SegmentVal, CompositeElementVal]
-      attr_reader :parent
-
       # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 
@@ -22,14 +22,19 @@ module Stupidedi
       end
 
       # @return [SimpleElementVal]
-      def copy(changes = {})
-        self.class.new \
-          changes.fetch(:usage, @usage)
-      end
+      abstract :copy, "changes={}"
 
       # @return true
       def leaf?
         true
+      end
+
+      def component?
+        @usage.component?
+      end
+
+      def simple?
+        not @usage.component?
       end
     end
 

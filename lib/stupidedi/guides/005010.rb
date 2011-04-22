@@ -2,7 +2,7 @@ module Stupidedi
   module Guides
 
     #
-    # @see Stupidedi::Dictionaries::FunctionalGroups::FiftyTen
+    # @see Stupidedi::Versions::FunctionalGroups::FiftyTen
     #
     module FiftyTen
 

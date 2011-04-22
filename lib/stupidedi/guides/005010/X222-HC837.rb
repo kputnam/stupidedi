@@ -7,8 +7,8 @@ module Stupidedi
         d = Schema
         r = SegmentReqs
         e = ElementReqs
-        s = Dictionaries::FunctionalGroups::FiftyTen::SegmentDefs
-        t = Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs
+        s = Versions::FunctionalGroups::FiftyTen::SegmentDefs
+        t = Versions::FunctionalGroups::FiftyTen::TransactionSetDefs
 
         # With only a quick glance at X222, it appears that 2300 is a child of
         # the 2000C HL loop. But there is a nasty little note that reads:

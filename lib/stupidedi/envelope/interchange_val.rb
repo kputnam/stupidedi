@@ -41,6 +41,11 @@ module Stupidedi
         @children.select{|x| x.is_a?(Values::SegmentVal) }
       end
 
+      # @return [Module]
+      def segment_dict
+        @definition.segment_dict
+      end
+
       # @return [void]
       def pretty_print(q)
         id = @definition.try do |d|

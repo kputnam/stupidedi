@@ -7,8 +7,8 @@ module Stupidedi
         d = Schema
         r = SegmentReqs
         e = ElementReqs
-        s = Dictionaries::FunctionalGroups::FiftyTen::SegmentDefs
-        t = Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs
+        s = Versions::FunctionalGroups::FiftyTen::SegmentDefs
+        t = Versions::FunctionalGroups::FiftyTen::TransactionSetDefs
 
         #
         # Health Care Claim Acknowledgement

@@ -1,17 +1,17 @@
 require "stupidedi"
 require "ruby-prof"
 
-Stupidedi::Dictionaries::Interchanges::FiveOhOne::InterchangeDef
+Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef
 Stupidedi::Guides::FiftyTen::X222::HC837
 
 config = Stupidedi::Config.new
-config.interchange.register("00501") { Stupidedi::Dictionaries::Interchanges::FiveOhOne::InterchangeDef }
-config.functional_group.register("005010") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::FunctionalGroupDef }
+config.interchange.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
+config.functional_group.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
 
-config.transaction_set.register("005010", "HN", "277") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
-config.transaction_set.register("005010", "HP", "835") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
-config.transaction_set.register("005010", "HC", "837") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
-config.transaction_set.register("005010", "FA", "999") { Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
+config.transaction_set.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
+config.transaction_set.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
+config.transaction_set.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
+config.transaction_set.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
 
 config.transaction_set.register("005010X214", "HN", "277") { Stupidedi::Guides::FiftyTen::X214::HN277 }
 config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835 }

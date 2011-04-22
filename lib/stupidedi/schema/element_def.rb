@@ -12,6 +12,10 @@ module Stupidedi
 
       # @return [String]
       attr_reader :description
+
+      abstract :simple?
+
+      abstract :composite?
     end
 
     #

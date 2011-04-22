@@ -2,8 +2,12 @@ module Stupidedi
   class Either
     include Inspect
 
-    # @return [void]
+    # @return self
     abstract :each, :args => %w(&block)
+
+    def tap(&block)
+      each(&block)
+    end
 
     # @return [Boolean]
     abstract :defined?
