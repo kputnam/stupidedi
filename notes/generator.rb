@@ -4,10 +4,8 @@ require "ruby-prof"
 config = Stupidedi::Config.new
 config.interchange.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
 config.functional_group.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
-config.transaction_set.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
-config.transaction_set.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
-config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835 }
-config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837 }
+config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835  }
+config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }
 
 b = Stupidedi::Builder::BuilderDsl.new(config)
 b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", b.blank)

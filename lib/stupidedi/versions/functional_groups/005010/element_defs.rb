@@ -180,7 +180,7 @@ module Stupidedi
               "X4"  => "Clinical Laboratory Improvement Amendment Number",
               "XZ"  => "Pharmacy Prescription Number"))
 
-          E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 3)
+          E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 15)
           E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
             s::CodeList.build(
               "277" => "Health Care Information Status Notification",

@@ -35,7 +35,7 @@ and ensure well-formedness. The configuration below links interchange version
     # Link "005010X222" in GS08 or ST03, "HC" in GS01, and "837"
     # in ST01 to the implementation guide definition
     config.transaction_set.register("005010X222", "HC", "837") do
-      Stupidedi::Guides::FiftyTen::X222::HC837
+      Stupidedi::Guides::FiftyTen::X222::HC837P
     end
 
     # Instantiate a new BuilderDsl

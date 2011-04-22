@@ -33,6 +33,10 @@ module Stupidedi
         q.text(ansi.segment("InvalidEnvelopeVal"))
         q.group(2, "(", ")") do
           q.breakable ""
+          q.text @children.first.reason
+          q.text ","
+          q.breakable
+
           @children.each do |e|
             unless q.current_group.first?
               q.text ","

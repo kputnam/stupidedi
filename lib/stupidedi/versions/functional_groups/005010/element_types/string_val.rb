@@ -144,7 +144,10 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("AN.value#{id}") << "(#{@value})"
+                value  = @value.slice(0, definition.max_length)
+                value << ansi.invalid(@value.slice(definition.max_length..-1).to_s)
+
+                ansi.element("AN.value#{id}") << "(#{value})"
               end
 
               def valid?
