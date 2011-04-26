@@ -36,14 +36,14 @@ tree is empty, a failure will be returned.
     machine.segment
       #=> Either.failure("not a segment")
 
-You may be wondering why the [`SegmentVal`][5] is wrapped by two layers. The
+You may be wondering why the [`SegmentVal`][5] is wrapped by two wrappers. The
 first, [`Either`][8], provides a manner to distinguish error return values from
 normal return values. It is more sophisticated and less error-prone than using
 conventions like returning `nil` on failure, because it supports chaining,
 detailed error information can be returned, and the risk of neglecting to test
 for an error is mitigated.
 
-The [`Either`][8] value wraps an [`AbstractCursor`][7], which points to the
+This [`Either`][8] value wraps an [`AbstractCursor`][7], which points to the
 [`SegmentVal`][5] via its `#node` method. Because [`SegmentVal`][5] does not
 have information about its parent or siblings (it only is aware of its
 `#children`), returning only a [`SegmentVal`][5] does not always provide enough
