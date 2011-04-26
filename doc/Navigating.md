@@ -65,7 +65,7 @@ For another example, the current segment identifier can be accessed like any
 other method of [`SegmentVal`][5].
 
     # When machine.segment fails, nothing is printed
-    machine.segment.each do |s|
+    machine.segment.tap do |s|
       puts "Hello, #{s.node.id}"
     end
 
@@ -253,8 +253,8 @@ _not_ reachable from `N3` because it preceeds `N3`.
 
 Segments that occur as siblings of an ancestor node are uncles (remember that
 [`#find`][14] only proceeds forward). Common uncle segments are `GE` and `IEA`,
-which are analogous to "closing tags" for envelope structures. Another example
-is the `IK5` and `AK9` segments from the *999 Functional Acknowledgement*
+which are analogous to "closing tags" for envelope structures. Other examples
+include the `IK5` and `AK9` segments from the *999 Functional Acknowledgement*
 transaction set.
 
     # From BHT ascend twice and move left to GE
@@ -365,8 +365,8 @@ element equals `41` or when there are no more `NM1` occurrences,
       position = position.flatmap{|m| m.find(:NM1) }
 
       # Check the constraint
-      position.each do |nm1|
-        nm1.element(1).each do |element|
+      position.tap do |nm1|
+        nm1.element(1).tap do |element|
           # Stop the while loop if we found the match
           searching = element.node != "QC"
         end
@@ -418,7 +418,7 @@ Or from a position where every reachable `NM1` segment is defined such that
 ### Chaining Method Calls
 
 The [`Either`][8] datatype allows chaining via the [`#map`][16], [`#or`][18],
-[`#flatmap`][17], and [`#each`][19] methods. The use of each method is
+[`#flatmap`][17], and [`#tap`][19] methods. The use of each method is
 demonstrated in the following examples.
 
 #### Map
@@ -463,6 +463,25 @@ Provider Organization" of the first claim in the parse tree.
       map(&:node)
       #=> Either.success(AN.value[E1035: Billing Provider Last or Organizational Name](BEN KILDARE SERVICE))
 
+To iterate a sequence of segments with the same identifier, use the
+[`#flatmap`][17] method,
+
+  # Find the first HL segment
+  position = machine.first.
+    flatmap{|x| x.find(:GS) }.
+    flatmap{|x| x.find(:ST) }.
+    flatmap{|x| x.find(:HL) }
+
+  while position.defined?
+    position = position.flatmap do |hl|
+      # Process the HL segment
+      ...
+
+      # Find the next HL segment
+      hl.find(:HL)
+    end
+  end
+
 Note that the value returned by the block given to [`#flatmap`][17] must return
 an instance of `Either` or a `TypeError` will be raised. The [`Object#try`][20]
 method is similar to [`#flatmap`][17] in many ways.
@@ -470,27 +489,27 @@ method is similar to [`#flatmap`][17] in many ways.
 #### Side Effects
 
 In cases where you do not want to transform the `Either` value, but only need to
-execute a side effect on `Either.success`, the [`#each`][19] method is suitable.
+execute a side effect on `Either.success`, the [`#tap`][19] method is suitable.
 On `Either.success` values, it passes the wrapped value to the block and returns
 the original value, and it passes `Either.failure` values along without calling
 the block.
 
     # Record GS06 Group Control Number
-    machine.first.flatmap{|x| x.find(:GS) }.each do |gs|
+    machine.first.flatmap{|x| x.find(:GS) }.tap do |gs|
       # The return value of this block is discarded
-      gs.element(6).each do |control|
+      gs.element(6).tap do |control|
         @numbers << control.node.to_s
       end
     end #=> Either.success(StateMachine[1](SegmentVal[GS](...)))
 
     # Contrived example
     machine.first.
-      flatmap{|x| x.find(:GS) }.each{|x| puts "Hi, GS" }
-      flatmap{|x| x.find(:ST) }.each{|x| puts "Hi, ST" }
+      flatmap{|x| x.find(:GS) }.tap{|x| puts "Hi, GS" }
+      flatmap{|x| x.find(:ST) }.tap{|x| puts "Hi, ST" }
       #=> Either.success(StateMachine[1](SegmentVal[ST](...)))
 
-The [`Object#tap`][21] method is similar to [`Either#each`][19] except `#tap`
-always calls the block, even on `nil`, while `#each` does not call the block
+The [`Object#tap`][21] method is similar to [`Either#tap`][19] except `#tap`
+always calls the block, even on `nil`, while `#tap` does not call the block
 on `Either.failure` values.
 
 #### Error Recovery
@@ -517,6 +536,6 @@ recover from the error.
   [16]: Stupidedi/Either.html#map-instance_method
   [17]: Stupidedi/Either.html#flatmap-instance_method
   [18]: Stupidedi/Either.html#or-instance_method
-  [19]: Stupidedi/Either.html#each-instance_method
+  [19]: Stupidedi/Either.html#tap-instance_method
   [20]: Object.html#try-instance_method
   [21]: Object.html#tap-instance_method

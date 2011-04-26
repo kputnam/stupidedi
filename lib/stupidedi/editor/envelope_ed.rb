@@ -54,7 +54,7 @@ module Stupidedi
 
       def edit_isa(isa, received, acc)
         edit(:ISA01) do
-          isa.element(1).each do |e|
+          isa.element(1).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "010", "must be present")
             elsif not %w(00 03).include?(e.node)
@@ -64,7 +64,7 @@ module Stupidedi
         end
 
         edit(:ISA02) do
-          isa.element(2).each do |e|
+          isa.element(2).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "011", "must be present")
             elsif e.node.length != 10
@@ -76,7 +76,7 @@ module Stupidedi
         end
 
         edit(:ISA03) do
-          isa.element(3).each do |e|
+          isa.element(3).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "012", "must be present")
             elsif not %w(00 01).include?(e.node)
@@ -86,7 +86,7 @@ module Stupidedi
         end
 
         edit(:ISA04) do
-          isa.element(4).each do |e|
+          isa.element(4).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "013", "must be present")
             elsif e.node.length != 10
@@ -98,7 +98,7 @@ module Stupidedi
         end
 
         edit(:ISA05) do
-          isa.element(5).each do |e|
+          isa.element(5).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "005", "must be present")
             elsif not %w(27 28 ZZ).include?(e.node)
@@ -108,7 +108,7 @@ module Stupidedi
         end
 
         edit(:ISA06) do
-          isa.element(6).each do |e|
+          isa.element(6).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "006", "must be present")
             elsif not an?(e.node)
@@ -118,7 +118,7 @@ module Stupidedi
         end
 
         edit(:ISA07) do
-          isa.element(7).each do |e|
+          isa.element(7).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "007", "must be present")
             elsif not %w(27 28 ZZ).include?(e.node)
@@ -128,7 +128,7 @@ module Stupidedi
         end
 
         edit(:ISA08) do
-          isa.element(8).each do |e|
+          isa.element(8).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "008", "must be present")
             elsif e.node.length != 15
@@ -138,7 +138,7 @@ module Stupidedi
         end
 
         edit(:ISA09) do
-          isa.element(9).each do |e|
+          isa.element(9).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "014", "must be present")
             elsif e.node.invalid?
@@ -158,13 +158,13 @@ module Stupidedi
         end
 
         edit(:ISA10) do
-          isa.element(10).each do |e|
+          isa.element(10).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "015", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "015", "must be a valid time in HHMM format")
             else
-              isa.element(9).each do |f|
+              isa.element(9).tap do |f|
                 date = f.node.oldest(received.send(:to_date) << 12*30)
 
                 if e.node.to_time(date) > received
@@ -176,7 +176,7 @@ module Stupidedi
         end
 
         edit(:ISA11) do
-          isa.element(11).each do |e|
+          isa.element(11).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "026", "must be present")
             elsif e.node.length != 1
@@ -186,7 +186,7 @@ module Stupidedi
         end
 
         edit(:ISA12) do
-          isa.element(12).each do |e|
+          isa.element(12).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "017", "must be present")
             elsif e.node != "00501"
@@ -196,7 +196,7 @@ module Stupidedi
         end
 
         edit(:ISA13) do
-          isa.element(13).each do |e|
+          isa.element(13).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "018", "must be present")
             elsif e.node.invalid?
@@ -210,7 +210,7 @@ module Stupidedi
         end
 
         edit(:ISA14) do
-          isa.element(14).each do |e|
+          isa.element(14).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "019", "must be present")
             elsif not %w(0 1).include?(e.node)
@@ -220,7 +220,7 @@ module Stupidedi
         end
 
         edit(:ISA15) do
-          isa.element(15).each do |e|
+          isa.element(15).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "020", "must be present")
             elsif not %w(P T).include?(e.node)
@@ -230,13 +230,13 @@ module Stupidedi
         end
 
         edit(:ISA16) do
-          isa.element(16).each do |e|
+          isa.element(16).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "027", "must be present")
             elsif not an?(e.node)
               acc.ta105(e, "R", "027", "has unacceptable AN characters")
             else
-              isa.element(11).each do |f|
+              isa.element(11).tap do |f|
                 if e.node == f.node
                   acc.ta105(e, "R", "027", "must be distinct from repetition separator")
                 end
@@ -281,7 +281,7 @@ module Stupidedi
         end
 
         edit(:IEA01) do
-          iea.flatmap{|x| x.element(1) }.each do |e|
+          iea.flatmap{|x| x.element(1) }.tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "021", "must be present")
             elsif e.node.invalid?
@@ -293,11 +293,11 @@ module Stupidedi
         end
 
         edit(:IEA02) do
-          iea.flatmap{|x| x.element(2) }.each do |e|
+          iea.flatmap{|x| x.element(2) }.tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "001", "must be present")
             else
-              isa.element(13).each do |f|
+              isa.element(13).tap do |f|
                 if e.node != f.node
                   acc.ta105(e, "R", "001", "must match interchange header control number")
                 end
@@ -311,7 +311,7 @@ module Stupidedi
 
       def edit_gs(gs, received, acc)
         edit(:GS01) do
-          gs.element(1).each do |e|
+          gs.element(1).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "1", "must be present")
             else
@@ -321,7 +321,7 @@ module Stupidedi
         end
 
         edit(:GS02) do
-          gs.element(2).each do |e|
+          gs.element(2).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "14", "must be present")
             elsif not e.node.length.between?(2, 15)
@@ -333,7 +333,7 @@ module Stupidedi
         end
 
         edit(:GS03) do
-          gs.element(3).each do |e|
+          gs.element(3).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "13", "must be present")
             elsif not e.node.length.between?(2, 15)
@@ -345,7 +345,7 @@ module Stupidedi
         end
 
         edit(:GS04) do
-          gs.element(4).each do |e|
+          gs.element(4).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "024", "must be present")
             elsif e.node.invalid?
@@ -357,13 +357,13 @@ module Stupidedi
         end
 
         edit(:GS05) do
-          gs.element(5).each do |e|
+          gs.element(5).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "024", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "024", "must be a valid time in HHMM format")
             else
-              gs.element(4).each do |f|
+              gs.element(4).tap do |f|
                 if e.node.to_time(f.node) > received
                   acc.ta105(e, "R", "024", "must not be a future date")
                 end
@@ -373,7 +373,7 @@ module Stupidedi
         end
 
         edit(:GS06) do
-          gs.element(6).each do |e|
+          gs.element(6).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "6", "must be present")
             elsif e.node.invalid?
@@ -387,7 +387,7 @@ module Stupidedi
         end
 
         edit(:GS07) do
-          gs.element(7).each do |e|
+          gs.element(7).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "024", "must be present")
             elsif e.node != "X"
@@ -397,7 +397,7 @@ module Stupidedi
         end
 
         edit(:GS08) do
-          gs.element(8).each do |e|
+          gs.element(8).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "2", "must be present")
             else
@@ -441,7 +441,7 @@ module Stupidedi
         end
 
         edit(:GE01) do
-          ge.flatmap{|x| x.element(1) }.each do |e|
+          ge.flatmap{|x| x.element(1) }.tap do |e|
             if e.node.empty?
               acc.ak905(e, "R", "5", "must be present")
             elsif e.node.invalid?
@@ -453,11 +453,11 @@ module Stupidedi
         end
 
         edit(:GE02) do
-          ge.flatmap{|x| x.element(2) }.each do |e|
+          ge.flatmap{|x| x.element(2) }.tap do |e|
             if e.node.empty?
               acc.ak905(e, "R", "4", "must be present")
             else
-              gs.element(6).each do |f|
+              gs.element(6).tap do |f|
                 if e.node != f.node
                   acc.ak905(e, "R", "4", "must match functional group header control number")
                 end
@@ -469,7 +469,7 @@ module Stupidedi
 
       def edit_st(st, acc)
         edit(:ST01) do
-          st.element(1).each do |e|
+          st.element(1).tap do |e|
             if e.node.blank?
               acc.ik502(e, "R", "6", "must be present")
             elsif e.node != "837"
@@ -479,7 +479,7 @@ module Stupidedi
         end
 
         edit(:ST02) do
-          st.element(2).each do |e|
+          st.element(2).tap do |e|
             if e.node.blank?
               acc.ik502(e, "R", "7", "must be present")
             end
@@ -495,13 +495,13 @@ module Stupidedi
         end
 
         edit(:SE01) do
-          se.flatmap{|x| x.element(1) }.each do |e|
+          se.flatmap{|x| x.element(1) }.tap do |e|
             if e.node.empty?
               acc.ik502(e, "R", "4", "must be present")
             elsif e.node.invalid?
               acc.ik502(e, "R", "4", "must be numeric")
             else
-            # st.distance(:SE).each do |d|
+            # st.distance(:SE).tap do |d|
             #   unless e.node == d + 1
             #     ak502(e, "R", "4", "must equal the transaction segment count")
             #   end
@@ -511,11 +511,11 @@ module Stupidedi
         end
 
         edit(:SE02) do
-          se.flatmap{|x| x.element(2) }.each do |e|
+          se.flatmap{|x| x.element(2) }.tap do |e|
             if e.node.empty?
               acc.ik502(e, "R", "3", "must be present")
             else
-              st.element(2).each do |f|
+              st.element(2).tap do |f|
                 if e.node != f.node
                   acc.ik502(e, "R", "3", "must equal transaction header control number")
                 end

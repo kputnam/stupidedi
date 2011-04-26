@@ -5,8 +5,9 @@ module Stupidedi
     # @return self
     abstract :each, :args => %w(&block)
 
-    def tap(&block)
-      each(&block)
+    # (see #each)
+    def tap
+      each{|x| yield x }
     end
 
     # @return [Boolean]
