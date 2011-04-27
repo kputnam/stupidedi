@@ -415,6 +415,32 @@ Or from a position where every reachable `NM1` segment is defined such that
 
   [14]: Stupidedi/Builder/Navigation.html#find-instance_method
 
+You can get a list of potentially reachable segments from the current position
+by calling [`#successors`][22], which returns one [`InstructionTable`][23] per
+active state. That is, when the machine is in a deterministic state, a single
+[`InstructionTable`][23] will be returned. See the section on
+[Non-determinism](#Non-determinism) for more information.
+
+    pp b.sucessors
+
+    [InstructionTable(
+      1: Instruction[REF: Subscriber Secon..](pop: 0, drop: 0),
+      2: Instruction[REF: Property and Cas..](pop: 0, drop: 0),
+      3: Instruction[PER: Property and Cas..](pop: 0, drop: 3),
+      4: Instruction[NM1: Subscriber Name   ](pop: 1, drop: 0, push: LoopState),
+      5: Instruction[NM1: Payer Name        ](pop: 1, drop: 0, push: LoopState),
+      6: Instruction[CLM: Claim Informatio..](pop: 1, drop: 2, push: LoopState),
+      7: Instruction[ HL: Subscriber Hiera..](pop: 2, drop: 0, push: LoopState),
+      8: Instruction[ HL: Billing Provider..](pop: 3, drop: 0, push: TableState),
+      9: Instruction[ HL: Subscriber Hiera..](pop: 3, drop: 0, push: TableState),
+     10: Instruction[ HL: Patient Hierachi..](pop: 3, drop: 0, push: TableState),
+     11: Instruction[ SE: Transaction Set ..](pop: 3, drop: 4, push: TableState),
+     12: Instruction[ ST](pop: 4, drop: 0, push: TransactionSetState),
+     13: Instruction[ GE: Functional Group..](pop: 4, drop: 2),
+     14: Instruction[ GS](pop: 5, drop: 0, push: FunctionalGroupState),
+     15: Instruction[IEA: Interchange Cont..](pop: 5, drop: 2),
+     16: Instruction[ISA](pop: 6, drop: 0, push: InterchangeState))]
+
 ### Chaining Method Calls
 
 The [`Either`][8] datatype allows chaining via the [`#map`][16], [`#or`][18],
@@ -539,3 +565,69 @@ recover from the error.
   [19]: Stupidedi/Either.html#tap-instance_method
   [20]: Object.html#try-instance_method
   [21]: Object.html#tap-instance_method
+  [22]: Stupidedi/Builder/InstructionTable.html
+  [23]: Stupidedi/Builder/StateMachine.html#successors-instance_method
+
+### Word of Caution
+
+Beware that the [`#find`][14] method only searches _forward_ in the sequence
+of segments. In some cases, you will need to save the current position to let
+you restart another search from that position, rather than chaining successive
+searches together.
+
+For instance, in the X222 837P transaction set, there are sixteen different
+consecutive `DTP` segments in Loop 2300. While the X222 implementation guide
+arranges them in what appears to be a sequence, there is no restriction on
+the order in which the `DTP` segments occur -- they all have the same position.
+Thus `DTP*439` "Accident Date" can follow or preceed `DTP*096` "Discharge Date",
+and one or both might not be present.
+
+    clm = machine.first.
+      flatmap{|x| x.find(:GS) }.
+      flatmap{|x| x.find(:ST) }.
+      flatmap{|x| x.find(:HL, nil, nil, nil, "0") }.
+      flatmap{|x| x.find(:CLM) }
+
+    clm. # Wrong: this assumes DTP*439 occurs before DTP*096
+      flatmap{|x| x.find(:DTP, "439") }.tap{|x| puts "accident  ..." }
+      flatmap{|x| x.find(:DTP, "096") }.tap{|x| puts "discharge ..." }
+
+    # Correct: no order is assumed among the DTP segments
+    clm.flatmap{|x| x.find(:DTP, "439") }.tap{|x| puts "accident  ..." }
+    clm.flatmap{|x| x.find(:DTP, "096") }.tap{|x| puts "accident  ..." }
+
+In general, siblings following the first segment in a purely syntactic node,
+like a table, loop, or envelope structure cannot exist unless the syntactic node
+exists -- and the syntactic node cannot exist unless an _entry segment_ from the
+definition of that node occurs. With few exceptions, the entry segment of a
+syntactic node is the first segment in its definition. Therefore, the 2300 `DTP`
+segments cannot exist unless the 2300 `CLM` segment occurs; that is why it is
+best to save the `CLM` position and use it as a starting point.
+
+Non-determinism
+---------------
+
+Certain sequences of input segments can be described by more than one parse
+tree. Often these sequences are malformed. For instance, in an X222 837P
+transaction, an `HL` segment that has an empty `HL03` qualifier could
+potentially be the `HL` segment describing the "Billing Provider Detail",
+"Subscriber Detail", or "Patient Detail". In this case the parser will construct
+three parse trees: one for each possibility. The parser will respond to
+[`#deterministic?`][24] with `false` when it is in a non-deterministic state.
+
+In a non-determistic state, methods that normally return a single node will
+return `Either.failure("non-deterministic state")`. These are [`#segment`][6],
+[`#element`][11], and `#zipper`. Traversal methods, however, like [`#next`][9]
+[`#first`][12], [`#last`][13], [`#find`][14], and [`#parent`][15], operate on
+each parse tree in parallel. 
+
+These traversal methods will position the parser on parallel segments within
+each parse tree. To use the `HL` example again, the parser would point to
+each tree's version of the `HL` segment, one named "Patient Detail", one named
+"Bililng Provider Detail", and another named "Subscriber Detail". These segments
+all have the same element values, but have a different meaning.
+
+### Resolution
+
+
+  [24]: Stupidedi/Builder/StateMachine.html#deterministic%3F-instance_method

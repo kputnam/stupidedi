@@ -183,7 +183,9 @@ module Stupidedi
 
       # @return [Either<StateMachine>]
       def parent
-        active = @active.map do |zipper|
+        active = []
+
+        @active.each do |zipper|
           state = zipper
           value = zipper.node.zipper
 
@@ -193,7 +195,7 @@ module Stupidedi
           end
 
           if value.root?
-            return Either.failure("no parent segment")
+            break
           end
 
           value = value.first
@@ -208,10 +210,14 @@ module Stupidedi
             state = state.replace(state.node.copy(:zipper => value))
           end
 
-          state
+          active << state
         end
 
-        Either.success(StateMachine.new(@config, active))
+        if active.empty?
+          Either.failure("no parent segment")
+        else
+          Either.success(StateMachine.new(@config, active))
+        end
       end
 
       # @return [StateMachine]
@@ -393,15 +399,6 @@ module Stupidedi
 
           state
         end
-      end
-
-      def xx(label, value, state)
-      # puts label
-      # puts " ~v: #{state.node.zipper.object_id} #{state.node.zipper.class.name.split('::').last}"
-      # puts "  v: #{value.object_id} #{value.class.name.split('::').last}"
-      # puts "     #{value.node.inspect}"
-      # puts "  s: #{state.object_id} #{state.class.name.split('::').last}"
-      # puts "     #{state.node.inspect}"
       end
 
     end
