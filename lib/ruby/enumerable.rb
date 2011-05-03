@@ -17,4 +17,12 @@ module Enumerable
       inject(0){|n, e| e == args.first ? n + 1 : n }
     end
   end
+
+  def sum(&block)
+    if block_given?
+      tail.inject(yield(head)){|sum,e| sum + yield(e) }
+    else
+      tail.inject(head){|sum,e| sum + e }
+    end
+  end
 end

@@ -21,6 +21,10 @@ module Stupidedi
           changes.fetch(:segment_tok, @segment_tok)
       end
 
+      def size
+        1
+      end
+
       # @return [Symbol]
       def id
         @segment_tok.id

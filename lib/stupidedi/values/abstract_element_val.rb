@@ -8,6 +8,10 @@ module Stupidedi
       def element?
         true
       end
+
+      def size
+        0
+      end
     end
 
   end

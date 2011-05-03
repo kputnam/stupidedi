@@ -15,6 +15,10 @@ module Stupidedi
         TransmissionVal.new(changes.fetch(:children, @children))
       end
 
+      def size
+        @children.sum(&:size)
+      end
+
       def leaf?
         false
       end

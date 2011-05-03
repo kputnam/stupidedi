@@ -26,6 +26,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
+      def size
+        @children.sum(&:size)
+      end
+
       # (see AbstractVal#loop?)
       # @return true
       def loop?

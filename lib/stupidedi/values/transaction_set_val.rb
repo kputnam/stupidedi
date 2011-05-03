@@ -23,6 +23,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
+      def size
+        @children.sum(&:size)
+      end
+
       # (see AbstractSet#transaction_set?)
       # @return true
       def transaction_set?

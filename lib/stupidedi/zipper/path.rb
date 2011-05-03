@@ -63,6 +63,10 @@ module Stupidedi
         0
       end
 
+      def position
+        nil
+      end
+
       # @return [String]
       def inspect
         "root"
@@ -95,13 +99,24 @@ module Stupidedi
         @left.empty?
       end
 
+      # (see AbstractPath#depth)
       def depth
         1 + @parent.depth
+      end
+
+      def position
+        @left.length
       end
 
       # @return [String]
       def inspect
         "#{@parent.inspect}/#{@left.length}"
+      end
+
+      # @return [Boolean]
+      def ==(other)
+        depth    == other.depth and
+        position == other.position
       end
     end
 

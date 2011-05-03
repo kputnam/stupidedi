@@ -22,6 +22,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
+      def size
+        @children.sum(&:size)
+      end
+
       # (see AbstractVal#table?)
       # @return true
       def table?

@@ -33,6 +33,108 @@ module Stupidedi
       # True if the node has no parent
       abstract :root?
 
+      # Returns nodes between this zipper and the other, including `self.node`
+      # and `other.node` as end-points. The nodes are not returned in a
+      # particular order. Both `self` and `other` must, and are assumed to,
+      # belong to the same tree.
+      #
+      # @return [Array]
+      def between(other)
+
+        # Collect ancestors of other, sorted oldest first (deepest last)
+        zipper    = other
+        ancestors = [other]
+
+        until zipper.root?
+          zipper = zipper.up
+          ancestors.unshift(zipper)
+        end
+
+        # Collect ancestors of self, sorted oldest first (deepest last)
+        zipper    = self
+        bncestors = [self]
+
+        until zipper.root?
+          zipper = zipper.up
+          bncestors.unshift(zipper)
+        end
+
+        # This is a root node. We could check that self and the given other
+        # belong to the same tree by comparing their roots -- unfortunately,
+        # this requires comparing each node in the entire tree.
+        common = zipper
+
+        # Remove the common prefix in the paths to self and other, and keep
+        # track of the youngest common ancestor.
+        while a = ancestors.first and b = bncestors.first
+          if a.path == b.path
+            common = a # This is the next youngest ancestor
+
+            ancestors.shift
+            bncestors.shift
+          else
+            break
+          end
+        end
+
+        if ancestors.empty?
+          return self.cons(bncestors).map(&:node)
+        elsif bncestors.empty?
+          return other.cons(ancestors).map(&:node)
+        elsif ancestors.head.path.position > bncestors.head.path.position
+          # Arrange so ancestors is the left path and bncestors is the right
+          ancestors, bncestors = bncestors, ancestors
+        end
+
+        # Accumulate the nodes between `common` and the left node (which is self
+        # or other), but only those to the right of the left node.
+        between = [ancestors.head.node]
+        ancestors.tail.each do |zipper|
+          between << zipper.node
+
+          until zipper.last?
+            zipper = zipper.next
+            between.concat(zipper.flatten)
+          end
+        end
+
+        # Accumulate the nodes in the siblings directly between self and other.
+        zipper = ancestors.head
+        (bncestors.head.path.position - zipper.path.position - 1).times do
+          zipper = zipper.next
+          between.concat(zipper.flatten)
+        end
+
+        # Accumulate the nodes between `common` and the right node (which is
+        # self or other), but only those to the left of the right node.
+        between << bncestors.head.node
+        bncestors.tail.each do |zipper|
+          between << zipper.node
+
+          until zipper.first?
+            zipper = zipper.prev
+            between.concat(zipper.flatten)
+          end
+        end
+
+        between
+      end
+
+      # Flattens all nodes in the subtree into an Array
+      #
+      # @return [Array]
+      def flatten
+        nodes = []
+        queue = [node]
+
+        while node = queue.pop
+          nodes << node
+          queue.concat(node.children) unless node.leaf?
+        end
+
+        nodes
+      end
+
       # @group Traversing the Tree
       #########################################################################
 

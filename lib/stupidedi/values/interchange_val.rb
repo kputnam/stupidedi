@@ -23,6 +23,10 @@ module Stupidedi
           definition, children
       end
 
+      def size
+        @children.sum(&:size)
+      end
+
       # @return [InterchangeVal]
       def copy(changes = {})
         InterchangeVal.new \

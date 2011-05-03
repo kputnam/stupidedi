@@ -15,6 +15,10 @@ module Stupidedi
         InvalidEnvelopeVal.new(changes.fetch(:children, @children))
       end
 
+      def size
+        @children.sum(&:size)
+      end
+
       # @return false
       def leaf?
         false

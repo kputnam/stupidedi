@@ -25,6 +25,10 @@ module Stupidedi
           changes.fetch(:usage, @usage)
       end
 
+      def size
+        1
+      end
+
       # @return [Symbol]
       def id
         definition.id
