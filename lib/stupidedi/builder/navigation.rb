@@ -3,11 +3,15 @@ module Stupidedi
 
     module Navigation
 
+      # @group Querying the Current Position
+      #########################################################################
+
       # @return [Array<InstructionTable>]
       def successors
         @active.map{|a| a.node.instructions }
       end
 
+      # Is there exactly one valid parse tree in the current state?
       def deterministic?
         @active.length == 1
       end
@@ -36,6 +40,14 @@ module Stupidedi
         return true
       end
 
+      # Returns the number of segments apart the current state is from the
+      # given `StateMachine`'s state. Note the direction is not indicated by
+      # the return value, so `a.distance(b) == b.distance(a)` for all states
+      # `a` and `b`.
+      #
+      #   m.distance(m)                          #=> Either.success(0)
+      #   m.next(10).flatmap{|n| n.distance(m) } #=> Either.success(10)
+      #
       # @return [Integer]
       def distance(other)
         zipper.flatmap do |a|
@@ -45,9 +57,12 @@ module Stupidedi
         end
       end
 
-      #
+      # @group Accessing the Current Node
       #########################################################################
 
+      # Returns the current position within the parse tree, if the current state
+      # is deterministic.
+      #
       # @return [Either<Zipper::AbstractCursor<Values::AbstractVal>>]
       def zipper
         if deterministic?
@@ -57,6 +72,9 @@ module Stupidedi
         end
       end
 
+      # Extracts the segment from the current state, if the current state is
+      # deterministic and positioned on a segment.
+      #
       # @return [Either<Zipper::AbstractCursor<Values::SegmentVal>>]
       def segment
         zipper.flatmap do |z|
@@ -68,6 +86,11 @@ module Stupidedi
         end
       end
 
+      # Extracts the *mth* element from the current segment, if the current
+      # state is deterministic. Accepts optional arguments to extract a specific
+      # occurrence of a repeated element and/or a specific component from a
+      # composite element.
+      #
       # @return [Either<Zipper::AbstractCUrsor<Values::AbstractElementVal>>]
       def element(m, n = nil, o = nil)
         segment.flatmap do |s|
@@ -140,6 +163,9 @@ module Stupidedi
       # @group Navigating the Tree
       #########################################################################
 
+      # Returns a new `StateMachine` positioned on the first segment in
+      # the parse tree, if there are any segments in the parse tree.
+      #
       # @return [Either<StateMachine>]
       def first
         active = roots.map do |zipper|
@@ -155,6 +181,7 @@ module Stupidedi
             return Either.failure("no segments")
           end
 
+          # Synchronize the two parallel state and value nodes
           unless value.eql?(state.node.zipper)
             state = state.replace(state.node.copy(:zipper => value))
           end
@@ -165,6 +192,9 @@ module Stupidedi
         Either.success(StateMachine.new(@config, active))
       end
 
+      # Returns a new `StateMachine` positioned on the last segment in
+      # the parse tree, if there are any segments in the parse tree.
+      #
       # @return [Either<StateMachine>]
       def last
         active = roots.map do |zipper|
@@ -180,6 +210,7 @@ module Stupidedi
             return Either.failure("no segments")
           end
 
+          # Synchronize the two parallel state and value nodes
           unless value.eql?(state.node.zipper)
             state = state.replace(state.node.copy(:zipper => value))
           end
@@ -190,6 +221,13 @@ module Stupidedi
         Either.success(StateMachine.new(@config, active))
       end
 
+      # Returns a new `StateMachine` positioned on the first segment of the
+      # parent structure. For example, when the current segment belongs to a
+      # loop but it's not the first segment in that loop, this method will
+      # rewind to the first segment in the loop. If the current position is
+      # the first segment of a loop, this method will rewind to the first
+      # segment in the loop's parent structure.
+      #
       # @return [Either<StateMachine>]
       def parent
         active = []
@@ -215,6 +253,7 @@ module Stupidedi
             state = state.down
           end
 
+          # Synchronize the two parallel state and value nodes
           unless value.eql?(state.node.zipper)
             state = state.replace(state.node.copy(:zipper => value))
           end
@@ -229,8 +268,17 @@ module Stupidedi
         end
       end
 
+      # Returns a new `StateMachine` positioned on the next segment, if
+      # there is a next segment. Optionally, a `count` argument may be
+      # provided that indicates how many segments to advance.
+      #
       # @return [StateMachine]
       def next(count = 1)
+        unless count > 0
+          raise ArgumentError,
+            "count must be positive"
+        end
+
         active = @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
@@ -254,6 +302,7 @@ module Stupidedi
             end
           end
 
+          # Synchronize the two parallel state and value nodes
           unless value.eql?(state.node.zipper)
             state = state.replace(state.node.copy(:zipper => value))
           end
@@ -264,8 +313,17 @@ module Stupidedi
         Either.success(StateMachine.new(@config, active))
       end
 
+      # Returns a new `StateMachine` positioned on the previous segment, if
+      # there is a previous segment. Optionally, a `count` argument may be
+      # provided that indicates how many segments to rewind.
+      #
       # @return [Either<StateMachine>]
       def prev(count = 1)
+        unless count > 0
+          raise ArgumentError,
+            "count must be positive"
+        end
+
         active = @active.map do |zipper|
           state = zipper
           value = zipper.node.zipper
@@ -289,6 +347,7 @@ module Stupidedi
             end
           end
 
+          # Synchronize the two parallel state and value nodes
           unless value.eql?(state.node.zipper)
             state = state.replace(state.node.copy(:zipper => value))
           end
@@ -299,11 +358,27 @@ module Stupidedi
         Either.success(StateMachine.new(@config, active))
       end
 
+      # Returns a `StateMachine` positioned on the next matching segment,
+      # excluding {InvalidSegmentVal}s, that satisfies the given element
+      # constraints. The search space is limited to certain related elements
+      # described in [Navigating.md]
+      #
+      # @example
+      #   machine.find(:ST, nil, nil, "005010X222")
+      #
       # @return [Either<StateMachine>]
       def find(id, *elements)
         __find(false, id, *elements)
       end
 
+      # Returns a `StateMachine` positioned on the next matching segment,
+      # including {InvalidSegmentVal}s, that satisfies the given element
+      # constraints. The search space is limited to certain related elements
+      # described in [Navigating.md]
+      #
+      # @example
+      #   machine.find!(:ST, nil, nil, "005010X222")
+      #
       # @return [Either<StateMachine>]
       def find!(id, *elements)
         __find(true, id, *elements)
@@ -367,6 +442,7 @@ module Stupidedi
                     next if __filter?(filter_tok, _value.node)
                   end
 
+                  # Synchronize the two parallel state and value nodes
                   unless _value.eql?(_state.node.zipper)
                     _state = _state.replace(_state.node.copy(:zipper => _value))
                   end
@@ -374,9 +450,10 @@ module Stupidedi
                   matches << _state
                   matched  = true
                   break
-                elsif _value.node.invalid? and op.segment_id == _value.node.id
+                elsif invalid and _value.node.invalid?
                   next if __filter?(filter_tok, _value.node)
 
+                  # Synchronize the two parallel state and value nodes
                   unless _value.eql?(_state.node.zipper)
                     _state = _state.replace(_state.node.copy(:zipper => _value))
                   end
@@ -386,9 +463,9 @@ module Stupidedi
                   break
                 end
               elsif target.length > state.node.instructions.length
-                # The ancestor state isn't one of the rightward siblings, since
-                # the length of instruction tables is non-increasing as we move
-                # rightward
+                # The ancestor state can't be one of the rightward siblings,
+                # since the length of instruction tables is non-increasing as
+                # we move rightward
                 break
               end
             end
@@ -408,6 +485,8 @@ module Stupidedi
       # Returns true if the constraints modeled in `filter_tok` are not
       # satisfied by the given `segment_val`, otherwise returns false.
       def filter?(filter_tok, segment_val)
+        return true unless filter_tok.id == segment_val.id
+
         filter_tok.element_toks.zip(segment_val.children) do |f_tok, e_val|
           if f_tok.simple?
             return true unless f_tok.blank? or e_val == f_tok.value
@@ -425,6 +504,8 @@ module Stupidedi
       # Returns true if the constraints modeled in `filter_tok` are not
       # satisfied by the given `invalid_val`, otherwise returns false.
       def __filter?(filter_tok, invalid_val)
+        return true unless filter_tok.id == invalid_val.id
+
         children = invalid_val.segment_tok.element_toks
         filter_tok.element_toks.zip(children) do |f_tok, e_tok|
           if f_tok.simple?
@@ -441,7 +522,10 @@ module Stupidedi
         end
       end
 
-      # @return [Array<Zipper::AbstractCursor>]
+      # Returns the cursor positioned at the root of the parse tree linked
+      # from each state.
+      #
+      # @return [Array<Zipper::RootCursor>]
       def roots
         @active.map do |zipper|
           state = zipper
@@ -452,6 +536,7 @@ module Stupidedi
             state = state.up
           end
 
+          # Synchronize the two parallel state and value nodes
           unless value.eql?(state.node.zipper)
             state = state.replace(state.node.copy(:zipper => value))
           end
@@ -464,3 +549,4 @@ module Stupidedi
 
   end
 end
+
