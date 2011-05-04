@@ -36,6 +36,15 @@ module Stupidedi
         return true
       end
 
+      # @return [Integer]
+      def distance(other)
+        zipper.flatmap do |a|
+          other.zipper.map do |b|
+            a.between(b).count(&:segment?) - 1
+          end
+        end
+      end
+
       #
       #########################################################################
 
@@ -292,12 +301,24 @@ module Stupidedi
 
       # @return [Either<StateMachine>]
       def find(id, *elements)
+        __find(false, id, *elements)
+      end
+
+      # @return [Either<StateMachine>]
+      def find!(id, *elements)
+        __find(true, id, *elements)
+      end
+
+    private
+
+      # @return [Either<StateMachine>]
+      def __find(invalid, id, *elements)
         reachable = false
         matches   = []
 
         @active.each do |zipper|
-          segment_tok  = mksegment_tok(zipper.node.segment_dict, id, elements)
-          instructions = zipper.node.instructions.matches(segment_tok, true)
+          filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements)
+          instructions = zipper.node.instructions.matches(filter_tok, true)
           matched      = false
           reachable  ||= !instructions.empty?
 
@@ -335,7 +356,26 @@ module Stupidedi
                 end
 
                 if op.segment_use.nil? or op.segment_use.eql?(_value.node.usage)
-                  next if filter?(segment_tok, _value.node)
+                  # Note op.segment_use.nil? is true of ISA, GS, and ST, since
+                  # we don't know until we've deconstructed them and found the
+                  # version numbers. That means _value.node could be an invalid
+                  # ISA, GS, or ST segment
+                  if _value.node.valid?
+                    next if filter?(filter_tok, _value.node)
+                  else
+                    next unless invalid
+                    next if __filter?(filter_tok, _value.node)
+                  end
+
+                  unless _value.eql?(_state.node.zipper)
+                    _state = _state.replace(_state.node.copy(:zipper => _value))
+                  end
+
+                  matches << _state
+                  matched  = true
+                  break
+                elsif _value.node.invalid? and op.segment_id == _value.node.id
+                  next if __filter?(filter_tok, _value.node)
 
                   unless _value.eql?(_state.node.zipper)
                     _state = _state.replace(_state.node.copy(:zipper => _value))
@@ -365,15 +405,34 @@ module Stupidedi
         end
       end
 
-    private
-
-      def filter?(segment_tok, segment_val)
-        segment_tok.element_toks.zip(segment_val.children) do |e_tok, e_val|
-          if e_tok.simple?
-            return true unless e_tok.blank? or e_val == e_tok.value
-          elsif e_tok.composite?
-            e_tok.component_toks.zip(e_val.children) do |c_tok, c_val|
+      # Returns true if the constraints modeled in `filter_tok` are not
+      # satisfied by the given `segment_val`, otherwise returns false.
+      def filter?(filter_tok, segment_val)
+        filter_tok.element_toks.zip(segment_val.children) do |f_tok, e_val|
+          if f_tok.simple?
+            return true unless f_tok.blank? or e_val == f_tok.value
+          elsif f_tok.composite?
+            f_tok.component_toks.zip(e_val.children) do |c_tok, c_val|
               return true unless c_tok.blank? or c_val == c_tok.value
+            end
+          else
+            raise Exceptions::ParseError,
+              "only simple and component elements can be filtered"
+          end
+        end
+      end
+
+      # Returns true if the constraints modeled in `filter_tok` are not
+      # satisfied by the given `invalid_val`, otherwise returns false.
+      def __filter?(filter_tok, invalid_val)
+        children = invalid_val.segment_tok.element_toks
+        filter_tok.element_toks.zip(children) do |f_tok, e_tok|
+          if f_tok.simple?
+            return true unless f_tok.blank? or f_tok.value == e_tok.value
+          elsif f_tok.composite?
+            children = e_tok.component_toks
+            f_tok.component_toks.zip(children) do |f_com, e_com|
+              return true unless f_com.blank? or f_com.value == e_com.value
             end
           else
             raise Exceptions::ParseError,

@@ -1,11 +1,6 @@
 module Stupidedi
   module Editor
 
-    #
-    # Generates TA1, IK502, and AK905 results
-    #
-    # @see 
-    #
     class EnvelopeEd < AbstractEd
 
       declare :ISA01, :ISA02, :ISA03, :ISA04, :ISA05, :ISA06,
@@ -32,17 +27,38 @@ module Stupidedi
       # @return [ResultSet]
       def validate(isa, received = Time.now.utc)
         # 000: No error
+
         # 002: This Standard as Noted in the Control Standards Identifier is Not Supported
+        #   Check for InvalidEnvelope
+
         # 003: This Version of the Controls is Not Supported
+        #   Check for InvalidEnvelope
+
         # 004: The Segment Terminator is Invalid
+        #   We couldn't have produced a parse tree, StreamReader#next_segment
+        #   would have returned an Either.failure<Result.failure>
+
         # 009: Unknown Interchange Receiver ID
+        #   This isn't for Stupidedi to decide
+
         # 016: Invalid Interchange Standards Identifier Value
+        #   Check for InvalidEnvelope
+
         # 022: Invalid Control Characters
+        #   What does this mean? TokenReader ignores control characters anyway,
+        #   so there will be no evidence of this in the parse tree
+
         # 025: Duplicate Interchange Control Numbers
+        #   Need to validate the parent, TransmissionVal
+
         # 028: Invalid Date in Deferred Delivery Request
         # 029: Invalid Time in Deferred Delivery Request
         # 030: Invalid Delivery Time Code in Deferred Delivery Request
         # 031: Invalid Grade of Service
+        #   It seems these elements should not be sent to a trading partner,
+        #   they are used internally to schedule a delivery. Not sure what to do
+        #   about validating them in a general way...
+
         edit_isa(isa, received, ResultSet.new)
       end
 
@@ -251,14 +267,14 @@ module Stupidedi
           m = m.flatmap do |m|
             edit_gs(m, received, acc)
 
-            m.element(6).each{|e| gs06s[e.node.to_s] << e }
+            m.element(6).tap{|e| gs06s[e.node.to_s] << e }
             m.find(:GS)
           end
         end
 
         edit(:GS) do
           if gs06s.blank?
-            isa.segment.each{|s| acc.ta105(s, "R", "024", "missing GS segment") }
+            isa.segment.tap{|s| acc.ta105(s, "R", "024", "missing GS segment") }
           end
         end
 
@@ -276,7 +292,7 @@ module Stupidedi
 
         edit(:IEA) do
           unless iea.defined?
-            isa.segment.each{|s| acc.ta105(s, "023", "missing IEA segment") }
+            isa.segment.tap{|s| acc.ta105(s, "023", "missing IEA segment") }
           end
         end
 
@@ -412,14 +428,14 @@ module Stupidedi
           m = m.flatmap do |m|
             edit_st(m, acc)
 
-            m.element(2).each{|e| st02s[e.node.to_s] << e }
+            m.element(2).tap{|e| st02s[e.node.to_s] << e }
             m.find(:ST)
           end
         end
 
         edit(:ST) do
           if st02s.empty?
-            gs.segment.each{|s| acc.ik502(s, "R", "1", "missing ST segment") }
+            gs.segment.tap{|s| acc.ik502(s, "R", "1", "missing ST segment") }
           end
         end
 
@@ -436,7 +452,7 @@ module Stupidedi
 
         edit(:GE) do
           unless ge.defined?
-            gs.segment.each{|s| acc.ak905(s, "R", "3", "missing GE segment") }
+            gs.segment.tap{|s| acc.ak905(s, "R", "3", "missing GE segment") }
           end
         end
 
@@ -468,20 +484,58 @@ module Stupidedi
       end
 
       def edit_st(st, acc)
+        # Note that ST is assumed to be the first segment in the transaction,
+        # and while it's considered part of an envelope, each transaction set
+        # definition can place different constraints on the ST and SE segments.
+        #
+        # This is why we have to check usage.required? and usage.forbidden? for
+        # each element -- it depends on the transaction set definition.
+
+        # Transaction Set Identifier Code
         edit(:ST01) do
           st.element(1).tap do |e|
             if e.node.blank?
-              acc.ik502(e, "R", "6", "must be present")
-            elsif e.node != "837"
-              acc.ik502(e, "R", "6", "must be '837'")
+              if e.node.usage.required?
+                acc.ik502(e, "R", "6", "must be present")
+              end
+            elsif e.node.usage.forbidden?
+              acc.ik502(e, "R", "6", "must not be present")
+            elsif e.node.invalid?
+              acc.ik502(e, "R", "6", "is not a valid identifier")
+            elsif e.node.usage.allowed_values.include?(e.node)
+              acc.ik502(e, "R", "6", "is not an allowed value")
             end
           end
         end
 
+        # Transaction Set Control Number
         edit(:ST02) do
           st.element(2).tap do |e|
             if e.node.blank?
-              acc.ik502(e, "R", "7", "must be present")
+              if e.node.usage.required?
+                acc.ik502(e, "R", "7", "must be present")
+              elsif e.node.usage.forbidden?
+                acc.ik502(e, "R", "7", "must not be present")
+              elsif e.node.invalid?
+                acc.ik502(e, "R", "7", "is not a valid string")
+              end
+            end
+          end
+        end
+
+        # Implementation Convention Reference
+        edit(:ST03) do
+          st.element(3).tap do |e|
+            if e.node.blank?
+              if e.node.usage.required?
+                acc.ik502(e, "R", "I6", "must be present")
+              end
+            elsif e.node.usage.forbidden?
+              acc.ik502(e, "R", "I6", "must not be present")
+            elsif e.node.invalid?
+              acc.ik502(e, "R", "I6", "is not a valid string")
+            elsif e.node.usage.allowed_values.include?(e.node)
+              acc.ik502(e, "R", "I6", "is not an allowed value")
             end
           end
         end
@@ -489,23 +543,29 @@ module Stupidedi
         se = st.find(:SE)
 
         edit(:SE) do
+          # It seems reasonable enough to assume that SE is a required segment,
+          # otherwise it's most likely to be defined incorrectly.
           unless se.defined?
-            st.segment.each{|s| acc.ik502(s, "R", "2", "missing SE segment") }
+            st.segment.tap{|s| acc.ik502(s, "R", "2", "missing SE segment") }
           end
         end
 
         edit(:SE01) do
           se.flatmap{|x| x.element(1) }.tap do |e|
             if e.node.empty?
-              acc.ik502(e, "R", "4", "must be present")
+              if e.node.usage.required?
+                acc.ik502(e, "R", "4", "must be present")
+              end
+            elsif e.node.usage.forbidden?
+              acc.ik502(e, "R", "4", "must not be present")
             elsif e.node.invalid?
               acc.ik502(e, "R", "4", "must be numeric")
             else
-            # st.distance(:SE).tap do |d|
-            #   unless e.node == d + 1
-            #     ak502(e, "R", "4", "must equal the transaction segment count")
-            #   end
-            # end
+              st.tap{|a| se.tap{|b| a.distance(b) }}.tap do |d|
+                unless e.node == d + 1
+                  ak502(e, "R", "4", "must equal the transaction segment count")
+                end
+              end
             end
           end
         end
@@ -513,12 +573,16 @@ module Stupidedi
         edit(:SE02) do
           se.flatmap{|x| x.element(2) }.tap do |e|
             if e.node.empty?
-              acc.ik502(e, "R", "3", "must be present")
+              if e.node.usage.required?
+                acc.ik502(e, "R", "3", "must be present")
+              end
+            elsif e.node.usage.forbidden?
+              acc.ik502(e, "R", "3", "must not be present")
+            elsif e.node.invalid?
+              acc.ik502(e, "R", "3", "is not a valid string")
             else
-              st.element(2).tap do |f|
-                if e.node != f.node
-                  acc.ik502(e, "R", "3", "must equal transaction header control number")
-                end
+              st.element(2).reject{|f| f.node == e.node }.tap do
+                acc.ik502(e, "R", "3", "must equal transaction header control number")
               end
             end
           end

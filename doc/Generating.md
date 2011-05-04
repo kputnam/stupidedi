@@ -39,7 +39,7 @@ and ensure well-formedness. The configuration below links interchange version
     end
 
     # Instantiate a new BuilderDsl
-    b = Stupidedi::Builder::BuilderDsl.new(config)
+    b = Stupidedi::Builder::BuilderDsl.build(config)
 
 [`InterchangeDef`][2] specifies which segments can occur directly in the
 interchange envelope (e.g. `ISA` and `ISE`), the order in which they can occur,

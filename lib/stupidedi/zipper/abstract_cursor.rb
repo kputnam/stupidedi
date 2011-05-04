@@ -34,16 +34,13 @@ module Stupidedi
       abstract :root?
 
       # Returns nodes between this zipper and the other, including `self.node`
-      # and `other.node` as end-points. The nodes are not returned in a
-      # particular order. Both `self` and `other` must, and are assumed to,
-      # belong to the same tree.
+      # and `other.node` as end points. When this and the other zipper point to
+      # the same node within the tree, a single node is returned. Otherwise, the
+      # nodes are returned in order according to a left-to-right depth-first
+      # pre-order traversal.
       #
       # @return [Array]
       def between(other)
-        if path == other.path
-          return node, node
-        end
-
         # Collect ancestors of self, sorted oldest first (deepest last). This
         # forms a boundary of nodes, which is called a "spine" below
         zipper = self
@@ -75,7 +72,6 @@ module Stupidedi
           end
         end
 
-
         if lspine.empty?
           # The other node is a child of self's node, and rspine contains all
           # the nodes along the path between the two nodes, not including the
@@ -100,18 +96,13 @@ module Stupidedi
         # Starting at the bottom of the left spine working upward, accumulate
         # all the nodes to the right of the spine. Remember this is contained
         # within the subtree under lspine.head
+        lspine.each{|z| between << z.node }
         lspine.tail.reverse.each do |zipper|
-          between << zipper.node
           until zipper.last?
             zipper = zipper.next
             between.concat(zipper.flatten)
           end
         end
-
-        # The uppermost node along the right spine. We've already partitioned
-        # its subtree (truncated at the appropriate depth) and added the nodes
-        # to the left of the spine.
-        between << lspine.head.node
 
         # For the sibling nodes directly between (not including) lspine.head
         # and rspine.head, we can accumulate the entire subtrees.

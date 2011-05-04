@@ -16,7 +16,11 @@ module Stupidedi
           class StringVal < Values::SimpleElementVal
 
             #
-            #
+            # Objects passed to StringVal.value that don't respond to #to_s are
+            # modeled by this class. Note most everything in Ruby responds to
+            # that method, including things that really shouldn't be considered
+            # StringVals (like Array or Class), so other validation should be
+            # performed on StringVal::NonEmpty values.
             #
             class Invalid < StringVal
 

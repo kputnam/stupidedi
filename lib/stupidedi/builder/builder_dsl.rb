@@ -11,8 +11,8 @@ module Stupidedi
       # @return [StateMachine]
       attr_reader :machine
 
-      def initialize(config)
-        @machine = StateMachine.build(config)
+      def initialize(machine)
+        @machine = machine
         @reader  = DslReader.new(Reader::Separators.empty,
                                  Reader::SegmentDict.empty)
       end
@@ -62,6 +62,14 @@ module Stupidedi
 
       # @endgroup
       #########################################################################
+    end
+
+    class << BuilderDsl
+
+      # @return [BuilderDsl]
+      def build(config)
+        new(StateMachine.build(config))
+      end
     end
 
     # @private
