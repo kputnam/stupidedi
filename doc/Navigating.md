@@ -234,7 +234,7 @@ Segments connected directly by a horizontal dashed black line are siblings and
 are reachable using [`#find`][14]. For instance, from the third `NM1`, the `N3`,
 `N4`, and `REF` segments are reachable.
 
-    # From 2000AA NM1 right one segment to N3
+    # From 2010AA NM1 right one segment to N3
     machine.find(:N3)
       #=> Either.success(StateMachine[1](N3(...)))
 
@@ -307,7 +307,7 @@ Segments that occurr as the _first_ child of a sibling of the parent node are
 cousins of the current segment. Similar to the restriction on nephew segments,
 siblings that follow the first child are _not_ directly reachable. For example,
 the second `NM1` is a cousin of the first `NM1` and `PER` segments, the 2000AB
-`NM1` is a cousin of all segments in Loop 2000AA, and each `HL` is a cousin of
+`NM1` is a cousin of all segments in Loop 2010AA, and each `HL` is a cousin of
 all segments in Table 1.
 
     # From 1000A PER to 2000A HL
