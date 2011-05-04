@@ -40,96 +40,122 @@ module Stupidedi
       #
       # @return [Array]
       def between(other)
+        if path == other.path
+          return node, node
+        end
 
-        # Collect ancestors of other, sorted oldest first (deepest last)
-        zipper    = other
-        ancestors = [other]
+        # Collect ancestors of self, sorted oldest first (deepest last). This
+        # forms a boundary of nodes, which is called a "spine" below
+        zipper = self
+        lspine = [self]
 
         until zipper.root?
           zipper = zipper.up
-          ancestors.unshift(zipper)
+          lspine.unshift(zipper)
         end
 
-        # Collect ancestors of self, sorted oldest first (deepest last)
-        zipper    = self
-        bncestors = [self]
+        # Collect ancestors of self, sorted oldest first (deepest last). This
+        # forms a list of boundary nodes, which is called a "spine" below
+        zipper = other
+        rspine = [other]
 
         until zipper.root?
           zipper = zipper.up
-          bncestors.unshift(zipper)
+          rspine.unshift(zipper)
         end
 
-        # This is a root node. We could check that self and the given other
-        # belong to the same tree by comparing their roots -- unfortunately,
-        # this requires comparing each node in the entire tree.
-        common = zipper
-
-        # Remove the common prefix in the paths to self and other, and keep
-        # track of the youngest common ancestor.
-        while a = ancestors.first and b = bncestors.first
+        # Now we have two spines, both beginning with the root node. We remove
+        # the prefix common to both spines.
+        while a = lspine.first and b = rspine.first
           if a.path == b.path
-            common = a # This is the next youngest ancestor
-
-            ancestors.shift
-            bncestors.shift
+            lspine.shift
+            rspine.shift
           else
             break
           end
         end
 
-        if ancestors.empty?
-          return self.cons(bncestors).map(&:node)
-        elsif bncestors.empty?
-          return other.cons(ancestors).map(&:node)
-        elsif ancestors.head.path.position > bncestors.head.path.position
-          # Arrange so ancestors is the left path and bncestors is the right
-          ancestors, bncestors = bncestors, ancestors
+
+        if lspine.empty?
+          # The other node is a child of self's node, and rspine contains all
+          # the nodes along the path between the two nodes, not including the
+          # self node.
+          return node.cons(rspine.map(&:node))
+
+        elsif rspine.empty?
+          # Self's node is a child of other's node, and lspine contains all
+          # the nodes along the path between the two nodes, not including the
+          # other node
+          return other.node.cons(lspine.map(&:node))
+
+        elsif lspine.head.path.position > rspine.head.path.position
+          # The first elements of lspine and rspine are siblings that share a
+          # common parent. Arrange them such that lspine is on the left, and
+          # so rspine is on the right
+          lspine, rspine = rspine, lspine
         end
 
-        # Accumulate the nodes between `common` and the left node (which is self
-        # or other), but only those to the right of the left node.
-        between = [ancestors.head.node]
-        ancestors.tail.each do |zipper|
-          between << zipper.node
+        between = []
 
+        # Starting at the bottom of the left spine working upward, accumulate
+        # all the nodes to the right of the spine. Remember this is contained
+        # within the subtree under lspine.head
+        lspine.tail.reverse.each do |zipper|
+          between << zipper.node
           until zipper.last?
             zipper = zipper.next
             between.concat(zipper.flatten)
           end
         end
 
-        # Accumulate the nodes in the siblings directly between self and other.
-        zipper = ancestors.head
-        (bncestors.head.path.position - zipper.path.position - 1).times do
+        # The uppermost node along the right spine. We've already partitioned
+        # its subtree (truncated at the appropriate depth) and added the nodes
+        # to the left of the spine.
+        between << lspine.head.node
+
+        # For the sibling nodes directly between (not including) lspine.head
+        # and rspine.head, we can accumulate the entire subtrees.
+        count  = rspine.head.path.position - lspine.head.path.position - 1
+        zipper = lspine.head
+
+        count.times do
           zipper = zipper.next
           between.concat(zipper.flatten)
         end
 
-        # Accumulate the nodes between `common` and the right node (which is
-        # self or other), but only those to the left of the right node.
-        between << bncestors.head.node
-        bncestors.tail.each do |zipper|
-          between << zipper.node
+        between << rspine.head.node
 
-          until zipper.first?
-            zipper = zipper.prev
+        rspine.tail.each do |zipper|
+          count  = zipper.path.position
+          zipper = zipper.first
+
+          # We have to do a bit more work to traverse the siblings in left-to-
+          # right order, because `zipper` is now the left spine. We start on
+          # the first sibling and move left a fixed number of times
+          count.times do
             between.concat(zipper.flatten)
+            zipper = zipper.next
           end
+
+          # Now zipper is along the left spine. We don't expand it here, but the
+          # next item in rspine is the next child along the left spine
+          between << zipper.node
         end
 
         between
       end
 
-      # Flattens all nodes in the subtree into an Array
+      # Flattens the subtree into an Array of nodes. The nodes are arranged
+      # according to a depth-first left-to-right preorder traversal.
       #
       # @return [Array]
       def flatten
         nodes = []
         queue = [node]
 
-        while node = queue.pop
+        while node = queue.shift
           nodes << node
-          queue.concat(node.children) unless node.leaf?
+          queue.unshift(*node.children) unless node.leaf?
         end
 
         nodes
