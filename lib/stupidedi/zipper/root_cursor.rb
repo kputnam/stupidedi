@@ -44,7 +44,7 @@ module Stupidedi
 
       # @group Traversing the Tree
       #########################################################################
-      
+
       # (see AbstractCursor#first)
       def first
         self

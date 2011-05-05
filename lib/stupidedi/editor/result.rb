@@ -11,7 +11,7 @@ module Stupidedi
 
       # @return [String]
       attr_reader :code
-      
+
       # @return [String]
       attr_reader :reason
 

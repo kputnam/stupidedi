@@ -330,7 +330,7 @@ module Stupidedi
               editor.new(config, received).validate(gs, acc)
             end
           else
-            # Probably "unknown interchange version '...'" 
+            # Probably "unknown interchange version '...'"
             acc.ak905(x, "R", "2", x.node.reason)
           end
         end

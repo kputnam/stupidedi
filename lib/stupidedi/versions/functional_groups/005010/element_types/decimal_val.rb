@@ -4,7 +4,7 @@ module Stupidedi
       module FiftyTen
         module ElementTypes
 
-          # 
+          #
           class R < SimpleElementDef
             def companion
               DecimalVal
