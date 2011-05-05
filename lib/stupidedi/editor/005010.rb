@@ -53,8 +53,6 @@ module Stupidedi
               end
             elsif e.node.usage.forbidden?
               acc.ak905(e, "R", "14", "must not be present")
-          # elsif not e.node.length.between?(2, 15)
-          #   acc.ak905(e, "R", "14", "must have 2-15 characters")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ak905(e, "R", "14", "is not a valid string")
             end
@@ -66,8 +64,6 @@ module Stupidedi
           gs.element(3).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "13", "must be present")
-          # elsif not e.node.length.between?(2, 15)
-          #   acc.ak905(e, "R", "13", "must have 2-15 characters")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ak905(e, "R", "13", "is not a valid string")
             end
@@ -81,7 +77,7 @@ module Stupidedi
               acc.ta105(e, "R", "024", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "024", "is not a valid date")
-            elsif e.node > received.send(:to_date)
+            elsif e.node > received.utc.send(:to_date)
               acc.ta105(e, "R", "024", "must not be a future date")
             end
           end
@@ -96,7 +92,7 @@ module Stupidedi
               acc.ta105(e, "R", "024", "is not a valid time")
             else
               gs.element(4).reject{|f| f.node.invalid? }.tap do |f|
-                if e.node.to_time(f.node) > received
+                if e.node.to_time(f.node) > received.utc
                   acc.ta105(e, "R", "024", "must not be a future date")
                 end
               end
@@ -123,10 +119,11 @@ module Stupidedi
         edit(:GS07) do
           gs.element(7).tap do |e|
             if e.node.blank?
+              acc.ta105(e, "R", "024", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "024", "is not a valid string")
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "024", "has an invalid value")
+              acc.ta105(e, "R", "024", "is not an allowed value")
             end
           end
         end
@@ -136,20 +133,18 @@ module Stupidedi
           gs.element(8).tap do |e|
             if e.node.blank?
               acc.ak905(e, "R", "2", "must be present")
-            else
-              # @todo: The allowed value depends on the child transaction set
             end
           end
         end
 
-        m, st02s = gs.find!(:ST), Hash.new{|h,k| h[k] = [] }
+        st, st02s = gs.find!(:ST), Hash.new{|h,k| h[k] = [] }
         # Collect all the ST02 elements within this functional group
-        while m.defined?
-          m = m.flatmap do |m|
-            edit_st(m, acc)
+        while st.defined?
+          st = st.flatmap do |st|
+            edit_st(st, acc)
 
-            m.element(2).tap{|e| st02s[e.node.to_s] << e }
-            m.find!(:ST)
+            st.element(2).tap{|e| st02s[e.node.to_s] << e }
+            st.find!(:ST)
           end
         end
 
@@ -168,22 +163,24 @@ module Stupidedi
           end
         end
 
-        ge = gs.find(:GE)
-
         edit(:GE) do
-          unless ge.defined?
+          gs.find(:GE).tap do |ge|
+            edit_ge(ge, gs, st02s.length, acc)
+          end.explain do
             gs.segment.tap{|s| acc.ak905(s, "R", "3", "missing GE segment") }
           end
         end
+      end
 
+      def edit_ge(ge, gs, st_count, acc)
         # Number of Transaction Sets Included
         edit(:GE01) do
-          ge.flatmap{|x| x.element(1) }.tap do |e|
+          ge.element(1).tap do |e|
             if e.node.empty?
               acc.ak905(e, "R", "5", "must be present")
             elsif e.node.invalid?
               acc.ak905(e, "R", "5", "must be numeric")
-            elsif e.node != st02s.length
+            elsif e.node != st_count
               acc.ak905(e, "R", "5", "must equal the number of transactions")
             end
           end
@@ -191,7 +188,7 @@ module Stupidedi
 
         # Group Control Number
         edit(:GE02) do
-          ge.flatmap{|x| x.element(2) }.tap do |e|
+          ge.element(2).tap do |e|
             if e.node.empty?
               acc.ak905(e, "R", "4", "must be present")
             else
@@ -206,24 +203,15 @@ module Stupidedi
       def edit_st(st, acc)
         st.segment.tap do |x|
           unless x.node.invalid?
-            envelope_def = x.node.definition.parent.parent.parent
-
-            if config.editor.defined_at?(envelope_def)
-              editor = config.editor.at(envelope_def)
-              editor.new(config, received).validate(st, acc)
-            end
+            # Invoke a general transaction set editor, which will later
+            # dispatch to a guide-specific transaction set editor
+            editor = TransactionSetEd.new(config, received)
+            editor.validate(st, acc)
           else
             acc.ik502(x, "R", "I6", x.node.reason)
             return
           end
         end
-
-        # Note that ST is assumed to be the first segment in the transaction,
-        # and while it's considered part of an envelope, each transaction set
-        # definition can place different constraints on the ST and SE segments.
-        #
-        # This is why we have to check usage.required? and usage.forbidden? for
-        # each element -- it depends on the transaction set definition.
 
         # Transaction Set Identifier Code
         edit(:ST01) do
@@ -274,18 +262,19 @@ module Stupidedi
           end
         end
 
-        se = st.find(:SE)
-
         edit(:SE) do
-          # It seems reasonable enough to assume that SE is a required segment,
-          # otherwise it's most likely to be defined incorrectly.
-          unless se.defined?
+          st.find(:SE).tap do |se|
+            edit_se(se, st, acc)
+          end.explain do
             st.segment.tap{|s| acc.ik502(s, "R", "2", "missing SE segment") }
           end
         end
+      end
 
+      def edit_se(se, st, acc)
+        # Number of Included Segments
         edit(:SE01) do
-          se.flatmap{|x| x.element(1) }.tap do |e|
+          se.element(1).tap do |e|
             if e.node.empty?
               if e.node.usage.required?
                 acc.ik502(e, "R", "4", "must be present")
@@ -295,7 +284,7 @@ module Stupidedi
             elsif e.node.invalid?
               acc.ik502(e, "R", "4", "must be numeric")
             else
-              se.flatmap{|x| st.distance(x) }.tap do |d|
+              st.distance(se).tap do |d|
                 unless e.node == d + 1
                   acc.ik502(e, "R", "4", "must equal the transaction segment count")
                 end
@@ -304,8 +293,9 @@ module Stupidedi
           end
         end
 
+        # Transaction Set Control Number
         edit(:SE02) do
-          se.flatmap{|x| x.element(2) }.tap do |e|
+          se.element(2).tap do |e|
             if e.node.empty?
               if e.node.usage.required?
                 acc.ik502(e, "R", "3", "must be present")

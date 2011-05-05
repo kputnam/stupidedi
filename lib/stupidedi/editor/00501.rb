@@ -2,9 +2,9 @@ module Stupidedi
   module Editor
 
     #
-    # Validates (edits) interchanges (ISA/IEA) with version "00501", then selects
-    # the appropriate editor, according to the config, and edits each functional
-    # group (GS/GE)
+    # Validates (edits) interchanges (ISA/IEA) with version "00501", then
+    # selects the appropriate editor, according to the config, and edits
+    # each functional group (GS/GE)
     #
     class FiveOhOneEd < AbstractEd
 
@@ -21,13 +21,6 @@ module Stupidedi
 
       # @return [ResultSet]
       def validate(isa, acc)
-        isa.segment.tap do |s|
-          unless s.node.definition.id == :ISA
-            raise ArgumentError,
-              "expecting an ISA segment"
-          end
-        end
-
         # 000: No error
 
         # 002: This Standard as Noted in the Control Standards Identifier is Not Supported
@@ -72,9 +65,8 @@ module Stupidedi
           isa.element(1).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "010", "must be present")
-          # elsif not %w(00 03).include?(e.node)
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "010", "has an invalid value")
+              acc.ta105(e, "R", "010", "is not an allowed value")
             end
           end
         end
@@ -84,8 +76,6 @@ module Stupidedi
           isa.element(2).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "011", "must be present")
-          # elsif e.node.length != 10
-          #   acc.ta105(e, "R", "011", "must have exactly 10 characters")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ta105(e, "R", "011", "is not a valid string")
             end
@@ -97,9 +87,8 @@ module Stupidedi
           isa.element(3).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "012", "must be present")
-          # elsif not %w(00 01).include?(e.node)
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "012", "has an invalid value")
+              acc.ta105(e, "R", "012", "is not an allowed value")
             end
           end
         end
@@ -109,8 +98,6 @@ module Stupidedi
           isa.element(4).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "013", "must be present")
-          # elsif e.node.length != 10
-          #   acc.ta105(e, "R", "013", "must have exactly 10 characters")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ta105(e, "R", "013", "is not a valid string")
             end
@@ -122,9 +109,8 @@ module Stupidedi
           isa.element(5).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "005", "must be present")
-          # elsif not %w(27 28 ZZ).include?(e.node)
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "005", "has an invalid value")
+              acc.ta105(e, "R", "005", "is not an allowed value")
             end
           end
         end
@@ -145,9 +131,8 @@ module Stupidedi
           isa.element(7).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "007", "must be present")
-          # elsif not %w(27 28 ZZ).include?(e.node)
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "007", "has an invalid value")
+              acc.ta105(e, "R", "007", "is not an allowed value")
             end
           end
         end
@@ -157,8 +142,6 @@ module Stupidedi
           isa.element(8).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "008", "must be present")
-          # elsif e.node.length != 15
-          #   acc.ta105(e, "R", "008", "must have exactly 15 characters")
             end
           end
         end
@@ -172,12 +155,12 @@ module Stupidedi
               acc.ta105(e, "R", "014", "is not a valid date")
             else
               # Convert to a proper 4-digit year, by making the assumption
-              # that the date is less than 20 years old. Note we have to use
+              # that the date is less than 30 years old. Note we have to use
               # Object#send to work around an incorrectly declared private
               # method that wasn't fixed until after Ruby 1.8
               date = e.node.oldest(received.send(:to_date) << 12*30)
 
-              if date > received.send(:to_date)
+              if date > received.utc.send(:to_date)
                 acc.ta105(e, "R", "014", "must not be a future date")
               end
             end
@@ -195,7 +178,7 @@ module Stupidedi
               isa.element(9).reject{|f| f.node.invalid? }.tap do |f|
                 date = f.node.oldest(received.send(:to_date) << 12*30)
 
-                if e.node.to_time(date) > received
+                if e.node.to_time(date) > received.utc
                   acc.ta105(e, "R", "015", "must not be a future time")
                 end
               end
@@ -208,8 +191,6 @@ module Stupidedi
           isa.element(11).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "026", "must be present")
-          # elsif e.node.length != 1
-          #   acc.ta105(e, "R", "026", "must have exactly 1 character")
             end
           end
         end
@@ -219,9 +200,6 @@ module Stupidedi
           isa.element(12).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "017", "must be present")
-          # elsif e.node != "00501"
-          #   # @todo: These ISA and IEA edits are all 00501-specific
-          #   acc.ta105(e, "R", "017", "must be '00501'")
             end
           end
         end
@@ -235,8 +213,6 @@ module Stupidedi
               acc.ta105(e, "R", "018", "must be numeric")
             elsif e.node <= 0
               acc.ta105(e, "R", "018", "must be positive")
-          # elsif e.node.length != 9
-          #   acc.ta105(e, "R", "018", "must have exactly 9 characters")
             end
           end
         end
@@ -246,9 +222,8 @@ module Stupidedi
           isa.element(14).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "019", "must be present")
-          # elsif not %w(0 1).include?(e.node)
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "019", "has an invalid value")
+              acc.ta105(e, "R", "019", "is not an allowed value")
             end
           end
         end
@@ -258,9 +233,8 @@ module Stupidedi
           isa.element(15).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "020", "must be present")
-          # elsif not %w(P T).include?(e.node)
             elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
-              acc.ta105(e, "R", "020", "has an invalid value")
+              acc.ta105(e, "R", "020", "is not an allowed value")
             end
           end
         end
@@ -285,50 +259,44 @@ module Stupidedi
         m, gs06s = isa.find!(:GS), Hash.new{|h,k| h[k] = [] }
         # Collect all the GS06 elements within this interchange
         while m.defined?
-          m = m.flatmap do |m|
-            edit_gs(m, acc)
+          m = m.flatmap do |gs|
+            edit_gs(gs, acc)
 
-            m.element(6).tap{|e| gs06s[e.node.to_s] << e }
-            m.find!(:GS)
-          end
-        end
-
-        # @todo: It's probably valid to send an interchange containing only TA1s
-        edit(:GS) do
-          if gs06s.blank?
-            isa.segment.tap{|s| acc.ta105(s, "R", "024", "missing GS segment") }
+            gs.element(6).tap{|e| gs06s[e.node.to_s] << e }
+            gs.find!(:GS)
           end
         end
 
         # Group Control Number
         edit(:GS06) do
-          gs06s.each do |number, es|
+          gs06s.each do |number, dupes|
             next if number.blank?
-            es.tail.each do |e|
+            dupes.tail.each do |e|
               acc.ak905(e, "R", "19", "must be unique within interchange")
             end
           end
         end
 
-        iea = isa.find(:IEA)
-
-        # @todo
-        # acc.ta105(s, "024", "only one IEA segment is allowed")
-
         edit(:IEA) do
-          unless iea.defined?
+          isa.find(:IEA).tap do |iea|
+            edit_iea(iea, isa, gs06s.length, acc)
+          end.explain do
             isa.segment.tap{|s| acc.ta105(s, "023", "missing IEA segment") }
           end
         end
+      end
+
+      def edit_iea(iea, isa, gs_count, acc)
+        # @todo: acc.ta105(s, "024", "only one IEA segment is allowed")
 
         # Number of Included Functional Groups
         edit(:IEA01) do
-          iea.flatmap{|x| x.element(1) }.tap do |e|
+          iea.element(1).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "021", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "021", "must be numeric")
-            elsif e.node != gs06s.length
+            elsif e.node != gs_count
               acc.ta105(e, "R", "021", "must equal the number of functional groups")
             end
           end
@@ -336,7 +304,7 @@ module Stupidedi
 
         # Interchange Control Number
         edit(:IEA02) do
-          iea.flatmap{|x| x.element(2) }.tap do |e|
+          iea.element(2).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "001", "must be present")
             else
@@ -348,16 +316,21 @@ module Stupidedi
         end
       end
 
+      #
+      # @see FiftyTenEd#validate
+      #
       def edit_gs(gs, acc)
         gs.segment.tap do |x|
           unless x.node.invalid?
             envelope_def = x.node.definition.parent.parent
 
+            # Invoke the version-specific functional group editor
             if config.editor.defined_at?(envelope_def)
               editor = config.editor.at(envelope_def)
               editor.new(config, received).validate(gs, acc)
             end
           else
+            # Probably "unknown interchange version '...'" 
             acc.ak905(x, "R", "2", x.node.reason)
           end
         end
