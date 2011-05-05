@@ -65,11 +65,16 @@ module Stupidedi
     end
 
     class << BuilderDsl
+      # @group Constructors
+      #########################################################################
 
       # @return [BuilderDsl]
       def build(config)
         new(StateMachine.build(config))
       end
+
+      # @endgroup
+      #########################################################################
     end
 
     # @private

@@ -13,11 +13,21 @@ validate the qualifier if one is given. In general, we want to know if a given
 pattern-matching token is guaranteed to match nothing. This should also include
 element length checks.
 
-Change Builder to start from an empty Envelope::TransactionSet (ST/SE), so the
+Allow Builder to start from an empty Envelope::TransactionSet (ST/SE), so the
 outer envelopes can be constructed independently. This will require some smarts
 to detect when the TransactionSetDef might use repetition separators because not
 all InterchangeDefs have support for it. This will also require a way to insert
 subtrees (safely, checking syntax) via the StateMachine.
+
+Enhance Generation#insert to do further validation when inserting segment behind
+another segment. This can probably be done by comparing A and B's instruction
+for C's segment token, where C is being inserted between A and B. The difficulty
+comes in doing this efficiently, as checking "am I the last segment?" before
+each segment could really hurt file reading performance, and converting the
+SegmentVal back into a SegmentTok just to lookup the instruction isn't optimal.
+
+Implement StateMachine#delete to remove the current segment, and possibly the
+dependent segments. This probably doesn't require validating the resulting tree.
 
 Fix the error handling with Reader::TokenReader so StateMachine can know when
 reading a segment failed due to EOF at an expected or unexpected boundary.

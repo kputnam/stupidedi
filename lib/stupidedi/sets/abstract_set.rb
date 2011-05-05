@@ -13,6 +13,11 @@ module Stupidedi
       # True if the set includes the given `object`
       abstract :include?, :args => %w(object)
 
+      # True if the set does not include the given `object`
+      def exclude?(object)
+        not include?(object)
+      end
+
       # True if {#size} `< Infinity`
       abstract :finite?
 

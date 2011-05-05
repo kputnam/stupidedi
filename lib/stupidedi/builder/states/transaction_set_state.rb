@@ -49,9 +49,18 @@ module Stupidedi
         # ST03: Implementation Convention Reference
         version = segment_tok.element_toks.at(2).try(:value)
 
+        # Fall back to GS08 if ST03 isn't available
         if version.blank? or version.is_a?(Symbol)
           # GS08: Version / Release / Industry Identifier Code
           version = parent.version
+        end
+
+        # Fall back to GS08 if version isn't recognized
+        unless config.transaction_set.defined_at?(version, fgcode, txcode)
+          if config.transaction_set.defined_at?(parent.version, fgcode, txcode)
+            # GS08: Version / Release / Industry Identifier Code
+            version = parent.version
+          end
         end
 
         unless config.transaction_set.defined_at?(version, fgcode, txcode)
