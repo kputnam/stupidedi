@@ -1,3 +1,23 @@
+BUGS
+-------------------------------------------------------------------------------
+Navigation#find doesn't find the SE segment from an 835 transaction if it is
+preceeded by PLB. This seems to indicate that in general, it doesn't correctly
+deal with tables that can begin with more than one segment (Table 3 can begin
+with PLB or SE).
+
+Navigation#find doesn't find next ISA segment when positioned on a preceeding
+ISA segment. Looking at the #successors, itlooks like a wrong instruction...
+it should be Instruction[ISA](pop: 1, push: InterchangeState). This is probably
+fixable in InterchangeState.push?
+
+[InstructionTable(
+    1: Instruction[ISB: Grade of Service..](pop: 0, drop: 1),
+    2: Instruction[ISE: Deferred Deliver..](pop: 0, drop: 2),
+    3: Instruction[TA1: Interchange Ackn..](pop: 0, drop: 2),
+    4: Instruction[ GS](pop: 0, drop: 3, push: FunctionalGroupState),
+    5: Instruction[IEA: Interchange Cont..](pop: 0, drop: 5),
+    6: Instruction[ISA](pop: 2, drop: 0, push: TransmissionState))]
+
 TODO
 -------------------------------------------------------------------------------
 Extend Builder::BuilderDsl to accept a "strict" flag that checks several things
