@@ -381,7 +381,8 @@ module Stupidedi
       def build(instructions)
         if instructions.length <= 1
           ConstraintTable::Stub.new(instructions)
-        elsif instructions.any?{|i| i.segment_use.nil? }
+        elsif instructions.any?{|i| i.segment_use.nil? } and
+          not instructions.all?{|i| i.segment_use.nil? }
           # When one of the instructions has a nil segment_use, it means
           # the SegmentUse is determined when pushing the new state. There
           # isn't a way to know the segment constraints from here.

@@ -392,9 +392,10 @@ module Stupidedi
         matches   = []
 
         @active.each do |zipper|
-          filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements)
-          instructions = zipper.node.instructions.matches(filter_tok, true)
           matched      = false
+          filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements)
+
+          instructions = zipper.node.instructions.matches(filter_tok, true)
           reachable  ||= !instructions.empty?
 
           instructions.each do |op|

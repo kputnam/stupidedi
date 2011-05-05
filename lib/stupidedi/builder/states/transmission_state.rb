@@ -43,7 +43,8 @@ module Stupidedi
         zipper = zipper.append_child new(
           parent.separators,
           parent.segment_dict,
-          parent.instructions.push([]),
+          parent.instructions.push([
+            Instruction.new(:ISA, nil, 0, 0, InterchangeState)]),
           parent.zipper.dangle.last,
           [])
 

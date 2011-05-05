@@ -36,7 +36,6 @@ parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 
 ARGV.each do |path|
-puts path
   File.open(path) do |io|
     parser, result = parser.read(Stupidedi::Reader.build(io))
   end
@@ -49,9 +48,7 @@ cursor = parser.first
 while cursor.defined?
   cursor = cursor.flatmap do |isa|
     pp envelope_ed.validate(isa).results
-    pp isa.successors
-
-    isa.find(:IEA).flatmap(&:next)
+    isa.find(:ISA)
   end
 end
 
