@@ -12,7 +12,8 @@ module Stupidedi
 
     autoload :AbstractEd,         "stupidedi/editor/abstract_ed"
     autoload :EnvelopeEd,         "stupidedi/editor/envelope_ed"
-    autoload :TransactionSetEd,   "stupidedi/editor/transaction_set_ed"
+    autoload :FiveOhOneEd,        "stupidedi/editor/envelope/00501"
+    autoload :FiftyTenEd,         "stupidedi/editor/envelope/005010"
 
     # TA1
     autoload :InterchangeAck,

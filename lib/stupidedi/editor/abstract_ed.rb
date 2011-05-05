@@ -4,23 +4,28 @@ module Stupidedi
     class AbstractEd
       include Inspect
 
+      # @return [Config]
       abstract :config
 
       def edit(id)
-        if config.enabled?(id)
+        if config.editor.enabled?(id)
+        # puts "#{self.class.name.split("::").last}.edit(#{id})"
           yield
         end
       end
 
       def rewrite(id)
-        if config.enabled?(id)
+        if config.editor.enabled?(id)
           yield
         end
       end
     end
 
     class << AbstractEd
-      def declare(*ids)
+      def edit(*args)
+      end
+
+      def rewrite(*args)
       end
     end
 

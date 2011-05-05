@@ -26,6 +26,9 @@ module Stupidedi
       def initialize(id, header_segment_uses, trailer_segment_uses)
         @id, @header_segment_uses, @trailer_segment_uses =
           id, header_segment_uses, trailer_segment_uses
+
+        @header_segment_uses  = header_segment_uses.map{|x| x.copy(:parent => self) }
+        @trailer_segment_uses = trailer_segment_uses.map{|x| x.copy(:parent => self) }
       end
 
       # @return [InterchangeDef]

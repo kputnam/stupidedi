@@ -19,6 +19,8 @@ module Stupidedi
     class FunctionalGroupConfig
       include Inspect
 
+      delegate :defined_at?, :to => :@table
+
       def initialize
         @table = Hash.new
       end
@@ -31,10 +33,6 @@ module Stupidedi
       # @return [FunctionalGroupDef]
       def at(version)
         @table[version].call
-      end
-
-      def defined_at?(version)
-        @table.defined_at?(version)
       end
 
       # @return [void]

@@ -128,7 +128,7 @@ module Stupidedi
               # @return [String]
               attr_reader :value
 
-              delegate :to_d, :to_s, :to_f, :length, :to => :@value
+              delegate :to_d, :to_s, :to_f, :length, :=~, :match, :to => :@value
 
               def initialize(string, usage)
                 @value = string
@@ -172,6 +172,21 @@ module Stupidedi
 
               def extended?
                 Reader.has_extended_characters?(@value)
+              end
+
+              # @return [StringVal::NonEmpty]
+              def gsub(*args, &block)
+                copy(:value => @value.gsub(*args, &block))
+              end
+
+              # @return [StringVal::NonEmpty]
+              def upcase
+                copy(:value => @value.upcase)
+              end
+
+              # @return [StringVal::NonEmpty]
+              def downcase
+                copy(:value => @value.downcase)
               end
 
               # @return [Boolean]
