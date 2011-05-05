@@ -1,5 +1,10 @@
 TODO
 -------------------------------------------------------------------------------
+Extend Builder::BuilderDsl to accept a "strict" flag that checks several things
+that would get re-checked by an editor, but does so as the segment is generated
+and raises an exception. These validations go beyond what the StateMachine does,
+and must be kept separate to ensure parsing an input stream isn't hamstrung with
+overly aggressive validation.
 
 Implement an automated FA999 Functional Acknowledgement generator that accepts
 any FunctionalGroupVal as input. This will be useful for writing integration
