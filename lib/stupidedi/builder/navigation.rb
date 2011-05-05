@@ -94,14 +94,21 @@ module Stupidedi
       # @return [Either<Zipper::AbstractCUrsor<Values::AbstractElementVal>>]
       def element(m, n = nil, o = nil)
         segment.flatmap do |s|
-          designator = s.node.id.to_s
-          definition = s.node.definition
-          length     = definition.element_uses.length
-
           unless m >= 1
             raise ArgumentError,
               "argument must be positive"
           end
+
+          if s.node.invalid?
+            # InvalidSegmentVal doesn't have child AbstractElementVals, its
+            # children are SimpleElementTok, CompositeElementTok, etc, which
+            # are not parsed values.
+            return Either.failure("invalid segment")
+          end
+
+          designator = s.node.id.to_s
+          definition = s.node.definition
+          length     = definition.element_uses.length
 
           unless m <= length
             raise ArgumentError,
@@ -177,7 +184,7 @@ module Stupidedi
             state = state.down
           end
 
-          if value.leaf?
+          unless value.node.segment?
             return Either.failure("no segments")
           end
 
@@ -206,7 +213,7 @@ module Stupidedi
             state = state.down.last
           end
 
-          if value.leaf?
+          unless value.node.segment?
             return Either.failure("no segments")
           end
 

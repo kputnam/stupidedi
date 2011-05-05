@@ -52,14 +52,13 @@ module Stupidedi
 
       def segment(segment_tok, parent)
         segment_val = Values::InvalidSegmentVal.new \
-          "Unexpected segment", segment_tok
+          "unexpected segment", segment_tok
 
-        new(
-          parent.separators,
-          parent.segment_dict,
-          parent.instructions,
-          parent.zipper.append(segment_val),
-          [])
+        new(parent.separators,
+            parent.segment_dict,
+            parent.instructions,
+            parent.zipper.append(segment_val),
+            [])
       end
 
       # @endgroup

@@ -70,7 +70,7 @@ module Stupidedi
             zipper,
             parent,
             segment_tok,
-            "Unknown transaction set #{context}")
+            "unknown transaction set #{context}")
         end
 
         envelope_def = config.transaction_set.at(version, fgcode, txcode)

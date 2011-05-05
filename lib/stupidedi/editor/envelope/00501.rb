@@ -192,7 +192,7 @@ module Stupidedi
             elsif e.node.invalid?
               acc.ta105(e, "R", "015", "is not a valid time")
             else
-              isa.element(9).tap do |f|
+              isa.element(9).reject{|f| f.node.invalid? }.tap do |f|
                 date = f.node.oldest(received.send(:to_date) << 12*30)
 
                 if e.node.to_time(date) > received
@@ -282,14 +282,14 @@ module Stupidedi
           end
         end
 
-        m, gs06s = isa.find(:GS), Hash.new{|h,k| h[k] = [] }
+        m, gs06s = isa.find!(:GS), Hash.new{|h,k| h[k] = [] }
         # Collect all the GS06 elements within this interchange
         while m.defined?
           m = m.flatmap do |m|
             edit_gs(m, acc)
 
             m.element(6).tap{|e| gs06s[e.node.to_s] << e }
-            m.find(:GS)
+            m.find!(:GS)
           end
         end
 
@@ -350,11 +350,15 @@ module Stupidedi
 
       def edit_gs(gs, acc)
         gs.segment.tap do |x|
-          envelope_def = x.node.definition.parent.parent
+          unless x.node.invalid?
+            envelope_def = x.node.definition.parent.parent
 
-          if config.editor.defined_at?(envelope_def)
-            editor = config.editor.at(envelope_def)
-            editor.new(config, received).validate(gs, acc)
+            if config.editor.defined_at?(envelope_def)
+              editor = config.editor.at(envelope_def)
+              editor.new(config, received).validate(gs, acc)
+            end
+          else
+            acc.ak905(x, "R", "2", x.node.reason)
           end
         end
       end

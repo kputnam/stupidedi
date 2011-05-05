@@ -95,7 +95,7 @@ module Stupidedi
             elsif e.node.invalid?
               acc.ta105(e, "R", "024", "is not a valid time")
             else
-              gs.element(4).tap do |f|
+              gs.element(4).reject{|f| f.node.invalid? }.tap do |f|
                 if e.node.to_time(f.node) > received
                   acc.ta105(e, "R", "024", "must not be a future date")
                 end
@@ -142,14 +142,14 @@ module Stupidedi
           end
         end
 
-        m, st02s = gs.find(:ST), Hash.new{|h,k| h[k] = [] }
+        m, st02s = gs.find!(:ST), Hash.new{|h,k| h[k] = [] }
         # Collect all the ST02 elements within this functional group
         while m.defined?
           m = m.flatmap do |m|
             edit_st(m, acc)
 
             m.element(2).tap{|e| st02s[e.node.to_s] << e }
-            m.find(:ST)
+            m.find!(:ST)
           end
         end
 
@@ -205,11 +205,16 @@ module Stupidedi
 
       def edit_st(st, acc)
         st.segment.tap do |x|
-          envelope_def = x.node.definition.parent.parent.parent
+          unless x.node.invalid?
+            envelope_def = x.node.definition.parent.parent.parent
 
-          if config.editor.defined_at?(envelope_def)
-            editor = config.editor.at(envelope_def)
-            editor.new(config, received).validate(st, acc)
+            if config.editor.defined_at?(envelope_def)
+              editor = config.editor.at(envelope_def)
+              editor.new(config, received).validate(st, acc)
+            end
+          else
+            acc.ik502(x, "R", "I6", x.node.reason)
+            return
           end
         end
 

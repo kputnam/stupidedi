@@ -48,7 +48,7 @@ cursor = parser.first
 while cursor.defined?
   cursor = cursor.flatmap do |isa|
     pp envelope_ed.validate(isa).results
-    isa.find(:ISA)
+    isa.find!(:ISA)
   end
 end
 

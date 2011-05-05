@@ -23,11 +23,15 @@ module Stupidedi
 
       def edit_isa(isa, acc)
         isa.segment.tap do |x|
-          envelope_def = x.node.definition.parent.parent
+          unless x.node.invalid?
+            envelope_def = x.node.definition.parent.parent
 
-          if config.editor.defined_at?(envelope_def)
-            editor = config.editor.at(envelope_def)
-            editor.new(config, received).validate(isa, acc)
+            if config.editor.defined_at?(envelope_def)
+              editor = config.editor.at(envelope_def)
+              editor.new(config, received).validate(isa, acc)
+            end
+          else
+            acc.ta105(x, "R", "003", x.node.reason)
           end
         end
       end

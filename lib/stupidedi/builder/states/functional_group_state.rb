@@ -60,7 +60,7 @@ module Stupidedi
             zipper,
             parent,
             segment_tok,
-            "Unknown functional group version #{gscode.inspect}")
+            "unknown functional group version #{gscode.inspect}")
         end
 
         envelope_def = config.functional_group.at(gscode)
