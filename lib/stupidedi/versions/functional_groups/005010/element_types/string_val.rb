@@ -177,10 +177,7 @@ module Stupidedi
                   end
                 end
 
-                value  = @value.slice(0, definition.max_length)
-                value << ansi.invalid(@value.slice(definition.max_length..-1).to_s)
-
-                ansi.element("AN.value#{id}") << "(#{value})"
+                ansi.element("AN.value#{id}") << "(#{@value})"
               end
 
               def valid?
@@ -208,6 +205,90 @@ module Stupidedi
               # @return [StringVal::NonEmpty]
               def downcase
                 copy(:value => @value.downcase)
+              end
+
+              def to_date(format)
+                case format
+                when "D8"  # CCYYMMDD
+                  Date.civil(@value.slice(0, 4).to_i, # year
+                             @value.slice(4, 2).to_i, # month
+                             @value.slice(6, 2).to_i) # day
+                when "DB"  # MMDDCCYY
+                  Date.civil(@value.slice(4, 4).to_i,
+                             @value.slice(0, 2).to_i,
+                             @value.slice(2, 2).to_i)
+                when "DDT" # CCYYMMDD-CCYYMMDDHHMM
+                  Time.utc(@value.slice(0, 4).to_i,     # year
+                           @value.slice(4, 2).to_i,     # month
+                           @value.slice(6, 2).to_i) ..  # day
+                  Time.utc(@value.slice(9, 4).to_i,
+                           @value.slice(13, 2).to_i,
+                           @value.slice(15, 2).to_i,
+                           @value.slice(17, 2).to_i,    # hour
+                           @value.slice(19, 2).to_i)    # minute
+                when "DT"  # CCYYMMDDHHMM
+                  Time.utc(@value.slice(0, 4).to_i,
+                           @value.slice(4, 2).to_i,
+                           @value.slice(6, 2).to_i,
+                           @value.slice(8, 2).to_i,
+                           @value.slice(10, 2).to_i)
+                when "DTD" # CCYYMMDDHHMM-CCYYMMDD
+                  Time.utc(@value.slice(0, 4).to_i,
+                           @value.slice(4, 2).to_i,
+                           @value.slice(6, 2).to_i,
+                           @value.slice(8, 2).to_i,
+                           @value.slice(10, 2).to_i) ..
+                  Time.utc(@value.slice(13, 4).to_i,
+                           @value.slice(15, 2).to_i,
+                           @value.slice(17, 2).to_i)
+                when "DTS" # CCYYMMDDHHMMSS-CCYYMMDDHHMMSS
+                  Time.utc(@value.slice(0, 4).to_i,
+                           @value.slice(4, 2).to_i,
+                           @value.slice(6, 2).to_i,
+                           @value.slice(8, 2).to_i,
+                           @value.slice(10, 2).to_i,
+                           @value.slice(12, 2).to_i) ..
+                  Time.utc(@value.slice(15, 4).to_i,
+                           @value.slice(19, 2).to_i,
+                           @value.slice(21, 2).to_i,
+                           @value.slice(23, 2).to_i,
+                           @value.slice(25, 2).to_i,
+                           @value.slice(27, 2).to_i)
+                when "RD"  # MMDDCCYY-MMDDCCYY
+                  Date.civil(@value.slice(4, 4).to_i,
+                             @value.slice(0, 2).to_i,
+                             @value.slice(2, 2).to_i) ..
+                  Date.civil(@value.slice(13, 4).to_i,
+                             @value.slice(9, 2).to_i,
+                             @value.slice(11, 2).to_i)
+                when "RD8" # CCYYMMDD-CCYYMMDD
+                  Date.civil(@value.slice(0, 4).to_i,
+                             @value.slice(4, 2).to_i,
+                             @value.slice(6, 2).to_i) ..
+                  Date.civil(@value.slice(9, 4).to_i,
+                             @value.slice(11, 2).to_i,
+                             @value.slice(13, 2).to_i)
+                when "RDT" # CCYYMMDDHHMM-CCYYMMDDHHMM
+                  Time.utc(@value.slice(0, 4).to_i,
+                           @value.slice(4, 2).to_i,
+                           @value.slice(6, 2).to_i,
+                           @value.slice(8, 2).to_i,
+                           @value.slice(10, 2).to_i) ..
+                  Time.utc(@value.slice(13, 4).to_i,
+                           @value.slice(15, 2).to_i,
+                           @value.slice(17, 2).to_i,
+                           @value.slice(19, 2).to_i,
+                           @value.slice(21, 2).to_i)
+                when "RTS" # CCYYMMDDHHMMSS
+                  Time.utc(@value.slice(0, 4).to_i,
+                           @value.slice(4, 2).to_i,
+                           @value.slice(6, 2).to_i,
+                           @value.slice(8, 2).to_i,
+                           @value.slice(10, 2).to_i)
+                else
+                  raise ArgumentError,
+                    "Format code #{format} is not recognized"
+                end
               end
 
               # @return [Boolean]

@@ -23,7 +23,7 @@ module Stupidedi
       end
 
       def repeated
-        RepeatedElementTok.new(self.cons)
+        RepeatedElementTok.new(self.cons, @position)
       end
 
       def repeated?

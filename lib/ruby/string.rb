@@ -64,4 +64,9 @@ class String
   def defined_at?(n)
     n < length
   end
+
+  # Shameful
+  def position
+    nil
+  end
 end

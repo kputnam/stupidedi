@@ -219,7 +219,7 @@ module Stupidedi
                   if codes.defined_at?(@value)
                     value = "#{@value}: " << ansi.dark(codes.at(@value))
                   else
-                    value = ansi.red("#{@value}: " << ansi.bold("Invalid Value"))
+                    value = ansi.red(@value)
                   end
                 else
                   value = @value
