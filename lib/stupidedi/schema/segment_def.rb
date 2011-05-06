@@ -4,7 +4,7 @@ module Stupidedi
     #
     # @see X222.pdf B.1.1.3.4 Data Segment
     #
-    class SegmentDef
+    class SegmentDef < AbstractDef
       include Inspect
 
       # @return [Symbol]
@@ -33,7 +33,6 @@ module Stupidedi
         # to prevent unnecessarily copying objects
         unless parent.nil?
           @element_uses = @element_uses.map{|x| x.copy(:parent => self) }
-          @syntax_notes = @syntax_notes.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -60,6 +59,10 @@ module Stupidedi
 
       def value(element_vals, usage)
         Values::SegmentVal.new(element_vals, usage)
+      end
+
+      def segment?
+        true
       end
 
       # @return [void]

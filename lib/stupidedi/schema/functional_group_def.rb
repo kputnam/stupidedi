@@ -25,7 +25,7 @@ module Stupidedi
     # @see X222.pdf B.1.1.3.13 Functional Group
     # @see X222.pdf B.1.1.4.2 Functional Groups
     #
-    class FunctionalGroupDef
+    class FunctionalGroupDef < AbstractDef
       include Inspect
 
       # @return [String]
@@ -72,6 +72,10 @@ module Stupidedi
       # @return [Values::FunctionalGroupVal]
       def empty
         Values::FunctionalGroupVal.new(self, [], [])
+      end
+
+      def functional_group?
+        true
       end
 
       # @return [void]

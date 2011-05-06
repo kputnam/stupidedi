@@ -34,6 +34,10 @@ module Stupidedi
           d::LoopDef.build("2300 CLAIM INFORMATION",
               d::RepeatCount.bounded(100),
               b::Segment(1300, s::CLM, "Claim Information",
+                # The spec is Required, but that doesn't seem right. This loop
+                # is not required to occur in both the Subscriber and Patient
+                # tables, it must appear in only one of them.
+                #::Situational, d::RepeatCount.bounded(1),
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Patient Control Number", b::MaxLength(20)),
                 b::Element(e::Required,    "Total Claim Charge Amount"),

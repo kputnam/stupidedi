@@ -5,7 +5,7 @@ module Stupidedi
     # @see X222.pdf 2.2.2 Loops
     # @see X222.pdf B.1.3.12.4 Loops of Data Segments
     #
-    class LoopDef
+    class LoopDef < AbstractDef
       include Inspect
 
       # @return [String]
@@ -73,9 +73,18 @@ module Stupidedi
         @header_segment_uses.head
       end
 
+      # @return [Array<SegmentUse, LoopDef>]
+      def children
+        @header_segment_uses + @loop_defs + @trailer_segment_uses
+      end
+
       # @return [LoopVal]
       def empty
         Values::LoopVal.new(self, [])
+      end
+
+      def loop?
+        true
       end
 
       # @return [void]

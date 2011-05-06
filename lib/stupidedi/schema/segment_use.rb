@@ -4,7 +4,7 @@ module Stupidedi
     #
     # @see X222.pdf B.1.1.3.12.5 Data Segments in a Transaction Set
     #
-    class SegmentUse
+    class SegmentUse < AbstractUse
       include Inspect
 
       # @see X222 B.1.1.3.12.7 Data Segment Position
@@ -28,6 +28,8 @@ module Stupidedi
 
       # @return [LoopDef, TableDef]
       attr_reader :parent
+
+      delegate :id, :to => :definition
 
       def initialize(definition, position, requirement, repeat_count, parent)
         @definition, @position, @requirement, @repeat_count, @parent =
@@ -61,6 +63,11 @@ module Stupidedi
 
       def value(element_vals)
         definition.value(element_vals, self)
+      end
+
+      # (see AbstractUse#segment?)
+      def segment?
+        true
       end
 
       # @return [void]

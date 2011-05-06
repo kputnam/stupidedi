@@ -5,7 +5,7 @@ module Stupidedi
     # @see X12-5.pdf 3.2.1 Basic Interchange Service Request
     # @see X222.pdf B.1.1.4.1 Interchange Control Structures
     #
-    class InterchangeDef
+    class InterchangeDef < AbstractDef
       include Inspect
 
       # @return [String]
@@ -47,6 +47,11 @@ module Stupidedi
       # @return [Array<SegmentUse>]
       def segment_uses
         @header_segment_uses + @trailer_segment_uses
+      end
+
+      # (see AbstractDef)
+      def interchange?
+        true
       end
 
       # @return [void]

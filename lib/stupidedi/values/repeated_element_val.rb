@@ -41,7 +41,7 @@ module Stupidedi
       end
 
       def empty?
-        @children.all(&:empty?)
+        @children.all?(&:empty?)
       end
 
       def element(n, o = nil)

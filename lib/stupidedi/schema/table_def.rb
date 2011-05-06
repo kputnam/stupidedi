@@ -1,7 +1,7 @@
 module Stupidedi
   module Schema
 
-    class TableDef
+    class TableDef < AbstractDef
       # @return [String]
       attr_reader :id
 
@@ -57,9 +57,18 @@ module Stupidedi
         uses.concat(@trailer_segment_uses)
       end
 
+      # @return [Array<SegmentUse, LoopDef>]
+      def children
+        @header_segment_uses + @loop_defs + @trailer_segment_uses
+      end
+
       # @return [Values::TableVal]
       def empty
         Values::TableVal.new(self, [])
+      end
+
+      def table?
+        true
       end
 
       # @return [void]

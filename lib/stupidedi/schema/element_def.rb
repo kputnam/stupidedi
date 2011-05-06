@@ -1,7 +1,7 @@
 module Stupidedi
   module Schema
 
-    class AbstractElementDef
+    class AbstractElementDef < AbstractDef
       include Inspect
 
       # @return [String]
@@ -16,6 +16,10 @@ module Stupidedi
       abstract :simple?
 
       abstract :composite?
+
+      def element?
+        true
+      end
     end
 
     #
@@ -78,7 +82,6 @@ module Stupidedi
         # to prevent unnecessarily copying objects
         unless parent.nil?
           @component_uses = @component_uses.map{|x| x.copy(:parent => self) }
-          @syntax_notes   = @syntax_notes.map{|x| x.copy(:parent => self) }
         end
       end
 

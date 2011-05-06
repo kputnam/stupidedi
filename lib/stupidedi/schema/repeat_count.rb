@@ -3,6 +3,9 @@ module Stupidedi
 
     class RepeatCount
       class Bounded < RepeatCount
+        include Comparable
+
+        delegate :<=>, :to => :@max
 
         # @return [Integer]
         attr_reader :max
@@ -33,12 +36,20 @@ module Stupidedi
 
       # @private
       Unbounded = Class.new(RepeatCount) do
+        include Comparable
+
+        Infinity = 1.0/0.0
+
         def include?(n)
           true
         end
 
         def exclude?(n)
           false
+        end
+
+        def <=>(n)
+          Infinity <=> n
         end
 
         def inspect

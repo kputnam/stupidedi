@@ -82,7 +82,7 @@ module Stupidedi
             zipper = zipper.up
           end
 
-          recurse(zipper)
+          recurse(zipper, acc)
         end
       end
 
@@ -103,7 +103,7 @@ module Stupidedi
       # IK403 "8"   Invalid date
       # IK403 "9"   Invalid time
 
-      def recurse(zipper)
+      def recurse(zipper, acc)
         group = Hash.new{|h,k| h[k] = [] }
 
         if zipper.node.simple?
@@ -111,22 +111,34 @@ module Stupidedi
 
         elsif zipper.node.composite?
           zipper.children.each do |element|
-            recurse(element)
+            recurse(element, acc)
+          end
+
+          zipper.node.definition.tap do |d|
+            d.syntax_notes.each do |s|
+              es = s.errors(zipper)
+              ex = s.reason(zipper) if es.present?
+              es.each{|c| acc.ik403(c, "R", "2", ex) }
+            end
           end
 
         elsif zipper.node.repeated?
           zipper.children.each do |element|
-            recurse(element)
+            recurse(element, acc)
           end
 
         elsif zipper.node.segment?
           if zipper.node.valid?
             zipper.children.each do |element|
-              recurse(element)
+              recurse(element, acc)
             end
 
             zipper.node.definition.tap do |d|
-              d.syntax_notes # ...
+              d.syntax_notes.each do |s|
+                es = s.errors(zipper)
+                ex = s.reason(zipper) if es.present?
+                es.each{|c| acc.ik403(c, "R", "2", ex) }
+              end
             end
           else
             # ...
@@ -135,90 +147,100 @@ module Stupidedi
         elsif zipper.node.loop?
           zipper.children.each do |child|
             # Child is either a segment or loop
-            recurse(child)
+            recurse(child, acc)
 
             if child.node.loop?
               group[child.node.definition] << child
-            else
+            elsif child.node.valid?
               group[child.node.usage] << child
+            else
+              acc.ik304(child, "R", "2", "unexpected segment")
             end
           end
 
           zipper.node.definition.tap do |d|
-            d.loop_defs.each do |l|
-              if l.requirement.required? and group.at(l).blank?
-                # ...
-              elsif l.repeat_count.exclude?(group.at(l).length)
-                # ...
-              end
-            end
+            # Though we're iterating the definition tree, we need to track
+            # the last location before a required child was missing.
+            last = zipper
 
-            d.header_segment_uses.each do |s|
-              if s.requirement.required? and group.at(s).blank?
-                # ...
-              elsif s.repeat_count.exclude?(group.at(s).length)
-                # ...
-              end
-            end
+            d.children.each do |child|
+              matches = group.at(child)
+              repeat  = child.repeat_count
 
-            d.trailer_segment_uses.each do |s|
-              if s.requirement.required? and group.at(s).blank?
-                # ...
-              elsif s.repeat_count.exclude?(group.at(s).length)
-                # ...
+              if matches.blank? and child.requirement.required?
+                if child.loop?
+                  acc.ik304(last, "R", "I7", "missing loop #{child.id}")
+                else
+                  acc.ik304(last, "R", "3", "missing segment #{child.id}")
+                end
+              elsif repeat < matches.length
+                matches.drop(repeat.max).each do |c|
+                  if child.loop?
+                    acc.ik304(c, "R", "4", "loop occurs too many times")
+                  else
+                    acc.ik304(c, "R", "5", "segment occurs too many times")
+                  end
+                end
               end
+
+              last = matches.last unless matches.blank?
             end
           end
 
         elsif zipper.node.table?
           zipper.children.each do |child|
             # Child is either a segment or loop
-            recurse(child)
+            recurse(child, acc)
 
             if child.node.loop?
               group[child.node.definition] << child
-            else
+            elsif child.node.valid?
               group[child.node.usage] << child
+            else
+              acc.ik304(child, "R", "2", "unexpected segment")
             end
           end
 
           zipper.node.definition.tap do |d|
-            d.loop_defs.each do |l|
-              if l.requirement.required? and group.at(l).blank?
-                # ...
-              elsif l.repeat_count.exclude?(group.at(l).length)
-                # ...
-              end
-            end
+            # Though we're iterating the definition tree, we need to track
+            # the last location before a required child was missing.
+            last = zipper
 
-            d.header_segment_uses.each do |s|
-              if s.requirement.required? and group.at(s).blank?
-                # ...
-              elsif s.repeat_count.exclude?(group.at(s).length)
-                # ...
-              end
-            end
+            d.children.each do |child|
+              matches = group.at(child)
+              repeat  = child.repeat_count
 
-            d.trailer_segment_uses.each do |s|
-              if s.requirement.required? and group.at(s).blank?
-                # ...
-              elsif s.repeat_count.exclude?(group.at(s).length)
-                # ...
+              if matches.blank? and child.requirement.required?
+                if child.loop?
+                  acc.ik304(last, "R", "I7", "missing loop #{child.id}")
+                else
+                  acc.ik304(last, "R", "3", "missing segment #{child.id}")
+                end
+              elsif repeat < matches.length
+                matches.drop(repeat.max).each do |c|
+                  if child.loop?
+                    acc.ik304(c, "R", "4", "loop occurs too many times")
+                  else
+                    acc.ik304(c, "R", "5", "segment occurs too many times")
+                  end
+                end
               end
+
+              last = matches.last unless matches.blank?
             end
           end
 
         elsif zipper.node.transaction_set?
           zipper.children.each do |table|
-            recurse(table)
+            recurse(table, acc)
             group[table.node.definition] << table
           end
 
           zipper.node.definition.tap do |d|
             d.table_defs.each do |table|
-              # @todo: How do we know which tables are required? It isn't obvious
-              # because some tables have more than one entry segment, and perhaps
-              # each has a different requirement designator.
+              # @todo: How do we know which tables are required? It isn't
+              # obvious because some tables have more than one entry segment,
+              # and perhaps each has a different requirement designator.
             end
           end
         end

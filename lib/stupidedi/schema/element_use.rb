@@ -1,7 +1,7 @@
 module Stupidedi
   module Schema
 
-    class AbstractElementUse
+    class AbstractElementUse < AbstractUse
       include Inspect
 
       delegate :forbidden?, :required?, :to => :requirement

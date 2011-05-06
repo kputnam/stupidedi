@@ -12,13 +12,46 @@ module Stupidedi
     # @see X222.pdf B.1.1.3.9 Condition Designator
     #
     class SyntaxNote
-      # @return [Array<SimpleElementUse, CompositeElementUse>]
-      abstract :element_uses
 
-      # @return [SyntaxNote]
-      def copy(changes = {})
-        # @todo
-        self
+      # @return [Array<Integer>]
+      attr_reader :indexes
+
+      def initialize(indexes)
+        @indexes = indexes
+      end
+
+      # Returns the AbstractElementVals from the given segment or composite
+      # element that must be present, given the presence of other elements
+      #
+      # @return [Array<Zipper::AbstractCursor<Values::AbstractElementVal>>]
+      abstract :required, :args => %w(zipper)
+
+      # Returns the AbstractElementVals from the given segment or composite
+      # element that must not be present, given the presence of other elements
+      #
+      # @return [Array<Zipper::AbstractCursor<Values::AbstractElementVal>>]
+      abstract :forbidden, :args => %w(zipper)
+
+      # @return [String]
+      abstract :reason, :args => %w(zipper)
+
+      def satisfied?(zipper)
+        forbidden(zipper).all?(&:blank?) and
+          required(zipper).all?(&:present?)
+      end
+
+      # @return [Array<Zipper::AbstractCursor<Values::AbstractElementVal>>]
+      def errors(zipper)
+        f = forbidden(zipper).select{|c| c.node.present? }
+        r = required(zipper).reject{|c| c.node.present? }
+
+        f.concat(r)
+      end
+
+    private
+
+      def children(zipper)
+        indexes.map{|n| zipper.child(n - 1) }
       end
     end
 

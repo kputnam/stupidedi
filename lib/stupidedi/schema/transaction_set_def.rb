@@ -1,7 +1,7 @@
 module Stupidedi
   module Schema
 
-    class TransactionSetDef
+    class TransactionSetDef < AbstractDef
       include Inspect
 
       # @return [String]
@@ -49,6 +49,10 @@ module Stupidedi
       # @return [SegmentUse]
       def last_segment_use
         @table_defs.last.trailer_segment_uses.last
+      end
+
+      def transaction?
+        true
       end
 
       # @return [void]
