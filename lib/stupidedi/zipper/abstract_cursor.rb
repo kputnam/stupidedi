@@ -206,6 +206,25 @@ module Stupidedi
         cursor
       end
 
+      #
+      #
+      # @return [Array<MemoizedCursor>]
+      def children
+        children = []
+
+        unless leaf?
+          zipper    = down
+          children << zipper
+
+          until zipper.last?
+            zipper    = zipper.next
+            children << zipper
+          end
+        end
+
+        children
+      end
+
       # Recursively descend to each node's `nth` child
       #
       # @return [AbstractCursor]

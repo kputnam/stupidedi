@@ -15,6 +15,10 @@ module Stupidedi
           n <= @max
         end
 
+        def exclude?(n)
+          n > @max
+        end
+
         def inspect
           @max.to_s
         end
@@ -31,6 +35,10 @@ module Stupidedi
       Unbounded = Class.new(RepeatCount) do
         def include?(n)
           true
+        end
+
+        def exclude?(n)
+          false
         end
 
         def inspect

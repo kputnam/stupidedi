@@ -76,6 +76,14 @@ module Stupidedi
             editor.new(config, received).validate(st, acc)
           end
         end
+
+        st.zipper.tap do |zipper|
+          until zipper.node.transaction_set?
+            zipper = zipper.up
+          end
+
+          recurse(zipper)
+        end
       end
 
       # IK304 "3"   Segment must be present
@@ -95,6 +103,126 @@ module Stupidedi
       # IK403 "8"   Invalid date
       # IK403 "9"   Invalid time
 
+      def recurse(zipper)
+        group = Hash.new{|h,k| h[k] = [] }
+
+        if zipper.node.simple?
+          # ...
+
+        elsif zipper.node.composite?
+          zipper.children.each do |element|
+            recurse(element)
+          end
+
+        elsif zipper.node.repeated?
+          zipper.children.each do |element|
+            recurse(element)
+          end
+
+        elsif zipper.node.segment?
+          if zipper.node.valid?
+            zipper.children.each do |element|
+              recurse(element)
+            end
+
+            zipper.node.definition.tap do |d|
+              d.syntax_notes # ...
+            end
+          else
+            # ...
+          end
+
+        elsif zipper.node.loop?
+          zipper.children.each do |child|
+            # Child is either a segment or loop
+            recurse(child)
+
+            if child.node.loop?
+              group[child.node.definition] << child
+            else
+              group[child.node.usage] << child
+            end
+          end
+
+          zipper.node.definition.tap do |d|
+            d.loop_defs.each do |l|
+              if l.requirement.required? and group.at(l).blank?
+                # ...
+              elsif l.repeat_count.exclude?(group.at(l).length)
+                # ...
+              end
+            end
+
+            d.header_segment_uses.each do |s|
+              if s.requirement.required? and group.at(s).blank?
+                # ...
+              elsif s.repeat_count.exclude?(group.at(s).length)
+                # ...
+              end
+            end
+
+            d.trailer_segment_uses.each do |s|
+              if s.requirement.required? and group.at(s).blank?
+                # ...
+              elsif s.repeat_count.exclude?(group.at(s).length)
+                # ...
+              end
+            end
+          end
+
+        elsif zipper.node.table?
+          zipper.children.each do |child|
+            # Child is either a segment or loop
+            recurse(child)
+
+            if child.node.loop?
+              group[child.node.definition] << child
+            else
+              group[child.node.usage] << child
+            end
+          end
+
+          zipper.node.definition.tap do |d|
+            d.loop_defs.each do |l|
+              if l.requirement.required? and group.at(l).blank?
+                # ...
+              elsif l.repeat_count.exclude?(group.at(l).length)
+                # ...
+              end
+            end
+
+            d.header_segment_uses.each do |s|
+              if s.requirement.required? and group.at(s).blank?
+                # ...
+              elsif s.repeat_count.exclude?(group.at(s).length)
+                # ...
+              end
+            end
+
+            d.trailer_segment_uses.each do |s|
+              if s.requirement.required? and group.at(s).blank?
+                # ...
+              elsif s.repeat_count.exclude?(group.at(s).length)
+                # ...
+              end
+            end
+          end
+
+        elsif zipper.node.transaction_set?
+          zipper.children.each do |table|
+            recurse(table)
+            group[table.node.definition] << table
+          end
+
+          zipper.node.definition.tap do |d|
+            d.table_defs.each do |table|
+              # @todo: How do we know which tables are required? It isn't obvious
+              # because some tables have more than one entry segment, and perhaps
+              # each has a different requirement designator.
+            end
+          end
+        end
+      end
     end
 
   end
