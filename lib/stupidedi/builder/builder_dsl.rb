@@ -28,8 +28,8 @@ module Stupidedi
       end
 
       # @return [BuilderDsl]
-      def segment!(name, *elements)
-        segment_tok     = mksegment_tok(@reader.segment_dict, name, elements)
+      def segment!(name, position, *elements)
+        segment_tok     = mksegment_tok(@reader.segment_dict, name, elements, position)
         machine, reader = @machine.insert(segment_tok, @reader)
 
         segments = machine.active.map{|s| s.node.zipper.node }
@@ -54,7 +54,7 @@ module Stupidedi
 
       def method_missing(name, *args)
         if SEGMENT_ID =~ name.to_s
-          segment!(name, *args)
+          segment!(name, Reader::Position.caller(2), *args)
         else
           super
         end

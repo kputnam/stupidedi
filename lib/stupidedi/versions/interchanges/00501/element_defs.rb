@@ -35,12 +35,12 @@ module Stupidedi
             end
 
             def empty?
-              @value.empty?
+              @value.blank?
             end
 
             def inspect
               id = definition.try{|d| ansi.bold("[#{d.id}]") }
-              ansi.element("SeparatorElementVal.value#{id}") << "(#{@value})"
+              ansi.element("SeparatorElementVal.value#{id}") << "(#{@value || "nil"})"
             end
           end
 
@@ -49,9 +49,8 @@ module Stupidedi
             ###################################################################
 
             # @raise NoMethodError
-            def empty(definition, usage, position)
-              raise NoMethodError,
-                "SeparatorElementVal.empty should not be called"
+            def empty(usage, position)
+              SeparatorElementVal.new(nil, usage, position)
             end
 
             # @return [SeparatorElementVal]

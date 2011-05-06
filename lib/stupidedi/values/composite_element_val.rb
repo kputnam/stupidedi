@@ -16,6 +16,8 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :usage
 
+      delegate :position, :to => "@children.head"
+
       def initialize(children, usage)
         @children, @usage =
           children, usage

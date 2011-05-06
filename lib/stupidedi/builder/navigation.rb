@@ -400,7 +400,7 @@ module Stupidedi
 
         @active.each do |zipper|
           matched      = false
-          filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements)
+          filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements, nil)
 
           instructions = zipper.node.instructions.matches(filter_tok, true)
           reachable  ||= !instructions.empty?

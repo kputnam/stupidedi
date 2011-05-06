@@ -2,7 +2,6 @@ module Stupidedi
   module Values
 
     class TransmissionVal < AbstractVal
-      include Color
 
       # @return [Array<InterchangeVal>]
       attr_reader :children

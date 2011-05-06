@@ -10,14 +10,14 @@ module Stupidedi
       #
       # @return [void]
       def repeated(*elements)
-        :repeated.cons(elements.cons)
+        [:repeated, elements, Reader::Position.caller(2)]
       end
 
       # Generates a composite element
       #
       # @return [void]
       def composite(*components)
-        :composite.cons(components.cons)
+        [:composite, components, Reader::Position.caller(2)]
       end
 
       #########################################################################
@@ -27,7 +27,7 @@ module Stupidedi
       #
       # @return [void]
       def blank
-        nil
+        [:blank, nil, Reader::Position.caller(2)]
       end
 
       # Generates a blank element and asserts that the element's usage
@@ -37,7 +37,7 @@ module Stupidedi
       #
       # @return [void]
       def not_used
-        @__not_used ||= :not_used.cons
+        [:not_used, nil, Reader::Position.caller(2)]
       end
 
       # Generates the only possible value an element may have, which may
@@ -49,7 +49,7 @@ module Stupidedi
       #
       # @return [void]
       def default
-        @__default ||= :default.cons
+        [:default, nil, Reader::Position.caller(2)]
       end
 
       # @endgroup
@@ -58,21 +58,29 @@ module Stupidedi
     private
 
       # @return [Reader::SegmentTok]
-      def mksegment_tok(segment_dict, id, elements)
+      def mksegment_tok(segment_dict, id, elements, position)
         id = id.to_sym
         element_toks = []
-
+        
         unless segment_dict.defined_at?(id)
           element_idx  = "00"
-          elements.each do |e_tag, e_val|
+          elements.each do |e_tag, e_val, e_position|
             element_idx.succ!
 
+            # If the element is a regular Ruby value "ABC", the way this
+            # proc's arguments are assigned would be e_tag = "ABC", and
+            # e_val and e_position are nil. If the argument is a placeholder
+            # like #blank, #not_used, or #default is used, those methods return
+            # a triple that is deconstructed such that e_val is also nil.
+            #
+            # However, for #composite or #repeated, the triple is deconstructed
+            # such that e_val is an Array of other values, and isn't #nil?
             unless e_val.nil?
               raise ArgumentError,
                 "#{id}#{element_idx} is assumed to be a simple element"
             end
 
-            element_toks << mksimple_tok(e_tag)
+            element_toks << mksimple_tok(e_tag, e_position || position)
           end
         else
           segment_def  = segment_dict.at(id)
@@ -84,25 +92,25 @@ module Stupidedi
           end
 
           element_idx  = "00"
-          element_uses.zip(elements) do |e_use, (e_tag, e_val)|
+          element_uses.zip(elements) do |e_use, (e_tag, e_val, e_position)|
             element_idx.succ!
             designator = "#{id}#{element_idx}"
 
             if e_use.repeatable?
               # Repeatable composite or non-composite
-              unless e_tag == :repeated or (e_tag.blank? and e_val.blank?)
+              unless [:repeated, :blank, :not_used, nil].include?(e_tag)
                 raise ArgumentError,
                   "#{designator} is a repeatable element"
               end
 
-              element_toks << mkrepeated_tok(e_val || [], e_use, designator)
+              element_toks << mkrepeated_tok(e_val || [], e_use, designator, e_position || position)
             elsif e_use.composite?
-              unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
+              unless [:composite, :not_used, :blank, nil].include?(e_tag)
                 raise ArgumentError,
                   "#{id}#{element_idx} is a non-repeatable composite element"
               end
 
-              element_toks << mkcomposite_tok(e_val || [], e_use, designator)
+              element_toks << mkcomposite_tok(e_val || [], e_use, designator, e_position || position)
             else
               # The actual value is in e_tag
               unless e_val.nil?
@@ -110,43 +118,43 @@ module Stupidedi
                   "#{id}#{element_idx} is a non-repeatable simple element"
               end
 
-              element_toks << mksimple_tok(e_tag)
+              element_toks << mksimple_tok(e_tag, e_position || position)
             end
           end
         end
 
-        Reader::SegmentTok.new(id, element_toks, nil, nil)
+        Reader::SegmentTok.new(id, element_toks, position, nil)
       end
 
       # @return [Reader::RepeatedElementTok]
-      def mkrepeated_tok(elements, element_use, designator)
+      def mkrepeated_tok(elements, element_use, designator, position)
         element_toks = []
 
         if element_use.composite?
-          elements.each do |e_tag, e_val|
-            unless e_tag == :composite or (e_tag.blank? and e_val.blank?)
+          elements.each do |e_tag, e_val, e_position|
+            unless [:composite, :not_used, :blank, nil].include?(e_tag)
               raise ArgumentError,
                 "#{designator} is a composite element"
             end
 
-            element_toks << mkcomposite_tok(e_val || [], element_use, designator)
+            element_toks << mkcomposite_tok(e_val || [], element_use, designator, e_position || position)
           end
         else
-          elements.each do |e_tag, e_val|
+          elements.each do |e_tag, e_val, e_position|
             unless e_val.nil?
               raise ArgumentError,
                 "#{designator} is a simple element"
             end
 
-            element_toks << mksimple_tok(e_tag)
+            element_toks << mksimple_tok(e_tag, e_position || position)
           end
         end
 
-        Reader::RepeatedElementTok.build(element_toks, nil)
+        Reader::RepeatedElementTok.build(element_toks, position)
       end
 
       # @return [Reader::CompositeElementTok]
-      def mkcomposite_tok(components, composite_use, designator)
+      def mkcomposite_tok(components, composite_use, designator, position)
         component_uses = composite_use.definition.component_uses
 
         if components.length > component_uses.length
@@ -156,7 +164,7 @@ module Stupidedi
 
         component_idx  = "0"
         component_toks = []
-        component_uses.zip(components) do |c_use, (c_tag, c_val)|
+        component_uses.zip(components) do |c_use, (c_tag, c_val, c_position)|
           component_idx.succ!
 
           unless c_val.nil?
@@ -164,20 +172,20 @@ module Stupidedi
               "#{designator}-#{component_idx} is a component element"
           end
 
-          component_toks << mkcomponent_tok(c_tag)
+          component_toks << mkcomponent_tok(c_tag, c_position || position)
         end
 
-        Reader::CompositeElementTok.build(component_toks, nil, nil)
+        Reader::CompositeElementTok.build(component_toks, position, nil)
       end
 
       # @return [Reader::ComponentElementTok]
-      def mkcomponent_tok(value)
-        Reader::ComponentElementTok.build(value, nil, nil)
+      def mkcomponent_tok(value, position)
+        Reader::ComponentElementTok.build(value, position, nil)
       end
 
       # @return [Reader::SimpleElementTok]
-      def mksimple_tok(value)
-        Reader::SimpleElementTok.build(value, nil, nil)
+      def mksimple_tok(value, position)
+        Reader::SimpleElementTok.build(value, position, nil)
       end
 
       # @endgroup

@@ -33,7 +33,7 @@ start  = Time.now
 
 ARGV.each do |path|
   File.open(path) do |io|
-    parser, result = parser.read(Stupidedi::Reader.build(io.read))
+    parser, result = parser.read(Stupidedi::Reader.build(io))
   end
 end
 

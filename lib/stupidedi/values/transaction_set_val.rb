@@ -3,13 +3,14 @@ module Stupidedi
 
     class TransactionSetVal < AbstractVal
       include SegmentValGroup
-      include Color
 
       # @return [TransactionSetDef]
       attr_reader :definition
 
       # @return [Array<TableVal>]
       attr_reader :children
+
+      delegate :position, :to => "@children.head"
 
       def initialize(definition, children)
         @definition, @children =

@@ -7,7 +7,6 @@ module Stupidedi
     #
     class InterchangeVal < AbstractVal
       include SegmentValGroup
-      include Color
 
       # @return [InterchangeDef]
       attr_reader :definition
@@ -17,6 +16,8 @@ module Stupidedi
 
       # @return [#segment, #element, #repetition, #component]
       abstract :separators
+
+      delegate :position, :to => "@children.head"
 
       def initialize(definition, children)
         @definition, @children =

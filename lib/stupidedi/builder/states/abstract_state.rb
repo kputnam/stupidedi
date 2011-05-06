@@ -153,7 +153,6 @@ module Stupidedi
         # exception if the programmer constructs the wrong kind of element
         # according to the SegmentDef.
 
-        # @todo: Position
         if element_tok.value == :default
           allowed_vals = element_use.allowed_values
 
@@ -174,6 +173,8 @@ module Stupidedi
             raise Exceptions::ParseError,
               "#{designator} is not forbidden"
           end
+        elsif element_tok.value == :blank
+          element_use.empty(element_tok.position)
         else
           element_use.value(element_tok.value, element_tok.position)
         end

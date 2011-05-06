@@ -58,5 +58,12 @@ module Stupidedi
       end
     end
 
+    class << Position
+      def caller(offset = 1)
+        path, line, method = Stupidedi.caller(offset + 1)
+        new(nil, line, nil, path)
+      end
+    end
+
   end
 end

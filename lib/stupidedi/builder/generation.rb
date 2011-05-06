@@ -102,10 +102,12 @@ module Stupidedi
 
       # @return [StateMachine]
       def replace(segment_tok, reader)
+        # @todo
       end
 
       # @return [StateMachine]
       def remove
+        # @todo
       end
 
     end

@@ -7,13 +7,14 @@ module Stupidedi
     #
     class FunctionalGroupVal < AbstractVal
       include SegmentValGroup
-      include Color
 
       # @return [FunctionalGroupDef]
       attr_reader :definition
 
       # @return [Array<SegmentVal, TransactionSetVal>]
       attr_reader :children
+
+      delegate :position, :to => "@children.head"
 
       def initialize(definition, children)
         @definition, @children =

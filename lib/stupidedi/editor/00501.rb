@@ -281,7 +281,7 @@ module Stupidedi
           isa.find(:IEA).tap do |iea|
             edit_iea(iea, isa, gs06s.length, acc)
           end.explain do
-            isa.segment.tap{|s| acc.ta105(s, "023", "missing IEA segment") }
+            isa.segment.tap{|s| acc.ta105(s, "R", "023", "missing IEA segment") }
           end
         end
       end
