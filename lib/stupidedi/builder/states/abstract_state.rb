@@ -66,24 +66,26 @@ module Stupidedi
         element_uses = segment_def.element_uses
         element_toks = segment_tok.element_toks
 
+        position     = segment_tok.position
         element_vals = []
         element_idx  = "00"
         element_uses.zip(element_toks) do |element_use, element_tok|
           element_idx.succ!
+          position = element_tok.position if element_tok
 
           element_vals <<
             if element_tok.nil?
               if element_use.repeatable?
                 Values::RepeatedElementVal.empty(element_use)
               else
-                element_use.empty
+                element_use.empty(position)
               end
             else
               mkelement("#{segment_def.id}#{element_idx}", element_use, element_tok)
             end
         end
 
-        segment_use.value(element_vals)
+        segment_use.value(element_vals, segment_tok.position)
       end
 
       # @return [Values::SimpleElementVal, Values::CompositeElementVal, Values::RepeatedElementVal]
@@ -125,20 +127,22 @@ module Stupidedi
         component_uses = composite_def.component_uses
         component_toks = composite_tok.component_toks
 
+        position       = composite_tok.position
         component_vals = []
         component_idx  = "00"
         component_uses.zip(component_toks) do |component_use, component_tok|
           component_idx.succ!
+          position = component_tok.position if component_tok
 
           component_vals <<
             if component_tok.nil?
-              component_use.empty
+              component_use.empty(position)
             else
               mksimple("#{designator}-#{component_idx}", component_use, component_tok)
             end
         end
 
-        composite_use.value(component_vals)
+        composite_use.value(component_vals, composite_tok.position)
       end
 
       # @return [Values::SimpleElementVal]
@@ -154,24 +158,24 @@ module Stupidedi
           allowed_vals = element_use.allowed_values
 
           if element_use.requirement.forbidden?
-            element_use.empty
+            element_use.empty(element_tok.position)
           elsif allowed_vals.empty?
-            element_use.empty
+            element_use.empty(element_tok.position)
           elsif allowed_vals.size == 1
-            element_use.value(allowed_vals.first)
+            element_use.value(allowed_vals.first, element_tok.position)
           else
             raise Exceptions::ParseError,
               "#{designator} cannot be inferred"
           end
         elsif element_tok.value == :not_used
           if element_use.requirement.forbidden?
-            element_use.empty
+            element_use.empty(element_tok.position)
           else
             raise Exceptions::ParseError,
               "#{designator} is not forbidden"
           end
         else
-          element_use.value(element_tok.value)
+          element_use.value(element_tok.value, element_tok.position)
         end
       end
 

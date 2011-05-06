@@ -17,8 +17,12 @@ module Stupidedi
       # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 
-      def initialize(usage)
-        @usage = usage
+      # @return [Reader::Position]
+      attr_reader :position
+
+      def initialize(usage, position)
+        @usage, @position =
+          usage, position
       end
 
       # @return [SimpleElementVal]

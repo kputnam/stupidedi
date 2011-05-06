@@ -74,9 +74,9 @@ module Stupidedi
               # @return [Object]
               attr_reader :value
 
-              def initialize(value, usage)
-                super(usage)
+              def initialize(value, usage, position)
                 @value = value
+                super(usage, position)
               end
 
               def valid?
@@ -170,16 +170,17 @@ module Stupidedi
 
               delegate :to_s, :to_str, :length, :=~, :match, :include?, :to => :@value
 
-              def initialize(value, usage)
+              def initialize(value, usage, position)
                 @value = value
-                super(usage)
+                super(usage, position)
               end
 
               # @return [NonEmpty]
               def copy(changes = {})
                 NonEmpty.new \
                   changes.fetch(:value, @value),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def valid?
@@ -245,27 +246,27 @@ module Stupidedi
             ###################################################################
 
             # @return [IdentifierVal]
-            def empty(usage)
-              IdentifierVal::Empty.new(usage)
+            def empty(usage, position)
+              IdentifierVal::Empty.new(usage, position)
             end
 
             # @return [IdentifierVal]
-            def value(object, usage)
+            def value(object, usage, position)
               if object.blank?
-                IdentifierVal::Empty.new(usage)
+                IdentifierVal::Empty.new(usage, position)
               elsif object.respond_to?(:to_s)
-                IdentifierVal::NonEmpty.new(object.to_s, usage)
+                IdentifierVal::NonEmpty.new(object.to_s, usage, position)
               else
-                IdentifierVal::Invalid.new(object, usage)
+                IdentifierVal::Invalid.new(object, usage, position)
               end
             end
 
             # @return [IdentifierVal]
-            def parse(string, usage)
+            def parse(string, usage, position)
               if string.blank?
-                IdentifierVal::Empty.new(usage)
+                IdentifierVal::Empty.new(usage, position)
               else
-                IdentifierVal::NonEmpty.new(string, usage)
+                IdentifierVal::NonEmpty.new(string, usage, position)
               end
             end
 

@@ -37,7 +37,7 @@ start  = Time.now
 
 ARGV.each do |path|
   File.open(path) do |io|
-    parser, result = parser.read(Stupidedi::Reader.build(io))
+    parser, result = parser.read(Stupidedi::Reader.build(io.read))
   end
 end
 
@@ -45,5 +45,13 @@ envelope_ed = Stupidedi::Editor::TransmissionEd.new(config, Time.now)
 pp envelope_ed.validate(parser).results
 
 stop = Time.now
+
+begin
+  a = parser.first
+  b = parser.last
+
+  a.flatmap{|a| b.flatmap{|b| a.distance(b) }}.
+    tap{|d| puts "#{d + 1} segments" }
+end
 
 puts "%0.3f seconds" % (stop - start)

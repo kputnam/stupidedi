@@ -8,8 +8,13 @@ module Stupidedi
       # @return [Array<SimpleElementTok>]
       attr_reader :element_toks
 
-      def initialize(element_toks)
-        @element_toks = element_toks
+      attr_reader :position
+
+      delegate :remainder, :to => "element_toks.last"
+
+      def initialize(element_toks, position)
+        @element_toks, @position =
+          element_toks, position
       end
 
       def repeated(element_tok)
@@ -39,8 +44,8 @@ module Stupidedi
       #########################################################################
 
       # @return [RepeatedElementTok]
-      def build(element_toks)
-        new(element_toks)
+      def build(element_toks, position)
+        new(element_toks, position)
       end
 
       # @endgroup

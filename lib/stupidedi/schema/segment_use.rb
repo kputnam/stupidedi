@@ -59,12 +59,12 @@ module Stupidedi
       end
 
       # @return [SegmentVal]
-      def empty
-        definition.empty(self)
+      def empty(position)
+        definition.empty(self, position)
       end
 
-      def value(element_vals)
-        definition.value(element_vals, self)
+      def value(element_vals, position)
+        definition.value(element_vals, self, position)
       end
 
       # (see AbstractUse#segment?)

@@ -29,6 +29,15 @@ module Stupidedi
           changes.fetch(:path, @path)
       end
 
+      # @return [String]
+      def inspect
+        if @path.present?
+          "file #{@path}, line #{@line}, column #{@column}"
+        else
+          "line #{@line}, column #{@column}"
+        end
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text "Position"

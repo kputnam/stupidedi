@@ -49,9 +49,9 @@ module Stupidedi
               # @return [Object]
               attr_reader :value
 
-              def initialize(value, usage)
-                super(usage)
+              def initialize(value, usage, position)
                 @value = value
+                super(usage, position)
               end
 
               def valid?
@@ -150,7 +150,7 @@ module Stupidedi
               # @return [Integer, BigDecimal]
               attr_reader :second
 
-              def initialize(hour, minute, second, usage)
+              def initialize(hour, minute, second, usage, position)
                 @hour, @minute, @second = hour, minute, second
 
                 valid   = (  hour.nil? or hour.between?(0, 24))
@@ -159,7 +159,7 @@ module Stupidedi
                 valid &&= (second.nil? or not minute.nil?)
                 valid &&= (second.nil? or second.between?(0, 60))
 
-                super(usage)
+                super(usage, position)
 
                 unless valid
                   raise Exceptions::InvalidElementError,
@@ -173,7 +173,8 @@ module Stupidedi
                   changes.fetch(:hour, @hour),
                   changes.fetch(:minute, @minute),
                   changes.fetch(:second, @second),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def valid?
@@ -240,14 +241,14 @@ module Stupidedi
             ###################################################################
 
             # @return [TimeVal]
-            def empty(usage)
-              TimeVal::Empty.new(usage)
+            def empty(usage, position)
+              TimeVal::Empty.new(usage, position)
             end
 
             # @return [TimeVal]
-            def value(object, usage)
+            def value(object, usage, position)
               if object.blank?
-                TimeVal::Empty.new(usage)
+                TimeVal::Empty.new(usage, position)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 hour   = object.to_s.slice(0, 2).to_i
@@ -258,28 +259,28 @@ module Stupidedi
                   second += "0.#{decimal}".to_d
                 end
 
-                TimeVal::NonEmpty.new(hour, minute, second, usage)
+                TimeVal::NonEmpty.new(hour, minute, second, usage, position)
 
               elsif object.is_a?(Time)
                 TimeVal::NonEmpty.new(object.hour, object.min,
                                       object.sec + (object.usec / 1000000.0),
-                                      usage)
+                                      usage, position)
 
               elsif object.is_a?(DateTime)
                 TimeVal::NonEmpty.new(object.hour, object.min,
                                       object.sec + object.sec_fraction.to_f,
-                                      usage)
+                                      usage, position)
               else
-                TimeVal::Invalid.new(object, usage)
+                TimeVal::Invalid.new(object, usage, position)
               end
             rescue Exceptions::InvalidElementError
-              TimeVal::Invalid.new(object, usage)
+              TimeVal::Invalid.new(object, usage, position)
             end
 
             # @return [TimeVal]
-            def parse(string, usage)
+            def parse(string, usage, position)
               if string.blank?
-                TimeVal::Empty.new(usage)
+                TimeVal::Empty.new(usage, position)
               else
                 hour   = string.slice(0, 2).to_i
                 minute = string.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
@@ -289,10 +290,10 @@ module Stupidedi
                   second += "0.#{decimal}".to_d
                 end
 
-                TimeVal::NonEmpty.new(hour, minute, second, usage)
+                TimeVal::NonEmpty.new(hour, minute, second, usage, position)
               end
             rescue Exceptions::InvalidElementError
-              TimeVal::Invalid.new(string, usage)
+              TimeVal::Invalid.new(string, usage, position)
             end
 
             # @endgroup

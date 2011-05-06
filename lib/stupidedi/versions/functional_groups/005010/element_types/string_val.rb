@@ -39,9 +39,9 @@ module Stupidedi
               # @return [Object]
               attr_reader :value
 
-              def initialize(value, usage)
-                super(usage)
+              def initialize(value, usage, position)
                 @value = value
+                super(usage, position)
               end
 
               def valid?
@@ -142,16 +142,17 @@ module Stupidedi
 
               delegate :to_d, :to_s, :to_f, :length, :=~, :match, :to => :@value
 
-              def initialize(string, usage)
+              def initialize(string, usage, position)
                 @value = string
-                super(usage)
+                super(usage, position)
               end
 
               # @return [NonEmpty]
               def copy(changes = {})
                 NonEmpty.new \
                   changes.fetch(:value, @value),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def too_long?
@@ -227,27 +228,27 @@ module Stupidedi
             ###################################################################
 
             # @return [StringVal]
-            def empty(usage)
-              StringVal::Empty.new(usage)
+            def empty(usage, position)
+              StringVal::Empty.new(usage, position)
             end
 
             # @return [StringVal]
-            def value(object, usage)
+            def value(object, usage, position)
               if object.blank?
-                StringVal::Empty.new(usage)
+                StringVal::Empty.new(usage, position)
               elsif object.respond_to?(:to_s)
-                StringVal::NonEmpty.new(object.to_s, usage)
+                StringVal::NonEmpty.new(object.to_s, usage, position)
               else
-                StringVal::Invalid.new(object, usage)
+                StringVal::Invalid.new(object, usage, position)
               end
             end
 
             # @return [StringVal]
-            def parse(string, usage)
+            def parse(string, usage, position)
               if string.blank?
-                StringVal::Empty.new(usage)
+                StringVal::Empty.new(usage, position)
               else
-                StringVal::NonEmpty.new(string.to_s, usage)
+                StringVal::NonEmpty.new(string.to_s, usage, position)
               end
             end
 

@@ -47,7 +47,7 @@ module Stupidedi
           # @see X222.pdf B.1.1.3.1.1 Numeric
           #
           class NumericVal < Values::SimpleElementVal
-            
+
             def numeric?
               true
             end
@@ -68,9 +68,9 @@ module Stupidedi
               # @return [Object]
               attr_reader :value
 
-              def initialize(value, usage)
-                super(usage)
+              def initialize(value, usage, position)
                 @value = value
+                super(usage, position)
               end
 
               def valid?
@@ -164,16 +164,17 @@ module Stupidedi
 
               delegate :to_i, :to_d, :to_f, :to => :@value
 
-              def initialize(value, usage)
+              def initialize(value, usage, position)
                 @value = value
-                super(usage)
+                super(usage, position)
               end
 
               # @return [NonEmpty]
               def copy(changes = {})
                 NonEmpty.new \
                   changes.fetch(:value, @value),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def valid?
@@ -286,38 +287,38 @@ module Stupidedi
             ###################################################################
 
             # @return [NumericVal]
-            def empty(usage)
-              NumericVal::Empty.new(usage)
+            def empty(usage, position)
+              NumericVal::Empty.new(usage, position)
             end
 
             # @return [NumericVal]
-            def value(object, usage)
+            def value(object, usage, position)
               if object.blank?
-                NumericVal::Empty.new(usage)
+                NumericVal::Empty.new(usage, position)
               elsif object.respond_to?(:to_d)
                 # The number of fractional digits is implied by usage.precision
                 factor = 10 ** usage.definition.precision
 
-                NumericVal::NonEmpty.new(object.to_d / factor, usage)
+                NumericVal::NonEmpty.new(object.to_d / factor, usage, position)
               else
-                NumericVal::Invalid.new(object, usage)
+                NumericVal::Invalid.new(object, usage, position)
               end
             rescue ArgumentError
-              NumericVal::Invalid.new(object, usage)
+              NumericVal::Invalid.new(object, usage, position)
             end
 
             # @return [NumericVal]
-            def parse(string, usage)
+            def parse(string, usage, position)
               if string.blank?
-                NumericVal::Empty.new(usage)
+                NumericVal::Empty.new(usage, position, position)
               else
                 # The number of fractional digits is implied by usage.precision
                 factor = 10 ** usage.definition.precision
 
-                NumericVal::NonEmpty.new(string.to_d / factor, usage)
+                NumericVal::NonEmpty.new(string.to_d / factor, usage, position)
               end
             rescue ArgumentError
-              NumericVal::Invalid.new(string, usage)
+              NumericVal::Invalid.new(string, usage, position)
             end
 
             # @endgroup

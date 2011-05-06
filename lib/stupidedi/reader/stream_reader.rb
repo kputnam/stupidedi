@@ -96,7 +96,8 @@ module Stupidedi
                   else
                     separators.segment = y.value
 
-                    token = SegmentTok.build(:ISA, elements, @input, y.remainder.input)
+                    token = SegmentTok.build(:ISA, elements,
+                      rest.input.position, y.remainder.input.position)
 
                     result(token, TokenReader.new(y.remainder.input, separators))
                   end

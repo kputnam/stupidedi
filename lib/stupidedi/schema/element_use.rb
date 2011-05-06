@@ -17,13 +17,13 @@ module Stupidedi
       abstract :component?
 
       # @return [SimpleElementVal, CompositeElementVal]
-      def empty
-        definition.empty(self)
+      def empty(position)
+        definition.empty(self, position)
       end
 
       # @return [SimpleElementVal, CompositeElementVal]
-      def value(object)
-        definition.value(object, self)
+      def value(object, position)
+        definition.value(object, self, position)
       end
 
       def composite?

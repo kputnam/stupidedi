@@ -31,13 +31,13 @@ module Stupidedi
       abstract :parent
 
       # @return [SimpleElementVal]
-      abstract :empty
+      abstract :empty, :args => %w(position)
 
       # @return [SimpleElementVal]
-      abstract :value, :args => %w(object)
+      abstract :value, :args => %w(object position)
 
       # @return [SimpleElementVal]
-      abstract :parse, :args => %w(string)
+      abstract :parse, :args => %w(string position)
 
       # @return true
       def simple?
@@ -112,12 +112,12 @@ module Stupidedi
       end
 
       # @return [CompositeElementVal]
-      def value(component_vals, usage)
+      def value(component_vals, usage, position)
         Values::CompositeElementVal.new(component_vals, usage)
       end
 
       # @return [CompositeElementVal]
-      def empty(usage)
+      def empty(usage, position)
         Values::CompositeElementVal.new([], usage)
       end
 

@@ -58,15 +58,15 @@ module Stupidedi
             # Constructs a SimpleElementVal from the given `value`
             #
             # @return [Values::SimpleElementVal]
-            def value(object, usage)
-              companion.value(object, usage)
+            def value(object, usage, position)
+              companion.value(object, usage, position)
             end
 
             # Constructs an empty SimpleElementVal
             #
             # @return [Values::SimpleElementVal]
-            def empty(usage)
-              companion.empty(usage)
+            def empty(usage, position)
+              companion.empty(usage, position)
             end
 
             # @return [void]

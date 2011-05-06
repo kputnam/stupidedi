@@ -17,16 +17,17 @@ module Stupidedi
 
             delegate :to_s, :length, :to => :@value
 
-            def initialize(value, usage)
+            def initialize(value, usage, position)
               @value = value
-              super(usage)
+              super(usage, position)
             end
 
             # @return [SeparatorElementVal]
             def copy(changes = {})
               SeparatorElementVal.new \
                 changes.fetch(:value, @value),
-                changes.fetch(:usage, usage)
+                changes.fetch(:usage, usage),
+                changes.fetch(:position, position)
             end
 
             def valid?
@@ -48,19 +49,19 @@ module Stupidedi
             ###################################################################
 
             # @raise NoMethodError
-            def empty(definition, usage)
+            def empty(definition, usage, position)
               raise NoMethodError,
                 "SeparatorElementVal.empty should not be called"
             end
 
             # @return [SeparatorElementVal]
-            def value(character, usage)
-              SeparatorElementVal.new(character, usage)
+            def value(character, usage, position)
+              SeparatorElementVal.new(character, usage, position)
             end
 
             # @return [SeparatorElementVal]
-            def parse(character, usage)
-              SeparatorElementVal.new(character, usage)
+            def parse(character, usage, position)
+              SeparatorElementVal.new(character, usage, position)
             end
 
             # @endgroup

@@ -106,7 +106,7 @@ module Stupidedi
       def recurse(zipper, acc)
         group = Hash.new{|h,k| h[k] = [] }
 
-        if zipper.node.leaf?
+        if zipper.node.simple? or zipper.node.component?
           if zipper.node.invalid?
             if zipper.node.date?
               acc.ik403(zipper, "R", "8", "is not a valid date")

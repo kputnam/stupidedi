@@ -57,8 +57,8 @@ module Stupidedi
         Values::SegmentVal.new([], usage)
       end
 
-      def value(element_vals, usage)
-        Values::SegmentVal.new(element_vals, usage)
+      def value(element_vals, usage, position)
+        Values::SegmentVal.new(element_vals, usage, position)
       end
 
       def segment?

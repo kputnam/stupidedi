@@ -8,14 +8,14 @@ module Stupidedi
       attr_reader :value
 
       # @return [Position]
-      attr_reader :start
+      attr_reader :position
 
       # @return [Position]
       attr_reader :remainder
 
-      def initialize(value, start, remainder)
-        @value, @start, @remainder =
-          value, start, remainder
+      def initialize(value, position, remainder)
+        @value, @position, @remainder =
+          value, position, remainder
       end
 
       def pretty_print(q)
@@ -40,8 +40,8 @@ module Stupidedi
       #########################################################################
 
       # @return [ComponentElementTok]
-      def build(value, start, remainder)
-        new(value, start, remainder)
+      def build(value, position, remainder)
+        new(value, position, remainder)
       end
 
       # @endgroup

@@ -56,8 +56,8 @@ module Stupidedi
               # @return [Object]
               attr_reader :value
 
-              def initialize(value, usage)
-                super(usage)
+              def initialize(value, usage, position)
+                super(usage, position)
                 @value = value
               end
 
@@ -154,7 +154,7 @@ module Stupidedi
               # @return [Integer]
               attr_reader :day
 
-              def initialize(year, month, day, usage)
+              def initialize(year, month, day, usage, position)
                 @year, @month, @day = year, month, day
 
                 begin
@@ -165,7 +165,7 @@ module Stupidedi
                     "invalid date year: #{year}, month: #{month}, day: #{day}"
                 end
 
-                super(usage)
+                super(usage, position)
               end
 
               # @return [Proper]
@@ -174,7 +174,8 @@ module Stupidedi
                   changes.fetch(:year, @year),
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def valid?
@@ -289,7 +290,7 @@ module Stupidedi
               # @return [Integer]
               attr_reader :day
 
-              def initialize(year, month, day, usage)
+              def initialize(year, month, day, usage, position)
                 @year, @month, @day = year, month, day
 
                 # Check that date is reasonably valid
@@ -298,7 +299,7 @@ module Stupidedi
                     "invalid date year: #{year}, month: #{month}, day: #{day}"
                 end
 
-                super(usage)
+                super(usage, position)
               end
 
               # @return [Improper]
@@ -307,7 +308,8 @@ module Stupidedi
                   changes.fetch(:year, @year),
                   changes.fetch(:month, @month),
                   changes.fetch(:day, @day),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def valid?
@@ -329,7 +331,7 @@ module Stupidedi
               #
               # @return [Proper]
               def century(cc)
-                Proper.new(100 * cc + @year, @month, @day, usage)
+                Proper.new(100 * cc + @year, @month, @day, usage, position)
               end
 
               # Create a proper date which cannot be older than the given `date`
@@ -448,63 +450,63 @@ module Stupidedi
             ###################################################################
 
             # @return [DateVal::Empty]
-            def empty(usage)
-              DateVal::Empty.new(usage)
+            def empty(usage, position)
+              DateVal::Empty.new(usage, position)
             end
 
             # @return [DateVal]
-            def value(object, usage)
+            def value(object, usage, position)
               if object.blank?
-                DateVal::Empty.new(usage)
+                DateVal::Empty.new(usage, position)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 string = object.to_s
 
                 if string.length < 6
-                  DateVal::Invalid.new(object, usage)
+                  DateVal::Invalid.new(object, usage, position)
                 else
                   day   = string.slice(-2, 2).to_i
                   month = string.slice(-4, 2).to_i
                   year  = string.slice( 0..-5)
 
                   if year.length < 4
-                    DateVal::Improper.new(year.to_i, month, day, usage)
+                    DateVal::Improper.new(year.to_i, month, day, usage, position)
                   else
-                    DateVal::Proper.new(year.to_i, month, day, usage)
+                    DateVal::Proper.new(year.to_i, month, day, usage, position)
                   end
                 end
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-                DateVal::Proper.new(object.year, object.month, object.day, usage)
+                DateVal::Proper.new(object.year, object.month, object.day, usage, position)
 
               elsif object.is_a?(DateVal::Improper)
-                DateVal::Improper.new(object.year, object.month, object.day, usage)
+                DateVal::Improper.new(object.year, object.month, object.day, usage, position)
 
               else
-                DateVal::Invalid.new(object, usage)
+                DateVal::Invalid.new(object, usage, position)
               end
 
             rescue Exceptions::InvalidElementError
-              DateVal::Invalid.new(object, usage)
+              DateVal::Invalid.new(object, usage, position)
             end
 
             # @return [DateVal]
-            def parse(string, usage)
+            def parse(string, usage, position)
               if string.length < 6
-                DateVal::Invalid.new(string, usage)
+                DateVal::Invalid.new(string, usage, position)
               else
                 day   = string.slice(-2, 2).to_i
                 month = string.slice(-4, 2).to_i
                 year  = string.slice( 0..-5)
 
                 if year.length < 4
-                  DateVal::Improper.new(year.to_i, month, day, usage)
+                  DateVal::Improper.new(year.to_i, month, day, usage, position)
                 else
-                  DateVal::Proper.new(year.to_i, month, day, usage)
+                  DateVal::Proper.new(year.to_i, month, day, usage, position)
                 end
               end
             rescue Exceptions::InvalidElementError
-              DateVal::Invalid.new(string, usage)
+              DateVal::Invalid.new(string, usage, position)
             end
 
             # @endgroup

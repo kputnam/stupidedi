@@ -11,14 +11,14 @@ module Stupidedi
       attr_reader :element_toks
 
       # @return [Position]
-      attr_reader :start
+      attr_reader :position
 
       # @return [Position]
       attr_reader :remainder
 
-      def initialize(id, element_toks, start, remainder)
-        @id, @element_toks, @start, @remainder =
-          id, element_toks, start, remainder
+      def initialize(id, element_toks, position, remainder)
+        @id, @element_toks, @position, @remainder =
+          id, element_toks, position, remainder
       end
 
       def pretty_print(q)
@@ -35,8 +35,8 @@ module Stupidedi
       #########################################################################
 
       # @return [SegmentTok]
-      def build(id, element_toks, start, remainder)
-        new(id, element_toks, start, remainder)
+      def build(id, element_toks, position, remainder)
+        new(id, element_toks, position, remainder)
       end
 
       # @endgroup

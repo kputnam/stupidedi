@@ -8,14 +8,14 @@ module Stupidedi
       attr_reader :component_toks
 
       # @return [Position]
-      attr_reader :start
+      attr_reader :position
 
       # @return [Position]
       attr_reader :remainder
 
-      def initialize(component_toks, start, remainder)
-        @component_toks, @start, @remainder =
-          component_toks, start, remainder
+      def initialize(component_toks, position, remainder)
+        @component_toks, @position, @remainder =
+          component_toks, position, remainder
       end
 
       def pretty_print(q)
@@ -23,7 +23,7 @@ module Stupidedi
       end
 
       def repeated
-        RepeatedElementTok.new(self.cons)
+        RepeatedElementTok.new(self.cons, @position)
       end
 
       def repeated?
@@ -48,8 +48,8 @@ module Stupidedi
       #########################################################################
 
       # @return [CompositeElementTok]
-      def build(component_toks, start, remainder)
-        new(component_toks, start, remainder)
+      def build(component_toks, position, remainder)
+        new(component_toks, position, remainder)
       end
 
       # @endgroup

@@ -142,7 +142,7 @@ module Stupidedi
           end
         end
 
-        Reader::RepeatedElementTok.build(element_toks)
+        Reader::RepeatedElementTok.build(element_toks, nil)
       end
 
       # @return [Reader::CompositeElementTok]

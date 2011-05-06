@@ -13,16 +13,20 @@ module Stupidedi
       # @return [SegmentUse]
       attr_reader :usage
 
-      def initialize(children, usage)
-        @children, @usage =
-          children, usage
+      # @return [Position]
+      attr_reader :position
+
+      def initialize(children, usage, position)
+        @children, @usage, @position =
+          children, usage, position
       end
 
       # @return [SegmentVal]
       def copy(changes = {})
         SegmentVal.new \
           changes.fetch(:children, @children),
-          changes.fetch(:usage, @usage)
+          changes.fetch(:usage, @usage),
+          changes.fetch(:position, @position)
       end
 
       def size

@@ -42,9 +42,9 @@ module Stupidedi
               # @return [Object]
               attr_reader :value
 
-              def initialize(value, usage)
-                super(usage)
+              def initialize(value, usage, position)
                 @value = value
+                super(usage, position)
               end
 
               def valid?
@@ -138,16 +138,17 @@ module Stupidedi
 
               delegate :to_i, :to_d, :to_f, :to => :@value
 
-              def initialize(value, usage)
+              def initialize(value, usage, position)
                 @value = value
-                super(usage)
+                super(usage, position)
               end
 
               # @return [NonEmpty]
               def copy(changes = {})
                 NonEmpty.new \
                   changes.fetch(:value, @value),
-                  changes.fetch(:usage, usage)
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
               def valid?
@@ -263,34 +264,34 @@ module Stupidedi
             ###################################################################
 
             # @return [DecimalVal]
-            def empty(usage)
-              DecimalVal::Empty.new(usage)
+            def empty(usage, position)
+              DecimalVal::Empty.new(usage, position)
             end
 
             # @return [DecimalVal]
-            def value(object, usage)
+            def value(object, usage, position)
               if object.blank?
-                DecimalVal::Empty.new(usage)
+                DecimalVal::Empty.new(usage, position)
               elsif object.respond_to?(:to_d)
                 begin
-                  DecimalVal::NonEmpty.new(object.to_d, usage)
+                  DecimalVal::NonEmpty.new(object.to_d, usage, position)
                 rescue ArgumentError
-                  DecimalVal::Invalid.new(object, usage)
+                  DecimalVal::Invalid.new(object, usage, position)
                 end
               else
-                DecimalVal::Invalid.new(object, usage)
+                DecimalVal::Invalid.new(object, usage, position)
               end
             end
 
             # @return [DecimalVal]
-            def parse(string, usage)
+            def parse(string, usage, position)
               if string.blank?
-                DecimalVal::Empty.new(usage)
+                DecimalVal::Empty.new(usage, position)
               else
                 begin
-                  DecimalVal::NonEmpty.new(string.to_d, usage)
+                  DecimalVal::NonEmpty.new(string.to_d, usage, position)
                 rescue ArgumentError
-                  DecimalVal::Invalid.new(string, usage)
+                  DecimalVal::Invalid.new(string, usage, position)
                 end
               end
             end

@@ -422,20 +422,20 @@ module Stupidedi
         Either.success(Result.success(value, remainder))
       end
 
-      def segment(segment_id, start, remainder, elements = [])
-        SegmentTok.build(segment_id, elements, start, remainder)
+      def segment(segment_id, input, remainder, elements = [])
+        SegmentTok.build(segment_id, elements, input.position, remainder.position)
       end
 
-      def simple(value, start, remainder)
-        SimpleElementTok.build(value, start, remainder)
+      def simple(value, input, remainder)
+        SimpleElementTok.build(value, input.position, remainder.position)
       end
 
-      def component(value, start, remainder)
-        ComponentElementTok.build(value, start, remainder)
+      def component(value, input, remainder)
+        ComponentElementTok.build(value, input.position, remainder.position)
       end
 
-      def composite(value, start, remainder)
-        CompositeElementTok.build(value, start, remainder)
+      def composite(value, input, remainder)
+        CompositeElementTok.build(value, input.position, remainder.position)
       end
     end
 
