@@ -24,6 +24,30 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :copy, "changes={}"
 
+      abstract :too_long?
+
+      abstract :too_short?
+
+      def id?
+        false
+      end
+
+      def date?
+        false
+      end
+
+      def time?
+        false
+      end
+
+      def string?
+        false
+      end
+
+      def numeric?
+        false
+      end
+
       # @return true
       def leaf?
         true

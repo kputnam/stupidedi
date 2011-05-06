@@ -106,8 +106,30 @@ module Stupidedi
       def recurse(zipper, acc)
         group = Hash.new{|h,k| h[k] = [] }
 
-        if zipper.node.simple?
-          # ...
+        if zipper.node.leaf?
+          if zipper.node.invalid?
+            if zipper.node.date?
+              acc.ik403(zipper, "R", "8", "is not a valid date")
+            elsif zipper.node.time?
+              acc.ik403(zipper, "R", "8", "is not a valid time")
+            elsif zipper.node.numeric?
+              acc.ik403(zipper, "R", "6", "is not a valid number")
+            else
+              acc.ik403(zipper, "R", "6", "is not a valid string")
+            end
+          elsif zipper.node.blank?
+            if zipper.node.usage.required?
+              acc.ik403(zipper, "R", "1", "must be present")
+            end
+          elsif zipper.node.usage.forbidden?
+            acc.ik403(zipper, "R", "I10", "must not be present")
+          elsif zipper.node.usage.allowed_values.exclude?(zipper.node.to_s)
+            acc.ik403(zipper, "R", "7", "is not an allowed value")
+          elsif zipper.node.too_long?
+            acc.ik403(zipper, "R", "5", "is too long")
+          elsif zipper.node.too_short?
+            acc.ik403(zipper, "R", "4", "is too short")
+          end
 
         elsif zipper.node.composite?
           zipper.children.each do |element|
@@ -167,11 +189,11 @@ module Stupidedi
               matches = group.at(child)
               repeat  = child.repeat_count
 
-              if matches.blank? and child.requirement.required?
+              if matches.blank? and child.required?
                 if child.loop?
-                  acc.ik304(last, "R", "I7", "missing loop #{child.id}")
+                  acc.ik304(last, "R", "I7", "missing #{child.id} loop")
                 else
-                  acc.ik304(last, "R", "3", "missing segment #{child.id}")
+                  acc.ik304(last, "R", "3", "missing #{child.id} segment")
                 end
               elsif repeat < matches.length
                 matches.drop(repeat.max).each do |c|
@@ -210,11 +232,11 @@ module Stupidedi
               matches = group.at(child)
               repeat  = child.repeat_count
 
-              if matches.blank? and child.requirement.required?
+              if matches.blank? and child.required?
                 if child.loop?
-                  acc.ik304(last, "R", "I7", "missing loop #{child.id}")
+                  acc.ik304(last, "R", "I7", "missing #{child.id} loop")
                 else
-                  acc.ik304(last, "R", "3", "missing segment #{child.id}")
+                  acc.ik304(last, "R", "3", "missing #{child.id} segment")
                 end
               elsif repeat < matches.length
                 matches.drop(repeat.max).each do |c|

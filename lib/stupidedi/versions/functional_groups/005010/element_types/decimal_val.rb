@@ -22,6 +22,18 @@ module Stupidedi
                        (?:E[+-]?\d+)?     (?# optional exponent                )
                       \Z/ix
 
+            def numeric?
+              true
+            end
+
+            def too_long?
+              false
+            end
+
+            def too_short?
+              false
+            end
+
             #
             #
             #

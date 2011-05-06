@@ -16,7 +16,7 @@ module Stupidedi
             e::E61 .simple_use(r::Relational,  s::RepeatCount.bounded(1)),
 
             SyntaxNotes::R.build(2, 4),
-            SyntaxNotes::E.build(2, 5))
+            SyntaxNotes::E.build(2, 4))
 
         end
       end

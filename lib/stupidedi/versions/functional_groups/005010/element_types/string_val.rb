@@ -15,6 +15,18 @@ module Stupidedi
           #
           class StringVal < Values::SimpleElementVal
 
+            def string?
+              true
+            end
+
+            def too_long?
+              false
+            end
+
+            def too_short?
+              false
+            end
+
             #
             # Objects passed to StringVal.value that don't respond to #to_s are
             # modeled by this class. Note most everything in Ruby responds to
@@ -140,6 +152,14 @@ module Stupidedi
                 NonEmpty.new \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage)
+              end
+
+              def too_long?
+                @value.lstrip.length > definition.max_length
+              end
+
+              def too_short?
+                @value.lstrip.length < definition.min_length
               end
 
               # @return [String]

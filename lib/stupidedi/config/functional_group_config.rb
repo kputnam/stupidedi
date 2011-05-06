@@ -26,13 +26,18 @@ module Stupidedi
       end
 
       # @return [void]
-      def register(version, &constructor)
-        @table[version] = constructor
+      def register(version, definition = nil, &constructor)
+        if block_given?
+          @table[version] = constructor
+        else
+          @table[version] = definition
+        end
       end
 
       # @return [FunctionalGroupDef]
       def at(version)
-        @table[version].call
+        x = @table[version]
+        x.is_a?(Proc) ? x.call : x
       end
 
       # @return [void]

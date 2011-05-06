@@ -35,6 +35,18 @@ module Stupidedi
           #
           class DateVal < Values::SimpleElementVal
 
+            def date?
+              true
+            end
+
+            def too_long?
+              false
+            end
+
+            def too_short?
+              false
+            end
+
             #
             # Models invalid dates, either with a bad format or a date that
             # does not exist (eg Febuary 30th 2000)

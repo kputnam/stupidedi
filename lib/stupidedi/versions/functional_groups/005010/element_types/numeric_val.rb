@@ -47,6 +47,18 @@ module Stupidedi
           # @see X222.pdf B.1.1.3.1.1 Numeric
           #
           class NumericVal < Values::SimpleElementVal
+            
+            def numeric?
+              true
+            end
+
+            def too_long?
+              false
+            end
+
+            def too_short?
+              false
+            end
 
             #
             #

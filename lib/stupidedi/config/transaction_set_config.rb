@@ -51,13 +51,18 @@ module Stupidedi
       #   table.register("005010", "FA", "999") { Standards::FA999 }
       #
       # @return [void]
-      def register(version, function, transaction, &constructor)
-        @table[Array[version, nil, transaction]] = constructor
+      def register(version, function, transaction, definition = nil, &constructor)
+        if block_given?
+          @table[Array[version, nil, transaction]] = constructor
+        else
+          @table[Array[version, nil, transaction]] = definition
+        end
       end
 
       # @return [TransactionSetDef]
       def at(version, function, transaction)
-        @table[Array[version, nil, transaction]].call
+        x = @table[Array[version, nil, transaction]]
+        x.is_a?(Proc) ? x.call : x
       end
 
       def defined_at?(version, function, transaction)

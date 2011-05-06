@@ -54,6 +54,18 @@ module Stupidedi
           #
           class IdentifierVal < Values::SimpleElementVal
 
+            def id?
+              true
+            end
+
+            def too_long?
+              false
+            end
+
+            def too_short?
+              false
+            end
+
             #
             #
             #
@@ -112,7 +124,7 @@ module Stupidedi
             class Empty < IdentifierVal
 
               def valid?
-                false
+                true
               end
 
               def empty?
@@ -176,6 +188,14 @@ module Stupidedi
 
               def empty?
                 false
+              end
+
+              def too_long?
+                @value.length > definition.max_length
+              end
+
+              def too_short?
+                @value.length < definition.min_length
               end
 
               # @return [String]

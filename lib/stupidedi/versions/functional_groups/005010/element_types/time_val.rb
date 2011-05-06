@@ -29,6 +29,18 @@ module Stupidedi
           #
           class TimeVal < Values::SimpleElementVal
 
+            def time?
+              true
+            end
+
+            def too_short?
+              false
+            end
+
+            def too_long?
+              false
+            end
+
             #
             #
             #
