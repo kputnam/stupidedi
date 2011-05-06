@@ -72,6 +72,26 @@ module Stupidedi
         end
       end
 
+      # IK403 "I10" element must not be present has action "E"
+
+      # X222.074.1000A.NM104.010
+      # X222.074.1000A.NM105.020
+      # X222.074.1000A.NM109.070
+      # X222.076.1000A.PER02.020
+      # X222.076.1000A.PER02.040
+      # X222.076.1000A.PER05.020
+      # X222.076.1000A.PER07.030
+      # X222.074.1000B.NM109.050
+      # X222.081.2000A.HL01.040
+      # X222.083.2000A.PRV03.020  *
+      # X222.084.2000A.CUR.010    * Medicare specific
+      # X222.084.2000A.CUR.010    * Medicare specific
+      # X222.087.2010AA.NM108.010 * Trailblazer specific
+      # X222.087.2010AA.NM108.020 * Medicare specific (except Trailblazer)
+      # X222.087.2010AA.NM109.030
+      # X222.087.2010AA.NM109.040
+      # X222.087.2010AA.N302.060  * "Post Office Box", "P.O. Box", "PO Box", "Lock Box", "Lock Bin"
+
     end
 
   end

@@ -78,7 +78,25 @@ module Stupidedi
         end
       end
 
+      # IK304 "3"   Segment must be present
+      # IK304 "I6"  Segment must be present
+      # IK304 "5"   Segment occurs too many times
+      # IK304 "4"   Loop occurs too many times
+      # IK304 "I7"  Loop must be present
+      #
+      # IK403 "1"   Element must be present
+      # IK403 "I10" Element must not be present
+      # IK403 "2"   Element must be present if other element(s) is (not) present
+      # IK403 "6"   Element must contain at least one character
+      # IK403 "4"   Element value is too short
+      # IK403 "5"   Element value is too long
+      # IK403 "6"   Element has invalid characters
+      # IK403 "7"   Invalid code value
+      # IK403 "8"   Invalid date
+      # IK403 "9"   Invalid time
+
     end
 
   end
 end
+
