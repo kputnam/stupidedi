@@ -107,7 +107,7 @@ module Stupidedi
           #
           class C < Schema::SyntaxNote
             def required(zipper)
-              if zipper.down.node.present?
+              if zipper.child(indexes.head - 1).node.present?
                 children(zipper)
               else
                 []
@@ -135,7 +135,7 @@ module Stupidedi
           #
           class L < Schema::SyntaxNote
             def required(zipper)
-              if zipper.down.node.present?
+              if zipper.child(indexes.head - 1).node.present?
                 children(zipper)
               else
                 []
