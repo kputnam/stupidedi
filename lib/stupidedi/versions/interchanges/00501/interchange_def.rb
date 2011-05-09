@@ -34,8 +34,8 @@ module Stupidedi
         end.new "00501",
           # Interchange header
           [ SegmentDefs::ISA.use(1, r::Mandatory, s::RepeatCount.bounded(1)),
-            SegmentDefs::ISB.use(2, r::Optional,  s::RepeatCount.bounded(1)),
-            SegmentDefs::ISE.use(3, r::Optional,  s::RepeatCount.bounded(1)),
+          # SegmentDefs::ISB.use(2, r::Optional,  s::RepeatCount.bounded(1)),
+          # SegmentDefs::ISE.use(3, r::Optional,  s::RepeatCount.bounded(1)),
             SegmentDefs::TA1.use(4, r::Optional,  s::RepeatCount.unbounded) ],
 
           # Interchange trailer

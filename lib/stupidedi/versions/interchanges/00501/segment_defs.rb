@@ -18,17 +18,17 @@ module Stupidedi
           autoload :IEA,
             "stupidedi/versions/interchanges/00501/segment_defs/IEA"
 
-          autoload :ISB,
-            "stupidedi/versions/interchanges/00501/segment_defs/ISB"
+        # autoload :ISB,
+        #   "stupidedi/versions/interchanges/00501/segment_defs/ISB"
 
-          autoload :ISE,
-            "stupidedi/versions/interchanges/00501/segment_defs/ISE"
+        # autoload :ISE,
+        #   "stupidedi/versions/interchanges/00501/segment_defs/ISE"
 
           autoload :TA1,
             "stupidedi/versions/interchanges/00501/segment_defs/TA1"
 
-          autoload :TA3,
-            "stupidedi/versions/interchanges/00501/segment_defs/TA3"
+        # autoload :TA3,
+        #   "stupidedi/versions/interchanges/00501/segment_defs/TA3"
 
         end
       end
