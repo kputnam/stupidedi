@@ -416,8 +416,6 @@ module Stupidedi
               state = state.up
             end
 
-            # The state we're searching for will have an ancestor state
-            # with this instruction table
             target = zipper.node.instructions.pop(op.pop_count).drop(op.drop_count)
 
             until state.last?
@@ -433,43 +431,78 @@ module Stupidedi
                 _value = value
                 _state = state
 
+                # In most cases, we need only to check the first segment under
+                # this ancestor. However, certain structios have more than one
+                # entry segment... hopefully only non-repeatable tables. For
+                # example, transaction set 835's summary table has an optional
+                # PLB segment followed by a mandatory SE segment, so the table
+                # can begin with PLB or SE. When the user searches for SE, we
+                # might descend into the table and see PLB, but this flag means
+                # we should search the sibling segments, too.
+                multi   = _value.node.table?
+                multi &&= target.instructions.count do |x|
+                  x.segment_use.try(:parent) == op.segment_use.parent
+                end > 1
+
+                # Descend to the first segment
                 until _value.node.segment?
                   _value = _value.down
                   _state = _state.down
                 end
 
-                if op.segment_use.nil? or op.segment_use.eql?(_value.node.usage)
-                  # Note op.segment_use.nil? is true of ISA, GS, and ST, since
-                  # we don't know until we've deconstructed them and found the
-                  # version numbers. That means _value.node could be an invalid
-                  # ISA, GS, or ST segment
-                  if _value.node.valid?
-                    next if filter?(filter_tok, _value.node)
-                  else
-                    next unless invalid
-                    next if __filter?(filter_tok, _value.node)
+                # This loop only executes once if multi is false. Otherwise, it
+                # checks the first segment and continues checking each sibling
+                # until a match is found or there are no more sibling segments.
+                while true
+                  if op.segment_use.nil? or op.segment_use.eql?(_value.node.usage)
+                    # Note op.segment_use.nil? is true of ISA, GS, and ST, since
+                    # we can't know the SegmentUse until we've deconstructed the
+                    # token and looked up the versions numbers in the Config.
+                    if _value.node.valid?
+                      break if filter?(filter_tok, _value.node)
+                    else
+                      break unless invalid
+                      break if __filter?(filter_tok, _value.node)
+                    end
+
+                    # Synchronize the two parallel state and value nodes
+                    unless _value.eql?(_state.node.zipper)
+                      _state = _state.replace(_state.node.copy(:zipper => _value))
+                    end
+
+                    matches << _state
+                    matched  = true
+                    break
+                  elsif invalid and _value.node.invalid?
+                    break if __filter?(filter_tok, _value.node)
+
+                    # Synchronize the two parallel state and value nodes
+                    unless _value.eql?(_state.node.zipper)
+                      _state = _state.replace(_state.node.copy(:zipper => _value))
+                    end
+
+                    matches << _state
+                    matched  = true
+                    break
                   end
 
-                  # Synchronize the two parallel state and value nodes
-                  unless _value.eql?(_state.node.zipper)
-                    _state = _state.replace(_state.node.copy(:zipper => _value))
+                  break unless multi
+
+                  # Scan through sibling nodes until we find another segment
+                  _value = _value.next
+                  _state = _state.next
+
+                  unless _value.node.segment?
+                    break if _value.last?
+                    _value = _value.next
+                    _state = _state.next
                   end
 
-                  matches << _state
-                  matched  = true
-                  break
-                elsif invalid and _value.node.invalid?
-                  next if __filter?(filter_tok, _value.node)
-
-                  # Synchronize the two parallel state and value nodes
-                  unless _value.eql?(_state.node.zipper)
-                    _state = _state.replace(_state.node.copy(:zipper => _value))
-                  end
-
-                  matches << _state
-                  matched  = true
-                  break
+                  # No more siblings
+                  break unless _value.node.segment?
                 end
+
+                break if matched
               elsif target.length > state.node.instructions.length
                 # The ancestor state can't be one of the rightward siblings,
                 # since the length of instruction tables is non-increasing as
