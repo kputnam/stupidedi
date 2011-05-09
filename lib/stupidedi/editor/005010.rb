@@ -20,12 +20,12 @@ module Stupidedi
       end
 
       def validate(gs, acc)
-        acc.tap { edit_gs(gs, acc) }
+        acc.tap { validate_gs(gs, acc) }
       end
 
     private
 
-      def edit_gs(gs, acc)
+      def validate_gs(gs, acc)
         # Functional Group Code
         edit(:GS01) do
           gs.element(1).tap do |e|
@@ -143,7 +143,18 @@ module Stupidedi
           st = st.flatmap do |st|
             edit_st(st, acc)
 
-            st.element(2).tap{|e| st02s[e.node.to_s] << e }
+            st.element(2).
+              tap{|e| st02s[e.node.to_s] << e }.
+              explain do
+                # The #element method failed because this was an invalid ST
+                # segment. To workaround that, we can get the SegmentTok and
+                # select the ST02 ElementTok (zero-based index)
+                st.segment.tap do |s|
+                  elements = s.node.segment_tok.element_toks
+                  st02s[elements.at(1).value] << s
+                end
+              end
+
             st.find!(:ST)
           end
         end
@@ -264,14 +275,14 @@ module Stupidedi
 
         edit(:SE) do
           st.find(:SE).tap do |se|
-            edit_se(se, st, acc)
+            validate_se(se, st, acc)
           end.explain do
             st.segment.tap{|s| acc.ik502(s, "R", "2", "missing SE segment") }
           end
         end
       end
 
-      def edit_se(se, st, acc)
+      def validate_se(se, st, acc)
         # Number of Included Segments
         edit(:SE01) do
           se.element(1).tap do |e|

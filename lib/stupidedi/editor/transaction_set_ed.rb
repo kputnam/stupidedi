@@ -132,15 +132,17 @@ module Stupidedi
           end
 
         elsif zipper.node.composite?
-          zipper.children.each do |element|
-            recurse(element, acc)
-          end
-
           zipper.node.definition.tap do |d|
-            d.syntax_notes.each do |s|
-              es = s.errors(zipper)
-              ex = s.reason(zipper) if es.present?
-              es.each{|c| acc.ik403(c, "R", "2", ex) }
+            if zipper.node.present?
+              zipper.children.each do |element|
+                recurse(element, acc)
+              end
+
+              d.syntax_notes.each do |s|
+                es = s.errors(zipper)
+                ex = s.reason(zipper) if es.present?
+                es.each{|c| acc.ik403(c, "R", "2", ex) }
+              end
             end
           end
 

@@ -54,12 +54,12 @@ module Stupidedi
         #   they are used internally to schedule a delivery. Not sure what to do
         #   about validating them in a general way...
 
-        acc.tap { edit_isa(isa, received, acc) }
+        acc.tap { validate_isa(isa, received, acc) }
       end
 
     private
 
-      def edit_isa(isa, received, acc)
+      def validate_isa(isa, received, acc)
         # Authorization Information Qualifier
         edit(:ISA01) do
           isa.element(1).tap do |e|

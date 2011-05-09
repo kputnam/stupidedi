@@ -22,7 +22,7 @@ module Stupidedi
           # Collect all the ISA13 elements within this transmission
           while m.defined?
             m = m.flatmap do |isa|
-              edit_isa(isa, acc)
+              validate_isa(isa, acc)
 
               # There isn't a well-defined constraint in the specs regarding
               # the uniqueness of control numbers, but one of the foundation
@@ -69,7 +69,7 @@ module Stupidedi
       #
       # @see FiveOhOne#validate
       #
-      def edit_isa(isa, acc)
+      def validate_isa(isa, acc)
         isa.segment.tap do |x|
           unless x.node.invalid?
             envelope_def = x.node.definition.parent.parent
