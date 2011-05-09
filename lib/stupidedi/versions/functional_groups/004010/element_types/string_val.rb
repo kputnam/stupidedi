@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module FiftyTen
+      module FortyTen
         module ElementTypes
 
           class AN < SimpleElementDef
@@ -11,7 +11,7 @@ module Stupidedi
           end
 
           #
-          # @see X222.pdf B.1.1.3.1.4 String
+          # @see X222.pdf A.1.3.1.4 String
           #
           class StringVal < Values::SimpleElementVal
 
@@ -318,7 +318,7 @@ module Stupidedi
               if object.blank?
                 StringVal::Empty.new(usage, position)
               elsif object.respond_to?(:to_s)
-                StringVal::NonEmpty.new(object.to_s.rstrip, usage, position)
+                StringVal::NonEmpty.new(object.to_s, usage, position)
               else
                 StringVal::Invalid.new(object, usage, position)
               end

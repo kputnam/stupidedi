@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module FiftyTen
+      module FortyTen
         module ElementTypes
 
           class ID < SimpleElementDef
@@ -50,7 +50,7 @@ module Stupidedi
           end
 
           #
-          # @see X222.pdf B.1.1.3.1.3 Identifier
+          # @see X222.pdf A.1.3.1.3 Identifier
           #
           class IdentifierVal < Values::SimpleElementVal
 

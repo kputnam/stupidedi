@@ -8,7 +8,9 @@ require "pp"
 require "term/ansicolor" if ARGV.delete("-C")
 
 config = Stupidedi::Config.new
+config.interchange.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
 config.interchange.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
+config.functional_group.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
 config.functional_group.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
 
 config.transaction_set.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
@@ -31,6 +33,7 @@ start  = Time.now
 ARGV.each do |path|
   File.open(path) do |io|
     parser, result = parser.read(Stupidedi::Reader.build(io))
+    pp result
   end
 end
 

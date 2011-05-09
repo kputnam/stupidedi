@@ -31,7 +31,6 @@ module Stupidedi
 
         autoload :TransactionSetDefs,
           "stupidedi/versions/functional_groups/005010/transaction_set_defs"
-
       end
 
     end
