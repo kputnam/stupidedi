@@ -21,14 +21,14 @@ class Module
       class_eval(<<-RUBY, file, line.to_i - 1)
         def #{name}(*args)
           raise NoMethodError,
-            "method #{name} is abstract"
+            "method \#{self.class.name}.#{name} is abstract"
         end
       RUBY
     else
       class_eval(<<-RUBY, file, line.to_i - 1)
         def #{name}(*args)
           raise NoMethodError,
-            "method #{name}(#{params.join(', ')}) is abstract"
+            "method \#{self.class.name}.#{name}(#{params.join(', ')}) is abstract"
         end
       RUBY
     end

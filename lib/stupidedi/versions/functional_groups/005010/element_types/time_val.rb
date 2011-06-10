@@ -253,7 +253,7 @@ module Stupidedi
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 hour   = object.to_s.slice(0, 2).to_i
                 minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                second = object.to_s.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
+                second = object.to_s.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
 
                 if decimal = object.to_s.slice(6..-1)
                   second += "0.#{decimal}".to_d
@@ -263,12 +263,14 @@ module Stupidedi
 
               elsif object.is_a?(Time)
                 TimeVal::NonEmpty.new(object.hour, object.min,
-                                      object.sec + (object.usec / 1000000.0),
+                                      object.sec.to_d \
+                                      + (object.usec.to_d / 1000000),
                                       usage, position)
 
               elsif object.is_a?(DateTime)
                 TimeVal::NonEmpty.new(object.hour, object.min,
-                                      object.sec + object.sec_fraction.to_f,
+                                      object.sec.to_d \
+                                      + object.sec_fraction.to_d,
                                       usage, position)
               else
                 TimeVal::Invalid.new(object, usage, position)

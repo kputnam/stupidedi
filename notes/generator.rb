@@ -1,5 +1,6 @@
 require "stupidedi"
 require "ruby-prof"
+require "pp"
 
 config = Stupidedi::Config.new
 config.interchange.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
@@ -8,13 +9,13 @@ config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::
 config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }
 
 
-b = Stupidedi::Builder::BuilderDsl.build(config)
+b = Stupidedi::Builder::BuilderDsl.build(config, true)
 x = b.blank
 
-b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", b.blank)
+b.ISA("00", "x", "00", "x", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", ":")
 b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
 b. ST("837", "1234", b.default)
-b.BHT("0019", "00", "1230", "19990531", x, "CH")
+b.BHT("0019", "00", "1230", "19990531", Time.now.utc, "CH")
 b.NM1("41", "2", "PREMIER BILLING SERVICE", "", "", "", "", "46", "12EEER000TY")
 b.PER("IC", "JERRY THE CLOWN", "TE", "3056660000")
 b.NM1("40", "2", "REPRICER JONES", "", "", "", "", "46", "66783JJT")
@@ -32,7 +33,7 @@ b.SBR("S", "18", "", "", "12", "", "", "", "MB")
 b.NM1("IL", "1", "BACON", "KEVIN", "", "", "", "MI", "222334444")
 b. N3("236 N MAIN ST")
 b. N4("MIAMI", "FL", "33413")
-b.DMG("D8", "19431022", "M")
+b.DMG("D8", "19431022", "F")
 
 b.zipper.map {|z| pp z.root.node }
 

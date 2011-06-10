@@ -38,6 +38,14 @@ module Stupidedi
               @value.blank?
             end
 
+            def too_short?
+              @value.length < 1
+            end
+
+            def too_long?
+              @value.length > 1
+            end
+
             def inspect
               id = definition.try{|d| ansi.bold("[#{d.id}]") }
               ansi.element("SeparatorElementVal.value#{id}") << "(#{@value || "nil"})"

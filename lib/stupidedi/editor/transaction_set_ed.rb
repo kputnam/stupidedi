@@ -104,8 +104,6 @@ module Stupidedi
       # IK403 "9"   Invalid time
 
       def recurse(zipper, acc)
-        group = Hash.new{|h,k| h[k] = [] }
-
         if zipper.node.simple? or zipper.node.component?
           if zipper.node.invalid?
             if zipper.node.date?
@@ -132,24 +130,27 @@ module Stupidedi
           end
 
         elsif zipper.node.composite?
-          zipper.node.definition.tap do |d|
+          if zipper.node.blank?
+            if zipper.node.usage.required?
+              acc.ik403(zipper, "R", "1", "must be present")
+            end
+          elsif zipper.node.usage.forbidden?
+            acc.ik403(zipper, "R", "I10", "must not be present")
+          else
             if zipper.node.present?
-              zipper.children.each do |element|
-                recurse(element, acc)
-              end
+              zipper.children.each{|z| recurse(z, acc) }
 
+              d = zipper.node.definition
               d.syntax_notes.each do |s|
-                es = s.errors(zipper)
-                ex = s.reason(zipper) if es.present?
-                es.each{|c| acc.ik403(c, "R", "2", ex) }
+                zs = s.errors(zipper)
+                ex = s.reason(zipper) if zs.present?
+                zs.each{|c| acc.ik403(c, "R", "2", ex) }
               end
             end
           end
 
         elsif zipper.node.repeated?
-          zipper.children.each do |element|
-            recurse(element, acc)
-          end
+          zipper.children.each{|z| recurse(z, acc) }
 
         elsif zipper.node.segment?
           if zipper.node.valid?
@@ -165,10 +166,12 @@ module Stupidedi
               end
             end
           else
-            # ...
+            acc.ik304(child, "R", "2", "unexpected segment")
           end
 
         elsif zipper.node.loop?
+          group = Hash.new{|h,k| h[k] = [] }
+
           zipper.children.each do |child|
             # Child is either a segment or loop
             recurse(child, acc)
@@ -177,41 +180,39 @@ module Stupidedi
               group[child.node.definition] << child
             elsif child.node.valid?
               group[child.node.usage] << child
-            else
-              acc.ik304(child, "R", "2", "unexpected segment")
             end
           end
 
-          zipper.node.definition.tap do |d|
-            # Though we're iterating the definition tree, we need to track
-            # the last location before a required child was missing.
-            last = zipper
+          # Though we're iterating the definition tree, we need to track
+          # the last location before a required child was missing.
+          last = zipper
 
-            d.children.each do |child|
-              matches = group.at(child)
-              repeat  = child.repeat_count
+          zipper.node.definition.children.each do |child|
+            repeat  = child.repeat_count
+            matches = group.at(child)
 
-              if matches.blank? and child.required?
+            if matches.blank? and child.required?
+              if child.loop?
+                acc.ik304(last, "R", "I7", "missing #{child.id} loop")
+              else
+                acc.ik304(last, "R", "3", "missing #{child.id} segment")
+              end
+            elsif repeat < matches.length
+              matches.drop(repeat.max).each do |c|
                 if child.loop?
-                  acc.ik304(last, "R", "I7", "missing #{child.id} loop")
+                  acc.ik304(c, "R", "4", "loop occurs too many times")
                 else
-                  acc.ik304(last, "R", "3", "missing #{child.id} segment")
-                end
-              elsif repeat < matches.length
-                matches.drop(repeat.max).each do |c|
-                  if child.loop?
-                    acc.ik304(c, "R", "4", "loop occurs too many times")
-                  else
-                    acc.ik304(c, "R", "5", "segment occurs too many times")
-                  end
+                  acc.ik304(c, "R", "5", "segment occurs too many times")
                 end
               end
-
-              last = matches.last unless matches.blank?
             end
+
+            last = matches.last unless matches.blank?
           end
 
         elsif zipper.node.table?
+          group = Hash.new{|h,k| h[k] = [] }
+
           zipper.children.each do |child|
             # Child is either a segment or loop
             recurse(child, acc)
@@ -255,6 +256,8 @@ module Stupidedi
           end
 
         elsif zipper.node.transaction_set?
+          group = Hash.new{|h,k| h[k] = [] }
+
           zipper.children.each do |table|
             recurse(table, acc)
             group[table.node.definition] << table
