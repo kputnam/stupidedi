@@ -15,14 +15,14 @@ module Stupidedi
       end
 
       # @return [ResultSet]
-      def validate(machine)
+      def critique(machine)
         ResultSet.new.tap do |acc|
           m, index = machine.first, Hash.new{|h,k| h[k] = [] }
 
           # Collect all the ISA13 elements within this transmission
           while m.defined?
             m = m.flatmap do |isa|
-              validate_isa(isa, acc)
+              critique_isa(isa, acc)
 
               # There isn't a well-defined constraint in the specs regarding
               # the uniqueness of control numbers, but one of the foundation
@@ -67,9 +67,9 @@ module Stupidedi
     private
 
       #
-      # @see FiveOhOne#validate
+      # @see FiveOhOne#critique
       #
-      def validate_isa(isa, acc)
+      def critique_isa(isa, acc)
         isa.segment.tap do |x|
           unless x.node.invalid?
             envelope_def = x.node.definition.parent.parent
@@ -77,7 +77,7 @@ module Stupidedi
             # Invoke the version-specific interchange editor
             if config.editor.defined_at?(envelope_def)
               editor = config.editor.at(envelope_def)
-              editor.new(config, received).validate(isa, acc)
+              editor.new(config, received).critique(isa, acc)
             end
           else
             acc.ta105(x, "R", "003", x.node.reason)

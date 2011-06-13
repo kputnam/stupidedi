@@ -15,19 +15,24 @@ module Stupidedi
 
       # Is `value` a valid string (AN)?
       def an?(value)
-        true
+        true # @todo
       end
 
+      # @param [Class]  definition
+      # @param [String] definition
       def register(definition, &constructor)
         @table[definition] = constructor
       end
 
+      # @param [Class] definition
       def defined_at?(definition)
-        @table.defined_at?(definition)
+        @table.defined_at?(definition) or
+        @table.defined_at?(definition.class.name)
       end
 
+      # @param [Class] definition
       def at(definition)
-        @table.at(definition).call
+        (@table.at(definition) || @table.at(definition.class.name)).call
       end
 
       # @return [void]

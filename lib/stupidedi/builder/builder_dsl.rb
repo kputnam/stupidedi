@@ -109,7 +109,7 @@ module Stupidedi
           elsif zipper.node.usage.forbidden?
             raise "forbidden #{descriptor} is present"
           elsif zipper.node.usage.allowed_values.exclude?(zipper.node.to_s)
-            raise "value #{zipper.node.to_s} not allowed in #{descriptor}"
+            raise "value #{zipper.node.inspect} not allowed in #{descriptor}"
           elsif zipper.node.too_long?
             raise "value is too long in #{descriptor}"
           elsif zipper.node.too_short?
@@ -158,81 +158,51 @@ module Stupidedi
           end
 
         elsif zipper.node.loop?
-          name = zipper.node.definition.id
-          occurences = Hash.new{|h,k| h[k] = 0 }
-
-          zipper.children.each do |child|
-            # Child is either a segment or loop
-            if child.node.loop?
-              occurences[child.node.definition] += 1
-            else
-              occurences[child.node.usage] += 1
-            end
-          end
-
-          zipper.node.definition.children.each do |child|
-            bound = child.repeat_count
-            count = occurences.at(child)
-
-            if count.zero? and child.required?
-              if child.loop?
-                raise "required loop #{child.id} is missing from #{name}"
-              else
-                raise "required segment #{child.id} is missing from #{name}"
-              end
-            elsif bound < count
-              if child.loop?
-                raise "loop #{child.id} occurs too many times in #{name}"
-              else
-                raise "segment #{child.id} occurs too many times in #{name}"
-              end
-            end
-          end
+          critique_occurences zipper,
+            "loop #{zipper.node.definition.id}"
 
         elsif zipper.node.table?
-          name = zipper.node.definition.id
-          occurences = Hash.new{|h,k| h[k] = 0 }
-
-          zipper.children.each do |child|
-            # Child is either a segment or loop
-            if child.node.loop?
-              occurences[child.node.definition] += 1
-            else
-              occurences[child.node.usage] += 1
-            end
-          end
-
-          zipper.node.definition.children.each do |child|
-            bound = child.repeat_count
-            count = occurences.at(child)
-
-            if count.zero? and child.required?
-              if child.loop?
-                raise "required loop #{child.id} is missing from #{name}"
-              else
-                raise "required segment #{child.id} is missing from #{name}"
-              end
-            elsif bound < count
-              if child.loop?
-                raise "loop #{child.id} occurs too many times in #{name}"
-              else
-                raise "segment #{child.id} occurs too many times in #{name}"
-              end
-            end
-          end
+          critique_occurences zipper,
+            "table #{zipper.node.definition.id}"
 
         elsif zipper.node.transaction_set?
-          # puts "transaction set: #{zipper.node.definition.id}"
-          # @todo
+          critique_occurences zipper,
+            "functional group #{zipper.node.definition.id}"
+
         elsif zipper.node.functional_group?
-          # puts "functional group: #{zipper.node.definition.id}"
-          # @todo
+          critique_occurences zipper,
+            "functional group #{zipper.node.definition.id}"
+
         elsif zipper.node.interchange?
-          # puts "interchange: #{zipper.node.definition.id}"
-          # @todo
+          critique_occurences zipper,
+            "interchange #{zipper.node.definition.id}"
+
         elsif zipper.node.transmission?
           # puts "transmission: ???"
           # @todo
+        end
+      end
+
+      def critique_occurences(zipper, name)
+        occurences = Hash.new{|h,k| h[k] = 0 }
+
+        zipper.children.each do |child|
+          if child.node.respond_to?(:usage)
+            occurences[child.node.usage] += 1
+          else
+            occurences[child.node.definition] += 1
+          end
+        end
+
+        zipper.node.definition.children.each do |child|
+          bound = child.repeat_count
+          count = occurences.at(child)
+
+          if count.zero? and child.required?
+            raise "required node #{child.id} is missing from #{name}"
+          elsif bound < count
+            raise "node #{child.id} occurs too many times in #{name}"
+          end
         end
       end
 
@@ -271,6 +241,10 @@ module Stupidedi
         @separators   = changes.fetch(:separators, @separators)
         @segment_dict = changes.fetch(:segment_dict, @segment_dict)
         self
+      end
+
+      def stream?
+        false
       end
     end
 

@@ -7,6 +7,9 @@ module Stupidedi
       # @return [Config]
       abstract :config
 
+      # @return [ResultSet]
+      abstract :critique
+
       def edit(id)
         if config.editor.enabled?(id)
         # puts "#{self.class.name.split("::").last}.edit(#{id})"

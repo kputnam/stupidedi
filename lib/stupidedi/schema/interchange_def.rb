@@ -45,7 +45,7 @@ module Stupidedi
       end
 
       # @return [Array<SegmentUse>]
-      def segment_uses
+      def children
         @header_segment_uses + @trailer_segment_uses
       end
 

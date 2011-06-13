@@ -14,8 +14,8 @@ module Stupidedi
           config, received
       end
 
-      def validate(st, acc)
-        acc.tap { validate_st(st, acc) }
+      def critique(st, acc)
+        acc.tap { critique_st(st, acc) }
       end
 
     private
@@ -23,7 +23,7 @@ module Stupidedi
       # The X222 implementation guide places constraints on the interchange
       # header and trailer that are not modeled in Guide::X222, because the
       # scope is limited to the contents of the transaction set envelope.
-      def validate_isa(isa, acc)
+      def critique_isa(isa, acc)
         edit(:ISA05) do
           isa.element(5).tap do |e|
             if e.node.present? and e.node.valid?
@@ -58,17 +58,17 @@ module Stupidedi
       # The X222 implementation guide places constraints on the functional
       # group header and trailer that are not modeled in Guide::X222, because
       # the scope is limited to the contents of the transaction set envelope.
-      def validate_gs(gs, acc)
+      def critique_gs(gs, acc)
         # ... However these are all handled generically in TransactionSetEd
         # and are driven by the definition of the transaction set.
       end
 
-      def validate_st(st, acc)
+      def critique_st(st, acc)
         st.parent.tap do |gs|
           gs.parent.tap do |isa|
-            validate_isa(isa, acc)
+            critique_isa(isa, acc)
           end
-          validate_gs(gs, acc)
+          critique_gs(gs, acc)
         end
       end
 

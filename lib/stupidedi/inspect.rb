@@ -15,7 +15,11 @@ module Stupidedi
 
     # @return [String]
     def inspect
-      "#<#{self.class.name}:0x#{object_id.abs.to_s(16)} ...>"
+      if self.class.name.empty?
+        "#<\#<Class:0x#{self.class.object_id.abs.to_s(16)}>"
+      else
+        "#<#{self.class.name}"
+      end << ":0x#{object_id.abs.to_s(16)} ...>"
     end
   end
 

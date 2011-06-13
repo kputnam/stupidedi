@@ -2,7 +2,7 @@ module Stupidedi
   module Editor
 
     #
-    # Validates (edits) a "005010" functional groups (GS/GE), then selects the
+    # Critiques (edits) a "005010" functional groups (GS/GE), then selects the
     # appropriate editor, according to the config, and edits each transaction
     # set (ST/SE)
     #
@@ -19,13 +19,13 @@ module Stupidedi
           config, received
       end
 
-      def validate(gs, acc)
-        acc.tap { validate_gs(gs, acc) }
+      def critique(gs, acc)
+        acc.tap { critique_gs(gs, acc) }
       end
 
     private
 
-      def validate_gs(gs, acc)
+      def critique_gs(gs, acc)
         # Functional Group Code
         edit(:GS01) do
           gs.element(1).tap do |e|
@@ -141,7 +141,7 @@ module Stupidedi
         # Collect all the ST02 elements within this functional group
         while st.defined?
           st = st.flatmap do |st|
-            edit_st(st, acc)
+            critique_st(st, acc)
 
             st.element(2).
               tap{|e| st02s[e.node.to_s] << e }.
@@ -176,14 +176,14 @@ module Stupidedi
 
         edit(:GE) do
           gs.find(:GE).tap do |ge|
-            edit_ge(ge, gs, st02s.length, acc)
+            critique_ge(ge, gs, st02s.length, acc)
           end.explain do
             gs.segment.tap{|s| acc.ak905(s, "R", "3", "missing GE segment") }
           end
         end
       end
 
-      def edit_ge(ge, gs, st_count, acc)
+      def critique_ge(ge, gs, st_count, acc)
         # Number of Transaction Sets Included
         edit(:GE01) do
           ge.element(1).tap do |e|
@@ -211,13 +211,13 @@ module Stupidedi
         end
       end
 
-      def edit_st(st, acc)
+      def critique_st(st, acc)
         st.segment.tap do |x|
           unless x.node.invalid?
             # Invoke a general transaction set editor, which will later
             # dispatch to a guide-specific transaction set editor
             editor = TransactionSetEd.new(config, received)
-            editor.validate(st, acc)
+            editor.critique(st, acc)
           else
             acc.ik502(x, "R", "I6", x.node.reason)
             return
@@ -275,14 +275,14 @@ module Stupidedi
 
         edit(:SE) do
           st.find(:SE).tap do |se|
-            validate_se(se, st, acc)
+            critique_se(se, st, acc)
           end.explain do
             st.segment.tap{|s| acc.ik502(s, "R", "2", "missing SE segment") }
           end
         end
       end
 
-      def validate_se(se, st, acc)
+      def critique_se(se, st, acc)
         # Number of Included Segments
         edit(:SE01) do
           se.element(1).tap do |e|
@@ -321,6 +321,144 @@ module Stupidedi
               end
             end
           end
+        end
+      end
+
+      def critique_nm1(nm1, acc)
+        edit(:NM1) do
+          # Organization/last name
+          nm1.element(3).tap do |e|
+            if e.node.blank? and e.node.usage.optional?
+              acc.warn(e, "optional element is not present")
+            end
+          end
+
+          # Non-person entity
+          if nm1.element(2).select{|e| e.node == "2" }.defined?
+            # First name
+            nm1.element(4).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "505", "must not be present when NM102 is 2")
+              end
+            end
+
+            # Middle name
+            nm1.element(5).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "514", "must not be present when NM102 is 2")
+              end
+            end
+
+            # Prefix name
+            nm1.element(6).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
+              end
+            end
+
+            # Suffix name
+            nm1.element(7).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
+              end
+            end
+          end
+
+          # Person
+          if nm1.element(2).select{|e| e.node == "1" }.defined?
+            # First name
+            nm1.element(4).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+
+            # Middle name
+            nm1.element(5).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+
+            # Prefix name
+            nm1.element(6).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+
+            # Suffix name
+            nm1.element(7).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+          end
+        end
+      end
+
+      def critique_n3(n3, acc)
+        edit(:N3) do
+          n3.element(2).tap do |e|
+            if e.node.usage.optional?
+              unless n3.element(1).relect(&:blank?).defined?
+                # Second address line (N302) shouldn't be present if the
+                # first (N301) isn't also present
+                acc.warn(e, "second address line present without first line")
+              end
+            end
+          end
+        end
+      end
+
+      def critique_n4(n4, acc)
+        edit(:N4) do
+          usa_canada =
+            n4.element(2).select(&:present?).defined? ||
+            n4.element(4).select(&:blank?).defined?   ||
+            n4.element(4).select{|e| e.node == "US" }.defined? ||
+            n4.element(7).select(&:blank?).defined?
+
+          # State or Province Code
+          n4.element(2).tap do |e|
+            if usa_canada
+              if e.node.blank? and e.node.situational?
+                # Required
+              end
+            else
+              if e.node.present? and e.node.situational?
+                # Forbidden
+              end
+            end
+          end
+
+          # Postal Code
+          n4.element(3).tap do |e|
+            if usa_canada
+              # US zipcodes must be 9-digits
+            end
+          end
+
+          # Country Code
+          n4.element(4).tap do |e|
+            if usa_canada
+              if e.node.present? and e.node.situational?
+                # Forbidden
+              end
+            else
+              # Country codes 2-digit from ISO 3166
+            end
+          end
+
+          # Country Subdivision Code
+          n4.element(7).tap do |e|
+            if usa_canada
+              if e.node.present? and e.node.situational?
+                # Forbidden
+              end
+            else
+              # Country subdivision codes from ISO 3166
+            end
         end
       end
 

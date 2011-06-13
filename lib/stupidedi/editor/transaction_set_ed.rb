@@ -14,22 +14,22 @@ module Stupidedi
           config, received
       end
 
-      def validate(st, acc)
+      def critique(st, acc)
         st.parent.tap do |gs|
           gs.parent.tap do |isa|
-            validate_isa(isa, acc)
+            critique_isa(isa, acc)
           end
 
-          validate_gs(gs, acc)
+          critique_gs(gs, acc)
         end
 
-        acc.tap { validate_st(st, acc) }
+        acc.tap { critique_st(st, acc) }
       end
 
     private
 
       # Performs validations using the definition of the given ISA segment
-      def validate_isa(isa, acc)
+      def critique_isa(isa, acc)
         isa.segment.tap do |x|
           envelope_def = x.node.definition.parent.parent
 
@@ -38,7 +38,7 @@ module Stupidedi
       end
 
       # Performs validations using the definition of the given GS segment
-      def validate_gs(gs, acc)
+      def critique_gs(gs, acc)
         gs.segment.tap do |x|
           envelope_def = x.node.definition.parent.parent
 
@@ -47,7 +47,7 @@ module Stupidedi
       end
 
       # Performs validations using the definition of the given ST segment
-      def validate_st(st, acc)
+      def critique_st(st, acc)
         st.segment.tap do |x|
           envelope_def = x.node.definition.parent.parent.parent
 
@@ -73,7 +73,7 @@ module Stupidedi
 
           if config.editor.defined_at?(envelope_def)
             editor = config.editor.at(envelope_def)
-            editor.new(config, received).validate(st, acc)
+            editor.new(config, received).critique(st, acc)
           end
         end
 

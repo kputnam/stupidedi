@@ -1,12 +1,7 @@
 BUGS
 -------------------------------------------------------------------------------
-Navigation#find doesn't find the SE segment from an 835 transaction if it is
-preceeded by PLB. This seems to indicate that in general, it doesn't correctly
-deal with tables that can begin with more than one segment (Table 3 can begin
-with PLB or SE).
-
 Navigation#find doesn't find next ISA segment when positioned on a preceeding
-ISA segment. Looking at the #successors, itlooks like a wrong instruction...
+ISA segment. Looking at the #successors, it looks like a wrong instruction...
 it should be Instruction[ISA](pop: 1, push: InterchangeState). This is probably
 fixable in InterchangeState.push?
 
@@ -20,12 +15,6 @@ fixable in InterchangeState.push?
 
 TODO
 -------------------------------------------------------------------------------
-Extend Builder::BuilderDsl to accept a "strict" flag that checks several things
-that would get re-checked by an editor, but does so as the segment is generated
-and raises an exception. These validations go beyond what the StateMachine does,
-and must be kept separate to ensure parsing an input stream isn't hamstrung with
-overly aggressive validation.
-
 Implement an automated FA999 Functional Acknowledgement generator that accepts
 any FunctionalGroupVal as input. This will be useful for writing integration
 tests, but more importantly it will create use cases that will require changes
@@ -64,15 +53,21 @@ specific.
 Update GuideBuilder to ensure SegmentReq, ElementReq, and RepeatCount are only
 restricted by the implementation guide and not made less restrictive.
 
-It might be most sensible to change AbstractState to accept already-built
-SegmentVals from the programmatic API in addition to SegmentToks from the
-Reader::TokenReader. This would reduce wasteful object creation.
-
 Reduce startup costs by Marshal'ing definition trees - requires eliminating
 anonymous classes which are used to instantiate singleton objects.
 
 DONE
 -------------------------------------------------------------------------------
+Navigation#find doesn't find the SE segment from an 835 transaction if it is
+preceeded by PLB. This seems to indicate that in general, it doesn't correctly
+deal with tables that can begin with more than one segment (Table 3 can begin
+with PLB or SE).
+
+Extend Builder::BuilderDsl to accept a "strict" flag that checks several things
+that would get re-checked by an editor, but does so as the segment is generated
+and raises an exception. These validations go beyond what the StateMachine does,
+and must be kept separate to ensure parsing an input stream isn't hamstrung with
+overly aggressive validation.
 
 Enhance Navigation#find to filter *all* pattern-matching elements, since the
 InstructionTable doesn't work this way. We could use this to find the CLM whose

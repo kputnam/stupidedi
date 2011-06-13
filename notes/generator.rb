@@ -43,4 +43,4 @@ config.editor.register(Stupidedi::Guides::FiftyTen::X222::HC837P) { Stupidedi::E
 config.editor.register(Stupidedi::Guides::FiftyTen::X222A1::HC837P) { Stupidedi::Editor::X222 }
 
 envelope_ed = Stupidedi::Editor::TransmissionEd.new(config, Time.now)
-pp envelope_ed.validate(b.machine).results
+pp envelope_ed.critique(b.machine).results

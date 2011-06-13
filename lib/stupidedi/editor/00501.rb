@@ -2,7 +2,7 @@ module Stupidedi
   module Editor
 
     #
-    # Validates (edits) interchanges (ISA/IEA) with version "00501", then
+    # Critiques (edits) interchanges (ISA/IEA) with version "00501", then
     # selects the appropriate editor, according to the config, and edits
     # each functional group (GS/GE)
     #
@@ -20,7 +20,7 @@ module Stupidedi
       end
 
       # @return [ResultSet]
-      def validate(isa, acc)
+      def critique(isa, acc)
         # 000: No error
 
         # 002: This Standard as Noted in the Control Standards Identifier is Not Supported
@@ -44,7 +44,7 @@ module Stupidedi
         #   so there will be no evidence of this in the parse tree
 
         # 025: Duplicate Interchange Control Numbers
-        #   Need to validate the parent, TransmissionVal
+        #   Need to critique the parent, TransmissionVal
 
         # 028: Invalid Date in Deferred Delivery Request
         # 029: Invalid Time in Deferred Delivery Request
@@ -54,12 +54,12 @@ module Stupidedi
         #   they are used internally to schedule a delivery. Not sure what to do
         #   about validating them in a general way...
 
-        acc.tap { validate_isa(isa, received, acc) }
+        acc.tap { critique_isa(isa, received, acc) }
       end
 
     private
 
-      def validate_isa(isa, received, acc)
+      def critique_isa(isa, received, acc)
         # Authorization Information Qualifier
         edit(:ISA01) do
           isa.element(1).tap do |e|
@@ -317,7 +317,7 @@ module Stupidedi
       end
 
       #
-      # @see FiftyTenEd#validate
+      # @see FiftyTenEd#critique
       #
       def edit_gs(gs, acc)
         gs.segment.tap do |x|
@@ -327,7 +327,7 @@ module Stupidedi
             # Invoke the version-specific functional group editor
             if config.editor.defined_at?(envelope_def)
               editor = config.editor.at(envelope_def)
-              editor.new(config, received).validate(gs, acc)
+              editor.new(config, received).critique(gs, acc)
             end
           else
             # Probably "unknown interchange version '...'"

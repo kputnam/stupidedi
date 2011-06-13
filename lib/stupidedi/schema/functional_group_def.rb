@@ -37,9 +37,6 @@ module Stupidedi
       # @return [Array<SegmentUses>]
       attr_reader :trailer_segment_uses
 
-      # @return [Array<SegmentUses>]
-      attr_reader :transaction_set_uses
-
       # @return [Hash, Module]
       abstract :segment_dict
 
@@ -65,7 +62,7 @@ module Stupidedi
       end
 
       # @return [Array<SegmentUse>]
-      def segment_uses
+      def children
         @header_segment_uses + @trailer_segment_uses
       end
 
