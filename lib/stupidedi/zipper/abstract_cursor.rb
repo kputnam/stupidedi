@@ -206,7 +206,7 @@ module Stupidedi
         cursor
       end
 
-      #
+      # Returns a list of cursors, one pointing to each child node.
       #
       # @return [Array<MemoizedCursor>]
       def children

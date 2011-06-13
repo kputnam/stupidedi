@@ -221,38 +221,34 @@ module Stupidedi
               group[child.node.definition] << child
             elsif child.node.valid?
               group[child.node.usage] << child
-            else
-              acc.ik304(child, "R", "2", "unexpected segment")
             end
           end
 
-          zipper.node.definition.tap do |d|
             # Though we're iterating the definition tree, we need to track
             # the last location before a required child was missing.
             last = zipper
 
-            d.children.each do |child|
-              matches = group.at(child)
-              repeat  = child.repeat_count
+          zipper.node.definition.children.each do |child|
+            matches = group.at(child)
+            repeat  = child.repeat_count
 
-              if matches.blank? and child.required?
+            if matches.blank? and child.required?
+              if child.loop?
+                acc.ik304(last, "R", "I7", "missing #{child.id} loop")
+              else
+                acc.ik304(last, "R", "3", "missing #{child.id} segment")
+              end
+            elsif repeat < matches.length
+              matches.drop(repeat.max).each do |c|
                 if child.loop?
-                  acc.ik304(last, "R", "I7", "missing #{child.id} loop")
+                  acc.ik304(c, "R", "4", "loop occurs too many times")
                 else
-                  acc.ik304(last, "R", "3", "missing #{child.id} segment")
-                end
-              elsif repeat < matches.length
-                matches.drop(repeat.max).each do |c|
-                  if child.loop?
-                    acc.ik304(c, "R", "4", "loop occurs too many times")
-                  else
-                    acc.ik304(c, "R", "5", "segment occurs too many times")
-                  end
+                  acc.ik304(c, "R", "5", "segment occurs too many times")
                 end
               end
-
-              last = matches.last unless matches.blank?
             end
+
+            last = matches.last unless matches.blank?
           end
 
         elsif zipper.node.transaction_set?
