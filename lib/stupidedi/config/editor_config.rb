@@ -8,6 +8,8 @@ module Stupidedi
         @table = Hash.new
       end
 
+      alias customize tap
+
       # Is the edit or rewrite rule enabled?
       def enabled?(id)
         true

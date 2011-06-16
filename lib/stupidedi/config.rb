@@ -30,8 +30,11 @@ module Stupidedi
       @transaction_set  = TransactionSetConfig.new
       @code_list        = CodeListConfig.new
       @editor           = EditorConfig.new
+    end
 
-      yield self if block_given?
+    # @yield self
+    def customize
+      self.tap { yield self }
     end
 
     # @return [void]

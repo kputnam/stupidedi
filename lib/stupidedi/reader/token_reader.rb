@@ -75,6 +75,20 @@ module Stupidedi
         failure("reached end of input without finding #{s.inspect}")
       end
 
+      def consume_control_chars
+        position = 0
+
+        while @input.defined_at?(position) and is_control?(@input.at(position))
+          position += 1
+        end
+
+        if position.zero?
+          success(self)
+        else
+          success(advance(position))
+        end
+      end
+
       # If `s` occurs within {#input}, then the input up to and including `s`
       # is skipped and the remaining input is returned as a new `TokenReader`
       # wrapped by `Either.success`. Otherwise, {Either::Failure} is returned.
@@ -130,28 +144,33 @@ module Stupidedi
 
       # @return [Either<Result<SegmentTok, TokenReader>>]
       def read_segment
-        read_segment_id.flatmap do |a|
-          if @segment_dict.defined_at?(a.value)
-            element_uses = @segment_dict.at(a.value).element_uses
-          else
-            element_uses = []
-          end
+        consume_control_chars.flatmap do |start|
+          # We might start reading a segment at "\nNM1...", where the "\n" is on
+          # line 5, but "NM1" is on line 6. So to ensure the segment position is
+          # line 6, we start with consume_control_characters.
+          start.read_segment_id.flatmap do |a|
+            if @segment_dict.defined_at?(a.value)
+              element_uses = @segment_dict.at(a.value).element_uses
+            else
+              element_uses = []
+            end
 
-          a.remainder.read_delimiter.flatmap do |b|
-            case b.value
-            when @separators.element
-              rest = b.remainder.read_elements(a.value, element_uses)
-              rest.map{|c| c.map{|es| segment(a.value, @input, c.remainder.input, es) }}
-            when @separators.segment
-              remainder =
-                if a.value == :IEA
-                  b.remainder.stream
-                else
-                  b.remainder
-                end
+            a.remainder.read_delimiter.flatmap do |b|
+              case b.value
+              when @separators.element
+                rest = b.remainder.read_elements(a.value, element_uses)
+                rest.map{|c| c.map{|es| segment(a.value, start.input, c.remainder.input, es) }}
+              when @separators.segment
+                remainder =
+                  if a.value == :IEA
+                    b.remainder.stream
+                  else
+                    b.remainder
+                  end
 
-              # Consume the segment terminator
-              result(segment(a.value, @input, b.remainder.input), remainder)
+                # Consume the segment terminator
+                result(segment(a.value, start.input, b.remainder.input), remainder)
+              end
             end
           end
         end

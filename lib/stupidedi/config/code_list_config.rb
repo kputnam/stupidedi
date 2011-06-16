@@ -8,6 +8,8 @@ module Stupidedi
         @table = Hash.new
       end
 
+      alias customize tap
+
       def register(id, &constructor)
         @table[id] = constructor
       end

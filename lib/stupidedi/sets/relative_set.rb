@@ -5,15 +5,16 @@ module Stupidedi
 
     #
     # This data type encodes a set of unique values that belong to an _infinite_
-    # universe of possible values. Set operations generally perform worse than
-    # {AbsoluteSet}, as they operate on {Hash} values and require iterating the
-    # underlying {Hash} of at least one of the two sets in `O(n)` time.
+    # universe of possible values (aka domain). Set operations generally perform
+    # worse than {AbsoluteSet}, as they operate on {Hash} values and require
+    # iterating the underlying {Hash} of at least one of the two sets in `O(n)`
+    # time.
     #
-    # This is suitable for sets that don't have an inherently restricted universe
-    # of allowed values (eg sets of arbitrary {String} values), including those
-    # where the universe is significantly large compared to the typical size of
-    # sets built from those values. {RelativeSet} also requires only a single
-    # step to execute {#include?}, while {AbsoluteSet} requires two.
+    # This is suitable for sets that don't have an inherently restricted domain
+    # (eg sets of arbitrary {String} values), including those where the domain
+    # is significantly large compared to the typical size of sets built from
+    # those values. {RelativeSet} also requires only a single step to execute
+    # {#include?}, while {AbsoluteSet} requires two.
     #
     class RelativeSet < AbstractSet
       include Enumerable

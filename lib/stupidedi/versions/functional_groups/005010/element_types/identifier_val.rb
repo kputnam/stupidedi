@@ -32,8 +32,8 @@ module Stupidedi
 
             # @return [SimpleElementUse]
             def simple_use(requirement, repeat_count, parent = nil)
-              if @code_list and @code_list.internal?
-                Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.absolute(code_list.codes), parent)
+              if @code_list.try(:internal?)
+                Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.absolute(@code_list.codes), parent)
               else
                 Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.universal, parent)
               end
@@ -41,8 +41,8 @@ module Stupidedi
 
             # @return [ComponentElementUse]
             def component_use(requirement, parent = nil)
-              if @code_list and @code_list.internal?
-                Schema::ComponentElementUse.new(self, requirement, Sets.absolute(code_list.codes), parent)
+              if @code_list.try(:internal?)
+                Schema::ComponentElementUse.new(self, requirement, Sets.absolute(@code_list.codes), parent)
               else
                 Schema::ComponentElementUse.new(self, requirement, Sets.universal, parent)
               end

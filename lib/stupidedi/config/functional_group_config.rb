@@ -25,6 +25,8 @@ module Stupidedi
         @table = Hash.new
       end
 
+      alias customize tap
+
       # @return [void]
       def register(version, definition = nil, &constructor)
         if block_given?

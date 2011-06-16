@@ -17,6 +17,8 @@ module Stupidedi
         @table = Hash.new
       end
 
+      alias customize tap
+
       # @example
       #   table = TransactionSetConfig.new
       #
