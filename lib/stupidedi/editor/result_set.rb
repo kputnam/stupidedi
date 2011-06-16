@@ -19,6 +19,7 @@ module Stupidedi
         @cscs    = [] # Hash.new(&default)
         @csccs   = [] # Hash.new(&default)
         @eics    = [] # Hash.new(&default)
+        @warns   = []
       end
 
       def ta105(*args)
@@ -52,9 +53,15 @@ module Stupidedi
       end
 
       def stc01(*args)
-        result = ClaimStatus.new(*args)
+      # result = ClaimStatus.new(*args)
+      # @results << result
+      # @cscs    << result
+      end
+
+      def warn(zipper, message)
+        result = Warning.new(zipper, message)
         @results << result
-        @cscs    << result
+        @warns   << result
       end
     end
 

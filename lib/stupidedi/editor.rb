@@ -8,6 +8,8 @@ module Stupidedi
     autoload :IK403,        "stupidedi/editor/result"
     autoload :IK502,        "stupidedi/editor/result"
     autoload :ClaimStatus,  "stupidedi/editor/result"
+    autoload :Warning,      "stupidedi/editor/result"
+    autoload :Error,        "stupidedi/editor/result"
     autoload :ResultSet,    "stupidedi/editor/result_set"
 
     autoload :AbstractEd,         "stupidedi/editor/abstract_ed"
