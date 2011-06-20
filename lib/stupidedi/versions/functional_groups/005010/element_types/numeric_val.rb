@@ -270,20 +270,7 @@ module Stupidedi
               # @return [-1, 0, +1]
               def <=>(other)
                 a, b = coerce(other)
-
-              # if a.respond_to?(:value)
-                  if b.respond_to?(:value)
-                    a.value <=> b.value
-                  else
-                    a.value <=> b
-                  end
-              # else
-              #   if b.respond_to?(:value)
-              #     a <=> b.value
-              #   else
-              #     a <=> b
-              #   end
-              # end
+                a.value <=> b
               end
 
               # @endgroup
