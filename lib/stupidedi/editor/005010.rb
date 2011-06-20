@@ -324,6 +324,145 @@ module Stupidedi
         end
       end
 
+      def critique_nm1(nm1, acc)
+        edit(:NM1) do
+          # Organization/last name
+          nm1.element(3).tap do |e|
+            if e.node.blank? and e.node.usage.optional?
+              acc.warn(e, "optional element is not present")
+            end
+          end
+
+          # Non-person entity
+          if nm1.element(2).select{|e| e.node == "2" }.defined?
+            # First name
+            nm1.element(4).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "505", "must not be present when NM102 is 2")
+              end
+            end
+
+            # Middle name
+            nm1.element(5).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "514", "must not be present when NM102 is 2")
+              end
+            end
+
+            # Prefix name
+            nm1.element(6).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
+              end
+            end
+
+            # Suffix name
+            nm1.element(7).tap do |e|
+              if e.node.present? and e.node.usage.optional?
+                acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
+              end
+            end
+          end
+
+          # Person
+          if nm1.element(2).select{|e| e.node == "1" }.defined?
+            # First name
+            nm1.element(4).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+
+            # Middle name
+            nm1.element(5).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+
+            # Prefix name
+            nm1.element(6).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+
+            # Suffix name
+            nm1.element(7).tap do |e|
+              if e.node.blank? and e.node.usage.optional?
+                acc.warn(e, "optional element is not present")
+              end
+            end
+          end
+        end
+      end
+
+      def critique_n3(n3, acc)
+        edit(:N3) do
+          n3.element(2).tap do |e|
+            if e.node.usage.optional?
+              unless n3.element(1).relect(&:blank?).defined?
+                # Second address line (N302) shouldn't be present if the
+                # first (N301) isn't also present
+                acc.warn(e, "second address line present without first line")
+              end
+            end
+          end
+        end
+      end
+
+      def critique_n4(n4, acc)
+        edit(:N4) do
+          usa_canada =
+            n4.element(2).select(&:present?).defined? ||
+            n4.element(4).select(&:blank?).defined?   ||
+            n4.element(4).select{|e| e.node == "US" }.defined? ||
+            n4.element(7).select(&:blank?).defined?
+
+          # State or Province Code
+          n4.element(2).tap do |e|
+            if usa_canada
+              if e.node.blank? and e.node.situational?
+                # Required
+              end
+            else
+              if e.node.present? and e.node.situational?
+                # Forbidden
+              end
+            end
+          end
+
+          # Postal Code
+          n4.element(3).tap do |e|
+            if usa_canada
+              # US zipcodes must be 9-digits
+            end
+          end
+
+          # Country Code
+          n4.element(4).tap do |e|
+            if usa_canada
+              if e.node.present? and e.node.situational?
+                # Forbidden
+              end
+            else
+              # Country codes 2-digit from ISO 3166
+            end
+          end
+
+          # Country Subdivision Code
+          n4.element(7).tap do |e|
+            if usa_canada
+              if e.node.present? and e.node.situational?
+                # Forbidden
+              end
+            else
+              # Country subdivision codes from ISO 3166
+            end
+          end
+        end
+      end
+
     end
 
   end

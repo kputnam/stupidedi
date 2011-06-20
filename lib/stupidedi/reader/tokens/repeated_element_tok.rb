@@ -26,12 +26,20 @@ module Stupidedi
         q.pp(:repeated.cons(@element_toks))
       end
 
+      def simple?
+        false
+      end
+
       def repeated?
         true
       end
 
       def blank?
         @element_toks.all?(&:blank?)
+      end
+
+      def present?
+        not blank?
       end
 
       def composite?

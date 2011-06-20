@@ -517,7 +517,7 @@ module Stupidedi
           raise Exceptions::ParseError,
             "#{id} segment cannot be reached from the current state"
         elsif matches.empty?
-          Either.failure("#{id} segment does not occur")
+          Either.failure("#{id}(#{elements.map(&:inspect).join(", ")}) segment does not occur")
         else
           Either.success(StateMachine.new(@config, matches))
         end
@@ -535,7 +535,7 @@ module Stupidedi
             f_tok.component_toks.zip(e_val.children) do |c_tok, c_val|
               return true unless c_tok.blank? or c_val == c_tok.value
             end
-          else
+          elsif f_tok.present?
             raise Exceptions::ParseError,
               "only simple and component elements can be filtered"
           end

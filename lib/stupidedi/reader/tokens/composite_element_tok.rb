@@ -34,6 +34,10 @@ module Stupidedi
         @component_toks.all?(&:blank?)
       end
 
+      def present?
+        not blank?
+      end
+
       def simple?
         false
       end

@@ -26,6 +26,10 @@ module Stupidedi
         @value.blank?
       end
 
+      def present?
+        not blank?
+      end
+
       def simple?
         true
       end
