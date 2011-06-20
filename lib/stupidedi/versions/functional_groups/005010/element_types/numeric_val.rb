@@ -269,11 +269,21 @@ module Stupidedi
 
               # @return [-1, 0, +1]
               def <=>(other)
-                if other.respond_to?(:value)
-                  @value <=> other.value
-                else
-                  @value <=> other
-                end
+                a, b = coerce(other)
+
+              # if a.respond_to?(:value)
+                  if b.respond_to?(:value)
+                    a.value <=> b.value
+                  else
+                    a.value <=> b
+                  end
+              # else
+              #   if b.respond_to?(:value)
+              #     a <=> b.value
+              #   else
+              #     a <=> b
+              #   end
+              # end
               end
 
               # @endgroup

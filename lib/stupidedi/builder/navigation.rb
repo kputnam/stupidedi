@@ -540,6 +540,8 @@ module Stupidedi
               "only simple and component elements can be filtered"
           end
         end
+
+        false
       end
 
       # Returns true if the constraints modeled in `filter_tok` are not
@@ -561,6 +563,8 @@ module Stupidedi
               "only simple and component elements can be filtered"
           end
         end
+
+        false
       end
 
       # Returns the cursor positioned at the root of the parse tree linked
