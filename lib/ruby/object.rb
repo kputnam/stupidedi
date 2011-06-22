@@ -28,6 +28,7 @@ class Object
   end
 
   # @group Combinators
+  #############################################################################
 
   # Yields `self` to a block argument
   #

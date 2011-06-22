@@ -33,15 +33,19 @@ describe "Parsing" do
 
   let(:parser) { Stupidedi::Builder::StateMachine.build(config) }
 
-  def parse(x)
-    parser.read(Stupidedi::Reader.build(x))
+  def parse(path)
+    if rand > 0.5
+      parser.read(Stupidedi::Reader.build(File.read(path)))
+    else
+      File.open(path){|io| parser.read(Stupidedi::Reader.build(io)) }
+    end
   end
 
   context "X222-HC837" do
     let(:fixtures) { File.join(FIXTURE_ROOT, "X222-HC837") }
 
     it "parses 1-good.txt" do
-      parser, reader = parse(File.read(File.join(fixtures, "1-good.txt")))
+      parser, reader = parse(File.join(fixtures, "1-good.txt"))
       
       parser.should be_deterministic
       parser.should be_last

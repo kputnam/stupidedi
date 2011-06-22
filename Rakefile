@@ -45,7 +45,7 @@ begin
     require "rspec/core/rake_task"
     RSpec::Core::RakeTask.new(:rcov) do |t|
       t.rcov = true
-      t.rcov_opts = "--exclude spec/,gems/"
+      t.rcov_opts = "--exclude spec/,gems/,00401"
 
       t.verbose = false
       t.pattern = "spec/examples/**/*.example"

@@ -184,7 +184,7 @@ module Stupidedi
       #########################################################################
 
       # Builds a sequence of {Instruction} values that corresponds to the given
-      # sequence of `segment_uses`.
+      # sequence of `segment_uses`
       #
       # @return [Array<Instruction>]
       def sequence(segment_uses, offset = 0)
@@ -230,6 +230,9 @@ module Stupidedi
         instructions
       end
 
+      # Builds a sequence of {Instruction} values that corresponds to the given
+      # sequence of `loop_defs`
+      #
       # @return [Array<Instruction>]
       def lsequence(loop_defs, offset = 0)
         instructions = []
@@ -273,6 +276,9 @@ module Stupidedi
         instructions
       end
 
+      # Builds a sequence of {Instruction} values that corresponds to the given
+      # sequence of `table_defs`
+      #
       # @return [Array<Instruction>]
       def tsequence(table_defs, offset = 0)
         instructions = []

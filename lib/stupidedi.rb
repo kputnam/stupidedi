@@ -5,7 +5,7 @@ require "term/ansicolor" if $stdout.tty?
 
 # Monkey patches
 
-#require "ruby/exception"
+#equire "ruby/exception"
 require "ruby/symbol"
 require "ruby/object"
 require "ruby/module"
