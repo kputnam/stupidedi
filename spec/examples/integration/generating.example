@@ -32,6 +32,13 @@ describe "Generating" do
   let(:strict)  { Stupidedi::Builder::BuilderDsl.build(config, true)  }
   let(:lazy)    { Stupidedi::Builder::BuilderDsl.build(config, false) }
 
+  context "unrecognized methods" do
+    it "raises an exception" do
+      lambda { lazy.xyz }.should \
+        raise_error(NoMethodError)
+    end
+  end
+
   context "unrecognized interchange version" do
     context "when strict" do
       it "quietly proceeds" do
@@ -71,6 +78,34 @@ describe "Generating" do
   end
 
   context "interchange 00501" do
+    context "with missing IEA" do
+
+      def isa(dsl)
+        dsl.ISA("00", "",
+                "00", "",
+                "ZZ", "431777999",
+                "ZZ", "133052274",
+                Time.now.utc,
+                Time.now.utc,
+                "", "00501", 123456789, "1", "T", "")
+      end
+
+      context "when strict" do
+        it "loudly complains" do
+          isa(strict)
+          lambda { isa(strict) }.should \
+            raise_error("required segment IEA is missing from interchange 00501")
+        end
+      end
+
+      context "when non-strict" do
+        it "quietly proceeds" do
+          isa(lazy)
+          lambda { isa(lazy) }.should_not \
+            raise_error("required segment IEA is missing from interchange 00501")
+        end
+      end
+    end
   end
 
   context "interchange 00401" do

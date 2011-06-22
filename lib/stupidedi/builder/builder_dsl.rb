@@ -101,17 +101,22 @@ module Stupidedi
       def critique(zipper, descriptor = "")
         if zipper.node.simple? or zipper.node.component?
           if zipper.node.invalid?
-            raise "invalid #{descriptor}"
+            raise Exceptions::ParseError,
+              "invalid #{descriptor}"
           elsif zipper.node.blank?
             if zipper.node.usage.required?
-              raise "required #{descriptor} is blank"
+              raise Exceptions::ParseError,
+                "required #{descriptor} is blank"
             end
           elsif zipper.node.usage.forbidden?
-            raise "forbidden #{descriptor} is present"
+            raise Exceptions::ParseError,
+              "forbidden #{descriptor} is present"
           elsif zipper.node.usage.allowed_values.exclude?(zipper.node.to_s)
-            raise "value #{zipper.node.inspect} not allowed in #{descriptor}"
+            raise Exceptions::ParseError,
+              "value #{zipper.node.inspect} not allowed in #{descriptor}"
           elsif zipper.node.too_long?
-            raise "value is too long in #{descriptor}"
+            raise Exceptions::ParseError,
+              "value is too long in #{descriptor}"
           elsif zipper.node.too_short?
           # raise "value is too short in #{descriptor}"
           end
@@ -119,10 +124,12 @@ module Stupidedi
         elsif zipper.node.composite?
           if zipper.node.blank?
             if zipper.node.usage.required?
-              raise "required #{descriptor} is blank"
+              raise Exceptions::ParseError,
+                "required #{descriptor} is blank"
             end
           elsif zipper.node.usage.forbidden?
-            raise "forbidden #{descriptor} is present"
+            raise Exceptions::ParseError,
+              "forbidden #{descriptor} is present"
           else
             if zipper.node.present?
               zipper.children.each_with_index do |z, i|
@@ -131,8 +138,10 @@ module Stupidedi
 
               d = zipper.node.definition
               d.syntax_notes.each do |s|
-                raise "for #{descriptor}, #{s.reason(zipper)}" \
-                  unless s.satisfied?(zipper)
+                unless s.satisfied?(zipper)
+                  raise Exceptions::ParseError,
+                    "for #{descriptor}, #{s.reason(zipper)}"
+                end
               end
             end
           end
@@ -144,7 +153,8 @@ module Stupidedi
           descriptor = zipper.node.id
 
           if zipper.node.invalid?
-            raise "invalid segment #{descriptor}"
+            raise Exceptions::ParseError,
+              "invalid segment #{descriptor}"
           else
             zipper.children.each_with_index do |z, i|
               critique(z, "#{descriptor}-#{'%02d' % (i + 1)}")
@@ -152,7 +162,8 @@ module Stupidedi
 
             d = zipper.node.definition
             d.syntax_notes.each do |s|
-              raise "for #{descriptor}, #{s.reason(zipper)}" \
+              raise Exceptions::ParseError,
+                "for #{descriptor}, #{s.reason(zipper)}" \
                 unless s.satisfied?(zipper)
             end
           end
@@ -198,10 +209,23 @@ module Stupidedi
           bound = child.repeat_count
           count = occurences.at(child)
 
+          type =
+            if child.segment?
+              "segment"
+            elsif child.loop?
+              "loop"
+            elsif child.table?
+              "table"
+            else
+              "node"
+            end
+
           if count.zero? and child.required?
-            raise "required node #{child.id} is missing from #{name}"
+            raise Exceptions::ParseError,
+              "required #{type} #{child.id} is missing from #{name}"
           elsif bound < count
-            raise "node #{child.id} occurs too many times in #{name}"
+            raise Exceptions::ParseError,
+              "#{type} #{child.id} occurs too many times in #{name}"
           end
         end
       end

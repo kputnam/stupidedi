@@ -14,7 +14,17 @@ config.interchange.tap do |c|
 end
 
 config.functional_group.tap do |c|
-  c.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+  # The 4010 functional group definition doesn't actually have any segment defs,
+  # so the tokenizer makes assumptions (eg, that every element is simple), which
+  # results in tokens that don't match the transaction set definition. This is
+  # only because we linked some 4010 transaction sets to the 5010 definitions.
+  # It would never happen when the transaction set definition is built from the
+  # same set of segment definitions. There might be a good place to detect this
+  # mismatch, but it's not yet implemented.
+  #
+  # c.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+
+  c.register("004010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
   c.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
 end
 

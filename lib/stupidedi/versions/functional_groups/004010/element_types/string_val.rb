@@ -318,7 +318,7 @@ module Stupidedi
               if object.blank?
                 StringVal::Empty.new(usage, position)
               elsif object.respond_to?(:to_s)
-                StringVal::NonEmpty.new(object.to_s, usage, position)
+                StringVal::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
                 StringVal::Invalid.new(object, usage, position)
               end
