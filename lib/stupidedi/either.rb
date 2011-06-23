@@ -1,6 +1,5 @@
 module Stupidedi
   class Either
-    include Inspect
 
     # @return self
     abstract :each, :args => %w(&block)
@@ -43,7 +42,6 @@ module Stupidedi
     # @endgroup
     ###########################################################################
 
-    #
     class Success < Either
       def initialize(value)
         @value = value
@@ -138,6 +136,11 @@ module Stupidedi
           q.pp @value
         end
       end
+
+      # @return [String]
+      def inspect
+        "Either.success(#{@value.inspect})"
+      end
     end
 
     class Failure < Either
@@ -228,6 +231,11 @@ module Stupidedi
       def fatal
         Fatal.new(@reason)
       end
+
+      # @return [String]
+      def inspect
+        "Either.failure(#{@reason.inspect})"
+      end
     end
 
     class Fatal < Failure
@@ -239,6 +247,11 @@ module Stupidedi
       # @return [Fatal]
       def fatal
         self
+      end
+
+      # @return [String]
+      def inspect
+        "Either.fatal(#{@reason.inspect})"
       end
     end
 

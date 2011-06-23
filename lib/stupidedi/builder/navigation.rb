@@ -16,6 +16,16 @@ module Stupidedi
         @active.length == 1
       end
 
+      def empty?
+        value = @active.head.node.zipper
+
+        until value.root?
+          value = value.up
+        end
+
+        value.node.children.empty?
+      end
+
       # Is this the first segment?
       def first?
         value = @active.head.node.zipper

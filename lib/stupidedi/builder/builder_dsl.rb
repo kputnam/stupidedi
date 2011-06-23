@@ -14,7 +14,8 @@ module Stupidedi
       # @return [Boolean]
       attr_writer :strict
 
-      delegate :pretty_print, :to => :@machine
+      delegate :pretty_print, :segment, :element, :zipper, :sucessors,
+        :empty?, :first?, :last?, :deterministic?, :to => :@machine
 
       def initialize(machine, strict = true)
         @machine = machine
@@ -25,16 +26,6 @@ module Stupidedi
 
       def strict?
         @strict
-      end
-
-      # (see Navigation#successors)
-      def successors
-        @machine.successors
-      end
-
-      # (see Navigation#zipper)
-      def zipper
-        @machine.zipper
       end
 
       # @return [BuilderDsl]
@@ -102,21 +93,21 @@ module Stupidedi
         if zipper.node.simple? or zipper.node.component?
           if zipper.node.invalid?
             raise Exceptions::ParseError,
-              "invalid #{descriptor}"
+              "invalid element #{descriptor}"
           elsif zipper.node.blank?
             if zipper.node.usage.required?
               raise Exceptions::ParseError,
-                "required #{descriptor} is blank"
+                "required element #{descriptor} is blank"
             end
           elsif zipper.node.usage.forbidden?
             raise Exceptions::ParseError,
-              "forbidden #{descriptor} is present"
+              "forbidden element #{descriptor} is present"
           elsif zipper.node.usage.allowed_values.exclude?(zipper.node.to_s)
             raise Exceptions::ParseError,
-              "value #{zipper.node.inspect} not allowed in #{descriptor}"
+              "value #{zipper.node.to_s} not allowed in element #{descriptor}"
           elsif zipper.node.too_long?
             raise Exceptions::ParseError,
-              "value is too long in #{descriptor}"
+              "value is too long in element #{descriptor}"
           elsif zipper.node.too_short?
           # raise "value is too short in #{descriptor}"
           end
@@ -125,11 +116,11 @@ module Stupidedi
           if zipper.node.blank?
             if zipper.node.usage.required?
               raise Exceptions::ParseError,
-                "required #{descriptor} is blank"
+                "required element #{descriptor} is blank"
             end
           elsif zipper.node.usage.forbidden?
             raise Exceptions::ParseError,
-              "forbidden #{descriptor} is present"
+              "forbidden element #{descriptor} is present"
           else
             if zipper.node.present?
               zipper.children.each_with_index do |z, i|
@@ -140,7 +131,7 @@ module Stupidedi
               d.syntax_notes.each do |s|
                 unless s.satisfied?(zipper)
                   raise Exceptions::ParseError,
-                    "for #{descriptor}, #{s.reason(zipper)}"
+                    "for element #{descriptor}, #{s.reason(zipper)}"
                 end
               end
             end
@@ -163,7 +154,7 @@ module Stupidedi
             d = zipper.node.definition
             d.syntax_notes.each do |s|
               raise Exceptions::ParseError,
-                "for #{descriptor}, #{s.reason(zipper)}" \
+                "for segment #{descriptor}, #{s.reason(zipper)}" \
                 unless s.satisfied?(zipper)
             end
           end

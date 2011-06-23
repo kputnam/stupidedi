@@ -40,16 +40,20 @@ describe "Generating" do
   end
 
   context "unrecognized interchange version" do
+    def isa(dsl, version)
+      dsl.ISA("00", "",
+              "00", "",
+              "ZZ", "",
+              "ZZ", "",
+              Time.now.utc,
+              Time.now.utc,
+              "", version, 123456789, "1", "T", "")
+    end
+
     context "when strict" do
       it "quietly proceeds" do
         # 0050x isn't configured
-        lazy.ISA("00", "",
-                 "00", "",
-                 "ZZ", "",
-                 "ZZ", "",
-                 Time.now.utc,
-                 Time.now.utc,
-                 "", "0050x", 123456789, "1", "T", "")
+        isa(lazy, "0050x")
 
         # An invalid ISA segment was added
         lazy.zipper.select{|z| z.node.invalid? }.should be_defined
@@ -62,24 +66,17 @@ describe "Generating" do
     context "when non-strict" do
       it "loudly complains" do
         lambda do
-          strict.ISA("00", "",
-                     "00", "",
-                     "ZZ", "",
-                     "ZZ", "",
-                     Time.now.utc,
-                     Time.now.utc,
-                     "", "0050x", 123456789, "1", "T", "")
+          isa(strict, "0050x")
         end.should raise_error("invalid segment ISA")
 
         # The ISA segment wasn't added
-        lazy.zipper.select(&:root?).should be_defined
+        lazy.should be_empty
       end
     end
   end
 
   context "interchange 00501" do
     context "with missing IEA" do
-
       def isa(dsl)
         dsl.ISA("00", "",
                 "00", "",
@@ -95,6 +92,8 @@ describe "Generating" do
           isa(strict)
           lambda { isa(strict) }.should \
             raise_error("required segment IEA is missing from interchange 00501")
+
+          strict.should be_first
         end
       end
 
@@ -103,6 +102,128 @@ describe "Generating" do
           isa(lazy)
           lambda { isa(lazy) }.should_not \
             raise_error("required segment IEA is missing from interchange 00501")
+
+          lazy.should_not be_first
+        end
+      end
+    end
+
+    context "with mising required elements" do
+      def isa(dsl)
+        dsl.ISA("00", "",
+                "00", "",
+                "ZZ", "",
+                "ZZ", "133052274",
+                Time.now.utc,
+                Time.now.utc,
+                "", "00501", 123456789, "1", "T", "")
+      end
+
+      context "when strict" do
+        it "loudly complains" do
+          lambda { isa(strict) }.should \
+            raise_error("required element ISA-06 is blank")
+
+          strict.should be_empty
+        end
+      end
+
+      context "when non-strict" do
+        it "quietly proceeds" do
+          lambda { isa(lazy) }.should_not \
+            raise_error("required element ISA-06 is blank")
+
+          lazy.element(6).select{|e| e.node.empty? }.should be_defined
+        end
+      end
+    end
+
+    context "with invalid ID values" do
+      def isa(dsl)
+        dsl.ISA("XX", "",
+                "00", "",
+                "ZZ", "431777999",
+                "ZZ", "133052274",
+                Time.now.utc,
+                Time.now.utc,
+                "", "00501", 123456789, "1", "T", "")
+      end
+
+      context "when strict" do
+        it "loudly complains" do
+          lambda { isa(strict) }.should \
+            raise_error("value XX not allowed in element ISA-01")
+
+          strict.should be_empty
+        end
+      end
+
+      context "when non-strict" do
+        it "quietly proceeds" do
+          lambda { isa(lazy) }.should_not \
+            raise_error("value XX not allowed in element ISA-01")
+
+          lazy.element(1).select{|e| e.node == "XX" }.should be_defined
+        end
+      end
+    end
+
+    context "with invalid DT values" do
+      def isa(dsl)
+        dsl.ISA("00", "",
+                "00", "",
+                "ZZ", "431777999",
+                "ZZ", "133052274",
+                "DATE",
+                Time.now.utc,
+                "", "00501", 123456789, "1", "T", "")
+      end
+
+      context "when strict" do
+        it "loudly complains" do
+          lambda { isa(strict) }.should \
+            raise_error("invalid element ISA-09")
+
+          strict.should be_empty
+        end
+      end
+
+      context "when non-strict" do
+        it "quietly proceeds" do
+          lambda { isa(lazy) }.should_not \
+            raise_error("invalid element ISA-09")
+
+          lazy.element(9).select{|e| e.node.invalid? }.should be_defined
+        end
+      end
+    end
+
+    context "with invalid TM values" do
+      def isa(dsl)
+        dsl.ISA("00", "",
+                "00", "",
+                "ZZ", "431777999",
+                "ZZ", "133052274",
+                Time.now.utc,
+                "TIME",
+                "", "00501", 123456789, "1", "T", "")
+      end
+
+      context "when strict" do
+        it "loudly complains" do
+          lambda { isa(strict) }.should \
+            raise_error("invalid element ISA-10")
+
+          strict.should be_empty
+        end
+      end
+
+      context "when non-strict" do
+        it "quietly proceeds" do
+          lambda { isa(lazy) }.should_not \
+            raise_error("invalid element ISA-10")
+
+          lazy.element(10).select{|e| e.node.invalid? }.should be_defined
         end
       end
     end

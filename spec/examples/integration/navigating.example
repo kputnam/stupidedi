@@ -1,0 +1,66 @@
+require "spec_helper"
+
+describe "Navigating" do
+  FIXTURE_ROOT = File.expand_path("../../../fixtures", __FILE__)
+
+  let(:config) do
+    Stupidedi::Config.new.customize do |config|
+      config.interchange.customize do |c|
+        c.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
+        c.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
+      end
+
+      config.functional_group.customize do |c|
+        c.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+        c.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
+      end
+
+      config.transaction_set.customize do |c|
+        c.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
+        c.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
+        c.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
+        c.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
+
+        c.register("005010X214", "HN", "277", Stupidedi::Guides::FiftyTen::X214::HN277)
+        c.register("005010X221", "HP", "835", Stupidedi::Guides::FiftyTen::X221::HP835)  # A1
+        c.register("005010X222", "HC", "837", Stupidedi::Guides::FiftyTen::X222::HC837P) # A1
+        c.register("005010X231", "FA", "999", Stupidedi::Guides::FiftyTen::X231::FA999)  # A1
+      end
+    end
+  end
+
+  let(:parser) { Stupidedi::Builder::StateMachine.build(config) }
+
+  def parse(path)
+    if rand > 0.5
+      parser.read(Stupidedi::Reader.build(File.read(path)))
+    else
+      File.open(path){|io| parser.read(Stupidedi::Reader.build(io)) }
+    end
+  end
+
+  let(:claim_a) { parse(File.join(FIXTURE_ROOT, "X222-HC837/1-good.txt"))  }
+  let(:claim_b) { parse(File.join(FIXTURE_ROOT, "X222-HC837/3b-good.txt")) }
+
+  context "unqualified segments" do
+  end
+
+  context "qualified segments" do
+  end
+
+  context "sequence of segments" do
+  end
+
+  context "parent segments" do
+  end
+
+  context "time elements" do
+  end
+
+  context "date elements" do
+  end
+
+  context "numeric elements" do
+  end
+
+end

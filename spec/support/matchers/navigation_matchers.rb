@@ -1,7 +1,112 @@
 module NavigationMatchers
+  extend RSpec::Matchers::DSL
 
-  def have_structure(structure)
-    HaveStructure.new(structure)
+  matcher :have_parent do |parent|
+    match do |child|
+      if child.respond_to?(:segment)
+        parent.segment.flatmap do |e|
+          child.parent.flatmap(&:segment).
+            select{|f| e.node.eql?(f.node) }
+        end.defined?
+      elsif child.is_a?(Symbol)
+        parent.segment.
+          select{|e| e.node.id.eql?(child) }.defined?
+      end
+    end
+  end
+
+  def have_distance(expected)
+    Class.new do
+      def initialize(distance)
+        @distance = distance
+      end
+
+      def from(machine)
+        HaveDistance.new(@distance, machine)
+      end
+
+      def to(machine)
+        HaveDistance.new(@distance, machine)
+      end
+    end.new(expected)
+  end
+
+  class HaveDistance
+    def initialize(expected, start)
+      @expected, @start =
+        expected, start
+    end
+
+    def matches?(machine)
+      @stop   = machine
+      @actual = @start.distance(machine)
+
+      @actual.select{|d| d == @expected }.defined?
+    end
+
+    def failure_message
+      if @actual.defined?
+        actual = nil
+        @actual.tap{|d| actual = d }
+        "expected #{@expected} but was #{actual} segments apart"
+      else
+        "not in the same tree: #{@start} and #{@stop}"
+      end
+    end
+  end
+
+  def have_sequence(expected)
+    HaveSequence.new(expected)
+  end
+
+  class HaveSequence
+    def initialize(expected)
+      @expected  = expected.map(&:to_sym)
+      @forwards  = []
+      @backwards = []
+    end
+
+    def matches?(machine)
+      cursor = machine.first
+      while cursor.defined?
+        cursor = cursor.flatmap do |c|
+          c.segment.tap{|x| @forwards << x.node.id }
+          c.next
+        end
+      end
+
+      cursor = machine.last
+      while cursor.defined?
+        cursor = cursor.flatmap do |c|
+          c.segment.tap{|x| @backwards << x.node.id }
+          c.prev
+        end
+      end
+
+      @forwards == @expected and @backwards == @expected.reverse
+    end
+
+    def description
+      "have sequence"
+    end
+
+    def failure_message
+      @expected.each_with_index do |e, k|
+        forward  = @forwards[k]
+        backward = @backwards[@expected.length - k]
+        
+        if e != forward
+          return "segment #{k} was #{forward} not #{e}"
+        end
+      end
+
+      extra = @forwards.drop(@expected.length)
+      return "extra segments #{extra.map(&:inspect).join(", ")}"
+    end
+  end
+
+  def have_structure(expected)
+    HaveStructure.new(expected)
   end
 
   def Ss(*segments)
@@ -33,12 +138,12 @@ module NavigationMatchers
   end
 
   class HaveStructure
-    def initialize(structure)
-      @structure = structure
+    def initialize(expected)
+      @expected = expected
     end
 
     def matches?(machine)
-      navigate(machine, @structure)
+      navigate(machine, @expected)
     end
 
     def description

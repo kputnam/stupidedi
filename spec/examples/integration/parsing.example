@@ -3,8 +3,6 @@ require "spec_helper"
 describe "Parsing" do
   include NavigationMatchers
 
-  FIXTURE_ROOT = File.expand_path("../../../fixtures", __FILE__)
-
   let(:config) do
     Stupidedi::Config.new.customize do |config|
       config.interchange.customize do |c|
@@ -55,31 +53,25 @@ describe "Parsing" do
         iea.node.position.column.should == 1
       end
 
+      parser.should have_sequence \
+        %w(ISA GS ST BHT NM1 PER NM1 HL PRV NM1 N3 N4 REF NM1 N3
+           N4 HL SBR NM1 N3 N4 DMG NM1 N4 REF HL PAT NM1 N3 N4 DMG
+           CLM REF HI LX SV1 DTP LX SV1 DTP LX SV1 DTP LX SV1 DTP
+           SE GE IEA)
+
       parser.parent.tap do |isa|
         # Should have 49 total segments in the parse tree
-        isa.distance(parser).select{|d| d + 1 == 49 }.should be_defined
+        isa.should have_distance(48).to(parser)
 
-        segment_ids = %w(ISA GS ST BHT NM1 PER NM1 HL PRV NM1 N3 N4 REF NM1 N3
-                         N4 HL SBR NM1 N3 N4 DMG NM1 N4 REF HL PAT NM1 N3 N4 DMG
-                         CLM REF HI LX SV1 DTP LX SV1 DTP LX SV1 DTP LX SV1 DTP
-                         SE GE IEA).map(&:to_sym)
-
-        # First-to-last
-        state = isa
-        segment_ids.each do |id|
-          state.segment.map(&:node).map(&:id).
-            should == Stupidedi::Either.success(id)
-          state.next.tap{|s| state = s }
-        end
-
-        # Last-to-first
-        isa.last.tap{|s| state = s }
-        segment_ids.reverse.each do |id|
-          state.segment.map(&:node).map(&:id).
-            should == Stupidedi::Either.success(id)
-          state.prev.tap{|s| state = s }
-        end
-
+        # See matchers/navigation_matchers.rb
+        #
+        # Ss: list of segment matchers
+        #  C: composite element
+        #
+        #  S: the segment might be reachable, and /is/ reachable
+        #  R: the segment might be reachable, but didn't occur
+        #  X: the segment would never be reachable
+        #
         isa.should have_structure(
           Ss(X(:ST),
              R(:ISA), # No more ISAs

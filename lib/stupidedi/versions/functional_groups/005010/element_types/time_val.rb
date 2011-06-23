@@ -251,6 +251,9 @@ module Stupidedi
                 TimeVal::Empty.new(usage, position)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
+                return TimeVal::Invalid.new(object, usage, position) \
+                  unless object =~ /^\d+$/
+
                 hour   = object.to_s.slice(0, 2).to_i
                 minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
                 second = object.to_s.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
