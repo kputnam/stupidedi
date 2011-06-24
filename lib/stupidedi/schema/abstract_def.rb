@@ -59,7 +59,7 @@ module Stupidedi
         false
       end
 
-      # Is this a {RepeatedElementDef}?
+      # Is this a repeated {AbstractElementDef}?
       def repeated?
         false
       end

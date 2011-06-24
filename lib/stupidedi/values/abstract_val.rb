@@ -38,7 +38,7 @@ module Stupidedi
         empty?
       end
 
-      # Is this a {Transmission}?
+      # Is this a {TransmissionVal}?
       def transmission?
         false
       end
@@ -88,7 +88,7 @@ module Stupidedi
         false
       end
 
-      # Is this a {RepeatedElementVal}?
+      # Is this a repeated {AbstractElementVal}?
       def repeated?
         false
       end

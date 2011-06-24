@@ -2,7 +2,7 @@ Generating X12
 ==============
 
 Stupidedi has a simple interface for generating X12 documents. Once you have
-defined a transaction set or implementation guide (see [Defining](Defining.md)),
+defined a transaction set or implementation guide (see {file:Defining.md Defining}),
 you can generate well-formed documents using [`BuilderDsl`][1].
 
   [1]: Stupidedi/Builder/BuilderDsl.html
@@ -268,14 +268,12 @@ the current state:
 
 The above output pertains to the X222 837 implementation guide. The output shows
 a single active [`InstructionTable`][20] and the segments it is able to accept.
-For more information about how the parser works, see [Parser Design][22].
+For more information about how the parser works, see {file:design/Parser.md Parser Design}.
 Attempting to generate a segment that is not a member of at least one of the
 instruction tables will cause a [`ParseError`][17] to be raised.
 
     b.N3("SUITE 111", "1234 OCEAN BLVD")
       #=> Segment N3 cannot occur here (Stupidedi::Exceptions::ParseError)
-
-  [22]: design/Parser.md
 
 ### Element Types
 

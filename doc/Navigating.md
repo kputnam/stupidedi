@@ -9,9 +9,9 @@ information hidden by [`StateMachine`][1] provides an efficient means to search
 the parse tree for specific segments.
 
 For information on how to construct a parse tree programmatically, see the
-document on [Generating X12](Generating.md). The [`StateMachine`][1] can be
+document on {file:Generating.md Generating X12}. The [`StateMachine`][1] can be
 accessed via the [`BuilderDsl#machine`][4] method. For information about how
-to construct a parse tree from an input stream, see [Parsing X12](Parsing.md).
+to construct a parse tree from an input stream, see {file:Parsing.md Parsing X12}.
 
   [1]: Stupidedi/Builder/StateMachine.html
   [2]: Stupidedi/Values/LoopVal.html

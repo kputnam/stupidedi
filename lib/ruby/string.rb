@@ -65,7 +65,7 @@ class String
     n < length
   end
 
-  # To make String compatible with the {Stupidedi::Input} interface,
+  # To make String compatible with the {Stupidedi::Reader::Input} interface,
   # we have to define `#position`... shameful!
   def position
     nil
