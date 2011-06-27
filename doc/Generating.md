@@ -242,7 +242,7 @@ from the given state. The [`#successors`][21] method will return one or more
 [`InstructionTable`][20] values which enumerate the segments that may occur in
 the current state:
 
-    pp b.sucessors
+    pp b.successors
 
     [InstructionTable(
       1: Instruction[REF: Subscriber Secon..](pop: 0, drop: 0),

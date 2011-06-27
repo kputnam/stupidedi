@@ -14,7 +14,7 @@ module Stupidedi
       # @return [Boolean]
       attr_writer :strict
 
-      delegate :pretty_print, :segment, :element, :zipper, :sucessors,
+      delegate :pretty_print, :segment, :element, :zipper, :successors,
         :empty?, :first?, :last?, :deterministic?, :to => :@machine
 
       def initialize(machine, strict = true)

@@ -421,7 +421,7 @@ active state. That is, when the machine is in a deterministic state, a single
 [`InstructionTable`][23] will be returned. See the section on
 [Non-determinism](#Non-determinism) for more information.
 
-    pp b.sucessors
+    pp b.successors
 
     [InstructionTable(
       1: Instruction[REF: Subscriber Secon..](pop: 0, drop: 0),
