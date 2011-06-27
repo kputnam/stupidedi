@@ -238,7 +238,11 @@ module Stupidedi
                 # instructions, so clearly this provides less information than
                 # if each allowed value set was disjoint.
 
-              # distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
+                # Currently disabled (and untested) because it doesn't look like
+                # any of the HIPAA schemas would use this -- so testing it would
+                # be a pain.
+                #
+                # distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
               end
             end
           end
