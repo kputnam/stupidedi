@@ -17,6 +17,9 @@ module Stupidedi
 
       abstract :composite?
 
+      # @return [AbstractSet<CodeList>]
+      abstract :code_lists
+
       def element?
         true
       end
@@ -57,6 +60,14 @@ module Stupidedi
       # @return [ComponentElementUse]
       def component_use(requirement, parent = nil)
         ComponentElementUse.new(self, requirement, Sets.universal, parent)
+      end
+
+      # This is overridden (if needed) by the concrete subclasses. Specifically
+      # the "ID" element types have an extra attribute to link the CodeList.
+      #
+      # @return [AbstractSet<CodeList>]
+      def code_lists(subset = Sets.universal)
+        Sets.empty
       end
     end
 
@@ -119,6 +130,11 @@ module Stupidedi
       # @return [CompositeElementVal]
       def empty(usage, position)
         Values::CompositeElementVal.new([], usage)
+      end
+
+      # @return [AbstractSet<CodeList>]
+      def code_lists
+        @component_uses.map(&:code_lists).inject(&:|)
       end
 
       # @return [void]

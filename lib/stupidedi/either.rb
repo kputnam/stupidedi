@@ -4,7 +4,7 @@ module Stupidedi
     # @return self
     abstract :each, :args => %w(&block)
 
-    # (see #each)
+    # (see Either#each)
     def tap
       each{|x| yield x }
     end

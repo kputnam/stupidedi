@@ -6,6 +6,8 @@ module Stupidedi
 
       delegate :forbidden?, :required?, :optional?, :to => :requirement
 
+      delegate :code_lists, :to => :definition
+
       # @return [ElementReq]
       abstract :requirement
 
@@ -85,6 +87,15 @@ module Stupidedi
       # @return false
       def component?
         false
+      end
+
+      # @return [AbstractSet<CodeList>]
+      def code_lists
+        if forbidden?
+          Sets.empty
+        else
+          @definition.code_lists(@allowed_values)
+        end
       end
 
       # @return [void]

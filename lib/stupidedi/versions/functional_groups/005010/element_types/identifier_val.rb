@@ -47,6 +47,14 @@ module Stupidedi
                 Schema::ComponentElementUse.new(self, requirement, Sets.universal, parent)
               end
             end
+
+            def code_lists(subset = Sets.universal)
+              if @code_list.present?
+                @code_list.code_lists(subset)
+              else
+                Sets.empty
+              end
+            end
           end
 
           #

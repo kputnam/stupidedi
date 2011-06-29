@@ -19,6 +19,5 @@ module Stupidedi
     autoload :TableState,           "stupidedi/builder/states/table_state"
     autoload :TransactionSetState,  "stupidedi/builder/states/transaction_set_state"
     autoload :TransmissionState,    "stupidedi/builder/states/transmission_state"
-
   end
 end

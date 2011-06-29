@@ -26,6 +26,27 @@ module Stupidedi
         def external?
           false
         end
+
+        # Some elements are qualifiers that select which code list
+        # is applicable to the qualified element. For instance, the
+        # diagnosis codes in the HI segment are qualified by E1270
+        # "Code List Qualifier Code", which indicates which code list
+        # should be used to validate the E1271's diagnosis code. It
+        # maybe ICD-9, ICD-10, etc.
+        #
+        # @return [AbstractSet<CodeList>]
+        def code_lists(subset = Sets.universal)
+          related =
+            @hash.select do |k, v|
+              subset.include?(k) and v.is_a?(Schema::CodeList)
+            end
+
+          if subset.finite?
+            Sets.build([self]) + related.map{|k,v| v }
+          else
+            Sets.build([self])
+          end
+        end
       end
 
       class External < CodeList
@@ -39,6 +60,10 @@ module Stupidedi
 
         def external?
           true
+        end
+
+        def code_lists(values = Sets.universal)
+          Sets.build([self])
         end
 
         def to_str

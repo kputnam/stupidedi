@@ -7,7 +7,7 @@ module Stupidedi
     # input.
     #
     # Because X12 specifications have no bearing on what happens outside the
-    # interchange envelope (from `ISE` to `ISA`), out-of-band data like blank
+    # interchange envelope (from `IEA` to `ISA`), out-of-band data like blank
     # lines, human readable text, etc can occur between interchanges. This
     # reader is designed to deal with that problem.
     #

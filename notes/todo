@@ -15,6 +15,11 @@ fixable in InterchangeState.push?
 
 TODO
 -------------------------------------------------------------------------------
+Support for configurable external code sources. The minimal interface should
+implement #include?(code). Need to decide how to handle unconfigured external
+code sources -- should there be a method to list all the code sources in some
+transaction set?
+
 Implement an automated FA999 Functional Acknowledgement generator that accepts
 any FunctionalGroupVal as input. This will be useful for writing integration
 tests, but more importantly it will create use cases that will require changes

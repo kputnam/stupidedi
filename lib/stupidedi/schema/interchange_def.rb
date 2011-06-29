@@ -54,6 +54,11 @@ module Stupidedi
         true
       end
 
+      # @return [AbstractSet<CodeList>]
+      def code_lists
+        children.map(&:code_lists).inject(&:|)
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text("InterchangeDef[#{id}]")

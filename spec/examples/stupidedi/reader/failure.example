@@ -23,6 +23,7 @@ describe Stupidedi::Reader::Failure do
     end
   end
 
+  # Note: `method` is dynamically scoped (bound by the caller's environment)
   shared_examples_for "wrapped input delegator method" do
     context "when remainder is wrapped" do
       let(:input) { mock("input", :offset => 400, :line => 90, :column => 10) }

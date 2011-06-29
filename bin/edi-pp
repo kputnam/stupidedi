@@ -42,7 +42,7 @@ config.transaction_set.tap do |c|
   c.register("005010X221A1", "HP", "835", Stupidedi::Guides::FiftyTen::X221A1::HP835)
   c.register("004010X098A1", "HC", "837", Stupidedi::Guides::FiftyTen::X222A1::HC837P)
   c.register("005010X222A1", "HC", "837", Stupidedi::Guides::FiftyTen::X222A1::HC837P)
-  c.register("005010X231A1", "FA", "997", Stupidedi::Guides::FiftyTen::X231A1::FA999)
+  c.register("005010X231A1", "FA", "999", Stupidedi::Guides::FiftyTen::X231A1::FA999)
 end
 
 parser = Stupidedi::Builder::StateMachine.build(config)

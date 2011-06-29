@@ -55,6 +55,11 @@ module Stupidedi
         true
       end
 
+      # @return [AbstractSet<CodeList>]
+      def code_lists
+        @table_defs.map(&:code_lists).inject(&:|)
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text("TransactionSetDef[#{@functional_group}#{@id}]")

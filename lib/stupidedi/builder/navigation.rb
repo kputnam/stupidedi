@@ -385,7 +385,7 @@ module Stupidedi
       #
       # @return [Either<StateMachine>]
       def find(id, *elements)
-        __find(false, id, *elements)
+        __find(false, id, elements)
       end
 
       # Returns a `StateMachine` positioned on the next matching segment,
@@ -398,13 +398,23 @@ module Stupidedi
       #
       # @return [Either<StateMachine>]
       def find!(id, *elements)
-        __find(true, id, *elements)
+        __find(true, id, elements)
+      end
+
+      # @return [Integer]
+      def count(id, *elements)
+        __count(false, id, elements)
+      end
+
+      # @return [Integer]
+      def count!(id, *elements)
+        __count(true, id, elements)
       end
 
     private
 
       # @return [Either<StateMachine>]
-      def __find(invalid, id, *elements)
+      def __find(invalid, id, elements)
         reachable = false
         matches   = []
 
@@ -575,6 +585,19 @@ module Stupidedi
         end
 
         false
+      end
+
+      # @return [Integer]
+      def __count(invalid, id, elements)
+        cursor = __find(invalid, id, elements)
+        count  = 0
+
+        while cursor.defined?
+          count += 1
+          cursor = cursor.flatmap{|c| c.__find(invalid, id, elements) }
+        end
+        
+        count
       end
 
       # Returns the cursor positioned at the root of the parse tree linked

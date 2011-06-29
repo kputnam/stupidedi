@@ -29,7 +29,7 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      delegate :id, :to => :definition
+      delegate :id, :code_lists, :to => :definition
 
       delegate :required?, :to => :requirement
 

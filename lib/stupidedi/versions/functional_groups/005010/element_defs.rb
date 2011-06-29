@@ -834,7 +834,7 @@ module Stupidedi
           E1034 = t::ID.new(:E1034, "Claim Adjustment Reason Code"         , 1, 5,
             s::CodeList.external("139"))
 
-          E1035 = t::AN.new(:E1035, "Name Last or Organization Code"       , 1, 60)
+          E1035 = t::AN.new(:E1035, "Name Last or Organization Name"       , 1, 60)
           E1036 = t::AN.new(:E1036, "Name First"                           , 1, 35)
           E1037 = t::AN.new(:E1037, "Name Middle"                          , 1, 25)
           E1038 = t::AN.new(:E1038, "Name Prefix"                          , 1, 10)
