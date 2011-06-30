@@ -45,11 +45,12 @@ module Stupidedi
           other.segment    || @segment
       end
 
+      # @return [AbstractSet<String>]
       def characters
         chars =
           [@component, @repetition, @element, @segment].select(&:present?)
 
-        Sets.absolute(chars, Reader::C_BYTES.split(//))
+        Sets.absolute(chars.join.split(//), Reader::C_BYTES.split(//))
       end
 
       # @return [String]
@@ -65,6 +66,15 @@ module Stupidedi
       # @return [Separators]
       def empty
         new(nil, nil, nil, nil)
+      end
+
+      # @return [Separators]
+      def build(hash)
+        Separators.new \
+          hash[:component],
+          hash[:repetition],
+          hash[:element],
+          hash[:segment]
       end
 
       # @endgroup

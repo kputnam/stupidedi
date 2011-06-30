@@ -46,8 +46,11 @@ b.zipper.map {|z| pp z.root.node }
 # envelope_ed = Stupidedi::Editor::TransmissionEd.new(config, Time.now)
 # pp envelope_ed.critique(b.machine).results
 
-b.zipper.tap{|z| p z.root.node.characters.to_a }
+b.zipper.tap do |z|
+  p z.root.node.characters.to_a
 
-b.machine.first.tap do |m|
-  Stupidedi::Writer::Default.new(m)
+  separators =
+    Stupidedi::Reader::Separators.build(:segment => "~\n", :element => "*")
+
+  Stupidedi::Writer::Default.new(z.root, separators).write($stdout)
 end

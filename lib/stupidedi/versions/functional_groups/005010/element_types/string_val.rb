@@ -132,7 +132,11 @@ module Stupidedi
 
               # @return [String]
               def to_x12
-                ""
+                if usage.required?
+                  " " * definition.min_length
+                else
+                  ""
+                end
               end
 
               # @return [Boolean]

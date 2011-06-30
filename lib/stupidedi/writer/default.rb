@@ -6,30 +6,24 @@ module Stupidedi
       # @return [Reader::Separators]
       attr_reader :separators
 
-      def initialize(machine, separators = nil)
-        @machine, @separators =
-          machine, separators
-
-        unless @machine.deterministic?
-          raise Exceptions::OutputError,
-            "cannot write non-deterministic parse tree"
-        end
-
-        if @separators.present?
-          @machine.zipper.tap do |zipper|
-            common  = @separators & zipper.node.characters
-            message = common.to_a.map(&:inspect).join(", ")
-
-            if common.present?
-              raise Exceptions::OutputError,
-                "separators #{message} occur as data"
-            end
-          end
-        end
+      def initialize(zipper, separators)
+        @zipper, @separators =
+          zipper, separators
       end
 
+      #
+      # @return out
       def write(out = "")
+        common  = @separators.characters & @zipper.node.characters
+        message = common.to_a.map(&:inspect).join(", ")
+
+        if common.present?
+          raise Exceptions::OutputError,
+            "separators #{message} occur as data"
+        end
+
         recurse(@zipper.node, @separators, out)
+        return out
       end
 
     private
@@ -38,8 +32,24 @@ module Stupidedi
         if value.segment?
           build(value, separators, out)
         else
-          if value.interchange? and @separators.nil?
-            separators = value.separators
+          if value.interchange?
+            separators = @separators.merge(value.separators)
+
+            unless separators == @separators
+              # We've inherited some separators from the interchange,
+              # so we need to re-check this condition. Note that we
+              # can't optimize this by caching @zipper.node.characters
+              # the first time (in #write), because we're only interested
+              # in conflicts between _this_ subtree (value) and the
+              # separators... not the entire tree (@zipper.node)
+              common  = separators.characters & @zipper.node.characters
+              message = common.to_a.map(&:inspect).join(", ")
+
+              if common.present?
+                raise Exceptions::OutputError,
+                  "separator characters #{message} occur as data"
+              end
+            end
           end
 
           value.children.each{|c| recurse(c, separators, out) }
@@ -49,10 +59,8 @@ module Stupidedi
       def build(segment, separators, out)
         out << segment.id.to_s
 
-        # Trailing empty elements can be omitted, so "NM1*XX******~" should
-        # be abbreviated to "NM1*XX~". The same idea applies to composite
-        # elements, where "HI*BK:10101::::*BK:20202::::~" should be abbreviated 
-        # to "HI*BK:10101*BK:20202"
+        # Trailing empty elements (including component elements) can be omitted,
+        # so "NM1*XX*1:2::::*****~" should be abbreviated to "NM1*XX*1:2~".
         elements = segment.children.
           reverse.drop_while(&:empty?).reverse  # Remove the trailing empties
 
@@ -89,10 +97,9 @@ module Stupidedi
             end
           end
 
-          out << separators.segment
         end
 
-        separators
+        out << separators.segment
       end
 
     end
