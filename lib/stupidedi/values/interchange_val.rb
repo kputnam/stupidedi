@@ -14,9 +14,6 @@ module Stupidedi
       # @return [Array<SegmentVal, FunctionalGroupVal>]
       attr_reader :children
 
-      # @return [#segment, #element, #repetition, #component]
-      abstract :separators
-
       delegate :position, :to => "@children.head"
 
       def initialize(definition, children)
@@ -49,6 +46,16 @@ module Stupidedi
       # @return [Module]
       def segment_dict
         @definition.segment_dict
+      end
+
+      # Note these will not contain the element and segment terminator, because
+      # those are not values stored as part of the interchange. Those values are
+      # stored in the state machine and can be retrieved by calling #separators
+      # on StateMachine
+      #
+      # @return [Reader::Separators]
+      def separators
+        @definition.separators(segment_vals.head)
       end
 
       # @return [void]

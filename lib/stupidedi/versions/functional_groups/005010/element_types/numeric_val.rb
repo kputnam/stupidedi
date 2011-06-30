@@ -60,9 +60,6 @@ module Stupidedi
               false
             end
 
-            #
-            #
-            #
             class Invalid < NumericVal
 
               # @return [Object]
@@ -100,6 +97,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -143,6 +145,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -217,6 +224,23 @@ module Stupidedi
               def to_s
                 # The number of fractional digits is implied by usage.precision
                 (@value * (10 ** definition.precision)).to_i.to_s
+              end
+
+              # @return [String]
+              def to_x12
+                nn   = (@value * (10 ** definition.precision)).to_i
+                sign = (nn < 0) ? "-" : ""
+
+                # Leading zeros must be suppressed unless necessary to satisfy a
+                # minimum length requirement
+                sign << nn.abs.to_s.rjust(definition.min_length, "0")
+              end
+
+              def too_long?
+                nn = (@value * (10 ** definition.precision)).to_i
+
+                # The length of a numeric type does not include an optional sign
+                definition.max_length < nn.abs.to_s.length
               end
 
               # @group Mathematical Operators

@@ -97,6 +97,29 @@ module Stupidedi
       def simple?
         false
       end
+
+      # Is this a simple element that represents a separator (delimiter)? For
+      # instance, ISA16 represents the repetition separator in version 00501.
+      def separator?
+        false
+      end
+
+      # Returns the set of characters that are used as data in this subtree, not
+      # including the separator (delimiter) elements found in the ISA segment.
+      #
+      # @return [AbstractSet<String>]
+      def characters(result = Sets.absolute([], Reader::C_BYTES.split(//)))
+        if leaf?
+          if present? and not separator?
+            result | to_x12.split(//)
+          else
+            result
+          end
+        else
+          children.inject(result){|r,c| c.characters(r) }
+        end
+      end
+
     end
 
   end

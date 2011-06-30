@@ -15,6 +15,15 @@ module NavigationMatchers
     end
   end
 
+  matcher :have_separators do |expected|
+    match do |machine|
+      machine.separators.segment == expected[:segment] and
+      machine.separators.element == expected[:element] and
+      machine.separators.component == expected[:component] and
+      machine.separators.repetition == expected[:repetition]
+    end
+  end
+
   def have_distance(expected)
     Class.new do
       def initialize(distance)

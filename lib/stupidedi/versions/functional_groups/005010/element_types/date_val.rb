@@ -71,7 +71,7 @@ module Stupidedi
 
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -87,6 +87,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -113,7 +118,7 @@ module Stupidedi
               # @return [String]
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -129,6 +134,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -235,7 +245,7 @@ module Stupidedi
               # @return [String]
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -246,12 +256,21 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(#{'%04d-%02d-%02d' % [@year, @month, @day]})"
+                ansi.element("DT.value#{id}") << "(#{"%04d-%02d-%02d" % [@year, @month, @day]})"
               end
 
               # @return [String]
               def to_s
-                '%04d%02d%02d' % [@year, @month, @day]
+                "%04d%02d%02d" % [@year, @month, @day]
+              end
+
+              # @return [String]
+              def to_x12
+                if definition.max_length == 6
+                  "%02d%02d%02d" % [@year % 100, @month, @day]
+                else
+                  "%04d%02d%02d" % [@year, @month, @day]
+                end
               end
 
               # @return -1, 0, 1
@@ -414,7 +433,7 @@ module Stupidedi
               # @return [String]
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -425,12 +444,23 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(XX#{'%02d-%02d-%02d' % [@year, @month, @day]})"
+                ansi.element("DT.value#{id}") << "(XX#{"%02d-%02d-%02d" % [@year, @month, @day]})"
               end
 
               # @return [String]
               def to_s
-                '%04d%02d%02d' % [@year, @month, @day]
+                "XX%02d%02d%02d" % [@year, @month, @day]
+              end
+
+              # @return [String]
+              def to_x12
+                "%02d%02d%02d" % [@year, @month, @day]
+              end
+
+              def too_short?
+                # Less than a 4-digit year means our max length is 7, but in
+                # practice the definition min/max lengths are either 6 or 8
+                definition.min_length > 6
               end
 
               # @note Not commutative

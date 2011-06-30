@@ -31,8 +31,13 @@ module Stupidedi
               @id, @name, @min_length, @max_length, @description, @parent =
                 id, name, min_length, max_length, description, parent
 
+              if min_length < 1
+                raise Exceptions::InvalidSchemaError,
+                  "min_length must be positive"
+              end
+
               if min_length > max_length
-                raise ArgumentError,
+                raise Exceptions::InvalidSchemaError,
                   "min_length cannot be greater than max_length"
               end
             end

@@ -74,9 +74,6 @@ module Stupidedi
               false
             end
 
-            #
-            #
-            #
             class Invalid < IdentifierVal
 
               # @return [Object]
@@ -115,6 +112,15 @@ module Stupidedi
               # @return [String]
               def to_s
                 ""
+              end
+
+              # @return [String]
+              def to_x12
+                if usage.required?
+                  " " * definition.min_length
+                else
+                  ""
+                end
               end
 
               # @return [Boolean]
@@ -158,6 +164,15 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                if usage.required?
+                  " " * definition.min_length
+                else
+                  ""
+                end
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -205,6 +220,11 @@ module Stupidedi
 
               def too_short?
                 @value.length < definition.min_length
+              end
+
+              # @return [String]
+              def to_x12
+                @value.ljust(definition.min_length, " ")
               end
 
               # @return [String]

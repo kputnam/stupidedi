@@ -17,6 +17,11 @@ module Stupidedi
         @config, @active = config, active
       end
 
+      # @return [Reader::Separators]
+      def separators
+        @active.head.node.separators
+      end
+
       # @return [void]
       def pretty_print(q)
         q.text "StateMachine[#{@active.length}]"

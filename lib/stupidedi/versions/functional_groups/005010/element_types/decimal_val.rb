@@ -6,6 +6,21 @@ module Stupidedi
 
           #
           class R < SimpleElementDef
+
+            # @return [Integer]
+            attr_reader :max_precision
+
+            def initialize(id, name, min_length, max_length, max_precision = nil, description = nil, parent = nil)
+              super(id, name, min_length, max_length, description, parent)
+
+              if max_precision.try(:>, max_length)
+                raise ArgumentError,
+                  "max_precision cannot be greater than max_length"
+              end
+
+              @max_precision = max_precision
+            end
+
             def companion
               DecimalVal
             end
@@ -34,9 +49,6 @@ module Stupidedi
               false
             end
 
-            #
-            #
-            #
             class Invalid < DecimalVal
 
               # @return [Object]
@@ -74,6 +86,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -117,6 +134,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -190,11 +212,65 @@ module Stupidedi
 
               # @return [String]
               def to_s
-                if false #definition.precision.present?
-                  @value.round(definition.precision).to_s("F")
+                if definition.max_precision.present?
+                  @value.round(definition.max_precision).to_s("F")
                 else
                   @value.to_s("F")
-                end.gsub(/\.0$/, "")
+                end
+              end
+
+              # While the ASC X12 standard supports the usage of exponential
+              # notation, the HIPAA guides prohibit it. In the interest of
+              # simplicity, this method will not output exponential notation,
+              # as there is currently no configuration attribute to indicate
+              # if this is allowed or not -- if this is required in the future,
+              # the best place for it to fit would be in SimpleElementUse
+              #
+              # @return [String]
+              def to_x12
+                remaining =
+                  if @value.to_i.zero?
+                    definition.max_length
+                  else
+                    definition.max_length - @value.to_i.abs.to_s.length
+                  end
+
+                remaining = (remaining < 0) ? 0 : remaining
+
+                # Don't exceed the definition's max_precision
+                precision =
+                  if definition.max_precision.present?
+                    (definition.max_precision < remaining) ?
+                      definition.max_precision : remaining
+                  else
+                    remaining
+                  end
+
+                rounded = @value.round(precision)
+                sign    = (rounded < 0) ? "-" : ""
+
+                # Leading zeros preceeding the decimal point and trailing zeros
+                # following the decimal point must be supressed unless necessary
+                # to satisfy a minimum length requirement or to indicate
+                # precision, respectively.
+                if rounded.zero?
+                  "0" * definition.min_length
+                else
+                  sign << rounded.abs.to_s("F").
+                    gsub(/^0+/, ""). # leading zeros
+                    gsub(/0+$/, ""). # trailing zeros
+                    gsub(/\.$/, ""). # trailing decimal point
+                    rjust(definition.min_length, "0")
+                end
+              end
+
+              def too_long?
+                # We can truncate the fractional portion as much as needed, so
+                # the only concern we have about length is regarding the digits
+                # to the left of the decimal place.
+
+                # The length of a decimal type does not include an optional sign
+                definition.max_length < @value.to_i.abs.to_s.length
               end
 
               # @group Mathematical Operators

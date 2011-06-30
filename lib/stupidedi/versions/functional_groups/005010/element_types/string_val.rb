@@ -78,6 +78,11 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
                 eql?(other) or
@@ -125,6 +130,11 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
                 other.is_a?(Empty)
@@ -161,6 +171,11 @@ module Stupidedi
 
               def too_short?
                 @value.lstrip.length < definition.min_length
+              end
+
+              # @return [String]
+              def to_x12
+                @value.ljust(definition.min_length, " ")
               end
 
               # @return [String]

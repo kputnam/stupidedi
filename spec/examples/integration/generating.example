@@ -67,7 +67,7 @@ describe "Generating" do
       it "loudly complains" do
         lambda do
           isa(strict, "0050x")
-        end.should raise_error("invalid segment ISA")
+        end.should raise_error('unknown interchange version "0050x"')
 
         # The ISA segment wasn't added
         lazy.should be_empty
@@ -76,6 +76,39 @@ describe "Generating" do
   end
 
   context "interchange 00501" do
+    context "tracks separators" do
+      def isa(dsl, component = ":", repetition = "^")
+        dsl.ISA("00", "",
+                "00", "",
+                "ZZ", "431777999",
+                "ZZ", "133052274",
+                Time.now.utc,
+                Time.now.utc,
+                repetition, "00501", 123456789, "1", "T",
+                component)
+      end
+
+      it "on the first interchange" do
+        isa(lazy, ":", "^")
+
+        lazy.machine.separators.component.should == ":"
+        lazy.machine.separators.repetition.should == "^"
+      end
+
+      it "on subsequent interchanges" do
+        isa(lazy, "$", "%")
+        isa(lazy, "@", "#")
+
+        lazy.machine.separators.component.should == "@"
+        lazy.machine.separators.repetition.should == "#"
+
+        lazy.machine.prev.tap do |machine|
+          machine.separators.component.should == "$"
+          machine.separators.repetition.should == "%"
+        end.should be_defined
+      end
+    end
+
     context "with missing IEA" do
       def isa(dsl)
         dsl.ISA("00", "",

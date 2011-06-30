@@ -53,11 +53,12 @@ describe "Parsing" do
         iea.node.position.column.should == 1
       end
 
-      parser.should have_sequence \
-        %w(ISA GS ST BHT NM1 PER NM1 HL PRV NM1 N3 N4 REF NM1 N3
-           N4 HL SBR NM1 N3 N4 DMG NM1 N4 REF HL PAT NM1 N3 N4 DMG
-           CLM REF HI LX SV1 DTP LX SV1 DTP LX SV1 DTP LX SV1 DTP
-           SE GE IEA)
+      parser.should have_sequence(%w(ISA GS ST BHT NM1 PER NM1 HL PRV NM1 N3 N4
+        REF NM1 N3 N4 HL SBR NM1 N3 N4 DMG NM1 N4 REF HL PAT NM1 N3 N4 DMG CLM
+        REF HI LX SV1 DTP LX SV1 DTP LX SV1 DTP LX SV1 DTP SE GE IEA))
+
+      parser.should have_separators(:element => "*", :component => ":",
+                                    :repetition => "^", :segment => "~")
 
       parser.parent.tap do |isa|
         # Should have 49 total segments in the parse tree

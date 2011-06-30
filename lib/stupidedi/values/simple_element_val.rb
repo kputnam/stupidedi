@@ -14,6 +14,9 @@ module Stupidedi
 
       abstract :valid?
 
+      # @return [String]
+      abstract :to_x12
+
       # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 

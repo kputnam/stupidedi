@@ -45,6 +45,13 @@ module Stupidedi
           other.segment    || @segment
       end
 
+      def characters
+        chars =
+          [@component, @repetition, @element, @segment].select(&:present?)
+
+        Sets.absolute(chars, Reader::C_BYTES.split(//))
+      end
+
       # @return [String]
       def inspect
         "Separators(#{@component.inspect}, #{@repetition.inspect}, #{@element.inspect}, #{@segment.inspect})"

@@ -39,6 +39,11 @@ module Stupidedi
       # nodes are returned in order according to a left-to-right depth-first
       # pre-order traversal.
       #
+      # @note This method assumes `other` is a zipper for the same tree as the
+      # tree wrapped by `this`. In general, there is no way to know if that is
+      # or isn't the case, without comparing the entire tree. If this method is
+      # called on two different trees, the results are undefined.
+      #
       # @return [Array]
       def between(other)
         # Collect ancestors of self, sorted oldest first (deepest last). This

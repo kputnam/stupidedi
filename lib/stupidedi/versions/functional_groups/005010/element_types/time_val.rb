@@ -9,12 +9,12 @@ module Stupidedi
               super(id, name, min_length, max_length, description)
 
               unless min_length == 2 or min_length == 4 or min_length >= 6
-                raise ArgumentError,
+                raise Exceptions::InvalidSchemaError,
                   "min_length must be either 2, 4, 6, or greater"
               end
 
               unless max_length == 2 or max_length == 4 or max_length >= 6
-                raise ArgumentError,
+                raise Exceptions::InvalidSchemaError,
                   "max_length must be either 2, 4, 6, or greater"
               end
             end
@@ -41,9 +41,6 @@ module Stupidedi
               false
             end
 
-            #
-            #
-            #
             class Invalid < TimeVal
 
               # @return [Object]
@@ -81,6 +78,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -124,6 +126,11 @@ module Stupidedi
 
               # @return [String]
               def to_s
+                ""
+              end
+
+              # @return [String]
+              def to_x12
                 ""
               end
 
@@ -222,7 +229,18 @@ module Stupidedi
 
               # @return [String]
               def to_s
-                "#{@hour}#{@minute}#{@second}"
+                hh =   @hour.try{|h| "%02d" % h }  || "hh"
+                mm = @minute.try{|m| "%02d" % m }  || "mm"
+                ss = @second.try{|s| s.to_s("F") } || "ss"
+                "#{hh}#{mm}#{ss}"
+              end
+
+              # @return [String]
+              def to_x12
+                hh =   @hour.try{|h| "%02d" % h }
+                mm = @minute.try{|m| "%02d" % m }
+                ss = @second.try{|s| s.to_s("F").gsub(/\.0*$/, "") }
+                "#{hh}#{mm}#{ss}"
               end
 
               # @return [Boolean]
