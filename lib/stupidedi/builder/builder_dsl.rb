@@ -144,8 +144,13 @@ module Stupidedi
           descriptor = zipper.node.id
 
           if zipper.node.invalid?
-            raise Exceptions::ParseError,
-              "invalid segment #{descriptor}"
+            if zipper.up.node.invalid?
+              raise Exceptions::ParseError,
+                zipper.first.node.reason
+            else
+              raise Exceptions::ParseError,
+                "invalid #{descriptor} segment"
+            end
           else
             zipper.children.each_with_index do |z, i|
               critique(z, "#{descriptor}-#{'%02d' % (i + 1)}")
