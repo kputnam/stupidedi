@@ -253,7 +253,7 @@ module Stupidedi
               "RJ" => s::CodeList.external("DOD1")))
 
           E310  = t::ID.new(:E310 , "Location Identifier"                  , 1, 30)
-          E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
+          E329  = t::AN.new(:E329 , "Transaction Set Control Number"       , 4, 9)
           E332  = t:: R.new(:E332 , "Percent, Decimal Format"              , 1, 6)
           E337  = t::TM.new(:E337 , "Time"                                 , 4, 8)
           E338  = t:: R.new(:E338 , "Terms Discount Percent"               , 1, 6)
