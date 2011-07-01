@@ -32,7 +32,7 @@ module Stupidedi
           instructions = state.instructions.matches(segment_tok)
 
           if instructions.empty?
-            active << zipper.append(FailureState.segment(segment_tok, state))
+            active << zipper.append(FailureState.mksegment(segment_tok, state))
             next
           end
 

@@ -41,13 +41,6 @@ module Stupidedi
           end
         end
       end
-
-    private
-
-      # @return [Values::SegmentVal]
-      def segment(segment_tok, segment_use)
-        AbstractState.segment(segment_tok, segment_use)
-      end
     end
 
     class << AbstractState

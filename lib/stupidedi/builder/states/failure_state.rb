@@ -50,7 +50,7 @@ module Stupidedi
           [])
       end
 
-      def segment(segment_tok, parent)
+      def mksegment(segment_tok, parent)
         segment_val = Values::InvalidSegmentVal.new \
           "unexpected segment", segment_tok
 

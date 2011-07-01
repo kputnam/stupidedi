@@ -61,8 +61,8 @@ module Stupidedi
       # @return [Integer]
       #
       # @note This method uses AbstractCursor#between, which assumes the two
-      # cursors point to the same tree. If that is not the case, the results
-      # are undefined.
+      #   cursors point to the same tree. If that is not the case, the results
+      #   are undefined.
       def distance(other)
         zipper.flatmap do |a|
           other.zipper.map do |b|
