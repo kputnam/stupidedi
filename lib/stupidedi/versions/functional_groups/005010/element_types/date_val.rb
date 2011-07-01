@@ -273,6 +273,12 @@ module Stupidedi
                 end
               end
 
+              def too_long?
+                # Month and day occupy four characters, but year occupies
+                # at *least* four characters -- possibly more.
+                definition.max_length - 4 > @year.to_s.length
+              end
+
               # @return -1, 0, 1
               def <=>(other)
                 if @year < other.year
@@ -461,6 +467,13 @@ module Stupidedi
                 # Less than a 4-digit year means our max length is 7, but in
                 # practice the definition min/max lengths are either 6 or 8
                 definition.min_length > 6
+              end
+
+              def too_long?
+                # We know month and day occupy four characters, but year *could*
+                # occupy either three or two characters. If the max_length can't
+                # accomodate a three-digit year, make sure we don't have one
+                definition.max_length < 7 and @year > 99
               end
 
               # @note Not commutative

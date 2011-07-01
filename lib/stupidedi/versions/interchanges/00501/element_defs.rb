@@ -42,6 +42,12 @@ module Stupidedi
                   " " * definition.min_length
                 end
               end
+
+              class NonEmpty < T::StringVal::NonEmpty
+                def too_short?
+                  false
+                end
+              end
             end
           end
 
@@ -179,8 +185,8 @@ module Stupidedi
               "SN" => s::CodeList.external("42"),
               "ZZ" => "Mutually Defined"))
 
-          I06 = t::AN.new(:I06, "Interchange Sender ID",                 15, 15)
-          I07 = t::AN.new(:I07, "Interchange Receiver ID",               15, 15)
+          I06 = SpecialAN.new(:I06, "Interchange Sender ID",                 15, 15)
+          I07 = SpecialAN.new(:I07, "Interchange Receiver ID",               15, 15)
           I08 = t::DT.new(:I08, "Interchange Date",                       6,  6)
           I09 = t::TM.new(:I09, "Interchange Time",                       4,  4)
 

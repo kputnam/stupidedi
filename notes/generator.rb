@@ -9,10 +9,10 @@ config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::
 config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }
 
 
-b = Stupidedi::Builder::BuilderDsl.build(config, false)
+b = Stupidedi::Builder::BuilderDsl.build(config, true)
 x = b.blank
 
-b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "1234567890", "1", "T", ":")
+b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "123456789", "1", "T", ":")
 b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
 b. ST("837", "1234", b.default)
 b.BHT("0019", "00", "1230", "19990531", Time.now.utc, "CH")
@@ -30,7 +30,7 @@ b. N3("2345 OCEAN BLVD")
 b. N4("MIAMI", "FL", "33111")
 b. HL("2", "1", "22", "0")
 b.SBR("S", "18", "", "", "12", "", "", "", "MB")
-b.PAT("1", "2", "3", "4")
+#.PAT("1", "2", "3", "4")
 b.NM1("IL", "1", "BACON", "KEVIN", "", "", "", "MI", "222334444")
 b. N3("236 N MAIN ST")
 b. N4("MIAMI", "FL", "33413")
