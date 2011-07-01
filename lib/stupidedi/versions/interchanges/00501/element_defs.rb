@@ -13,6 +13,38 @@ module Stupidedi
           t = FunctionalGroups::FiftyTen::ElementTypes
           s = Schema
 
+          # Namespace workaround for SpecialAN inner classes
+          T = t
+
+          # Fun (stupid) problem. The specifications declare ISA02 and ISA04 are
+          # required elements, but they only have "meaningful information" when
+          # ISA01 and ISA03 qualifiers aren't "00".
+          #
+          # Without specifications regarding what should be entered in these
+          # required elements, our best option is to defer to convention, which
+          # seems to be that these elements should have 10 spaces -- which means
+          # they're blank. So we can't really make these elements required! Even
+          # stupider, these are the only blank elements that should be written
+          # out space-padded to the min_length -- every other element should be
+          # collapsed to an empty string.
+          #
+          # So this "Special" class overrides to_x12 for empty values, but it
+          # otherwise looks and acts like a normal AN and StringVal
+          class SpecialAN < t::AN
+            def companion
+              SpecialVal
+            end
+
+            class SpecialVal < T::StringVal
+              class Empty < T::StringVal::Empty
+                # @return [String]
+                def to_x12
+                  " " * definition.min_length
+                end
+              end
+            end
+          end
+
           class SeparatorElementVal < Values::SimpleElementVal
 
             delegate :to_s, :length, :to => :@value
@@ -94,14 +126,14 @@ module Stupidedi
               "05" => "Deparment of Defense (DoD) Communication Identifier",
               "06" => "United States Federal Government Communication Identifier"))
 
-          I02 = t::AN.new(:I02, "Authorization Information",             10, 10)
+          I02 = SpecialAN.new(:I02, "Authorization Information",             10, 10)
 
           I03 = t::ID.new(:I03, "Security Information Qualifier",         2,  2,
             s::CodeList.build(
               "00" => "No Security Information (No Meaningful Information in I04)",
               "01" => "Password"))
 
-          I04 = t::AN.new(:I04, "Security Information",                  10, 10)
+          I04 = SpecialAN.new(:I04, "Security Information",                  10, 10)
 
           I05 = t::ID.new(:I05, "Interchange ID Qualifier",               2,  2,
             s::CodeList.build(

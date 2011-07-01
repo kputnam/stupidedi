@@ -457,56 +457,56 @@ module Stupidedi
             # @return [DateVal]
             def value(object, usage, position)
               if object.blank?
-                DateVal::Empty.new(usage, position)
+                self::Empty.new(usage, position)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
                 string = object.to_s
 
                 if string.length < 6
-                  DateVal::Invalid.new(object, usage, position)
+                  self::Invalid.new(object, usage, position)
                 else
                   day   = string.slice(-2, 2).to_i
                   month = string.slice(-4, 2).to_i
                   year  = string.slice( 0..-5)
 
                   if year.length < 4
-                    DateVal::Improper.new(year.to_i, month, day, usage, position)
+                    self::Improper.new(year.to_i, month, day, usage, position)
                   else
-                    DateVal::Proper.new(year.to_i, month, day, usage, position)
+                    self::Proper.new(year.to_i, month, day, usage, position)
                   end
                 end
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-                DateVal::Proper.new(object.year, object.month, object.day, usage, position)
+                self::Proper.new(object.year, object.month, object.day, usage, position)
 
               elsif object.is_a?(DateVal::Improper)
-                DateVal::Improper.new(object.year, object.month, object.day, usage, position)
+                self::Improper.new(object.year, object.month, object.day, usage, position)
 
               else
-                DateVal::Invalid.new(object, usage, position)
+                self::Invalid.new(object, usage, position)
               end
 
             rescue Exceptions::InvalidElementError
-              DateVal::Invalid.new(object, usage, position)
+              self::Invalid.new(object, usage, position)
             end
 
             # @return [DateVal]
             def parse(string, usage, position)
               if string.length < 6
-                DateVal::Invalid.new(string, usage, position)
+                self::Invalid.new(string, usage, position)
               else
                 day   = string.slice(-2, 2).to_i
                 month = string.slice(-4, 2).to_i
                 year  = string.slice( 0..-5)
 
                 if year.length < 4
-                  DateVal::Improper.new(year.to_i, month, day, usage, position)
+                  self::Improper.new(year.to_i, month, day, usage, position)
                 else
-                  DateVal::Proper.new(year.to_i, month, day, usage, position)
+                  self::Proper.new(year.to_i, month, day, usage, position)
                 end
               end
             rescue Exceptions::InvalidElementError
-              DateVal::Invalid.new(string, usage, position)
+              self::Invalid.new(string, usage, position)
             end
 
             # @endgroup

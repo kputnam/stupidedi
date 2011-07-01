@@ -310,26 +310,26 @@ module Stupidedi
 
             # @return [StringVal]
             def empty(usage, position)
-              StringVal::Empty.new(usage, position)
+              self::Empty.new(usage, position)
             end
 
             # @return [StringVal]
             def value(object, usage, position)
               if object.blank?
-                StringVal::Empty.new(usage, position)
+                self::Empty.new(usage, position)
               elsif object.respond_to?(:to_s)
-                StringVal::NonEmpty.new(object.to_s.rstrip, usage, position)
+                self::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
-                StringVal::Invalid.new(object, usage, position)
+                self::Invalid.new(object, usage, position)
               end
             end
 
             # @return [StringVal]
             def parse(string, usage, position)
               if string.blank?
-                StringVal::Empty.new(usage, position)
+                self::Empty.new(usage, position)
               else
-                StringVal::NonEmpty.new(string.rstrip, usage, position)
+                self::NonEmpty.new(string.rstrip, usage, position)
               end
             end
 

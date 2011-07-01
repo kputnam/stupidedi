@@ -275,26 +275,26 @@ module Stupidedi
 
             # @return [IdentifierVal]
             def empty(usage, position)
-              IdentifierVal::Empty.new(usage, position)
+              self::Empty.new(usage, position)
             end
 
             # @return [IdentifierVal]
             def value(object, usage, position)
               if object.blank?
-                IdentifierVal::Empty.new(usage, position)
+                self::Empty.new(usage, position)
               elsif object.respond_to?(:to_s)
-                IdentifierVal::NonEmpty.new(object.to_s.rstrip, usage, position)
+                self::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
-                IdentifierVal::Invalid.new(object, usage, position)
+                self::Invalid.new(object, usage, position)
               end
             end
 
             # @return [IdentifierVal]
             def parse(string, usage, position)
               if string.blank?
-                IdentifierVal::Empty.new(usage, position)
+                self::Empty.new(usage, position)
               else
-                IdentifierVal::NonEmpty.new(string.rstrip, usage, position)
+                self::NonEmpty.new(string.rstrip, usage, position)
               end
             end
 

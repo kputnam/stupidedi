@@ -63,6 +63,9 @@ anonymous classes which are used to instantiate singleton objects.
 
 DONE
 -------------------------------------------------------------------------------
+Handle the weird case with ISA02 & ISA04 which can be blank but must be padded
+to their min_lengths. Other non-required elements shouldn't be padded when blank
+
 Navigation#find doesn't find the SE segment from an 835 transaction if it is
 preceeded by PLB. This seems to indicate that in general, it doesn't correctly
 deal with tables that can begin with more than one segment (Table 3 can begin
