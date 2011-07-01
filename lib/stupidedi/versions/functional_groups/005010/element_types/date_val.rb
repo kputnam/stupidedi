@@ -266,7 +266,7 @@ module Stupidedi
 
               # @return [String]
               def to_x12
-                if definition.max_length == 6
+                if definition.max_length < 8
                   "%02d%02d%02d" % [@year % 100, @month, @day]
                 else
                   "%04d%02d%02d" % [@year, @month, @day]
@@ -274,9 +274,11 @@ module Stupidedi
               end
 
               def too_long?
-                # Month and day occupy four characters, but year occupies
-                # at *least* four characters -- possibly more.
-                definition.max_length - 4 > @year.to_s.length
+                if definition.max_length < 8
+                  definition.max_length - 2 < @year.to_s.length
+                else
+                  definition.max_length - 4 < @year.to_s.length
+                end
               end
 
               # @return -1, 0, 1

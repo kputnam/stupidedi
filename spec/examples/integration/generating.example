@@ -122,7 +122,9 @@ describe "Generating" do
 
       context "when strict" do
         it "loudly complains" do
-          isa(strict)
+          lambda { isa(strict) }.should_not \
+            raise_error("required segment IEA is missing from interchange 00501")
+
           lambda { isa(strict) }.should \
             raise_error("required segment IEA is missing from interchange 00501")
 
@@ -132,7 +134,9 @@ describe "Generating" do
 
       context "when non-strict" do
         it "quietly proceeds" do
-          isa(lazy)
+          lambda { isa(lazy) }.should_not \
+            raise_error("required segment IEA is missing from interchange 00501")
+
           lambda { isa(lazy) }.should_not \
             raise_error("required segment IEA is missing from interchange 00501")
 
@@ -155,7 +159,7 @@ describe "Generating" do
       context "when strict" do
         it "loudly complains" do
           lambda { isa(strict) }.should \
-            raise_error("required element ISA-06 is blank")
+            raise_error("required element ISA06 is blank")
 
           strict.should be_empty
         end
@@ -164,130 +168,294 @@ describe "Generating" do
       context "when non-strict" do
         it "quietly proceeds" do
           lambda { isa(lazy) }.should_not \
-            raise_error("required element ISA-06 is blank")
+            raise_error("required element ISA06 is blank")
 
+          lazy.element(6).select{|e| e.node == "" }.should be_defined
           lazy.element(6).select{|e| e.node.empty? }.should be_defined
         end
       end
     end
 
-    context "with invalid ID values" do
-      def isa(dsl)
-        dsl.ISA("XX", "",
-                "00", "",
-                "ZZ", "431777999",
-                "ZZ", "133052274",
-                Time.now.utc,
-                Time.now.utc,
-                "", "00501", 123456789, "1", "T", "")
-      end
+    context "invalid values" do
 
-      context "when strict" do
-        it "loudly complains" do
-          lambda { isa(strict) }.should \
-            raise_error("value XX not allowed in element ISA-01")
+      context "with disallowed ID values" do
+        def isa(dsl)
+          dsl.ISA("XX", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  Time.now.utc,
+                  "", "00501", 123456789, "1", "T", "")
+        end
 
-          strict.should be_empty
+        context "when strict" do
+          it "loudly complains" do
+            lambda { isa(strict) }.should \
+              raise_error("value XX not allowed in element ISA01")
+
+            strict.should be_empty
+          end
+        end
+
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { isa(lazy) }.should_not \
+              raise_error("value XX not allowed in element ISA01")
+
+            lazy.element(1).select{|e| e.node == "XX" }.should be_defined
+            lazy.element(1).select{|e| e.node.invalid? }.should_not be_defined
+          end
         end
       end
 
-      context "when non-strict" do
-        it "quietly proceeds" do
-          lambda { isa(lazy) }.should_not \
-            raise_error("value XX not allowed in element ISA-01")
-
-          lazy.element(1).select{|e| e.node == "XX" }.should be_defined
+      context "with invalid DT values" do
+        def isa(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  "DATE",
+                  Time.now.utc,
+                  "", "00501", 123456789, "1", "T", "")
         end
-      end
-    end
 
-    context "with invalid DT values" do
-      def isa(dsl)
-        dsl.ISA("00", "",
-                "00", "",
-                "ZZ", "431777999",
-                "ZZ", "133052274",
-                "DATE",
-                Time.now.utc,
-                "", "00501", 123456789, "1", "T", "")
-      end
+        context "when strict" do
+          it "loudly complains" do
+            lambda { isa(strict) }.should \
+              raise_error("invalid element ISA09")
 
-      context "when strict" do
-        it "loudly complains" do
-          lambda { isa(strict) }.should \
-            raise_error("invalid element ISA-09")
-
-          strict.should be_empty
+            strict.should be_empty
+          end
         end
-      end
 
-      context "when non-strict" do
-        it "quietly proceeds" do
-          lambda { isa(lazy) }.should_not \
-            raise_error("invalid element ISA-09")
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { isa(lazy) }.should_not \
+              raise_error("invalid element ISA09")
 
-          lazy.element(9).select{|e| e.node.invalid? }.should be_defined
-        end
-      end
-    end
-
-    context "with invalid TM values" do
-      def isa(dsl)
-        dsl.ISA("00", "",
-                "00", "",
-                "ZZ", "431777999",
-                "ZZ", "133052274",
-                Time.now.utc,
-                "TIME",
-                "", "00501", 123456789, "1", "T", "")
-      end
-
-      context "when strict" do
-        it "loudly complains" do
-          lambda { isa(strict) }.should \
-            raise_error("invalid element ISA-10")
-
-          strict.should be_empty
+            lazy.element(9).select{|e| e.node.invalid? }.should be_defined
+            lazy.element(9).select{|e| e.node == "DATE" }.should_not be_defined
+          end
         end
       end
 
-      context "when non-strict" do
-        it "quietly proceeds" do
-          lambda { isa(lazy) }.should_not \
-            raise_error("invalid element ISA-10")
+      context "with invalid TM values" do
+        def isa(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  "TIME",
+                  "", "00501", 123456789, "1", "T", "")
+        end
 
-          lazy.element(10).select{|e| e.node.invalid? }.should be_defined
+        context "when strict" do
+          it "loudly complains" do
+            lambda { isa(strict) }.should \
+              raise_error("invalid element ISA10")
+
+            strict.should be_empty
+          end
+        end
+
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { isa(lazy) }.should_not \
+              raise_error("invalid element ISA10")
+
+            lazy.element(10).select{|e| e.node.invalid? }.should be_defined
+            lazy.element(10).select{|e| e.node == "TIME" }.should_not be_defined
+          end
         end
       end
+
+      context "with invalid Nn values" do
+        def isa(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  Time.now.utc,
+                  "", "00501", "1234ABC", "1", "T", "")
+        end
+
+        context "when strict" do
+          it "loudly complains" do
+            lambda { isa(strict) }.should \
+              raise_error("invalid element ISA13")
+
+            strict.should be_empty
+          end
+        end
+
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { isa(lazy) }.should_not \
+              raise_error("invalid element ISA13")
+
+            lazy.element(13).select{|e| e.node.invalid? }.should be_defined
+          end
+        end
+      end
+
     end
 
     context "incorrect element lengths" do
 
       context "with Nn elements that are too long" do
+        def setup(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  Time.now.utc,
+                  "^", "00501", 1234567890, "1", "T", ":")
+        end
+
+        context "when strict" do
+          it "loudly complains" do
+            lambda { setup(strict) }.should \
+              raise_error("value is too long in element ISA13")
+          end
+        end
+        
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { setup(lazy) }.should_not \
+              raise_error
+
+            lazy.element(13).select{|e| e.node == 1234567890 }.should be_defined
+            lazy.element(13).select{|e| e.node.too_long? }.should be_defined
+          end
+        end
       end
 
       context "with Nn element that are too short" do
+        # I don't know of any Nn elements that have a min_length
+        # that isn't just 1. So the #too_short? method in NumericVal
+        # don't bother testing and returns false in every case, for
+        # simplicity.
       end
 
       context "with R elements that are too long" do
       end
 
       context "with R elements that are too short" do
+        # I don't know of any R elements that have a min_length
+        # that isn't just 1. So the #too_short? method in DecimalVal
+        # don't bother testing and returns false in every case, for
+        # simplicity.
       end
 
       context "with AN elements that are too long" do
+        def setup(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999xxxxxxxxxxx",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  Time.now.utc,
+                  "^", "00501", 123456789, "1", "T", ":")
+        end
+
+        context "when strict" do
+          it "loudly complains" do
+            lambda { setup(strict) }.should \
+              raise_error("value is too long in element ISA06")
+          end
+        end
+
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { setup(lazy) }.should_not \
+              raise_error("value is too long in element ISA06")
+
+            lazy.element(6).select{|e| e.node == "431777999xxxxxxxxxxx" }.should be_defined
+            lazy.element(6).select{|e| e.node.too_long? }.should be_defined
+          end
+        end
       end
 
       context "with AN elements that are too short" do
+        # I don't know of any AN elements that have a min_length
+        # that isn't just 1. But the #too_short? method in StringVal
+        # is correctly implemented
       end
 
       context "with TM elements that are too long" do
+        # Because TM definitions ensure max_length is 2, 4, or greater
+        # than 6 and because of the values are parsed into TimeVals, we
+        # can always safely truncate output to max_length. So there
+        # isn't a case where a TM element value is too long
       end
 
       context "with TM elements that are too short" do
+        def setup(dsl, time = Time.now.utc)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  time.hour.to_s,
+                  "^", "00501", 123456789, "1", "T", ":")
+        end
+
+        context "when strict" do
+          it "complains loudly" do
+            lambda { setup(strict) }.should \
+              raise_error("value is too short in ISA10")
+          end
+        end
+
+        context "when non-strict" do
+          it "proceeds quietly" do
+            time = Time.now.utc
+
+            lambda { setup(lazy, time) }.should_not \
+              raise_error("value is too short in ISA10")
+
+            lazy.element(10).select{|e| e.node.hour == time.hour }.should be_defined
+            lazy.element(10).select{|e| e.node.too_short? }.should be_defined
+          end
+        end
       end
 
       context "with DT elements that are too long" do
+        def setup(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  Time.now.utc,
+                  "^", "00501", 123456789, "1", "T", ":")
+
+          dsl.GS("HC",
+                 "SENDER ID",
+                 "RECEIVER ID",
+                 "222221105",
+                 Time.now.utc, "1", "X", "005010X222")
+        end
+
+        context "when strict" do
+          it "complains loudly" do
+            lambda { setup(strict) }.should \
+              raise_error("value is too long in element GS04")
+          end
+        end
+
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { setup(lazy) }.should_not \
+              raise_error("value is too long in element GS04")
+
+            lazy.element(4).select{|e| e.node.year.should == 22222 }.should be_defined
+          end
+        end
       end
 
       context "with DT elements that are too short" do
@@ -327,6 +495,7 @@ describe "Generating" do
             setup(lazy, "005010X221")
 
             lazy.ST("835", "CONTROLNUM", lazy.default)
+            lazy.element(3).select{|e| e.node == "" }.should be_defined
             lazy.element(3).select{|e| e.node.blank? }.should be_defined
           end
         end
@@ -347,6 +516,7 @@ describe "Generating" do
             setup(lazy, "005010X221")
 
             lazy.ST("835", "CONTROLNUM", lazy.not_used)
+            lazy.element(3).select{|e| e.node == "" }.should be_defined
             lazy.element(3).select{|e| e.node.blank? }.should be_defined
           end
         end

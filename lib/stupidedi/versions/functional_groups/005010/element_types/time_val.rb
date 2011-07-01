@@ -228,19 +228,20 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_s
-                hh =   @hour.try{|h| "%02d" % h }  || "hh"
-                mm = @minute.try{|m| "%02d" % m }  || "mm"
-                ss = @second.try{|s| s.to_s("F") } || "ss"
+              def to_s(hh = "hh", mm = "mm", ss = "ss")
+                hh =   @hour.try{|h| "%02d" % h }  || hh
+                mm = @minute.try{|m| "%02d" % m }  || mm
+                ss = @second.try{|s| s.to_s("F").gsub(/\.0*$/, "") } || ss
                 "#{hh}#{mm}#{ss}"
               end
 
               # @return [String]
               def to_x12
-                hh =   @hour.try{|h| "%02d" % h }
-                mm = @minute.try{|m| "%02d" % m }
-                ss = @second.try{|s| s.to_s("F").gsub(/\.0*$/, "") }
-                "#{hh}#{mm}#{ss}"
+                to_s(nil, nil, nil).take(definition.max_length)
+              end
+
+              def too_short?
+                to_s(nil, nil, nil).length < definition.min_length
               end
 
               # @return [Boolean]

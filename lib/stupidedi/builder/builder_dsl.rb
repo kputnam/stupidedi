@@ -154,7 +154,7 @@ module Stupidedi
             end
           else
             zipper.children.each_with_index do |z, i|
-              critique(z, "#{descriptor}-#{'%02d' % (i + 1)}")
+              critique(z, "#{descriptor}#{'%02d' % (i + 1)}")
             end
 
             d = zipper.node.definition
