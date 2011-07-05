@@ -228,9 +228,9 @@ module Stupidedi
 
               # @return [String]
               def to_s(hh = "hh", mm = "mm", ss = "ss")
-                hh =   @hour.try{|h| "%02d" % h }  || hh
-                mm = @minute.try{|m| "%02d" % m }  || mm
-                ss = @second.try{|s| s.to_s("F").gsub(/\.0*$/, "") } || ss
+                hh =   @hour.try{|h| "%02d" % h } || hh
+                mm = @minute.try{|m| "%02d" % m } || mm
+                ss = @second.try{|s| "%02d" % s } || ss
                 "#{hh}#{mm}#{ss}"
               end
 
