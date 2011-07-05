@@ -1,24 +1,24 @@
-BUGS
--------------------------------------------------------------------------------
-Navigation#find doesn't find next ISA segment when positioned on a preceeding
-ISA segment. Looking at the #successors, it looks like a wrong instruction...
-it should be Instruction[ISA](pop: 1, push: InterchangeState). This is probably
-fixable in InterchangeState.push?
-
-[InstructionTable(
-    1: Instruction[ISB: Grade of Service..](pop: 0, drop: 1),
-    2: Instruction[ISE: Deferred Deliver..](pop: 0, drop: 2),
-    3: Instruction[TA1: Interchange Ackn..](pop: 0, drop: 2),
-    4: Instruction[ GS](pop: 0, drop: 3, push: FunctionalGroupState),
-    5: Instruction[IEA: Interchange Cont..](pop: 0, drop: 5),
-    6: Instruction[ISA](pop: 2, drop: 0, push: TransmissionState))]
-
 TODO
 -------------------------------------------------------------------------------
+Fix the error handling with Reader::TokenReader so StateMachine can know when
+reading a segment failed due to EOF at an expected or unexpected boundary.
+
+Create specs to parse a fixture file and write out the parse tree, comparing
+the input string with the output string, minding #characters
+
 Support for configurable external code sources. The minimal interface should
 implement #include?(code). Need to decide how to handle unconfigured external
 code sources -- should there be a method to list all the code sources in some
 transaction set?
+
+Validations:
+  Extended or basic character set usage
+  Sequential number of HL segments
+  Match children HL02 with parent HL01
+  Confirm HL04 matches with the (non-)existence of children
+  Uniqueness of control numbers: CLM01, ...
+  Balanced line-level and claim-level amounts, COB amounts, etc
+  BHT03 is limited to 30 chars (only in HIPAA X222 837)
 
 Implement an automated FA999 Functional Acknowledgement generator that accepts
 any FunctionalGroupVal as input. This will be useful for writing integration
@@ -48,9 +48,6 @@ SegmentVal back into a SegmentTok just to lookup the instruction isn't optimal.
 Implement StateMachine#delete to remove the current segment, and possibly the
 dependent segments. This probably doesn't require validating the resulting tree.
 
-Fix the error handling with Reader::TokenReader so StateMachine can know when
-reading a segment failed due to EOF at an expected or unexpected boundary.
-
 Evaluate implementation guide conformance regarding ElementReq and SyntaxNote.
 This requires interpreting the meaning of SyntaxNote, so its necessarily version
 specific.
@@ -63,6 +60,19 @@ anonymous classes which are used to instantiate singleton objects.
 
 DONE
 -------------------------------------------------------------------------------
+Navigation#find doesn't find next ISA segment when positioned on a preceeding
+ISA segment. Looking at the #successors, it looks like a wrong instruction...
+it should be Instruction[ISA](pop: 1, push: InterchangeState). This is probably
+fixable in InterchangeState.push?
+
+[InstructionTable(
+    1: Instruction[ISB: Grade of Service..](pop: 0, drop: 1),
+    2: Instruction[ISE: Deferred Deliver..](pop: 0, drop: 2),
+    3: Instruction[TA1: Interchange Ackn..](pop: 0, drop: 2),
+    4: Instruction[ GS](pop: 0, drop: 3, push: FunctionalGroupState),
+    5: Instruction[IEA: Interchange Cont..](pop: 0, drop: 5),
+    6: Instruction[ISA](pop: 2, drop: 0, push: TransmissionState))]
+
 Handle the weird case with ISA02 & ISA04 which can be blank but must be padded
 to their min_lengths. Other non-required elements shouldn't be padded when blank
 

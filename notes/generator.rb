@@ -15,7 +15,7 @@ x = b.blank
 b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", "^", "00501", "123456789", "1", "T", ":")
 b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
 b. ST("837", "1234", b.default)
-b.BHT("0019", "00", "1230", "19990531", Time.now.utc, "CH")
+b.BHT("0019", "00", "X"*31, "19990531", Time.now.utc, "CH")
 b.NM1("41", "2", "PREMIER BILLING SERVICE", "", "", "", "", "46", "12EEER000TY")
 b.PER("IC", "JERRY THE CLOWN", "TE", "3056660000")
 b.NM1("40", "2", "REPRICER JONES", "", "", "", "", "46", "66783JJT")

@@ -52,10 +52,6 @@ module Stupidedi
                 false
               end
 
-              def extended?
-                false
-              end
-
               # @return [String]
               def inspect
                 id = definition.bind do |d|
@@ -101,10 +97,6 @@ module Stupidedi
 
               def empty?
                 true
-              end
-
-              def extended?
-                false
               end
 
               # @return [String]
@@ -204,10 +196,6 @@ module Stupidedi
 
               def empty?
                 false
-              end
-
-              def extended?
-                Reader.has_extended_characters?(@value)
               end
 
               # @return [StringVal::NonEmpty]

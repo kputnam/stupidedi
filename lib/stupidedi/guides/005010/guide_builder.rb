@@ -133,7 +133,9 @@ module Stupidedi
               "element name must be a String"
           end
 
-          changes = Hash.new
+          changes = Hash.new # changes to SegmentUse
+          dhanges = Hash.new # changes to SegmentDef
+
           changes[:requirement] = requirement
           changes[:definition]  = element_use.definition.copy(:name => name)
 
@@ -158,13 +160,18 @@ module Stupidedi
           max_length = arguments.select{|x| x.is_a?(Array) and x.head == :MaxLength }
 
           if max_length.length == 1
-            changes[:max_length] = max_length.head
+            dhanges[:max_length] = max_length.head.last
           elsif max_length.length > 1
             raise Exceptions::InvalidSchemaError,
               "more than one MaxLength specified for this Element"
           end
 
-          element_use.copy(changes)
+          if dhanges.empty?
+            element_use.copy(changes)
+          else
+            element_use.copy(changes.merge(:definition =>
+              element_use.definition.copy(dhanges)))
+          end
         end
       end
 
