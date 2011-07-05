@@ -5,22 +5,19 @@ module Stupidedi
 
       # @return [(StateMachine, Either<Reader::TokenReader>)]
       def read(reader)
-        machine   = self
-        remainder = Either.success(reader)
+        machine = self
+        reader  = reader.read_segment
 
-        while remainder.defined?
-          remainder = remainder.flatmap{|x| x.read_segment }.map do |result|
-            segment_tok = result.value
-            reader      = result.remainder
-
+        while reader.defined?
+          reader = reader.flatmap do |segment_tok, reader|
             machine, reader =
               machine.insert(segment_tok, reader)
 
-            reader
+            reader.read_segment
           end
         end
 
-        return machine, remainder
+        return machine, reader
       end
 
       # @return [(StateMachine, Reader::TokenReader)]

@@ -62,20 +62,20 @@ module Stupidedi
       def read_segment
         consume_isa.flatmap do |rest|
           # The character after "ISA" is defined to be the element separator
-          rest.read_character.flatmap do |a|
-            separators = Separators.new(nil, nil, a.value, nil)
-            remaining  = success(TokenReader.new(a.remainder.input, separators))
+          rest.read_character.flatmap do |char, aR|
+            separators = Separators.new(nil, nil, char, nil)
+            remaining  = success(TokenReader.new(aR.input, separators))
             elements   = []
 
             # Read 15 simple elements into an array. Consume/discard the element
             # separator that follows each one.
             15.times do
               remaining =
-                remaining.flatmap(&:read_simple_element).flatmap do |x|
-                  elements << x.value
+                remaining.flatmap(&:read_simple_element).flatmap do |e, eR|
+                  elements << e
 
                   # Throw away the following element separator
-                  x.remainder.consume_prefix(separators.element)
+                  eR.consume_prefix(separators.element)
                 end
             end
 
@@ -83,28 +83,28 @@ module Stupidedi
             # it is not terminated by an element separator. The {read_character}
             # method defined by TokenReader skips past control characters.
             remaining.flatmap do |w|
-              w.read_character.flatmap do |x|
-                elements << SimpleElementTok.build(x.value, w.input, x.remainder.input)
+              w.read_character.flatmap do |isa16, cR|
+                elements << SimpleElementTok.build(isa16, w.input, cR.input)
 
                 # The character after the last element is defined to be the
                 # segment terminator. The {read_character} method here, defined
                 # by StreamReader, does not skip past control character, so the
                 # separator could be a control character.
-                x.remainder.stream.read_character.flatmap do |y|
-                  if y.value == separators.element
-                    failure("element separator and segment terminator must be distinct", x.remainder.input)
+                cR.stream.read_character.flatmap do |char, dR|
+                  if char == separators.element
+                    failure("element separator and segment terminator must be distinct", dR.input)
                   else
-                    separators.segment = y.value
+                    separators.segment = char
 
                     token = SegmentTok.build(:ISA, elements,
-                      rest.input.position, y.remainder.input.position)
+                      rest.input.position, dR.input.position)
 
-                    result(token, TokenReader.new(y.remainder.input, separators))
+                    result(token, TokenReader.new(dR.input, separators))
                   end
                 end
               end
             end
-          end.or do |x|
+          end.or do |reason|
             # We read "ISA" but failed to tokenize the input that followed. This
             # was probably a random occurrence of the sequence "ISA", so we'll
             # skip past it and try again.
@@ -156,7 +156,7 @@ module Stupidedi
       end
 
       def failure(message, remainder = input)
-        Either.failure(Reader::Failure.new(message, remainder))
+        Reader::Failure.new(message, remainder)
       end
 
       def success(value)
@@ -164,7 +164,7 @@ module Stupidedi
       end
 
       def result(value, remainder)
-        Either.success(Reader::Success.new(value, remainder))
+        Reader::Success.new(value, remainder)
       end
 
     end

@@ -148,28 +148,28 @@ module Stupidedi
           # We might start reading a segment at "\nNM1...", where the "\n" is on
           # line 5, but "NM1" is on line 6. So to ensure the segment position is
           # line 6, we start with consume_control_characters.
-          start.read_segment_id.flatmap do |a|
-            if @segment_dict.defined_at?(a.value)
-              element_uses = @segment_dict.at(a.value).element_uses
+          start.read_segment_id.flatmap do |segment_id, aR|
+            if @segment_dict.defined_at?(segment_id)
+              element_uses = @segment_dict.at(segment_id).element_uses
             else
               element_uses = []
             end
 
-            a.remainder.read_delimiter.flatmap do |b|
-              case b.value
+            aR.read_delimiter.flatmap do |delim, bR|
+              case delim
               when @separators.element
-                rest = b.remainder.read_elements(a.value, element_uses)
-                rest.map{|c| c.map{|es| segment(a.value, start.input, c.remainder.input, es) }}
+                rest = bR.read_elements(segment_id, element_uses)
+                rest.map{|es, cR| segment(segment_id, start.input, cR.input, es) }
               when @separators.segment
                 remainder =
-                  if a.value == :IEA
-                    b.remainder.stream
+                  if segment_id == :IEA
+                    bR.stream
                   else
-                    b.remainder
+                    bR
                   end
 
                 # Consume the segment terminator
-                result(segment(a.value, start.input, b.remainder.input), remainder)
+                result(segment(segment_id, start.input, bR.input), remainder)
               end
             end
           end
@@ -189,24 +189,24 @@ module Stupidedi
           else
             read_simple_element(repeatable)
           end
-        end.flatmap do |a|
-          a.remainder.read_delimiter.flatmap do |b|
-            case b.value
+        end.flatmap do |element, aR|
+          aR.read_delimiter.flatmap do |delim, bR|
+            case delim
             when @separators.segment
               remainder =
                 if segment_id == :IEA
-                  b.remainder.stream
+                  bR.stream
                 else
-                  b.remainder
+                  bR
                 end
 
               # This is the last element before the segment terminator, make
               # it into a singleton list and _do_ consume the delimiter
-              result(a.value.cons, remainder)
+              result(element.cons, remainder)
             when @separators.element
               # There is another element following the delimiter
-              rest = b.remainder.read_elements(segment_id, element_uses.tail)
-              rest.map{|c| c.map{|es| a.value.cons(es) }}
+              rest = bR.read_elements(segment_id, element_uses.tail)
+              rest.map{|es, _| element.cons(es) }
             end
           end
         end
@@ -214,18 +214,18 @@ module Stupidedi
 
       # @return [Either<Result<Array<ComponentElementTok, TokenReader>>>]
       def read_component_elements(repeatable = false)
-        read_component_element(repeatable).flatmap do |a|
-          a.remainder.read_delimiter.flatmap do |b|
-            case b.value
+        read_component_element(repeatable).flatmap do |component, aR|
+          aR.read_delimiter.flatmap do |delim, bR|
+            case delim
             when @separators.segment,
                  @separators.element,
                  @separators.repetition
               # This is the last component element within the composite element,
               # so make it into a singleton list and don't consume the delimiter
-              result(a.value.cons, a.remainder)
+              result(component.cons, aR)
             when @separators.component
-              rest = b.remainder.read_component_elements(repeatable)
-              rest.map{|c| c.map{|es| a.value.cons(es) }}
+              rest = bR.read_component_elements(repeatable)
+              rest.map{|es, _| component.cons(es) }
             end
           end
         end
@@ -238,7 +238,7 @@ module Stupidedi
 
         while true
           unless @input.defined_at?(position)
-            return failure("reached end of input without finding a segment identifier")
+            return eof("reached end of input without finding a segment identifier")
           end
 
           character = @input.at(position)
@@ -323,7 +323,7 @@ module Stupidedi
             if repeatable
               token = simple(buffer, @input, @input.drop(position))
               rest  = advance(position).read_simple_element(repeatable)
-              return rest.map{|r| r.map{|e| e.repeated(token) }}
+              return rest.map{|e, _| e.repeated(token) }
           # else
           #   # @todo: Read this as data but sound the alarms
             end
@@ -375,18 +375,18 @@ module Stupidedi
 
       # @return [Either<Result<CompositeElementTok, TokenReader>>]
       def read_composite_element(repeatable = false)
-        read_component_elements(repeatable).flatmap do |a|
-          token = composite(a.value, @input, a.remainder.input)
+        read_component_elements(repeatable).flatmap do |components, aR|
+          token = composite(components, @input, aR.input)
 
-          a.remainder.read_delimiter.flatmap do |b|
-            case b.value
+          aR.read_delimiter.flatmap do |delim, bR|
+            case delim
             when @separators.segment,
                  @separators.element
               token = token.repeated if repeatable
-              result(token, a.remainder)
+              result(token, aR)
             when @separators.repetition
-              b.remainder.read_composite_element(repeatable).map do |r|
-                r.map{|e| e.repeated(token) }
+              bR.read_composite_element(repeatable).map do |c, cR|
+                c.repeated(token)
               end
             end
           end
@@ -430,7 +430,11 @@ module Stupidedi
       end
 
       def failure(message, remainder = @input)
-        Either.failure(Result.failure(message, remainder))
+        Result.failure(message, remainder)
+      end
+
+      def eof(message, remainder = @input)
+        Result.failure(message, remainder)
       end
 
       def success(value)
@@ -438,7 +442,7 @@ module Stupidedi
       end
 
       def result(value, remainder)
-        Either.success(Result.success(value, remainder))
+        Result.success(value, remainder)
       end
 
       def segment(segment_id, input, remainder, elements = [])

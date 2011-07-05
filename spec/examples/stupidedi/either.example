@@ -351,23 +351,23 @@ describe Stupidedi::Either do
   describe "#each(&block)" do
     context "on success" do
       it "yields the wrapped value" do
-        lambda { mksuccess("a").each{|*a| raise a.inspect }}.should raise_error('["a"]')
+        lambda { mksuccess("a").tap{|*a| raise a.inspect }}.should raise_error('["a"]')
       end
 
       it "returns itself" do
         either = mksuccess("a")
-        either.each{|a| a.length }.should eq(either)
+        either.tap{|a| a.length }.should eq(either)
       end
     end
 
     context "on failure" do
       it "does not evaluate the block argument" do
-        lambda { mkfailure("a").each { raise }}.should_not raise_error
+        lambda { mkfailure("a").tap { raise }}.should_not raise_error
       end
 
       it "returns itself" do
         either = mkfailure("a")
-        either.each.should eq(either)
+        either.tap.should eq(either)
       end
     end
   end

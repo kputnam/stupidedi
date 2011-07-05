@@ -271,7 +271,7 @@ describe "Generating" do
         end
       end
 
-      context "with invalid Nn values" do
+      context "with invalid Nn values", :ruby => "1.8" do
         def isa(dsl)
           dsl.ISA("00", "",
                   "00", "",

@@ -1,14 +1,6 @@
 module Stupidedi
   class Either
 
-    # @return self
-    abstract :each, :args => %w(&block)
-
-    # (see Either#each)
-    def tap
-      each{|x| yield x }
-    end
-
     # @return [Boolean]
     abstract :defined?
 
@@ -43,15 +35,13 @@ module Stupidedi
     ###########################################################################
 
     class Success < Either
+
       def initialize(value)
         @value = value
       end
 
-      # @return [Success]
-      # @yieldparam value
-      def each
-        yield(@value)
-        self
+      def copy(changes = {})
+        Success.new(changes.fetch(:value, @value))
       end
 
       # @return true
@@ -65,8 +55,8 @@ module Stupidedi
       # @return [Either]
       # @yieldparam value
       # @yieldreturn [Boolean]
-      def select(reason = "select")
-        if yield(@value)
+      def select(reason = "select", &block)
+        if deconstruct(block)
           self
         else
           Either.failure(reason)
@@ -76,8 +66,8 @@ module Stupidedi
       # @return [Either]
       # @yieldparam value
       # @yieldreturn [Boolean]
-      def reject(reason = "reject")
-        if yield(@value)
+      def reject(reason = "reject", &block)
+        if deconstruct(block)
           Either.failure(reason)
         else
           self
@@ -93,15 +83,15 @@ module Stupidedi
       # @return [Success]
       # @yieldparam value
       # @yieldreturn value
-      def map
-        Success.new(yield(@value))
+      def map(&block)
+        copy(:value => deconstruct(block))
       end
 
       # @return [Either]
       # @yieldparam value
       # @yieldreturn [Either]
-      def flatmap
-        result = yield(@value)
+      def flatmap(&block)
+        result = deconstruct(block)
 
         if result.is_a?(Either)
           result
@@ -123,9 +113,13 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
+      def tap(&block)
+        deconstruct(block); self
+      end
+
       # @return [Boolean]
       def ==(other)
-        other.is_a?(Success) and other.select{|x| x == @value }.defined?
+        other.is_a?(Either) and other.select{|x| x == @value }.defined?
       end
 
       # @return [void]
@@ -141,6 +135,12 @@ module Stupidedi
       def inspect
         "Either.success(#{@value.inspect})"
       end
+
+    private
+      
+      def deconstruct(block)
+        block.call(@value)
+      end
     end
 
     class Failure < Either
@@ -152,8 +152,8 @@ module Stupidedi
       end
 
       # @return [Failure]
-      def each
-        self
+      def copy(changes = {})
+        Failure.new(changes.fetch(:reason, @reason))
       end
 
       # @return false
@@ -193,8 +193,8 @@ module Stupidedi
       # @return [Either]
       # @yieldparam reason
       # @yieldreturn [Either]
-      def or
-        result = yield(@reason)
+      def or(&block)
+        result = deconstruct(block)
 
         if result.is_a?(Either)
           result
@@ -206,12 +206,16 @@ module Stupidedi
       # @return [Failure]
       # @yieldparam reason
       # @yieldreturn reason
-      def explain
-        Either.failure(yield(@reason))
+      def explain(&block)
+        copy(:reason => deconstruct(block))
       end
 
       # @endgroup
       #########################################################################
+
+      def tap
+        self
+      end
 
       # @return [Boolean]
       def ==(other)
@@ -227,31 +231,15 @@ module Stupidedi
         end
       end
 
-      # @return [Fatal]
-      def fatal
-        Fatal.new(@reason)
-      end
-
       # @return [String]
       def inspect
         "Either.failure(#{@reason.inspect})"
       end
-    end
 
-    class Fatal < Failure
-      # @return [Fatal]
-      def or
-        self
-      end
+    private
 
-      # @return [Fatal]
-      def fatal
-        self
-      end
-
-      # @return [String]
-      def inspect
-        "Either.fatal(#{@reason.inspect})"
+      def deconstruct(block)
+        block.call(@reason)
       end
     end
 

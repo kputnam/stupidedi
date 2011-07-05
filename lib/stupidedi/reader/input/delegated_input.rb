@@ -4,7 +4,8 @@ module Stupidedi
     class DelegatedInput < AbstractInput
 
       def initialize(delegate, offset = 0, line = 1, column = 1)
-        @delegate, @offset, @line, @column = delegate, offset, line, column
+        @delegate, @offset, @line, @column =
+          delegate, offset, line, column
       end
 
       # @group Querying the Position
