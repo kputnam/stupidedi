@@ -407,7 +407,7 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             lambda { setup(strict) }.should \
-              raise_error("value is too short in ISA10")
+              raise_error("value is too short in element ISA10")
           end
         end
 
@@ -416,7 +416,7 @@ describe "Generating" do
             time = Time.now.utc
 
             lambda { setup(lazy, time) }.should_not \
-              raise_error("value is too short in ISA10")
+              raise_error("value is too short in element ISA10")
 
             lazy.element(10).select{|e| e.node.hour == time.hour }.should be_defined
             lazy.element(10).select{|e| e.node.too_short? }.should be_defined
@@ -459,6 +459,37 @@ describe "Generating" do
       end
 
       context "with DT elements that are too short" do
+        def setup(dsl)
+          dsl.ISA("00", "",
+                  "00", "",
+                  "ZZ", "431777999",
+                  "ZZ", "133052274",
+                  Time.now.utc,
+                  Time.now.utc,
+                  "^", "00501", 123456789, "1", "T", ":")
+
+          dsl.GS("HC",
+                 "SENDER ID",
+                 "RECEIVER ID",
+                 "110605",
+                 Time.now.utc, "1", "X", "005010X222")
+        end
+
+        context "when strict" do
+          it "complains loudly" do
+            lambda { setup(strict) }.should \
+              raise_error("value is too short in element GS04")
+          end
+        end
+
+        context "when non-strict" do
+          it "quietly proceeds" do
+            lambda { setup(lazy) }.should_not \
+              raise_error("value is too short in element GS04")
+
+            lazy.element(4).select{|e| e.node.year.should == 11 }.should be_defined
+          end
+        end
       end
 
     end
@@ -494,7 +525,9 @@ describe "Generating" do
           it "generates an empty element" do
             setup(lazy, "005010X221")
 
-            lazy.ST("835", "CONTROLNUM", lazy.default)
+            lambda { lazy.ST("835", "CONTROLNUM", lazy.default) }.should_not \
+              raise_error("ST02 cannot be inferred")
+
             lazy.element(3).select{|e| e.node == "" }.should be_defined
             lazy.element(3).select{|e| e.node.blank? }.should be_defined
           end
@@ -504,7 +537,9 @@ describe "Generating" do
           it "generates a non-empty element value" do
             setup(lazy, "005010X222")
 
-            lazy.ST("837", "CONTROLNUM", lazy.default)
+            lambda { lazy.ST("837", "CONTROLNUM", lazy.default) }.should_not \
+              raise_error("ST02 cannot be inferred")
+
             lazy.element(3).select{|e| e.node == "005010X222" }.should be_defined
           end
         end
@@ -515,7 +550,9 @@ describe "Generating" do
           it "generates an empty element" do
             setup(lazy, "005010X221")
 
-            lazy.ST("835", "CONTROLNUM", lazy.not_used)
+            lambda { lazy.ST("835", "CONTROLNUM", lazy.not_used) }.should_not \
+              raise_error("ST03 is not forbidden")
+
             lazy.element(3).select{|e| e.node == "" }.should be_defined
             lazy.element(3).select{|e| e.node.blank? }.should be_defined
           end

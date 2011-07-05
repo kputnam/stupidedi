@@ -107,8 +107,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                eql?(other) or
-                  (other.is_a?(Invalid) and @value == other.value)
+                eql?(other)
               end
             end
 

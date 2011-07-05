@@ -110,7 +110,7 @@ module Stupidedi
               "value is too long in element #{descriptor}"
           elsif zipper.node.too_short?
             raise Exceptions::ParseError,
-              "value is too short in #{descriptor}"
+              "value is too short in element #{descriptor}"
           end
 
         elsif zipper.node.composite?
