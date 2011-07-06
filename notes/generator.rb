@@ -50,7 +50,7 @@ b.zipper.tap do |z|
   p z.root.node.characters.to_a
 
   separators =
-    Stupidedi::Reader::Separators.build(:segment => "~\n", :element => "*")
+    Stupidedi::Reader::Separators.build(:segment => "~\n", :element => "*", :component => ">")
 
   Stupidedi::Writer::Default.new(z.root, separators).write($stdout)
 end
