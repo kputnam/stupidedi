@@ -69,6 +69,11 @@ module Stupidedi
                 false
               end
 
+              # @return [DateVal]
+              def map
+                DateVal.value(yield(nil), usage, position)
+              end
+
               def inspect
                 id = definition.bind do |d|
                   "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -91,7 +96,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -112,6 +117,11 @@ module Stupidedi
 
               def empty?
                 true
+              end
+
+              # @return [DateVal]
+              def map
+                DateVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
@@ -137,7 +147,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -241,6 +251,11 @@ module Stupidedi
                 self
               end
 
+              # @return [DateVal]
+              def map
+                DateVal.value(yield(@value), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
@@ -264,12 +279,15 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
-                if definition.max_length < 8
-                  "%02d%02d%02d" % [@year % 100, @month, @day]
-                else
-                  "%04d%02d%02d" % [@year, @month, @day]
-                end
+              def to_x12(truncate = true)
+                x12 =
+                  if definition.max_length < 8
+                    "%02d%02d%02d" % [@year % 100, @month, @day]
+                  else
+                    "%04d%02d%02d" % [@year, @month, @day]
+                  end
+
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               def too_long?
@@ -389,7 +407,6 @@ module Stupidedi
                     end
                   end
                 end
-
               end
 
               # Create a proper date which cannot be newer than the given `date`
@@ -460,8 +477,9 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
-                "%02d%02d%02d" % [@year, @month, @day]
+              def to_x12(truncate = true)
+                x12 = "%02d%02d%02d" % [@year, @month, @day]
+                truncate ? x12.slice(0, definition.max_length) : x12
               end
 
               def too_short?
@@ -532,25 +550,6 @@ module Stupidedi
 
             rescue Exceptions::InvalidElementError
               self::Invalid.new(object, usage, position)
-            end
-
-            # @return [DateVal]
-            def parse(string, usage, position)
-              if string.length < 6
-                self::Invalid.new(string, usage, position)
-              else
-                day   = string.slice(-2, 2).to_i
-                month = string.slice(-4, 2).to_i
-                year  = string.slice( 0..-5)
-
-                if year.length < 4
-                  self::Improper.new(year.to_i, month, day, usage, position)
-                else
-                  self::Proper.new(year.to_i, month, day, usage, position)
-                end
-              end
-            rescue Exceptions::InvalidElementError
-              self::Invalid.new(string, usage, position)
             end
 
             # @endgroup

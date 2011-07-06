@@ -52,6 +52,11 @@ module Stupidedi
                 false
               end
 
+              # @return [StringVal]
+              def map
+                StringVal.value(yield(nil), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
@@ -75,7 +80,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -97,6 +102,11 @@ module Stupidedi
 
               def empty?
                 true
+              end
+
+              # @return [StringVal]
+              def map
+                StringVal.value(yield(""), usage, position)
               end
 
               # @return [String]
@@ -122,12 +132,8 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
-                if usage.required?
-                  " " * definition.min_length
-                else
-                  ""
-                end
+              def to_x12(truncate = true)
+                ""
               end
 
               # @return [Boolean]
@@ -169,8 +175,9 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
-                @value.ljust(definition.min_length, " ")
+              def to_x12(truncate = true)
+                x12 = @value.ljust(definition.min_length, " ")
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               # @return [String]
@@ -198,19 +205,9 @@ module Stupidedi
                 false
               end
 
-              # @return [StringVal::NonEmpty]
-              def gsub(*args, &block)
-                copy(:value => @value.gsub(*args, &block))
-              end
-
-              # @return [StringVal::NonEmpty]
-              def upcase
-                copy(:value => @value.upcase)
-              end
-
-              # @return [StringVal::NonEmpty]
-              def downcase
-                copy(:value => @value.downcase)
+              # @return StringVal
+              def map
+                StringVal.value(yield(@value), usage, position)
               end
 
               def to_date(format)
@@ -272,8 +269,8 @@ module Stupidedi
                              @value.slice(4, 2).to_i,
                              @value.slice(6, 2).to_i) ..
                   Date.civil(@value.slice(9, 4).to_i,
-                             @value.slice(11, 2).to_i,
-                             @value.slice(13, 2).to_i)
+                             @value.slice(13, 2).to_i,
+                             @value.slice(15, 2).to_i)
                 when "RDT" # CCYYMMDDHHMM-CCYYMMDDHHMM
                   Time.utc(@value.slice(0, 4).to_i,
                            @value.slice(4, 2).to_i,
@@ -327,15 +324,6 @@ module Stupidedi
                 self::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
                 self::Invalid.new(object, usage, position)
-              end
-            end
-
-            # @return [StringVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                self::NonEmpty.new(string.rstrip, usage, position)
               end
             end
 

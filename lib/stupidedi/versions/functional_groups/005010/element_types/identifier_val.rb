@@ -92,6 +92,11 @@ module Stupidedi
                 false
               end
 
+              # @return [IdentifierVal]
+              def map
+                IdentifierVal.value(yield(nil), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
@@ -115,12 +120,8 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
-                if usage.required?
-                  " " * definition.min_length
-                else
-                  ""
-                end
+              def to_x12(truncate = true)
+                ""
               end
 
               # @return [Boolean]
@@ -163,15 +164,16 @@ module Stupidedi
 
               # @return [String]
               def to_s
-                if usage.required?
-                  " " * definition.min_length
-                else
-                  ""
-                end
+                ""
+              end
+
+              # @return [IdentifierVal]
+              def map
+                IdentifierVal.value(yield(""), usage, position)
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -221,9 +223,15 @@ module Stupidedi
                 @value.length < definition.min_length
               end
 
+              # @return [IdentifierVal]
+              def map
+                IdentifierVal.value(yield(@value), usage, position)
+              end
+
               # @return [String]
-              def to_x12
-                @value.ljust(definition.min_length, " ")
+              def to_x12(truncate = true)
+                x12 = @value.ljust(definition.min_length, " ")
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               # @return [String]
@@ -285,15 +293,6 @@ module Stupidedi
                 self::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
                 self::Invalid.new(object, usage, position)
-              end
-            end
-
-            # @return [IdentifierVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                self::NonEmpty.new(string.rstrip, usage, position)
               end
             end
 

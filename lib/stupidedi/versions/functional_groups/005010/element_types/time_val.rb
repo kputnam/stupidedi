@@ -82,7 +82,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -129,7 +129,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -230,13 +230,14 @@ module Stupidedi
               def to_s(hh = "hh", mm = "mm", ss = "ss")
                 hh =   @hour.try{|h| "%02d" % h } || hh
                 mm = @minute.try{|m| "%02d" % m } || mm
-                ss = @second.try{|s| "%02d" % s } || ss
+                ss = @second.try{|s| "%02f" % s } || ss
                 "#{hh}#{mm}#{ss}"
               end
 
               # @return [String]
-              def to_x12
-                to_s(nil, nil, nil).take(definition.max_length)
+              def to_x12(truncate = true)
+                x12 = to_s(nil, nil, nil)
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               def too_short?
@@ -298,25 +299,6 @@ module Stupidedi
               end
             rescue Exceptions::InvalidElementError
               self::Invalid.new(object, usage, position)
-            end
-
-            # @return [TimeVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                hour   = string.slice(0, 2).to_i
-                minute = string.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                second = string.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
-
-                if decimal = string.slice(6..-1)
-                  second += "0.#{decimal}".to_d
-                end
-
-                self::NonEmpty.new(hour, minute, second, usage, position)
-              end
-            rescue Exceptions::InvalidElementError
-              self::Invalid.new(string, usage, position)
             end
 
             # @endgroup

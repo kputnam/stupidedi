@@ -78,6 +78,11 @@ module Stupidedi
                 false
               end
 
+              # @return [NumericVal]
+              def map
+                NumericVal.value(yield(nil), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
@@ -101,7 +106,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -123,6 +128,11 @@ module Stupidedi
 
               def empty?
                 true
+              end
+
+              # @return [NumericVal]
+              def map
+                NumericVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
@@ -148,7 +158,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -226,13 +236,14 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 nn   = (@value * (10 ** definition.precision)).to_i
                 sign = (nn < 0) ? "-" : ""
 
                 # Leading zeros must be suppressed unless necessary to satisfy a
                 # minimum length requirement
-                sign << nn.abs.to_s.rjust(definition.min_length, "0")
+                x12 = sign << nn.abs.to_s.rjust(definition.min_length, "0")
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               def too_long?
@@ -240,6 +251,11 @@ module Stupidedi
 
                 # The length of a numeric type does not include an optional sign
                 definition.max_length < nn.abs.to_s.length
+              end
+
+              # @return [NumericVal]
+              def map
+                NumericVal.value(yield(@value), usage, position)
               end
 
               # @group Mathematical Operators
@@ -325,20 +341,6 @@ module Stupidedi
               end
             rescue ArgumentError
               self::Invalid.new(object, usage, position)
-            end
-
-            # @return [NumericVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position, position)
-              else
-                # The number of fractional digits is implied by usage.precision
-                factor = 10 ** usage.definition.precision
-
-                self::NonEmpty.new(string.to_d / factor, usage, position)
-              end
-            rescue ArgumentError
-              self::Invalid.new(string, usage, position)
             end
 
             # @endgroup

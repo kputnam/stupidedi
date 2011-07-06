@@ -67,6 +67,11 @@ module Stupidedi
                 false
               end
 
+              # @return [DecimalVal]
+              def map
+                DecimalVal.value(yield(nil), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.try do |d|
@@ -90,7 +95,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -112,6 +117,11 @@ module Stupidedi
 
               def empty?
                 true
+              end
+
+              # @return [DecimalVal]
+              def map
+                DecimalVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
@@ -137,7 +147,7 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 ""
               end
 
@@ -226,7 +236,7 @@ module Stupidedi
               # the best place for it to fit would be in SimpleElementUse
               #
               # @return [String]
-              def to_x12
+              def to_x12(truncate = true)
                 remaining =
                   if @value.to_i.zero?
                     definition.max_length
@@ -255,11 +265,12 @@ module Stupidedi
                 if rounded.zero?
                   "0" * definition.min_length
                 else
-                  sign << rounded.abs.to_s("F").
-                    gsub(/^0+/, ""). # leading zeros
-                    gsub(/0+$/, ""). # trailing zeros
-                    gsub(/\.$/, ""). # trailing decimal point
-                    rjust(definition.min_length, "0")
+                  x12 = sign << rounded.abs.to_s("F").
+                          gsub(/^0+/, ""). # leading zeros
+                          gsub(/0+$/, ""). # trailing zeros
+                          gsub(/\.$/, ""). # trailing decimal point
+                          rjust(definition.min_length, "0")
+                  truncate ? x12.take(definition.max_length) : x12
                 end
               end
 
@@ -270,6 +281,11 @@ module Stupidedi
 
                 # The length of a decimal type does not include an optional sign
                 definition.max_length < @value.to_i.abs.to_s.length
+              end
+
+              # @return [DecimalVal]
+              def map
+                DecimalVal.value(yield(@value), usage, position)
               end
 
               # @group Mathematical Operators
@@ -355,19 +371,6 @@ module Stupidedi
                 end
               else
                 self::Invalid.new(object, usage, position)
-              end
-            end
-
-            # @return [DecimalVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                begin
-                  self::NonEmpty.new(string.to_d, usage, position)
-                rescue ArgumentError
-                  self::Invalid.new(string, usage, position)
-                end
               end
             end
 

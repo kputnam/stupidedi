@@ -4,7 +4,10 @@ Fix the error handling with Reader::TokenReader so StateMachine can know when
 reading a segment failed due to EOF at an expected or unexpected boundary.
 
 Create specs to parse a fixture file and write out the parse tree, comparing
-the input string with the output string, minding #characters
+the input string with the output string, minding #characters.
+
+Fix writing ISA segment out to replace separator elements with the chosen
+override separators (: and ^)
 
 Support for configurable external code sources. The minimal interface should
 implement #include?(code). Need to decide how to handle unconfigured external
