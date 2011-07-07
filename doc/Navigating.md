@@ -492,21 +492,21 @@ Provider Organization" of the first claim in the parse tree.
 To iterate a sequence of segments with the same identifier, use the
 [`#flatmap`][17] method,
 
-  # Find the first HL segment
-  position = machine.first.
-    flatmap{|x| x.find(:GS) }.
-    flatmap{|x| x.find(:ST) }.
-    flatmap{|x| x.find(:HL) }
+    # Find the first HL segment
+    position = machine.first.
+      flatmap{|x| x.find(:GS) }.
+      flatmap{|x| x.find(:ST) }.
+      flatmap{|x| x.find(:HL) }
 
-  while position.defined?
-    position = position.flatmap do |hl|
-      # Process the HL segment
-      ...
+    while position.defined?
+      position = position.flatmap do |hl|
+        # Process the HL segment
+        ...
 
-      # Find the next HL segment
-      hl.find(:HL)
+        # Find the next HL segment
+        hl.find(:HL)
+      end
     end
-  end
 
 Note that the value returned by the block given to [`#flatmap`][17] must return
 an instance of `Either` or a `TypeError` will be raised. The [`Object#try`][20]

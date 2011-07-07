@@ -55,6 +55,7 @@ module Stupidedi
       # the return value, so `a.distance(b) == b.distance(a)` for all states
       # `a` and `b`.
       #
+      # @example
       #   m.distance(m)                          #=> Either.success(0)
       #   m.next(10).flatmap{|n| n.distance(m) } #=> Either.success(10)
       #
