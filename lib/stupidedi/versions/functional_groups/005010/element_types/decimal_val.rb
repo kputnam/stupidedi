@@ -153,7 +153,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(Empty)
+                other.is_a?(Empty) or other.nil?
               end
             end
 
@@ -163,6 +163,21 @@ module Stupidedi
             #
             class NonEmpty < DecimalVal
               include Comparable
+
+              # @group Mathematical Operators
+              #################################################################
+
+              extend Operators::Binary
+              binary_operators(:+, :-, :*, :/, :%)
+
+              extend Operators::Relational
+              relational_operators(:==, :<=>)
+
+              extend Operators::Unary
+              unary_operators(:abs, :-@, :+@)
+
+              # @endgroup
+              #################################################################
 
               # @return [BigDecimal]
               attr_reader :value
@@ -182,6 +197,16 @@ module Stupidedi
                   changes.fetch(:position, position)
               end
 
+              def coerce(other)
+                # self', other' = other.coerce(self)
+                # self' * other'
+                if other.respond_to?(:to_d)
+                  return copy(:value => other.to_d), self
+                else
+                  raise TypeError
+                end
+              end
+
               def valid?
                 # False for NaN and +/- Infinity
                 @value.finite?
@@ -189,17 +214,6 @@ module Stupidedi
 
               def empty?
                 false
-              end
-
-              # @return [Array(NonEmpty, Numeric)]
-              def coerce(other)
-                if other.respond_to?(:to_d)
-                  # Re-evaluate other.call(self) as self.op(other.to_d)
-                  return self, other.to_d
-                else
-                  # Fail, other.call(self) is still other.call(self)
-                  raise TypeError, "#{other.class} can't be coerced into #{NonEmpty}"
-                end
               end
 
               # @return [String]
@@ -287,65 +301,6 @@ module Stupidedi
               def map
                 DecimalVal.value(yield(@value), usage, position)
               end
-
-              # @group Mathematical Operators
-              #################################################################
-
-              # @return [NonEmpty]
-              def /(other)
-                copy(:value => (@value / other).to_d)
-              end
-
-              # @return [NonEmpty]
-              def +(other)
-                copy(:value => (@value + other).to_d)
-              end
-
-              # @return [NonEmpty]
-              def -(other)
-                copy(:value => (@value - other).to_d)
-              end
-
-              # @return [NonEmpty]
-              def **(other)
-                copy(:value => (@value ** other).to_d)
-              end
-
-              # @return [NonEmpty]
-              def *(other)
-                copy(:value => (@value * other).to_d)
-              end
-
-              # @return [NonEmpty]
-              def %(other)
-                copy(:value => (@value % other).to_d)
-              end
-
-              # @return [NonEmpty]
-              def -@
-                copy(:value => -@value)
-              end
-
-              # @return [NonEmpty]
-              def +@
-                self
-              end
-
-              # @return [NonEmpty]
-              def abs
-                copy(:value => @value.abs)
-              end
-
-              # @return [-1, 0, +1]
-              def <=>(other)
-                if other.respond_to?(:value)
-                  @value <=> other.value
-                else
-                  @value <=> other
-                end
-              end
-
-              # @endgroup
             end
 
           end

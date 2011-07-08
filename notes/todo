@@ -1,8 +1,5 @@
 TODO
 -------------------------------------------------------------------------------
-Fix the error handling with Reader::TokenReader so StateMachine can know when
-reading a segment failed due to EOF at an expected or unexpected boundary.
-
 Create specs to parse a fixture file and write out the parse tree, comparing
 the input string with the output string, minding #characters.
 
@@ -63,6 +60,9 @@ anonymous classes which are used to instantiate singleton objects.
 
 DONE
 -------------------------------------------------------------------------------
+Fix the error handling with Reader::TokenReader so StateMachine can know when
+reading a segment failed due to EOF at an expected or unexpected boundary.
+
 Navigation#find doesn't find next ISA segment when positioned on a preceeding
 ISA segment. Looking at the #successors, it looks like a wrong instruction...
 it should be Instruction[ISA](pop: 1, push: InterchangeState). This is probably
