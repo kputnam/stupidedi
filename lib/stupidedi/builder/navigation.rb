@@ -601,7 +601,7 @@ module Stupidedi
           count += 1
           cursor = cursor.flatmap{|c| c.send(:__find, invalid, id, elements) }
         end
-        
+
         count
       end
 

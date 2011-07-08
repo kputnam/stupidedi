@@ -41,7 +41,8 @@ module Stupidedi
       end
 
       def copy(changes = {})
-        Success.new(changes.fetch(:value, @value))
+        Success.new \
+          changes.fetch(:value, @value)
       end
 
       # @return true
@@ -59,7 +60,7 @@ module Stupidedi
         if deconstruct(block)
           self
         else
-          Either.failure(reason)
+          failure(reason)
         end
       end
 
@@ -68,7 +69,7 @@ module Stupidedi
       # @yieldreturn [Boolean]
       def reject(reason = "reject", &block)
         if deconstruct(block)
-          Either.failure(reason)
+          failure(reason)
         else
           self
         end
@@ -137,9 +138,13 @@ module Stupidedi
       end
 
     private
-      
+
       def deconstruct(block)
         block.call(@value)
+      end
+
+      def failure(reason)
+        Either::Failure.new(reason)
       end
     end
 
@@ -153,7 +158,8 @@ module Stupidedi
 
       # @return [Failure]
       def copy(changes = {})
-        Failure.new(changes.fetch(:reason, @reason))
+        Failure.new \
+          changes.fetch(:reason, @reason)
       end
 
       # @return false

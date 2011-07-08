@@ -4,7 +4,7 @@ module Stupidedi
     class TokenReader
 
       # @private
-      SEGMENT_ID =  /\A[A-Z][A-Z0-9]{1,2}\Z/
+      SEGMENT_ID = /\A[A-Z][A-Z0-9]{1,2}\Z/
 
       include Inspect
 
@@ -430,11 +430,11 @@ module Stupidedi
       end
 
       def failure(message, remainder = @input)
-        Result.failure(message, remainder)
+        Result.failure(message, remainder, true)
       end
 
       def eof(message, remainder = @input)
-        Result.failure(message, remainder)
+        Result.failure(message, remainder, false)
       end
 
       def success(value)

@@ -42,8 +42,8 @@ module Stupidedi
       end
 
       # @return [Result::Failure]
-      def failure(reason, remainder)
-        Failure.new(reason, remainder)
+      def failure(reason, remainder, fatal)
+        Failure.new(reason, remainder, fatal)
       end
 
       # @endgroup
@@ -64,6 +64,10 @@ module Stupidedi
         Success.new \
           changes.fetch(:value, @value),
           changes.fetch(:remainder, @remainder)
+      end
+
+      def fatal?
+        false
       end
 
       # @return [Boolean]
@@ -97,6 +101,10 @@ module Stupidedi
       def deconstruct(block)
         block.call(@value, @remainder)
       end
+
+      def failure(reason)
+        Failure.new(reason, @remainder, false)
+      end
     end
 
     class Failure < Either::Failure
@@ -104,15 +112,25 @@ module Stupidedi
 
       attr_reader :remainder
 
-      def initialize(reason, remainder)
-        @reason, @remainder = reason, remainder
+      def initialize(reason, remainder, fatal)
+        @reason, @remainder, @fatal =
+          reason, remainder, fatal
       end
 
       # @return [Failure]
       def copy(changes = {})
         Failure.new \
           changes.fetch(:reason, @reason),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:remainder, @remainder),
+          changes.fetch(:fatal, @fatal)
+      end
+
+      def fatal?
+        @fatal
+      end
+
+      def fatal
+        copy(:fatal => true)
       end
 
       # @return [Boolean]
@@ -133,6 +151,9 @@ module Stupidedi
           q.text ","
           q.breakable
           q.pp @remainder
+          q.text ","
+          q.breakable
+          q.text "#{@fatal ? "" : "non-"}fatal"
         end
       end
 

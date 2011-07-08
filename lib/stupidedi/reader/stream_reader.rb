@@ -156,7 +156,7 @@ module Stupidedi
       end
 
       def failure(message, remainder = input)
-        Reader::Failure.new(message, remainder)
+        Reader::Failure.new(message, remainder, false)
       end
 
       def success(value)

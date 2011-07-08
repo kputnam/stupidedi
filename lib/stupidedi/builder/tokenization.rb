@@ -61,7 +61,7 @@ module Stupidedi
       def mksegment_tok(segment_dict, id, elements, position)
         id = id.to_sym
         element_toks = []
-        
+
         unless segment_dict.defined_at?(id)
           element_idx  = "00"
           elements.each do |e_tag, e_val, e_position|
