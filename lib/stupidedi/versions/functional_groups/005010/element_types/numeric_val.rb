@@ -179,13 +179,13 @@ module Stupidedi
               #################################################################
 
               extend Operators::Binary
-              binary_operators(:+, :-, :*, :/, :%)
+              binary_operators :+, :-, :*, :/, :%, :coerce => :to_d
 
               extend Operators::Relational
-              relational_operators(:==, :<=>)
+              relational_operators :==, :<=>, :coerce => :to_d
 
               extend Operators::Unary
-              unary_operators(:abs, :-@, :+@)
+              unary_operators :abs, :-@, :+@
 
               # @endgroup
               #################################################################
@@ -193,7 +193,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to => :@value
+              delegate :to_i, :to_d, :to_f, :to_r, :to_c, :to => :@value
 
               def initialize(value, usage, position)
                 @value = value
@@ -214,7 +214,8 @@ module Stupidedi
                 if other.respond_to?(:to_d)
                   return copy(:value => other.to_d), self
                 else
-                  raise TypeError
+                  raise TypeError,
+                    "cannot coerce NumericVal to #{other.class}"
                 end
               end
 

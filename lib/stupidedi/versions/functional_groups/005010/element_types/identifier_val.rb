@@ -192,7 +192,30 @@ module Stupidedi
               # @return [String]
               attr_reader :value
 
-              delegate :to_s, :to_str, :length, :=~, :match, :include?, :to => :@value
+              # (string any* -> any)
+              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+                :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+                :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
+                :=~, :match, :partition, :rpatition, :each, :split, :scan,
+                :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
+                :to => :@value
+
+              # (string any* -> IdentifierVal)
+              extend Operators::Wrappers
+              wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
+                :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
+                :sub, :gsub, :encode, :force_encoding, :squeeze
+
+              # (string -> IdentifierVal)
+              extend Operators::Binary
+              binary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase,
+                :coerce => :to_s
+
+              # (string string -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :start_with?, :end_with?,
+                :include?, :casecmp, :coerce => :to_s
 
               def initialize(value, usage, position)
                 @value = value
@@ -205,6 +228,17 @@ module Stupidedi
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage),
                   changes.fetch(:position, position)
+              end
+
+              def coerce(other)
+                # self', other' = other.coerce(self)
+                # self' * other'
+                if other.respond_to?(:to_str)
+                  return copy(:value => other.to_str), self
+                else
+                  raise TypeError,
+                    "cannot coerce IdentifierVal to #{other.class}"
+                end
               end
 
               def valid?

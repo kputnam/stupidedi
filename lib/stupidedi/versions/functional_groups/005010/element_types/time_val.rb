@@ -135,7 +135,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(Empty)
+                other.is_a?(Empty) or other.nil?
               end
             end
 

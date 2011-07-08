@@ -168,10 +168,10 @@ module Stupidedi
               #################################################################
 
               extend Operators::Binary
-              binary_operators(:+, :-, :*, :/, :%)
+              binary_operators(:+, :-, :*, :/, :%, :coerce => :to_d)
 
               extend Operators::Relational
-              relational_operators(:==, :<=>)
+              relational_operators(:==, :<=>, :coerce => :to_d)
 
               extend Operators::Unary
               unary_operators(:abs, :-@, :+@)
@@ -182,7 +182,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to => :@value
+              delegate :to_i, :to_d, :to_f, :to_r, :to_c, :to => :@value
 
               def initialize(value, usage, position)
                 @value = value
@@ -203,7 +203,8 @@ module Stupidedi
                 if other.respond_to?(:to_d)
                   return copy(:value => other.to_d), self
                 else
-                  raise TypeError
+                  raise TypeError,
+                    "cannot coerce NumericVal to #{other.class}"
                 end
               end
 
@@ -258,7 +259,15 @@ module Stupidedi
                     definition.max_length - @value.to_i.abs.to_s.length
                   end
 
-                remaining = (remaining < 0) ? 0 : remaining
+                if remaining <= 0
+                  if truncate
+                    int   = @value.to_i.to_s
+                    sign  = (int < 0) ? "-" : ""
+                    return sign << int.abs.to_s.take(definition.max_length)
+                  else
+                    return @value.to_i.abs
+                  end
+                end
 
                 # Don't exceed the definition's max_precision
                 precision =
@@ -279,12 +288,11 @@ module Stupidedi
                 if rounded.zero?
                   "0" * definition.min_length
                 else
-                  x12 = sign << rounded.abs.to_s("F").
-                          gsub(/^0+/, ""). # leading zeros
-                          gsub(/0+$/, ""). # trailing zeros
-                          gsub(/\.$/, ""). # trailing decimal point
-                          rjust(definition.min_length, "0")
-                  truncate ? x12.take(definition.max_length) : x12
+                  sign << rounded.abs.to_s("F").
+                    gsub(/^0+/, ""). # leading zeros
+                    gsub(/0+$/, ""). # trailing zeros
+                    gsub(/\.$/, ""). # trailing decimal point
+                    rjust(definition.min_length, "0")
                 end
               end
 
