@@ -1,4 +1,3 @@
-
 module Stupidedi
   module Editor
 
