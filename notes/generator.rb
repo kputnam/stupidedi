@@ -8,9 +8,9 @@ config.functional_group.register("005010") { Stupidedi::Versions::FunctionalGrou
 config.transaction_set.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835  }
 config.transaction_set.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }
 
-
 b = Stupidedi::Builder::BuilderDsl.build(config, true)
 x = b.blank
+
 
 b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", nil, "00501", "123456789", "1", "T", nil)
 b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
@@ -46,11 +46,23 @@ b.zipper.map {|z| pp z.root.node }
 # envelope_ed = Stupidedi::Editor::TransmissionEd.new(config, Time.now)
 # pp envelope_ed.critique(b.machine).results
 
-b.zipper.tap do |z|
-  p z.root.node.characters.to_a
-
+b.machine.parent.flatmap(&:parent).flatmap(&:parent).flatmap(&:zipper).tap do |z|
   separators =
-    Stupidedi::Reader::Separators.build(:segment => "~\n", :element => "*", :component => ">")
+    Stupidedi::Reader::Separators.build(:segment => "~\n",
+                                        :element => "*",
+                                        :component => ":",
+                                        :repetition => "^")
 
-  Stupidedi::Writer::Default.new(z.root, separators).write($stdout)
+  w = Stupidedi::Writer::Default.new(z.up.up, separators)
+  s = w.write
+  $stdout.puts(s)
 end
+
+#b.zipper.tap do |z|
+#  p z.root.node.characters.to_a
+#
+#  separators =
+#    Stupidedi::Reader::Separators.build(:segment => "~\n", :element => "*")
+#
+#  Stupidedi::Writer::Default.new(z.root, separators).write($stdout)
+#end

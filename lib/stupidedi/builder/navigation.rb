@@ -457,13 +457,13 @@ module Stupidedi
                 _state = state
 
                 # In most cases, we need only to check the first segment under
-                # this ancestor. However, certain structios have more than one
+                # this ancestor. However, certain structures have more than one
                 # entry segment... hopefully only non-repeatable tables. For
                 # example, transaction set 835's summary table has an optional
                 # PLB segment followed by a mandatory SE segment, so the table
                 # can begin with PLB or SE. When the user searches for SE, we
                 # might descend into the table and see PLB, but this flag means
-                # we should search the sibling segments, too.
+                # we should search the sibling segments, too (SE).
                 multi   = _value.node.table?
                 multi &&= target.instructions.count do |x|
                   x.segment_use.try(:parent) == op.segment_use.parent
@@ -599,7 +599,7 @@ module Stupidedi
 
         while cursor.defined?
           count += 1
-          cursor = cursor.flatmap{|c| c.__find(invalid, id, elements) }
+          cursor = cursor.flatmap{|c| c.send(:__find, invalid, id, elements) }
         end
         
         count

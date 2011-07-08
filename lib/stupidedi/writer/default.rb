@@ -9,6 +9,12 @@ module Stupidedi
       def initialize(zipper, separators)
         @zipper, @separators =
           zipper, separators
+
+        raise Exceptions::OutputError,
+          "separators.segment cannot be blank" if separators.segment.blank?
+
+        raise Exceptions::OutputError,
+          "separators.element cannot be blank" if separators.element.blank?
       end
 
       #
@@ -29,6 +35,8 @@ module Stupidedi
     private
 
       def recurse(value, separators, out)
+        return if value.invalid?
+
         if value.segment?
           build(value, separators, out)
         else
