@@ -28,19 +28,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
-      def size
-        @children.sum(&:size)
-      end
-
       # (see AbstractVal#functional_group?)
       # @return true
       def functional_group?
         true
-      end
-
-      # @return [Array<SegmentVal>]
-      def segment_vals
-        @children.select{|x| x.is_a?(SegmentVal) }
       end
 
       # @return [String, nil]

@@ -41,10 +41,6 @@ module Stupidedi
         true
       end
 
-      def empty?
-        @children.all?(&:empty?)
-      end
-
       # @return [SimpleElementVal]
       def element(n)
         unless n > 0

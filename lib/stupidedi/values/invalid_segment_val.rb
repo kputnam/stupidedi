@@ -23,8 +23,9 @@ module Stupidedi
           changes.fetch(:segment_tok, @segment_tok)
       end
 
+      # (see AbstractVal#size)
       def size
-        1
+        0
       end
 
       # @return [Symbol]

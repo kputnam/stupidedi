@@ -17,8 +17,9 @@ module Stupidedi
         InvalidEnvelopeVal.new(changes.fetch(:children, @children))
       end
 
+      # (see AbstractVal#size)
       def size
-        @children.sum(&:size)
+        0
       end
 
       # @return false
@@ -28,10 +29,6 @@ module Stupidedi
 
       def valid?
         false
-      end
-
-      def empty?
-        @children.all?(&:empty?)
       end
 
       # @return [void]

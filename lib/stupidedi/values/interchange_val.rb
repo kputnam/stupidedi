@@ -21,10 +21,6 @@ module Stupidedi
           definition, children
       end
 
-      def size
-        @children.sum(&:size)
-      end
-
       # @return [InterchangeVal]
       def copy(changes = {})
         InterchangeVal.new \
@@ -36,11 +32,6 @@ module Stupidedi
       # @return true
       def interchange?
         true
-      end
-
-      # @return [Array<SegmentVal>]
-      def segment_vals
-        @children.select{|x| x.is_a?(SegmentVal) }
       end
 
       # @return [Module]

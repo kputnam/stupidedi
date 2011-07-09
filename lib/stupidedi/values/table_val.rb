@@ -24,23 +24,10 @@ module Stupidedi
           changes.fetch(:children, @children)
       end
 
-      def size
-        @children.sum(&:size)
-      end
-
       # (see AbstractVal#table?)
       # @return true
       def table?
         true
-      end
-
-      # @return [Array<SegmentVal>]
-      def segment_vals
-        @children.select{|x| x.is_a?(SegmentVal) }
-      end
-
-      def empty?
-        @children.all(&:empty?)
       end
 
       # @return [void]

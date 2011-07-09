@@ -9,14 +9,18 @@ module Stupidedi
       abstract :definition
 
       # @see X222.pdf B.1.3.10 Absence of Data
-      abstract :empty?
+      def empty?
+        @children.all?(&:empty?)
+      end
 
       abstract :leaf?
 
       # Number of segments in this subtree
       #
       # @return [Integer]
-      abstract :size
+      def size
+        @children.sum(&:size)
+      end
 
       # True except for {InvalidSegmentVal} and {AbstractElementVal} values
       # that could not be parsed -- "abc" in a numeric field, for example.

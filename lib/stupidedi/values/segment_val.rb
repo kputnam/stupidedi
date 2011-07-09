@@ -29,6 +29,7 @@ module Stupidedi
           changes.fetch(:position, @position)
       end
 
+      # (see AbstractVal#size)
       def size
         1
       end
@@ -51,10 +52,6 @@ module Stupidedi
       # @return true
       def segment?
         true
-      end
-
-      def empty?
-        @children.all?(&:empty?)
       end
 
       # @return [AbstractElementVal]

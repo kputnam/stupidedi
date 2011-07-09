@@ -9,6 +9,7 @@ module Stupidedi
         true
       end
 
+      # (see AbstractVal#size)
       def size
         0
       end
