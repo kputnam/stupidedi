@@ -164,37 +164,48 @@ module Stupidedi
             class Proper < DateVal
               include Comparable
 
-              # @return [Integer]
-              attr_reader :year
+              # (date any* -> any)
+              delegate :year, :month, :day, :cwday, :cweek, :downto, :upto,
+                :step, :httpdate, :to_s, :to_i, :strftime, :iso8601, :rfc2822,
+                :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
+                :to_datetime, :to_int, :to_r, :to_c, :wday, :xmlschema, :yday,
+                :to => :@value
 
-              # @return [Integer]
-              attr_reader :month
+              # (date any* -> DateVal::Proper)
+              extend Operators::Wrappers
+              wrappers :+, :<<, :>>, :next_day, :next_month, :next_year,
+                :prev_day, :prev_month, :prev_year
 
-              # @return [Integer]
-              attr_reader :day
+              # (date -> DateVal::Proper)
+              extend Operators::Unary
+              unary_operators :next, :succ, :prev, :start
 
-              def initialize(year, month, day, usage, position)
-                @year, @month, @day = year, month, day
+              # (date date -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :-, :coerce => :to_date
 
-                begin
-                  # Check that date is valid
-                  @value = ::Date.civil(@year, @month, @day)
-                rescue ArgumentError
-                  raise Exceptions::InvalidElementError,
-                    "invalid date year: #{year}, month: #{month}, day: #{day}"
-                end
-
+              def initialize(value, usage, position)
+                @value = value
                 super(usage, position)
               end
 
               # @return [Proper]
               def copy(changes = {})
                 Proper.new \
-                  changes.fetch(:year, @year),
-                  changes.fetch(:month, @month),
-                  changes.fetch(:day, @day),
+                  changes.fetch(:value, @value),
                   changes.fetch(:usage, usage),
                   changes.fetch(:position, position)
+              end
+
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_date)
+                  return copy(:value => other.to_date), self
+                else
+                  raise TypeError,
+                    "cannot coerce DateVal to #{other.class}"
+                end
               end
 
               def valid?
@@ -221,13 +232,13 @@ module Stupidedi
                 end
 
                 if not second.nil?
-                  Time.utc(@year, @month, @day, hour, minute, second)
+                  Time.utc(year, month, day, hour, minute, second)
                 elsif not minute.nil?
-                  Time.utc(@year, @month, @day, hour, minute)
+                  Time.utc(year, month, day, hour, minute)
                 elsif not hour.nil?
-                  Time.utc(@year, @month, @day, hour)
+                  Time.utc(year, month, day, hour)
                 else
-                  Time.utc(@year, @month, @day)
+                  Time.utc(year, month, day)
                 end
               end
 
@@ -270,21 +281,21 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(#{"%04d-%02d-%02d" % [@year, @month, @day]})"
+                ansi.element("DT.value#{id}") << "(#{"%04d-%02d-%02d" % [year, month, day]})"
               end
 
               # @return [String]
               def to_s
-                "%04d%02d%02d" % [@year, @month, @day]
+                "%04d%02d%02d" % [year, month, day]
               end
 
               # @return [String]
               def to_x12(truncate = true)
                 x12 =
                   if definition.max_length < 8
-                    "%02d%02d%02d" % [@year % 100, @month, @day]
+                    "%02d%02d%02d" % [year % 100, month, day]
                   else
-                    "%04d%02d%02d" % [@year, @month, @day]
+                    "%04d%02d%02d" % [year, month, day]
                   end
 
                 truncate ? x12.take(definition.max_length) : x12
@@ -292,28 +303,9 @@ module Stupidedi
 
               def too_long?
                 if definition.max_length < 8
-                  definition.max_length - 2 < @year.to_s.length
+                  definition.max_length - 2 < year.to_s.length
                 else
-                  definition.max_length - 4 < @year.to_s.length
-                end
-              end
-
-              # @return -1, 0, 1
-              def <=>(other)
-                if @year < other.year
-                  -1
-                elsif @year > other.year
-                  1
-                elsif @month < other.month
-                  -1
-                elsif @month > other.month
-                  1
-                elsif @day < other.day
-                  -1
-                elsif @day > other.day
-                  1
-                else
-                  0
+                  definition.max_length - 4 < year.to_s.length
                 end
               end
             end
@@ -375,7 +367,8 @@ module Stupidedi
               #
               # @return [Proper]
               def century(cc)
-                Proper.new(100 * cc + @year, @month, @day, usage, position)
+                date = ::Date.civil(100 * cc + @year, @month, @day)
+                Proper.new(date, usage, position)
               end
 
               # Create a proper date which cannot be older than the given `date`
@@ -534,12 +527,14 @@ module Stupidedi
                   if year.length < 4
                     self::Improper.new(year.to_i, month, day, usage, position)
                   else
-                    self::Proper.new(year.to_i, month, day, usage, position)
+                    date = date(year, month, day)
+                    self::Proper.new(date, usage, position)
                   end
                 end
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-                self::Proper.new(object.year, object.month, object.day, usage, position)
+                date = date(object.year, object.month, object.day)
+                self::Proper.new(date, usage, position)
 
               elsif object.is_a?(DateVal::Improper)
                 self::Improper.new(object.year, object.month, object.day, usage, position)
@@ -554,6 +549,15 @@ module Stupidedi
 
             # @endgroup
             ###################################################################
+
+          private
+
+            def date(year, month, day)
+              ::Date.civil(year.to_i, month.to_i, day.to_i)
+            rescue
+              raise Exceptions::InvalidElementException,
+                "invalid year(#{year}), month(#{month}), day(#{day})"
+            end
           end
 
           # Prevent direct instantiation of abstract class DateVal

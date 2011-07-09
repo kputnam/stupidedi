@@ -257,8 +257,12 @@ module Stupidedi
 
                 # Leading zeros must be suppressed unless necessary to satisfy a
                 # minimum length requirement
-                x12 = sign << nn.abs.to_s.rjust(definition.min_length, "0")
-                truncate ? x12.take(definition.max_length) : x12
+                if truncate
+                  sign << nn.abs.to_s.take(definition.max_length).
+                                      rjust(definition.min_length, "0")
+                else
+                  sign << nn.abs.to_s.rjust(definition.min_length, "0")
+                end
               end
 
               def too_long?

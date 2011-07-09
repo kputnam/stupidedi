@@ -27,6 +27,11 @@ module Stupidedi
               false
             end
 
+            # @return [StringVal]
+            def map
+              StringVal.value(yield(value), usage, position)
+            end
+
             #
             # Objects passed to StringVal.value that don't respond to #to_s are
             # modeled by this class. Note most everything in Ruby responds to
@@ -95,18 +100,57 @@ module Stupidedi
             # use the {StringVal.empty} constructor.
             #
             class Empty < StringVal
+              include Comparable
+
+              # (string any* -> any)
+              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+                :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+                :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
+                :=~, :match, :partition, :rpatition, :each, :split, :scan,
+                :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
+                :at, :empty?, :blank?, :to => :value
+
+              # (string any* -> StringVal)
+              extend Operators::Wrappers
+              wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
+                :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
+                :sub, :gsub, :encode, :force_encoding, :squeeze
+
+              # (string -> StringVal)
+              extend Operators::Unary
+              unary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
+
+              # (string string -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :start_with?, :end_with?,
+                :include?, :casecmp, :coerce => :to_s
+
+              # @return [IdentifierVal]
+              def copy(changes = {})
+                StringVal.value \
+                  changes.fetch(:value, value),
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
+              end
+
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_str)
+                  return copy(:value => other.to_str), self
+                else
+                  raise TypeError,
+                    "cannot coerce StringVal to #{other.class}"
+                end
+              end
+
+              def value
+                ""
+              end
 
               def valid?
                 true
-              end
-
-              def empty?
-                true
-              end
-
-              # @return [StringVal]
-              def map
-                StringVal.value(yield(""), usage, position)
               end
 
               # @return [String]
@@ -135,11 +179,6 @@ module Stupidedi
               def to_x12(truncate = true)
                 ""
               end
-
-              # @return [Boolean]
-              def ==(other)
-                other.is_a?(Empty) or other == ""
-              end
             end
 
             #
@@ -158,7 +197,7 @@ module Stupidedi
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-                :to => :@value
+                :at, :empty?, :blank?, :to => :@value
 
               # (string any* -> StringVal)
               extend Operators::Wrappers
@@ -167,10 +206,9 @@ module Stupidedi
                 :sub, :gsub, :encode, :force_encoding, :squeeze
 
               # (string -> StringVal)
-              extend Operators::Binary
-              binary_operators :chr, :chop, :upcase, :downcase, :strip,
-                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase,
-                :coerce => :to_s
+              extend Operators::Unary
+              unary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
 
               # (string string -> any)
               extend Operators::Relational
@@ -182,17 +220,17 @@ module Stupidedi
                 super(usage, position)
               end
 
-              # @return [NonEmpty]
+              # @return [StringVal]
               def copy(changes = {})
-                NonEmpty.new \
+                StringVal.value \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage),
                   changes.fetch(:position, position)
               end
 
               def coerce(other)
-                # self', other' = other.coerce(self)
-                # self' * other'
+                # me, he = other.coerce(self)
+                # me <OP> he
                 if other.respond_to?(:to_str)
                   return copy(:value => other.to_str), self
                 else
@@ -234,15 +272,6 @@ module Stupidedi
 
               def valid?
                 true
-              end
-
-              def empty?
-                false
-              end
-
-              # @return StringVal
-              def map
-                StringVal.value(yield(@value), usage, position)
               end
 
               def to_date(format)
@@ -327,16 +356,6 @@ module Stupidedi
                   raise ArgumentError,
                     "Format code #{format} is not recognized"
                 end
-              end
-
-              # @return [Boolean]
-              def ==(other)
-                eql?(other) or
-                 (if other.is_a?(NonEmpty)
-                    other.value == @value
-                  else
-                    other == @value
-                  end)
               end
             end
 

@@ -127,7 +127,7 @@ describe Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementTypes do
 
         specify { eluse.value("ABC", position).should == "ABC" }
         specify { eluse.value("ABC", position).should ==
-                  eluse.value("ABC", position).should }
+                  eluse.value("ABC", position) }
         specify { eluse.value("ABC ", position).should == "ABC" }
         specify { eluse.value(" ABC", position).should == " ABC" }
         specify { eluse.value(" ABC ", position).should == " ABC" }
