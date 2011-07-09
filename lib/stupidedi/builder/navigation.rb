@@ -583,7 +583,7 @@ module Stupidedi
             f_tok.component_toks.zip(children) do |f_com, e_com|
               return true unless f_com.blank? or f_com.value == e_com.value
             end
-          else
+          elsif f_tok.present?
             raise Exceptions::ParseError,
               "only simple and component elements can be filtered"
           end

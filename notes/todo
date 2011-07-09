@@ -1,5 +1,7 @@
 TODO
 -------------------------------------------------------------------------------
+Handle b.default as an input for ConstraintTable
+
 Create specs to parse a fixture file and write out the parse tree, comparing
 the input string with the output string, minding #characters.
 
