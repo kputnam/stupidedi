@@ -18,7 +18,7 @@ module Stupidedi
       attr_reader :trailer_segment_uses
 
       # @return [Values::InterchangeVal]
-      abstract :empty
+      abstract :empty, :args => %w(separators)
 
       # @return [Reader::Separators]
       abstract :separators, :args => %w(isa_segment_val)

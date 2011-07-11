@@ -53,12 +53,15 @@ module Stupidedi
 
         # Construct a SegmentVal and InterchangeVal around it
         envelope_def = config.interchange.at(version)
-        envelope_val = envelope_def.empty
+        envelope_val = envelope_def.empty(parent.separators)
         segment_use  = envelope_def.entry_segment_use
         segment_val  = mksegment(segment_tok, segment_use)
 
+        separators =
+          parent.separators.merge(envelope_def.separators(segment_val))
+
         zipper.append_child new(
-          parent.separators.merge(envelope_def.separators(segment_val)),
+          separators,
           parent.segment_dict.push(envelope_val.segment_dict),
           parent.instructions.push(instructions(envelope_def)),
           parent.zipper.append(envelope_val).append_child(segment_val),

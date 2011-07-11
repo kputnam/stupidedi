@@ -6,15 +6,9 @@ module Stupidedi
       # @return [Reader::Separators]
       attr_reader :separators
 
-      def initialize(zipper, separators)
+      def initialize(zipper, separators = Reader::Separators.empty)
         @zipper, @separators =
           zipper, separators
-
-        raise Exceptions::OutputError,
-          "separators.segment cannot be blank" if separators.segment.blank?
-
-        raise Exceptions::OutputError,
-          "separators.element cannot be blank" if separators.element.blank?
       end
 
       #
@@ -41,7 +35,13 @@ module Stupidedi
           segment(value, separators, out)
         else
           if value.interchange?
-            separators = @separators.merge(value.separators)
+            separators = value.separators.merge(@separators)
+
+            raise Exceptions::OutputError,
+              "separators.segment cannot be blank" if separators.segment.blank?
+
+            raise Exceptions::OutputError,
+              "separators.element cannot be blank" if separators.element.blank?
 
             unless separators == @separators
               # We've inherited some separators from the interchange,

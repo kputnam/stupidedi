@@ -184,6 +184,8 @@ module Stupidedi
               extend Operators::Relational
               relational_operators :==, :<=>, :-, :coerce => :to_date
 
+              attr_reader :value
+
               def initialize(value, usage, position)
                 @value = value
                 super(usage, position)

@@ -16,16 +16,17 @@ module Stupidedi
 
       delegate :position, :to => "@children.head"
 
-      def initialize(definition, children)
-        @definition, @children =
-          definition, children
+      def initialize(definition, children, separators)
+        @definition, @children, @separators =
+          definition, children, separators
       end
 
       # @return [InterchangeVal]
       def copy(changes = {})
         InterchangeVal.new \
           changes.fetch(:definition, @definition),
-          changes.fetch(:children, @children)
+          changes.fetch(:children, @children),
+          changes.fetch(:separators, @separators)
       end
 
       # (see AbstractVal#interchange?)
@@ -46,7 +47,7 @@ module Stupidedi
       #
       # @return [Reader::Separators]
       def separators
-        @definition.separators(@children.find(&:segment?))
+        @separators.merge(definition.separators(@children.find(&:segment?)))
       end
 
       # @return [void]

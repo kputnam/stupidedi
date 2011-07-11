@@ -15,8 +15,8 @@ module Stupidedi
           #####################################################################
 
           # @return [Values::InterchangeVal]
-          def empty
-            Values::InterchangeVal.new(self, [])
+          def empty(separators)
+            Values::InterchangeVal.new(self, [], separators)
           end
 
           # @endgroup
