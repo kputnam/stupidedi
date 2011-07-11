@@ -46,7 +46,7 @@ module Stupidedi
       #
       # @return [Reader::Separators]
       def separators
-        @definition.separators(segment_vals.head)
+        @definition.separators(@children.find(&:segment?))
       end
 
       # @return [void]

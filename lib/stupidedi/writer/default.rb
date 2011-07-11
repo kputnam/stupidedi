@@ -38,7 +38,7 @@ module Stupidedi
         return if value.invalid?
 
         if value.segment?
-          build(value, separators, out)
+          segment(value, separators, out)
         else
           if value.interchange?
             separators = @separators.merge(value.separators)
@@ -64,50 +64,52 @@ module Stupidedi
         end
       end
 
-      def build(segment, separators, out)
-        out << segment.id.to_s
+      def segment(s, separators, out)
+        out << s.id.to_s
 
         # Trailing empty elements (including component elements) can be omitted,
         # so "NM1*XX*1:2::::*****~" should be abbreviated to "NM1*XX*1:2~".
-        elements = segment.children.
+        elements = s.children.
           reverse.drop_while(&:empty?).reverse  # Remove the trailing empties
 
         elements.each do |e|
           out << separators.element
-
-          if e.simple?
-            out << e.to_x12
-
-          elsif e.composite?
-            components = e.children.
-              reverse.drop_while(&:empty?).reverse
-
-            unless components.empty?
-              out << components.head.to_x12
-            end
-
-            components.tail.each do |c|
-              out << separators.component
-              out << c.to_x12
-            end
-
-          elsif e.repeated?
-            occurrences = e.children.
-              reverse.drop_while(&:empty?).reverse
-
-            unless occurrences.empty?
-              out << occurences.head.to_x12
-            end
-
-            occurences.tail.each do |o|
-              out << separators.repetition
-              out << o.to_x12
-            end
-          end
-
+          element(e, separators, out)
         end
 
         out << separators.segment
+      end
+
+      def element(e, separators, out)
+        if e.simple?
+          out << e.to_x12
+
+        elsif e.composite?
+          components = e.children.
+            reverse.drop_while(&:empty?).reverse
+
+          unless components.empty?
+            out << components.head.to_x12
+          end
+
+          components.tail.each do |c|
+            out << separators.component
+            out << c.to_x12
+          end
+
+        elsif e.repeated?
+          occurrences = e.children.
+            reverse.drop_while(&:empty?).reverse
+
+          unless occurrences.empty?
+            element(occurrences.head, separators, out)
+          end
+
+          occurrences.tail.each do |o|
+            out << separators.repetition
+            element(occurrences.head, separators, out)
+          end
+        end
       end
 
     end

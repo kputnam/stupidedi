@@ -236,7 +236,17 @@ module Stupidedi
 
               # @return [String]
               def to_x12(truncate = true)
-                x12 = to_s(nil, nil, nil)
+                hh =   @hour.try{|h| "%02d" % h }
+                mm = @minute.try{|m| "%02d" % m }
+                ss = @second.try{|s| "%02d" % s }
+                ff = @second.try do |s|
+                  s.frac.to_s("F").
+                    gsub(/^0*\./, "").
+                    gsub(/0+$/, "")
+                end
+
+                x12 = "#{hh}#{mm}#{ss}#{ff}"
+
                 truncate ? x12.take(definition.max_length) : x12
               end
 
