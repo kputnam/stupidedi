@@ -11,6 +11,8 @@ module Stupidedi
       # @return [Input]
       def build(o, *args)
         case o
+        when AbstractInput
+          o
         when IO
           FileInput.new(o, *args)
         when String, Array
