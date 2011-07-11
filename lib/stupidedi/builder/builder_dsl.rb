@@ -34,6 +34,16 @@ module Stupidedi
         machine, reader = @machine.insert(segment_tok, @reader)
 
         if @strict
+          unless machine.deterministic?
+            matches = machine.active.map do |m|
+              segment_def = m.node.zipper.node.definition
+              "#{segment_def.id} #{segment_def.name}"
+            end.join(", ")
+
+            raise Exceptions::ParseError,
+              "non-deterministic machine state: #{matches}"
+          end
+
           # Validate the new segment (recursively, including its children)
           machine.active.each{|m| critique(m.node.zipper) }
 

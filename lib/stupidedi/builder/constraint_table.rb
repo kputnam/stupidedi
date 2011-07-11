@@ -84,7 +84,10 @@ module Stupidedi
           @__basis.head.each do |(n, m), map|
             value = deconstruct(segment_tok.element_toks, n, m)
 
-            unless value.nil?
+            case value
+            when nil, :not_used, :default
+              # ignore
+            else
               singleton = map.at(value)
               present   = true
 
@@ -242,7 +245,7 @@ module Stupidedi
                 # any of the HIPAA schemas would use this -- so testing it would
                 # be a pain.
                 #
-                # distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
+                distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
               end
             end
           end
