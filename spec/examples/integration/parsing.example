@@ -277,44 +277,124 @@ describe "Parsing" do
                   S(:IEA) => Ss())))
       end
     end
+  end
 
-    it "parses 1-bad.txt"
+  context "X221-HP835" do
+    let(:fixtures) { File.join(FIXTURE_ROOT, "X221-HP835") }
 
-    it "parses 3a-good.txt"
-    it "parses 3a-bad.txt"
+    it "parses 1-good.txt" do
+      parser, reader = parse(File.join(fixtures, "1-good.txt"))
+      
+      parser.should be_deterministic
+      parser.should be_last
 
-    it "parses 3b-good.txt"
-    it "parses 3b-bad.txt"
+      parser.segment.tap do |iea|
+        iea.node.position.line.should   == 40
+        iea.node.position.column.should == 1
+      end
 
-    it "parses 3c-good.txt"
-    it "parses 3c-bad.txt"
+      parser.should have_sequence(%w(ISA GS ST BPR TRN DTM N1 N3 N4 REF REF
+        N1 REF LX TS3 TS2 CLP CAS NM1 MIA DTM DTM AMT QTY LX TS3 CLP CAS
+        NM1 MOA DTM AMT PLB SE GE IEA))
 
-    it "parses 4-good.txt"
-    it "parses 4-bad.txt"
+      parser.should have_separators(:element => "+", :component => ">",
+                                    :repetition => "~", :segment => "\r")
 
-    it "parses 5-good.txt"
-    it "parses 5-bad.txt"
+      parser.parent.tap do |isa|
+        isa.should have_distance(35).to(parser)
 
-    it "parses 6-good.txt"
-    it "parses 6-bad.txt"
-    
-    it "parses 7-good.txt"
-    it "parses 7-bad.txt"
+        # See matchers/navigation_matchers.rb
+        #
+        # Ss: list of segment matchers
+        #  C: composite element
+        #
+        #  S: the segment might be reachable, and /is/ reachable
+        #  R: the segment might be reachable, but didn't occur
+        #  X: the segment would never be reachable
+        #
+        isa.should have_structure(
+          Ss(X(:ST),
+             R(:ISA), # No more ISAs
+             S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
+               Ss(R(:GS), # No more GSs
+                  S(:ST) =>
+                    Ss(R(:ST), # No more STs
+                       S(:BPR, nil, 150000) =>
+                         Ss(S(:TRN),
+                            S(:DTM),
+                            S(:N1, "PR"),
+                            S(:N1, "PE"),
+                            S(:LX, "110212"),
+                            S(:LX, "130212"),
+                            S(:PLB),
+                            S(:SE),
+                            S(:GE),
+                            S(:IEA)),
+                       S(:TRN, "1", "12345") =>
+                         Ss(X(:BPR)),
 
-    it "parses 8-good.txt"
-    it "parses 8-bad.txt"
+                       S(:DTM, "405", Date.civil(2002, 9, 13)) =>
+                         Ss(X(:TRN)),
 
-    it "parses 9-good.txt"
-    it "parses 9-bad.txt"
+                       # 1000A PAYER IDENTIFICATION
+                       S(:N1, "PR", "INSURANCE COMPANY OF TIMBUCKTU") =>
+                         Ss(S(:N3, "1 MAIN STREET"),
+                            S(:N4),
+                            S(:REF, "2U", "999"),
+                            S(:REF, "NF", "12345"),
+                            S(:SE),
+                            S(:GE),
+                            S(:IEA)),
 
-    it "parses 10a-good.txt"
-    it "parses 10a-bad.txt"
+                       # 1000B PAYEE IDENTIFICATION
+                       S(:N1, "PE", nil, "XX", "1232343560") =>
+                         Ss(S(:REF, "TJ"),
+                            S(:SE),
+                            S(:GE),
+                            S(:IEA)),
 
-    it "parses 10b-good.txt"
-    it "parses 10b-bad.txt"
+                       # 2000 HEADER NUMBER
+                       S(:LX, "110212") =>
+                         Ss(S(:LX, "130212"),
+                            S(:TS3),
+                            S(:TS2),
+                            S(:CLP) =>
+                              Ss(S(:CAS, "CO", 45, "73348.57"),
+                                 S(:NM1, "QC", nil, "JONES"),
+                                 S(:MIA, 0, nil, nil, "138018.4".to_d),
+                                 S(:DTM, "232", "20020816"),
+                                 S(:DTM, "233", "20020824"),
+                                 S(:AMT, "AU", 150000),
+                                 S(:QTY, "CA", 8))),
 
-    it "parses 10c-good.txt"
-    it "parses 10c-bad.txt"
+                       # 2000 HEADER NUMBER
+                       S(:LX, "130212") =>
+                         Ss(R(:LX, "110212"),
+                            S(:TS3, "6543210909", "13", "1996/12/31", 1, 15000),
+                            S(:CLP, "777777") =>
+                              Ss(S(:CAS, "CO", "45", "3019.67"),
+                                 S(:NM1, "QC"),
+                                 S(:MOA, nil, nil, "MA02"),
+                                 S(:DTM, "232", "2002-05-12"),
+                                 S(:AMT, "AU", 17000))),
+
+                       S(:PLB, "6543210903") =>
+                         Ss(S(:SE, 32, 1234),
+                            S(:GE, 1, 1),
+                            S(:IEA, 1, 905)),
+                       S(:PLB, nil, "20021231") =>
+                         Ss(S(:SE, "32", "1234"),
+                            S(:GE, "1", "1"),
+                            S(:IEA, "1", "905")),
+                       S(:PLB, nil, nil, C("CV", "CP")) => Ss(),
+                       S(:PLB, nil, nil, nil, "-1.27")  => Ss(),
+
+                       S(:SE) => Ss(S(:GE),
+                                    S(:IEA))),
+                  S(:GE)  => Ss(S(:IEA)),
+                  S(:IEA) => Ss())))
+      end
+    end
   end
 
 end
