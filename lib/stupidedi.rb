@@ -3,6 +3,8 @@ require "time"
 require "date"
 require "term/ansicolor" if $stdout.tty?
 
+$:.unshift(File.expand_path("..", __FILE__))
+
 # Monkey patches
 
 #equire "ruby/exception"

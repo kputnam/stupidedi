@@ -1,3 +1,6 @@
+require "pathname"
+abspath = Pathname.new(File.dirname(__FILE__)).expand_path
+relpath = abspath.relative_path_from(Pathname.pwd)
 
 begin
   require "rubygems"
@@ -17,16 +20,19 @@ begin
   require "rspec/core/rake_task"
   RSpec::Core::RakeTask.new do |t|
     t.verbose = false
-    t.pattern = "spec/examples/**/*.example"
-    t.rspec_opts = %w(--color --format p)
+    t.pattern = "#{relpath}/spec/examples/**/*.example"
+
+    t.rspec_opts  = %w(--color --format p)
+    t.rspec_opts << "-I#{abspath}/spec"
   end
 rescue LoadError => first
   begin
     require "spec/rake/spectask"
     Spec::Rake::SpecTask.new do |t|
-      t.pattern = "spec/examples/**/*.example"
+      t.pattern = "#{relpath}/spec/examples/**/*.example"
       t.spec_opts << "--color"
       t.spec_opts << "--format p"
+      t.libs << "#{abspath}/spec"
     end
   rescue LoadError => second
     task :spec do
@@ -48,8 +54,10 @@ begin
       t.rcov_opts = "--exclude spec/,gems/,00401"
 
       t.verbose = false
-      t.pattern = "spec/examples/**/*.example"
-      t.rspec_opts = %w(--color --format=p)
+      t.pattern = "#{relpath}/spec/examples/**/*.example"
+
+      t.rspec_opts  = %w(--color --format p)
+      t.rspec_opts << "-I#{abspath}/spec"
     end
   rescue LoadError => first
     begin
@@ -58,9 +66,10 @@ begin
         t.rcov = true
         t.rcov_opts = %w(--exclude spec/,gems/)
 
-        t.pattern = "spec/examples/**/*.example"
+        t.pattern = "#{relpath}/spec/examples/**/*.example"
         t.spec_opts << "--color"
         t.spec_opts << "--format=p"
+        t.libs << "#{abspath}/spec"
       end
     rescue LoadError => second
       task :rcov do
@@ -86,8 +95,8 @@ begin
   YARD::Rake::YardocTask.new(:yard => :clobber_yard)
 
   task :clobber_yard do
-    rm_rf "doc/generated"
-    mkdir_p "doc/generated/images"
+    rm_rf "#{relpath}/doc/generated"
+    mkdir_p "#{relpath}/doc/generated/images"
   end
 
 rescue LoadError

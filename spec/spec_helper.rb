@@ -1,4 +1,4 @@
-require "pp"
+require File.expand_path("../../lib/stupidedi", __FILE__)
 
 begin
   # RSpec-1: https://github.com/dchelimsky/rspec
@@ -8,15 +8,11 @@ rescue LoadError
   require "rspec"
 end
 
-specdir = File.expand_path(File.dirname(__FILE__))
-
-$:.unshift(specdir)
-$:.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
-require "stupidedi"
-
 # Require supporting files with custom matchers and macros
-Dir["#{specdir}/support/**/*.rb"].each do |f|
-  require f.slice(specdir.length + 1 .. -1)
+Pathname.new(File.dirname(__FILE__)).tap do |specdir|
+  Dir["#{specdir}/support/**/*.rb"].each do |file|
+    require Pathname.new(file).relative_path_from(specdir)
+  end
 end
 
 RSpec.configure do |config|

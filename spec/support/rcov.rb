@@ -23,7 +23,7 @@ loader = lambda do |root|
           recurse.call(value, recurse)
         end
       rescue LoadError, NameError
-        $stderr.puts "#{$!.class}: #{$!.message}"
+        $stderr.puts "warning: #{$!.class} #{$!.message}"
       end
     end
   end.bind do |recurse|
