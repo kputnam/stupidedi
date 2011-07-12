@@ -121,7 +121,7 @@ module Stupidedi
             end
           elsif zipper.node.usage.forbidden?
             acc.ik403(zipper, "R", "I10", "must not be present")
-          elsif zipper.node.usage.allowed_values.exclude?(zipper.node.to_s)
+          elsif not zipper.node.allowed?
             acc.ik403(zipper, "R", "7", "is not an allowed value")
           elsif zipper.node.too_long?
             acc.ik403(zipper, "R", "5", "is too long")

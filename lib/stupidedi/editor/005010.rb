@@ -122,7 +122,7 @@ module Stupidedi
               acc.ta105(e, "R", "024", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "024", "is not a valid string")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "024", "is not an allowed value")
             end
           end
@@ -235,7 +235,7 @@ module Stupidedi
               acc.ik502(e, "R", "6", "must not be present")
             elsif e.node.invalid?
               acc.ik502(e, "R", "6", "is not a valid identifier")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ik502(e, "R", "6", "is not an allowed value")
             end
           end
@@ -267,7 +267,7 @@ module Stupidedi
               acc.ik502(e, "R", "I6", "must not be present")
             elsif e.node.invalid?
               acc.ik502(e, "R", "I6", "is not a valid string")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ik502(e, "R", "I6", "is not an allowed value")
             end
           end

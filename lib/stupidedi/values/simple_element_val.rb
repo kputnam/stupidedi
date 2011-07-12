@@ -17,6 +17,12 @@ module Stupidedi
       # @return [String]
       abstract :to_x12
 
+      abstract :too_long?
+
+      abstract :too_short?
+
+      abstract :to_s
+
       # @return [SimpleElementUse, ComponentElementUse]
       attr_reader :usage
 
@@ -31,9 +37,10 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :copy, "changes={}"
 
-      abstract :too_long?
-
-      abstract :too_short?
+      # True unless this value isn't included in {ElementUse#allowed_values}
+      def allowed?
+        empty? or invalid? or usage.allowed_values.include?(to_s)
+      end
 
       def id?
         false

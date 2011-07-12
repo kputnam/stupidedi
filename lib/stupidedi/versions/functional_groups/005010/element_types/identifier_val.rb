@@ -347,6 +347,8 @@ module Stupidedi
               else
                 self::Invalid.new(object, usage, position)
               end
+            rescue
+              self::Invalid.new(object, usage, position)
             end
 
             # @endgroup

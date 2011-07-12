@@ -65,7 +65,7 @@ module Stupidedi
           isa.element(1).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "010", "must be present")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "010", "is not an allowed value")
             end
           end
@@ -87,7 +87,7 @@ module Stupidedi
           isa.element(3).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "012", "must be present")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "012", "is not an allowed value")
             end
           end
@@ -109,7 +109,7 @@ module Stupidedi
           isa.element(5).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "005", "must be present")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "005", "is not an allowed value")
             end
           end
@@ -131,7 +131,7 @@ module Stupidedi
           isa.element(7).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "007", "must be present")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "007", "is not an allowed value")
             end
           end
@@ -222,7 +222,7 @@ module Stupidedi
           isa.element(14).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "019", "must be present")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "019", "is not an allowed value")
             end
           end
@@ -233,7 +233,7 @@ module Stupidedi
           isa.element(15).tap do |e|
             if e.node.blank?
               acc.ta105(e, "R", "020", "must be present")
-            elsif e.node.usage.allowed_values.exclude?(e.node.to_s)
+            elsif not e.node.allowed?
               acc.ta105(e, "R", "020", "is not an allowed value")
             end
           end

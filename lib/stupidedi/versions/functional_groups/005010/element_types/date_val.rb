@@ -153,7 +153,7 @@ module Stupidedi
 
               # @return [Boolean]
               def ==(other)
-                other.is_a?(Empty)
+                other.is_a?(Empty) or other.nil?
               end
             end
 
@@ -169,7 +169,7 @@ module Stupidedi
                 :step, :httpdate, :to_s, :to_i, :strftime, :iso8601, :rfc2822,
                 :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
                 :to_datetime, :to_int, :to_r, :to_c, :wday, :xmlschema, :yday,
-                :to => :@value
+                :start, :to => :@value
 
               # (date any* -> DateVal::Proper)
               extend Operators::Wrappers
@@ -178,7 +178,7 @@ module Stupidedi
 
               # (date -> DateVal::Proper)
               extend Operators::Unary
-              unary_operators :next, :succ, :prev, :start
+              unary_operators :next, :succ, :prev
 
               # (date date -> any)
               extend Operators::Relational
@@ -203,7 +203,7 @@ module Stupidedi
                 # me, he = other.coerce(self)
                 # me <OP> he
                 if other.respond_to?(:to_date)
-                  return copy(:value => other.to_date), self
+                  return DateVal.value(other, usage, position), self
                 else
                   raise TypeError,
                     "cannot coerce DateVal to #{other.class}"
@@ -287,11 +287,6 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_s
-                "%04d%02d%02d" % [year, month, day]
-              end
-
-              # @return [String]
               def to_x12(truncate = true)
                 x12 =
                   if definition.max_length < 8
@@ -300,7 +295,13 @@ module Stupidedi
                     "%04d%02d%02d" % [year, month, day]
                   end
 
-                truncate ? x12.take(definition.max_length) : x12
+                if truncate
+                  # Drop the most significant digits... they are probably bogus?
+                  overage = x12.length - definition.max_length
+                  x12.drop(overage > 0 ? overage : 0)
+                else
+                  x12
+                end
               end
 
               def too_long?
@@ -557,7 +558,7 @@ module Stupidedi
             def date(year, month, day)
               ::Date.civil(year.to_i, month.to_i, day.to_i)
             rescue
-              raise Exceptions::InvalidElementException,
+              raise Exceptions::InvalidElementError,
                 "invalid year(#{year}), month(#{month}), day(#{day})"
             end
           end
