@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module FiftyTen
+      module FortyTen
         module ElementTypes
 
           class Nn < SimpleElementDef
@@ -38,15 +38,15 @@ module Stupidedi
             end
 
             def companion
-              NumericVal
+              FixnumVal
             end
           end
 
 
           #
-          # @see X222.pdf B.1.1.3.1.1 Numeric
+          # @see X222.pdf A.1.3.1.1 Numeric
           #
-          class NumericVal < Values::SimpleElementVal
+          class FixnumVal < Values::SimpleElementVal
 
             def numeric?
               true
@@ -60,7 +60,10 @@ module Stupidedi
               false
             end
 
-            class Invalid < NumericVal
+            #
+            #
+            #
+            class Invalid < FixnumVal
 
               # @return [Object]
               attr_reader :value
@@ -76,11 +79,6 @@ module Stupidedi
 
               def empty?
                 false
-              end
-
-              # @return [NumericVal]
-              def map
-                NumericVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
@@ -105,22 +103,18 @@ module Stupidedi
                 ""
               end
 
-              # @return [String]
-              def to_x12(truncate = true)
-                ""
-              end
-
               # @return [Boolean]
               def ==(other)
-                eql?(other)
+                eql?(other) or
+                  (other.is_a?(Invalid) and @value == other.value)
               end
             end
 
             #
             # Empty numeric value. Shouldn't be directly instantiated -- instead
-            # use the {NumericVal.value} and {NumericVal.empty} constructors.
+            # use the {FixnumVal.value} and {FixnumVal.empty} constructors.
             #
-            class Empty < NumericVal
+            class Empty < FixnumVal
 
               def valid?
                 true
@@ -128,11 +122,6 @@ module Stupidedi
 
               def empty?
                 true
-              end
-
-              # @return [NumericVal]
-              def map
-                NumericVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
@@ -157,43 +146,23 @@ module Stupidedi
                 ""
               end
 
-              # @return [String]
-              def to_x12(truncate = true)
-                ""
-              end
-
               # @return [Boolean]
               def ==(other)
-                other.is_a?(Empty) or other.nil?
+                other.is_a?(Empty)
               end
             end
 
             #
             # Non-empty numeric value. Shouldn't be directly instantiated --
-            # instead, use the {NumericVal.value} constructors.
+            # instead, use the {FixnumVal.value} constructors.
             #
-            class NonEmpty < NumericVal
+            class NonEmpty < FixnumVal
               include Comparable
-
-              # @group Mathematical Operators
-              #################################################################
-
-              extend Operators::Binary
-              binary_operators :+, :-, :*, :/, :%, :coerce => :to_d
-
-              extend Operators::Relational
-              relational_operators :==, :<=>, :coerce => :to_d
-
-              extend Operators::Unary
-              unary_operators :abs, :-@, :+@
-
-              # @endgroup
-              #################################################################
 
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to_r, :to_c, :to => :@value
+              delegate :to_i, :to_d, :to_f, :to => :@value
 
               def initialize(value, usage, position)
                 @value = value
@@ -208,23 +177,23 @@ module Stupidedi
                   changes.fetch(:position, position)
               end
 
-              def coerce(other)
-                # self', other' = other.coerce(self)
-                # self' * other'
-                if other.respond_to?(:to_d)
-                  return copy(:value => other.to_d), self
-                else
-                  raise TypeError,
-                    "cannot coerce NumericVal to #{other.class}"
-                end
-              end
-
               def valid?
                 true
               end
 
               def empty?
                 false
+              end
+
+              # @return [Array(NonEmpty, Numeric)]
+              def coerce(other)
+                if other.respond_to?(:to_d)
+                  # Re-evaluate other.call(self) as self.op(other.to_d)
+                  return self, other.to_d
+                else
+                  # Fail, other.call(self) is still other.call(self)
+                  raise TypeError, "#{other.class} can't be coerced into FixnumVal"
+                end
               end
 
               # @return [String]
@@ -250,46 +219,76 @@ module Stupidedi
                 (@value * (10 ** definition.precision)).to_i.to_s
               end
 
-              # @return [String]
-              def to_x12(truncate = true)
-                nn   = (@value * (10 ** definition.precision)).to_i
-                sign = (nn < 0) ? "-" : ""
+              # @group Mathematical Operators
+              #################################################################
 
-                # Leading zeros must be suppressed unless necessary to satisfy a
-                # minimum length requirement
-                if truncate
-                  sign << nn.abs.to_s.take(definition.max_length).
-                                      rjust(definition.min_length, "0")
-                else
-                  sign << nn.abs.to_s.rjust(definition.min_length, "0")
-                end
+              # @return [NonEmpty]
+              def /(other)
+                copy(:value => (@value / other).to_d)
               end
 
-              def too_long?
-                nn = (@value * (10 ** definition.precision)).to_i
-
-                # The length of a numeric type does not include an optional sign
-                definition.max_length < nn.abs.to_s.length
+              # @return [NonEmpty]
+              def +(other)
+                copy(:value => (@value + other).to_d)
               end
 
-              # @return [NumericVal]
-              def map
-                NumericVal.value(yield(@value), usage, position)
+              # @return [NonEmpty]
+              def -(other)
+                copy(:value => (@value - other).to_d)
               end
+
+              # @return [NonEmpty]
+              def **(other)
+                copy(:value => (@value ** other).to_d)
+              end
+
+              # @return [NonEmpty]
+              def *(other)
+                copy(:value => (@value * other).to_d)
+              end
+
+              # @return [NonEmpty]
+              def %(other)
+                copy(:value => (@value % other).to_d)
+              end
+
+              # @return [NonEmpty]
+              def -@
+                copy(:value => -@value)
+              end
+
+              # @return [NonEmpty]
+              def +@
+                self
+              end
+
+              # @return [NonEmpty]
+              def abs
+                copy(:value => @value.abs)
+              end
+
+              # @return [-1, 0, +1]
+              def <=>(other)
+                a, b = coerce(other)
+                a.value <=> b
+              end
+
+              # @endgroup
+              #################################################################
             end
 
           end
 
-          class << NumericVal
+          class << FixnumVal
             # @group Constructors
             ###################################################################
 
-            # @return [NumericVal]
+            # @return [FixnumVal]
             def empty(usage, position)
               self::Empty.new(usage, position)
             end
 
-            # @return [NumericVal]
+            # @return [FixnumVal]
             def value(object, usage, position)
               if object.blank?
                 self::Empty.new(usage, position)
@@ -305,15 +304,29 @@ module Stupidedi
               self::Invalid.new(object, usage, position)
             end
 
+            # @return [FixnumVal]
+            def parse(string, usage, position)
+              if string.blank?
+                self::Empty.new(usage, position, position)
+              else
+                # The number of fractional digits is implied by usage.precision
+                factor = 10 ** usage.definition.precision
+
+                self::NonEmpty.new(string.to_d / factor, usage, position)
+              end
+            rescue ArgumentError
+              self::Invalid.new(string, usage, position)
+            end
+
             # @endgroup
             ###################################################################
           end
 
-          # Prevent direct instantiation of abstract class NumericVal
-          NumericVal.eigenclass.send(:protected, :new)
-          NumericVal::Empty.eigenclass.send(:public, :new)
-          NumericVal::Invalid.eigenclass.send(:public, :new)
-          NumericVal::NonEmpty.eigenclass.send(:public, :new)
+          # Prevent direct instantiation of abstract class FixnumVal
+          FixnumVal.eigenclass.send(:protected, :new)
+          FixnumVal::Empty.eigenclass.send(:public, :new)
+          FixnumVal::Invalid.eigenclass.send(:public, :new)
+          FixnumVal::NonEmpty.eigenclass.send(:public, :new)
         end
 
       end

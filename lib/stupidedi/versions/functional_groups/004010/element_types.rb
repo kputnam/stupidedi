@@ -87,11 +87,11 @@ module Stupidedi
           autoload :DT,
             "stupidedi/versions/functional_groups/004010/element_types/date_val"
 
-          autoload :DecimalVal,
-            "stupidedi/versions/functional_groups/004010/element_types/decimal_val"
+          autoload :FloatVal,
+            "stupidedi/versions/functional_groups/004010/element_types/float_val"
 
           autoload :R,
-            "stupidedi/versions/functional_groups/004010/element_types/decimal_val"
+            "stupidedi/versions/functional_groups/004010/element_types/float_val"
 
           autoload :IdentifierVal,
             "stupidedi/versions/functional_groups/004010/element_types/identifier_val"
@@ -99,11 +99,11 @@ module Stupidedi
           autoload :ID,
             "stupidedi/versions/functional_groups/004010/element_types/identifier_val"
 
-          autoload :NumericVal,
-            "stupidedi/versions/functional_groups/004010/element_types/numeric_val"
+          autoload :FixnumVal,
+            "stupidedi/versions/functional_groups/004010/element_types/fixnum_val"
 
           autoload :Nn,
-            "stupidedi/versions/functional_groups/004010/element_types/numeric_val"
+            "stupidedi/versions/functional_groups/004010/element_types/fixnum_val"
 
           autoload :StringVal,
             "stupidedi/versions/functional_groups/004010/element_types/string_val"

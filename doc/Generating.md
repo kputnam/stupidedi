@@ -136,10 +136,10 @@ either two, four, six, or more than six characters, and from the `Time` and
 
 Numeric and decimal elements (declared with type `Nn` and `R`, respectively) can
 be constructed from any value that responds to `#to_d`. The constructed element
-is a [`NumericVal`][13] or [`DecimalVal`][14].
+is a [`FixnumVal`][13] or [`FloatVal`][14].
 
-  [13]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/NumericVal.html
-  [14]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/DecimalVal.html
+  [13]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/FixnumVal.html
+  [14]: Stupidedi/Versions/FunctionalGroups/FiftyTen/ElementTypes/FloatVal.html
 
 ### Composite Elements
 

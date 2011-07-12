@@ -336,7 +336,7 @@ describe "Generating" do
 
       context "with Nn element that are too short" do
         # I don't know of any Nn elements that have a min_length
-        # that isn't just 1. So the #too_short? method in NumericVal
+        # that isn't just 1. So the #too_short? method in FixnumVal
         # don't bother testing and returns false in every case, for
         # simplicity.
       end
@@ -346,7 +346,7 @@ describe "Generating" do
 
       context "with R elements that are too short" do
         # I don't know of any R elements that have a min_length
-        # that isn't just 1. So the #too_short? method in DecimalVal
+        # that isn't just 1. So the #too_short? method in FloatVal
         # don't bother testing and returns false in every case, for
         # simplicity.
       end

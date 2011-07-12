@@ -7,19 +7,19 @@ module Stupidedi
           #
           class R < SimpleElementDef
             def companion
-              DecimalVal
+              FloatVal
             end
           end
 
           #
           # @see X222.pdf A.1.3.1.2 Decimal
           #
-          class DecimalVal < Values::SimpleElementVal
-            PATTERN = /\A[+-]?            (?# optional leading sign            )
-                       (?:
-                         (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)
-                         (?:\d*?\.?\d+) ) (?# optional whole with decimal      )
-                      \Z/ix
+          class FloatVal < Values::SimpleElementVal
+          # PATTERN = /\A[+-]?            (?# optional leading sign            )
+          #            (?:
+          #              (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)
+          #              (?:\d*?\.?\d+) ) (?# optional whole with decimal      )
+          #           \Z/ix
 
             def numeric?
               true
@@ -36,7 +36,7 @@ module Stupidedi
             #
             #
             #
-            class Invalid < DecimalVal
+            class Invalid < FloatVal
 
               # @return [Object]
               attr_reader :value
@@ -85,9 +85,9 @@ module Stupidedi
 
             #
             # Empty numeric value. Shouldn't be directly instantiated -- instead
-            # use the {DecimalVal.value} and {DecimalVal.empty} constructors.
+            # use the {FloatVal.value} and {FloatVal.empty} constructors.
             #
-            class Empty < DecimalVal
+            class Empty < FloatVal
 
               def valid?
                 true
@@ -127,9 +127,9 @@ module Stupidedi
 
             #
             # Non-empty numeric value. Shouldn't be directly instantiated --
-            # instead, use the {DecimalVal.value} constructors.
+            # instead, use the {FloatVal.value} constructors.
             #
-            class NonEmpty < DecimalVal
+            class NonEmpty < FloatVal
               include Comparable
 
               # @return [BigDecimal]
@@ -258,16 +258,16 @@ module Stupidedi
 
           end
 
-          class << DecimalVal
+          class << FloatVal
             # @group Constructors
             ###################################################################
 
-            # @return [DecimalVal]
+            # @return [FloatVal]
             def empty(usage, position)
               self::Empty.new(usage, position)
             end
 
-            # @return [DecimalVal]
+            # @return [FloatVal]
             def value(object, usage, position)
               if object.blank?
                 self::Empty.new(usage, position)
@@ -282,28 +282,15 @@ module Stupidedi
               end
             end
 
-            # @return [DecimalVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                begin
-                  self::NonEmpty.new(string.to_d, usage, position)
-                rescue ArgumentError
-                  self::Invalid.new(string, usage, position)
-                end
-              end
-            end
-
             # @endgroup
             ###################################################################
           end
 
-          # Prevent direct instantiation of abstract class DecimalVal
-          DecimalVal.eigenclass.send(:protected, :new)
-          DecimalVal::Empty.eigenclass.send(:public, :new)
-          DecimalVal::Invalid.eigenclass.send(:public, :new)
-          DecimalVal::NonEmpty.eigenclass.send(:public, :new)
+          # Prevent direct instantiation of abstract class FloatVal
+          FloatVal.eigenclass.send(:protected, :new)
+          FloatVal::Empty.eigenclass.send(:public, :new)
+          FloatVal::Invalid.eigenclass.send(:public, :new)
+          FloatVal::NonEmpty.eigenclass.send(:public, :new)
 
         end
       end

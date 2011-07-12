@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementTypes do
-  describe "NumericVal" do
+  describe "FixnumVal" do
 
     let(:x5010) { Stupidedi::Versions::FunctionalGroups::FiftyTen }
     let(:types) { x5010::ElementTypes }

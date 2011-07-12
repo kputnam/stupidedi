@@ -4,38 +4,49 @@ module Stupidedi
       module FiftyTen
         module ElementTypes
 
-          #
-          class R < SimpleElementDef
+          class Nn < SimpleElementDef
 
             # @return [Integer]
-            attr_reader :max_precision
+            attr_reader :precision
 
-            def initialize(id, name, min_length, max_length, max_precision = nil, description = nil, parent = nil)
+            def initialize(id, name, min_length, max_length, precision, description = nil, parent = nil)
               super(id, name, min_length, max_length, description, parent)
 
-              if max_precision.try(:>, max_length)
+              if precision > max_length
                 raise ArgumentError,
-                  "max_precision cannot be greater than max_length"
+                  "precision cannot be greater than max_length"
               end
 
-              @max_precision = max_precision
+              @precision = precision
+            end
+
+            # @return [Nn]
+            def copy(changes = {})
+              Nn.new \
+                changes.fetch(:id, @id),
+                changes.fetch(:name, @name),
+                changes.fetch(:min_length, @min_length),
+                changes.fetch(:max_length, @max_length),
+                changes.fetch(:precision, @precision),
+                changes.fetch(:description, @description),
+                changes.fetch(:parent, @parent)
+            end
+
+            # @return [void]
+            def pretty_print(q)
+              q.text "N#{@precision}[#{@id}]"
             end
 
             def companion
-              DecimalVal
+              FixnumVal
             end
           end
 
+
           #
-          # @see X222.pdf B.1.1.3.1.2 Decimal
+          # @see X222.pdf B.1.1.3.1.1 Numeric
           #
-          class DecimalVal < Values::SimpleElementVal
-            PATTERN = /\A[+-]?            (?# optional leading sign            )
-                       (?:
-                         (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)
-                         (?:\d*?\.?\d+) ) (?# optional whole with decimal      )
-                       (?:E[+-]?\d+)?     (?# optional exponent                )
-                      \Z/ix
+          class FixnumVal < Values::SimpleElementVal
 
             def numeric?
               true
@@ -49,7 +60,7 @@ module Stupidedi
               false
             end
 
-            class Invalid < DecimalVal
+            class Invalid < FixnumVal
 
               # @return [Object]
               attr_reader :value
@@ -67,14 +78,14 @@ module Stupidedi
                 false
               end
 
-              # @return [DecimalVal]
+              # @return [FixnumVal]
               def map
-                DecimalVal.value(yield(nil), usage, position)
+                FixnumVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
+                id = definition.bind do |d|
                   "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
@@ -86,7 +97,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element(" R.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("Nn.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]
@@ -107,9 +118,9 @@ module Stupidedi
 
             #
             # Empty numeric value. Shouldn't be directly instantiated -- instead
-            # use the {DecimalVal.value} and {DecimalVal.empty} constructors.
+            # use the {FixnumVal.value} and {FixnumVal.empty} constructors.
             #
-            class Empty < DecimalVal
+            class Empty < FixnumVal
 
               def valid?
                 true
@@ -119,14 +130,14 @@ module Stupidedi
                 true
               end
 
-              # @return [DecimalVal]
+              # @return [FixnumVal]
               def map
-                DecimalVal.value(yield(nil), usage, position)
+                FixnumVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
+                id = definition.bind do |d|
                   "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
@@ -138,7 +149,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element(" R.empty#{id}")
+                ansi.element("Nn.empty#{id}")
               end
 
               # @return [String]
@@ -159,22 +170,22 @@ module Stupidedi
 
             #
             # Non-empty numeric value. Shouldn't be directly instantiated --
-            # instead, use the {DecimalVal.value} constructors.
+            # instead, use the {FixnumVal.value} constructors.
             #
-            class NonEmpty < DecimalVal
+            class NonEmpty < FixnumVal
               include Comparable
 
               # @group Mathematical Operators
               #################################################################
 
               extend Operators::Binary
-              binary_operators(:+, :-, :*, :/, :%, :coerce => :to_d)
+              binary_operators :+, :-, :*, :/, :%, :coerce => :to_d
 
               extend Operators::Relational
-              relational_operators(:==, :<=>, :coerce => :to_d)
+              relational_operators :==, :<=>, :coerce => :to_d
 
               extend Operators::Unary
-              unary_operators(:abs, :-@, :+@)
+              unary_operators :abs, :-@, :+@
 
               # @endgroup
               #################################################################
@@ -204,13 +215,12 @@ module Stupidedi
                   return copy(:value => other.to_d), self
                 else
                   raise TypeError,
-                    "cannot coerce NumericVal to #{other.class}"
+                    "cannot coerce FixnumVal to #{other.class}"
                 end
               end
 
               def valid?
-                # False for NaN and +/- Infinity
-                @value.finite?
+                true
               end
 
               def empty?
@@ -219,7 +229,7 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
+                id = definition.bind do |d|
                   "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
@@ -231,123 +241,81 @@ module Stupidedi
                   end
                 end
 
-                ansi.element(" R.value#{id}") << "(#{to_s})"
+                ansi.element("Nn.value#{id}") << "(#{to_s})"
               end
 
               # @return [String]
               def to_s
-                if definition.max_precision.present?
-                  @value.round(definition.max_precision).to_s("F")
-                else
-                  @value.to_s("F")
-                end
+                # The number of fractional digits is implied by usage.precision
+                (@value * (10 ** definition.precision)).to_i.to_s
               end
 
-              # While the ASC X12 standard supports the usage of exponential
-              # notation, the HIPAA guides prohibit it. In the interest of
-              # simplicity, this method will not output exponential notation,
-              # as there is currently no configuration attribute to indicate
-              # if this is allowed or not -- if this is required in the future,
-              # the best place for it to fit would be in SimpleElementUse
-              #
               # @return [String]
               def to_x12(truncate = true)
-                remaining =
-                  if @value.to_i.zero?
-                    definition.max_length
-                  else
-                    definition.max_length - @value.to_i.abs.to_s.length
-                  end
+                nn   = (@value * (10 ** definition.precision)).to_i
+                sign = (nn < 0) ? "-" : ""
 
-                if remaining <= 0
-                  if truncate
-                    int   = @value.to_i.to_s
-                    sign  = (int < 0) ? "-" : ""
-                    return sign << int.abs.to_s.take(definition.max_length)
-                  else
-                    return @value.to_i.abs
-                  end
-                end
-
-                # Don't exceed the definition's max_precision
-                precision =
-                  if definition.max_precision.present?
-                    (definition.max_precision < remaining) ?
-                      definition.max_precision : remaining
-                  else
-                    remaining
-                  end
-
-                rounded = @value.round(precision)
-                sign    = (rounded < 0) ? "-" : ""
-
-                # Leading zeros preceeding the decimal point and trailing zeros
-                # following the decimal point must be supressed unless necessary
-                # to satisfy a minimum length requirement or to indicate
-                # precision, respectively.
-                if rounded.zero?
-                  "0" * definition.min_length
+                # Leading zeros must be suppressed unless necessary to satisfy a
+                # minimum length requirement
+                if truncate
+                  sign << nn.abs.to_s.take(definition.max_length).
+                                      rjust(definition.min_length, "0")
                 else
-                  sign << rounded.abs.to_s("F").
-                    gsub(/^0+/, ""). # leading zeros
-                    gsub(/0+$/, ""). # trailing zeros
-                    gsub(/\.$/, ""). # trailing decimal point
-                    rjust(definition.min_length, "0")
+                  sign << nn.abs.to_s.rjust(definition.min_length, "0")
                 end
               end
 
               def too_long?
-                # We can truncate the fractional portion as much as needed, so
-                # the only concern we have about length is regarding the digits
-                # to the left of the decimal place.
+                nn = (@value * (10 ** definition.precision)).to_i
 
-                # The length of a decimal type does not include an optional sign
-                definition.max_length < @value.to_i.abs.to_s.length
+                # The length of a numeric type does not include an optional sign
+                definition.max_length < nn.abs.to_s.length
               end
 
-              # @return [DecimalVal]
+              # @return [FixnumVal]
               def map
-                DecimalVal.value(yield(@value), usage, position)
+                FixnumVal.value(yield(@value), usage, position)
               end
             end
 
           end
 
-          class << DecimalVal
+          class << FixnumVal
             # @group Constructors
             ###################################################################
 
-            # @return [DecimalVal]
+            # @return [FixnumVal]
             def empty(usage, position)
               self::Empty.new(usage, position)
             end
 
-            # @return [DecimalVal]
+            # @return [FixnumVal]
             def value(object, usage, position)
               if object.blank?
                 self::Empty.new(usage, position)
               elsif object.respond_to?(:to_d)
-                begin
-                  self::NonEmpty.new(object.to_d, usage, position)
-                rescue ArgumentError
-                  self::Invalid.new(object, usage, position)
-                end
+                # The number of fractional digits is implied by usage.precision
+                factor = 10 ** usage.definition.precision
+
+                self::NonEmpty.new(object.to_d / factor, usage, position)
               else
                 self::Invalid.new(object, usage, position)
               end
+            rescue ArgumentError
+              self::Invalid.new(object, usage, position)
             end
 
             # @endgroup
             ###################################################################
           end
 
-          # Prevent direct instantiation of abstract class DecimalVal
-          DecimalVal.eigenclass.send(:protected, :new)
-          DecimalVal::Empty.eigenclass.send(:public, :new)
-          DecimalVal::Invalid.eigenclass.send(:public, :new)
-          DecimalVal::NonEmpty.eigenclass.send(:public, :new)
-
+          # Prevent direct instantiation of abstract class FixnumVal
+          FixnumVal.eigenclass.send(:protected, :new)
+          FixnumVal::Empty.eigenclass.send(:public, :new)
+          FixnumVal::Invalid.eigenclass.send(:public, :new)
+          FixnumVal::NonEmpty.eigenclass.send(:public, :new)
         end
+
       end
     end
   end
