@@ -48,7 +48,7 @@ module Stupidedi
             "n must be positive"
         end
 
-        @children.at(n)
+        @children.at(n - 1)
       end
 
       # @return [void]

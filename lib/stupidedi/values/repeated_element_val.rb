@@ -47,9 +47,9 @@ module Stupidedi
         end
 
         unless o.nil?
-          @children.at(o - 1).element(o)
+          @children.at(n - 1).element(o)
         else
-          @children.at(o - 1)
+          @children.at(n - 1)
         end
       end
 
