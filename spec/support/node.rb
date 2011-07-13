@@ -1,5 +1,4 @@
 class Node
-
   # @return [String]
   attr_reader :label
 

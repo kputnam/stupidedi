@@ -63,9 +63,9 @@ describe Stupidedi::Reader::TokenReader do
     context "when s is empty" do
       it "returns self" do
         reader = mkreader("abc")
-        either = reader.consume_prefix("")
-        either.should be_defined
-        either.map{|x| x.should == reader }
+        result = reader.consume_prefix("")
+        result.should be_defined
+        result.map{|x| x.should == reader }
       end
     end
 
@@ -74,9 +74,9 @@ describe Stupidedi::Reader::TokenReader do
         string(:alnum)
       end.check do |s|
         reader = mkreader(s)
-        either = reader.consume_prefix(s)
-        either.should be_defined
-        either.map{|x| x.should be_empty }
+        result = reader.consume_prefix(s)
+        result.should be_defined
+        result.map{|x| x.should be_empty }
       end
     end
 
@@ -85,9 +85,9 @@ describe Stupidedi::Reader::TokenReader do
         string(:alnum).bind{|s| s.split_at(between(0, s.length)) }
       end.check do |p, s|
         reader = mkreader("#{p}#{s}")
-        either = reader.consume_prefix(p)
-        either.should be_defined
-        either.map{|x| x.input.should == s }
+        result = reader.consume_prefix(p)
+        result.should be_defined
+        result.map{|x| x.input.should == s }
       end
     end
 
@@ -99,9 +99,9 @@ describe Stupidedi::Reader::TokenReader do
         [a, b]
       end.check do |a, b|
         reader = mkreader(a)
-        either = reader.consume_prefix(b)
-        either.should_not be_defined
-        either.remainder.should == a
+        result = reader.consume_prefix(b)
+        result.should_not be_defined
+        result.remainder.should == a
       end
     end
   end
@@ -110,9 +110,9 @@ describe Stupidedi::Reader::TokenReader do
     context "when s is empty" do
       it "returns self" do
         reader = mkreader("abc")
-        either = reader.consume("")
-        either.should be_defined
-        either.map{|x| x.should == reader }
+        result = reader.consume("")
+        result.should be_defined
+        result.map{|x| x.should == reader }
       end
     end
 
@@ -121,9 +121,9 @@ describe Stupidedi::Reader::TokenReader do
         string(:alnum)
       end.check do |s|
         reader = mkreader(s)
-        either = reader.consume(s)
-        either.should be_defined
-        either.map{|x| x.should be_empty }
+        result = reader.consume(s)
+        result.should be_defined
+        result.map{|x| x.should be_empty }
       end
     end
 
@@ -132,9 +132,9 @@ describe Stupidedi::Reader::TokenReader do
         string(:alnum).bind{|s| s.split_at(between(0, s.length)) }
       end.check do |p, s|
         reader = mkreader("#{p}#{s}")
-        either = reader.consume(p)
-        either.should be_defined
-        either.map{|x| x.input.should == s }
+        result = reader.consume(p)
+        result.should be_defined
+        result.map{|x| x.input.should == s }
       end
     end
 
@@ -145,9 +145,9 @@ describe Stupidedi::Reader::TokenReader do
         [p, s]
       end.check do |p, s|
         reader = mkreader("#{p}#{s}")
-        either = reader.consume(s)
-        either.should be_defined
-        either.map{|x| x.should be_empty }
+        result = reader.consume(s)
+        result.should be_defined
+        result.map{|x| x.should be_empty }
       end
     end
 
@@ -160,9 +160,9 @@ describe Stupidedi::Reader::TokenReader do
         [a, b]
       end.check do |a, b|
         reader = mkreader(a)
-        either = reader.consume(b)
-        either.should_not be_defined
-        either.remainder.should == a
+        result = reader.consume(b)
+        result.should_not be_defined
+        result.remainder.should == a
       end
     end
 
@@ -175,9 +175,9 @@ describe Stupidedi::Reader::TokenReader do
         [a, b, c]
       end.check do |a, b, c|
         reader = mkreader("#{a}#{b}#{c}")
-        either = reader.consume(b)
-        either.should be_defined
-        either.map{|x| x.input.should == c }
+        result = reader.consume(b)
+        result.should be_defined
+        result.map{|x| x.input.should == c }
       end
     end
   end
@@ -186,26 +186,26 @@ describe Stupidedi::Reader::TokenReader do
     context "when the input is empty" do
       it "returns a failure" do
         reader = mkreader("")
-        either = reader.read_character
-        either.should_not be_defined
-        either.remainder.should == ""
-        either.reason.should =~ /less than one character available/
+        result = reader.read_character
+        result.should_not be_defined
+        result.remainder.should == ""
+        result.reason.should =~ /less than one character available/
       end
     end
 
     context "when the input is not empty" do
       it "returns the remaining input" do
         reader = mkreader("abc")
-        either = reader.read_character
-        either.should be_defined
-        either.map{|x, remainder| remainder.input.should == "bc" }
+        result = reader.read_character
+        result.should be_defined
+        result.map{|x, remainder| remainder.input.should == "bc" }
       end
 
       it "returns one character" do
         reader = mkreader("abc")
-        either = reader.read_character
-        either.should be_defined
-        either.map{|x, remainder| x.should == "a" }
+        result = reader.read_character
+        result.should be_defined
+        result.map{|x, remainder| x.should == "a" }
       end
     end
   end
@@ -214,10 +214,11 @@ describe Stupidedi::Reader::TokenReader do
     context "when the input is empty" do
       it "returns a failure" do
         reader = mkreader("")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == ""
-        either.reason.should =~ /reached end of input/
+        result = reader.read_segment
+        result.should_not be_defined
+        result.should_not be_fatal
+        result.remainder.should == ""
+        result.reason.should =~ /reached end of input/
       end
     end
 
@@ -225,74 +226,81 @@ describe Stupidedi::Reader::TokenReader do
       it "returns a failure" do
         # Segment ID cannot start with element separator "*"
         reader = mkreader("*ABC")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "*ABC"
-        either.reason.should =~ /found "\*" instead of segment identifier/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "*ABC"
+        result.reason.should =~ /found "\*" instead of segment identifier/
       end
 
       it "returns a failure" do
         # Segment ID cannot start with segment terminator "~"
         reader = mkreader("~ABC")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "~ABC"
-        either.reason.should =~ /found "~" instead of segment identifier/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "~ABC"
+        result.reason.should =~ /found "~" instead of segment identifier/
       end
 
       it "returns a failure" do
         # Segment ID cannot start with a number
         reader = mkreader("0ABC")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "0ABC"
-        either.reason.should =~ /found "0ABC" instead of segment identifier/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "0ABC"
+        result.reason.should =~ /found "0ABC" instead of segment identifier/
       end
 
       it "returns a failure" do
         # Segment ID cannot be followed by component separator ":"
         reader = mkreader("ABC:")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "ABC:"
-        either.reason.should =~ /found ":" following segment identifier/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "ABC:"
+        result.reason.should =~ /found ":" following segment identifier/
       end
 
       it "returns a failure" do
         # Segment ID cannot be followed by repetition separator "^"
         reader = mkreader("ABC^")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "ABC^"
-        either.reason.should =~ /found "\^" following segment identifier/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "ABC^"
+        result.reason.should =~ /found "\^" following segment identifier/
       end
 
       it "returns a failure" do
         # Segment ID must be followed by element delimiter "~" or segment terminator "*"
         reader = mkreader("ABCD")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "ABCD"
-        either.reason.should =~ /found "D" following segment identifier/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "ABCD"
+        result.reason.should =~ /found "D" following segment identifier/
       end
     end
 
     context "when the input does not have a segment terminator" do
       it "returns a failure" do
         reader = mkreader("XYZ*A*B")
-        either = reader.read_segment
-        either.should_not be_defined
-        either.remainder.should == "B"
-        either.reason.should =~ /reached end of input/
+        result = reader.read_segment
+        result.should be_fatal
+        result.should_not be_defined
+        result.remainder.should == "B"
+        result.reason.should =~ /reached end of input/
       end
     end
 
     context "when the input starts with an ise segment" do
       it "the remainder is a StreamReader" do
         reader = mkreader("IEA~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :IEA
           value.should have(0).element_toks
           remainder.input.should == "..."
@@ -302,9 +310,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "the remainder is a StreamReader" do
         reader = mkreader("IEA*A*B~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :IEA
           value.should have(2).element_toks
           remainder.input.should == "..."
@@ -316,9 +324,9 @@ describe Stupidedi::Reader::TokenReader do
     context "when the input contains no elements" do
       it "returns the empty segment token" do
         reader = mkreader("ABC~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :ABC
           value.should have(0).element_toks
           remainder.input.should == "..."
@@ -327,18 +335,18 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the remaining input" do
         reader = mkreader("ABC~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map{|value, remainder| remainder.input.should == "..." }
+        result = reader.read_segment
+        result.should be_defined
+        result.map{|value, remainder| remainder.input.should == "..." }
       end
     end
 
     context "when the input contains one element" do
       it "returns the segment token" do
         reader = mkreader("ABC*O~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :ABC
           value.should have(1).element_toks
           value.element_toks.head.value.should == "O"
@@ -347,9 +355,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the segment token" do
         reader = mkreader("ABC*~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :ABC
           value.should have(1).element_toks
           value.element_toks.head.value.should == ""
@@ -358,18 +366,18 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the remaining input" do
         reader = mkreader("ABC*O~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map{|value, remainder| remainder.input.should == "..." }
+        result = reader.read_segment
+        result.should be_defined
+        result.map{|value, remainder| remainder.input.should == "..." }
       end
     end
 
     context "when the input contains many elements" do
       it "returns the segment token" do
         reader = mkreader("ABC*M*N*O~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :ABC
           value.should have(3).element_toks
           value.element_toks.map(&:value).should == %w(M N O)
@@ -378,9 +386,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the segment token" do
         reader = mkreader("ABC***~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :ABC
           value.should have(3).element_toks
           value.element_toks.map(&:value).should == ["", "", ""]
@@ -389,9 +397,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the segment token" do
         reader = mkreader("ABC***O~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.id.should == :ABC
           value.should have(3).element_toks
           value.element_toks.map(&:value).should == ["", "", "O"]
@@ -400,9 +408,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the remaining input" do
         reader = mkreader("ABC*M*O~...")
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           remainder.input.should == "..."
         end
       end
@@ -421,9 +429,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the segment token" do
         reader = mkreader("SEG*W*X*Y*Z~...", separators, dictionary)
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           value.should have(4).element_toks
           value.element_toks.map(&:value).should == %w(W X Y Z)
         end
@@ -431,9 +439,9 @@ describe Stupidedi::Reader::TokenReader do
 
       it "returns the remaining input" do
         reader = mkreader("SEG*W*X*Y*Z~...", separators, dictionary)
-        either = reader.read_segment
-        either.should be_defined
-        either.map do |value, remainder|
+        result = reader.read_segment
+        result.should be_defined
+        result.map do |value, remainder|
           remainder.input.should == "..."
         end
       end
@@ -453,9 +461,9 @@ describe Stupidedi::Reader::TokenReader do
       context "with a repetition separator" do
         it "reads the separator as data" do
           reader = mkreader("SEG*W^X*Y^Z~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(2).element_toks
             value.element_toks.head.value.should == "W^X"
             value.element_toks.last.value.should == "Y^Z"
@@ -464,9 +472,9 @@ describe Stupidedi::Reader::TokenReader do
 
         it "returns the remaining input" do
           reader = mkreader("SEG*W^X*Y^Z~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             remainder.input.should == "..."
           end
         end
@@ -475,9 +483,9 @@ describe Stupidedi::Reader::TokenReader do
       context "with a component separator" do
         it "reads the separator as data" do
           reader = mkreader("SEG*W:X*Y:Z~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(2).element_toks
             value.element_toks.head.value.should == "W:X"
             value.element_toks.last.value.should == "Y:Z"
@@ -486,9 +494,9 @@ describe Stupidedi::Reader::TokenReader do
 
         it "returns the remaining input" do
           reader = mkreader("SEG*W:X*Y:Z~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             remainder.input.should == "..."
           end
         end
@@ -517,9 +525,9 @@ describe Stupidedi::Reader::TokenReader do
       context "and one component" do
         it "returns the segment token" do
           reader = mkreader("SEG*W*X*Y~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.head.value.should == "W"
 
@@ -533,9 +541,9 @@ describe Stupidedi::Reader::TokenReader do
 
         it "returns the remaining input" do
           reader = mkreader("SEG*W*X*Y~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             remainder.input.should == "..."
           end
         end
@@ -544,9 +552,9 @@ describe Stupidedi::Reader::TokenReader do
       context "and many components" do
         it "returns the segment token" do
           reader = mkreader("SEG*W*X:Y*M:N~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.head.value.should == "W"
 
@@ -562,9 +570,9 @@ describe Stupidedi::Reader::TokenReader do
 
         it "returns the remaining input" do
           reader = mkreader("SEG*W*X:Y*M:N~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             remainder.input.should == "..."
           end
         end
@@ -573,9 +581,9 @@ describe Stupidedi::Reader::TokenReader do
       context "and too many components" do
         it "returns the segment token" do
           reader = mkreader("SEG*W*X::Z*M:N:O:P~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.head.value.should == "W"
             value.element_toks.at(1).component_toks.map(&:value).should == ["X", "", "Z"]
@@ -585,9 +593,9 @@ describe Stupidedi::Reader::TokenReader do
 
         it "returns the remaining input" do
           reader = mkreader("SEG*W*X:Y:Z*M:N:O:P~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             remainder.input.should == "..."
           end
         end
@@ -596,9 +604,9 @@ describe Stupidedi::Reader::TokenReader do
       context "and a component with a repetition separator" do
         it "returns the segment token" do
           reader = mkreader("SEG*W*X^Y:Z*M:N^O~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.head.value.should == "W"
             value.element_toks.at(1).component_toks.map(&:value).should == %w(X^Y Z)
@@ -622,9 +630,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has no occurances of a repeatable simple element" do
         it "returns the segment token" do
           reader = mkreader("SEG**~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(2).element_toks
             value.element_toks.head.value.should == ""
           # value.element_toks.last.should have(0).element_toks
@@ -633,9 +641,9 @@ describe Stupidedi::Reader::TokenReader do
 
         it "returns the remaining input" do
           reader = mkreader("SEG**~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             remainder.input.should == "..."
           end
         end
@@ -644,9 +652,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has one occurance of a repeatable simple element" do
         it "returns the segment token" do
           reader = mkreader("SEG**X~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(2).element_toks
             value.element_toks.last.should have(1).element_toks
             value.element_toks.last.element_toks.head.value.should == "X"
@@ -657,9 +665,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has many occurances of a repeatable simple element" do
         it "returns the segment token" do
           reader = mkreader("SEG**X^Y~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(2).element_toks
             value.element_toks.last.should have(2).element_toks
             value.element_toks.last.element_toks.head.value.should == "X"
@@ -671,9 +679,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has too many occurances of a repeatable simple element" do
         it "returns the segment token" do
           reader = mkreader("SEG**X^Y^Z~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(2).element_toks
             value.element_toks.last.should have(3).element_toks
             value.element_toks.last.element_toks.map(&:value).should == %w(X Y Z)
@@ -704,9 +712,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has no occurances of a repeatable composite element" do
         it "returns the segment token" do
           reader = mkreader("SEG***~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
           # value.element_toks.at(1).should have(0).element_toks
           end
@@ -716,9 +724,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has one occurance of a repeatable composite element" do
         it "returns the segment token" do
           reader = mkreader("SEG**A:B*~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.at(1).should have(1).element_toks
             value.element_toks.at(1).element_toks.should have(1).element_toks
@@ -732,9 +740,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has many occurances of a repeatable composite element" do
         it "returns the segment token" do
           reader = mkreader("SEG**A:B^C:D*~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.at(1).element_toks.head.should have(2).component_toks
             value.element_toks.at(1).element_toks.head.component_toks.head.value.should == "A"
@@ -748,9 +756,9 @@ describe Stupidedi::Reader::TokenReader do
       context "when the input has too many occurances of a repeatable composite element" do
         it "returns the segment token" do
           reader = mkreader("SEG**A:B^C^D:E:F*~...", separators, dictionary)
-          either = reader.read_segment
-          either.should be_defined
-          either.map do |value, remainder|
+          result = reader.read_segment
+          result.should be_defined
+          result.map do |value, remainder|
             value.should have(3).element_toks
             value.element_toks.at(1).element_toks.head.should have(2).component_toks
             value.element_toks.at(1).element_toks.at(0).component_toks.head.value.should == "A"
