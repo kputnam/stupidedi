@@ -3,13 +3,13 @@ require "spec_helper"
 describe "Generating" do
   include NavigationMatchers
 
-  let(:config) { Stupidedi::Config.default }
-  let(:strict) { Stupidedi::Builder::BuilderDsl.build(config, true)  }
-  let(:lazy)   { Stupidedi::Builder::BuilderDsl.build(config, false) }
+  let(:config)  { Stupidedi::Config.default }
+  let(:strict)  { Stupidedi::Builder::BuilderDsl.build(config, true)  }
+  let(:relaxed) { Stupidedi::Builder::BuilderDsl.build(config, false) }
 
   context "unrecognized methods" do
     it "raises an exception" do
-      lambda { lazy.xyz }.should \
+      lambda { relaxed.xyz }.should \
         raise_error(NoMethodError)
     end
   end
@@ -25,27 +25,27 @@ describe "Generating" do
               "", version, 123456789, "1", "T", "")
     end
 
-    context "when strict" do
+    context "when non-strict" do
       it "quietly proceeds" do
         # 0050x isn't configured
-        isa(lazy, "0050x")
+        isa(relaxed, "0050x")
 
         # An invalid ISA segment was added
-        lazy.zipper.select{|z| z.node.invalid? }.should be_defined
+        relaxed.zipper.select{|z| z.node.invalid? }.should be_defined
 
         # It's parent is an InvalidEnvelopeVal
-        lazy.zipper.select{|z| z.parent.node.invalid? }.should be_defined
+        relaxed.zipper.select{|z| z.parent.node.invalid? }.should be_defined
       end
     end
 
-    context "when non-strict" do
+    context "when strict" do
       it "loudly complains" do
         lambda do
           isa(strict, "0050x")
         end.should raise_error('unknown interchange version "0050x"')
 
         # The ISA segment wasn't added
-        lazy.should be_empty
+        relaxed.should be_empty
       end
     end
   end
@@ -64,20 +64,20 @@ describe "Generating" do
       end
 
       it "on the first interchange" do
-        isa(lazy, ":", "^")
+        isa(relaxed, ":", "^")
 
-        lazy.machine.separators.component.should == ":"
-        lazy.machine.separators.repetition.should == "^"
+        relaxed.machine.separators.component.should == ":"
+        relaxed.machine.separators.repetition.should == "^"
       end
 
       it "on subsequent interchanges" do
-        isa(lazy, "$", "%")
-        isa(lazy, "@", "#")
+        isa(relaxed, "$", "%")
+        isa(relaxed, "@", "#")
 
-        lazy.machine.separators.component.should == "@"
-        lazy.machine.separators.repetition.should == "#"
+        relaxed.machine.separators.component.should == "@"
+        relaxed.machine.separators.repetition.should == "#"
 
-        lazy.machine.prev.tap do |machine|
+        relaxed.machine.prev.tap do |machine|
           machine.separators.component.should == "$"
           machine.separators.repetition.should == "%"
         end.should be_defined
@@ -109,13 +109,13 @@ describe "Generating" do
 
       context "when non-strict" do
         it "quietly proceeds" do
-          lambda { isa(lazy) }.should_not \
+          lambda { isa(relaxed) }.should_not \
             raise_error("required segment IEA is missing from interchange 00501")
 
-          lambda { isa(lazy) }.should_not \
+          lambda { isa(relaxed) }.should_not \
             raise_error("required segment IEA is missing from interchange 00501")
 
-          lazy.should_not be_first
+          relaxed.should_not be_first
         end
       end
     end
@@ -142,11 +142,11 @@ describe "Generating" do
 
       context "when non-strict" do
         it "quietly proceeds" do
-          lambda { isa(lazy) }.should_not \
+          lambda { isa(relaxed) }.should_not \
             raise_error("required element ISA06 is blank")
 
-          lazy.element(6).select{|e| e.node == "" }.should be_defined
-          lazy.element(6).select{|e| e.node.empty? }.should be_defined
+          relaxed.element(6).select{|e| e.node == "" }.should be_defined
+          relaxed.element(6).select{|e| e.node.empty? }.should be_defined
         end
       end
     end
@@ -175,11 +175,11 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(lazy) }.should_not \
+            lambda { isa(relaxed) }.should_not \
               raise_error("value XX not allowed in element ISA01")
 
-            lazy.element(1).select{|e| e.node == "XX" }.should be_defined
-            lazy.element(1).select{|e| e.node.invalid? }.should_not be_defined
+            relaxed.element(1).select{|e| e.node == "XX" }.should be_defined
+            relaxed.element(1).select{|e| e.node.invalid? }.should_not be_defined
           end
         end
       end
@@ -206,11 +206,11 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(lazy) }.should_not \
+            lambda { isa(relaxed) }.should_not \
               raise_error("invalid element ISA09")
 
-            lazy.element(9).select{|e| e.node.invalid? }.should be_defined
-            lazy.element(9).select{|e| e.node == "DATE" }.should_not be_defined
+            relaxed.element(9).select{|e| e.node.invalid? }.should be_defined
+            relaxed.element(9).select{|e| e.node == "DATE" }.should_not be_defined
           end
         end
       end
@@ -237,11 +237,11 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(lazy) }.should_not \
+            lambda { isa(relaxed) }.should_not \
               raise_error("invalid element ISA10")
 
-            lazy.element(10).select{|e| e.node.invalid? }.should be_defined
-            lazy.element(10).select{|e| e.node == "TIME" }.should_not be_defined
+            relaxed.element(10).select{|e| e.node.invalid? }.should be_defined
+            relaxed.element(10).select{|e| e.node == "TIME" }.should_not be_defined
           end
         end
       end
@@ -268,10 +268,10 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(lazy) }.should_not \
+            lambda { isa(relaxed) }.should_not \
               raise_error("invalid element ISA13")
 
-            lazy.element(13).select{|e| e.node.invalid? }.should be_defined
+            relaxed.element(13).select{|e| e.node.invalid? }.should be_defined
           end
         end
       end
@@ -300,11 +300,11 @@ describe "Generating" do
         
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(lazy) }.should_not \
+            lambda { setup(relaxed) }.should_not \
               raise_error
 
-            lazy.element(13).select{|e| e.node == 1234567890 }.should be_defined
-            lazy.element(13).select{|e| e.node.too_long? }.should be_defined
+            relaxed.element(13).select{|e| e.node == 1234567890 }.should be_defined
+            relaxed.element(13).select{|e| e.node.too_long? }.should be_defined
           end
         end
       end
@@ -346,11 +346,11 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(lazy) }.should_not \
+            lambda { setup(relaxed) }.should_not \
               raise_error("value is too long in element ISA06")
 
-            lazy.element(6).select{|e| e.node == "431777999xxxxxxxxxxx" }.should be_defined
-            lazy.element(6).select{|e| e.node.too_long? }.should be_defined
+            relaxed.element(6).select{|e| e.node == "431777999xxxxxxxxxxx" }.should be_defined
+            relaxed.element(6).select{|e| e.node.too_long? }.should be_defined
           end
         end
       end
@@ -390,11 +390,11 @@ describe "Generating" do
           it "proceeds quietly" do
             time = Time.now.utc
 
-            lambda { setup(lazy, time) }.should_not \
+            lambda { setup(relaxed, time) }.should_not \
               raise_error("value is too short in element ISA10")
 
-            lazy.element(10).select{|e| e.node.hour == time.hour }.should be_defined
-            lazy.element(10).select{|e| e.node.too_short? }.should be_defined
+            relaxed.element(10).select{|e| e.node.hour == time.hour }.should be_defined
+            relaxed.element(10).select{|e| e.node.too_short? }.should be_defined
           end
         end
       end
@@ -425,10 +425,10 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(lazy) }.should_not \
+            lambda { setup(relaxed) }.should_not \
               raise_error("value is too long in element GS04")
 
-            lazy.element(4).select{|e| e.node.year.should == 22222 }.should be_defined
+            relaxed.element(4).select{|e| e.node.year.should == 22222 }.should be_defined
           end
         end
       end
@@ -459,10 +459,10 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(lazy) }.should_not \
+            lambda { setup(relaxed) }.should_not \
               raise_error("value is too short in element GS04")
 
-            lazy.element(4).select{|e| e.node.year.should == 11 }.should be_defined
+            relaxed.element(4).select{|e| e.node.year.should == 11 }.should be_defined
           end
         end
       end
@@ -489,33 +489,33 @@ describe "Generating" do
       context "with default element placeholder" do
         context "when value cannot be inferred" do
           it "raises an error" do
-            setup(lazy, "005010X222")
+            setup(relaxed, "005010X222")
 
-            lambda { lazy.ST("837", lazy.default, "005010X222") }.should \
+            lambda { relaxed.ST("837", relaxed.default, "005010X222") }.should \
               raise_error("ST02 cannot be inferred")
           end
         end
 
         context "when blank value can be inferred" do
           it "generates an empty element" do
-            setup(lazy, "005010X221")
+            setup(relaxed, "005010X221")
 
-            lambda { lazy.ST("835", "CONTROLNUM", lazy.default) }.should_not \
+            lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }.should_not \
               raise_error("ST02 cannot be inferred")
 
-            lazy.element(3).select{|e| e.node == "" }.should be_defined
-            lazy.element(3).select{|e| e.node.blank? }.should be_defined
+            relaxed.element(3).select{|e| e.node == "" }.should be_defined
+            relaxed.element(3).select{|e| e.node.blank? }.should be_defined
           end
         end
 
         context "when non-empty value can be inferred" do
           it "generates a non-empty element value" do
-            setup(lazy, "005010X222")
+            setup(relaxed, "005010X222")
 
-            lambda { lazy.ST("837", "CONTROLNUM", lazy.default) }.should_not \
+            lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }.should_not \
               raise_error("ST02 cannot be inferred")
 
-            lazy.element(3).select{|e| e.node == "005010X222" }.should be_defined
+            relaxed.element(3).select{|e| e.node == "005010X222" }.should be_defined
           end
         end
       end
@@ -523,21 +523,21 @@ describe "Generating" do
       context "with not_used element placeholder" do
         context "when element is declared forbidden" do
           it "generates an empty element" do
-            setup(lazy, "005010X221")
+            setup(relaxed, "005010X221")
 
-            lambda { lazy.ST("835", "CONTROLNUM", lazy.not_used) }.should_not \
+            lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }.should_not \
               raise_error("ST03 is not forbidden")
 
-            lazy.element(3).select{|e| e.node == "" }.should be_defined
-            lazy.element(3).select{|e| e.node.blank? }.should be_defined
+            relaxed.element(3).select{|e| e.node == "" }.should be_defined
+            relaxed.element(3).select{|e| e.node.blank? }.should be_defined
           end
         end
 
         context "when element is not declared forbidden" do
           it "generates a non-empty element value" do
-            setup(lazy, "005010X222")
+            setup(relaxed, "005010X222")
 
-            lambda { lazy.ST("837", "CONTROLNUM", lazy.not_used) }.should \
+            lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }.should \
               raise_error("ST03 is not forbidden")
           end
         end
