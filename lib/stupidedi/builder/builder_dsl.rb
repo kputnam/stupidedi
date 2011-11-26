@@ -184,8 +184,7 @@ module Stupidedi
             "table #{zipper.node.definition.id}"
 
         elsif zipper.node.transaction_set?
-          critique_occurences zipper,
-            "functional group #{zipper.node.definition.id}"
+          # @todo
 
         elsif zipper.node.functional_group?
           critique_occurences zipper,
@@ -196,7 +195,6 @@ module Stupidedi
             "interchange #{zipper.node.definition.id}"
 
         elsif zipper.node.transmission?
-          # puts "transmission: ???"
           # @todo
         end
       end
