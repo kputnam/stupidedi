@@ -178,7 +178,11 @@ module Stupidedi
               "#{designator} has only #{length} components"
           end
 
-          Either.success(value.child(n - 1))
+          if value.node.empty?
+            Either.failure("#{designator} is empty")
+          else
+            Either.success(value.child(n - 1))
+          end
         end
       end
 
