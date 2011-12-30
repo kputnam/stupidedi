@@ -467,11 +467,9 @@ module Stupidedi
                 # PLB segment followed by a mandatory SE segment, so the table
                 # can begin with PLB or SE. When the user searches for SE, we
                 # might descend into the table and see PLB, but this flag means
-                # we should search the sibling segments, too (SE).
+                # we should keep searching through the sibling segments, too (SE).
                 multi   = _value.node.table?
-                multi &&= target.instructions.count do |x|
-                  x.segment_use.try(:parent) == op.segment_use.parent
-                end > 1
+                multi &&= 1 < target.instructions.count{|x| x.segment_use.try(:parent) == op.segment_use.parent }
 
                 # Descend to the first segment
                 until _value.node.segment?
@@ -494,7 +492,7 @@ module Stupidedi
                       break if __filter?(filter_tok, _value.node)
                     end
 
-                    # Synchronize the two parallel state and value nodes
+                    # This node will do. Synchronize the two parallel state and value nodes
                     unless _value.eql?(_state.node.zipper)
                       _state = _state.replace(_state.node.copy(:zipper => _value))
                     end
@@ -505,7 +503,7 @@ module Stupidedi
                   elsif invalid and _value.node.invalid?
                     break if __filter?(filter_tok, _value.node)
 
-                    # Synchronize the two parallel state and value nodes
+                    # This node will do. Synchronize the two parallel state and value nodes
                     unless _value.eql?(_state.node.zipper)
                       _state = _state.replace(_state.node.copy(:zipper => _value))
                     end
@@ -516,16 +514,11 @@ module Stupidedi
                   end
 
                   break unless multi
+                  break if _value.last?
 
                   # Scan through sibling nodes until we find another segment
                   _value = _value.next
                   _state = _state.next
-
-                  unless _value.node.segment?
-                    break if _value.last?
-                    _value = _value.next
-                    _state = _state.next
-                  end
 
                   # No more siblings
                   break unless _value.node.segment?
