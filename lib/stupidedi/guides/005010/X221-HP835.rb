@@ -573,7 +573,7 @@ module Stupidedi
                     b::Element(e::Required,    "Code List Qualifier Code", b::Values("HE", "RX")),
                     b::Element(e::Required,    "Remark Code")))))),
 
-          d::TableDef.detail("Table 3 - Summary",
+          d::TableDef.summary("Table 3 - Summary",
             b::Segment(100, s::PLB, "Provider Adjustment",
               r::Situational, d::RepeatCount.unbounded,
               b::Element(e::Required,    "Provider Identifier"),

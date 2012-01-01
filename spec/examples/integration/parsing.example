@@ -374,8 +374,8 @@ describe "Parsing" do
                            Ss(S(:SE),
                               R(:PLB)),
                          S(:SE) =>
-                           Ss(R(:PLB),    # @todo... should be X!
-                              R(:SE)))))) # @todo... should be X!
+                           Ss(X(:PLB),
+                              X(:SE))))))
         end
       end
 
@@ -395,8 +395,8 @@ describe "Parsing" do
                            Ss(S(:SE),
                               S(:PLB)),
                          S(:SE) =>
-                           Ss(R(:PLB), # @todo... should be X!
-                              R(:SE)), # @todo... should be X!
+                           Ss(X(:PLB),
+                              X(:SE)),
                          S(:PLB) =>
                            Ss(R(:PLB), # only one PLB
                               S(:SE))))))
@@ -417,35 +417,25 @@ describe "Parsing" do
                     S(:ST) =>
                       Ss(S(:LX) =>
                            Ss(S(:SE),
-                              S(:PLB)),
-                         #    S(:PLB, "9876543210"),
-                         #    S(:PLB, "0123456789")),
+                              S(:PLB),
+                              S(:PLB, "9876543210"),
+                              S(:PLB, "0123456789")),
                          S(:SE) =>
-                           Ss(R(:PLB), # @todo... should be X!
-                              R(:SE)), # @todo... should be X!
+                           Ss(X(:PLB),
+                              X(:SE)),
                          S(:PLB) =>
                            Ss(S(:PLB),
                               S(:PLB, "0123456789"),
                               R(:PLB, "9876543210"),
                               S(:SE)),
-                         #(:PLB, "0123456789") =>
-                         # Ss(R(:PLB, "0123456789"),
-                         #    R(:PLB, "9876543210"),
-                         #    S(:SE)),
+                         S(:PLB, "0123456789") =>
+                           Ss(R(:PLB, "0123456789"),
+                              R(:PLB, "9876543210"),
+                              S(:SE)),
                          S(:PLB, "9876543210") =>
                            Ss(R(:PLB, "9876543210"),
                               S(:PLB, "0123456789"),
                               S(:SE))))))
-
-          # There is still an issue to work out in Navigation#__find, as
-          # filters on element contents (eg PLB*0123456789) that fail on
-          # the first PLB cause the search to abort early, instead of
-          # trying the next PLB segment.
-
-          # Also, the order constraints between PLB and SE segments aren't
-          # being validated. The grammar indicates PLB cannot occur after
-          # an SE segment, and it also indicates an SE segment may only
-          # occur once.
         end
       end
     end
