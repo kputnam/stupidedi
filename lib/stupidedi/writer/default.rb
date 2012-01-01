@@ -38,7 +38,7 @@ module Stupidedi
             separators = value.separators.merge(@separators)
 
             raise Exceptions::OutputError,
-              "separators.segment cannot be blank" if separators.segment.blank?
+              "separators.segment cannot be blank" if separators.segment.empty?
 
             raise Exceptions::OutputError,
               "separators.element cannot be blank" if separators.element.blank?
@@ -65,6 +65,12 @@ module Stupidedi
       end
 
       def segment(s, separators, out)
+        # It's likely annoying for the user to need to check for at least
+        # one non-blank element before generating a segment. Instead, we
+        # can check that after the segment was generated and supress any
+        # empty segments here.
+        return if s.empty?
+
         out << s.id.to_s
 
         # Trailing empty elements (including component elements) can be omitted,
