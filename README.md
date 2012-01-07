@@ -12,28 +12,17 @@ will love to hate EDI.
 
 ## What problem does it solve?
 
-The motivation for developing Stupidedi was to implement HIPAA 5010
-compliance for medical billing companies. This requires sending health
-care claims to insurance carriers and receiving payments from them.
+Transaction set specifications can be enormous, boring, and vague.
+Trading partners can demand strict adherence (often to their own unique
+interpretation of the specification) of the documents you generate.
+However, documents they generate themselves are often non-standard
+and require flexibility to parse them.
 
-HIPAA transaction set specifications are enormous, boring, and vague.
-These vague specifications provide ammunition for insurance carriers
-to reject health care claims and deny payments. On the other hand,
-carriers have little motivation to ensure the same level of conformance
-in the receipts they generate, imposing a burden on payee to deal
-with any deviations from the spec.
-
-To state the problem simply, when *generating* X12 documents you need
-to ensure strict conformance with tedious specifications. But when
-*receiving* X12 documents you need to relax and gracefully handle
-non-conforming documents.
-
-## How does it solve the problem?
-
-Specifications are represented as plain Ruby data structures, which
-are analogous to an XML schema. Two levels of validation are achieved
-by layering a DSL which performs extra validation on top of an otherwise
-error-tolerant parser.
+Stupidedi enables you to encode these transaction set specifications
+directly in Ruby. From these specifications, it will generate a parser
+to read incoming messages and a DSL to generate outgoing messages. This
+approach has a huge advantage of writing a parser from scratch, which
+can be error-prone and difficult to change.
 
 Significant thought was put into the design of the library. Some of
 the features are described here.
@@ -42,8 +31,11 @@ the features are described here.
 
 Delimiters, line breaks, and out-of-band data between interchanges are
 handled correctly. While many trading partners follow common conventions,
-it only takes one deviant, swapping the ":" and "~" delimiters, to render
-your quick-and-dirty regexp parser useless.
+it only takes one unexpected deviation, like swapping the ":" and "~"
+delimiters, to render a hand-written parser broken.
+
+Stupidedi handles many edge cases that can only be anticipated by reading
+carefully between the lines of the X12 documentation.
 
 ### Instant feedback on error conditions
 
@@ -62,10 +54,13 @@ been generated, while some don't perform validation at all.
 ## Why not use a commercial EDI translator?
 
 Because enterprise software is garbage. The costs include not only
-licensing, but support, maintenance, and training. Translators are
-designed to convert EDI to some other format, like XML, CSV, or a
-relational database. This doesn't achieve anything productive, as
-we still have to unserialize the data to do anything with it.
+licensing, but support, maintenance, and training.
+
+Most importantly, commercial EDI translators solve a different set
+of problems. Many focus on translating between EDI and another data
+format, like XML, CSV, or a relational database. This isn't particularly
+productive, as you still have to unserialize the data to do
+anything with it.
 
 ## What doesn't it solve?
 
@@ -79,6 +74,8 @@ commercial EDI translators have, so it...
 * Doesn't queue messages for delivery or receipt
 * Doesn't generate acknowledgements
 * Doesn't have a graphical interface
+
+These can be accomplished using other libraries or your own code.
 
 ## Alternative libraries
 
