@@ -106,7 +106,7 @@ module Stupidedi
       # occurrence of a repeated element and/or a specific component from a
       # composite element.
       #
-      # @return [Either<Zipper::AbstractCUrsor<Values::AbstractElementVal>>]
+      # @return [Either<Zipper::AbstractCursor<Values::AbstractElementVal>>]
       def element(m, n = nil, o = nil)
         segment.flatmap do |s|
           unless m >= 1
