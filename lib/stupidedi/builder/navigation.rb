@@ -420,6 +420,16 @@ module Stupidedi
         __count(true, id, elements)
       end
 
+      def iterate(id, *elements)
+        m = find(id, *elements)
+        while m.defined?
+          m = m.flatmap do |n|
+            yield(n)
+            n.find(id, *elements)
+          end
+        end
+      end
+
     private
 
       # @return [Either<StateMachine>]
