@@ -337,7 +337,7 @@ module Stupidedi
 
       # Remove the current node, and navigate to the next (rightward) node if
       # one exists. Otherwise, navigate to the previous (leftward) node if one
-      # exists. Otherwise, create a placehold where the next sibling node will
+      # exists. Otherwise, create a placeholder where the next sibling node will
       # be created.
       #
       # @return [EditedCursor]
