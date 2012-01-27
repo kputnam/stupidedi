@@ -89,3 +89,128 @@ it. Here are a few alternative libraries:
 * http://edi4r.rubyforge.org/edi4r/
 * http://edival.sourceforge.net/
 * http://www.edidev.com/
+
+## Examples
+
+### Utilities
+
+Pretty print the syntax tree
+
+    $ ./bin/edi-pp spec/fixtures/X222-HC837/1-good.txt
+    ...
+            TableVal[Table 3 - Summary](
+              SegmentVal[SE: Transaction Set Trailer](
+                Nn.value[  E96: Number of Included Segments](45),
+                AN.value[ E329: Transaction Set Control Number](0021)))), 
+          SegmentVal[GE: Functional Group Trailer](
+            Nn.value[  E97: Number of Transaction Sets Included](1),
+            Nn.value[  E28: Group Control Number](1))), 
+        SegmentVal[IEA: Interchange Control Trailer](
+          Nn.value[  I16: Number of Included Functional Groups](1),
+          Nn.value[  I12: Interchange Control Number](905))))
+    49 segments
+    49 segments
+    0.140 seconds
+
+Perform validation on a file
+
+    $ ./bin/edi-ed spec/fixtures/X222-HC837/1-bad.txt
+    [AK905(file spec/fixtures/X222-HC837/1-bad.txt,
+           line 16, column 4, is not an allowed value,
+           ID.value[ E479: Functional Identifier Code](XX)),
+     IK304(file spec/fixtures/X222-HC837/1-bad.txt,
+           line 33, column 1,
+           missing N4 segment, NM1),
+     IK304(file spec/fixtures/X222-HC837/1-bad.txt,
+           line 35, column 1,
+           missing N4 segment, NM1)]
+    46 segments
+    0.177 seconds
+
+### Generating, Writing
+
+    require "stupidedi"
+
+    b = Stupidedi::Builder::BuilderDsl.build(Stupidedi::Config.default)
+
+    b.ISA("00", "", "00", "",
+          "ZZ", "SUBMITTER ID",
+          "ZZ", "RECEIVER ID",
+          "990531", "1230", nil, "00501", "123456789", "1", "T", nil)
+    b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
+    b. ST("837", "1234", b.default)
+    b.BHT("0019", "00", "X"*30, "19990531", Time.now.utc, "CH")
+    b.NM1(b.default, "1", "PREMIER BILLING SERVICE", "", "", "", "", "46", "12EEER000TY")
+    b.PER("IC", "JERRY THE CLOWN", "TE", "3056660000")
+    b.NM1("40", "2", "REPRICER JONES", "", "", "", "", "46", "66783JJT")
+    b. HL("1", "", "20", "1")
+    b.NM1("85", "2", "PREMIER BILLING SERVICE", "", "", "", "", "XX", "123234560")
+    b. N3("1234 SEAWAY ST")
+    b. N4("MIAMI", "FL", "331111234")
+    b.REF("EI", "123667894")
+    b.PER("IC", b.blank, "TE", "3056661111")
+    b.NM1("87", "2")
+    b. N3("2345 OCEAN BLVD")
+    b. N4("MIAMI", "FL", "33111")
+    b. HL("2", "1", "22", "0")
+    b.SBR("S", "18", "", "", "12", "", "", "", "MB")
+    b.NM1("IL", "1", "BACON", "KEVIN", "", "", "", "MI", "222334444")
+    b. N3("236 N MAIN ST")
+    b. N4("MIAMI", "FL", "33413")
+    b.DMG("D8", "19431022", "F")
+
+    b.machine.zipper.tap do |z|
+      separators =
+        Stupidedi::Reader::Separators.build(:segment    => "~\n",
+                                            :element    => "*",
+                                            :component  => ":",
+                                            :repetition => "^")
+
+      w = Stupidedi::Writer::Default.new(z.root, separators)
+      w.write($stdout)
+    end
+
+### Reading, Traversing
+
+    require "stupidedi"
+
+    config = Stupidedi::Config.default
+    parser = Stupidedi::Builder::StateMachine.build(config)
+
+    input  = if RUBY_VERSION > "1.8"
+               File.open("spec/fixtures/X221-HP835/1-good.txt", :encoding => "ISO-8859-1")
+             else
+               File.open("spec/fixtures/X221-HP835/1-good.txt")
+             end
+
+    # Reader.build accepts IO (File), String, and DelegateInput
+    parser, result = parser.read(Stupidedi::Reader.build(input))
+
+    # Report fatal tokenizer failures
+    if result.fatal?
+      result.explain{|reason| raise reason + " at #{result.position.inspect}" }
+    end
+
+    # Utility method
+    def el(m, n, &block)
+      m.tap{|m| m.element(n).tap{|e| yield(e.node.value) }}
+    end
+
+    # Print some information
+    parser.first
+      .flatmap{|m| m.find(:GS) }
+      .flatmap{|m| m.find(:ST) }
+      .tap do |m|
+        el(m.find(:N1, "PR"), 2){|e| puts "First payer: #{e}" }
+        el(m.find(:N1, "PE"), 2){|e| puts "First payee: #{e}" }
+      end
+      .flatmap{|m| m.find(:LX) }
+      .flatmap{|m| m.find(:CLP) }
+      .flatmap{|m| m.find(:NM1, "QC") }
+      .tap do |m|
+        m.element(3).tap do |l|
+        m.element(4).tap do |f|
+          puts "First patient: #{l.node.value}, #{f.node.value}"
+        end
+        end
+      end
