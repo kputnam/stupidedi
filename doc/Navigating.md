@@ -13,11 +13,6 @@ document on {file:Generating.md Generating X12}. The [`StateMachine`][1] can be
 accessed via the [`BuilderDsl#machine`][4] method. For information about how
 to construct a parse tree from an input stream, see {file:Parsing.md Parsing X12}.
 
-  [1]: Stupidedi/Builder/StateMachine.html
-  [2]: Stupidedi/Values/LoopVal.html
-  [3]: Stupidedi/Values/TableVal.html
-  [4]: Stupidedi/Builder/BuilderDsl.html#machine-instance_method
-
 Iterating Segments
 ------------------
 
@@ -69,12 +64,6 @@ other method of [`SegmentVal`][5].
       puts "Hello, #{s.node.id}"
     end
 
-  [5]: Stupidedi/Values/SegmentVal.html
-  [6]: Stupidedi/Builder/Navigation.html#segment-instance_method
-  [7]: Stupidedi/Zipper/AbstractCursor.html
-  [8]: Stupidedi/Either.html
-
-
 ### Going Forward
 
 The [`#next`][9] method returns a [`StateMachine`][1] positioned at the segment
@@ -99,8 +88,6 @@ is the last segment using the `#last?` method.
 
     machine.next
       #=> Either.failure("cannot move to next after last segment")
-
-  [9]: Stupidedi/Builder/Navigation.html#next-instance_method
 
 ### Going Backward
 
@@ -127,16 +114,12 @@ is the first segment using the `#first?` method.
     machine.prev
       #=> Either.failure("cannot move to prev before first segment")
 
-  [10]: Stupidedi/Builder/Navigation.html#prev-instance_method
-
 Accessing Elements
 ------------------
 
 Elements can be accessed using the [`#element`][11] method, which accepts up to
 three numeric arguments and requires at least one. Like [`#segment`][6], the
 return value is a [`AbstractCursor`][7] wrapped by an [`Either`][8].
-
-  [11]: Stupidedi/Builder/Navigation.html#element-instance_method
 
 ### Simple Elements
 
@@ -198,8 +181,6 @@ at the first `ISA` segment.
     machine.first.map(&:first?)
       #=> Either.success(true)
 
-  [12]: Stupidedi/Builder/Navigation.html#first-instance_method
-
 ### Last Segment
 
 Likewise, the [`#last`][13] method will position the [`StateMachine`][1] at the
@@ -209,8 +190,6 @@ at the last `IEA` segment.
 
     machine.last.map(&:last?)
       #=> Either.success(true)
-
-  [13]: Stupidedi/Builder/Navigation.html#last-instance_method
 
 ### Searching for Segments
 
@@ -344,8 +323,6 @@ backwards in the sequence of segments. The [`#parent`][15] method can only
 rewind to the segment defined by the grammar, so it will always find the same
 segment from a given starting position.
 
-  [15]: Stupidedi/Builder/Navigation.html#parent-instance_method
-
 #### Element Constraints
 
 Finding the next segment by identifier alone is often not specific enough. For
@@ -412,8 +389,6 @@ Or from a position where every reachable `NM1` segment is defined such that
 
     machine.find(:NM1, "XX")
       #=> "XX" is not allowed in NM101 (ArgumentError)
-
-  [14]: Stupidedi/Builder/Navigation.html#find-instance_method
 
 You can get a list of potentially reachable segments from the current position
 by calling [`#successors`][22], which returns one [`InstructionTable`][23] per
@@ -489,8 +464,8 @@ Provider Organization" of the first claim in the parse tree.
       map(&:node)
       #=> Either.success(AN.value[E1035: Billing Provider Last or Organizational Name](BEN KILDARE SERVICE))
 
-To iterate a sequence of segments with the same identifier, use the
-[`#flatmap`][17] method,
+You can use [`#flatmap`][17] to iterate a sequence of segments with the same
+identifier, or use [`#iterate`][25] which does the same thing.
 
     # Find the first HL segment
     position = machine.first.
@@ -511,6 +486,28 @@ To iterate a sequence of segments with the same identifier, use the
 Note that the value returned by the block given to [`#flatmap`][17] must return
 an instance of `Either` or a `TypeError` will be raised. The [`Object#try`][20]
 method is similar to [`#flatmap`][17] in many ways.
+
+#### Iterate
+
+The [`#iterate`][25] method is a convenience method that calls [`#find`][14]
+repeatedly with the given arguments, yielding its result to a block.
+
+    # Process each ST in the first ISA envelope
+    machine.first.flatmap do |isa|
+      isa.iterate(:GS) do |gs|
+        gs.iterate(:ST) do |st|
+          # ...
+        end
+      end
+    end
+
+Note that the search starts *ahead* of the current position, so the following
+`machine.first.flatmap{|m| m.iterate(:ISA) {|isa| ... }}` will never yield the
+first ISA segment in the document, because it started searching *after* `m`,
+which is the first ISA.
+
+Since [`#iterate`][25] calls [`#find`][14], it enforces the same [syntactic
+constraints](#Syntactic_Constraints).
 
 #### Side Effects
 
@@ -558,15 +555,6 @@ recover from the error.
     # is StateMachine or FalseClass
     result.defined?
       #=> true
-
-  [16]: Stupidedi/Either.html#map-instance_method
-  [17]: Stupidedi/Either.html#flatmap-instance_method
-  [18]: Stupidedi/Either.html#or-instance_method
-  [19]: Stupidedi/Either.html#tap-instance_method
-  [20]: Object.html#try-instance_method
-  [21]: Object.html#tap-instance_method
-  [22]: Stupidedi/Builder/InstructionTable.html
-  [23]: Stupidedi/Builder/StateMachine.html#successors-instance_method
 
 ### Word of Caution
 
@@ -629,5 +617,29 @@ all have the same element values, but have a different meaning.
 
 ### Resolution
 
-
+  [1]: Stupidedi/Builder/StateMachine.html
+  [2]: Stupidedi/Values/LoopVal.html
+  [3]: Stupidedi/Values/TableVal.html
+  [4]: Stupidedi/Builder/BuilderDsl.html#machine-instance_method
+  [5]: Stupidedi/Values/SegmentVal.html
+  [6]: Stupidedi/Builder/Navigation.html#segment-instance_method
+  [7]: Stupidedi/Zipper/AbstractCursor.html
+  [8]: Stupidedi/Either.html
+  [9]: Stupidedi/Builder/Navigation.html#next-instance_method
+  [10]: Stupidedi/Builder/Navigation.html#prev-instance_method
+  [11]: Stupidedi/Builder/Navigation.html#element-instance_method
+  [12]: Stupidedi/Builder/Navigation.html#first-instance_method
+  [13]: Stupidedi/Builder/Navigation.html#last-instance_method
+  [14]: Stupidedi/Builder/Navigation.html#find-instance_method
+  [15]: Stupidedi/Builder/Navigation.html#parent-instance_method
+  [16]: Stupidedi/Either.html#map-instance_method
+  [17]: Stupidedi/Either.html#flatmap-instance_method
+  [18]: Stupidedi/Either.html#or-instance_method
+  [19]: Stupidedi/Either.html#tap-instance_method
+  [20]: Object.html#try-instance_method
+  [21]: Object.html#tap-instance_method
+  [22]: Stupidedi/Builder/InstructionTable.html
+  [23]: Stupidedi/Builder/StateMachine.html#successors-instance_method
   [24]: Stupidedi/Builder/StateMachine.html#deterministic%3F-instance_method
+  [25]: Stupidedi/Builder/Navigation.html#iterate-instance_method
+
