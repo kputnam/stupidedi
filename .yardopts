@@ -1,16 +1,14 @@
+--readme          README.md
+--title           'Stupidedi Documentation'
+--markup          markdown
+
+--default-return  ''
+--hide-void-return
 --no-private
-
---output-dir doc/generated
---readme doc/README.md
-
---load ./yard/rspec-plugin/lib/yard-rspec.rb
---load ./yard/meta-plugin/lib/yard-meta.rb
-
---title 'Stupidedi Documentation'
-
---markup markdown
-
---asset doc/images:.
+--output-dir      doc/generated
+--asset           doc/images:.
+--load            ./yard/rspec-plugin/lib/yard-rspec.rb
+--load            ./yard/meta-plugin/lib/yard-meta.rb
 
 lib/**/*.rb
 spec/examples/**/*.example
