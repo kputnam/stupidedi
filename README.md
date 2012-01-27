@@ -32,7 +32,7 @@ can be error-prone and difficult to change.
 Significant thought was put into the design of the library. Some of
 the features are described here.
 
-### Highly robust tokenization and parsing
+### Robust tokenization and parsing
 
 Delimiters, line breaks, and out-of-band data between interchanges are
 handled correctly. While many trading partners follow common conventions,
@@ -52,11 +52,11 @@ been generated, while some don't perform validation at all.
 
 ### Encourages readable client code
 
-### Highly efficient parsing and traversing
+### Efficient parsing and traversing
 
 ### Helps developers gain familiarity
 
-## Why not use a commercial EDI translator?
+## Why not a commercial EDI translator?
 
 Because enterprise software is garbage. The costs include not only
 licensing, but support, maintenance, and training.
