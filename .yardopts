@@ -13,4 +13,4 @@
 lib/**/*.rb
 spec/examples/**/*.example
 
-- 'doc/*.md'
+- doc/*.md
