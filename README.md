@@ -1,5 +1,8 @@
 # Stupidedi
 
+* [GitHub project](http://github.com/kputnam/stupidedi)
+* [Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
+
 Stupidedi is a high-quality library for parsing, generating, validating,
 and manipulating ASC X12 EDI documents. Very roughly, it's jQuery for
 EDI.
