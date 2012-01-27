@@ -57,7 +57,7 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
     return unless owner[:describes]
 
     node = YARD::Registry.resolve(nil, owner[:describes], true)
-    spec = if statement.parameters.first
+    spec = if statement.parameters and statement.parameters.first
              statement.parameters.first.jump(:string_content).source
            else
              "untitled spec"

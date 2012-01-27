@@ -16,7 +16,7 @@ GEM
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.3.0)
     term-ansicolor (1.0.5)
-    yard (0.6.5)
+    yard (0.7.4)
 
 PLATFORMS
   ruby
@@ -29,4 +29,4 @@ DEPENDENCIES
   rdiscount (~> 1.6.8)
   rspec (~> 2.3.0)
   term-ansicolor
-  yard (~> 0.6.5)
+  yard (~> 0.7.4)
