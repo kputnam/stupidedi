@@ -63,7 +63,11 @@ class Array
     slice(n..-1) or []
   end
 
-  # Select all elements except the last `n` ones.
+  # Select the first `n` elements.
+  #
+  # @example
+  #   [1, 2, 3].take(2)  #=> [1, 2]
+  #   [1, 2, 3].take(0)  #=> []
   #
   # @return [Array]
   def take(n)
