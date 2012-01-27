@@ -20,6 +20,10 @@ class RSpecDescribeHandler < YARD::Handlers::Ruby::Base
       parse_block(statement.last.last, owner: pwner)
     end
   rescue YARD::Handlers::NamespaceMissingError
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 end
 
@@ -36,6 +40,10 @@ class RSpecContextHandler < YARD::Handlers::Ruby::Base
       parse_block(statement.last.last, owner: owner.merge(context: context))
     end
   rescue YARD::Handlers::NamespaceMissingError
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 end
 
@@ -49,7 +57,7 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
     return unless owner[:describes]
 
     node = YARD::Registry.resolve(nil, owner[:describes], true)
-    spec = if statement.parameters
+    spec = if statement.parameters.first
              statement.parameters.first.jump(:string_content).source
            else
              "untitled spec"
@@ -71,6 +79,10 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
             file: statement.file,
             line: statement.line,
             source: source ]
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 end
 
@@ -82,6 +94,10 @@ class RSpecCheckHandler < YARD::Handlers::Ruby::Base
     return unless statement.first
 
     parse_block(statement.first, owner: owner.merge(source: statement.source))
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 end
 
@@ -109,5 +125,9 @@ class RSpecPropertyHandler < YARD::Handlers::Ruby::Base
             file: statement.file,
             line: statement.line,
             source: owner[:source].strip ]
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 end
