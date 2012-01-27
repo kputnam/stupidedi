@@ -10,12 +10,12 @@ class AbstractMethodHandler < YARD::Handlers::Ruby::Base
     unless args.eql?(statement.parameters)
       if args.first.jump(:symbol, :ident).source == ":args"
         # :args => (...)
-        case args[1].type
+        case args[1].first.type
         when :qwords_literal
-          params = args[1].children.map(&:source)
+          params = args[1].first.children.map(&:source)
         else
           raise YARD::Parser::UndocumentableError,
-            "Need to add support for 'abstract :args => #{args[1].inspect}'"
+            "need to add support for #{args[1].first.type} 'abstract :args => #{args[1].first.inspect}'"
         end
       end
     end
@@ -44,6 +44,10 @@ class AbstractMethodHandler < YARD::Handlers::Ruby::Base
     unless object.has_tag?(:abstract)
       object.docstring.add_tag(YARD::Tags::Tag.new(:abstract, ""))
     end
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 
 private
@@ -102,6 +106,9 @@ class DelegateMethodHandler < YARD::Handlers::Ruby::MethodHandler
         o.namespace.groups |= [o.group]
       end
     end
-
+  rescue
+    $stderr.puts $!
+    $stderr.puts "\t" + $!.backtrace.join("\n\t")
+    throw $!
   end
 end
