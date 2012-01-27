@@ -31,6 +31,9 @@ module Stupidedi
     # @return [Either]
     abstract :explain, :args => %w(&block)
 
+    # @return [Object]
+    abstract :fetch, :args => %w(default)
+
     # @endgroup
     ###########################################################################
 
@@ -48,6 +51,10 @@ module Stupidedi
       # @return true
       def defined?
         true
+      end
+
+      def fetch(default)
+        @value
       end
 
       #########################################################################
@@ -165,6 +172,10 @@ module Stupidedi
       # @return false
       def defined?
         false
+      end
+
+      def fetch(default)
+        default
       end
 
       #########################################################################

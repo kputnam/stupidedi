@@ -193,9 +193,12 @@ Perform validation on a file
       result.explain{|reason| raise reason + " at #{result.position.inspect}" }
     end
 
-    # Utility method
-    def el(m, n, &block)
-      m.tap{|m| m.element(n).tap{|e| yield(e.node.value) }}
+    def el(m, *ns, &block)
+      if Stupidedi::Either === m
+        m.tap{|m| el(m, *ns, &block) }
+      else
+        yield(*ns.map{|n| m.element(*n).map(&:node).map(&:value).fetch(nil) })
+      end
     end
 
     # Print some information
@@ -203,16 +206,10 @@ Perform validation on a file
       .flatmap{|m| m.find(:GS) }
       .flatmap{|m| m.find(:ST) }
       .tap do |m|
-        el(m.find(:N1, "PR"), 2){|e| puts "First payer: #{e}" }
-        el(m.find(:N1, "PE"), 2){|e| puts "First payee: #{e}" }
+        el(m.find(:N1, "PR"), 2){|e| puts "Payer: #{e}" }
+        el(m.find(:N1, "PE"), 2){|e| puts "Payee: #{e}" }
       end
       .flatmap{|m| m.find(:LX) }
       .flatmap{|m| m.find(:CLP) }
       .flatmap{|m| m.find(:NM1, "QC") }
-      .tap do |m|
-        m.element(3).tap do |l|
-        m.element(4).tap do |f|
-          puts "First patient: #{l.node.value}, #{f.node.value}"
-        end
-        end
-      end
+      .tap{|m| el(m, 3, 4){|l,f| puts "Patient: #{l}, #{f}" }}
