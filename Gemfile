@@ -6,7 +6,7 @@ group :development do
   gem "rake",       "~> 0.8.7"
   gem "rcov",       "~> 0.9.9"
   gem "rspec",      "~> 2.3.0"
-  gem "yard",       "~> 0.6.5"
+  gem "yard",       "~> 0.7.4"
   gem "rdiscount",  "~> 1.6.8"
 
   gem "term-ansicolor"
