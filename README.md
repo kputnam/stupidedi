@@ -1,5 +1,7 @@
 # Stupidedi
 
+![Screenshot](https://raw.github.com/kputnam/stupidedi/master/doc/images/edi-pp.png)
+
 * [GitHub project](http://github.com/kputnam/stupidedi)
 * [Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
 
