@@ -56,7 +56,7 @@ been generated, while some don't perform validation at all.
 
 ### Helps developers gain familiarity
 
-## Why not a commercial EDI translator?
+## Why not a commercial translator?
 
 Because enterprise software is garbage. The costs include not only
 licensing, but support, maintenance, and training.
