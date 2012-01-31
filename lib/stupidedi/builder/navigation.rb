@@ -59,7 +59,7 @@ module Stupidedi
       #   m.distance(m)                          #=> Either.success(0)
       #   m.next(10).flatmap{|n| n.distance(m) } #=> Either.success(10)
       #
-      # @return [Integer]
+      # @return [Either<Integer>]
       #
       # @note This method uses AbstractCursor#between, which assumes the two
       #   cursors point to the same tree. If that is not the case, the results
