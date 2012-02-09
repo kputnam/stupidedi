@@ -1,5 +1,6 @@
 #!/bin/env/ruby
 require "stupidedi"
+require "pp"
 
 # Restructures the syntax tree so each transaction set is the only
 # child of its parent functional group, which is the only child of
