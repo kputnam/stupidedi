@@ -1,7 +1,12 @@
 require "bigdecimal"
 require "time"
 require "date"
-require "term/ansicolor" if $stdout.tty?
+
+begin
+  require "term/ansicolor" if $stdout.tty?
+rescue LoadError
+  warn "terminal color disabled. gem install term-ansicolor to enable"
+end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
