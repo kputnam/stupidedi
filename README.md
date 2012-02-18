@@ -69,11 +69,35 @@ EDI.
 
 ### Efficient parsing and traversing
 
-The API is designed almost exclusively using immutable data structures,
-making it thread-safe for runtimes that can utilize multiple cores. While
-immutability places higher demand on garbage collection, Stupidedi has
-been profiled and tuned to minimize the more significant bottlenecks.
+The parser is designed using immutable data structures, making it thread-safe
+for runtimes that can utilize multiple cores. While in certain cases,
+immutability places higher demand on garbage collection, this has been
+mitigated with careful optimization. Input is streamed incrementally, so
+large files aren't read into memory all at once.
 
+![Benchmark](https://raw.github.com/kputnam/stupidedi/master/notes/benchmark/throughput.png)
+
+    segments  1.9.3     1.9.2     rbx-head  jruby-1.6.6
+    ---------------------------------------------------
+    1680      2107.90   2007.17    503.14    317.52
+    3360      2461.54   2420.75    731.71    477.07
+    6720      2677.29   2620.90    950.63    685.15
+    13440     2699.88   2663.50   1071.00    897.50
+    26880     2558.54   2510.51   1124.50   1112.67
+    53760     2254.94   2164.16   1039.81   1292.62
+
+These benchmarks aren't scientific by any means. They were performed on a
+MacBook Pro, 2.2GHz Core i7 with 8GB RAM by using the X222-HC837 fixture data
+files. The results indicate the parser runtime is O(n), linear in the size of
+the input, but the drop in throughput at 13K+ segments is likely due to memory
+allocation. The steady increase in throughput on JRuby and Rubinus is probably
+attributable optimizations performed by the JIT compiler.
+
+Lastly, these results should approximate the performance of document generation
+with BuilderDSL, except there is room for optimization in the input stream
+tokenizer. Generation via the BuilderDSL API should have less overhead, as it
+skips the tokenizer. In typical real-world use, custom application logic and
+database access are going to bottleneck performance.
 
 ### Helps developers gain familiarity
 
