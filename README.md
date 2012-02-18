@@ -74,6 +74,7 @@ making it thread-safe for runtimes that can utilize multiple cores. While
 immutability places higher demand on garbage collection, Stupidedi has
 been profiled and tuned to minimize the more significant bottlenecks.
 
+
 ### Helps developers gain familiarity
 
 ## Why not a commercial translator?
