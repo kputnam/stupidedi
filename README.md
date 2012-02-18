@@ -75,7 +75,7 @@ immutability places higher demand on garbage collection, this has been
 mitigated with careful optimization. Input is streamed incrementally, so
 large files aren't read into memory all at once.
 
-![Benchmark](https://raw.github.com/kputnam/stupidedi/master/notes/benchmark/benchmark.png)
+![Benchmark](https://raw.github.com/kputnam/stupidedi/master/notes/benchmark/throughput.png)
 
     segments  1.9.3     1.9.2     rbx-head  jruby-1.6.6
     ---------------------------------------------------
