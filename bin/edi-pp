@@ -2,6 +2,9 @@
 require File.expand_path("../../lib/stupidedi", __FILE__)
 require "pp"
 
+# Short-lived processes should win some peformance gains here
+GC.disable
+
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
 
@@ -27,29 +30,34 @@ config.functional_group.tap do |c|
 end
 
 config.transaction_set.tap do |c|
-  c.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
-  c.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
-  c.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
-  c.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
+# c.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
+# c.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
+# c.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
+# c.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
 
-  c.register("005010X214", "HN", "277", Stupidedi::Guides::FiftyTen::X214::HN277)
-  c.register("005010X221", "HP", "835", Stupidedi::Guides::FiftyTen::X221::HP835)
-  c.register("005010X222", "HC", "837", Stupidedi::Guides::FiftyTen::X222::HC837P)
-  c.register("005010X231", "FA", "999", Stupidedi::Guides::FiftyTen::X231::FA999)
+  c.register("005010X214", "HN", "277") { Stupidedi::Guides::FiftyTen::X214::HN277  }
+  c.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835  }
+  c.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }
+  c.register("005010X231", "FA", "999") { Stupidedi::Guides::FiftyTen::X231::FA999  }
 
-  c.register("005010X221A1", "HP", "835", Stupidedi::Guides::FiftyTen::X221A1::HP835)
-  c.register("004010X098A1", "HC", "837", Stupidedi::Guides::FiftyTen::X222A1::HC837P)
-  c.register("005010X222A1", "HC", "837", Stupidedi::Guides::FiftyTen::X222A1::HC837P)
-  c.register("005010X231A1", "FA", "999", Stupidedi::Guides::FiftyTen::X231A1::FA999)
+  c.register("005010X221A1", "HP", "835") { Stupidedi::Guides::FiftyTen::X221A1::HP835  }
+  c.register("004010X098A1", "HC", "837") { Stupidedi::Guides::FiftyTen::X222A1::HC837P }
+  c.register("005010X222A1", "HC", "837") { Stupidedi::Guides::FiftyTen::X222A1::HC837P }
+  c.register("005010X231A1", "FA", "999") { Stupidedi::Guides::FiftyTen::X231A1::FA999  }
 end
 
+config = Stupidedi::Config.default
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 
 ARGV.each do |path|
+  # Reading the entire input at once is slightly faster than streaming
+  # from a file handle.
+  # content   = File.read(path, :encoding => "ISO-8859-1")
+  # parser, r = parser.read(Stupidedi::Reader.build(content))
+
   File.open(path) do |io|
     parser, result = parser.read(Stupidedi::Reader.build(io))
-    pp result
   end
 end
 
@@ -58,6 +66,8 @@ stop = Time.now
 parser.zipper.map{|z| pp z.root.node }.
   explain { puts "Non-deterministic state" }
 
+=begin
+# Count number of segments by traversing the tree one segment at-a-time
 begin
   count  = 0
   cursor = parser.first
@@ -69,7 +79,9 @@ begin
 
   puts "#{count} segments"
 end
+=end
 
+# Count number of segments much more quickly
 begin
   a = parser.first
   b = parser.last
