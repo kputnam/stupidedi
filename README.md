@@ -57,15 +57,14 @@ details.
 
 ### Encourages readable client code
 
-Unlike other libraries, generating documents doesn't involve memorizing
-noisy identifiers from the specification (like C001 or LOOP2000), which
-identify elements of the grammar that don't actually appear in the output.
+Unlike other libraries, generating documents doesn't involve naming
+obscure identifiers from the specification (like C001, DE522 or LOOP2000),
+for elements of the grammar that don't actually appear in the output.
 
-Like HAML or BuilderXML, the DSL for generating documents closely matches
-terminology from the problem domain. You can see in the example below that
-code looks very similar to an EDI document (without the noisy delimiters).
-This makes it easy to understand, assuming a reasonable familiarity with
-EDI.
+Like HAML or Builder::XmlMarkup, the DSL for generating documents closely
+matches terminology from the problem domain. You can see in the example
+below that code looks very similar to an EDI document. This makes it easy
+to understand, assuming a reasonable familiarity with EDI.
 
 ### Efficient parsing and traversing
 
@@ -130,17 +129,18 @@ large files aren't read into memory all at once.
 </table>
 
 These benchmarks aren't scientific by any means. They were performed on a
-MacBook Pro, 2.2GHz Core i7 with 8GB RAM by using the X222-HC837 fixture data
-files. The results indicate the parser runtime is O(n), linear in the size of
-the input, but the drop in throughput at 13K+ segments is likely due to memory
-allocation. The steady increase in throughput on JRuby and Rubinus is probably
-attributable optimizations performed by the JIT compiler.
+MacBook Pro, 2.2GHz Core i7 with 8GB RAM by reading the X222-HC837 fixture data
+files, in serial. The results show the parser runtime is O(n), linear in the
+size of the input, but the drop in throughput at 13K+ segments is likely due to
+memory allocation. The steady increase in throughput on JRuby and Rubinus is
+probably attributable optimizations performed by the JIT compiler.
 
 Lastly, these results should approximate the performance of document generation
-with BuilderDSL, except there is room for optimization in the input stream
-tokenizer. Generation via the BuilderDSL API should have less overhead, as it
-skips the tokenizer. In typical real-world use, custom application logic and
-database access are going to bottleneck performance.
+with BuilderDSL, except BuilderDSL API should have less overhead, as it skips
+the tokenizer. On the other hand, BuilderDSL frequently queries the call stack
+to track provenance of elements in the parse tree. In common real-world use,
+custom application logic and database access are going to bottleneck performance,
+rather than Stupidedi.
 
 ### Helps developers gain familiarity
 
@@ -164,7 +164,8 @@ commercial EDI translators have, so it...
 * Doesn't generate acknowledgements
 * Doesn't have a graphical interface
 
-These can be accomplished using other libraries or your own code.
+These features are orthogonal to the problem Stupidedi aims to solve, but they
+can certainly be implemented with other code taking advantage of Stupidedi.
 
 ## Alternative libraries
 
@@ -177,6 +178,9 @@ it. Here are a few alternative libraries:
 * http://www.edidev.com/
 
 ## Examples
+
+In addition to these breif examples, see sample code in the `notes` directory
+and the human-readable Markdown documentation in `doc`.
 
 ### Utilities
 
