@@ -77,14 +77,57 @@ large files aren't read into memory all at once.
 
 ![Benchmark](https://raw.github.com/kputnam/stupidedi/master/notes/benchmark/throughput.png)
 
-    segments  1.9.3     1.9.2     rbx-head  jruby-1.6.6
-    ---------------------------------------------------
-    1680      2107.90   2007.17    503.14    317.52
-    3360      2461.54   2420.75    731.71    477.07
-    6720      2677.29   2620.90    950.63    685.15
-    13440     2699.88   2663.50   1071.00    897.50
-    26880     2558.54   2510.51   1124.50   1112.67
-    53760     2254.94   2164.16   1039.81   1292.62
+<table>
+  <tr>
+    <th>segments</th>
+    <th>1.9.3</th>
+    <th>1.9.2</th>
+    <th>rbx-head</th>
+    <th>jruby-1.6.6</th>
+  </tr>
+  <tr>
+    <td>1680</td>
+    <td>2107.90</td>
+    <td>2007.17</td>
+    <td>503.14</td>
+    <td>317.52</td>
+  </tr>
+  <tr>
+    <td>3360</td>
+    <td>2461.54</td>
+    <td>2420.75</td>
+    <td>731.71</td>
+    <td>477.07</td>
+  </tr>
+  <tr>
+    <td>6720</td>
+    <td>2677.29</td>
+    <td>2620.90</td>
+    <td>950.63</td>
+    <td>685.15</td>
+  </tr>
+  <tr>
+    <td>13440</td>
+    <td>2699.88</td>
+    <td>2663.50</td>
+    <td>1071.00</td>
+    <td>897.50</td>
+  </tr>
+  <tr>
+    <td>26880</td>
+    <td>2558.54</td>
+    <td>2510.51</td>
+    <td>1124.50</td>
+    <td>1112.67</td>
+  </tr>
+  <tr>
+    <td>53760</td>
+    <td>2254.94</td>
+    <td>2164.16</td>
+    <td>1039.81</td>
+    <td>1292.62</td>
+  </tr>
+</table>
 
 These benchmarks aren't scientific by any means. They were performed on a
 MacBook Pro, 2.2GHz Core i7 with 8GB RAM by using the X222-HC837 fixture data
@@ -190,36 +233,36 @@ b.ISA("00", "", "00", "",
 
 # The API tracks the current position in the specification (e.g., the current loop,
 # table, etc) to ensure well-formedness as each segment is generated.
-b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
+b.GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")
 
 # The `b.default` value can be used to generate the appropriate value if it can
 # be unambigously inferred from the grammar.
-b. ST("837", "1234", b.default)
+b.ST("837", "1234", b.default)
+  # You can use string representations of data or standard Ruby data types, like Time.
+  b.BHT("0019", "00", "X"*30, "19990531", Time.now.utc, "CH")
+  b.NM1(b.default, "1", "PREMIER BILLING SERVICE", "", "", "", "", "46", "12EEER000TY")
+  b.PER("IC", "JERRY THE CLOWN", "TE", "3056660000")
 
-# You can use string representations of data or standard Ruby data types, like Time.
-b.BHT("0019", "00", "X"*30, "19990531", Time.now.utc, "CH")
-b.NM1(b.default, "1", "PREMIER BILLING SERVICE", "", "", "", "", "46", "12EEER000TY")
-b.PER("IC", "JERRY THE CLOWN", "TE", "3056660000")
+  b.NM1("40", "2", "REPRICER JONES", "", "", "", "", "46", "66783JJT")
+    b.HL("1", "", "20", "1")
 
-b.NM1("40", "2", "REPRICER JONES", "", "", "", "", "46", "66783JJT")
-b. HL("1", "", "20", "1")
+  b.NM1("85", "2", "PREMIER BILLING SERVICE", "", "", "", "", "XX", "123234560")
+    b.N3("1234 SEAWAY ST")
+    b.N4("MIAMI", "FL", "331111234")
+    b.REF("EI", "123667894")
+    b.PER("IC", b.blank, "TE", "3056661111")
 
-b.NM1("85", "2", "PREMIER BILLING SERVICE", "", "", "", "", "XX", "123234560")
-b. N3("1234 SEAWAY ST")
-b. N4("MIAMI", "FL", "331111234")
-b.REF("EI", "123667894")
-b.PER("IC", b.blank, "TE", "3056661111")
+  b.NM1("87", "2")
+    b.N3("2345 OCEAN BLVD")
+    b.N4("MIAMI", "FL", "33111")
 
-b.NM1("87", "2")
-b. N3("2345 OCEAN BLVD")
-b. N4("MIAMI", "FL", "33111")
-b. HL("2", "1", "22", "0")
-b.SBR("S", "18", "", "", "12", "", "", "", "MB")
+b.HL("2", "1", "22", "0")
+  b.SBR("S", "18", "", "", "12", "", "", "", "MB")
 
-b.NM1("IL", "1", "BACON", "KEVIN", "", "", "", "MI", "222334444")
-b. N3("236 N MAIN ST")
-b. N4("MIAMI", "FL", "33413")
-b.DMG("D8", "19431022", "F")
+  b.NM1("IL", "1", "BACON", "KEVIN", "", "", "", "MI", "222334444")
+    b.N3("236 N MAIN ST")
+    b.N4("MIAMI", "FL", "33413")
+    b.DMG("D8", "19431022", "F")
 
 b.machine.zipper.tap do |z|
   # The :component, and :repitition parameters can also be specified as elements
@@ -262,6 +305,7 @@ if result.fatal?
   result.explain{|reason| raise reason + " at #{result.position.inspect}" }
 end
 
+# Helper function
 def el(m, *ns, &block)
   if Stupidedi::Either === m
     m.tap{|m| el(m, *ns, &block) }
