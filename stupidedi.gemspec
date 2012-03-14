@@ -22,4 +22,6 @@ Gem::Specification.new do |s|
   s.bindir            = "bin"
   s.executables       = ["edi-pp", "edi-ed"]
   s.require_path      = "lib"
+
+  s.add_dependency "term-ansicolor", "~> 1.0.7"
 end
