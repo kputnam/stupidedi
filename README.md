@@ -2,6 +2,7 @@
 
 ![Screenshot](https://raw.github.com/kputnam/stupidedi/master/doc/images/edi-pp.png)
 
+* [![Build Status](https://secure.travis-ci.org/kputnam/cantor.png)](http://travis-ci.org/kputnam/cantor)
 * [GitHub project](http://github.com/kputnam/stupidedi)
 * [Human Documentation](https://github.com/kputnam/stupidedi/tree/master/doc)
 * [API Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
