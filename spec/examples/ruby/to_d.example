@@ -34,7 +34,7 @@ describe Rational do
   describe "#to_d" do
     include QuickCheck::Macro
 
-    property("rational.to_d ≈ rational") do
+    property("rational.to_d ≈ rational", :ruby => "1.8") do
       Rational(integer, integer)
     end.check{|r| r.to_d.should be_within(1e-10).of(r) }
 
