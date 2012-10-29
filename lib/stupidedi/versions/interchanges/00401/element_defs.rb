@@ -50,6 +50,11 @@ module Stupidedi
               true
             end
 
+            # @return [String]
+            def to_x12
+              @value.to_s
+            end
+
             def inspect
               id = definition.try{|d| ansi.bold("[#{d.id}]") }
               ansi.element("SeparatorElementVal.value#{id}") << "(#{@value || "nil"})"
