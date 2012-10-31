@@ -1,2 +1,4 @@
 .yardoc
 doc/generated
+.rvmrc
+*.gem

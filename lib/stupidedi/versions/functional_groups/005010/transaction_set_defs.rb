@@ -39,6 +39,9 @@ module Stupidedi
           autoload :RA820, # Payment Order/Remittance Advice
             "stupidedi/versions/functional_groups/005010/transaction_set_defs/RA820"
 
+          autoload :STP820, # Payment Order/Remittance Advice
+            "stupidedi/versions/functional_groups/005010/transaction_set_defs/STP820"
+
         # # 005010X220 Benefit Enrollment and Maintenance
         # autoload :BE834, # Benefit Enrollment and Maintenance
         #   "stupidedi/versions/functional_groups/005010/transaction_set_defs/BE834"

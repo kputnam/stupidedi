@@ -137,6 +137,7 @@ module Stupidedi
               "APC" => s::CodeList.external("468"),
               "BB"  => "Authorization Number",
               "BLT" => "Billing Type",
+              "BM"  => "Bill of Lading Number",
               "BT"  => "Batch Number",
               "CE"  => "Class of Contract Code",
               "CPT" => s::CodeList.external("133"),
@@ -163,18 +164,23 @@ module Stupidedi
               "HPI" => s::CodeList.external("537"),
               "ICD" => s::CodeList.external("131"),
               "IG"  => "Insurance Policy Number",
+              "IV"  => "Seller's Invoice Number",
               "LOI" => s::CodeList.external("663"),
               "LU"  => "Location Number",
               "LX"  => "Qualified Products List",
               "MRC" => s::CodeList.external("844"),
               "NF"  => s::CodeList.external("245"),
               "P4"  => "Project Code",
+              "PO"  => "Purchase Order Number", 
               "PQ"  => "Payee Indentification",
               "PXC" => s::CodeList.external("682"),
               "RB"  => "Rate code number",
+              "R7"  => "Accounts Receivable Open Item",
               "SY"  => "Social Security Number",
               "T4"  => "Signal Code",
+              "TD"  => "Reason for Change",
               "TJ"  => "Federal Taxpayer's Identification Number",
+              "VV"  => "Voucher",
               "VY"  => "Link Sequence Number",
               "Y4"  => "Agency Claim Number",
               "X4"  => "Clinical Laboratory Improvement Amendment Number",
@@ -184,6 +190,7 @@ module Stupidedi
           E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
             s::CodeList.build(
               "277" => "Health Care Information Status Notification",
+              "820" => "Payment Order/Remittance Advice", 
               "835" => "Health Care Claim Payment/Advice",
               "837" => "Health Care Claim",
               "999" => "Implementation Acknowledgement"))
@@ -305,12 +312,15 @@ module Stupidedi
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
             s::CodeList.build(
+              "003" => "Invoice",
+              "004" => "Purchase Order",
               "009" => "Process",
               "011" => "Shipped",
               "036" => "Expiration",
               "050" => "Received",
               "090" => "Report Start",
               "091" => "Report End",
+              "092" => "Contract Effective",
               "096" => "Discharge",
               "150" => "Service Period Start",
               "151" => "Service Period End",
@@ -343,9 +353,20 @@ module Stupidedi
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
           E426  = t::ID.new(:E426 , "Adjustment Reason Code"               , 2, 2,
             s::CodeList.build(
+              "01" => "Pricing Error",
+              "03" => "Extension Error",
+              "04" => "Item Nnot Accepted - Damaged",
+              "05" => "Item Not Accepted - Quality",
+              "06" => "Quality Contested",
+              "07" => "Incorrect Product",
+              "11" => "Returns - Damage",
+              "12" => "Returns - Quality",
               "50" => "Late Charge",
               "51" => "Interest Penalty Charge",
+              "59" => "Item not received",
               "72" => "Authorized Return",
+              "75" => "Total order not received",
+              "81" => "Credit as Agreed",
               "90" => "Early Payment Allowance",
               "AH" => "Origination Fee",
               "AM" => "Applied to Borrower's Account",
@@ -355,6 +376,7 @@ module Stupidedi
               "BD" => "Bad Debt Adjustment",
               "BN" => "Bonus",
               "C5" => "Temporary Allowance",
+              "CM" => "Covered by Credit Memo",
               "CR" => "Capitation Interest",
               "CS" => "Adjustment",
               "CT" => "Capitation Payment",
@@ -422,6 +444,8 @@ module Stupidedi
             s::CodeList.build(
               "1" => "Current Transaction Trace Numbers",
               "2" => "Referenced Transaction Trace Numbers"))
+
+          E482 = t::AN.new(:E482 , "Payment Action Code"                    , 1, 1)
 
           E499  = t::AN.new(:E499 , "Condition Value"                      , 1, 10)
           E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
