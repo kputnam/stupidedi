@@ -188,7 +188,7 @@ module Stupidedi
                 d::LoopDef.build("LOOP 0325",
                   d::RepeatCount.bounded(99),
                   b::Segment(140, s::G61, "Contact",
-                    r::Required, d::RepeatCount.bounded(1),
+                    r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Situational, "Contact Function Code", b::Values("HM")),
                     b::Element(e::Situational, "Name"),
                     b::Element(e::Situational, "Communication Number Qualifier", b::Values("TE")),

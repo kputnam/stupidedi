@@ -47,14 +47,14 @@ module Stupidedi
                   s::AT8.use(135, r::Optional,  d::RepeatCount.bounded(1)),
 
                   d::LoopDef.build("0325", d::RepeatCount.bounded(99),
-                    s::G61.use(140, r::Mandatory, d::RepeatCount.bounded(1)),
+                    s::G61.use(140, r::Optional, d::RepeatCount.bounded(1)),
                     s::L11.use(135, r::Optional,  d::RepeatCount.bounded(30)),
 
                     d::LoopDef.build("0330", d::RepeatCount.bounded(25),
-                      s::LH1.use(143, r::Mandatory, d::RepeatCount.bounded(1)),
-                      s::LH2.use(144, r::Optional,  d::RepeatCount.bounded(4))),
-                      s::LH3.use(145, r::Optional,  d::RepeatCount.bounded(10))),
-                      s::LFH.use(146, r::Optional,  d::RepeatCount.bounded(20))))),
+                      s::LH1.use(143, r::Optional, d::RepeatCount.bounded(1)),
+                      s::LH2.use(144, r::Optional,  d::RepeatCount.bounded(4)),
+                      s::LH3.use(145, r::Optional,  d::RepeatCount.bounded(10)),
+                      s::LFH.use(146, r::Optional,  d::RepeatCount.bounded(20))))))),
 
             d::TableDef.detail("Summary",
               s:: L3.use(10, r::Optional,  d::RepeatCount.bounded(1)),
