@@ -8,6 +8,8 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
+          E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
+
           E140  = t::ID.new(:E140 , "Standard Carrier Alpha Code"          , 2, 4,
             s::CodeList.build(
               "RBTW" => "RBTW",
@@ -24,6 +26,8 @@ module Stupidedi
               "RFLB" => "RFLB",
               "RBHD" => "RBHD"))
 
+          E154  = t::ID.new(:E154 , "Standard Point Location Code"         , 6, 9)
+
           E145  = t::AN.new(:E145 , "Shipment Identification Number"       , 1, 30)
 
           E146  = t::ID.new(:E146 , "Shipment Method of Payment"           , 2, 2,
@@ -34,6 +38,18 @@ module Stupidedi
               "PU" => "Pickup",
               "TP" => "Third Party Pay"))
           
+          E147  = t::ID.new(:E147 , "Shipment Qualifier"                   , 1, 1)
+
+          E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
+
+          E460  = t::ID.new(:E460 , "Shipment Weight Code"                 , 1, 1)
+
+          E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
+
+          E335  = t::ID.new(:E335 , "Transportation Terms Code"            , 3, 3)
+
+          E591  = t::ID.new(:E591 , "Payment Method Code"                  , 3, 3)
+
           E353  = t::ID.new(:E353 , "Transaction Set Purpose Code"        , 2, 2,
             s::CodeList.build(
               "00" => "Original",
@@ -332,9 +348,9 @@ module Stupidedi
 
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
 
-          E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
+          E373  = t::DT.new(:E373 , "Date"                                 , 6, 6)
 
-          E337  = t::TM.new(:E337 , "Time"                                 , 4, 8)
+          E337  = t::TM.new(:E337 , "Time"                                 , 4, 4)
 
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
             s::CodeList.build(
@@ -357,6 +373,8 @@ module Stupidedi
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
             s::CodeList.external("881"))
+
+          E999  = t::AN.new(:E999 , "Not Available"                        , 1, 1)
 
         end
       end
