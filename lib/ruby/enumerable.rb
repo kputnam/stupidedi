@@ -16,7 +16,7 @@ module Enumerable
     else
       inject(0){|n, e| e == args.first ? n + 1 : n }
     end
-  end
+  end unless method_defined?(:count)
 
   # Accumulate elements using the `+` method, optionally
   # transforming them first using a block
@@ -31,5 +31,5 @@ module Enumerable
     else
       tail.inject(head){|sum,e| sum + e }
     end
-  end
+  end unless method_defined?(:sum)
 end

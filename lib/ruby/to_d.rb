@@ -6,7 +6,7 @@ class BigDecimal
   # @return [BigDecimal] self
   def to_d
     self
-  end
+  end unless method_defined?(:to_d)
 end
 
 class String
@@ -31,7 +31,7 @@ class String
     else
       raise ArgumentError, "#{inspect} is not a valid number"
     end
-  end
+  end unless method_defined?(:to_d)
 end
 
 class Integer
@@ -44,7 +44,7 @@ class Integer
   # @return [BigDecimal]
   def to_d
     BigDecimal(to_s)
-  end
+  end unless method_defined?(:to_d)
 end
 
 class Rational
@@ -57,7 +57,7 @@ class Rational
   # @return [BigDecimal]
   def to_d
     numerator.to_d / denominator.to_d
-  end
+  end unless method_defined?(:to_d)
 end
 
 class Float
@@ -77,5 +77,5 @@ class Float
     # The programmer should convert the Float to a String using whatever
     # precision he chooses, and call #to_d on the String.
     raise TypeError, "cannot convert Float to BigDecimal"
-  end
+  end unless method_defined?(:to_d)
 end
