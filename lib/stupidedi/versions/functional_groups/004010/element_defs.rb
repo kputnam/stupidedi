@@ -348,7 +348,7 @@ module Stupidedi
 
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
 
-          E373  = t::DT.new(:E373 , "Date"                                 , 6, 6)
+          E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
 
           E337  = t::TM.new(:E337 , "Time"                                 , 4, 4)
 
