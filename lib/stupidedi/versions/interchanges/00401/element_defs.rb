@@ -144,7 +144,7 @@ module Stupidedi
           I05 = t::ID.new(:I05, "Interchange ID Qualifier",               2,  2,
             s::CodeList.build(
               "01" => "Duns (Dun & Bradstreet)",
-            # "02" => "SCAC (Standard Carrier Alpha Code)",
+              "02" => "SCAC (Standard Carrier Alpha Code)",
             # "03" => "FMC (Federal Maritime Commission)",
             # "04" => "IATA (International Air Transport Association)",
             # "07" => s::CodeList.external("583"),
