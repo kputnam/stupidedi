@@ -69,19 +69,25 @@ module Stupidedi
     def default
       new.customize do |c|
         c.interchange.customize do |x|
+          x.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
           x.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
         end
 
         c.functional_group.customize do |x|
+          x.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
           x.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
         end
 
         c.transaction_set.customize do |x|
+          x.register("004010", "SM", "204") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::SM204 }
+          x.register("004010", "GF", "990") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::GF990 }
           x.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
           x.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
           x.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
           x.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
 
+          x.register("004010",     "SM", "204") { Stupidedi::Guides::FortyTen::X12::SM204  }
+          x.register("004010",     "GF", "990") { Stupidedi::Guides::FortyTen::X12::GF990  }
           x.register("005010X214", "HN", "277") { Stupidedi::Guides::FiftyTen::X214::HN277  }
           x.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835  }
           x.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }

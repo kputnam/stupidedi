@@ -226,6 +226,13 @@ module Stupidedi
 
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
 
+          E558  = t::ID.new(:E558 , "Reservation Action Code"              , 1, 1,
+            s::CodeList.build(
+              "A" => "Reservation Accepted",
+              "D" => "Reservation Cancelled"))
+
+          E61   = t::AN.new(:E61  , "Free-Form Message"                    , 1, 30)
+
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
 
           E23   = t::ID.new(:E23  , "Commodity Code Qualifier"             , 1, 1,
@@ -344,7 +351,8 @@ module Stupidedi
               "277" => "Health Care Information Status Notification",
               "835" => "Health Care Claim Payment/Advice",
               "837" => "Health Care Claim",
-              "204" => "Motor Carrier Load Tender"))
+              "204" => "Motor Carrier Load Tender",
+              "990" => "Response to a Load Tender"))
 
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
 
@@ -360,6 +368,7 @@ module Stupidedi
             s::CodeList.build(
               "BE" => "Benefit Enrollment and Maintenance",
               "FA" => "Functional or Implementation Acknowledgment Transaction Sets",
+              "GF" => "Response to a Load Tender",
               "HC" => "Health Care Claim",
               "HI" => "Health Care Services Review Information",
               "HN" => "Health Care Information Status Notification",
