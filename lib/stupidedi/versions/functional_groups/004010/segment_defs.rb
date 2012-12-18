@@ -16,6 +16,9 @@ module Stupidedi
           autoload :ST,
             "stupidedi/versions/functional_groups/004010/segment_defs/ST"
 
+          autoload :B1,
+            "stupidedi/versions/functional_groups/004010/segment_defs/B1"
+
           autoload :B2,
             "stupidedi/versions/functional_groups/004010/segment_defs/B2"
 
@@ -30,6 +33,9 @@ module Stupidedi
 
           autoload :G62,
             "stupidedi/versions/functional_groups/004010/segment_defs/G62"
+
+          autoload :K1,
+            "stupidedi/versions/functional_groups/004010/segment_defs/K1"
 
           autoload :L11,
             "stupidedi/versions/functional_groups/004010/segment_defs/L11"
@@ -72,6 +78,9 @@ module Stupidedi
 
           autoload :N7,
             "stupidedi/versions/functional_groups/004010/segment_defs/N7"
+
+          autoload :N9,
+            "stupidedi/versions/functional_groups/004010/segment_defs/N9"
 
           autoload :NTE,
             "stupidedi/versions/functional_groups/004010/segment_defs/NTE"

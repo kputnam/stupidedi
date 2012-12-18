@@ -32,9 +32,11 @@ end
 config.transaction_set.tap do |c|
 # c.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
 # c.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
-# c.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
+  c.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
+  c.register("004010", "GF", "990") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::GF990 }
 # c.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
 
+  c.register("004010",     "GF", "990") { Stupidedi::Guides::FortyTen::X12::GF990  }
   c.register("005010X214", "HN", "277") { Stupidedi::Guides::FiftyTen::X214::HN277  }
   c.register("005010X221", "HP", "835") { Stupidedi::Guides::FiftyTen::X221::HP835  }
   c.register("005010X222", "HC", "837") { Stupidedi::Guides::FiftyTen::X222::HC837P }
@@ -63,6 +65,7 @@ end
 
 stop = Time.now
 
+puts "Explain"
 parser.zipper.map{|z| pp z.root.node }.
   explain { puts "Non-deterministic state" }
 
@@ -81,6 +84,7 @@ begin
 end
 =end
 
+puts "Count"
 # Count number of segments much more quickly
 begin
   a = parser.first
