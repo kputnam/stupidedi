@@ -14,9 +14,7 @@ module Stupidedi
               s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
               s:: B1.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
               s:: N9.use( 30, r::Optional,  d::RepeatCount.bounded(1)),
-              s:: K1.use( 60, r::Optional,  d::RepeatCount.bounded(10))),
-
-            d::TableDef.detail("Summary",
+              s:: K1.use( 60, r::Optional,  d::RepeatCount.bounded(10)),
               s:: SE.use(70, r::Mandatory, d::RepeatCount.bounded(1))))
         end
       end

@@ -332,6 +332,98 @@ module Stupidedi
               "PM" => "Per Mile",
               "PL" => "Per Load"))
 
+          E554  = t::Nn.new(:E554 , "Assigned Number"                      , 1, 6, 0)
+
+          E1650 = t::ID.new(:E1650, "Shipment Status Code"                 , 2, 2,
+            s::CodeList.build(
+              "AF" => "Carrier Departed Pick-up Location with Shipment",
+              "AG" => "Estimated Delivery",
+              "AJ" => "Tendered for Delivery",
+              "C1" => "Estimated to Depart Terminal Location",
+              "D1" => "Completed Unloading at Delivery Location",
+              "X1" => "Arrived at Delivery Location",
+              "X3" => "Arrived at Pick-up Location",
+              "X6" => "En Route to Delivery Location"))
+
+          E1651 = t::ID.new(:E1651, "Shipment Status or Appointment Reason Code" , 2, 2,
+            s::CodeList.build(
+              "A1" => "Missed Delivery",
+              "A2" => "Incorrect Address",
+              "A3" => "Indirect Delivery",
+              "A5" => "Unable to Locate",
+              "A6" => "Address Corrected - Delivery Attempted",
+              "AA" => "Mis-sort",
+              "AD" => "Customer Requested Future Delivery",
+              "AE" => "Restricted Articles Unacceptable",
+              "AF" => "Accident",
+              "AG" => "Consignee Related",
+              "AH" => "Driver Related",
+              "AI" => "Mechanical Breakdown",
+              "AJ" => "Other Carrier Related",
+              "AK" => "Damaged, Rewrapped in Hub",
+              "AL" => "Previous Stop",
+              "AM" => "Shipper Related",
+              "AN" => "Holiday - Closed",
+              "AO" => "Weather or Natural Disaster Related",
+              "AQ" => "Recipient Unavailable - Delivery Delayed",
+              "AR" => "Improper International Paperwork",
+              "AS" => "Hold Due to Customs Documentation Problems",
+              "AT" => "Unable to Contact Recipent for Broker Information",
+              "AV" => "Exceeds Service Limitations",
+              "AW" => "Past Cut-off Time",
+              "AX" => "Insufficient Pick-up Time",
+              "AY" => "Missed Pick-up",
+              "AZ" => "Alternate Carrier Delivered",
+              "B1" => "Consignee Closed",
+              "B2" => "Trap for Customer",
+              "B5" => "Held for Consignee",
+              "B8" => "Improper Unloading Facility or Equipment",
+              "B9" => "Receiving Time Restriced",
+              "BB" => "Held per Shipper",
+              "BC" => "Missing Documents",
+              "BD" => "Border Clearance",
+              "BE" => "Road Conditions",
+              "BF" => "Carrier Keying Error",
+              "BG" => "Other",
+              "BH" => "Insufficient Time to Complete Delivery",
+              "BI" => "Cartage Agent",
+              "BL" => "Held for Protective Service",
+              "BS" => "Refused by Customer",
+              "BT" => "Returned to Shipper",
+              "C1" => "Waiting for Customer Pick-up",
+              "C2" => "Credit Hold",
+              "C3" => "Suspended at Customer Request",
+              "C4" => "Customer Vacation",
+              "C5" => "Customer Strike",
+              "C6" => "Waiting Shipping Instructions",
+              "C7" => "Waiting for Customer Specified Carrier",
+              "C8" => "Collect on Delivery Required",
+              "C9" => "Cash Not Available From Consignee",
+              "CA" => "Customs (Import or Export)",
+              "CB" => "No Requested Arrival Date Provided by Shipper",
+              "CC" => "No Requested Arrival Time Provided by Shipper",
+              "D1" => "Carrier Dispatch Error",
+              "D2" => "Driver Not Available",
+              "F2" => "International Non-carrier Delay",
+              "NA" => "Normal Appointment",
+              "NS" => "Normal Status",
+              "P1" => "Processing Delay",
+              "P2" => "Waiting Inspection",
+              "P3" => "Production Falldown",
+              "P4" => "Held for Full Carrier Load",
+              "RC" => "Reconsigned",
+              "T2" => "Tractor, Conventional, Not Available",
+              "T3" => "Trailer not Available",
+              "T4" => "Trailer Not Usable Due to Prior Product",
+              "T5" => "Trailer Class Not Available",
+              "T6" => "Trailer Volume Not Available",
+              "T7" => "Insufficent Delivery Time"))
+
+          E1652 = t::ID.new(:E1652, "Shipment Appointment Status Code"     , 2, 2,
+            s::CodeList.build(
+              "AA" => "Pick-up Appointment Date and/or Time",
+              "AB" => "Delivery Appointment Date and/or Time"))
+
           E58   = t:: R.new(:E58  , "Charge"                               , 1, 12)
 
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
@@ -352,6 +444,7 @@ module Stupidedi
               "835" => "Health Care Claim Payment/Advice",
               "837" => "Health Care Claim",
               "204" => "Motor Carrier Load Tender",
+              "214" => "Transportation Carrier Shipment Status Message",
               "990" => "Response to a Load Tender"))
 
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
