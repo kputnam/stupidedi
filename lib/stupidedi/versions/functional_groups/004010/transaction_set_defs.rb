@@ -4,6 +4,10 @@ module Stupidedi
       module FortyTen
         module TransactionSetDefs
 
+          # 004010X... Purchase Order
+          autoload :PO850, # Purchase Order
+            "stupidedi/versions/functional_groups/004010/transaction_set_defs/PO850"
+
           # 004010X... Motor Carrier Load Tender
           autoload :SM204, # Motor Carrier Load Tender
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/SM204"
