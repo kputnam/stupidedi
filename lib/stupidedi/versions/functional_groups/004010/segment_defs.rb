@@ -25,6 +25,15 @@ module Stupidedi
           autoload :B10,
             "stupidedi/versions/functional_groups/004010/segment_defs/B10"
 
+          autoload :BEG,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BEG"
+
+          autoload :CTT,
+            "stupidedi/versions/functional_groups/004010/segment_defs/CTT"
+
+          autoload :DTM,
+            "stupidedi/versions/functional_groups/004010/segment_defs/DTM"
+
           autoload :AT7,
             "stupidedi/versions/functional_groups/004010/segment_defs/AT7"
 
@@ -102,6 +111,18 @@ module Stupidedi
 
           autoload :PLD,
             "stupidedi/versions/functional_groups/004010/segment_defs/PLD"
+
+          autoload :PER,
+            "stupidedi/versions/functional_groups/004010/segment_defs/PER"
+
+          autoload :PID,
+            "stupidedi/versions/functional_groups/004010/segment_defs/PID"
+
+          autoload :PO1,
+            "stupidedi/versions/functional_groups/004010/segment_defs/PO1"
+
+          autoload :REF,
+            "stupidedi/versions/functional_groups/004010/segment_defs/REF"
 
           autoload :S5,
             "stupidedi/versions/functional_groups/004010/segment_defs/S5"

@@ -430,6 +430,8 @@ module Stupidedi
                               "D" => "Reservation Cancelled"
           ))
 
+          E559  = t::ID.new(:E559  , "Agency Qualifier Code"               , 2, 2)
+
           E567  = t::Nn.new(:E567  , "Equipment Length"                    , 4, 5, 0)
 
           E591  = t::ID.new(:E591 , "Payment Method Code"                  , 3, 3)
@@ -449,6 +451,11 @@ module Stupidedi
           E740  = t:: R.new(:E740 , "Range Minimum"                        , 1, 20)
 
           E741  = t:: R.new(:E741 , "Range Maximum"                        , 1, 20)
+          
+          E750  = t::ID.new(:E750 , "Product/Process Characteristic Code"  , 2, 3)
+
+          E751  = t::AN.new(:E751 , "Product Description Code"  , 1, 12)
+          
 
           E808  = t::ID.new(:E808 , "Hazardous Material Shipping Information Qualifier", 3, 3,
                             s::CodeList.build(
