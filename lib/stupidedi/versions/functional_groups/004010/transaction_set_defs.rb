@@ -8,6 +8,10 @@ module Stupidedi
           autoload :PO850, # Purchase Order
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/PO850"
 
+          # 004010X... Warehouse Stock Transfer
+          autoload :AR943, # Warehouse Stock Transfer
+            "stupidedi/versions/functional_groups/004010/transaction_set_defs/AR943"
+
           # 004010X... Motor Carrier Load Tender
           autoload :SM204, # Motor Carrier Load Tender
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/SM204"
