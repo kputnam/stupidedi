@@ -384,6 +384,8 @@ module Stupidedi
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
 
+          E382  = t::R.new(:E382, "Number of Units Shipped"                , 1, 10)
+
           E406  = t::Nn.new(:E406  , "Quantity of Pallets Shipped"         , 1, 3, 0)
 
           E432  = t::ID.new(:E432  , "Date Qualifier"                      , 2, 2,
@@ -394,6 +396,8 @@ module Stupidedi
                               "54" => "Deliver Not Later Than Date",
                               "64" => "Must Respond By"
           ))
+
+          E438  = t::AN.new(:E438, "U.P.C. Case Code"                      , 12, 12)
 
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
                             s::CodeList.build(
