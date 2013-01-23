@@ -274,6 +274,7 @@ module Stupidedi
                             s::CodeList.build(
           "L" => "Pounds"))
 
+          E206  = t::AN.new(:E206 , "Equipment Initial"                    , 1, 4)
 
           E207  = t::AN.new(:E207 , "Equipment Number"                     , 1, 10)
 

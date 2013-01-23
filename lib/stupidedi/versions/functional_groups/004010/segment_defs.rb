@@ -127,6 +127,10 @@ module Stupidedi
           autoload :S5,
             "stupidedi/versions/functional_groups/004010/segment_defs/S5"
 
+          autoload :W27,
+            "stupidedi/versions/functional_groups/004010/segment_defs/W27"
+
+
         end
       end
     end
