@@ -133,6 +133,12 @@ module Stupidedi
           autoload :W06,
             "stupidedi/versions/functional_groups/004010/segment_defs/W06"
 
+          autoload :W03,
+            "stupidedi/versions/functional_groups/004010/segment_defs/W04"
+
+          autoload :W04,
+            "stupidedi/versions/functional_groups/004010/segment_defs/W04"
+
 
         end
       end
