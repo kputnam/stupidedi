@@ -22,9 +22,7 @@ module Stupidedi
             d::TableDef.header("Table 2 - Detail",
               d::LoopDef.build("W04", d::RepeatCount.bounded(10000),
                 s::W04.use( 220, r::Mandatory,  d::RepeatCount.bounded(1)),
-                s::G69.use( 230, r::Optional,  d::RepeatCount.bounded(1)),
                 s::N9.use(240, r::Optional, d::RepeatCount.bounded(2)),
-                s::W20.use(250, r::Optional, d::RepeatCount.bounded(1))
               )
             ),
 

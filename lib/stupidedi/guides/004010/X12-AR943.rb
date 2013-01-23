@@ -14,7 +14,7 @@ module Stupidedi
         # Purchase Order
         #
         AR943 = b.build(t::AR943,
-          d::TableDef.header("Heading",
+          d::TableDef.header("Header",
             b::Segment(10, s:: ST, "Transaction Set Header", r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("943")),
               b::Element(e::Required,    "Transaction Set Control Number")),
@@ -36,8 +36,13 @@ module Stupidedi
             ),
 
             b::Segment(110, s::G62, "Date/Time Reference", r::Situational, d::RepeatCount.bounded(2),
-              b::Element(e::Required,    "Date/Time Qualifier", b::Values("002")),
-              b::Element(e::Situational,    "Date")),
+              b::Element(e::Situational,    "Date Qualifier"),
+              b::Element(e::Situational,    "Date"),
+              b::Element(e::Situational, "Time Qualifier"),
+              b::Element(e::Situational, "Time"),
+              b::Element(e::Situational, "Time Code")
+
+            ),
 
             b::Segment(130, s::W27, "Carrier Detail", r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transportation Method/Type Code", b::Values("M", "R")),
@@ -56,7 +61,7 @@ module Stupidedi
               b::Segment(10, s::W04, "Baseline Item Data", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Situational,    "Item Detail Total"),
                 b::Element(e::Situational,    "Unit or Basis for Measurement Code", b::Values("CS", "EA", "IP", "PL")),
-                b::Element(e::Optional,       "U.P.C. Case Code"),
+                b::Element(e::Situational,    "U.P.C. Case Code"),
                 b::Element(e::Situational,    "Product/Service ID Qualifier", b::Values("VN")),
                 b::Element(e::Situational,    "Product/Service ID")
               )
@@ -73,6 +78,8 @@ module Stupidedi
           d::TableDef.header("Summary",
             b::Segment(10, s::W03, "Total Shipment Information", r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Units Shipped"),
+              b::Element(e::Situational, "Weight"),
+              b::Element(e::Situational, "Unit or Basis for Measurement Code")
             ),
             b::Segment(30, s::SE, "Transaction Set Trailer", r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Included Segments"),

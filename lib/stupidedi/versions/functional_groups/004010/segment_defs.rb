@@ -134,7 +134,7 @@ module Stupidedi
             "stupidedi/versions/functional_groups/004010/segment_defs/W06"
 
           autoload :W03,
-            "stupidedi/versions/functional_groups/004010/segment_defs/W04"
+            "stupidedi/versions/functional_groups/004010/segment_defs/W03"
 
           autoload :W04,
             "stupidedi/versions/functional_groups/004010/segment_defs/W04"

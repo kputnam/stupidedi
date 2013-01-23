@@ -105,7 +105,8 @@ module Stupidedi
                               "CN" => "Consignee",
                               "SH" => "Shipper",
                               "SF" => "Ship From",
-                              "ST" => "Ship To"
+                              "ST" => "Ship To",
+                              "WH" => "Warehouse"
           ))
 
           E103  = t::ID.new(:E103 , "Packaging Code"                       , 3, 5,
@@ -173,6 +174,7 @@ module Stupidedi
                               "IX" => "Item Number",
                               "JB" => "Job (Project) Number",
                               "KK" => "Delivery Reference",
+                              "LI" => "Line Item Identifier",
                               "MB" => "Master Bill of Lading",
                               "OS" => "Outbound-from Party",
                               "P8" => "Pickup Reference Number",
@@ -202,7 +204,8 @@ module Stupidedi
                               "WGMA" => "WGMA",
                               "RBID" => "RBID",
                               "RFLB" => "RFLB",
-                              "RBHD" => "RBHD"
+                              "RBHD" => "RBHD",
+                              "CUST" => "CUST"
           ))
 
           E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 15)
@@ -215,6 +218,7 @@ module Stupidedi
                               "204" => "Motor Carrier Load Tender",
                               "214" => "Transportation Carrier Shipment Status Message",
                               "850" => "Purchase Order",
+                              "943" => "Warehouse Stock Transfer",
                               "990" => "Response to a Load Tender"
           ))
 
@@ -348,6 +352,8 @@ module Stupidedi
                              "LB" => "Pound",
                              "PL" => "Pallet/Unit Load",
                              "TK" => "Tank",
+                             "IP" => "Master Pack of %",
+                             "CS" => "Case Pack of %",
                              "ZZ" => "Mutually Defined"
           ))
 
@@ -390,6 +396,7 @@ module Stupidedi
 
           E432  = t::ID.new(:E432  , "Date Qualifier"                      , 2, 2,
                             s::CodeList.build(
+                              "17" => "Estimated Delivery Date",
                               "37" => "Ship Not Before Date",
                               "38" => "Ship Not Later Than Date",
                               "53" => "Deliver Not Before Date",
@@ -421,7 +428,8 @@ module Stupidedi
                               "SM" => "Motor Carrier Load Tender",
                               "TM" => "Motor Carrier Delivery Trailer Manifest",
                               "UP" => "Motor Carrier Pick-up Manifest",
-                              "PO" => "Purchase Order"
+                              "PO" => "Purchase Order",
+                              "AR" => "Warehouse Stock Transfer"
           ))
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
