@@ -54,8 +54,8 @@ module Stupidedi
 
               b::Segment(340, s:: N4, "Geographic Location", r::Situational, d::RepeatCount.unbounded,
                 b::Element(e::Situational,    "City Name"),
-                b::Element(e::Situational,    "State or Province Code")
-                b::Element(e::Situational,    "Postal Code")
+                b::Element(e::Situational,    "State or Province Code"),
+                b::Element(e::Situational,    "Postal Code"),
                 b::Element(e::Situational,    "Country Code")),
                 
               b::Segment(350, s::REF, "Reference Identification", r::Situational, d::RepeatCount.bounded(12),
