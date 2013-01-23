@@ -8,8 +8,8 @@ module Stupidedi
           e = ElementDefs
           r = ElementReqs
 
-          W04 = s::SegmentDef.build(:W04, "Warehouse Shipment Identification",
-            "To provide identifying numbers, dates, and other basic data for this transaction set",
+          W04 = s::SegmentDef.build(:W04, "Item Detail Total",
+            "To designate those line items that were shipped",
             e::E382.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E355.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::E438.simple_use(r::Optional, s::RepeatCount.bounded(1)),
