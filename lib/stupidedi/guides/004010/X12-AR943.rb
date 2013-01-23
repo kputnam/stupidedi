@@ -16,15 +16,19 @@ module Stupidedi
         AR943 = b.build(t::AR943,
           d::TableDef.header("Heading",
             b::Segment(10, s:: ST, "Transaction Set Header", r::Required, d::RepeatCount.bounded(1),
-              b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("850")),
+              b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("943")),
               b::Element(e::Required,    "Transaction Set Control Number")),
 
             b::Segment(20, s::W06, "Warehouse Shipment Identification", r::Required, d::RepeatCount.bounded(1),
+              b::Element(e::Required,    "Reporting Code", b::Values("F", "U")),
+              b::Element(e::Situational,    "Depositor Order Number"),
+              b::Element(e::Situational,    "Date"), 
+              b::Element(e::Situational,    "Shipment Identification Number"),
             ),
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(200),
               b::Segment(140, s:: N1, "Name", r::Situational, d::RepeatCount.bounded(3),
-                b::Element(e::Required,    "Entity Identifier Code", b::Values("SF", "ST")),
+                b::Element(e::Required,    "Entity Identifier Code", b::Values("WH")),
                 b::Element(e::Required,    "Name"),
                 b::Element(e::Situational, "Identification Code Qualifier", b::Values("91")),
                 b::Element(e::Situational, "Identification Code")),
@@ -36,6 +40,11 @@ module Stupidedi
               b::Element(e::Situational,    "Date")),
 
             b::Segment(130, s::W27, "Carrier Detail", r::Situational, d::RepeatCount.bounded(1),
+              b::Element(e::Required,    "Transportation Method/Type Code", b::Values("M", "R")),
+              b::Element(e::Situational, "Standard Carrier Alpha Code"),
+              b::Element(e::Situational, "Shipment Method of Payment", b::Values("CC", "PP")),
+              b::Element(e::Situational, "Equipment Initial"),
+              b::Element(e::Situational, "Equipment Number")
             )
 
 
@@ -47,6 +56,7 @@ module Stupidedi
               b::Segment(10, s::W04, "Baseline Item Data", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Situational,    "Item Detail Total"),
                 b::Element(e::Situational,    "Unit or Basis for Measurement Code", b::Values("CS", "EA", "IP", "PL")),
+                b::Element(e::Optional,       "U.P.C. Case Code"),
                 b::Element(e::Situational,    "Product/Service ID Qualifier", b::Values("VN")),
                 b::Element(e::Situational,    "Product/Service ID")
               )
