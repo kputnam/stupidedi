@@ -299,6 +299,8 @@ module Stupidedi
 
           E277  = t::ID.new(:E277 , "UN/NA Identification Code"            , 6, 6)
 
+          E285  = t::AN.new(:E285 , "Depositor Order Number"               , 1, 22)
+
           E324  = t::AN.new(:E324 , "Purchase Order Number"                , 1, 22)
 
           E328  = t::AN.new(:E328 , "Release Number"                       , 1, 30)
@@ -423,10 +425,7 @@ module Stupidedi
 
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
 
-          E514  = t::ID.new(:E514 ,
-            "Code specifying the basis used when reporting shipment information",
-            1,
-            1,
+          E514  = t::ID.new(:E514 , "Reporting Code"                       , 1, 1,
             s::CodeList.build(
               "F" => "Full Detail",
               "U" => "Update"
