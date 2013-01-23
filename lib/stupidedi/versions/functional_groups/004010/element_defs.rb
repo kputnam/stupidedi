@@ -423,6 +423,16 @@ module Stupidedi
 
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
 
+          E514  = t::ID.new(:E514 ,
+            "Code specifying the basis used when reporting shipment information",
+            1,
+            1,
+            s::CodeList.build(
+              "F" => "Full Detail",
+              "U" => "Update"
+            )
+          )
+
           E554  = t::Nn.new(:E554 , "Assigned Number"                      , 1, 6, 0)
 
           E558  = t::ID.new(:E558 , "Reservation Action Code"              , 1, 1,
