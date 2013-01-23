@@ -130,6 +130,9 @@ module Stupidedi
           autoload :W27,
             "stupidedi/versions/functional_groups/004010/segment_defs/W27"
 
+          autoload :W06,
+            "stupidedi/versions/functional_groups/004010/segment_defs/W06"
+
 
         end
       end
