@@ -88,6 +88,7 @@ module Stupidedi
                             s::CodeList.build(
                               "NE" => "New Order",
                               "DS" => "Drop Ship",
+                              "SA" => "Stand Alone",
                               "EO" => "Emergency Order",
                               "RO" => "Rush Order"
           ))
@@ -107,6 +108,9 @@ module Stupidedi
                               "SF" => "Ship From",
                               "ST" => "Ship To"
           ))
+
+          E100   = t::ID.new(:E100   , "Currency Code"              , 3, 3,
+                            s::CodeList.external("5"))
 
           E103  = t::ID.new(:E103 , "Packaging Code"                       , 3, 5,
                             s::CodeList.build(
@@ -171,6 +175,7 @@ module Stupidedi
                               "DP" => "Department Number",
                               "GZ" => "General Ledger Account",
                               "IX" => "Item Number",
+                              "LI" => "Letters or Notes",
                               "JB" => "Job (Project) Number",
                               "KK" => "Delivery Reference",
                               "MB" => "Master Bill of Lading",
@@ -291,7 +296,9 @@ module Stupidedi
 
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
                             s::CodeList.build(
-                              "VN" => "Vendor's (Seller's) Item Number"
+                              "VN" => "Vendor's (Seller's) Item Number",
+                              "VC" => "Vendor's (Seller's) Catalog Number",
+                              "VP" => "Vendor's (Seller's) Part Number"
           ))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
@@ -376,7 +383,12 @@ module Stupidedi
 
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
                             s::CodeList.build(
-                              "002" => "Delivery Requested"
+                              "001" => "Cancel after",
+                              "002" => "Delivery Requested",
+                              "010" => "Requested ship",
+                              "037" => "Ship not before",
+                              "038" => "Ship no later",
+                              "175" => "Cancel if not shipped by"
           ))
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)

@@ -31,6 +31,9 @@ module Stupidedi
           autoload :CTT,
             "stupidedi/versions/functional_groups/004010/segment_defs/CTT"
 
+          autoload :CUR,
+            "stupidedi/versions/functional_groups/004010/segment_defs/CUR"
+
           autoload :DTM,
             "stupidedi/versions/functional_groups/004010/segment_defs/DTM"
 
