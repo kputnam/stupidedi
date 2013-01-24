@@ -141,7 +141,7 @@ module Stupidedi
                 "argument must be positive"
             end
 
-            limit = value.node.definition.repeat_count
+            limit = value.node.usage.repeat_count
             unless limit.include?(n)
               raise ArgumentError,
                 "#{designator} can only occur #{limit.max} times"
