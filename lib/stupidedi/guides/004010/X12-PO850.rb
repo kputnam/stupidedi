@@ -27,6 +27,10 @@ module Stupidedi
               b::Element(e::Required,    "Date"),              
               ),
 
+            b::Segment(40, s::CUR, "Currency", r::Situational, d::RepeatCount.bounded(1),
+              b::Element(e::Required,    "Entity Identifier Code", b::Values("BT","BY","CN","SH","SF","ST"),
+              b::Element(e::Required,    "Currency Code")),
+
             b::Segment(50, s::REF, "Reference Identification", r::Situational, d::RepeatCount.unbounded,
               b::Element(e::Required,    "Reference Identification Qualifier", b::Values("ZZ", "OS")),
               b::Element(e::Situational,    "Reference Identification")),
@@ -72,7 +76,7 @@ module Stupidedi
                 b::Element(e::Situational,    "Unit or Basis for Measurement Code", b::Values("CA", "EA", "LB")),
                 b::Element(e::Situational,    "Unit Price"),
                 b::Element(e::Situational,    "Basis of Unit Price Code", b::values("PE","PP","UM")),
-                b::Element(e::Situational,    "Product/Service ID Qualifier", b::Values("VN")),
+                b::Element(e::Situational,    "Product/Service ID Qualifier", b::Values("VN", "VC")),
                 b::Element(e::Situational,    "Product/Service ID")
               )
             ),
