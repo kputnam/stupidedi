@@ -24,6 +24,8 @@ module Stupidedi
               b::Element(e::Situational,    "Depositor Order Number"),
               b::Element(e::Situational,    "Date"), 
               b::Element(e::Situational,    "Shipment Identification Number"),
+              b::Element(e::Situational,    "Not Used"),
+              b::Element(e::Situational,    "Purchase Order Number")
             ),
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(200),
