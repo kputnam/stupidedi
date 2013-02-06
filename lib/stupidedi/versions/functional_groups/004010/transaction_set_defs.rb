@@ -12,6 +12,10 @@ module Stupidedi
           autoload :AR943, # Warehouse Stock Transfer
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/AR943"
 
+          # 004010X... Warehouse Stock Transfer Receipt Advice
+          autoload :RE944, # Warehouse Stock Transfer Receipt Advice
+            "stupidedi/versions/functional_groups/004010/transaction_set_defs/RE944"
+
           # 004010X... Motor Carrier Load Tender
           autoload :SM204, # Motor Carrier Load Tender
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/SM204"
