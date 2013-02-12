@@ -22,7 +22,7 @@ module Stupidedi
             b::Segment(20, s:: W05, "Shipping Order Identification", r::Required, d::RepeadCount.bounded(1),
               b::Element(e::Required, "Order Status Code", b::Values("F", "N", "R")),
               b::Element(e::Required, "Depositor Order Number"),
-              b::Element(e::Situational, "Purchase Order Number"),
+              b::Element(e::Optional, "Purchase Order Number"),
               b::Element(e::Situational, "Link Sequence Number"),
               b::Element(e::Situational, "Master Reference Number")),
 
@@ -30,8 +30,8 @@ module Stupidedi
               b::Segment(40, s:: N1, "Name", r::Situational, d::RepeatCount.bounded(3),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("ST", "DE", "VN", "WH", "SF")),
                 b::Element(e::Required,    "Name"),
-                b::Element(e::Situational, "Identification Code Qualifier", b::Values("91", "9", "ZZ")),
-                b::Element(e::Situational, "Identification Code")),
+                b::Element(e::Required, "Identification Code Qualifier", b::Values("91", "9", "ZZ")),
+                b::Element(e::Required, "Identification Code")),
 
               b::Segment(50, s:: N2, "Additional Name Information", r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required, "Additional Name Information"),
@@ -39,12 +39,12 @@ module Stupidedi
 
               b::Segment(60, s:: N3, "Address Information", r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required, "Address Information"),
-                b::Element(e::Situational, "Address Information")),
+                b::Element(e::Optional, "Address Information")),
 
               b::Segment(70, s:: N4, "Geographic Location", r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required, "City Name"),
                 b::Element(e::Required, "State Code"),
-                b::Element(e::Situational, "Postal Code")),
+                b::Element(e::Optional, "Postal Code")),
 
             ),
 
