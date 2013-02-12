@@ -12,6 +12,7 @@ module Stupidedi
 
       module X12
         autoload :P0850,  "stupidedi/guides/004010/X12-PO850"
+        autoload :OW940,  "stupidedi/guides/004010/X12-OW940"
         autoload :AR943,  "stupidedi/guides/004010/X12-AR943"
         autoload :SM204,  "stupidedi/guides/004010/X12-SM204"
         autoload :QM214,  "stupidedi/guides/004010/X12-QM214"
