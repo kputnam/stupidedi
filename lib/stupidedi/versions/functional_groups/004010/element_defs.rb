@@ -218,6 +218,7 @@ module Stupidedi
                               "204" => "Motor Carrier Load Tender",
                               "214" => "Transportation Carrier Shipment Status Message",
                               "850" => "Purchase Order",
+                              "940" => "Warehouse Ship Order",
                               "943" => "Warehouse Stock Transfer",
                               "990" => "Response to a Load Tender"
           ))
@@ -392,6 +393,10 @@ module Stupidedi
 
           E382  = t::R.new(:E382, "Number of Units Shipped"                , 1, 10)
 
+          E387  = t::AN.new(:E387, "Routing"                               , 1, 35)
+
+          E399  = t::ID.new(:E399, "Pallet Exchange Code"                  , 1, 1)
+
           E406  = t::Nn.new(:E406  , "Quantity of Pallets Shipped"         , 1, 3, 0)
 
           E432  = t::ID.new(:E432  , "Date Qualifier"                      , 2, 2,
@@ -406,12 +411,25 @@ module Stupidedi
 
           E438  = t::AN.new(:E438, "U.P.C. Case Code"                      , 12, 12)
 
+          E451  = t::AN.new(:E451 , "Warehouse Lot Number"                 , 1, 12)
+
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
                             s::CodeList.build(
                               "X" => "Accredited Standards Committee X12"
           ))
 
           E460  = t::ID.new(:E460 , "Shipment Weight Code"                 , 1, 1)
+
+          E472  = t::AN.new(:E472  , "Link Sequence Number"                , 6, 6)
+
+          E473  = t::ID.new(:E473 , "Order Status Code"                    , 1, 1,
+                            s::CodeList.build(
+                              "F" => "Cancel",
+                              "N" => "Original",
+                              "R" => "Change"
+          ))
+          
+          E474  = t::AN.new(:E474 , "Master Reference Number"              , 1, 22)
 
           E479  = t::ID.new(:E479 , "Functional Identifier Code"           , 2, 2,
                             s::CodeList.build(
