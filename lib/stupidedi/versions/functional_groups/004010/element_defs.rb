@@ -79,6 +79,7 @@ module Stupidedi
                               "M" => "Motor (Common Carrier)",
                               "R" => "Rail",
                               "S" => "Ocean",
+                              "T" => "Best Way (Shippers Option)",
                               "U" => "Private Parcel Service",
                               "X" => "Intermodal (Piggyback)",
                               "LT" => "Less Than Trailer Load (LTL)"
@@ -183,6 +184,7 @@ module Stupidedi
                               "SI" => "Shipper's Identifying Number for Shipment (SID)",
                               "SN" => "Seal Number",
                               "WH" => "Master Reference (Link) Number",
+                              "BT" => "Bill To",
                               "ZZ" => "Mutually Defined"
           ))
 
@@ -297,7 +299,8 @@ module Stupidedi
 
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
                             s::CodeList.build(
-                              "VN" => "Vendor's (Seller's) Item Number"
+                              "VN" => "Vendor's (Seller's) Item Number",
+                              "UK" => "UPC/EAN Shipping Container Code"
           ))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
@@ -358,6 +361,10 @@ module Stupidedi
                              "ZZ" => "Mutually Defined"
           ))
 
+          E356  = t::R.new(:E356   , "Case/Inner Pack"                     , 1, 6)
+
+          E357  = t::R.new(:E357   , "Outer Pack"                          , 1, 8)
+
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
                             s::CodeList.build(
                               "ZZZ" => "Mutually Defined"
@@ -401,6 +408,9 @@ module Stupidedi
 
           E432  = t::ID.new(:E432  , "Date Qualifier"                      , 2, 2,
                             s::CodeList.build(
+                              "02" => "Requested Delivery Date",
+                              "04" => "Purchase Order Date",
+                              "10" => "Requested Ship Date",
                               "17" => "Estimated Delivery Date",
                               "37" => "Ship Not Before Date",
                               "38" => "Ship Not Later Than Date",
@@ -447,6 +457,7 @@ module Stupidedi
                               "TM" => "Motor Carrier Delivery Trailer Manifest",
                               "UP" => "Motor Carrier Pick-up Manifest",
                               "PO" => "Purchase Order",
+                              "OW" => "Warehouse Ship Order",
                               "AR" => "Warehouse Stock Transfer"
           ))
 
