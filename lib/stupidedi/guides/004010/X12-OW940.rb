@@ -90,6 +90,10 @@ module Stupidedi
               b::Segment(40, s:: N9 ,"Reference Number", r::Optional, d::RepeatCount.bounded(200),
                 b::Element(e::Required, "Reference Identifier Qualifier", b::Values("LI", "PC", "PJ", "PK")),
                 b::Element(e::Required, "Reference Identifier")
+              ),
+              b::Segment(50, s:: W20, "Pack Detail", r::Required, d::RepeatCount.bounded(1),
+                b::Element(e::Required, "Case Inner Pack"),
+                b::Element(e::Required, "Outer Pack")
               )
             )
             

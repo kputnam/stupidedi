@@ -148,6 +148,9 @@ module Stupidedi
           autoload :W04,
             "stupidedi/versions/functional_groups/004010/segment_defs/W04"
 
+          autoload :W20,
+            "stupidedi/versions/functional_groups/004010/segment_defs/W20"
+
           autoload :W66,
             "stupidedi/versions/functional_groups/004010/segment_defs/W66"
 

@@ -15,8 +15,8 @@ module Stupidedi
               d::LoopDef.build("N1", d::RepeatCount.bounded(10),
                 s::N1.use( 40, r::Mandatory,  d::RepeatCount.bounded(1)),
                 s::N2.use( 50, r::Optional, d::RepeatCount.bounded(2)),
-                s::N3.use( 60, r::Mandatory, d::RepeatCount.bounded(2)),
-                s::N4.use( 70, r::Mandatory, d::RepeatCount.bounded(1))
+                s::N3.use( 60, r::Optional, d::RepeatCount.bounded(2)),
+                s::N4.use( 70, r::Optional, d::RepeatCount.bounded(1))
               ),
               s::N9.use( 90, r::Optional, d::RepeatCount.bounded(10)),
               s::G62.use( 110, r::Optional,  d::RepeatCount.bounded(10)),
@@ -32,6 +32,7 @@ module Stupidedi
               d::LoopDef.build("W01", d::RepeatCount.bounded(9999),
                 s::W01.use( 20, r::Mandatory,  d::RepeatCount.bounded(1)),
                 s::N9.use( 40, r::Optional, d::RepeatCount.bounded(200)),
+                s::W20.use( 50, r::Mandatory,  d::RepeatCount.bounded(1))
               )
             ),
 
