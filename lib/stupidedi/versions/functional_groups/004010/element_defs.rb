@@ -222,6 +222,7 @@ module Stupidedi
                               "850" => "Purchase Order",
                               "940" => "Warehouse Ship Order",
                               "943" => "Warehouse Stock Transfer",
+                              "944" => "Warehouse Stock Transfer Receipt Advice",
                               "990" => "Response to a Load Tender"
           ))
 
@@ -464,7 +465,8 @@ module Stupidedi
                               "UP" => "Motor Carrier Pick-up Manifest",
                               "PO" => "Purchase Order",
                               "OW" => "Warehouse Ship Order",
-                              "AR" => "Warehouse Stock Transfer"
+                              "AR" => "Warehouse Stock Transfer",
+                              "RE" => "Warehouse Stock Transfer Receipt Advice"
           ))
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
