@@ -389,6 +389,8 @@ module Stupidedi
                               "HM" => "Hazardous Material Contact"
           ))
 
+          E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
+
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
 
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
@@ -402,9 +404,13 @@ module Stupidedi
 
           E387  = t::AN.new(:E387, "Routing"                               , 1, 35)
 
+          E394  = t::AN.new(:E394, "Warehouse Receipt Number"              , 1, 12)
+
           E399  = t::ID.new(:E399, "Pallet Exchange Code"                  , 1, 1)
 
           E406  = t::Nn.new(:E406  , "Quantity of Pallets Shipped"         , 1, 3, 0)
+
+          E413  = t::R.new(:E413, "Quantity Received"                      , 1, 7)
 
           E432  = t::ID.new(:E432  , "Date Qualifier"                      , 2, 2,
                             s::CodeList.build(
