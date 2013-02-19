@@ -33,14 +33,13 @@ module Stupidedi
 
             ),
 
-            b::Segment(130, s::W08, "Receipt Carrier Information", r::Optional, d::RepeatCount.bounded(1),
-              b::Element(e::Required,       "Transportation Method/Type Code", b::Values("M", "R")),
-              b::Element(e::Situational,    "Standard Carrier Alpha Code"),
-              b::Element(e::Optional,       "Routing"),
-              b::Element(e::Situational,    "Equipment Initial"),
-              b::Element(e::Situational,    "Equipment Number"),
-              b::Element(e::Optional,       "Seal Number"),
-              b::Element(e::Optional,       "Seal Number")
+            b::Segment(140, s::G62, "Date/Time Reference", r::Situational, d::RepeatCount.bounded(2),
+              b::Element(e::Situational,    "Date Qualifier"),
+              b::Element(e::Situational,    "Date"),
+              b::Element(e::Situational, "Time Qualifier"),
+              b::Element(e::Situational, "Time"),
+              b::Element(e::Situational, "Time Code")
+
             )
 
 
@@ -56,14 +55,10 @@ module Stupidedi
                 b::Element(e::Situational,    "Product/Service ID"),
                 b::Element(e::Optional,       "Warehouse Lot Number")
               ),
-              b::Segment(30, s::G69, "Line Item Detail - Description", r::Required, d::RepeatCount.bounded(1),
+              b::Segment(30, s::G69, "Line Item Detail - Description", r::Optional, d::RepeatCount.bounded(1),
                 b::Element(e::Mandatory,      "Free-form descriptive text")
               ),
-              b::Segment(40, s::N9, "Reference Identification", r::Required, d::RepeatCount.bounded(200),
-                b::Element(e::Mandatory,      "Reference Identification Qualifier"),
-                b::Element(e::Situational,    "Reference Identification")
-              ),
-              b::Segment(40, s::N9, "Reference Identification", r::Required, d::RepeatCount.bounded(200),
+              b::Segment(40, s::N9, "Reference Identification", r::Optional, d::RepeatCount.bounded(200),
                 b::Element(e::Mandatory,      "Reference Identification Qualifier"),
                 b::Element(e::Situational,    "Reference Identification")
               )
@@ -73,7 +68,7 @@ module Stupidedi
 
 
           d::TableDef.header("Summary",
-            b::Segment(10, s::W14, "Total Receipt Information", r::Required, d::RepeatCount.bounded(1),
+            b::Segment(10, s::W14, "Total Receipt Information", r::Optional, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Quantity Received")
             ),
             b::Segment(20, s::SE, "Transaction Set Trailer", r::Required, d::RepeatCount.bounded(1),
