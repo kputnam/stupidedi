@@ -583,7 +583,7 @@ module Stupidedi
             end
           elsif f_tok.present?
             raise Exceptions::ParseError,
-              "only simple and component elements can be filtered"
+              "only simple and composite elements can be filtered"
           end
         end
 
@@ -606,7 +606,7 @@ module Stupidedi
             end
           elsif f_tok.present?
             raise Exceptions::ParseError,
-              "only simple and component elements can be filtered"
+              "only simple and composite elements can be filtered"
           end
         end
 
