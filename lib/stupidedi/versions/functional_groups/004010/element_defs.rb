@@ -67,7 +67,8 @@ module Stupidedi
 
           E88   = t::ID.new(:E88  , "Marks and Numbers Qualifier"          , 1, 2,
                             s::CodeList.build(
-                              "UP" => "U.P.C. Consumer Package Code (1-5-5-1)"
+                              "UP" => "U.P.C. Consumer Package Code (1-5-5-1)",
+                              "GM" => "SSCC-18 and Application Identifier"
           ))
 
 
