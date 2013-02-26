@@ -64,7 +64,12 @@ module Stupidedi
               b::Element(e::Required, "Ship Method of Payment", b::Values("CC", "PB", "PP")),
               b::Element(e::Required, "Transport Type Code", b::Values("A", "H", "M", "R")),
               b::Element(e::Optional, "Pallet Exchange Code"),
+              b::Element(e::Optional, "Unused"),
               b::Element(e::Optional, "Routing"),
+              b::Element(e::Optional, "Unused"),
+              b::Element(e::Optional, "Unused"),
+              b::Element(e::Optional, "Unused"),
+              b::Element(e::Optional, "Unused"),
               b::Element(e::Optional, "SCAC"))
 
           ),

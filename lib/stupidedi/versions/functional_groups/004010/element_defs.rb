@@ -185,6 +185,7 @@ module Stupidedi
                               "SN" => "Seal Number",
                               "WH" => "Master Reference (Link) Number",
                               "BT" => "Bill To",
+                              "UC" => "Casepack UPC",
                               "ZZ" => "Mutually Defined"
           ))
 
@@ -192,23 +193,7 @@ module Stupidedi
                             s::CodeList.build(
           "B" => "Origin/Delivery Carrier (Any Mode)"))
 
-          E140  = t::ID.new(:E140 , "Standard Carrier Alpha Code"          , 2, 4,
-                            s::CodeList.build(
-                              "RBTW" => "RBTW",
-                              "RBLT" => "RBLT",
-                              "CHRI" => "CHRI",
-                              "CHXD" => "CHXD",
-                              "RBIN" => "RBIN",
-                              "RBWR" => "RBWR",
-                              "RBCL" => "RBCL",
-                              "RBCG" => "RBCG",
-                              "CHSL" => "CHSL",
-                              "WGMA" => "WGMA",
-                              "RBID" => "RBID",
-                              "RFLB" => "RFLB",
-                              "RBHD" => "RBHD",
-                              "CUST" => "CUST"
-          ))
+          E140  = t::AN.new(:E140 , "Standard Carrier Alpha Code"          , 2, 4)
 
           E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 15)
 
