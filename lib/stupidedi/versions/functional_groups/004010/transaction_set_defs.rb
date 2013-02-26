@@ -20,6 +20,10 @@ module Stupidedi
           autoload :RE944, # Warehouse Stock Transfer Receipt Advice
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/RE944"
 
+          # 004010X... Warehouse Shipping Advice
+          autoload :SW945, # Warehouse Shipping Advice
+            "stupidedi/versions/functional_groups/004010/transaction_set_defs/SW945"
+
           # 004010X... Motor Carrier Load Tender
           autoload :SM204, # Motor Carrier Load Tender
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/SM204"
