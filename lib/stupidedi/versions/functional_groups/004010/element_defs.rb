@@ -266,7 +266,9 @@ module Stupidedi
 
           E188  = t::ID.new(:E188 , "Weight Unit Code"                     , 1, 1,
                             s::CodeList.build(
-          "L" => "Pounds"))
+                              "L" => "Pounds",
+                              "K" => "Kilograms"
+          ))
 
           E206  = t::AN.new(:E206 , "Equipment Initial"                    , 1, 4)
 
@@ -287,7 +289,10 @@ module Stupidedi
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
                             s::CodeList.build(
                               "VN" => "Vendor's (Seller's) Item Number",
-                              "UK" => "UPC/EAN Shipping Container Code"
+                              "UK" => "UPC/EAN Shipping Container Code",
+                              "BP" => "Buyer's Part Number",
+                              "CB" => "Buyer's Part Number",
+                              "UP" => "UPC Consumer Packaging Code"
           ))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
@@ -375,6 +380,13 @@ module Stupidedi
                               "SH" => "Shipper Contact",
                               "HM" => "Hazardous Material Contact"
           ))
+
+          E368  = t::AN.new(:E368, "Shipment/Order Status Code"            , 2, 2,
+                            s::CodeList.build(
+                              "AB" => "Available to Ship - Billed Quantity",
+                              "CC" => "Shipment Complete on"
+                            )
+          )
 
           E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
 
