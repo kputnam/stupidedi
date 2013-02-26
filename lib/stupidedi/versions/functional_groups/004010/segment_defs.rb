@@ -82,6 +82,9 @@ module Stupidedi
           autoload :M7,
             "stupidedi/versions/functional_groups/004010/segment_defs/M7"
 
+          autoload :MAN,
+            "stupidedi/versions/functional_groups/004010/segment_defs/MAN"
+
           autoload :MEA,
             "stupidedi/versions/functional_groups/004010/segment_defs/MEA"
 
@@ -156,6 +159,9 @@ module Stupidedi
 
           autoload :W08,
             "stupidedi/versions/functional_groups/004010/segment_defs/W08"
+
+          autoload :W12,
+            "stupidedi/versions/functional_groups/004010/segment_defs/W12"
 
           autoload :W14,
             "stupidedi/versions/functional_groups/004010/segment_defs/W14"
