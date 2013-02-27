@@ -49,6 +49,7 @@ module Stupidedi
             b::Segment(130, s::W27, "Carrier Detail", r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transportation Method/Type Code", b::Values("M", "R")),
               b::Element(e::Situational, "Standard Carrier Alpha Code"),
+              b::Element(e::Situational, "Routing"),
               b::Element(e::Situational, "Shipment Method of Payment", b::Values("CC", "PP")),
               b::Element(e::Situational, "Equipment Initial"),
               b::Element(e::Situational, "Equipment Number")

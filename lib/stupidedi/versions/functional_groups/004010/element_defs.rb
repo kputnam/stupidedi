@@ -209,6 +209,7 @@ module Stupidedi
                               "940" => "Warehouse Ship Order",
                               "943" => "Warehouse Stock Transfer",
                               "944" => "Warehouse Stock Transfer Receipt Advice",
+                              "945" => "Warehouse Shipping Advice",
                               "990" => "Response to a Load Tender"
           ))
 
@@ -401,6 +402,8 @@ module Stupidedi
 
           E382  = t::R.new(:E382, "Number of Units Shipped"                , 1, 10)
 
+          E383  = t::R.new(:E382, "Quantity Difference"                    , 1, 9)
+
           E387  = t::AN.new(:E387, "Routing"                               , 1, 35)
 
           E394  = t::AN.new(:E394, "Warehouse Receipt Number"              , 1, 12)
@@ -416,6 +419,7 @@ module Stupidedi
                               "02" => "Requested Delivery Date",
                               "04" => "Purchase Order Date",
                               "10" => "Requested Ship Date",
+                              "11" => "Shipped Date",
                               "17" => "Estimated Delivery Date",
                               "37" => "Ship Not Before Date",
                               "38" => "Ship Not Later Than Date",
@@ -463,6 +467,7 @@ module Stupidedi
                               "UP" => "Motor Carrier Pick-up Manifest",
                               "PO" => "Purchase Order",
                               "OW" => "Warehouse Ship Order",
+                              "SW" => "Warehouse Shipping Advice",
                               "AR" => "Warehouse Stock Transfer",
                               "RE" => "Warehouse Stock Transfer Receipt Advice"
           ))
@@ -520,6 +525,13 @@ module Stupidedi
           ))
 
           E809  = t::AN.new(:E809 , "Hazardous Material Shipment Information", 1, 25)
+
+          E892  = t::ID.new(:E892 , "Line Item Change Reason Code"         , 2, 2,
+                            s::CodeList.build(
+                              "01" => "Out of Stock",
+                              "02" => "Cut due to cube or weight"
+                            )
+          )
 
           E983  = t::ID.new(:E983 , "Hazardous Class Qualifier"            , 1, 1,
                             s::CodeList.build(
