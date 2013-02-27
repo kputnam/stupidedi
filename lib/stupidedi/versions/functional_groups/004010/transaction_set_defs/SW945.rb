@@ -8,7 +8,7 @@ module Stupidedi
           s = SegmentDefs
 
 
-          OW945 = d::TransactionSetDef.build("SW", "945", "Warehouse Shipping Advice",
+          SW945 = d::TransactionSetDef.build("SW", "945", "Warehouse Shipping Advice",
 
             d::TableDef.header("Table 1 - Header",
               s::ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),

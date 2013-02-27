@@ -12,6 +12,7 @@ module Stupidedi
             "To specify details of the transportation equipment and carrier routing details",
             e::E91.simple_use(r::Mandatory, s::RepeatCount.bounded(1)),
             e::E140.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E387.simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E146.simple_use(r::Optional, s::RepeatCount.bounded(1)),
             e::E206.simple_use(r::Optional, s::RepeatCount.bounded(1)),
             e::E207.simple_use(r::Optional, s::RepeatCount.bounded(1))
