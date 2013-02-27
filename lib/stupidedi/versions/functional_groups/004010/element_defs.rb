@@ -421,6 +421,7 @@ module Stupidedi
                               "10" => "Requested Ship Date",
                               "11" => "Shipped Date",
                               "17" => "Estimated Delivery Date",
+                              "19" => "Date Unloaded",
                               "37" => "Ship Not Before Date",
                               "38" => "Ship Not Later Than Date",
                               "53" => "Deliver Not Before Date",
