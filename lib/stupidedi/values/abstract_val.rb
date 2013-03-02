@@ -19,7 +19,7 @@ module Stupidedi
       #
       # @return [Integer]
       def size
-        @children.sum_and_count(&:size)
+        @children.map(&:size).inject(0, &:+)
       end
 
       # True except for {InvalidSegmentVal} and {AbstractElementVal} values
