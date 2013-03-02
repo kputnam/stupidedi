@@ -47,6 +47,9 @@ config.transaction_set.tap do |c|
 end
 
 config = Stupidedi::Config.default
+config.interchange.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
+config.functional_group.register("004010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
+
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 

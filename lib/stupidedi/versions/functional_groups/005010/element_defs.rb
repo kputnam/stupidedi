@@ -24,6 +24,7 @@ module Stupidedi
               "38" => s::CodeList.external("5"),
               "46" => "Electronic Transmitter Identification Number (ETIN)",
               "51" => s::CodeList.external("51"),
+              "91" => "Assigned by Seller or Seller's Agent",
               "AC" => "Attachment Control Number",
               "AD" => "Blue Cross Blue Shield Associtation Plan Code",
               "BD" => "Blue Cross Provider Number",
@@ -171,7 +172,7 @@ module Stupidedi
               "MRC" => s::CodeList.external("844"),
               "NF"  => s::CodeList.external("245"),
               "P4"  => "Project Code",
-              "PO"  => "Purchase Order Number", 
+              "PO"  => "Purchase Order Number",
               "PQ"  => "Payee Indentification",
               "PXC" => s::CodeList.external("682"),
               "RB"  => "Rate code number",
@@ -190,7 +191,7 @@ module Stupidedi
           E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
             s::CodeList.build(
               "277" => "Health Care Information Status Notification",
-              "820" => "Payment Order/Remittance Advice", 
+              "820" => "Payment Order/Remittance Advice",
               "835" => "Health Care Claim Payment/Advice",
               "837" => "Health Care Claim",
               "999" => "Implementation Acknowledgement"))
@@ -355,7 +356,7 @@ module Stupidedi
             s::CodeList.build(
               "01" => "Pricing Error",
               "03" => "Extension Error",
-              "04" => "Item Nnot Accepted - Damaged",
+              "04" => "Item Not Accepted - Damaged",
               "05" => "Item Not Accepted - Quality",
               "06" => "Quality Contested",
               "07" => "Incorrect Product",

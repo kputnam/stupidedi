@@ -114,7 +114,7 @@ module Stupidedi
               "14" => "Duns Plus Suffix",
             # "15" => "Petroleum Accountants Society of Canada Company Code",
             # "16" => "Duns Number With 4-Character Suffix",
-            # "17" => "American Bankers Association (ABA) Transit Routing Number (Including Check Digit, 9 Digit)",
+              "17" => "American Bankers Association (ABA) Transit Routing Number (Including Check Digit, 9 Digit)",
             # "18" => s::CodeList.external("420"),
             # "19" => s::CodeList.external("421"),
               "20" => s::CodeList.external("121"),

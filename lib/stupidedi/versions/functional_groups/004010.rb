@@ -3,8 +3,8 @@ module Stupidedi
     module FunctionalGroups
 
       #
-      # @see Guides::FiftyTen
-      # @see Interchanges::FiveOhOne
+      # @see Guides::FortyTen
+      # @see Interchanges::FourOhOne
       #
       module FortyTen
 
@@ -29,8 +29,8 @@ module Stupidedi
         autoload :SyntaxNotes,
           "stupidedi/versions/functional_groups/004010/syntax_notes"
 
-      # autoload :TransactionSetDefs,
-      #   "stupidedi/versions/functional_groups/004010/transaction_set_defs"
+        autoload :TransactionSetDefs,
+          "stupidedi/versions/functional_groups/004010/transaction_set_defs"
       end
 
     end
