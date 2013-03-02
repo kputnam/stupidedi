@@ -7,6 +7,9 @@ module Stupidedi
           autoload :AAA,
             "stupidedi/versions/functional_groups/005010/segment_defs/AAA"
 
+          autoload :ADX,
+            "stupidedi/versions/functional_groups/005010/segment_defs/ADX"
+
           autoload :AK1,
             "stupidedi/versions/functional_groups/005010/segment_defs/AK1"
 
@@ -177,6 +180,9 @@ module Stupidedi
 
           autoload :REF,
             "stupidedi/versions/functional_groups/005010/segment_defs/REF"
+
+          autoload :RMR,
+            "stupidedi/versions/functional_groups/005010/segment_defs/RMR"
 
           autoload :SBR,
             "stupidedi/versions/functional_groups/005010/segment_defs/SBR"

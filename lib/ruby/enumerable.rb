@@ -25,7 +25,7 @@ module Enumerable
   #   ["a", "b", "cd"].sum             #=> "abcd"
   #   ["a", "b", "cd"].sum(&:length)   #=> 4
   #
-  def sum(&block)
+  def sum_and_count(&block)
     if block_given?
       tail.inject(yield(head)){|sum,e| sum + yield(e) }
     else
