@@ -446,7 +446,7 @@ module Stupidedi
               "1" => "Current Transaction Trace Numbers",
               "2" => "Referenced Transaction Trace Numbers"))
 
-          E482 = t::AN.new(:E482 , "Payment Action Code"                    , 1, 1)
+          E482 = t::AN.new(:E482 , "Payment Action Code"                   , 1, 1)
 
           E499  = t::AN.new(:E499 , "Condition Value"                      , 1, 10)
           E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,

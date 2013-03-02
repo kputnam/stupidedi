@@ -8,13 +8,13 @@ module Stupidedi
           e = ElementDefs
           r = ElementReqs
 
+          # @todo: Copied from 4010 implementation guide
           ADX = s::SegmentDef.build(:ADX, "Adjustment",
             "To designate the entities which are parties to a transaction and specify a reference meaningful to those entities",
             e::E782.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)), 
-            e::E426 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E128 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E127.simple_use(r::Relational, s::RepeatCount.bounded(1))
-          )
+            e::E426.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E128.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E127.simple_use(r::Relational, s::RepeatCount.bounded(1)))
 
         end
       end
