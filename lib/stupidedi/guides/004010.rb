@@ -19,6 +19,7 @@ module Stupidedi
         autoload :SM204,  "stupidedi/guides/004010/X12-SM204"
         autoload :QM214,  "stupidedi/guides/004010/X12-QM214"
         autoload :GF990,  "stupidedi/guides/004010/X12-GF990"
+        #autoload :FA997,  "stupidedi/guides/004010/X12-FA997"
       end
 
     end

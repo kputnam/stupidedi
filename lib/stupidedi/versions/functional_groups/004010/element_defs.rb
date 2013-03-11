@@ -9,6 +9,8 @@ module Stupidedi
           s = Schema
 
 
+          E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
+
           E19   = t::AN.new(:E19  , "City Name"                           , 2, 30)
 
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -158,6 +160,8 @@ module Stupidedi
                             s::CodeList.external("51"),
                             s::CodeList.external("166"))
 
+          E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)
+
           E124  = t::AN.new(:E124 , "Application Receiver's Code"          , 2, 15)
 
           E127  = t::AN.new(:E127 , "Reference Identification"            , 1, 30)
@@ -210,7 +214,8 @@ module Stupidedi
                               "943" => "Warehouse Stock Transfer",
                               "944" => "Warehouse Stock Transfer Receipt Advice",
                               "945" => "Warehouse Shipping Advice",
-                              "990" => "Response to a Load Tender"
+                              "990" => "Response to a Load Tender",
+                              "997" => "Functional Acknowledgement"
           ))
 
 
@@ -470,7 +475,8 @@ module Stupidedi
                               "OW" => "Warehouse Ship Order",
                               "SW" => "Warehouse Shipping Advice",
                               "AR" => "Warehouse Stock Transfer",
-                              "RE" => "Warehouse Stock Transfer Receipt Advice"
+                              "RE" => "Warehouse Stock Transfer Receipt Advice",
+                              "FA" => "Functional Acknowledgment"
           ))
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
@@ -510,6 +516,39 @@ module Stupidedi
                               "PP" => "Price per Pound",
                               "UM" => "Price per Unit of Measure"
           ))
+
+          E715  = t::ID.new(:E715 , "Functional Group Acknowledgment Code" , 1, 1,
+            s::CodeList.build(
+              "A" => "Accepted",
+              "E" => "Accepted, But Errors Were Noted",
+              "M" => "Rejected, Message Authentication Code (MAC) Failed",
+              "P" => "Partially Accepted, At Least One Transaction Set Was Rejected",
+              "R" => "Rejected",
+              "W" => "Rejected, Assurance Failed Validity Tests",
+              "X" => "Rejected, Content After Decryption Could Not Be Analyzed"))
+
+          E716  = t::ID.new(:E716 , "Functional Group Syntax Error Code"   , 1, 3,
+            s::CodeList.build(
+              "1"  => "Functional Group Not Supported",
+              "2"  => "Functional Group Version Not Supported",
+              "3"  => "Functional Group Trailer Missing",
+              "4"  => "Group Control Number in the Functional Group Header and Trailer Do Not Agree",
+              "5"  => "Number of Included Transaction Sets Does Not Match Actual Count",
+              "6"  => "Group Control Number Violates Syntax",
+              "10" => "Authentication Key Name Unknown",
+              "11" => "Encryption Key Name Unknown",
+              "12" => "Requested Service (Authentication or Encryption) Not Available",
+              "13" => "Unknown Security Recipient",
+              "14" => "Unknown Security Originator",
+              "15" => "Syntax Error in Decrypted Text",
+              "16" => "Security Not Supported",
+              "17" => "Incorrect Message Length (Encryption Only)",
+              "18" => "Message Authentication Code Failed",
+              "19" => "Functional Group Control Number not Unique within Interchange",
+              "23" => "S3E Security End Segment Missing for S3S Security Start Segment",
+              "24" => "S3S Security Start Segment Missing for S3E Security End Segment",
+              "25" => "S4E Security End Segment Missing for S4S Security Start Segment",
+              "26" => "S4S Security Start Segment Missing for S4E Security End Segment"))
 
           E740  = t:: R.new(:E740 , "Range Minimum"                        , 1, 20)
 

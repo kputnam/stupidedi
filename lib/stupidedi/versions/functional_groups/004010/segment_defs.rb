@@ -178,6 +178,19 @@ module Stupidedi
           autoload :W76,
             "stupidedi/versions/functional_groups/004010/segment_defs/W76"
 
+          autoload :AK1,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK1"
+
+          autoload :AK2,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK2"
+
+          autoload :AK3,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK3"
+
+          autoload :AK9,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK9"
+
+
 
         end
       end
