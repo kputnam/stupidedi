@@ -24,6 +24,10 @@ module Stupidedi
           autoload :SW945, # Warehouse Shipping Advice
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/SW945"
 
+          # 004010X... Functional Acknowledgement
+          autoload :FA997, #Functional Acknowledgement
+            "stupidedi/versions/functional_groups/004010/transaction_set_defs/FA997"
+
           # 004010X... Motor Carrier Load Tender
           autoload :SM204, # Motor Carrier Load Tender
             "stupidedi/versions/functional_groups/004010/transaction_set_defs/SM204"
