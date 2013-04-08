@@ -14,7 +14,7 @@ module Stupidedi
       # @return [Array<SegmentVal, LoopVal>]
       attr_reader :children
 
-      delegate :position, :to => "@children.head"
+      delegate_stupid :position, :to => "@children.head"
 
       def initialize(definition, children)
         @definition, @children =

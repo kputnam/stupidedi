@@ -135,7 +135,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to => :@value
+              delegate_stupid :to_i, :to_d, :to_f, :to => :@value
 
               def initialize(value, usage, position)
                 @value = value

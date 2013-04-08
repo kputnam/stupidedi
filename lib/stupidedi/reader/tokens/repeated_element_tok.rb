@@ -10,7 +10,7 @@ module Stupidedi
 
       attr_reader :position
 
-      delegate :remainder, :to => "element_toks.last"
+      delegate_stupid :remainder, :to => "element_toks.last"
 
       def initialize(element_toks, position)
         @element_toks, @position =

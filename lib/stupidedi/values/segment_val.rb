@@ -5,7 +5,7 @@ module Stupidedi
     class SegmentVal < AbstractVal
 
       # @return [SegmentDef]
-      delegate :definition, :to => :@usage
+      delegate_stupid :definition, :to => :@usage
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children

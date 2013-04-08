@@ -47,7 +47,7 @@ class Module
   #   end
   #
   # @return [void]
-  def delegate(*params)
+  def delegate_stupid(*params)
     unless params.last.is_a?(Hash)
       raise ArgumentError,
         "last argument must be :to => ..."

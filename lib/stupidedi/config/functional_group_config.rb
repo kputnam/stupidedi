@@ -19,7 +19,7 @@ module Stupidedi
     class FunctionalGroupConfig
       include Inspect
 
-      delegate :defined_at?, :to => :@table
+      delegate_stupid :defined_at?, :to => :@table
 
       def initialize
         @table = Hash.new

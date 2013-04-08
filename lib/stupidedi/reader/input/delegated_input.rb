@@ -29,13 +29,13 @@ module Stupidedi
       ########################################################################
 
       # (see AbstractInput#take)
-      delegate :take, :to => :@delegate
+      delegate_stupid :take, :to => :@delegate
 
       # (see AbstractInput#at)
-      delegate :at, :to => :@delegate
+      delegate_stupid :at, :to => :@delegate
 
       # (see AbstractInput#index)
-      delegate :index, :to => :@delegate
+      delegate_stupid :index, :to => :@delegate
 
       # @group Advancing the Cursor
       ########################################################################
@@ -66,13 +66,13 @@ module Stupidedi
       ########################################################################
 
       # (see AbstractInput#defined_at?)
-      delegate :defined_at?, :to => :@delegate
+      delegate_stupid :defined_at?, :to => :@delegate
 
       # (see AbstractInput#empty?)
-      delegate :empty?, :to => :@delegate
+      delegate_stupid :empty?, :to => :@delegate
 
       # (see AbstractInput#==)
-      delegate :==, :to => :@delegate
+      delegate_stupid :==, :to => :@delegate
 
       # @endgroup
       ########################################################################

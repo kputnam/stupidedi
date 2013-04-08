@@ -18,18 +18,4 @@ module Enumerable
     end
   end
 
-  # Accumulate elements using the `+` method, optionally
-  # transforming them first using a block
-  #
-  # @example
-  #   ["a", "b", "cd"].sum             #=> "abcd"
-  #   ["a", "b", "cd"].sum(&:length)   #=> 4
-  #
-  def sum(&block)
-    if block_given?
-      tail.inject(yield(head)){|sum,e| sum + yield(e) }
-    else
-      tail.inject(head){|sum,e| sum + e }
-    end
-  end
 end

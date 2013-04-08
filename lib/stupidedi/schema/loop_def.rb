@@ -26,9 +26,9 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      delegate :requirement, :to => :entry_segment_use
+      delegate_stupid :requirement, :to => :entry_segment_use
 
-      delegate :required?, :to => :requirement
+      delegate_stupid :required?, :to => :requirement
 
       def initialize(id, repeat_count, header_segment_uses, loop_defs, trailer_segment_uses, parent)
         @id, @repeat_count, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
