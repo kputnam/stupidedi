@@ -132,7 +132,7 @@ module Stupidedi
               # @return [String]
               attr_reader :value
 
-              delegate :to_d, :to_s, :to_f, :length, :=~, :match, :to => :@value
+              delegate_stupid :to_d, :to_s, :to_f, :length, :=~, :match, :to => :@value
 
               def initialize(string, usage, position)
                 @value = string

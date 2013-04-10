@@ -4,9 +4,9 @@ module Stupidedi
     class AbstractElementUse < AbstractUse
       include Inspect
 
-      delegate :forbidden?, :required?, :optional?, :to => :requirement
+      delegate_stupid :forbidden?, :required?, :optional?, :to => :requirement
 
-      delegate :code_lists, :to => :definition
+      delegate_stupid :code_lists, :to => :definition
 
       # @return [ElementReq]
       abstract :requirement

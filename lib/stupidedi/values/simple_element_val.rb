@@ -10,7 +10,7 @@ module Stupidedi
     class SimpleElementVal < AbstractElementVal
 
       # @return [SimpleElementDef]
-      delegate :definition, :to => :@usage
+      delegate_stupid :definition, :to => :@usage
 
       abstract :valid?
 

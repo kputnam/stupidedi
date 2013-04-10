@@ -12,7 +12,8 @@ $:.unshift(File.expand_path("..", __FILE__))
 
 # Monkey patches
 
-#equire "ruby/exception"
+#require "ruby/exception"
+
 require "ruby/symbol"
 require "ruby/object"
 require "ruby/module"

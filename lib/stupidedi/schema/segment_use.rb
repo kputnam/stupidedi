@@ -29,9 +29,9 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      delegate :id, :code_lists, :to => :definition
+      delegate_stupid :id, :code_lists, :to => :definition
 
-      delegate :required?, :to => :requirement
+      delegate_stupid :required?, :to => :requirement
 
       def initialize(definition, position, requirement, repeat_count, parent)
         @definition, @position, @requirement, @repeat_count, @parent =

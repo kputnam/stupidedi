@@ -60,23 +60,23 @@ module Stupidedi
       # The current position as the number of elements previously read
       #
       # @return [Integer]
-      delegate :offset, :to => :position
+      delegate_stupid :offset, :to => :position
 
       # The line of the current position
       #
       # @return [Integer]
-      delegate :line, :to => :position
+      delegate_stupid :line, :to => :position
 
       # The column of the current position. The column resets to `1` each time
       # a newline is read
       #
       # @return [Integer]
-      delegate :column, :to => :position
+      delegate_stupid :column, :to => :position
 
       # The file name, URI, etc that identifies the input stream
       #
       # @return [String]
-      delegate :path, :to => :position
+      delegate_stupid :path, :to => :position
 
       # @group Reading the Input
       ########################################################################
