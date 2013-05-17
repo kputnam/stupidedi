@@ -3,8 +3,8 @@ abspath = Pathname.new(File.dirname(__FILE__)).expand_path
 relpath = abspath.relative_path_from(Pathname.pwd)
 
 begin
-  require "rubygems"
-  require "bundler/setup"
+# require "rubygems"
+# require "bundler/setup"
 rescue LoadError
   warn "couldn't load bundler:"
   warn "  #{$!}"
@@ -13,7 +13,7 @@ end
 task :default => :spec
 
 task :console do
-  exec *%w(irb -I lib -r stupidedi)
+  exec(*%w(irb -I lib -r stupidedi))
 end
 
 begin

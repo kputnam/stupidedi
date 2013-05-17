@@ -3,7 +3,7 @@ source "http://rubygems.org"
 gem "called_from", :platforms => [:ruby_18, :mri_18, :mingw_18]
 
 group :development do
-  gem "rake"
+  # gem "rake"
   gem "rspec"      ,"~> 2.8.0"
   gem "yard"       ,"~> 0.7.4"
   gem "rdiscount"  ,"~> 1.6.8"
