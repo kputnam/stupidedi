@@ -430,6 +430,22 @@ module Stupidedi
         end
       end
 
+      # Sequence multiple traversals together, by iteratively calling
+      # `find`. Each argument must be either a single segment ID or a
+      # list whose first element is a segment ID and remaining elements
+      # are segment constraints.
+      #
+      # @example
+      #   machine.sequence(:GS, :ST, :HL)
+      #   machine.sequence(:GS, [:ST, "837"], [:HL, nil, "20"])
+      #
+      # @return [Either<StateMachine>]
+      def sequence(pattern, *patterns)
+        patterns.inject(find(*pattern)) do |m, p|
+          m = m.flatmap{|n| n.find(*p) }
+        end
+      end
+
     private
 
       # @return [Either<StateMachine>]
