@@ -4,6 +4,11 @@ class QuickCheck
       ASCII = (0..127).inject(""){|string, n| string << n }
       ALL   = (0..255).inject(""){|string, n| string << n }
 
+      if ASCII.respond_to?(:encoding)
+        ASCII.force_encoding("ASCII")
+        ALL.force_encoding("BINARY")
+      end
+
       def of(regexp, set = ALL)
         set.scan(regexp)
       end

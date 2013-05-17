@@ -1,6 +1,7 @@
 require "bigdecimal"
 require "time"
 require "date"
+require "set"
 
 begin
   require "term/ansicolor" if $stdout.tty?
