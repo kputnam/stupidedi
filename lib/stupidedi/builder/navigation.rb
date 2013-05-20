@@ -482,39 +482,57 @@ module Stupidedi
             # of instructions.
             matches_ = []
 
-            # TODO: Since each `op` has the same push, pop_count, and drop_count
-            # we're repeating some work in the loop below. Optimize by lifting
-            # that outside the loop.
+            # Every transition follows the same shape
+            # 1. Move upward a number of nodes
+            # 2. Move left a number of nodes
+            # 3. Move downward a number of nodes
+            # 4. Stop on a segment
+
+            opg,   = group
+            stateg = zipper
+            valueg = zipper.node.zipper
+
+            # 1. Move upward (possibly zero times)
+            opg.pop_count.times do
+              valueg = valueg.up
+              stateg = stateg.up
+            end
+
+            # 2. We know from the instruction `op` the *maximum* number of
+            #    nodes to move left, but not exactly how many. Instead, we
+            #    know what the InstructionTable is when we get there.
+            target = zipper.node.instructions.pop(opg.pop_count).drop(opg.drop_count)
 
             group.each do |op|
-              distance_a = 0
-              distance_b = 0
+              state = stateg
+              value = valueg
+              distance = 0
 
-              # Every transition follows the same shape
-              # 1. Move upward a number of nodes
-              # 2. Move left a number of nodes
-              # 3. Move downward a number of nodes
-              # 4. Stop on a segment
-
-              state = zipper
-              value = zipper.node.zipper
-
-              # 1. Move upward (possibly zero times)
-              op.pop_count.times do
-                value = value.up
-                state = state.up
+              # 3. If the segment we're searching for belongs in a new subtree,
+              #    but it's not the only segment that might have "opened" that
+              #    subtree (eg, Summary Table in 835 can begin with PLB or SE)
+              #    then maybe the segment we're looking for comes *after* the
+              #    first segment in this subtree.
+              single   = op.push.nil?
+              single ||= op.segment_use.nil?
+              single ||= 1 >= zipper.node.instructions.instructions.count do |x|
+                x.push.present? and
+                 (# This is hairy, but we know the instruction is pushing some
+                  # number of nested subtrees. We know from each AbstractState
+                  # subclass that we both either push a single subtree
+                  op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
+                  # Or this instruction pushes one subtree while the other one
+                  # pushes two (eg, a new loop inside of a table)
+                  op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
+                  # Or this instruction pushes two subtrees (eg, a new loop in
+                  # a new table) and the other also pushes two subtrees.
+                  op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
               end
-
-              # 2. We know from the instruction `op` the *maximum* number of
-              #    nodes to move left, but not exactly how many. Instead, we
-              #    know what the InstructionTable is when we get there.
-              target = zipper.node.instructions.pop(op.pop_count).drop(op.drop_count)
 
               until state.last?
                 state = state.next
                 value = value.next
-
-                distance_a += 1
+                distance += 1
 
                 # 2. Even if the InstructionTable matches, we still need to
                 #    descend to some segment and compare it to the criteria. In
@@ -525,27 +543,6 @@ module Stupidedi
                   #    descend to a segment, but we have to be careful...
                   _value = value
                   _state = state
-
-                  # 3. If the segment we're searching for belongs in a new subtree,
-                  #    but it's not the only segment that might have "opened" that
-                  #    subtree (eg, Summary Table in 835 can begin with PLB or SE)
-                  #    then maybe the segment we're looking for comes *after* the
-                  #    first segment in this subtree.
-                  single   = op.push.nil?
-                  single ||= op.segment_use.nil?
-                  single ||= 1 >= zipper.node.instructions.instructions.count do |x|
-                    x.push.present? and
-                     (# This is hairy, but we know the instruction is pushing some
-                      # number of nested subtrees. We know from each AbstractState
-                      # subclass that we both either push a single subtree
-                      op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
-                      # Or this instruction pushes one subtree while the other one
-                      # pushes two (eg, a new loop inside of a table)
-                      op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
-                      # Or this instruction pushes two subtrees (eg, a new loop in
-                      # a new table) and the other also pushes two subtrees.
-                      op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
-                  end
 
                   unless _value.node.segment?
                     _value = _value.down
@@ -580,7 +577,7 @@ module Stupidedi
                         __state = __state.replace(__state.node.copy(:zipper => __value))
                       end
 
-                      matches_ << [[distance_a, distance_b], __state]
+                      matches_ << [distance, __state]
                       break
                     end
 
@@ -589,7 +586,6 @@ module Stupidedi
 
                     _value = _value.next
                     _state = _state.next
-                    distance_b += 1
                   end
 
                   # 4. Stop on a segment
@@ -604,21 +600,27 @@ module Stupidedi
               end
             end
 
-            puts
+            # 14.22, 14.05, 14.48
+            # 13.34, 13.33, 13.32
+            # 12.82, 12.95, 12.70
+
+            # puts
             # BEWARE matched gets reset, so matches_.empty? /= !matched
-            pp ["matches_", matches_.map(&:first)]
+            # pp ["matches_", matches_.map(&:first)]
 
             # Which was nearest?
             unless matches_.empty?
-              sorted = matches_.sort do |((ax,ay),_), ((bx,by),_)| 
-                cmp = ax <=> bx
-                cmp = ay <=> by if cmp == 0
-                cmp
-              end
+              best,    = matches_.sort{|(a,_), (b,_)| a <=> b }
+              matches << best.last
 
-              pp ["sorted", sorted.map(&:first)]
+              # sorted = matches_.sort do |((ax,ay),_), ((bx,by),_)| 
+              #   cmp = ax <=> bx
+              #   cmp = ay <=> by if cmp == 0
+              #   cmp
+              # end
 
-              matches << sorted.first.last
+              # pp ["sorted", sorted.map(&:first)]
+              # matches << sorted.first.last
             end
           end
         end
