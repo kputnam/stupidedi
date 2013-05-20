@@ -186,14 +186,6 @@ module Stupidedi
         end
       end
 
-      def segmentn
-        segment.map(&:node)
-      end
-
-      def elementn(m, n = nil, o = nil)
-        element(m, n, o).map(&:node)
-      end
-
       # @group Navigating the Tree
       #########################################################################
 
