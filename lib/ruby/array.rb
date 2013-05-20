@@ -159,6 +159,24 @@ class Array
     return prefix, suffix
   end
 
+  # Returns a list of sublists, where each sublist contains only equal
+  # elements. Equality is determined by a two-argument block parameter.
+  # The concatenation of the result is equal to the original argument.
+  #
+  # @example
+  #   "abba".split(//).group_by(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
+  #   "abba".split(//).group_by(&:!=)
+  #
+  # @return [[Array]]
+  def group_by(&block)
+    unless empty?
+      as, bs = tail.split_until{|x| block.call(head, x) }
+      head.cons(as).cons(bs.group_by(&block))
+    else
+      []
+    end
+  end
+
   # @endgroup
   #############################################################################
 end
