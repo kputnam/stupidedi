@@ -468,7 +468,7 @@ module Stupidedi
           instructions = zipper.node.instructions.matches(filter_tok, true)
           reachable  ||= !instructions.empty?
 
-          grouped = instructions.group_by do |a,b|
+          grouped = instructions.runs do |a,b|
             a.push == b.push &&
               a.pop_count == b.pop_count &&
                 a.drop_count == b.drop_count

@@ -164,14 +164,13 @@ class Array
   # The concatenation of the result is equal to the original argument.
   #
   # @example
-  #   "abba".split(//).group_by(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
-  #   "abba".split(//).group_by(&:!=)
+  #   "abba".split(//).group_seq(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
   #
   # @return [[Array]]
-  def group_by(&block)
+  def runs(&block)
     unless empty?
       as, bs = tail.split_until{|x| block.call(head, x) }
-      head.cons(as).cons(bs.group_by(&block))
+      head.cons(as).cons(bs.runs(&block))
     else
       []
     end
