@@ -495,23 +495,9 @@ module Stupidedi
             #    subtree (eg, Summary Table in 835 can begin with PLB or SE)
             #    then maybe the segment we're looking for comes *after* the
             #    first segment in this subtree.
-            non_leaders = group.reject do |op|
-              op.push.nil?        ||
-              op.segment_use.nil? ||
-              1 >= zipper.node.instructions.instructions.count do |x|
-                x.push.present? and
-                 (# This is hairy, but we know the instruction is pushing some
-                  # number of nested subtrees. We know from each AbstractState
-                  # subclass that we both either push a single subtree
-                  op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
-                  # Or this instruction pushes one subtree while the other one
-                  # pushes two (eg, a new loop inside of a table)
-                  op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
-                  # Or this instruction pushes two subtrees (eg, a new loop in
-                  # a new table) and the other also pushes two subtrees.
-                  op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
-              end
-            end
+            #
+            #    This is computed lazily below: non_leaders ||= ...
+            non_leaders = nil
 
             until state.last?
               state = state.next
@@ -565,7 +551,24 @@ module Stupidedi
                     break
                   end
 
-                  ops = non_leaders
+                  ops = non_leaders     ||= group.reject do |op|
+                    op.push.nil?        ||
+                    op.segment_use.nil? ||
+                    1 >= zipper.node.instructions.instructions.count do |x|
+                      x.push.present? and
+                       (# This is hairy, but we know the instruction is pushing some
+                        # number of nested subtrees. We know from each AbstractState
+                        # subclass that we both either push a single subtree
+                        op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
+                        # Or this instruction pushes one subtree while the other one
+                        # pushes two (eg, a new loop inside of a table)
+                        op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
+                        # Or this instruction pushes two subtrees (eg, a new loop in
+                        # a new table) and the other also pushes two subtrees.
+                        op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
+                    end
+                  end
+
                   break if ops.empty?
                   break if _value.last?
 
