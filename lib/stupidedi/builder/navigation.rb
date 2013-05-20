@@ -468,7 +468,6 @@ module Stupidedi
           instructions = zipper.node.instructions.matches(filter_tok, true)
           reachable  ||= !instructions.empty?
 
-          # TODO
           grouped = instructions.group_by do |a,b|
             a.push == b.push &&
               a.pop_count == b.pop_count &&
@@ -478,44 +477,36 @@ module Stupidedi
           grouped.each do |group|
             break if matched
 
-            # If there are any, choose the best match within this group
-            # of instructions.
-            matches_ = []
-
             # Every transition follows the same shape
             # 1. Move upward a number of nodes
             # 2. Move left a number of nodes
             # 3. Move downward a number of nodes
             # 4. Stop on a segment
 
-            opg,   = group
-            stateg = zipper
-            valueg = zipper.node.zipper
+            op_,  = group
+            state = zipper
+            value = zipper.node.zipper
 
             # 1. Move upward (possibly zero times)
-            opg.pop_count.times do
-              valueg = valueg.up
-              stateg = stateg.up
+            op_.pop_count.times do
+              value = value.up
+              state = state.up
             end
 
             # 2. We know from the instruction `op` the *maximum* number of
             #    nodes to move left, but not exactly how many. Instead, we
             #    know what the InstructionTable is when we get there.
-            target = zipper.node.instructions.pop(opg.pop_count).drop(opg.drop_count)
+            target = zipper.node.instructions.pop(op_.pop_count).drop(op_.drop_count)
 
-            group.each do |op|
-              state = stateg
-              value = valueg
-              distance = 0
-
-              # 3. If the segment we're searching for belongs in a new subtree,
-              #    but it's not the only segment that might have "opened" that
-              #    subtree (eg, Summary Table in 835 can begin with PLB or SE)
-              #    then maybe the segment we're looking for comes *after* the
-              #    first segment in this subtree.
-              single   = op.push.nil?
-              single ||= op.segment_use.nil?
-              single ||= 1 >= zipper.node.instructions.instructions.count do |x|
+            # 3. If the segment we're searching for belongs in a new subtree,
+            #    but it's not the only segment that might have "opened" that
+            #    subtree (eg, Summary Table in 835 can begin with PLB or SE)
+            #    then maybe the segment we're looking for comes *after* the
+            #    first segment in this subtree.
+            non_leaders = group.reject do |op|
+              op.push.nil?        ||
+              op.segment_use.nil? ||
+              1 >= zipper.node.instructions.instructions.count do |x|
                 x.push.present? and
                  (# This is hairy, but we know the instruction is pushing some
                   # number of nested subtrees. We know from each AbstractState
@@ -528,99 +519,77 @@ module Stupidedi
                   # a new table) and the other also pushes two subtrees.
                   op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
               end
-
-              until state.last?
-                state = state.next
-                value = value.next
-                distance += 1
-
-                # 2. Even if the InstructionTable matches, we still need to
-                #    descend to some segment and compare it to the criteria. In
-                #    most circumstances, this segment is directly below this
-                if target.eql?(state.node.instructions)
-
-                  # 3. Move downward a number of nodes. Ultimately, we need to
-                  #    descend to a segment, but we have to be careful...
-                  _value = value
-                  _state = state
-
-                  unless _value.node.segment?
-                    _value = _value.down
-                    _state = _state.down
-                  end
-
-                  while true
-                    __value = _value
-                    __state = _state
-
-                    # Descend to the first segment
-                    until __value.node.segment?
-                      __value = __value.down
-                      __state = __state.down
-                    end
-
-                    matched =
-                      if __value.node.invalid?
-                        invalid and not __filter?(filter_tok, __value.node)
-                      else
-                        # Note op.segment_use.nil? is true when searching for ISA,
-                        # GS, and ST, because we can't know the SegmentUse until we
-                        # deconstruct the token and looked up the versions numbers
-                        # in the Config.
-                        (op.segment_use.nil? or op.segment_use.eql?(__value.node.usage)) \
-                          and not filter?(filter_tok, __value.node)
-                      end
-
-                    # 4. Stop on a segment
-                    if matched
-                      unless __value.eql?(__state.node.zipper)
-                        __state = __state.replace(__state.node.copy(:zipper => __value))
-                      end
-
-                      matches_ << [distance, __state]
-                      break
-                    end
-
-                    break if single
-                    break if _value.last?
-
-                    _value = _value.next
-                    _state = _state.next
-                  end
-
-                  # 4. Stop on a segment
-                  break if matched
-
-                elsif target.length > state.node.instructions.length
-                  # The ancestor state can't be one of the rightward siblings,
-                  # since the length of instruction tables is non-increasing as
-                  # we move rightward
-                  break
-                end
-              end
             end
 
-            # 14.22, 14.05, 14.48
-            # 13.34, 13.33, 13.32
-            # 12.82, 12.95, 12.70
+            until state.last?
+              state = state.next
+              value = value.next
+              ops   = group
 
-            # puts
-            # BEWARE matched gets reset, so matches_.empty? /= !matched
-            # pp ["matches_", matches_.map(&:first)]
+              # 2. Even if the InstructionTable matches, we still need to
+              #    descend to some segment and compare it to the criteria. In
+              #    most circumstances, this segment is directly below this
+              if target.eql?(state.node.instructions)
 
-            # Which was nearest?
-            unless matches_.empty?
-              best,    = matches_.sort{|(a,_), (b,_)| a <=> b }
-              matches << best.last
+                # 3. Move downward a number of nodes. Ultimately, we need to
+                #    descend to a segment, but we have to be careful...
+                _value = value
+                _state = state
 
-              # sorted = matches_.sort do |((ax,ay),_), ((bx,by),_)| 
-              #   cmp = ax <=> bx
-              #   cmp = ay <=> by if cmp == 0
-              #   cmp
-              # end
+                unless _value.node.segment?
+                  _value = _value.down
+                  _state = _state.down
+                end
 
-              # pp ["sorted", sorted.map(&:first)]
-              # matches << sorted.first.last
+                while true
+                  __value = _value
+                  __state = _state
+
+                  # Descend to the first segment
+                  until __value.node.segment?
+                    __value = __value.down
+                    __state = __state.down
+                  end
+
+                  matched =
+                    if __value.node.invalid?
+                      invalid and not __filter?(filter_tok, __value.node)
+                    else
+                      # Note op.segment_use.nil? is true when searching for ISA,
+                      # GS, and ST, because we can't know the SegmentUse until we
+                      # deconstruct the token and looked up the versions numbers
+                      # in the Config.
+                      ops.any?{|op| op.segment_use.nil? or op.segment_use.eql?(__value.node.usage) } \
+                        and not filter?(filter_tok, __value.node)
+                    end
+
+                  # 4. Stop on a segment
+                  if matched
+                    unless __value.eql?(__state.node.zipper)
+                      __state = __state.replace(__state.node.copy(:zipper => __value))
+                    end
+
+                    matches << __state
+                    break
+                  end
+
+                  ops = non_leaders
+                  break if ops.empty?
+                  break if _value.last?
+
+                  _value = _value.next
+                  _state = _state.next
+                end
+
+                # 4. Stop on a segment
+                break if matched
+
+              elsif target.length > state.node.instructions.length
+                # The ancestor state can't be one of the rightward siblings,
+                # since the length of instruction tables is non-increasing as
+                # we move rightward
+                break
+              end
             end
           end
         end
