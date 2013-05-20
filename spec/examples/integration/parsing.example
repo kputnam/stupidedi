@@ -474,7 +474,7 @@ describe "Parsing" do
           b = dsl.dup
           p.each{|es| b.send(:HL, *es) }
 
-          m = b.machine.parent
+          m = b.machine.first.flatmap{|x| x.sequence(:GS, :ST) }
           m.map{|x| x.count(:HL) }.should be_success(6)
 
           m.flatmap{|x| x.sequence(:HL) }.
