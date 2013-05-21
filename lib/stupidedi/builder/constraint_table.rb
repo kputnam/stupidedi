@@ -54,7 +54,7 @@ module Stupidedi
             deepest = @instructions.head
 
             @instructions.tail.each do |i|
-              if i.pop_count < deepest.pop_count
+              if i.pop_count > deepest.pop_count
                 deepest = i
               end
             end
@@ -160,7 +160,7 @@ module Stupidedi
             key = i.segment_use.object_id
 
             if deepest.defined_at?(key)
-              if deepest.at(key).pop_count > i.pop_count
+              if deepest.at(key).pop_count < i.pop_count
                 deepest[key] = i
               end
             else
