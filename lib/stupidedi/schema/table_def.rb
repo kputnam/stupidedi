@@ -55,6 +55,10 @@ module Stupidedi
         uses.concat(@header_segment_uses)
         uses.concat(@loop_defs.map{|l| l.entry_segment_use })
         uses.concat(@trailer_segment_uses)
+
+        # Up to and including the first required segment
+        opt, req = uses.split_until(&:optional?)
+        opt.concat(req.take(1))
       end
 
       # @return [Array<SegmentUse, LoopDef>]
