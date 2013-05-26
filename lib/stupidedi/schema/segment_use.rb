@@ -31,7 +31,7 @@ module Stupidedi
 
       delegate :id, :code_lists, :to => :definition
 
-      delegate :required?, :to => :requirement
+      delegate :required?, :optional?, :to => :requirement
 
       def initialize(definition, position, requirement, repeat_count, parent)
         @definition, @position, @requirement, @repeat_count, @parent =
