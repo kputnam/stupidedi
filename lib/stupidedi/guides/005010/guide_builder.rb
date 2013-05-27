@@ -12,6 +12,26 @@ module Stupidedi
 
         # @return [Schema::TransactionSetDef]
         def build(transaction_set_def, *table_defs)
+          table_defs.each do |t|
+            next unless t.repeatable?
+
+            search = [t.header_segment_uses, t.loop_defs, t.trailer_segment_uses]
+            search.each do |s|
+              opt, req = s.split_until(&:optional?)
+              prefix   = opt.concat(req.take(1))
+
+              if x = prefix.find(&:repeatable?)
+                raise Exceptions::InvalidSchemaError,
+                  "#{x.id} is an entry point into #{t.id}. Both are marked " <<
+                  "repeatable, but only one should be repeatable to avoid "  <<
+                  "generating an ambiguous grammar. You probably want to "   <<
+                  "change the repeat count of #{x.id}"
+              end
+
+              break if req.present?
+            end
+          end
+
           transaction_set_def.copy(:table_defs => table_defs)
         end
 

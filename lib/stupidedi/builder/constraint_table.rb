@@ -37,11 +37,11 @@ module Stupidedi
       end
 
       #
-      # Chooses the {Instruction} that pops the fewest number of states. For
+      # Chooses the {Instruction} that pops the greatest number of states. For
       # example, in the X222 837P an HL segment signals the start of a new
       # 2000 loop, but may or may not begin a new Table 2 -- the specifications
-      # aren't actually clear. This rule will avoid creating a new Table 2 if
-      # possible, and instead create a new 2000 loop under the current Table 2.
+      # aren't actually clear. This rule will always create a new Table 2 and
+      # a new 2000 loop under it.
       #
       class DepthBased < ConstraintTable
         def initialize(instructions)
@@ -51,15 +51,15 @@ module Stupidedi
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
           @__matches ||= begin
-            deepest = @instructions.head
+            shallowest = @instructions.head
 
             @instructions.tail.each do |i|
-              if i.pop_count < deepest.pop_count
-                deepest = i
+              if i.pop_count > shallowest.pop_count
+                shallowest = i
               end
             end
 
-            deepest.cons
+            shallowest.cons
           end
         end
       end
@@ -80,7 +80,7 @@ module Stupidedi
           invalid = true  # Were all possibly distinguishing elements invalid?
           present = false # Were any possibly distinguishing elements present?
 
-          @__basis ||= basis(deepest(@instructions))
+          @__basis ||= basis(shallowest(@instructions))
           @__basis.head.each do |(n, m), map|
             value = deconstruct(segment_tok.element_toks, n, m)
 
@@ -150,25 +150,25 @@ module Stupidedi
 
         # Resolve conflicts between instructions that have identical SegmentUse
         # values. For each SegmentUse, this chooses the Instruction that pops
-        # the fewest number of states.
+        # the greatest number of states.
         #
         # @return [Array<Instruction>]
-        def deepest(instructions)
-          deepest = Hash.new
+        def shallowest(instructions)
+          shallowest = Hash.new
 
           instructions.each do |i|
             key = i.segment_use.object_id
 
-            if deepest.defined_at?(key)
-              if deepest.at(key).pop_count > i.pop_count
-                deepest[key] = i
+            if shallowest.defined_at?(key)
+              if shallowest.at(key).pop_count < i.pop_count
+                shallowest[key] = i
               end
             else
-              deepest[key] = i
+              shallowest[key] = i
             end
           end
 
-          deepest.values
+          shallowest.values
         end
 
         # @return [Array(Array<(Integer, Integer, Map)>, Array<(Integer, Integer, Map)>)]

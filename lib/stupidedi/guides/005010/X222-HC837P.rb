@@ -1879,7 +1879,7 @@ module Stupidedi
 
           d::TableDef.detail("Table 2 - Billing Provider Detail",
             d::LoopDef.build("2000A BILLING PROVIDER HIERARCHICAL LEVEL",
-              d::RepeatCount.unbounded,
+              d::RepeatCount.bounded(1),
               b::Segment(10, s::HL, "Billing Provider Hierarchical Level",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Hierarchical ID Number"),
@@ -2045,7 +2045,7 @@ module Stupidedi
 
           d::TableDef.detail("Table 2 - Subscriber Detail",
             d::LoopDef.build("2000B SUBSCRIBER HIERARCHICAL LEVEL",
-              d::RepeatCount.unbounded,
+              d::RepeatCount.bounded(1),
               b::Segment(10, s::HL, "Subscriber Hierarchical Level",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Hierarchical ID Number"),
@@ -2187,7 +2187,7 @@ module Stupidedi
 
           d::TableDef.detail("Table 2 - Patient Detail",
             d::LoopDef.build("2000C PATIENT HIERARCHICAL LEVEL",
-              d::RepeatCount.unbounded,
+              d::RepeatCount.bounded(1),
               b::Segment(10, s::HL, "Patient Hierachical Level",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Hierarchical ID Number"),
