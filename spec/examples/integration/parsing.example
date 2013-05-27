@@ -475,6 +475,11 @@ describe "Parsing" do
           p.each{|es| b.send(:HL, *es) }
 
           m = b.machine.first.flatmap{|x| x.sequence(:GS, :ST) }
+
+          m.map{|x| x.count(:HL, nil, nil, "20") }.should be_success(2)
+          m.map{|x| x.count(:HL, nil, nil, "22") }.should be_success(2)
+          m.map{|x| x.count(:HL, nil, nil, "23") }.should be_success(2)
+
           m.map{|x| x.count(:HL) }.should be_success(6)
 
           m.flatmap{|x| x.sequence(:HL) }.

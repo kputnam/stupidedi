@@ -28,7 +28,7 @@ module Stupidedi
 
       delegate :requirement, :to => :entry_segment_use
 
-      delegate :required?, :to => :requirement
+      delegate :required?, :optional?, :to => :requirement
 
       def initialize(id, repeat_count, header_segment_uses, loop_defs, trailer_segment_uses, parent)
         @id, @repeat_count, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
