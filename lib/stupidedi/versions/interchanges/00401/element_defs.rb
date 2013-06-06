@@ -152,7 +152,7 @@ module Stupidedi
             # "09" => "X.121 (CCITT)",
             # "10" => s::CodeList.external("350"),
             # "11" => "DEA (Drug Enforcement Administration)",
-            # "12" => "Phone (Telephone Companies)",
+              "12" => "Phone (Telephone Companies)",
             # "13" => "UCS Code (The UCS Code is a Code Used for UCS Transmissions; it includes the Area Code and Telephone Number of a Modem; it Does Not Include Punctation, Blanks, or Access Code)",
               "14" => "Duns Plus Suffix",
             # "15" => "Petroleum Accountants Society of Canada Company Code",
