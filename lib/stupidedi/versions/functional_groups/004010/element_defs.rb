@@ -9,6 +9,8 @@ module Stupidedi
           s = Schema
 
 
+          E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
+
           E19   = t::AN.new(:E19  , "City Name"                           , 2, 30)
 
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -67,7 +69,8 @@ module Stupidedi
 
           E88   = t::ID.new(:E88  , "Marks and Numbers Qualifier"          , 1, 2,
                             s::CodeList.build(
-                              "UP" => "U.P.C. Consumer Package Code (1-5-5-1)"
+                              "UP" => "U.P.C. Consumer Package Code (1-5-5-1)",
+                              "GM" => "SSCC-18 and Application Identifier"
           ))
 
 
@@ -79,6 +82,7 @@ module Stupidedi
                               "M" => "Motor (Common Carrier)",
                               "R" => "Rail",
                               "S" => "Ocean",
+                              "T" => "Best Way (Shippers Option)",
                               "U" => "Private Parcel Service",
                               "X" => "Intermodal (Piggyback)",
                               "LT" => "Less Than Trailer Load (LTL)"
@@ -106,7 +110,8 @@ module Stupidedi
                               "CN" => "Consignee",
                               "SH" => "Shipper",
                               "SF" => "Ship From",
-                              "ST" => "Ship To"
+                              "ST" => "Ship To",
+                              "WH" => "Warehouse"
           ))
 
           E100   = t::ID.new(:E100   , "Currency Code"              , 3, 3,
@@ -159,6 +164,8 @@ module Stupidedi
                             s::CodeList.external("51"),
                             s::CodeList.external("166"))
 
+          E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)
+
           E124  = t::AN.new(:E124 , "Application Receiver's Code"          , 2, 15)
 
           E127  = t::AN.new(:E127 , "Reference Identification"            , 1, 30)
@@ -178,6 +185,7 @@ module Stupidedi
                               "LI" => "Letters or Notes",
                               "JB" => "Job (Project) Number",
                               "KK" => "Delivery Reference",
+                              "LI" => "Line Item Identifier",
                               "MB" => "Master Bill of Lading",
                               "OS" => "Outbound-from Party",
                               "P8" => "Pickup Reference Number",
@@ -186,6 +194,8 @@ module Stupidedi
                               "SI" => "Shipper's Identifying Number for Shipment (SID)",
                               "SN" => "Seal Number",
                               "WH" => "Master Reference (Link) Number",
+                              "BT" => "Bill To",
+                              "UC" => "Casepack UPC",
                               "ZZ" => "Mutually Defined"
           ))
 
@@ -193,22 +203,7 @@ module Stupidedi
                             s::CodeList.build(
           "B" => "Origin/Delivery Carrier (Any Mode)"))
 
-          E140  = t::ID.new(:E140 , "Standard Carrier Alpha Code"          , 2, 4,
-                            s::CodeList.build(
-                              "RBTW" => "RBTW",
-                              "RBLT" => "RBLT",
-                              "CHRI" => "CHRI",
-                              "CHXD" => "CHXD",
-                              "RBIN" => "RBIN",
-                              "RBWR" => "RBWR",
-                              "RBCL" => "RBCL",
-                              "RBCG" => "RBCG",
-                              "CHSL" => "CHSL",
-                              "WGMA" => "WGMA",
-                              "RBID" => "RBID",
-                              "RFLB" => "RFLB",
-                              "RBHD" => "RBHD"
-          ))
+          E140  = t::AN.new(:E140 , "Standard Carrier Alpha Code"          , 2, 4)
 
           E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 15)
 
@@ -220,7 +215,12 @@ module Stupidedi
                               "204" => "Motor Carrier Load Tender",
                               "214" => "Transportation Carrier Shipment Status Message",
                               "850" => "Purchase Order",
-                              "990" => "Response to a Load Tender"
+                              "940" => "Warehouse Ship Order",
+                              "943" => "Warehouse Stock Transfer",
+                              "944" => "Warehouse Stock Transfer Receipt Advice",
+                              "945" => "Warehouse Shipping Advice",
+                              "990" => "Response to a Load Tender",
+                              "997" => "Functional Acknowledgement"
           ))
 
 
@@ -277,8 +277,11 @@ module Stupidedi
 
           E188  = t::ID.new(:E188 , "Weight Unit Code"                     , 1, 1,
                             s::CodeList.build(
-          "L" => "Pounds"))
+                              "L" => "Pounds",
+                              "K" => "Kilograms"
+          ))
 
+          E206  = t::AN.new(:E206 , "Equipment Initial"                    , 1, 4)
 
           E207  = t::AN.new(:E207 , "Equipment Number"                     , 1, 10)
 
@@ -298,12 +301,18 @@ module Stupidedi
                             s::CodeList.build(
                               "VN" => "Vendor's (Seller's) Item Number",
                               "VC" => "Vendor's (Seller's) Catalog Number",
-                              "VP" => "Vendor's (Seller's) Part Number"
+                              "VP" => "Vendor's (Seller's) Part Number",
+                              "UK" => "UPC/EAN Shipping Container Code",
+                              "BP" => "Buyer's Part Number",
+                              "CB" => "Buyer's Part Number",
+                              "UP" => "UPC Consumer Packaging Code"
           ))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
 
           E277  = t::ID.new(:E277 , "UN/NA Identification Code"            , 6, 6)
+
+          E285  = t::AN.new(:E285 , "Depositor Order Number"               , 1, 22)
 
           E324  = t::AN.new(:E324 , "Purchase Order Number"                , 1, 22)
 
@@ -352,8 +361,14 @@ module Stupidedi
                              "LB" => "Pound",
                              "PL" => "Pallet/Unit Load",
                              "TK" => "Tank",
+                             "IP" => "Master Pack of %",
+                             "CS" => "Case Pack of %",
                              "ZZ" => "Mutually Defined"
           ))
+
+          E356  = t::R.new(:E356   , "Case/Inner Pack"                     , 1, 6)
+
+          E357  = t::R.new(:E357   , "Outer Pack"                          , 1, 8)
 
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
                             s::CodeList.build(
@@ -379,6 +394,15 @@ module Stupidedi
                               "HM" => "Hazardous Material Contact"
           ))
 
+          E368  = t::AN.new(:E368, "Shipment/Order Status Code"            , 2, 2,
+                            s::CodeList.build(
+                              "AB" => "Available to Ship - Billed Quantity",
+                              "CC" => "Shipment Complete on"
+                            )
+          )
+
+          E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
+
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
 
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
@@ -393,10 +417,28 @@ module Stupidedi
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
 
+          E382  = t::R.new(:E382, "Number of Units Shipped"                , 1, 10)
+
+          E383  = t::R.new(:E382, "Quantity Difference"                    , 1, 9)
+
+          E387  = t::AN.new(:E387, "Routing"                               , 1, 35)
+
+          E394  = t::AN.new(:E394, "Warehouse Receipt Number"              , 1, 12)
+
+          E399  = t::ID.new(:E399, "Pallet Exchange Code"                  , 1, 1)
+
           E406  = t::Nn.new(:E406  , "Quantity of Pallets Shipped"         , 1, 3, 0)
+
+          E413  = t::R.new(:E413, "Quantity Received"                      , 1, 7)
 
           E432  = t::ID.new(:E432  , "Date Qualifier"                      , 2, 2,
                             s::CodeList.build(
+                              "02" => "Requested Delivery Date",
+                              "04" => "Purchase Order Date",
+                              "10" => "Requested Ship Date",
+                              "11" => "Shipped Date",
+                              "17" => "Estimated Delivery Date",
+                              "19" => "Date Unloaded",
                               "37" => "Ship Not Before Date",
                               "38" => "Ship Not Later Than Date",
                               "53" => "Deliver Not Before Date",
@@ -404,12 +446,27 @@ module Stupidedi
                               "64" => "Must Respond By"
           ))
 
+          E438  = t::AN.new(:E438, "U.P.C. Case Code"                      , 12, 12)
+
+          E451  = t::AN.new(:E451 , "Warehouse Lot Number"                 , 1, 12)
+
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
                             s::CodeList.build(
                               "X" => "Accredited Standards Committee X12"
           ))
 
           E460  = t::ID.new(:E460 , "Shipment Weight Code"                 , 1, 1)
+
+          E472  = t::AN.new(:E472  , "Link Sequence Number"                , 6, 6)
+
+          E473  = t::ID.new(:E473 , "Order Status Code"                    , 1, 1,
+                            s::CodeList.build(
+                              "F" => "Cancel",
+                              "N" => "Original",
+                              "R" => "Change"
+          ))
+          
+          E474  = t::AN.new(:E474 , "Master Reference Number"              , 1, 22)
 
           E479  = t::ID.new(:E479 , "Functional Identifier Code"           , 2, 2,
                             s::CodeList.build(
@@ -426,13 +483,25 @@ module Stupidedi
                               "SM" => "Motor Carrier Load Tender",
                               "TM" => "Motor Carrier Delivery Trailer Manifest",
                               "UP" => "Motor Carrier Pick-up Manifest",
-                              "PO" => "Purchase Order"
+                              "PO" => "Purchase Order",
+                              "OW" => "Warehouse Ship Order",
+                              "SW" => "Warehouse Shipping Advice",
+                              "AR" => "Warehouse Stock Transfer",
+                              "RE" => "Warehouse Stock Transfer Receipt Advice",
+                              "FA" => "Functional Acknowledgment"
           ))
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
                             s::CodeList.external("881"))
 
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
+
+          E514  = t::ID.new(:E514 , "Reporting Code"                       , 1, 1,
+            s::CodeList.build(
+              "F" => "Full Detail",
+              "U" => "Update"
+            )
+          )
 
           E554  = t::Nn.new(:E554 , "Assigned Number"                      , 1, 6, 0)
 
@@ -460,6 +529,39 @@ module Stupidedi
                               "UM" => "Price per Unit of Measure"
           ))
 
+          E715  = t::ID.new(:E715 , "Functional Group Acknowledgment Code" , 1, 1,
+            s::CodeList.build(
+              "A" => "Accepted",
+              "E" => "Accepted, But Errors Were Noted",
+              "M" => "Rejected, Message Authentication Code (MAC) Failed",
+              "P" => "Partially Accepted, At Least One Transaction Set Was Rejected",
+              "R" => "Rejected",
+              "W" => "Rejected, Assurance Failed Validity Tests",
+              "X" => "Rejected, Content After Decryption Could Not Be Analyzed"))
+
+          E716  = t::ID.new(:E716 , "Functional Group Syntax Error Code"   , 1, 3,
+            s::CodeList.build(
+              "1"  => "Functional Group Not Supported",
+              "2"  => "Functional Group Version Not Supported",
+              "3"  => "Functional Group Trailer Missing",
+              "4"  => "Group Control Number in the Functional Group Header and Trailer Do Not Agree",
+              "5"  => "Number of Included Transaction Sets Does Not Match Actual Count",
+              "6"  => "Group Control Number Violates Syntax",
+              "10" => "Authentication Key Name Unknown",
+              "11" => "Encryption Key Name Unknown",
+              "12" => "Requested Service (Authentication or Encryption) Not Available",
+              "13" => "Unknown Security Recipient",
+              "14" => "Unknown Security Originator",
+              "15" => "Syntax Error in Decrypted Text",
+              "16" => "Security Not Supported",
+              "17" => "Incorrect Message Length (Encryption Only)",
+              "18" => "Message Authentication Code Failed",
+              "19" => "Functional Group Control Number not Unique within Interchange",
+              "23" => "S3E Security End Segment Missing for S3S Security Start Segment",
+              "24" => "S3S Security Start Segment Missing for S3E Security End Segment",
+              "25" => "S4E Security End Segment Missing for S4S Security Start Segment",
+              "26" => "S4S Security Start Segment Missing for S4E Security End Segment"))
+
           E740  = t:: R.new(:E740 , "Range Minimum"                        , 1, 20)
 
           E741  = t:: R.new(:E741 , "Range Maximum"                        , 1, 20)
@@ -475,6 +577,13 @@ module Stupidedi
           ))
 
           E809  = t::AN.new(:E809 , "Hazardous Material Shipment Information", 1, 25)
+
+          E892  = t::ID.new(:E892 , "Line Item Change Reason Code"         , 2, 2,
+                            s::CodeList.build(
+                              "01" => "Out of Stock",
+                              "02" => "Cut due to cube or weight"
+                            )
+          )
 
           E983  = t::ID.new(:E983 , "Hazardous Class Qualifier"            , 1, 1,
                             s::CodeList.build(

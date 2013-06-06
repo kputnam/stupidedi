@@ -80,6 +80,11 @@ module Stupidedi
 
         c.transaction_set.customize do |x|
           x.register("004010", "PO", "850") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::PO850 }
+          x.register("004010", "OW", "940") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::OW940 }
+          x.register("004010", "AR", "943") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::AR943 }
+          x.register("004010", "RE", "944") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::RE944 }
+          x.register("004010", "SW", "945") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::SW945 }
+          x.register("004010", "FA", "997") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::FA997 }
 
           x.register("004010", "SM", "204") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::SM204 }
           x.register("004010", "QM", "214") { Stupidedi::Versions::FunctionalGroups::FortyTen::TransactionSetDefs::QM214 }
