@@ -13,11 +13,14 @@ module Stupidedi
     autoload :ResultSet,    "stupidedi/editor/result_set"
 
     autoload :AbstractEd,         "stupidedi/editor/abstract_ed"
+    autoload :FourOhOneEd,        "stupidedi/editor/00401"
+    autoload :FortyTenEd,         "stupidedi/editor/004010"
     autoload :FiveOhOneEd,        "stupidedi/editor/00501"
     autoload :FiftyTenEd,         "stupidedi/editor/005010"
     autoload :TransactionSetEd,   "stupidedi/editor/transaction_set_ed"
     autoload :TransmissionEd,     "stupidedi/editor/transmission_ed"
 
+    autoload :X12, "stupidedi/editor/X12"
     autoload :X221, "stupidedi/editor/X221-HP835"
     autoload :X222, "stupidedi/editor/X222-HC837"
 

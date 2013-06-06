@@ -81,6 +81,9 @@ module Stupidedi
             end
           end
 
+          autoload :Operators,
+            "stupidedi/versions/functional_groups/004010/element_types/operators"
+
           autoload :DateVal,
             "stupidedi/versions/functional_groups/004010/element_types/date_val"
 

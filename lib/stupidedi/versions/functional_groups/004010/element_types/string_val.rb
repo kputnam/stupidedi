@@ -11,7 +11,7 @@ module Stupidedi
           end
 
           #
-          # @see X222.pdf A.1.3.1.4 String
+          # @see X222.pdf B.1.1.3.1.4 String
           #
           class StringVal < Values::SimpleElementVal
 
@@ -25,6 +25,11 @@ module Stupidedi
 
             def too_short?
               false
+            end
+
+            # @return [StringVal]
+            def map
+              StringVal.value(yield(value), usage, position)
             end
 
             #
@@ -52,6 +57,11 @@ module Stupidedi
                 false
               end
 
+              # @return [StringVal]
+              def map
+                StringVal.value(yield(nil), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
@@ -74,10 +84,14 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
-                eql?(other) or
-                  (other.is_a?(Invalid) and @value == other.value)
+                eql?(other) or other.nil?
               end
             end
 
@@ -86,12 +100,56 @@ module Stupidedi
             # use the {StringVal.empty} constructor.
             #
             class Empty < StringVal
+              include Comparable
 
-              def valid?
-                true
+              # (string any* -> any)
+              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+                :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+                :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
+                :=~, :match, :partition, :rpatition, :each, :split, :scan,
+                :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
+                :at, :empty?, :blank?, :to => :value
+
+              # (string any* -> StringVal)
+              extend Operators::Wrappers
+              wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
+                :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
+                :sub, :gsub, :encode, :force_encoding, :squeeze
+
+              # (string -> StringVal)
+              extend Operators::Unary
+              unary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
+
+              # (string string -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :start_with?, :end_with?,
+                :include?, :casecmp, :coerce => :to_s
+
+              # @return [IdentifierVal]
+              def copy(changes = {})
+                StringVal.value \
+                  changes.fetch(:value, value),
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
-              def empty?
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_str)
+                  return copy(:value => other.to_str), self
+                else
+                  raise TypeError,
+                    "cannot coerce StringVal to #{other.class}"
+                end
+              end
+
+              def value
+                ""
+              end
+
+              def valid?
                 true
               end
 
@@ -117,9 +175,9 @@ module Stupidedi
                 ""
               end
 
-              # @return [Boolean]
-              def ==(other)
-                other.is_a?(Empty)
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
               end
             end
 
@@ -128,23 +186,57 @@ module Stupidedi
             # instead, use the {StringVal.value} constructor.
             #
             class NonEmpty < StringVal
+              include Comparable
 
               # @return [String]
               attr_reader :value
 
-              delegate :to_d, :to_s, :to_f, :length, :=~, :match, :to => :@value
+              # (string any* -> any)
+              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+                :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+                :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
+                :=~, :match, :partition, :rpatition, :each, :split, :scan,
+                :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
+                :at, :empty?, :blank?, :to => :@value
+
+              # (string any* -> StringVal)
+              extend Operators::Wrappers
+              wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
+                :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
+                :sub, :gsub, :encode, :force_encoding, :squeeze
+
+              # (string -> StringVal)
+              extend Operators::Unary
+              unary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
+
+              # (string string -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :start_with?, :end_with?,
+                :include?, :casecmp, :coerce => :to_s
 
               def initialize(string, usage, position)
                 @value = string
                 super(usage, position)
               end
 
-              # @return [NonEmpty]
+              # @return [StringVal]
               def copy(changes = {})
-                NonEmpty.new \
+                StringVal.value \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage),
                   changes.fetch(:position, position)
+              end
+
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_str)
+                  return copy(:value => other.to_str), self
+                else
+                  raise TypeError,
+                    "cannot coerce StringVal to #{other.class}"
+                end
               end
 
               def too_long?
@@ -153,6 +245,12 @@ module Stupidedi
 
               def too_short?
                 @value.lstrip.length < definition.min_length
+              end
+
+              # @return [String]
+              def to_x12(truncate = true)
+                x12 = @value.ljust(definition.min_length, " ")
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               # @return [String]
@@ -174,25 +272,6 @@ module Stupidedi
 
               def valid?
                 true
-              end
-
-              def empty?
-                false
-              end
-
-              # @return [StringVal::NonEmpty]
-              def gsub(*args, &block)
-                copy(:value => @value.gsub(*args, &block))
-              end
-
-              # @return [StringVal::NonEmpty]
-              def upcase
-                copy(:value => @value.upcase)
-              end
-
-              # @return [StringVal::NonEmpty]
-              def downcase
-                copy(:value => @value.downcase)
               end
 
               def to_date(format)
@@ -254,8 +333,8 @@ module Stupidedi
                              @value.slice(4, 2).to_i,
                              @value.slice(6, 2).to_i) ..
                   Date.civil(@value.slice(9, 4).to_i,
-                             @value.slice(11, 2).to_i,
-                             @value.slice(13, 2).to_i)
+                             @value.slice(13, 2).to_i,
+                             @value.slice(15, 2).to_i)
                 when "RDT" # CCYYMMDDHHMM-CCYYMMDDHHMM
                   Time.utc(@value.slice(0, 4).to_i,
                            @value.slice(4, 2).to_i,
@@ -278,16 +357,6 @@ module Stupidedi
                     "Format code #{format} is not recognized"
                 end
               end
-
-              # @return [Boolean]
-              def ==(other)
-                eql?(other) or
-                 (if other.is_a?(NonEmpty)
-                    other.value == @value
-                  else
-                    other == @value
-                  end)
-              end
             end
 
           end
@@ -309,15 +378,6 @@ module Stupidedi
                 self::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
                 self::Invalid.new(object, usage, position)
-              end
-            end
-
-            # @return [StringVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                self::NonEmpty.new(string.rstrip, usage, position)
               end
             end
 
