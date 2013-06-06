@@ -48,7 +48,8 @@ module Stupidedi
             SyntaxNotes::C.build(18, 16),
             SyntaxNotes::L.build(19, 20, 21),
             SyntaxNotes::C.build(20, 19),
-            SyntaxNotes::C.build(21, 19))
+            SyntaxNotes::C.build(21, 19)
+            )
 
         end
       end

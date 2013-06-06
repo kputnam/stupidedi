@@ -8,7 +8,7 @@ module Stupidedi
           # Simple element definition for date elements
           #
           # @see DateVal
-          # @see X222.pdf A.1.3.1.5 Date
+          # @see X222.pdf B.1.1.3.1.5 Date
           #
           class DT < SimpleElementDef
             def initialize(id, name, min_length, max_length, description = nil, parent = nil)
@@ -69,9 +69,14 @@ module Stupidedi
                 false
               end
 
+              # @return [DateVal]
+              def map
+                DateVal.value(yield(nil), usage, position)
+              end
+
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -90,9 +95,13 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
+              end
+
               def ==(other)
-                eql?(other) or
-                  (other.is_a?(Invalid) and @value == other.value)
+                eql?(other)
               end
             end
 
@@ -110,10 +119,15 @@ module Stupidedi
                 true
               end
 
+              # @return [DateVal]
+              def map
+                DateVal.value(yield(nil), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -132,9 +146,14 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
-                other.is_a?(Empty)
+                other.is_a?(Empty) or other.nil?
               end
             end
 
@@ -145,37 +164,50 @@ module Stupidedi
             class Proper < DateVal
               include Comparable
 
-              # @return [Integer]
-              attr_reader :year
+              # (date any* -> any)
+              delegate :year, :month, :day, :cwday, :cweek, :downto, :upto,
+                :step, :httpdate, :to_s, :to_i, :strftime, :iso8601, :rfc2822,
+                :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
+                :to_datetime, :to_int, :to_r, :to_c, :wday, :xmlschema, :yday,
+                :start, :to => :@value
 
-              # @return [Integer]
-              attr_reader :month
+              # (date any* -> DateVal::Proper)
+              extend Operators::Wrappers
+              wrappers :+, :<<, :>>, :next_day, :next_month, :next_year,
+                :prev_day, :prev_month, :prev_year
 
-              # @return [Integer]
-              attr_reader :day
+              # (date -> DateVal::Proper)
+              extend Operators::Unary
+              unary_operators :next, :succ, :prev
 
-              def initialize(year, month, day, usage, position)
-                @year, @month, @day = year, month, day
+              # (date date -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :-, :coerce => :to_date
 
-                begin
-                  # Check that date is valid
-                  @value = ::Date.civil(@year, @month, @day)
-                rescue ArgumentError
-                  raise Exceptions::InvalidElementError,
-                    "invalid date year: #{year}, month: #{month}, day: #{day}"
-                end
+              attr_reader :value
 
+              def initialize(value, usage, position)
+                @value = value
                 super(usage, position)
               end
 
               # @return [Proper]
               def copy(changes = {})
                 Proper.new \
-                  changes.fetch(:year, @year),
-                  changes.fetch(:month, @month),
-                  changes.fetch(:day, @day),
+                  changes.fetch(:value, @value),
                   changes.fetch(:usage, usage),
                   changes.fetch(:position, position)
+              end
+
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_date)
+                  return DateVal.value(other, usage, position), self
+                else
+                  raise TypeError,
+                    "cannot coerce DateVal to #{other.class}"
+                end
               end
 
               def valid?
@@ -202,13 +234,13 @@ module Stupidedi
                 end
 
                 if not second.nil?
-                  Time.utc(@year, @month, @day, hour, minute, second)
+                  Time.utc(year, month, day, hour, minute, second)
                 elsif not minute.nil?
-                  Time.utc(@year, @month, @day, hour, minute)
+                  Time.utc(year, month, day, hour, minute)
                 elsif not hour.nil?
-                  Time.utc(@year, @month, @day, hour)
+                  Time.utc(year, month, day, hour)
                 else
-                  Time.utc(@year, @month, @day)
+                  Time.utc(year, month, day)
                 end
               end
 
@@ -232,10 +264,15 @@ module Stupidedi
                 self
               end
 
+              # @return [DateVal]
+              def map
+                DateVal.value(yield(@value), usage, position)
+              end
+
               # @return [String]
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -246,30 +283,32 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(#{'%04d-%02d-%02d' % [@year, @month, @day]})"
+                ansi.element("DT.value#{id}") << "(#{"%04d-%02d-%02d" % [year, month, day]})"
               end
 
               # @return [String]
-              def to_s
-                '%04d%02d%02d' % [@year, @month, @day]
+              def to_x12(truncate = true)
+                x12 =
+                  if definition.max_length < 8
+                    "%02d%02d%02d" % [year % 100, month, day]
+                  else
+                    "%04d%02d%02d" % [year, month, day]
+                  end
+
+                if truncate
+                  # Drop the most significant digits... they are probably bogus?
+                  overage = x12.length - definition.max_length
+                  x12.drop(overage > 0 ? overage : 0)
+                else
+                  x12
+                end
               end
 
-              # @return -1, 0, 1
-              def <=>(other)
-                if @year < other.year
-                  -1
-                elsif @year > other.year
-                  1
-                elsif @month < other.month
-                  -1
-                elsif @month > other.month
-                  1
-                elsif @day < other.day
-                  -1
-                elsif @day > other.day
-                  1
+              def too_long?
+                if definition.max_length < 8
+                  definition.max_length - 2 < year.to_s.length
                 else
-                  0
+                  definition.max_length - 4 < year.to_s.length
                 end
               end
             end
@@ -331,7 +370,8 @@ module Stupidedi
               #
               # @return [Proper]
               def century(cc)
-                Proper.new(100 * cc + @year, @month, @day, usage, position)
+                date = ::Date.civil(100 * cc + @year, @month, @day)
+                Proper.new(date, usage, position)
               end
 
               # Create a proper date which cannot be older than the given `date`
@@ -363,7 +403,6 @@ module Stupidedi
                     end
                   end
                 end
-
               end
 
               # Create a proper date which cannot be newer than the given `date`
@@ -414,7 +453,7 @@ module Stupidedi
               # @return [String]
               def inspect
                 id = definition.bind do |d|
-                  "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                  "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
                     elsif usage.required?
@@ -425,12 +464,31 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(XX#{'%02d-%02d-%02d' % [@year, @month, @day]})"
+                ansi.element("DT.value#{id}") << "(XX#{"%02d-%02d-%02d" % [@year, @month, @day]})"
               end
 
               # @return [String]
               def to_s
-                '%04d%02d%02d' % [@year, @month, @day]
+                "XX%02d%02d%02d" % [@year, @month, @day]
+              end
+
+              # @return [String]
+              def to_x12(truncate = true)
+                x12 = "%02d%02d%02d" % [@year, @month, @day]
+                truncate ? x12.slice(0, definition.max_length) : x12
+              end
+
+              def too_short?
+                # Less than a 4-digit year means our max length is 7, but in
+                # practice the definition min/max lengths are either 6 or 8
+                definition.min_length > 6
+              end
+
+              def too_long?
+                # We know month and day occupy four characters, but year *could*
+                # occupy either three or two characters. If the max_length can't
+                # accomodate a three-digit year, make sure we don't have one
+                definition.max_length < 7 and @year > 99
               end
 
               # @note Not commutative
@@ -451,7 +509,7 @@ module Stupidedi
 
             # @return [DateVal::Empty]
             def empty(usage, position)
-              DateVal::Empty.new(usage, position)
+              self::Empty.new(usage, position)
             end
 
             # @return [DateVal]
@@ -472,12 +530,14 @@ module Stupidedi
                   if year.length < 4
                     self::Improper.new(year.to_i, month, day, usage, position)
                   else
-                    self::Proper.new(year.to_i, month, day, usage, position)
+                    date = date(year, month, day)
+                    self::Proper.new(date, usage, position)
                   end
                 end
 
               elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-                self::Proper.new(object.year, object.month, object.day, usage, position)
+                date = date(object.year, object.month, object.day)
+                self::Proper.new(date, usage, position)
 
               elsif object.is_a?(DateVal::Improper)
                 self::Improper.new(object.year, object.month, object.day, usage, position)
@@ -490,27 +550,17 @@ module Stupidedi
               self::Invalid.new(object, usage, position)
             end
 
-            # @return [DateVal]
-            def parse(string, usage, position)
-              if string.length < 6
-                self::Invalid.new(string, usage, position)
-              else
-                day   = string.slice(-2, 2).to_i
-                month = string.slice(-4, 2).to_i
-                year  = string.slice( 0..-5)
-
-                if year.length < 4
-                  self::Improper.new(year.to_i, month, day, usage, position)
-                else
-                  self::Proper.new(year.to_i, month, day, usage, position)
-                end
-              end
-            rescue Exceptions::InvalidElementError
-              self::Invalid.new(string, usage, position)
-            end
-
             # @endgroup
             ###################################################################
+
+          private
+
+            def date(year, month, day)
+              ::Date.civil(year.to_i, month.to_i, day.to_i)
+            rescue
+              raise Exceptions::InvalidElementError,
+                "invalid year(#{year}), month(#{month}), day(#{day})"
+            end
           end
 
           # Prevent direct instantiation of abstract class DateVal
