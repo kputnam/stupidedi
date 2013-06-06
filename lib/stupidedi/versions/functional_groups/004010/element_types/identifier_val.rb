@@ -32,8 +32,8 @@ module Stupidedi
 
             # @return [SimpleElementUse]
             def simple_use(requirement, repeat_count, parent = nil)
-              if @code_list and @code_list.internal?
-                Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.absolute(code_list.codes), parent)
+              if @code_list.try(:internal?)
+                Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.absolute(@code_list.codes), parent)
               else
                 Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.universal, parent)
               end
@@ -41,16 +41,24 @@ module Stupidedi
 
             # @return [ComponentElementUse]
             def component_use(requirement, parent = nil)
-              if @code_list and @code_list.internal?
-                Schema::ComponentElementUse.new(self, requirement, Sets.absolute(code_list.codes), parent)
+              if @code_list.try(:internal?)
+                Schema::ComponentElementUse.new(self, requirement, Sets.absolute(@code_list.codes), parent)
               else
                 Schema::ComponentElementUse.new(self, requirement, Sets.universal, parent)
+              end
+            end
+
+            def code_lists(subset = Sets.universal)
+              if @code_list.present?
+                @code_list.code_lists(subset)
+              else
+                Sets.empty
               end
             end
           end
 
           #
-          # @see X222.pdf A.1.3.1.3 Identifier
+          # @see X222.pdf B.1.1.3.1.3 Identifier
           #
           class IdentifierVal < Values::SimpleElementVal
 
@@ -66,9 +74,11 @@ module Stupidedi
               false
             end
 
-            #
-            #
-            #
+            # @return [IdentifierVal]
+            def map
+              IdentifierVal.value(yield(value), usage, position)
+            end
+
             class Invalid < IdentifierVal
 
               # @return [Object]
@@ -85,6 +95,11 @@ module Stupidedi
 
               def empty?
                 false
+              end
+
+              # @return [IdentifierVal]
+              def map
+                IdentifierVal.value(yield(nil), usage, position)
               end
 
               # @return [String]
@@ -109,10 +124,14 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
-                eql?(other) or
-                  (other.is_a?(Invalid) and @value == other.value)
+                eql?(other) or other.nil?
               end
             end
 
@@ -122,12 +141,56 @@ module Stupidedi
             # constructors
             #
             class Empty < IdentifierVal
+              include Comparable
 
-              def valid?
-                true
+              # (string any* -> any)
+              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+                :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+                :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
+                :=~, :match, :partition, :rpatition, :each, :split, :scan,
+                :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
+                :at, :empty?, :blank?, :to => :value
+
+              # (string any* -> StringVal)
+              extend Operators::Wrappers
+              wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
+                :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
+                :sub, :gsub, :encode, :force_encoding, :squeeze
+
+              # (string -> StringVal)
+              extend Operators::Unary
+              unary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
+
+              # (string string -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :start_with?, :end_with?,
+                :include?, :casecmp, :coerce => :to_s
+
+              # @return [IdentifierVal]
+              def copy(changes = {})
+                IdentifierVal.value \
+                  changes.fetch(:value, value),
+                  changes.fetch(:usage, usage),
+                  changes.fetch(:position, position)
               end
 
-              def empty?
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_str)
+                  return copy(:value => other.to_str), self
+                else
+                  raise TypeError,
+                    "cannot coerce IdentifierVal to #{other.class}"
+                end
+              end
+
+              def value
+                ""
+              end
+
+              def valid?
                 true
               end
 
@@ -153,9 +216,9 @@ module Stupidedi
                 ""
               end
 
-              # @return [Boolean]
-              def ==(other)
-                other.is_a?(Empty)
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
               end
             end
 
@@ -164,31 +227,60 @@ module Stupidedi
             # instead, use the {IdentifierVal.value} constructor
             #
             class NonEmpty < IdentifierVal
+              include Comparable
 
               # @return [String]
               attr_reader :value
+              # (string any* -> any)
+              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+                :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+                :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
+                :=~, :match, :partition, :rpatition, :each, :split, :scan,
+                :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
+                :at, :empty?, :blank?, :to => :value
 
-              delegate :to_s, :to_str, :length, :=~, :match, :include?, :to => :@value
+              # (string any* -> StringVal)
+              extend Operators::Wrappers
+              wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
+                :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
+                :sub, :gsub, :encode, :force_encoding, :squeeze
+
+              # (string -> StringVal)
+              extend Operators::Unary
+              unary_operators :chr, :chop, :upcase, :downcase, :strip,
+                :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
+
+              # (string string -> any)
+              extend Operators::Relational
+              relational_operators :==, :<=>, :start_with?, :end_with?,
+                :include?, :casecmp, :coerce => :to_s
 
               def initialize(value, usage, position)
                 @value = value
                 super(usage, position)
               end
 
-              # @return [NonEmpty]
+              # @return [IdentifierVal]
               def copy(changes = {})
-                NonEmpty.new \
+                IdentifierVal.value \
                   changes.fetch(:value, @value),
                   changes.fetch(:usage, usage),
                   changes.fetch(:position, position)
               end
 
-              def valid?
-                true
+              def coerce(other)
+                # me, he = other.coerce(self)
+                # me <OP> he
+                if other.respond_to?(:to_str)
+                  return copy(:value => other.to_str), self
+                else
+                  raise TypeError,
+                    "cannot coerce IdentifierVal to #{other.class}"
+                end
               end
 
-              def empty?
-                false
+              def valid?
+                true
               end
 
               def too_long?
@@ -197,6 +289,12 @@ module Stupidedi
 
               def too_short?
                 @value.length < definition.min_length
+              end
+
+              # @return [String]
+              def to_x12(truncate = true)
+                x12 = @value.ljust(definition.min_length, " ")
+                truncate ? x12.take(definition.max_length) : x12
               end
 
               # @return [String]
@@ -227,16 +325,6 @@ module Stupidedi
 
                 ansi.element("ID.value#{id}") << "(#{value})"
               end
-
-              # @return [Boolean]
-              def ==(other)
-                eql?(other) or
-                 (if other.is_a?(NonEmpty)
-                    other.value == @value
-                  else
-                    other == @value
-                  end)
-              end
             end
 
           end
@@ -259,15 +347,8 @@ module Stupidedi
               else
                 self::Invalid.new(object, usage, position)
               end
-            end
-
-            # @return [IdentifierVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                self::NonEmpty.new(string.rstrip, usage, position)
-              end
+            rescue
+              self::Invalid.new(object, usage, position)
             end
 
             # @endgroup

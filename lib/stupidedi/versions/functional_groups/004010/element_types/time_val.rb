@@ -9,12 +9,12 @@ module Stupidedi
               super(id, name, min_length, max_length, description)
 
               unless min_length == 2 or min_length == 4 or min_length >= 6
-                raise ArgumentError,
+                raise Exceptions::InvalidSchemaError,
                   "min_length must be either 2, 4, 6, or greater"
               end
 
               unless max_length == 2 or max_length == 4 or max_length >= 6
-                raise ArgumentError,
+                raise Exceptions::InvalidSchemaError,
                   "max_length must be either 2, 4, 6, or greater"
               end
             end
@@ -25,7 +25,7 @@ module Stupidedi
           end
 
           #
-          # @see X222.pdf A.1.3.1.6 Time
+          # @see X222.pdf B.1.1.3.1.6 Time
           #
           class TimeVal < Values::SimpleElementVal
 
@@ -81,10 +81,14 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
-                eql?(other) or
-                  (other.is_a?(Invalid) and @value == other.value)
+                eql?(other)
               end
             end
 
@@ -124,9 +128,14 @@ module Stupidedi
                 ""
               end
 
+              # @return [String]
+              def to_x12(truncate = true)
+                ""
+              end
+
               # @return [Boolean]
               def ==(other)
-                other.is_a?(Empty)
+                other.is_a?(Empty) or other.nil?
               end
             end
 
@@ -218,8 +227,31 @@ module Stupidedi
               end
 
               # @return [String]
-              def to_s
-                "#{@hour}#{@minute}#{@second}"
+              def to_s(hh = "hh", mm = "mm", ss = "ss")
+                hh =   @hour.try{|h| "%02d" % h } || hh
+                mm = @minute.try{|m| "%02d" % m } || mm
+                ss = @second.try{|s| "%02f" % s } || ss
+                "#{hh}#{mm}#{ss}"
+              end
+
+              # @return [String]
+              def to_x12(truncate = true)
+                hh =   @hour.try{|h| "%02d" % h }
+                mm = @minute.try{|m| "%02d" % m }
+                ss = @second.try{|s| "%02d" % s }
+                ff = @second.try do |s|
+                  s.frac.to_s("F").
+                    gsub(/^0*\./, "").
+                    gsub(/0+$/, "")
+                end
+
+                x12 = "#{hh}#{mm}#{ss}#{ff}"
+
+                truncate ? x12.take(definition.max_length) : x12
+              end
+
+              def too_short?
+                to_s(nil, nil, nil).length < definition.min_length
               end
 
               # @return [Boolean]
@@ -248,9 +280,12 @@ module Stupidedi
                 self::Empty.new(usage, position)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)
+                return self::Invalid.new(object, usage, position) \
+                  unless object =~ /^\d+$/
+
                 hour   = object.to_s.slice(0, 2).to_i
                 minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                second = object.to_s.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
+                second = object.to_s.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
 
                 if decimal = object.to_s.slice(6..-1)
                   second += "0.#{decimal}".to_d
@@ -260,37 +295,20 @@ module Stupidedi
 
               elsif object.is_a?(Time)
                 self::NonEmpty.new(object.hour, object.min,
-                                      object.sec + (object.usec / 1000000.0),
+                                      object.sec.to_d \
+                                      + (object.usec.to_d / 1000000),
                                       usage, position)
 
               elsif object.is_a?(DateTime)
                 self::NonEmpty.new(object.hour, object.min,
-                                      object.sec + object.sec_fraction.to_f,
+                                      object.sec.to_d \
+                                      + object.sec_fraction.to_d,
                                       usage, position)
               else
                 self::Invalid.new(object, usage, position)
               end
             rescue Exceptions::InvalidElementError
               self::Invalid.new(object, usage, position)
-            end
-
-            # @return [TimeVal]
-            def parse(string, usage, position)
-              if string.blank?
-                self::Empty.new(usage, position)
-              else
-                hour   = string.slice(0, 2).to_i
-                minute = string.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                second = string.slice(4, 2).try{|ss| ss.to_i unless ss.blank? }
-
-                if decimal = string.slice(6..-1)
-                  second += "0.#{decimal}".to_d
-                end
-
-                self::NonEmpty.new(hour, minute, second, usage, position)
-              end
-            rescue Exceptions::InvalidElementError
-              self::Invalid.new(string, usage, position)
             end
 
             # @endgroup
