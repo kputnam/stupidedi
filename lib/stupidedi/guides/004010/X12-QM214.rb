@@ -52,15 +52,19 @@ module Stupidedi
                 b::Element(e::Situational, "Postal Code"),
                 b::Element(e::Situational, "Country Code"))),
 
-# BUG: Getting a mysterious "undefined method 'position' for #<Stupidedi::Schema::LoopDef when 
-# a segment is sandwiched between 2 loops
-#            b::Segment(120, s::MS3, "Interline Information",
-#              r::Situational, d::RepeatCount.bounded(12),
-#              b::Element(e::Required,    "Standard Carrier Alpha Code"),
-#              b::Element(e::Situational, "Routing Sequence Code"),
-#              b::Element(e::NotUsed, "City Name"),
-#              b::Element(e::Required,    "Transportation Method/Type Code"),
-#              b::Element(e::NotUsed, "State or Province Code")),
+            # BUG: Getting "undefined method 'position' for
+            # #<Stupidedi::Schema::LoopDef when a segment is sandwiched
+            # between 2 loops.  Defininig artificial loop to get around the
+            # problem.
+            d::LoopDef.build("0150",
+              d::RepeatCount.bounded(12),
+              b::Segment(120, s::MS3, "Interline Information",
+                r::Situational, d::RepeatCount.bounded(1),
+                b::Element(e::Required,    "Standard Carrier Alpha Code"),
+                b::Element(e::Situational, "Routing Sequence Code"),
+                b::Element(e::NotUsed, "City Name"),
+                b::Element(e::Required,    "Transportation Method/Type Code"),
+                b::Element(e::NotUsed, "State or Province Code"))),
 
             d::LoopDef.build("0200",
               d::RepeatCount.bounded(999999),
