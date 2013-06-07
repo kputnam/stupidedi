@@ -80,10 +80,10 @@ begin
       end
     end
   end
-rescue LoadError
+rescue LoadError => e
   task :rcov do
     warn "couldn't load rcov:"
-    warn "  #{$!}"
+    warn "  #{e}"
     exit 1
   end
 end
@@ -99,10 +99,10 @@ begin
     mkdir_p "#{relpath}/doc/generated/images"
   end
 
-rescue LoadError
+rescue LoadError => e
   task :yard do
     warn "couldn't load yard:"
-    warn "  #{$!}"
+    warn "  #{e}"
     exit 1
   end
 end
