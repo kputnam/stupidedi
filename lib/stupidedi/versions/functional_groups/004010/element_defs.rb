@@ -1,3 +1,5 @@
+# encoding: ISO-8859-1
+
 module Stupidedi
   module Versions
     module FunctionalGroups
