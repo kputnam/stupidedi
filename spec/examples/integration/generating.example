@@ -3,7 +3,7 @@ require "spec_helper"
 describe "Generating" do
   include NavigationMatchers
 
-  let(:config)  { Stupidedi::Config.default }
+  let(:config)  { Stupidedi::Config.hipaa }
   let(:strict)  { Stupidedi::Builder::BuilderDsl.build(config, true)  }
   let(:relaxed) { Stupidedi::Builder::BuilderDsl.build(config, false) }
 

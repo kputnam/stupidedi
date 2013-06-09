@@ -449,7 +449,7 @@ describe "Parsing" do
       #   Table 2C
       #     2000C HL*..*..*23
       let(:dsl) do
-        c = Stupidedi::Config.default
+        c = Stupidedi::Config.hipaa
         b = Stupidedi::Builder::BuilderDsl.build(c, false)
         b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil) 
         b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
@@ -509,7 +509,7 @@ describe "Parsing" do
       #     1000A NM1*41
       #     1000B NM1*40
       let(:dsl) do
-        c = Stupidedi::Config.default
+        c = Stupidedi::Config.hipaa
         b = Stupidedi::Builder::BuilderDsl.build(c, false)
         b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil) 
         b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
@@ -548,7 +548,7 @@ describe "Parsing" do
       #       PER*IC
 
       let(:dsl) do
-        c = Stupidedi::Config.default
+        c = Stupidedi::Config.hipaa
         b = Stupidedi::Builder::BuilderDsl.build(c)
         b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil) 
         b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X221")
