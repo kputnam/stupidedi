@@ -18,6 +18,7 @@ if defined? Rcov or defined? SimpleCov
 
       for child in namespace.constants
         begin
+          next if child.to_s == "Contrib"
           value = namespace.const_get(child)
 
           if value.is_a?(Module) and not history[value]
