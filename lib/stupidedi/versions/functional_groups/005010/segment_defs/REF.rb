@@ -14,8 +14,9 @@ module Stupidedi
             e::E127 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E352 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::C040 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            SyntaxNotes::R.build(2, 3)
-          )
+
+            SyntaxNotes::R.build(2, 3))
+
         end
       end
     end
