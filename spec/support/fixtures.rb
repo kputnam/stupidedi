@@ -3,7 +3,7 @@ Fixtures = Class.new do
     @root  = root
     @files = Hash.new{|h,k| h[k] = parse(k) }
 
-    @config  = Stupidedi::Config.default
+    @config  = Stupidedi::Config.hipaa
     @machine = Stupidedi::Builder::StateMachine.build(@config)
   end
 
