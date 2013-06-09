@@ -99,8 +99,7 @@ module Stupidedi
             s::CodeList.external("5"))
 
           E116  = t::ID.new(:E116 , "Postal Code"                          , 3, 15,
-            s::CodeList.external("51"),
-            s::CodeList.external("166"))
+            s::CodeList.external("51"))
 
           E118  = t:: R.new(:E118 , "Rate"                                 , 1, 9)
           E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)

@@ -8,7 +8,6 @@ module Stupidedi
 
       autoload :SegmentReqs,  "stupidedi/guides/005010/segment_reqs"
       autoload :ElementReqs,  "stupidedi/guides/005010/element_reqs"
-
       autoload :GuideBuilder, "stupidedi/guides/005010/guide_builder"
 
       module X214

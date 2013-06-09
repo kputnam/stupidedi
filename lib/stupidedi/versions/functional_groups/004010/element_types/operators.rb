@@ -23,7 +23,7 @@ module Stupidedi
             module Binary
               def binary_operators(*ops)
                 file, line, = Stupidedi.caller
-                
+
                 if ops.last.is_a?(Hash)
                   options = ops.pop
 
