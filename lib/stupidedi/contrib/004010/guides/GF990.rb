@@ -1,14 +1,14 @@
 module Stupidedi
-  module Guides
+  module Contrib
     module FortyTen
-      module X12
+      module Guides
 
         b = GuideBuilder
         d = Schema
         r = SegmentReqs
         e = ElementReqs
         s = Versions::FunctionalGroups::FortyTen::SegmentDefs
-        t = Versions::FunctionalGroups::FortyTen::TransactionSetDefs
+        t = Contrib::FortyTen::TransactionSetDefs
 
         #
         # Response to a Load Tender

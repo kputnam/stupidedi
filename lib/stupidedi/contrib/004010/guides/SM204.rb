@@ -1,14 +1,14 @@
 module Stupidedi
-  module Guides
+  module Contrib
     module FortyTen
-      module X12
+      module Guides
 
         b = GuideBuilder
         d = Schema
         r = SegmentReqs
         e = ElementReqs
         s = Versions::FunctionalGroups::FortyTen::SegmentDefs
-        t = Versions::FunctionalGroups::FortyTen::TransactionSetDefs
+        t = Contrib::FortyTen::TransactionSetDefs
 
         #
         # Motor Carrier Load Tender
@@ -51,7 +51,7 @@ module Stupidedi
               b::Element(e::Situational, "Date"),
               b::Element(e::Situational, "Time Qualifier"),
               b::Element(e::Situational, "Time"),
-              b::Element(e::NotUsed, "Time Code")),
+              b::Element(e::NotUsed,     "Time Code")),
 
             b::Segment(100, s::MS3, "Interline Information",
               r::Required, d::RepeatCount.bounded(1),
@@ -69,7 +69,7 @@ module Stupidedi
               r::Situational, d::RepeatCount.bounded(10),
                 b::Element(e::Situational, "Note Reference Code"),
                 b::Element(e::Situational, "Description")),
-              
+
             d::LoopDef.build("LOOP 0100",
               d::RepeatCount.bounded(5),
               b::Segment(140, s::N1, "Name",
@@ -102,28 +102,28 @@ module Stupidedi
               d::RepeatCount.bounded(10),
               b::Segment(200, s::N7, "Equipment Details",
                 r::Required, d::RepeatCount.bounded(1),
-                b::Element(e::NotUsed, "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
                 b::Element(e::Situational, "Equipment Number"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
                 b::Element(e::Situational, "Equipment Description Code"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
                 b::Element(e::Situational, "Equipment Length")),
 
               b::Segment(208, s::MEA, "Measurements",
                 r::Situational, d::RepeatCount.bounded(1),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Not Available"),
-                b::Element(e::NotUsed, "Composite Unit of Measure"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Not Available"),
+                b::Element(e::NotUsed,     "Composite Unit of Measure"),
                 b::Element(e::Situational, "Range Minimum"),
                 b::Element(e::Situational, "Range Maximum")),
 
@@ -138,7 +138,7 @@ module Stupidedi
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Situational, "Stop Sequence Number"),
                 b::Element(e::Situational, "Stop Reason Code")),
-            
+
               b::Segment(20, s::L11, "Business Instructions and Reference Number",
                 r::Situational, d::RepeatCount.bounded(200),
                 b::Element(e::Situational, "Reference Identification"),
@@ -198,7 +198,7 @@ module Stupidedi
                   b::Element(e::Situational, "Marks and Numbers Qualifier"),
                   b::Element(e::Situational, "SKU"),
                   b::Element(e::Situational, "SKU Qualifier Code")),
-                  
+
                 b::Segment(135, s::AT8, "Shipment Weight, Packaging and Quantity Data",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Weight Qualifier"),
@@ -230,12 +230,12 @@ module Stupidedi
                       b::Element(e::Required,    "Unit or Basis for Measurement Code"),
                       b::Element(e::Situational, "Lading Quantity"),
                       b::Element(e::Required,    "UN/NA Identification Code"),
-                      b::Element(e::NotUsed, "Not Available"),
-                      b::Element(e::NotUsed, "Not Available"),
-                      b::Element(e::NotUsed, "Not Available"),
-                      b::Element(e::NotUsed, "Not Available"),
-                      b::Element(e::NotUsed, "Not Available"),
-                      b::Element(e::NotUsed, "Not Available"),
+                      b::Element(e::NotUsed,     "Not Available"),
+                      b::Element(e::NotUsed,     "Not Available"),
+                      b::Element(e::NotUsed,     "Not Available"),
+                      b::Element(e::NotUsed,     "Not Available"),
+                      b::Element(e::NotUsed,     "Not Available"),
+                      b::Element(e::NotUsed,     "Not Available"),
                       b::Element(e::Required,    "Packing Group Code")),
 
                     b::Segment(144, s::LH2, "Hazardous Classification Information",
@@ -261,14 +261,14 @@ module Stupidedi
               b::Element(e::Situational, "Freight Rate"),
               b::Element(e::Situational, "Rate/Value Qualifier"),
               b::Element(e::Situational, "Charge"),
-              b::Element(e::NotUsed, "Not Available"),
-              b::Element(e::NotUsed, "Not Available"),
-              b::Element(e::NotUsed, "Not Available"),
+              b::Element(e::NotUsed,     "Not Available"),
+              b::Element(e::NotUsed,     "Not Available"),
+              b::Element(e::NotUsed,     "Not Available"),
               b::Element(e::Situational, "Volume"),
               b::Element(e::Situational, "Volume Unit Qualifier"),
-              b::Element(e::NotUsed, "Not Available"),
-              b::Element(e::NotUsed, "Not Available"),
-              b::Element(e::NotUsed, "Not Available"),
+              b::Element(e::NotUsed,     "Not Available"),
+              b::Element(e::NotUsed,     "Not Available"),
+              b::Element(e::NotUsed,     "Not Available"),
               b::Element(e::Situational, "Declared Value"),
               b::Element(e::Situational, "Rate/Value Qualifier")),
 

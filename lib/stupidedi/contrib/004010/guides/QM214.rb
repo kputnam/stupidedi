@@ -1,14 +1,14 @@
 module Stupidedi
-  module Guides
+  module Contrib
     module FortyTen
-      module X12
+      module Guides
 
         b = GuideBuilder
         d = Schema
         r = SegmentReqs
         e = ElementReqs
         s = Versions::FunctionalGroups::FortyTen::SegmentDefs
-        t = Versions::FunctionalGroups::FortyTen::TransactionSetDefs
+        t = Contrib::FortyTen::TransactionSetDefs
 
         #
         # Transportation Carrier Shipment Status Message
@@ -83,7 +83,7 @@ module Stupidedi
                   b::Element(e::Situational, "Date"),
                   b::Element(e::Situational, "Time"),
                   b::Element(e::Situational, "Time Code")),
-                
+
                 b::Segment(143, s::MS1, "Equipment, Shipment or Real Property Location",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Situational, "City Name"),
@@ -114,6 +114,7 @@ module Stupidedi
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Situational, "Number of Included Segments"),
               b::Element(e::Situational, "Transaction Set Control Number"))))
+
       end
     end
   end
