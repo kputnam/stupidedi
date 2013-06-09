@@ -86,6 +86,12 @@ rescue LoadError => e
     warn "  #{e}"
     exit 1
   end
+end if RUBY_VERSION <= "1.9"
+
+if RUBY_VERSION >= "1.9"
+  # spec/spec_helper.rb will load SimpleCov
+  task :rcov => :spec do
+  end
 end
 
 begin

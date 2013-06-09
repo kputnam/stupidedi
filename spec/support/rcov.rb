@@ -7,7 +7,7 @@
 # a new namespace in which to define the method, this is a defined as a lambda
 # value instead of a method.
 #
-if defined? Rcov
+if defined? Rcov or defined? SimpleCov
   lambda do |root|
     # Prevent walking in circles due to cycles in the graph
     # like Object.constants.include?("Object") #=> true
@@ -25,6 +25,7 @@ if defined? Rcov
           end
         rescue LoadError, NameError
           $stderr.puts "warning: #{$!.class} #{$!.message}"
+          $stderr.puts "   file: #{$!.backtrace.first}"
         end
       end
     end.bind do |recurse|
