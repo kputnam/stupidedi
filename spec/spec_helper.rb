@@ -8,6 +8,13 @@ rescue LoadError
   require "rspec"
 end
 
+begin
+  require "simplecov"
+  SimpleCov.start
+rescue LoadError
+  warn $!
+end if RUBY_VERSION >= "1.9"
+
 # Require supporting files with custom matchers and macros
 Pathname.new(File.dirname(__FILE__)).tap do |specdir|
   Dir["#{specdir}/support/**/*.rb"].each do |file|
