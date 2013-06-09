@@ -20,7 +20,7 @@ module Stupidedi
     autoload :TransactionSetEd,   "stupidedi/editor/transaction_set_ed"
     autoload :TransmissionEd,     "stupidedi/editor/transmission_ed"
 
-    autoload :X12, "stupidedi/editor/X12"
+    autoload :X12,  "stupidedi/editor/X12"
     autoload :X221, "stupidedi/editor/X221-HP835"
     autoload :X222, "stupidedi/editor/X222-HC837"
 
