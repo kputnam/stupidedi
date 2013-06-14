@@ -1,6 +1,6 @@
 require "stupidedi"
 
-config = Stupidedi::Config.default
+config = Stupidedi::Config.hipaa
 parser = Stupidedi::Builder::StateMachine.build(config)
 
 input  = if RUBY_VERSION > "1.8"

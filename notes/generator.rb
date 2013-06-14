@@ -2,7 +2,7 @@ require "stupidedi"
 require "ruby-prof"
 require "pp"
 
-config = Stupidedi::Config.default
+config = Stupidedi::Config.hipaa
 b = Stupidedi::Builder::BuilderDsl.build(config, true)
 b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", "990531", "1230", nil, "00501", "123456789", "1", "T", nil)
 b. GS("HC", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "005010X222")

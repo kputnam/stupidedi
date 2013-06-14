@@ -1,7 +1,7 @@
 require "stupidedi"
 require "pp"
 
-config = Stupidedi::Config.default
+config = Stupidedi::Config.hipaa
 reader = Stupidedi::Reader.build(File.open("notes/recover.txt"))
 parser = Stupidedi::Builder::StateMachine.build(config)
 
