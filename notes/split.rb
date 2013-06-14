@@ -100,7 +100,7 @@ def only(machine, depth=1)
   Stupidedi::Builder::StateMachine.new(machine.config, active)
 end
 
-config = Stupidedi::Config.default
+config = Stupidedi::Config.hipaa
 reader = Stupidedi::Reader.build(File.read("notes/split.edi", :encoding => "ISO-8859-1"))
 parser = Stupidedi::Builder::StateMachine.build(config)
 
