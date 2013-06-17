@@ -8,7 +8,10 @@ require "pp"
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
 
+# config = Stupidedi::Config.default
+# config = Stupidedi::Config.contrib
 config = Stupidedi::Config.hipaa
+
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 
