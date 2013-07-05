@@ -113,7 +113,7 @@ module Stupidedi
 
           occurrences.tail.each do |o|
             out << separators.repetition
-            element(occurrences.head, separators, out)
+            element(o, separators, out)
           end
         end
       end
