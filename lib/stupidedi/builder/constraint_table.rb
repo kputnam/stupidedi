@@ -43,7 +43,7 @@ module Stupidedi
       # aren't actually clear. This rule will always create a new Table 2 and
       # a new 2000 loop under it.
       #
-      class DepthBased < ConstraintTable
+      class Shallowest < ConstraintTable
         def initialize(instructions)
           @instructions = instructions
         end
@@ -60,6 +60,32 @@ module Stupidedi
             end
 
             shallowest.cons
+          end
+        end
+      end
+
+      #
+      # The only exception to the rule of preferring the {Instruction} which pops
+      # the greatest number of states is when the {Instruction} is for ISA. We want
+      # to reuse one root {TransmissionVal} container for all children.
+      #
+      class Deepest < ConstraintTable
+        def initialize(instructions)
+          @instructions = instructions
+        end
+
+        # @return [Array<Instruction>]
+        def matches(segment_tok, strict)
+          @__matches ||= begin
+            deepest = @instructions.head
+
+            @instructions.tail.each do |i|
+              if i.pop_count < deepest.pop_count
+                deepest = i
+              end
+            end
+
+            deepest.cons
           end
         end
       end
@@ -403,7 +429,9 @@ module Stupidedi
             # all the instructions have the same SegmentUse, they also have
             # the same element constraints so we can't use them to narrow
             # down the instruction list.
-            ConstraintTable::DepthBased.new(instructions)
+            instructions.head.segment_id == :ISA ?
+              ConstraintTable::Deepest.new(instructions) :
+              ConstraintTable::Shallowest.new(instructions)
           else
             ConstraintTable::ValueBased.new(instructions)
           end
