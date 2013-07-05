@@ -166,7 +166,7 @@ module Stupidedi
               end
             end
           else
-            acc.ik304(child, "R", "2", "unexpected segment")
+            acc.ik304(zipper, "R", "2", "unexpected segment")
           end
 
         elsif zipper.node.loop?

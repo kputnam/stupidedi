@@ -40,6 +40,11 @@ module Stupidedi
         true
       end
 
+      # @return [Boolean]
+      def empty?
+        @children.empty? or @children.all?(&:empty?)
+      end
+
       def element(n, o = nil)
         unless n > 0
           raise ArgumentError,
