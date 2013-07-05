@@ -36,8 +36,8 @@ module Stupidedi
       abstract :reason, :args => %w(zipper)
 
       def satisfied?(zipper)
-        forbidden(zipper).all?(&:blank?) and
-          required(zipper).all?(&:present?)
+        forbidden(zipper).all?{|c| c.node.blank? } and
+          required(zipper).all?{|c| c.node.present? }
       end
 
       # @return [Array<Zipper::AbstractCursor<Values::AbstractElementVal>>]

@@ -11,13 +11,21 @@ require "term/ansicolor" if ARGV.delete("-C")
 # config = Stupidedi::Config.default
 # config = Stupidedi::Config.contrib
 config = Stupidedi::Config.hipaa
+config.editor.tap do |c|
+  c.register(Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
+  c.register(Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
+  c.register(Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
+  c.register(Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
+  c.register(Stupidedi::Guides::FiftyTen::X222::HC837P) { Stupidedi::Editor::X222 }
+  c.register(Stupidedi::Guides::FiftyTen::X222A1::HC837P) { Stupidedi::Editor::X222 }
+end
 
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 
 ARGV.each do |path|
   File.open(path) do |io|
-    parser, result = parser.read(Stupidedi::Reader.build(io))
+    parser, = parser.read(Stupidedi::Reader.build(io))
   end
 end
 
@@ -30,7 +38,7 @@ begin
   a = parser.first
   b = parser.last
 
-  a.flatmap{|a| b.flatmap{|b| a.distance(b) }}.
+  a.flatmap{|_a| b.flatmap{|_b| _a.distance(_b) }}.
     tap{|d| puts "#{d + 1} segments" }
 end
 

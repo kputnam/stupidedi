@@ -61,7 +61,7 @@ module Stupidedi
             def reason(zipper)
               present = indexes.select{|n| zipper.child(n - 1).node.present? }
               missing = indexes - present
-              "at least one of elements #{missing.join(", ")} must be present when elements #{present.join(", ")} are present"
+              "at least one of elements #{missing.join(", ")} must be present"
             end
           end
 
