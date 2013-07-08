@@ -277,7 +277,7 @@ b.HL("2", "1", "22", "0")
     b.DMG("D8", "19431022", "F")
 
 b.machine.zipper.tap do |z|
-  # The :component, and :repitition parameters can also be specified as elements
+  # The :component, and :repetition parameters can also be specified as elements
   # of the ISA segment, at `b.ISA(...)` above. When generating a document from
   # scratch, :segment and :element must be specified -- if you've parsed the doc
   # from a file, these params will default to whatever was used in the file, or
