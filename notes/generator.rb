@@ -1,5 +1,4 @@
 require "stupidedi"
-require "ruby-prof"
 require "pp"
 
 config = Stupidedi::Config.hipaa
@@ -58,7 +57,7 @@ end
 #
 #  Stupidedi::Writer::Default.new(z.root, separators).write($stdout)
 #end
-conf4 = Stupidedi::Config.new.customize do |c|
+conf4 = Stupidedi::Config.contrib.customize do |c|
   c.interchange.customize do |x|
     x.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
   end
@@ -70,9 +69,9 @@ end
 
 b = Stupidedi::Builder::BuilderDsl.build(conf4, true)
 b.ISA("00", "----------", "00", "----------", "ZZ", "111111111111111", "ZZ", "111111111111111", "990531", "1230", "U", "00401", "123456789", "0", "T", ">")
-b. GS("SM", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "004010X12")
+b. GS("SM", "SENDER ID", "RECEIVER ID", "19990531", "1230", "1", "X", "004010")
 b. ST("204", "000010001")
-b. B2("RBTW", "12345678", "PP")
+b. B2("MM", "RBTW", "123456789", nil, nil, "PP")
 b.B2A("00", "LT")
 b.L11("55455", "CO")
 b.L11("223456", "P8")
@@ -83,7 +82,7 @@ b.N1("BT", "BILL TO NAME", "ZZ", "12345")
 b.N3("BILL TO ADDRESS")
 b.N4("CITY", "ST", "ZIP", "USA")
 b.G61("CN", "TRACY", "TE", "555-666-4444")
-b. N7("123456", "FT")
+b. N7("1234", "FT")
 b. M7("777C8")
 b. S5("1", "CL")
 b.L11("111", "PO")
