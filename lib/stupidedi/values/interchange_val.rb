@@ -50,6 +50,19 @@ module Stupidedi
         @separators.merge(definition.separators(@children.find(&:segment?)))
       end
 
+      # @return [InterchangeVal]
+      def replace_separators(replacement)
+        whole              = separators.merge(replacement)
+        head, (isa, *tail) = @children.split_when(&:segment?)
+
+        # replace ISA11 and ISA16 with given separators
+        isa = definition.replace_separators(isa, whole)
+
+        copy \
+          :children   => isa.snoc(head) + tail,
+          :separators => whole
+      end
+
       # @return [void]
       def pretty_print(q)
         id = @definition.try do |d|
