@@ -21,6 +21,7 @@ module Stupidedi
               "T" => "Standard Transportation Commidity Code (STCC)",
               "Z" => "Mutually defined"))
 
+          E24   = t::ID.new(:E24   , "Equipment Type"                      , 4, 4)
           E26   = t::ID.new(:E26   , "Country Code"                        , 2, 3,
             s::CodeList.external("5"))
 
@@ -36,10 +37,32 @@ module Stupidedi
               "TL" => "Trailer (not otherwise specified)",
               "TV" => "Truck, Van"))
 
+          E56   = t::ID.new(:E56  , "Type of Service Code"                 , 2, 2,
+            s::CodeList.build(
+              "AI" => "Transport Mode Change",
+              "BB" => "Breakbulk",
+              "CS" => "Container Station",
+              "CY" => "Container Yard",
+              "DD" => "Door to Door",
+              "DR" => "Door to Ramp",
+              "HA" => "Haulage",
+              "HH" => "House-to-house",
+              "HL" => "Headload or Devanning",
+              "HP" => "House-to-pier",
+              "MC" => "Multi-country Consolidation",
+              "MD" => "Mixed Delivery",
+              "NC" => "Non-containerized cargo",
+              "PH" => "Pier-to-house",
+              "PP" => "Pier-to-pier",
+              "RD" => "Ramp to Door",
+              "RE" => "Ramp to Ramp",
+              "RR" => "Roll-on Roll-off"))
+
           E58   = t:: R.new(:E58  , "Charge"                               , 1, 12)
           E59   = t::AN.new(:E59  , "Freight Class Code"                   , 2, 5)
           E60   = t:: R.new(:E60  , "Freight Rate"                         , 1, 9)
           E61   = t::AN.new(:E61  , "Free-Form Message"                    , 1, 30)
+          E65   = t:: R.new(:E65  , "Height"                               , 1, 8)
           E66   = t::ID.new(:E66  , "Identification Code Qualifier"        , 2, 3,
             s::CodeList.build(
               "1"  => "D-U-N-S Number, Dun & Bradstreet",
@@ -3953,8 +3976,15 @@ module Stupidedi
 
           E188  = t::ID.new(:E188 , "Weight Unit Code"                     , 1, 1,
             s::CodeList.build(
+              "E" => "Metric Ton",
+              "G" => "Grams",
+              "M" => "Measurement Ton",
+              "O" => "Ounces",
+              "S" => "Short Ton",
+              "T" => "Long Ton",
               "L" => "Pounds",
               "K" => "Kilograms"))
+          E189  = t:: R.new(:E189 , "Width"                                , 1, 8)
           E190  = t::ID.new(:E190 , "Accomplish Code"                      , 1, 1,
             s::CodeList.build(
               "A" => "Accomplished",
@@ -4003,6 +4033,7 @@ module Stupidedi
               "09" => "Hold or Reserve Stock",
               "ZZ" => "Mutually Defined"))
 
+          E301  = t::ID.new(:E301 , "Car Type Code"                        , 1, 4)
           E306  = t::ID.new(:E306 , "Action Code"                          , 1, 2,
             s::CodeList.build(
               "0"  => "Authorize",
@@ -5099,6 +5130,10 @@ module Stupidedi
               "X0010" => "Combine All Same Day Shipment"))
 
           E567  = t::Nn.new(:E567 , "Equipment Length"                     , 4, 5, 0)
+          E571  = t::ID.new(:E571 , "Tare Qualifier Code"                  , 1, 1,
+            s::CodeList.build(
+              "A" => "Actual",
+              "M" => "Marked"))
           E587  = t::ID.new(:E597 , "Acknowledgment Type Code"             , 2, 2,
             s::CodeList.build(
               "AC" => "Acknowledge - With Detail and Change",
