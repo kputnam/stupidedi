@@ -187,7 +187,7 @@ it. Here are a few alternative libraries:
 
 ## Examples
 
-In addition to these breif examples, see sample code in the `notes` directory
+In addition to these brief examples, see sample code in the `notes` directory
 and the human-readable Markdown documentation in `doc`.
 
 ### Utilities
