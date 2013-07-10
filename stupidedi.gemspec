@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
   s.require_path      = "lib"
 
   s.add_dependency "term-ansicolor", "~> 1.0.7"
+  s.add_dependency "cantor", "~> 1.2.0"
 end
