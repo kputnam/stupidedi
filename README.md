@@ -72,8 +72,8 @@ to understand, assuming a reasonable familiarity with EDI.
 The parser is designed using immutable data structures, making it thread-safe
 for runtimes that can utilize multiple cores. While in certain cases,
 immutability places higher demand on garbage collection, this has been
-mitigated with careful optimization. Input is streamed incrementally, so
-large files aren't read into memory all at once.
+mitigated with careful optimization. Input can be streamed incrementally, so
+very large files aren't read into memory all at once.
 
 ![Benchmark](https://raw.github.com/kputnam/stupidedi/master/notes/benchmark/throughput.png)
 
