@@ -31,7 +31,7 @@ module Stupidedi
               b::Element(e::Required,    "Currency Code")),
 
 
-          d::TableDef.header("Detail",            
+          d::TableDef.detail("Detail",            
             d::LoopDef.build("HL", d::RepeatCount.bounded(1),              
               b::Segment(50, s:: HL, "Hierarchical Level - Shipment Level",
                 r::Situational, d::RepeatCount.unbounded,
