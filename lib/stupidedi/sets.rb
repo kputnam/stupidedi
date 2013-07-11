@@ -1,52 +1,37 @@
+require "cantor"
+
 module Stupidedi
 
   module Sets
-    autoload :AbstractSet,        "stupidedi/sets/abstract_set"
-    autoload :AbsoluteSet,        "stupidedi/sets/absolute_set"
-    autoload :NullSet,            "stupidedi/sets/null_set"
-    autoload :RelativeComplement, "stupidedi/sets/relative_complement"
-    autoload :RelativeSet,        "stupidedi/sets/relative_set"
-    autoload :UniversalSet,       "stupidedi/sets/universal_set"
   end
 
   class << Sets
     # @group Constructors
     ###########################################################################
 
-    # @return [Sets::AbstractSet]
+    # @return [Cantor::AbstractSet]
     def build(object)
-      if object.is_a?(Sets::AbstractSet)
-        object
-      elsif object.is_a?(Enumerable)
-        Sets::RelativeSet.build(object)
-      else
-        raise TypeError,
-          "argument must be an AbstractSet or Enumerable"
-      end
+      Cantor.build(object)
     end
 
-    # @return [Sets::AbstractSet]
+    # @return [Cantor::AbstractSet]
     def complement(other)
-      build(other).complement
+      Cantor.complement(other)
     end
 
-    # @return [Sets::UniversalSet]
+    # @return [Cantor::UniversalSet]
     def universal
-      Sets::UniversalSet.build
+      Cantor.universal
     end
 
-    # @return [Sets::NullSet]
+    # @return [Cantor::NullSet]
     def empty
-      Sets::NullSet.build
+      Cantor.empty
     end
 
-    # @return [Sets::AbsoluteSet]
+    # @return [Cantor::AbsoluteSet]
     def absolute(other, universe = other)
-      if universe.eql?(other)
-        Sets::AbsoluteSet.build(universe)
-      else
-        Sets::AbsoluteSet.build(universe).intersection(other)
-      end
+      Cantor.absolute(other, universe)
     end
 
     # @endgroup
