@@ -3,8 +3,8 @@ module Stupidedi
     module TwoThousandOne
       module TransactionSetDefs
 
-        SegmentReqs = Versions::FunctionalGroups::TwoThousandOne::SegmentReqs
-        SegmentDefs = Versions::FunctionalGroups::TwoThousandOne::SegmentDefs
+        SegmentReqs = Versions::FunctionalGroups::FortyTen::SegmentReqs
+        SegmentDefs = Versions::FunctionalGroups::FortyTen::SegmentDefs
        
         autoload :SH856, # Ship Notice/Manifest
           "stupidedi/contrib/004010/transaction_set_defs/SH856"
