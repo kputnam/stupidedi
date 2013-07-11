@@ -28,6 +28,10 @@ module Stupidedi
           autoload :BEG,
             "stupidedi/versions/functional_groups/004010/segment_defs/BEG"
 
+          # Definition might be outdated, working from ANSI X12 2001 specification
+          autoload :BSN,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BSN"
+
           autoload :CTT,
             "stupidedi/versions/functional_groups/004010/segment_defs/CTT"
 
@@ -54,6 +58,9 @@ module Stupidedi
 
           autoload :G69,
             "stupidedi/versions/functional_groups/004010/segment_defs/G69"
+
+          autoload :HL,
+            "stupidedi/versions/functional_groups/004010/segment_defs/HL"
 
           autoload :K1,
             "stupidedi/versions/functional_groups/004010/segment_defs/K1"
