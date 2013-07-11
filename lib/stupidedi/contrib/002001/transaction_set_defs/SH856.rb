@@ -65,7 +65,7 @@ module Stupidedi
 
           d::TableDef.summary("Table 3 - Summary",
             s::CTT.use(380, r::Mandatory, d::RepeatCount.bounded(1)),
-            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1))))
+            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1)))))
 
       end
     end
