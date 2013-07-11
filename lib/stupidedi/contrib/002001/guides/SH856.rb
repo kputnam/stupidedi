@@ -7,7 +7,7 @@ module Stupidedi
         d = Schema
         r = SegmentReqs
         e = ElementReqs
-        s = Versions::FunctionalGroups::TwoThousandOne::SegmentDefs
+        s = Versions::FunctionalGroups::FortyTen::SegmentDefs
         t = Contrib::TwoThousandOne::TransactionSetDefs
 
         #
