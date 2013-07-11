@@ -8,8 +8,8 @@ module Stupidedi
         r = SegmentReqs
         e = ElementReqs
         s = Versions::FunctionalGroups::FortyTen::SegmentDefs
-        t = Contrib::TwoThousandOne::TransactionSetDefs
-
+        # t = Contrib::TwoThousandOne::TransactionSetDefs
+        t = Contrib::FortyTen::TransactionSetDefs
         #
         # Ship Notice/Manifest
         #
