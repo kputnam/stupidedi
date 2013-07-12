@@ -285,7 +285,7 @@ module Stupidedi
           E71   = t::Nn.new(:E71  , "Inquiry Request Number"               , 1, 3, 0)
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
-          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
+          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0) 
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
           E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
