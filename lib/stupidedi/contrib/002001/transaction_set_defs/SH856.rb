@@ -13,6 +13,39 @@ module Stupidedi
             s::BSN.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
             s::DTM.use( 40, r::Optional,  d::RepeatCount.bounded(10)),
 
+          ################################################################
+          # Commented the code out just in case I need to use it 
+          # I am not sure I understand the 'super set' comment
+          ################################################################
+          # d::TableDef.detail("Table 2 - Detail",
+          #   d::LoopDef.build("HL", d::RepeatCount.bounded(1),
+          #     s:: HL.use(  50, r::Mandatory, d::RepeatCount.bounded(1)),
+          #     s::MEA.use( 130, r::Optional,  d::RepeatCount.bounded(1)),
+          #     s::TD1.use( 160, r::Optional,  d::RepeatCount.bounded(1)),
+          #     s::TD3.use( 180, r::Optional,  d::RepeatCount.bounded(1)),
+          #     s::REF.use( 200, r::Optional,  d::RepeatCount.bounded(2)))),
+
+          #     d::LoopDef.build("N1", d::RepeatCount.bounded(200),
+          #       s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1))),
+
+          #   d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
+          #     s:: HL.use(  50, r::Optional, d::RepeatCount.bounded(1)),
+          #     s::REF.use( 200, r::Optional, d::RepeatCount.bounded(200))),
+
+          #   d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
+          #     s:: HL.use(  50, r::Optional, d::RepeatCount.bounded(1)),
+          #     s::LIN.use(  60, r::Optional, d::RepeatCount.bounded(1)),              
+          #     s::SN1.use(  80, r::Optional, d::RepeatCount.bounded(1)),
+          #     s::PO4.use( 110, r::Optional, d::RepeatCount.bounded(1)),
+          #     s::REF.use( 200, r::Optional, d::RepeatCount.bounded(200))),
+
+          #   d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
+          #     s:: HL.use(  50, r::Optional, d::RepeatCount.bounded(1)),
+          #     s::SN1.use(  80, r::Optional, d::RepeatCount.bounded(1)),                          
+          #     s::REF.use( 200, r::Optional, d::RepeatCount.bounded(200)))),
+
+
+          d::TableDef.detail("Table 2 - Detail",
             d::LoopDef.build("HL", d::RepeatCount.bounded(1),
               s:: HL.use(  50, r::Mandatory, d::RepeatCount.bounded(1)),
               s::MEA.use( 130, r::Optional,  d::RepeatCount.bounded(1)),
@@ -20,30 +53,19 @@ module Stupidedi
               s::TD3.use( 180, r::Optional,  d::RepeatCount.bounded(1)),
               s::REF.use( 200, r::Optional,  d::RepeatCount.bounded(2)))),
 
-          d::TableDef.header("Table 2 - Detail",
-            d::LoopDef.build("N1", d::RepeatCount.bounded(200),
-              s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1))),
+              d::LoopDef.build("N1", d::RepeatCount.bounded(200),
+                s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1))),
 
             d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
-              s:: HL.use( 50, r::Optional,  d::RepeatCount.bounded(1)),
+              s:: HL.use(  50, r::Optional, d::RepeatCount.bounded(1)),
+              s::LIN.use(  60, r::Optional, d::RepeatCount.bounded(1)),              
+              s::SN1.use(  80, r::Optional, d::RepeatCount.bounded(1)),
+              s::PO4.use( 110, r::Optional, d::RepeatCount.bounded(1)),
               s::REF.use( 200, r::Optional, d::RepeatCount.bounded(200))),
 
-            d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
-              s:: HL.use( 50, r::Optional,  d::RepeatCount.bounded(1)),
-              s::LIN.use( 60, r::Optional,  d::RepeatCount.bounded(1)),              
-              s::SN1.use( 80, r::Optional,  d::RepeatCount.bounded(1)),
-              s::PO4.use( 110, r::Optional,  d::RepeatCount.bounded(1)),
-              s::REF.use( 200, r::Conditional, d::RepeatCount.bounded(200))),
-
-            d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
-              s:: HL.use( 50, r::Optional,  d::RepeatCount.bounded(1)),
-              s::SN1.use( 80, r::Optional,  d::RepeatCount.bounded(1)),                          
-              s::REF.use( 200, r::Optional,  d::RepeatCount.bounded(200)))),
-
-          d::TableDef.header("Table 3 - Summary",
-            s::CTT.use( 10, r::Mandatory,  d::RepeatCount.bounded(1)),
-
-            s:: SE.use( 30, r::Mandatory, d::RepeatCount.bounded(1))))
+          d::TableDef.summary("Table 3 - Summary",
+            s::CTT.use(380, r::Mandatory, d::RepeatCount.bounded(1)),
+            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1)))))
 
       end
     end

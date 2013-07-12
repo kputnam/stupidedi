@@ -6,7 +6,7 @@ module Stupidedi
 
           s = Schema
           e = ElementDefs
-          r = ElementReqs
+          r = ElementReqs 
 
           ST = s::SegmentDef.build(:ST, "Transaction Set Header",
             "To indicate the start of a transaction set and assign a control number",

@@ -285,7 +285,7 @@ module Stupidedi
           E71   = t::Nn.new(:E71  , "Inquiry Request Number"               , 1, 3, 0)
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
-          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
+          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0) 
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
           E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
@@ -4633,6 +4633,7 @@ module Stupidedi
           E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
           E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
+          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)          
           E397  = t::AN.new(:E397 , "Color"                                , 1, 10)
           E398  = t:: R.new(:E398 , "Order Sizing Factor"                  , 1, 10)
           E399  = t::ID.new(:E399 , "Pallet Exchange Code"                 , 1, 1)
@@ -5173,6 +5174,8 @@ module Stupidedi
               "2" => "Certified or Cashier's or Company Check Only",
               "3" => "Certified or Cashier's or Company or Personal Check Only",
               "4" => "Cash or Certified Check Only"))
+          
+          E628  = t::AN.new(:E628 , "Hierachical ID Number"                , 1, 12)
 
           E639  = t::ID.new(:E639 , "Basis of Unit Price Code"                           , 2, 2,
             s::CodeList.build(
@@ -5916,6 +5919,24 @@ module Stupidedi
           E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3,
             s::CodeList.external("77"))
 
+          E729  = t::DT.new(:E729 , "Category - Ship Notice Date"          , 6, 6)
+          E730  = t::TM.new(:E730 , "Subcategory - Ship Notice Time"       , 4, 4)
+
+          E734  = t::AN.new(:E734 , "Hierarchical Parent ID Number"        , 1, 12)
+          E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 2,
+            s::CodeList.build(
+              "19" => "Provider of Service",
+              "20" => "Information Source",
+              "21" => "Information Receiver",
+              "22" => "Subscriber",
+              "23" => "Dependent",
+              "PT" => "Patient"))
+
+          E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
+            s::CodeList.build(
+              "0" => "No Subordinate HL Segment in This Hierarchical Structure",
+              "1" => "Additional Subordinate HL Data Segment in This Hierarchical Structure"))
+          
           E737  = t::ID.new(:E737 , "Measurement Reference ID Code"        , 2, 2,
             s::CodeList.build(
               "9L" => "Ninth Layer",
