@@ -11,7 +11,7 @@ module Stupidedi
           d::TableDef.header("Table 1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),          
             s::BSN.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
-            s::DTM.use( 40, r::Optional,  d::RepeatCount.bounded(10)),
+            s::DTM.use( 40, r::Optional,  d::RepeatCount.bounded(10))),
 
           d::TableDef.detail("Table 2 - Detail",
             d::LoopDef.build("HL", d::RepeatCount.bounded(1),
@@ -29,7 +29,7 @@ module Stupidedi
 
           d::TableDef.summary("Table 3 - Summary",
             s::CTT.use(380, r::Mandatory, d::RepeatCount.bounded(1)),
-            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1)))))
+            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1))))
 
       end
     end

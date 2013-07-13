@@ -27,9 +27,8 @@ module Stupidedi
               b::Element(e::Situational, "Subcategory - Ship Notice Time")),
             b::Segment(40, s::DTM, "Date/Time/Period",
               r::Situational, d::RepeatCount.bounded(1),
-              b::Element(e::Required,    "Entity Identifier Code", b::Values("BT","BY","CN","SH","SF","ST"),
-              b::Element(e::Required,    "Currency Code")),
-
+              b::Element(e::Required,    "Entity Identifier Code", b::Values("BT","BY","CN","SH","SF","ST")),
+              b::Element(e::Required,    "Currency Code"))),
 
           d::TableDef.detail("Detail",            
             d::LoopDef.build("HL", d::RepeatCount.bounded(1),              
@@ -62,7 +61,7 @@ module Stupidedi
                   b::Element(e::Required,    "Entity Identifier Code", b::Values("SU")),
                   b::Element(e::Conditional, "Name - Supplier Name"),
                   b::Element(e::Conditional, "Identification Code Qualifier", b::Values("92")),
-                  b::Element(e::Conditional, "Identification Code - Supplier Code")),
+                  b::Element(e::Conditional, "Identification Code - Supplier Code")))),
 
             d::LoopDef.build("HL", d::RepeatCount.bounded(200),
               b::Segment( 50, s:: HL, "Hierarchical Level - Tare Level",
@@ -74,7 +73,7 @@ module Stupidedi
               b::Segment( 200, s::REF, "Reference Numbers",
                 r::Situational, d::RepeatCount.bounded(200),
                 b::Element(e::Required,    "Reference Number Qualifier"),
-                b::Element(e::Situational, "Reference Number - Mixed or Master Label Serial Number", b::Values("4S","5S","M","G","S"))),
+                b::Element(e::Situational, "Reference Number - Mixed or Master Label Serial Number", b::Values("4S","5S","M","G","S")))),
 
             d::LoopDef.build("HL", d::RepeatCount.bounded(200),
               b::Segment( 50, s:: HL, "Hierarchical Level - Item Level",
@@ -103,7 +102,7 @@ module Stupidedi
               b::Segment(200, s::REF, "Reference Identification",
                 r::Situational, d::RepeatCount.bounded(12),
                 b::Element(e::Required,    "Reference Identification Qualifier", b::Values("DP")),
-                b::Element(e::Situational, "Reference Identification")))),
+                b::Element(e::Situational, "Reference Identification"))),
 
 
             d::LoopDef.build("HL", d::RepeatCount.bounded(200),
@@ -112,27 +111,27 @@ module Stupidedi
                 b::Element(e::Required,    "Hierarchical ID Number"),
                 b::Element(e::Situational, "Hierarchical Parent ID Number"),
                 b::Element(e::Situational, "Hierarchical Level Code", b::Values("P")),
-                b::Element(e::Situational, "Hierarchical Child Code", b::Values("0")),
+                b::Element(e::Situational, "Hierarchical Child Code", b::Values("0"))),
               b::Segment( 80, s::SN1, "Item Detail (Shipment)",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required, "Number of Units Shipped"),
-                b::Element(e::Required, "Unit or Basis for Measurement Code"),
+                b::Element(e::Required, "Unit or Basis for Measurement Code")),
               b::Segment(200, s::REF, "Reference Numbers",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("LS")),
-                b::Element(e::Situational, "Reference Number - Label Serial Number."),             
+                b::Element(e::Situational, "Reference Number - Label Serial Number.")))),             
+
 
           d::TableDef.header("Summary",
             d::LoopDef.build("CTT", d::RepeatCount.bounded(1),
               b::Segment(380, s::CTT, "Transaction Totals",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Number of Line Items"),
-                b::Element(e::Situational, "Hash Total"))),
-            b::Segment(390, s:: SE, "Transaction Set Trailer",
-              r::Required, d::RepeatCount.bounded(1),
-              b::Element(e::Required,    "Number of Included Segments"),
-              b::Element(e::Required,    "Transaction Set Control Number")))))
-
+                b::Element(e::Situational, "Hash Total")),
+              b::Segment(390, s:: SE, "Transaction Set Trailer",
+                r::Required, d::RepeatCount.bounded(1),
+                b::Element(e::Required,    "Number of Included Segments"),
+                b::Element(e::Required,    "Transaction Set Control Number")))))
       end
     end
   end
