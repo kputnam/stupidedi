@@ -2,6 +2,9 @@
 require "pathname"
 $:.unshift(File.expand_path("../../lib", Pathname.new(__FILE__).realpath))
 
+# Short-lived processes should win some peformance gains here
+GC.disable
+
 require "stupidedi"
 require "pp"
 
