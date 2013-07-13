@@ -25,11 +25,11 @@ module Stupidedi
               s::REF.use( 200, r::Optional,  d::RepeatCount.bounded(2))),
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(200),
-                s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1))),
+                s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1)))),
 
           d::TableDef.summary("Table 3 - Summary",
             s::CTT.use(380, r::Mandatory, d::RepeatCount.bounded(1)),
-            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1))))))
+            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1)))))
 
       end
     end
