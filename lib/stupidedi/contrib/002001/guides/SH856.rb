@@ -34,7 +34,7 @@ module Stupidedi
           d::TableDef.detail("Detail",            
             d::LoopDef.build("HL", d::RepeatCount.bounded(1),              
               b::Segment(50, s:: HL, "Hierarchical Level - Shipment Level",
-                r::Situational, d::RepeatCount.unbounded,
+                r::Required, d::RepeatCount.unbounded,
                 b::Element(e::Required,    "Reference Identification Qualifier", b::Values("ZZ", "OS")),
                 b::Element(e::Situational, "Reference Identification")),
               b::Segment(130, s::MEA, "Measurements",
