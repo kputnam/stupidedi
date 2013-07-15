@@ -69,13 +69,15 @@ module Stupidedi
     def default
       new.customize do |c|
         c.interchange.customize do |x|
-          x.register("00200") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
+          #x.register("00200") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
+          x.register("00200") { Stupidedi::Versions::Interchanges::TwoHundred::InterchangeDef }
           x.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
           x.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
         end
 
         c.functional_group.customize do |x|
-          x.register("002001") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+          # x.register("002001") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+          x.register("002001") { Stupidedi::Versions::FunctionalGroups::TwoThousandOne::FunctionalGroupDef }
           x.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
           x.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
         end
