@@ -3,7 +3,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module FortyTen
+      module TwoThousandOne
         module ElementDefs
 
           t = ElementTypes
@@ -27,16 +27,149 @@ module Stupidedi
 
           E28   = t::Nn.new(:E28  , "Group Control Number"                 , 1, 9, 0)
 
-          E40   = t::ID.new(:E40   , "Equipment Description Code"          , 2, 2,
+          E40   = t::ID.new(:E40   , "Equipment Description Code"          , 2, 2
             s::CodeList.build(
+              "20" => "20 ft. IL Container (Open Top)",
+              "2B" => "20 ft. IL Container (Closed Top)",
+              "2C" => "Cut-in Robot Distributed Power Unit (DPU)",
+              "2D" => "Control Unit",
+              "2E" => "Head-end Helper Unit",
+              "2F" => "Roadrailer",
+              "2G" => "Cut-in Helper",
+              "2H" => "Rear-end Helper Unit",
+              "2R" => "Rear-end Robot Distributed Power Unit (DPU)",
+              "40" => "40 ft. IL Container (Open Top)",
+              "4B" => "40 ft. IL Container (Closed Top)",
+              "AA" => "Air Ride Van",
+              "AC" => "Closed Container",
+              "AD" => "Flatbed Sliding Tandem",
+              "AF" => "Air Freight (Break Bulk)",
+              "AL" => "Container, Aluminum",
+              "AP" => "Aircraft",
+              "AT" => "Closed Container (Controlled Temperature)",
+              "BC" => "Covered Barge",
+              "BE" => "Bilevel Railcar Fully Open",
+              "BF" => "Bilevel Railcar Fully Enclosed",
+              "BG" => "Bogie",
+              "BH" => "Bilevel Railcar Screened With Roof",
+              "BJ" => "Bilevel Railcar Screened, No Roof",
+              "BK" => "Container, Bulk",
+              "BO" => "Barge Open",
+              "BR" => "Barge",
+              "BX" => "Boxcar",
+              "CA" => "Caboose",
+              "CB" => "Chassis, Gooseneck",
+              "CC" => "Container resting on a Chassis",
+              "CD" => "Container with Bag Hangers",
+              "CG" => "Container, Tank (Gas)",
+              "CH" => "Chassis",
+              "CI" => "Container, Insulated",
+              "CJ" => "Container, Insulated/Ventilated",
+              "CK" => "Container, Heated/Insulated/Ventilated",
+              "CL" => "Container (Closed Top - Length Unspecified)",
+              "CM" => "Container, Open-Sided",
+              "CN" => "Container",
+              "CP" => "Coil Car Open",
+              "CQ" => "Container, Tank (Food Grade-Liquid)",
+              "CR" => "Coil-Car Covered",
+              "CS" => "Container-Low Side Open Top",
+              "CT" => "Container-High Side Open Top",
+              "CU" => "Container (Open Top - Length Unspecified)",
+              "CV" => "Closed Van",
+              "CW" => "Container, Tank (Chemicals)",
+              "CX" => "Container, Tank",
+              "CZ" => "Refrigerated Container",
+              "DD" => "Double-Drop Trailer",
+              "DF" => "Container with Flush Doors",
+              "DT" => "Drop Back Trailer",
+              "DX" => "Boxcar, Damage Free Equipped",
+              "ET" => "End of Train Device",
               "FF" => "Frozen Food Trailer",
+              "FH" => "Flat Bed Trailer with Headboards",
+              "FN" => "Flat Bed Trailer with No Headboards",
+              "FP" => "Flatcar With Pedestal",
+              "FR" => "Flat Bed Trailer - Removable Sides",
+              "FS" => "Container with Floor Securing Rings",
               "FT" => "Flat Bed Trailer",
+              "FX" => "Boxcar Cushion Under Frame OF",
+              "GS" => "Generator Set",
+              "HB" => "Container with Hangar Bars",
+              "HC" => "Hopper Car (Covered)",
+              "HO" => "Hopper Car (Open)",
+              "HP" => "Hopper Car (Covered; Pneumatic Discharge)",
+              "HT" => "Head of Train Device",
+              "HV" => "High Cube Van",
+              "HY" => "Hydrant-Cart",
+              "ID" => "Idler Car",
+              "IX" => "Boxcar (Insulated)",
+              "LO" => "Locomotive",
+              "LS" => "Half Height Flat Rack",
+              "LU" => "Load/unload Device on Equipment",
+              "NC" => "Non Containerized Equipment",
+              "NX" => "Boxcar (Interior Bulkheads)",
+              "OB" => "Ocean Vessel (Break Bulk)",
+              "OT" => "Open-top/flatbed trailer",
+              "OV" => "Open Top Van",
+              "PL" => "Container, Platform",
+              "PM" => "Flat Bed Trailer, Pneumatic",
+              "PP" => "Power Pack",
+              "PT" => "Protected Trailer",
+              "PU" => "Pickup Truck",
+              "RA" => "Fixed-Rack, Flat-Bed Trailer",
               "RC" => "Refrigerated (Reefer) Car",
+              "RD" => "Fixed-Rack, Double Drop Trailer",
+              "RE" => "Flat Car (End Bulkheads)",
+              "RF" => "Flat Car",
+              "RG" => "Gondola Covered",
+              "RI" => "Gondola Car (Covered - Interior Bulkheads)",
+              "RO" => "Gondola Car (Open)",
+              "RR" => "Rail Car",
+              "RS" => "Fixed-Rack, Single-Drop Trailer",
               "RT" => "Controlled Temperature Trailer (Reefer)",
-              "SU" => "Supplier/Manufacturer", 
-              "TF" => "Trailer, Try Freight",
+              "SA" => "Saddle",
+              "SC" => "Service Car",
+              "SD" => "Single-Drop Trailer",
+              "SK" => "Stack Car",
+              "SL" => "Container, Steel",
+              "SR" => "STAK-RAK",
+              "SS" => "Container with Smooth Sides",
+              "ST" => "Removable Side Trailer",
+              "SV" => "Van - Special Inside Length, Width or Height Requirements",
+              "TA" => "Trailer, Heated/Insulated/Ventilated",
+              "TB" => "Trailer, Boat",
+              "TC" => "Trailer, Car",
+              "TF" => "Trailer, Dry Freight",
+              "TG" => "Trailer, Tank (Gas)",
+              "TH" => "Truck, Open Top High Side",
+              "TI" => "Trailer, Insulated",
+              "TJ" => "Trailer, Tank (Chemicals)",
+              "TK" => "Trailer, Tank (Food Grade-Liquid)",
               "TL" => "Trailer (not otherwise specified)",
-              "TV" => "Truck, Van"))
+              "TM" => "Trailer, Insulated/Ventilated",
+              "TN" => "Tank Car",
+              "TO" => "Truck, Open Top",
+              "TP" => "Trailer, Pneumatic",
+              "TQ" => "Trailer, Electric Heat",
+              "TR" => "Tractor",
+              "TT" => "Telescoping Trailer",
+              "TU" => "Truck, Open Top Low Side",
+              "TV" => "Truck, Van",
+              "VT" => "Vessel, Ocean, Containership",
+              "TW" => "Trailer, Refrigerated ",
+              "UA" => "Trilevel Railcar 20 Feet",
+              "UB" => "Trilevel Railcar Screened, Fully Enclosed",
+              "UC" => "Trilevel Railcar Screened, With Roof",
+              "UD" => "Trilevel Railcar Screened, No Roof",
+              "UE" => "Trilevel Railcar Screened, With Doors, No Roof",
+              "UL" => "Unit Load Device (ULD)",
+              "UP" => "Container, Upgraded",
+              "VA" => "Container, Vented",
+              "VE" => "Vessel, Ocean",
+              "VL" => "Vessel, Lake",
+              "VR" => "Vessel, Ocean, Rollon-Rolloff",
+              "VS" => "Vessel, Ocean, Lash",
+              "WR" => "Container with Wavy or Ripple Sides",
+              "WY" => "Railroad Maintenance of Way Car"))
 
           E56   = t::ID.new(:E56  , "Type of Service Code"                 , 2, 2,
             s::CodeList.build(
@@ -317,7 +450,7 @@ module Stupidedi
           E93   = t::AN.new(:E93  , "Name"                                 , 1, 60)
           E96   = t::Nn.new(:E96  , "Number of Included Segments"          , 1, 10, 0)
           E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
-          E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 3,
+          E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 2,
             s::CodeList.build(
               "BT" => "Bill-to-Party",
               "BY" => "Buying Party (Purchaser)",
@@ -325,7 +458,8 @@ module Stupidedi
               "SH" => "Shipper",
               "SF" => "Ship From",
               "ST" => "Ship To",
-              "WH" => "Warehouse"))
+              "WH" => "Warehouse",
+              "SU" => "Supplier/Manufacturer"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -336,40 +470,41 @@ module Stupidedi
               "R" => "Seller Owned, Returnable",
               "S" => "Customer Owned or Leased",
               "T" => "Trip Leased"))
-          E103  = t::ID.new(:E103 , "Packaging Code"                       , 3, 5,
-            s::CodeList.build(
-              "AMM" => "Ammo Pack",
-              "BAG" => "Bag",
-              "BAL" => "Bale",
-              "BDL" => "Bundle",
-              "BIN" => "Bin",
-              "BOT" => "Bottle",
-              "BOX" => "Box",
-              "BXT" => "Bucket",
-              "CAS" => "Case",
-              "CRT" => "Crate",
-              "CTN" => "Carton",
-              "DRM" => "Drum",
-              "JAR" => "Jar",
-              "KIT" => "Kit",
-              "LSE" => "Loose",
-              "LUG" => "Lug",
-              "PAL" => "Pail",
-              "PCK" => "Packed - not otherwise specified",
-              "PCS" => "Pieces",
-              "PKG" => "Package",
-              "PLT" => "Pallet",
-              "RCK" => "Rack",
-              "REL" => "Reel",
-              "ROL" => "Roll",
-              "SAK" => "Sack",
-              "SHT" => "Sheet",
-              "SKD" => "Skid",
-              "SKE" => "Skid, elevating or lift truck",
-              "SLP" => "Slip Sheet",
-              "TBN" => "Tote Bin",
-              "TLD" => "Intermodal Trailer/Container Load (Rail)",
-              "TRY" => "Tray"))
+          E103  = t::ID.new(:E103 , "Packaging Code"                       , 1, 5)
+
+            # s::CodeList.build(
+            #   "AMM" => "Ammo Pack",
+            #   "BAG" => "Bag",
+            #   "BAL" => "Bale",
+            #   "BDL" => "Bundle",
+            #   "BIN" => "Bin",
+            #   "BOT" => "Bottle",
+            #   "BOX" => "Box",
+            #   "BXT" => "Bucket",
+            #   "CAS" => "Case",
+            #   "CRT" => "Crate",
+            #   "CTN" => "Carton",
+            #   "DRM" => "Drum",
+            #   "JAR" => "Jar",
+            #   "KIT" => "Kit",
+            #   "LSE" => "Loose",
+            #   "LUG" => "Lug",
+            #   "PAL" => "Pail",
+            #   "PCK" => "Packed - not otherwise specified",
+            #   "PCS" => "Pieces",
+            #   "PKG" => "Package",
+            #   "PLT" => "Pallet",
+            #   "RCK" => "Rack",
+            #   "REL" => "Reel",
+            #   "ROL" => "Roll",
+            #   "SAK" => "Sack",
+            #   "SHT" => "Sheet",
+            #   "SKD" => "Skid",
+            #   "SKE" => "Skid, elevating or lift truck",
+            #   "SLP" => "Slip Sheet",
+            #   "TBN" => "Tote Bin",
+            #   "TLD" => "Intermodal Trailer/Container Load (Rail)",
+            #   "TRY" => "Tray"))
 
           E122  = t::ID.new(:E122 , "Rate/Value Qualifier"                 , 2, 2,
             s::CodeList.build(
@@ -4005,7 +4140,7 @@ module Stupidedi
           E224  = t::ID.new(:E224 , "Hazardous Material Shipping Name"     , 1, 25)
           E225  = t::AN.new(:E225 , "Seal Number"                          , 2, 15)
           E232  = t::Nn.new(:E232 , "Weight Allowance"                     , 2, 6, 0)
-          E234  = t::AN.new(:E234 , "Product/Service ID"                   , 1, 48)
+          E234  = t::AN.new(:E234 , "Product/Service ID - Nissan Part Number"     , 1, 19)
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
             s::CodeList.build(
               "VN" => "Vendor's (Seller's) Item Number",
@@ -4014,6 +4149,8 @@ module Stupidedi
               "UK" => "UPC/EAN Shipping Container Code",
               "BP" => "Buyer's Part Number",
               "CB" => "Buyer's Part Number",
+              "ON" => "Customer Order Number",
+              "SN" => "Serial Number",
               "UP" => "UPC Consumer Packaging Code"))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
@@ -4630,7 +4767,7 @@ module Stupidedi
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
-          E382  = t:: R.new(:E382 , "Number of Units Shipped"              , 1, 10)
+          E382  = t:: R.new(:E382 , "Number of Units Shipped"              , 1, 7)
           E383  = t:: R.new(:E382 , "Quantity Difference"                  , 1, 9)
           E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
@@ -5925,14 +6062,10 @@ module Stupidedi
           E730  = t::TM.new(:E730 , "Subcategory - Ship Notice Time"       , 4, 4)
 
           E734  = t::AN.new(:E734 , "Hierarchical Parent ID Number"        , 1, 12)
-          E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 2,
+          E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 1,
             s::CodeList.build(
-              "19" => "Provider of Service",
-              "20" => "Information Source",
-              "21" => "Information Receiver",
-              "22" => "Subscriber",
-              "23" => "Dependent",
-              "PT" => "Patient",
+               "I" => "Item",
+               "P" => "Pack",
                "S" => "Shipment",
                "T" => "Shipping Tare" ))
 
@@ -7386,7 +7519,7 @@ module Stupidedi
               "ZZN" => "Zinc",
               "ZZR" => "Zirconium",
               "ZZZ" => "Mutually Defined"))
-
+          E739  = t:: R.new(:E739 , "Measurement Value - Gross Weight"     , 1, 9)
           E740  = t:: R.new(:E740 , "Range Minimum"                        , 1, 20)
           E741  = t:: R.new(:E741 , "Range Maximum"                        , 1, 20)
           E750  = t::ID.new(:E750 , "Product/Process Characteristic Code"  , 2, 3)
