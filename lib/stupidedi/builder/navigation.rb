@@ -430,14 +430,22 @@ module Stupidedi
         __count(true, id, elements)
       end
 
+      # @yieldparam   [StateMachine]
+      # @yieldreturn  [Object]
+      # @return       [Either<Array<Object>>]
       def iterate(id, *elements)
+        a = []
         m = find(id, *elements)
+        return m unless m.defined?
+
         while m.defined?
           m = m.flatmap do |n|
-            yield(n)
+            a << yield(n)
             n.find(id, *elements)
           end
         end
+
+        Either.success(a)
       end
 
       # Sequence multiple traversals together, by iteratively calling
