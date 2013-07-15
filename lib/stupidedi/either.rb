@@ -53,7 +53,7 @@ module Stupidedi
         true
       end
 
-      def fetch(default)
+      def fetch(default = nil)
         @value
       end
 
@@ -174,7 +174,7 @@ module Stupidedi
         false
       end
 
-      def fetch(default)
+      def fetch(default = nil)
         default
       end
 
