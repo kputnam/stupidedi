@@ -14,8 +14,11 @@ module Stupidedi
             "To transmit identifying numbers, dates, and other basic data relating to the transaction set",
             e::E353.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E396.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E729.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E730.simple_use(r::Optional,  s::RepeatCount.bounded(1)))
+            e::E729.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)), #E373 ?
+            e::E730.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1005.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
+            e::E640.simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            e::E641.simple_use(r::Optional,   s::RepeatCount.bounded(1))) 
 
         end
       end
