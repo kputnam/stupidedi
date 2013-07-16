@@ -156,7 +156,7 @@ module Stupidedi
             # "13" => "UCS Code (The UCS Code is a Code Used for UCS Transmissions; it includes the Area Code and Telephone Number of a Modem; it Does Not Include Punctation, Blanks, or Access Code)",
               "14" => "Duns Plus Suffix",
             # "15" => "Petroleum Accountants Society of Canada Company Code",
-            # "16" => "Duns Number With 4-Character Suffix",
+              "16" => "Duns Number With 4-Character Suffix",
             # "17" => "American Bankers Association (ABA) Transit Routing Number (Including Check Digit, 9 Digit)",
             # "18" => s::CodeList.external("420"),
             # "19" => s::CodeList.external("421"),
@@ -207,7 +207,10 @@ module Stupidedi
           I13 = t::ID.new(:I13, "Acknowledgment Requested",               1,  1,
             s::CodeList.build(
               "0" => "No Interchange Acknowledgment Requested",
-              "1" => "Interchange Acknowledgment Requested (TA1)"))
+              "1" => "Interchange Acknowledgment Requested (TA1)",
+              "2" => "Interchange Acknowledgment Requested only when Interchange is \"Rejected Because Of Errors\"",
+              "3" => "Interchange Acknowledgment Requested only when Interchange is \"Rejected Because Of Errors\" or \"Accepted but Errors are Noted\""
+              ))
 
           I14 = t::ID.new(:I14, "Interchange Usage Indicator",            1,  1,
             s::CodeList.build(
