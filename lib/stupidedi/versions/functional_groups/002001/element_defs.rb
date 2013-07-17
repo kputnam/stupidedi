@@ -4140,7 +4140,7 @@ module Stupidedi
           E224  = t::ID.new(:E224 , "Hazardous Material Shipping Name"     , 1, 25)
           E225  = t::AN.new(:E225 , "Seal Number"                          , 2, 15)
           E232  = t::Nn.new(:E232 , "Weight Allowance"                     , 2, 6, 0)
-          E234  = t::AN.new(:E234 , "Product/Service ID - Nissan Part Number"     , 1, 40)
+          E234  = t::AN.new(:E234 , "Product/Service ID"                   , 1, 40)
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
             s::CodeList.build(
               "VN" => "Vendor's (Seller's) Item Number",
@@ -6204,6 +6204,8 @@ module Stupidedi
               "6" => "6th from Brake End"))
 
           E610  = t::Nn.new(:E610 , "Amount"                               , 1, 15, 2)
+
+          E624  = t::Nn.new(:E624 , "Century"                              , 2, 2, 0)
           E623  = t::ID.new(:E623 , "Time Code"                            , 2, 2,
             s::CodeList.build(
               "LT" => "Local Time (Preferred Usage - Explain in detail)"))
