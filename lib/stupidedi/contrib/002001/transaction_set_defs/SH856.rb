@@ -22,10 +22,10 @@ module Stupidedi
               s::MEA.use( 130, r::Optional,  d::RepeatCount.bounded(1)),
               s::TD1.use( 160, r::Optional,  d::RepeatCount.bounded(1)),
               s::TD3.use( 180, r::Optional,  d::RepeatCount.bounded(1)),
-              s::REF.use( 200, r::Optional,  d::RepeatCount.bounded(2))),
+              s::REF.use( 200, r::Optional,  d::RepeatCount.bounded(2)),
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(200),
-                s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1)))),
+                s:: N1.use( 270, r::Optional, d::RepeatCount.bounded(1))))),
 
           d::TableDef.summary("Table 3 - Summary",
             s::CTT.use(380, r::Mandatory, d::RepeatCount.bounded(1)),
