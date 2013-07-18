@@ -8,7 +8,7 @@ module Stupidedi
       module TwoHundred
 
         s = Schema
-        r = FunctionalGroups::FortyTen::ElementReqs
+        r = FunctionalGroups::TwoThousandOne::ElementReqs
 
         InterchangeDef = Class.new(Schema::InterchangeDef) do
           # @group Constructors
