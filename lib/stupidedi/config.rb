@@ -69,11 +69,15 @@ module Stupidedi
     def default
       new.customize do |c|
         c.interchange.customize do |x|
+          #x.register("00200") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
+          x.register("00200") { Stupidedi::Versions::Interchanges::TwoHundred::InterchangeDef }
           x.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
           x.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
         end
 
         c.functional_group.customize do |x|
+          # x.register("002001") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+          x.register("002001") { Stupidedi::Versions::FunctionalGroups::TwoThousandOne::FunctionalGroupDef }
           x.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
           x.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
         end
@@ -113,6 +117,9 @@ module Stupidedi
           x.register("004010", "SM", "204") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SM204 }
           x.register("004010", "QM", "214") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::QM214 }
           x.register("004010", "GF", "990") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::GF990 }
+
+          #x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::SH856 }
+          x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::Guides::SH856 }
 
           # x.register("004010", "SM", "204") { Stupidedi::Contrib::FortyTen::Guides::SM204 }
           # x.register("004010", "QM", "214") { Stupidedi::Contrib::FortyTen::Guides::QM214 }
