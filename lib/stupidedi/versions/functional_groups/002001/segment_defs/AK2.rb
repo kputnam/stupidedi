@@ -1,15 +1,15 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module FortyTen
+      module TwoThousandOne
         module SegmentDefs
 
           s = Schema
           e = ElementDefs
-          r = ElementReqs 
+          r = ElementReqs
 
-          ST = s::SegmentDef.build(:ST, "Transaction Set Header",
-            "To indicate the start of a transaction set and assign a control number",
+          AK2 = s::SegmentDef.build(:AK2, "Transaction Set Response Header",
+            "To start acknowledgement of a single transaction set",
             e::E143 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E329 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)))
 
@@ -18,3 +18,4 @@ module Stupidedi
     end
   end
 end
+
