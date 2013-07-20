@@ -28,6 +28,10 @@ module Stupidedi
           autoload :BEG,
             "stupidedi/versions/functional_groups/004010/segment_defs/BEG"
 
+          # Definition might be outdated, working from ANSI X12 2001 specification
+          autoload :BSN,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BSN"
+
           autoload :CTT,
             "stupidedi/versions/functional_groups/004010/segment_defs/CTT"
 
@@ -55,6 +59,9 @@ module Stupidedi
           autoload :G69,
             "stupidedi/versions/functional_groups/004010/segment_defs/G69"
 
+          autoload :HL,
+            "stupidedi/versions/functional_groups/004010/segment_defs/HL"
+
           autoload :K1,
             "stupidedi/versions/functional_groups/004010/segment_defs/K1"
 
@@ -66,6 +73,9 @@ module Stupidedi
 
           autoload :L5,
             "stupidedi/versions/functional_groups/004010/segment_defs/L5"
+
+          autoload :LIN,
+            "stupidedi/versions/functional_groups/004010/segment_defs/LIN"
 
           autoload :LFH,
             "stupidedi/versions/functional_groups/004010/segment_defs/LFH"
@@ -133,11 +143,23 @@ module Stupidedi
           autoload :PO1,
             "stupidedi/versions/functional_groups/004010/segment_defs/PO1"
 
+          autoload :PO4,
+            "stupidedi/versions/functional_groups/004010/segment_defs/PO4"
+
           autoload :REF,
             "stupidedi/versions/functional_groups/004010/segment_defs/REF"
 
           autoload :S5,
             "stupidedi/versions/functional_groups/004010/segment_defs/S5"
+
+          autoload :SN1,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SN1"
+
+          autoload :TD1,
+            "stupidedi/versions/functional_groups/004010/segment_defs/TD1"
+
+          autoload :TD3,
+            "stupidedi/versions/functional_groups/004010/segment_defs/TD3"
 
           autoload :W27,
             "stupidedi/versions/functional_groups/004010/segment_defs/W27"
