@@ -1,7 +1,7 @@
 module Stupidedi
   module Builder
 
-    class ControlStack
+    class IdentifierStack
       def initialize(id)
         @state = Empty.new(id)
       end
@@ -43,11 +43,11 @@ module Stupidedi
 
       class Empty
         def initialize(id)
-          @count, @id = 0, id
+          @count, @next, @id = 0, id, id
         end
 
         def isa
-          ISA.new(self, @id).tap { @count += 1; @id += 1 }
+          ISA.new(self, @next).tap { @count += 1; @next += 1 }
         end
 
         # Number of Interchanges (ISA..IEA)
@@ -60,11 +60,11 @@ module Stupidedi
         attr_reader :id
 
         def initialize(parent, id)
-          @count, @parent, @id = 0, parent, id
+          @count, @parent, @next, @id = 0, parent, id, id
         end
 
         def gs
-          GS.new(self, @id).tap { @count += 1; @id += 1 }
+          GS.new(self, @next).tap { @count += 1; @next += 1 }
         end
 
         # Number of Functional Groups (GS..GE)
@@ -81,14 +81,16 @@ module Stupidedi
         attr_reader :id
 
         def initialize(parent, id)
-          @count, @parent, @id = 0, parent, id
+          @count, @parent, @next, @id = 0, parent, id, id
         end
 
         def st
-          ST.new(self, @id).tap { @count += 1; @id += 1 }
+          ST.new(self, @next).tap { @count += 1; @next += 1 }
         end
 
-        # Number of Transaction Sets (ST..SE)
+        # GE01 Number of Transaction Sets (within current functional group)
+        #
+        # @return [Integer]
         def count
           @count
         end
