@@ -9,7 +9,7 @@ module Stupidedi
     autoload :Navigation,           "stupidedi/builder/navigation"
     autoload :Tokenization,         "stupidedi/builder/tokenization"
     autoload :StateMachine,         "stupidedi/builder/state_machine"
-    autoload :ControlStack,         "stupidedi/builder/control_stack"
+    autoload :IdentifierStack,      "stupidedi/builder/identifier_stack"
 
     autoload :AbstractState,        "stupidedi/builder/states/abstract_state"
     autoload :FailureState,         "stupidedi/builder/states/failure_state"
