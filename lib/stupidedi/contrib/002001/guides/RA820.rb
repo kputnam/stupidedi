@@ -119,6 +119,8 @@ module Stupidedi
 
 
 
+continue on page 21 
+dropBox\workhome\nissan-edi\ 31458931APP820S Remittance Advice
 
 
               b::Segment( 60, s::LIN, "Item Identification",
