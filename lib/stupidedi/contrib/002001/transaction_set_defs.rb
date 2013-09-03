@@ -11,6 +11,8 @@ module Stupidedi
 
         autoload :SH856, # Ship Notice/Manifest
           "stupidedi/contrib/002001/transaction_set_defs/SH856"
+        autoload :RA820, # Remittance Advice
+          "stupidedi/contrib/002001/transaction_set_defs/RA820"
 
       end
     end
