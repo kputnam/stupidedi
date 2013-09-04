@@ -1,6 +1,6 @@
 module Stupidedi
   module Contrib
-    module TwoThousandOne
+    module ThirtyTen
       module Guides
 
         # GuideBuilder = Stupidedi::Guides::TwoThousandOne::GuideBuilder
@@ -11,7 +11,7 @@ module Stupidedi
         SegmentReqs  = Stupidedi::Guides::FortyTen::SegmentReqs
         ElementReqs  = Stupidedi::Guides::FortyTen::ElementReqs
         
-        autoload :SH856, "stupidedi/contrib/002001/guides/SH856"
+        autoload :RA820, "stupidedi/contrib/003010/guides/RA820"
       end
     end
   end

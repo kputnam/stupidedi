@@ -11,7 +11,6 @@ module Stupidedi
 
         autoload :SH856, # Ship Notice/Manifest
           "stupidedi/contrib/002001/transaction_set_defs/SH856"
-
       end
     end
   end
