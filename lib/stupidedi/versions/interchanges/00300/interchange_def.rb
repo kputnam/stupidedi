@@ -5,7 +5,7 @@ module Stupidedi
       #
       # @see Values::InterchangeDef
       #
-      module TwoHundred
+      module ThreeHundred
 
         s = Schema
         r = FunctionalGroups::TwoThousandOne::ElementReqs

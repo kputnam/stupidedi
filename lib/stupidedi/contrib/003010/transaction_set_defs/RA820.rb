@@ -1,6 +1,6 @@
 module Stupidedi
   module Contrib
-    module TwoThousandOne
+    module ThirtyTen
       module TransactionSetDefs
         d = Schema
         r = SegmentReqs
@@ -14,7 +14,7 @@ module Stupidedi
             s::REF.use( 50, r::Mandatory, d::RepeatCount.bounded(1)),
             s::DTM.use( 60, r::Optional,  d::RepeatCount.bounded(10)),
             d::LoopDef.build("N1", d::RepeatCount.bounded(1),
-              s:: N1.use(  70, r::Mandatory, d::RepeatCount.bounded(1)),
+              s:: N1.use(  70, r::Mandatory, d::RepeatCount.bounded(1)))),
           
           d::TableDef.detail("Table 2 - Detail",
             s:: LS.use(  10, r::Mandatory, d::RepeatCount.bounded(1)),
@@ -44,10 +44,10 @@ module Stupidedi
                 s::REF.use(  50, r::Optional, d::RepeatCount.bounded(1)),
                 s::REF.use(  50, r::Optional, d::RepeatCount.bounded(1)),
                 s::REF.use(  50, r::Optional, d::RepeatCount.bounded(1)),
-                s:: LE.use(  70, r::Optional, d::RepeatCount.bounded(200))),
+                s:: LE.use(  70, r::Optional, d::RepeatCount.bounded(200)))),
 
           d::TableDef.summary("Table 3 - Summary",
-            s:: SE.use( 10, r::Mandatory, d::RepeatCount.bounded(1)))))
+            s:: SE.use( 10, r::Mandatory, d::RepeatCount.bounded(1))))
 
       end
     end

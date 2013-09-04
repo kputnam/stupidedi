@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module Interchanges
-      module TwoHundred
+      module ThreeHundred
 
         #
         # @see Schema::SegmentDef.build
@@ -13,13 +13,13 @@ module Stupidedi
           m = FunctionalGroups::FortyTen::ElementReqs
 
           autoload :ISA,
-            "stupidedi/versions/interchanges/00200/segment_defs/ISA"
+            "stupidedi/versions/interchanges/00300/segment_defs/ISA"
 
           autoload :IEA,
-            "stupidedi/versions/interchanges/00200/segment_defs/IEA"
+            "stupidedi/versions/interchanges/00300/segment_defs/IEA"
 
           autoload :TA1,
-            "stupidedi/versions/interchanges/00200/segment_defs/TA1"
+            "stupidedi/versions/interchanges/00300/segment_defs/TA1"
 
         end
       end

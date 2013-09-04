@@ -5,7 +5,7 @@ module Stupidedi
       #
       # @see FunctionalGroups::FortyTen
       #
-      module TwoHundred
+      module ThreeHundred
 
         autoload :ElementDefs,
           "stupidedi/versions/interchanges/00300/element_defs"

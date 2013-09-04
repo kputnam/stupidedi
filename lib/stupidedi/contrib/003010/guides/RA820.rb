@@ -1,15 +1,15 @@
 module Stupidedi
   module Contrib
-    module TwoThousandOne
+    module ThirtyTen
       module Guides
 
         b = GuideBuilder
         d = Schema
         r = SegmentReqs
         e = ElementReqs
-        s = Versions::FunctionalGroups::TwoThousandOne::SegmentDefs
+        s = Versions::FunctionalGroups::ThirtyTen::SegmentDefs
         # t = Contrib::TwoThousandOne::TransactionSetDefs
-        t = Contrib::TwoThousandOne::TransactionSetDefs
+        t = Contrib::ThirtyTen::TransactionSetDefs
         #
         # Ship Notice/Manifest
         #
@@ -21,7 +21,8 @@ module Stupidedi
               b::Element(e::Required,    "Transaction Set Control Number")),
             b::Segment(20, s::BPS, "Beginning Segment for Payment Order/Remittance Advice",
               r::Required, d::RepeatCount.bounded(1),
-              b::Element(e::Required,    "Payment Method Code", b::Values("PBC")),
+              # b::Element(e::Required,    "Payment Method Code", b::Values("PBC")),
+              b::Element(e::Required,    "Payment Method Code"),
               b::Element(e::Required,    "Monetary Amount"),
               b::Element(e::Required,    "Transaction Handling Code", b::Values("I")),
               b::Element(e::Situational, "Account Number - Supplier Number"),
@@ -29,17 +30,16 @@ module Stupidedi
             b::Segment(50, s::REF, "Reference Numbers",
               r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Reference Number Qualifier", b::Values("R2")),
-              b::Element(e::Required,    "Reference Number"), b::Values("CPICS","ERS","NLC")),
+              b::Element(e::Situational, "Reference Number"), b::Values("CPICS","ERS","NLC")),
             b::Segment(60, s::DTM, "Date/Time/Period",
               r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Date/Time Qualifier", b::Values("195")),
-              b::Element(e::Required,    "Date"),
+              b::Element(e::Required,    "Date")),
             d::LoopDef.build("N1", d::RepeatCount.bounded(1),              
               b::Segment(70, s:: N1, "Name",
                 r::Situational, d::RepeatCount.unbounded,
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("SU")),
-                b::Element(e::Situational, "Name - Supplier Contact")),
-
+                b::Element(e::Situational, "Name - Supplier Contact")))),
 
 
           d::TableDef.detail("Detail",            
@@ -86,7 +86,7 @@ module Stupidedi
                   b::Segment( 60, s::DTM, "Date/Time/Period",
                     r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Date/Time Qualifier", b::Values("011","193")),
-                    b::Element(e::Situational, "Date - Invoice Date"))),
+                    b::Element(e::Situational, "Date - Invoice Date"))))),
 
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(200),
@@ -105,7 +105,7 @@ module Stupidedi
               b::Segment( 22, s:: N1, "Name - Invoice Number/Check Number/Bill of Lading Number - Line Item",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("LI")),
-                b::Element(e::Situational, "Name - Invoice Number/Check Number/Bill of Lading"))),
+                b::Element(e::Situational, "Name - Invoice Number/Check Number/Bill of Lading")),
 
               d::LoopDef.build("RMT", d::RepeatCount.bounded(200),
                 b::Segment( 30, s::RMT, "Remittance Advice",
@@ -143,7 +143,7 @@ module Stupidedi
               b::Segment(200, s::REF, "Reference Numbers",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("LS")),
-                b::Element(e::Situational, "Reference Number - Label Serial Number."),             
+                b::Element(e::Situational, "Reference Number - Label Serial Number.")))),             
 
           d::TableDef.header("Summary",
             d::LoopDef.build(" SE", d::RepeatCount.bounded(1),
