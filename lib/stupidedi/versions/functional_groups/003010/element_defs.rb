@@ -10,7 +10,8 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
-
+          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR RMT 5,6,8"         , 1, 1)
+          
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -452,14 +453,18 @@ module Stupidedi
           E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 2,
             s::CodeList.build(
+              "AA" => "Authority For Shipment",
               "BT" => "Bill-to-Party",
               "BY" => "Buying Party (Purchaser)",
               "CN" => "Consignee",
+              "LI" => "Line Item - Nissan Unique Code",
+              "PJ" => "Party to Receive Correspondence",
               "SH" => "Shipper",
               "SF" => "Ship From",
               "ST" => "Ship To",
               "WH" => "Warehouse",
-              "SU" => "Supplier/Manufacturer"))
+              "SU" => "Supplier/Manufacturer",
+              "HH" => "Header Information - Nissan Unique Code" ))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -5674,7 +5679,9 @@ module Stupidedi
               "011" => "Shipped",
               "037" => "Ship not before",
               "038" => "Ship no later",
-              "175" => "Cancel if not shipped by"))
+              "175" => "Cancel if not shipped by",
+              "193" => "Receipt - Nissan Unique Code",
+              "195" => "Payment - Nissan Unique Code"))
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
@@ -5715,6 +5722,12 @@ module Stupidedi
 
           E413  = t:: R.new(:E413 , "Quantity Received"                    , 1, 7)
           E416  = t::Nn.new(:E416 , "Pallet Block and Tiers"               , 6, 6, 0)
+
+          E426  = t::ID.new(:E426 , "Adjustment Reason Code - Reprice Indicator" , 2, 2,
+            s::CodeList.build(
+              "NO" => "No - Nissan Unique Code",
+              "YS" => "Yes - Nissan Unique Code"))
+
           E432  = t::ID.new(:E432 , "Date Qualifier"                       , 2, 2,
             s::CodeList.build(
               "02" => "Requested Delivery Date",
@@ -6222,7 +6235,7 @@ module Stupidedi
 
           E591 = t::ID.new(:E591, "Payment Method Code"                 , 3, 3,
             s::CodeList.build(
-              "BPC" => "Pay by Check"))
+              "PBC" => "Pay by Check"))
 
           E595  = t::ID.new(:E595 , "Compartment ID Code"                  , 1, 1,
             s::CodeList.build(

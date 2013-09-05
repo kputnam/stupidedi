@@ -10,7 +10,6 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
-
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
