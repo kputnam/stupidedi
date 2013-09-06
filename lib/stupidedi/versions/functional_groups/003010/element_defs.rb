@@ -10,8 +10,8 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
-          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR RMT 5,6,8"         , 1, 1)
-          
+          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR RMT 5,6,8"         , 0, 0)
+
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
