@@ -1,4 +1,4 @@
-require "stupidedi"
+#equire "stupidedi"
 require "benchmark"
 
 N = 10_000_000
@@ -12,6 +12,9 @@ def five(a,b,c,d,e) nil; end
 def six(a,b,c,d,e,f) nil; end
 def seven(a,b,c,d,e,f,g) nil; end
 def eight(a,b,c,d,e,f,g,h) nil; end
+def nine(a,b,c,d,e,f,g,h,i) nil; end
+def ten(a,b,c,d,e,f,g,h,i,j) nil; end
+def eleven(a,b,c,d,e,f,g,h,i,j,k) nil; end
 
 def implicit_return; nil; end
 def explicit_return; return nil; end
@@ -42,9 +45,9 @@ def call_stack_caller; caller.first; end
 def call_stack_called_from; pp called_from(5); end
 
 Benchmark.bmbm(10) do |bm|
-    single = %w(a)
 
   # puts "a. What's the cost of using #each to visit the item in a singleton list?"
+  # single = %w(a)
   # bm.report("a. each") { N.times { single.each{|a| a } }}
   # bm.report("a. first") { N.times { if single.length == 1; single.first; end }}
   # Results:
@@ -63,6 +66,12 @@ Benchmark.bmbm(10) do |bm|
   # bm.report("b. six") { N.times { six(1,2,3,4,5,6) }}
   # bm.report("b. seven") { N.times { seven(1,2,3,4,5,6,7) }}
   # bm.report("b. eight") { N.times { eight(1,2,3,4,5,6,7,8) }}
+  # bm.report("b. nine") { N.times { nine(1,2,3,4,5,6,7,8,9) }}
+  # bm.report("b. ten") { N.times { ten(1,2,3,4,5,6,7,8,9,10) }}
+  # bm.report("b. eleven") { N.times { eleven(1,2,3,4,5,6,7,8,9,10,11) }}
+  # Results:
+  #   200: eleven-arg call is 50% slower than zero-arg
+  #        growth might be quadtratic in number of args
 
 
   # puts "c. What's the cost of 'coalescing' nil to a constant?"
@@ -89,7 +98,7 @@ Benchmark.bmbm(10) do |bm|
   # bm.report("..from") { (10).times { call_stack_called_from }}
   # bm.report("nil")    { (N/10).times { implicit_return   }}
 
-  puts "g. How expensive are indirect method calls using __send__?"
-  bm.report("__send__") { N.times { __send__(:two, 1, 2) }}
-  bm.report("direct")   { N.times { two(1, 2) }}
+  # puts "g. How expensive are indirect method calls using __send__?"
+  # bm.report("__send__") { N.times { __send__(:two, 1, 2) }}
+  # bm.report("direct")   { N.times { two(1, 2) }}
 end
