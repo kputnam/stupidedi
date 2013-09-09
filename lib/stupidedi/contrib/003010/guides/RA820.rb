@@ -160,18 +160,13 @@ module Stupidedi
             b::Segment( 70, s:: LE, "Loop Trailer",
               r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Loop Identifier Code", b::Values("A")))),
-
-              # b::Segment(200, s::REF, "Reference Numbers",
-              #   r::Situational, d::RepeatCount.bounded(1),
-              #   b::Element(e::Required,    "Reference Number Qualifier", b::Values("LS")),
-              #   b::Element(e::Situational, "Reference Number - Label Serial Number.")))),             
+   
 
           d::TableDef.header("Summary",
-            d::LoopDef.build(" SE", d::RepeatCount.bounded(1),
             b::Segment( 10, s:: SE, "Transaction Set Trailer",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Included Segments"),
-              b::Element(e::Required,    "Transaction Set Control Number")))))
+              b::Element(e::Required,    "Transaction Set Control Number"))))
 
       end
     end

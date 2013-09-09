@@ -431,10 +431,15 @@ module Stupidedi
           E91   = t::ID.new(:E91  , "Transportation Method/Type Code"      , 1, 2,
             s::CodeList.build(
               "A"  => "Air",
+              "AE" => "Air Express",
               "H"  => "Customer Pickup",
               "M"  => "Motor (Common Carrier)",
+              "PG" => "Pooled Piggyback: Outbound shipment consisting of a trailer on a railcar from a consolidation point to a final destination via rail move",
               "R"  => "Rail",
+              "RR" => "Roadrailer: Used for shipments which travel by roadrailer, i.e., a multi-model rail/highway trailer",
               "S"  => "Ocean",
+              "SE" => "Sea/Air",
+              "SS" => "Steamship",
               "T"  => "Best Way (Shippers Option)",
               "U"  => "Private Parcel Service",
               "X"  => "Intermodal (Piggyback)",
@@ -442,6 +447,9 @@ module Stupidedi
 
           E92   = t::ID.new(:E92  , "Purchase Order Type Code"             , 2, 2,
             s::CodeList.build(
+              "BE" => "Blanket Order/Estimated Quantities (Not firm Commitment)",
+              "BK" => "Blanket Order (Quantity Firm)",
+              "SP" => "Sample",
               "NE" => "New Order",
               "DS" => "Drop Ship",
               "SA" => "Stand Alone",
@@ -454,10 +462,11 @@ module Stupidedi
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 2,
             s::CodeList.build(
               "AA" => "Authority For Shipment",
-              "BT" => "Bill-to-Party",
+              "BT" => "Party to be Billed For Other Than Freight(Bill To)",
               "BY" => "Buying Party (Purchaser)",
               "CN" => "Consignee",
               "LI" => "Line Item - Nissan Unique Code",
+              "MP" => "Manufacturing Plant",
               "PJ" => "Party to Receive Correspondence",
               "SH" => "Shipper",
               "SF" => "Ship From",
@@ -551,11 +560,28 @@ module Stupidedi
           E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)
           E124  = t::AN.new(:E124 , "Application Receiver's Code"          , 2, 15)
           
-          E127  = t::AN.new(:E127 , "Reference Number"             , 1, 5,
+          E127  = t::AN.new(:E127 , "Reference Number - Business Type"     , 1, 2,
             s::CodeList.build(
-              "CPICS" => "Central Procurement Inventory System",
-              "ERS"   => "Evaluated Receipt Settlement",
-              "NLC"   => "Nissan Logistics Center"))
+              "AC" => "Service Accessory",
+              "AE" => "North American Sourced Aguas",
+              "AS" => "Accessory Service",
+              "BS" => "Brazil Direct Shipments N",
+              "ER" => "Renault Spain Export Program",
+              "ES" => "Spain Part",
+              "ET" => "Thailand Part",
+              "GW" => "Goodwill",
+              "IS" => "Inhouse Service Parts",
+              "MP" => "Mexico Part Prior to NLC",
+              "MT" => "North American Sourced Parts",
+              "ND" => "X",
+              "NS" => "NISMEX",
+              "NT" => "Nissan Taiwan",
+              "PR" => "Production",
+              "RB" => "Brazil Part",
+              "RC" => "Recall Service Campaign",
+              "RP" => "Reverse Vanned Part",
+              "SD" => "Accessories",
+              "SN" => "Thailand"))
 
           E128  = t::ID.new(:E128 , "Reference Identification Qualifier"   , 2, 3,
             s::CodeList.build(
@@ -2374,6 +2400,7 @@ module Stupidedi
           E146  = t::ID.new(:E146 , "Shipment Method of Payment"           , 2, 2,
             s::CodeList.build(
               "CC" => "Collect",
+              "DE" => "Destination Shipping Point - Nissan Unique Code",
               "PC" => "Prepaid but Charged to Customer",
               "PP" => "Prepaid (by Seller)",
               "PU" => "Pickup",
@@ -4154,6 +4181,7 @@ module Stupidedi
           E234  = t::AN.new(:E234 , "Product/Service ID"                   , 1, 40)
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
             s::CodeList.build(
+              "C4" => "Design Note Number - Nissan Unique Code",
               "VN" => "Vendor's (Seller's) Item Number",
               "VC" => "Vendor's (Seller's) Catalog Number",
               "VP" => "Vendor's (Seller's) Part Number",
@@ -4705,13 +4733,34 @@ module Stupidedi
               "ZZ" => "Mutually Defined"))
           E310  = t::AN.new(:E310 , "Location Identifier"                  , 1, 30)
           E319  = t::AN.new(:E319 , "Temperature Control"                  , 3, 6)
+          E323  = t::DT.new(:E323 , "Purchase Order Date"                  , 6, 6)
           E324  = t::AN.new(:E324 , "Purchase Order Number"                , 1, 22)
           E328  = t::AN.new(:E328 , "Release Number"                       , 1, 30)
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
           E330  = t:: R.new(:E330 , "Quantity Ordered"                     , 1, 9)
+
+          E333  = t::ID.new(:E333 , "Terms Basis Date Code"                , 2, 2,
+            s::CodeList.build(
+              "AA" => "Prepaid and Add",
+              "AB" => "Prepaid and Bill",
+              "AE" => "Prepaid and Equalized",
+              "NS" => "No Material Shipped",
+              "OR" => "Collect From Origin",
+              "TB" => "Prepaid To Border",
+              "TD" => "Prepaid to Destination",
+              "TP" => "Prepaid To Port"))
           
           E335  = t::ID.new(:E335 , "Transportation Terms Code"            , 3, 3)
+          
+          E336  = t::ID.new(:E336 , "Terms Type Code"                      , 2, 2,
+            s::CodeList.build(
+              "09" => "Proximo",
+              "10" => "Instant",
+              "30" => "Semi-Monthly - Nissan Unique Code"))
+
           E337  = t::TM.new(:E337 , "Time"                                 , 4, 4)
+          E338  = t:: R.new(:E338 , "Terms Discount Percent"               , 6, 6)
+          E342  = t:: R.new(:E342 , "Percent of Invoice Payable"           , 1, 5)
           E346  = t::ID.new(:E346 , "Application Type"                     , 2, 2,
             s::CodeList.build(
               "LT" => "Load Tender - Truckload (TL) Carrier Only",
@@ -4724,12 +4773,15 @@ module Stupidedi
             "F" => "Free-form"))
 
           E350  = t::AN.new(:E350 , "Assigned Identification"              , 1, 20)
-          E352  = t::AN.new(:E352 , "Description"                          , 1, 80)
+          E351  = t::Nn.new(:E351 , "Terms Discount Days Due"              , 1, 3, 0)
+          E352  = t::AN.new(:E352 , "Description - Freight FOB Terms"      , 1, 25)
           E353  = t::ID.new(:E353 , "Transaction Set Purpose Code"         , 2, 2,
             s::CodeList.build(
               "00" => "Original",
               "01" => "Cancellation",
-              "04" => "Change"))
+              "04" => "Change",
+              "05" => "Replace",
+              "18" => "Reissue"))
 
           E354 = t::Nn.new(:E354 , "Number of Line Items"                  , 1, 6, 0)
           E355 = t::ID.new(:E355 , "Unit or Basis for Measurement Code"    , 2, 2,
@@ -5644,6 +5696,7 @@ module Stupidedi
 
           E356  = t:: R.new(:E356   , "Case/Inner Pack"                    , 1, 6)
           E357  = t:: R.new(:E357   , "Outer Pack"                         , 1, 8)
+          E362  = t::Nn.new(:E362   , "Terms Discount Amount"              , 1, 10, 2)
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
             s::CodeList.build(
               "ZZZ" => "Mutually Defined"))
@@ -5670,13 +5723,16 @@ module Stupidedi
               "CC" => "Shipment Complete on"))
 
           E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
+          E370  = t::DT.new(:E370 , "Terms Discount Due Date"              , 6, 6)
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
             s::CodeList.build(
               "001" => "Cancel after",
               "002" => "Delivery Requested",
+              "007" => "Effective",
               "010" => "Requested ship",
               "011" => "Shipped",
+              "036" => "Expiration",
               "037" => "Ship not before",
               "038" => "Ship no later",
               "175" => "Cancel if not shipped by",
@@ -5688,8 +5744,10 @@ module Stupidedi
 
           E382  = t:: R.new(:E382 , "Number of Units Shipped"              , 1, 10)
           E383  = t:: R.new(:E383 , "Quantity Difference"                  , 1, 9)
-          
+          E386  = t::Nn.new(:E386 , "Terms Net Days"                       , 1, 3, 0)
           E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
+          E388  = t::DT.new(:E388 , "Terms Deferred Due Date"              , 6, 6)
+          E389  = t::Nn.new(:E389 , "Deferred Amount Due"                  , 1, 10, 2)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
           E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
           E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)          
@@ -5750,6 +5808,7 @@ module Stupidedi
           E434  = t::AN.new(:E434 , "F.O.B. Point"                         , 1, 30)
           E438  = t::AN.new(:E438 , "U.P.C. Case Code"                     , 12,12)
           E443  = t::AN.new(:E443 , "Contact Inquiry Reference"            , 1, 20)
+          E446  = t::DT.new(:E446 , "Terms Net Due Date"                   , 6, 6)
           E447  = t::ID.new(:E447 , "Loop Identifier Code"                 , 1, 4,
             s::CodeList.build(
               "A" => "Loop Identifier Code"))
@@ -9037,7 +9096,7 @@ module Stupidedi
             s::CodeList.build(
               "RQ" => "Reportable Quantity"))
           E761  = t::Nn.new(:E761 , "Equipment Number Check Digit"         , 1, 1, 0)
-
+          E765  = t::Nn.new(:E765 , "Day of Month"                         , 1, 2, 0)
           E777 = t:: R.new(:E777, "Total Invoice Amount - Total Net Amount", 1, 13)
 
           E780 = t:: R.new(:E780, "Amount of Discount Taken - Discount Amount Due", 1, 13)
@@ -9126,7 +9185,8 @@ module Stupidedi
             s::CodeList.build(
               "1" => "Adjustment Having Normal Effect on Inventory for Type of Transaction Set in which Code is Used",
               "2" => "Adjustment Having Reversal Effect on Inventory for Type of Transaction Set in Which Code is Used"))
-
+          
+          E933  = t::AN.new(:E933 , "Free-Form Message Text"               , 1, 264)
           E935  = t::ID.new(:E935 , "Measurement Significance Code"        , 2, 2,
             s::CodeList.build(
               "01" => "Where Air = 1",

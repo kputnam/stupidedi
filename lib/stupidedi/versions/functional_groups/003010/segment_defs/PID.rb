@@ -14,17 +14,17 @@ module Stupidedi
             e::E750 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E559 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E751 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E352 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E752 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E822 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E819 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E352 .simple_use(r::Relational, s::RepeatCount.bounded(1)))
+            # e::E752 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            # e::E822 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            # e::E1073.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            # e::E819 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
-            SyntaxNotes::C.build(4, 3),
-            SyntaxNotes::R.build(4, 5),
-            SyntaxNotes::C.build(7, 3),
-            SyntaxNotes::C.build(8, 4),
-            SyntaxNotes::C.build(9, 5))
+            # SyntaxNotes::C.build(4, 3),
+            # SyntaxNotes::R.build(4, 5),
+            # SyntaxNotes::C.build(7, 3),
+            # SyntaxNotes::C.build(8, 4),
+            # SyntaxNotes::C.build(9, 5))
 
         end
       end
