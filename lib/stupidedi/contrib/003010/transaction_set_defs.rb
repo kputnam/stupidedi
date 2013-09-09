@@ -12,6 +12,8 @@ module Stupidedi
         autoload :RA820, # Remittance Advice
           "stupidedi/contrib/003010/transaction_set_defs/RA820"
 
+        autoload :PO850, # Remittance Advice
+          "stupidedi/contrib/003010/transaction_set_defs/PO850"
       end
     end
   end

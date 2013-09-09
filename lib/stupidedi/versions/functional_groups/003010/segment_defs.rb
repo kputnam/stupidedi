@@ -227,6 +227,17 @@ module Stupidedi
           autoload :LE,
             "stupidedi/versions/functional_groups/003010/segment_defs/LE"
 
+          autoload :FOB,
+            "stupidedi/versions/functional_groups/003010/segment_defs/FOB"
+
+          autoload :ITD,
+            "stupidedi/versions/functional_groups/003010/segment_defs/ITD"
+
+          autoload :TD5,
+            "stupidedi/versions/functional_groups/003010/segment_defs/TD5"            
+
+          autoload :MSG,
+            "stupidedi/versions/functional_groups/003010/segment_defs/MSG"                  
         end
       end
     end
