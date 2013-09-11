@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module ThirtyTen
+      module ThirtyForty
         module ElementTypes
 
           class SimpleElementDef < Schema::SimpleElementDef
@@ -82,43 +82,43 @@ module Stupidedi
           end
 
           autoload :Operators,
-            "stupidedi/versions/functional_groups/003010/element_types/operators"
+            "stupidedi/versions/functional_groups/003040/element_types/operators"
 
           autoload :DateVal,
-            "stupidedi/versions/functional_groups/003010/element_types/date_val"
+            "stupidedi/versions/functional_groups/003040/element_types/date_val"
 
           autoload :DT,
-            "stupidedi/versions/functional_groups/003010/element_types/date_val"
+            "stupidedi/versions/functional_groups/003040/element_types/date_val"
 
           autoload :FloatVal,
-            "stupidedi/versions/functional_groups/003010/element_types/float_val"
+            "stupidedi/versions/functional_groups/003040/element_types/float_val"
 
           autoload :R,
-            "stupidedi/versions/functional_groups/003010/element_types/float_val"
+            "stupidedi/versions/functional_groups/003040/element_types/float_val"
 
           autoload :IdentifierVal,
-            "stupidedi/versions/functional_groups/003010/element_types/identifier_val"
+            "stupidedi/versions/functional_groups/003040/element_types/identifier_val"
 
           autoload :ID,
-            "stupidedi/versions/functional_groups/003010/element_types/identifier_val"
+            "stupidedi/versions/functional_groups/003040/element_types/identifier_val"
 
           autoload :FixnumVal,
-            "stupidedi/versions/functional_groups/003010/element_types/fixnum_val"
+            "stupidedi/versions/functional_groups/003040/element_types/fixnum_val"
 
           autoload :Nn,
-            "stupidedi/versions/functional_groups/003010/element_types/fixnum_val"
+            "stupidedi/versions/functional_groups/003040/element_types/fixnum_val"
 
           autoload :StringVal,
-            "stupidedi/versions/functional_groups/003010/element_types/string_val"
+            "stupidedi/versions/functional_groups/003040/element_types/string_val"
 
           autoload :AN,
-            "stupidedi/versions/functional_groups/003010/element_types/string_val"
+            "stupidedi/versions/functional_groups/003040/element_types/string_val"
 
           autoload :TimeVal,
-            "stupidedi/versions/functional_groups/003010/element_types/time_val"
+            "stupidedi/versions/functional_groups/003040/element_types/time_val"
 
           autoload :TM,
-            "stupidedi/versions/functional_groups/003010/element_types/time_val"
+            "stupidedi/versions/functional_groups/003040/element_types/time_val"
 
         end
       end

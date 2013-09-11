@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module ThirtyTen
+      module ThirtyForty
         module SegmentDefs
 
           s = Schema
@@ -28,21 +28,21 @@ module Stupidedi
             e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
-            e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)))
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E235 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
+            # e::E234 .simple_use(r::Relational, s::RepeatCount.bounded(1)))
 
         end
       end

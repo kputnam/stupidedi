@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module ThirtyTen
+      module ThirtyForty
 
         s = Schema
         r = ElementReqs
@@ -17,7 +17,7 @@ module Stupidedi
           def segment_dict
             SegmentDefs
           end
-        end.new "003010",
+        end.new "003040",
           # Functional group header
           [ SegmentDefs::GS.use(1, r::Mandatory, s::RepeatCount.bounded(1)) ],
 
