@@ -20,7 +20,7 @@ module Stupidedi
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("142")),
               b::Element(e::Required,    "Transaction Set Control Number")),
 
-            b::Segment(20, s::BEG, "Beginning Segment",
+            b::Segment(20, s::BGN, "Beginning Segment",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Purpose Code", b::Values("00","31","32")),
               b::Element(e::Required,    "Reference Number - Warranty Claim Reference"),
@@ -44,7 +44,7 @@ module Stupidedi
             d::LoopDef.build("LX", d::RepeatCount.unbounded,              
               b::Segment(10, s::LX, "Assigned Number",
                 r::Required, d::RepeatCount.bounded(1),
-                b::Element(e::Required,    "Assigned Number"))
+                b::Element(e::Required,    "Assigned Number")),
               b::Segment(20, s::N9, "Reference Number - Receiver Claim Number",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier"),
@@ -95,7 +95,7 @@ module Stupidedi
               b::Segment(30, s::N9, "Reference Number - Receiver Claim Number",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("K6")),
-                b::Element(e::Required,    "Reference Number - Major Model Description"))
+                b::Element(e::Required,    "Reference Number - Major Model Description")),
 
               d::LoopDef.build("LIN", d::RepeatCount.unbounded,
                 b::Segment( 32, s::LIN, "Item Identification",
@@ -121,12 +121,12 @@ module Stupidedi
                   r::Required, d::RepeatCount.bounded(2),
                   b::Element(e::Situational,    "Quantity Qualifier"),
                   b::Element(e::Required,       "Quantity - Mileage"),
-                  b::Element(e::Required,       "Unit or Basis for Measurement Code", b::Values("DH")),
+                  b::Element(e::Required,       "Unit or Basis for Measurement Code", b::Values("DH"))),
                 b::Segment( 60, s::DTM, "Date/Time/Period",
                   r::Required, d::RepeatCount.unbounded,
-                  b::Element(e::Situational,    "Date/Time Qualifier", b::Values("096","094","128","194","214")),
+                  b::Element(e::Situational,    "Date/Time Qualifier", b::Values("006","094","128","194","214")),
                   b::Element(e::Required,       "Date"),
-                  b::Element(e::Required,       "Century"),
+                  b::Element(e::Required,       "Century")),
                 b::Segment( 100, s::SSS, "Special Services",
                   r::Required, d::RepeatCount.unbounded,
                   b::Element(e::Required,    "Allowance or Charge Indicator", b::Values("C")),
@@ -134,7 +134,7 @@ module Stupidedi
                   b::Element(e::Required,    "Special Services Code", b::Values("PP","SH","ZZ")),
                   b::Element(e::Situational, "Allowance or Charge Rate - Supplier Rate"),
                   b::Element(e::Situational, "Allowance or Charge Total Amount"),
-                  b::Element(e::Situational, "Quantity - Supplier Amount"),  
+                  b::Element(e::Situational, "Quantity - Supplier Amount"))),  
 
               d::LoopDef.build("PRR", d::RepeatCount.unbounded,
                 b::Segment( 170, s::PRR, "Problem Report",
@@ -144,7 +144,7 @@ module Stupidedi
                   b::Element(e::Situational,    "Description")),
                 b::Segment( 210, s::MSG, "Message Text",
                   r::Required, d::RepeatCount.unbounded,
-                  b::Element(e::Required,    "Free-Form Message Text - Tech Comment/Service Advisor Comment")))
+                  b::Element(e::Required,    "Free-Form Message Text - Tech Comment/Service Advisor Comment"))),
 
               d::LoopDef.build("REP", d::RepeatCount.unbounded,
                 b::Segment( 310, s::REP, "Repair Action",
@@ -165,7 +165,7 @@ module Stupidedi
                 b::Segment( 450, s::AMT, "Monetary Amount",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Assigned Identification", b::Values("CC")),
-                  b::Element(e::Required,    "Product/Service ID Qualifier"))))
+                  b::Element(e::Required,    "Product/Service ID Qualifier"))))),
                   
 
           d::TableDef.header("Summary",
@@ -177,6 +177,7 @@ module Stupidedi
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Included Segments"),
               b::Element(e::Required,    "Transaction Set Control Number"))))
+
       end
     end
   end

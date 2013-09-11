@@ -3,7 +3,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module ThirtyTen
+      module ThirtyForty
         module ElementDefs
 
           t = ElementTypes
@@ -4190,7 +4190,24 @@ module Stupidedi
               "CB" => "Buyer's Part Number",
               "ON" => "Customer Order Number",
               "SN" => "Serial Number",
-              "UP" => "UPC Consumer Packaging Code"))
+              "UP" => "UPC Consumer Packaging Code",
+              "MN" => "Model Number",
+              "ES" => "Engine Serial Number",
+              "VV" => "Motor Vehicle ID Number",
+              "EM" => "Equipment Identification Number",
+              "PQ" => "Product ID Attribute Code",
+              "RY" => "Record Keeping or Model Year",
+              "PC" => "Prime Contractor Part Number",
+              "PF" => "Petroleum Accountants Society of Canada Capital Expenditure Code - Goods and Services Tax Forwarded",
+              "PN" => "Company Part Number",
+              "RV" => "Repair Tag Number",
+              "SV" => "Service Rendered"
+              ))
+
+          E248  = t::ID.new(:E248 , "Allowance or Charge Indicator"           , 1, 1,
+            s::CodeList.build(
+              "C" => "Charge"
+              ))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
@@ -4781,7 +4798,9 @@ module Stupidedi
               "01" => "Cancellation",
               "04" => "Change",
               "05" => "Replace",
-              "18" => "Reissue"))
+              "18" => "Reissue",
+              "31" => "Allowance/Addition",
+              "32" => "Recovery/Deduction"))
 
           E354 = t::Nn.new(:E354 , "Number of Line Items"                  , 1, 6, 0)
           E355 = t::ID.new(:E355 , "Unit or Basis for Measurement Code"    , 2, 2,
@@ -5696,7 +5715,12 @@ module Stupidedi
 
           E356  = t:: R.new(:E356   , "Case/Inner Pack"                    , 1, 6)
           E357  = t:: R.new(:E357   , "Outer Pack"                         , 1, 8)
-          E362  = t::Nn.new(:E362   , "Terms Discount Amount"              , 1, 10, 2)
+          E358  = t:: R.new(:E358   , "Quantity Invoiced - Part Quantity/Labor Hours"  , 1, 10)
+          E359  = t:: R.new(:E359   , "Allowance or Charge Rate - Supplier Rate" , 1, 9)
+
+          E360  = t::Nn.new(:E360   , "Allowance or Charge Total Amount"   , 1, 9, 2)
+          E361  = t::Nn.new(:E361   , "Terms Discount Amount"              , 1, 10, 2)          
+          E362  = t::Nn.new(:E362   , "Total Invoice Amount"               , 1, 10, 2)
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
             s::CodeList.build(
               "ZZZ" => "Mutually Defined"))
@@ -5710,6 +5734,7 @@ module Stupidedi
 
           E366  = t::ID.new(:E366 , "Contact Function Code"                , 2, 2,
             s::CodeList.build(
+              "EN" => "Engineer",
               "BD" => "Buyer Name or Department",
               "CN" => "General Contact",
               "DC" => "Delivery Contact",
@@ -5737,7 +5762,12 @@ module Stupidedi
               "038" => "Ship no later",
               "175" => "Cancel if not shipped by",
               "193" => "Receipt - Nissan Unique Code",
-              "195" => "Payment - Nissan Unique Code"))
+              "195" => "Payment - Nissan Unique Code",
+              "006" => "Sold",
+              "094" => "Manufacture",
+              "128" => "Replacement Effective",
+              "194" => "Period End",
+              "214" => "Date of Repair/Service" ))
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
@@ -6079,6 +6109,10 @@ module Stupidedi
             s::CodeList.build(
               "F" => "Full Detail",
               "U" => "Update"))
+
+          E522  = t::ID.new(:E522 , "Amount Qualifier Code"                 , 1, 2,
+            s::CodeList.build(
+              "CC" => "Chargeback Claim Amount"))
 
           E531  = t::AN.new(:E531 , "Agent Shipment ID Number"             , 1, 12)
           E554  = t::Nn.new(:E554 , "Assigned Number"                      , 1, 6, 0)
@@ -7334,7 +7368,7 @@ module Stupidedi
               "R" => "Residue Last Contained Description (Rail Car)"))
 
           E668  = t::ID.new(:E668 , "Line Item Status Code"                , 2, 2)
-
+          
           E669  = t::ID.new(:E669 , "Currency Market/Exchange Code"        , 3, 3,
             s::CodeList.build(
               "IMF" => "International Monetary Fund",
@@ -7343,6 +7377,10 @@ module Stupidedi
               "NYC" => "New York Foreign Exchange",
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
+
+          E673  = t::ID.new(:E673 , "Quantity Qualifier"                   , 2, 2,
+            s::CodeList.build(
+              "CS" => "Current Service Life"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
@@ -9468,6 +9506,7 @@ module Stupidedi
               "TM" => "Time and Materials",
               "ZZ" => "Mutually Defined"))
 
+          E1229 = t::AN.new(:E1229, "Complaint Code"                       , 3, 3)
           E1232 = t::ID.new(:E1232, "Purchase Category Code"               , 2, 2,
             s::CodeList.build(
               "AE" => "Architect and Engineering",
@@ -10545,6 +10584,7 @@ module Stupidedi
               "WSM" => "Weapon System Maintenance Code"))
 
           E1271 = t::AN.new(:E1271, "Industry Code"                        , 1, 30)
+
           E1280 = t::ID.new(:E1280, "Direction Identifier Code"            , 1, 1,
             s::CodeList.build(
               "A" => "Northeast",
