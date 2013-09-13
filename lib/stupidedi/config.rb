@@ -72,6 +72,7 @@ module Stupidedi
           #x.register("00200") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
           x.register("00200") { Stupidedi::Versions::Interchanges::TwoHundred::InterchangeDef }
           x.register("00300") { Stupidedi::Versions::Interchanges::ThreeHundred::InterchangeDef }
+          x.register("00400") { Stupidedi::Versions::Interchanges::FourHundred::InterchangeDef }
           x.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
           x.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
         end
@@ -120,6 +121,7 @@ module Stupidedi
           x.register("004010", "SM", "204") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SM204 }
           x.register("004010", "QM", "214") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::QM214 }
           x.register("004010", "GF", "990") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::GF990 }
+          x.register("004010", "SS", "862") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SS862 }
 
           #x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::SH856 }
 

@@ -215,8 +215,17 @@ module Stupidedi
           autoload :AK9,
             "stupidedi/versions/functional_groups/004010/segment_defs/AK9"
 
+          autoload :BSS,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BSS"
 
+          autoload :UIT,
+            "stupidedi/versions/functional_groups/004010/segment_defs/UIT"
 
+          autoload :FST,
+            "stupidedi/versions/functional_groups/004010/segment_defs/FST"
+
+          autoload :JIT,
+            "stupidedi/versions/functional_groups/004010/segment_defs/JIT"
         end
       end
     end
