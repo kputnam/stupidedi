@@ -238,6 +238,12 @@ module Stupidedi
 
           autoload :MSG,
             "stupidedi/versions/functional_groups/003010/segment_defs/MSG"                  
+
+          autoload :BCH,
+            "stupidedi/versions/functional_groups/003010/segment_defs/BCH"                  
+
+          autoload :POC,
+            "stupidedi/versions/functional_groups/003010/segment_defs/POC"   
         end
       end
     end

@@ -13,6 +13,7 @@ module Stupidedi
         
         autoload :RA820, "stupidedi/contrib/003010/guides/RA820"
         autoload :PO850, "stupidedi/contrib/003010/guides/PO850"
+        autoload :PC860, "stupidedi/contrib/003010/guides/PC860"
       end
     end
   end

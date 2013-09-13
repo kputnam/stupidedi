@@ -14,6 +14,9 @@ module Stupidedi
 
         autoload :PO850, # Remittance Advice
           "stupidedi/contrib/003010/transaction_set_defs/PO850"
+
+        autoload :PC860, # Purchase Order Change
+          "stupidedi/contrib/003010/transaction_set_defs/PC860"          
       end
     end
   end
