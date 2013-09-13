@@ -33,6 +33,9 @@ module Stupidedi
         autoload :GF990, # Response to a Load Tender
           "stupidedi/contrib/004010/transaction_set_defs/GF990"
 
+        autoload :SS862, # Response to a Load Tender
+          "stupidedi/contrib/004010/transaction_set_defs/SS862"
+
       end
     end
   end

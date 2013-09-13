@@ -325,7 +325,10 @@ module Stupidedi
               "SH" => "Shipper",
               "SF" => "Ship From",
               "ST" => "Ship To",
-              "WH" => "Warehouse"))
+              "WH" => "Warehouse",
+              "MI" => "Planning Schedule/Material Release Issuer",
+              "SI" => "Shipping Schedule Issuer",
+              "SU" => "Supplier/Manufacturer" ))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -4574,7 +4577,8 @@ module Stupidedi
             s::CodeList.build(
               "00" => "Original",
               "01" => "Cancellation",
-              "04" => "Change"))
+              "04" => "Change",
+              "05" => "Replace"))
 
           E354 = t::Nn.new(:E354 , "Number of Line Items"                  , 1, 6, 0)
           E355 = t::ID.new(:E355 , "Unit or Basis for Measurement Code"    , 2, 2,
@@ -4626,7 +4630,9 @@ module Stupidedi
               "011" => "Shipped",
               "037" => "Ship not before",
               "038" => "Ship no later",
-              "175" => "Cancel if not shipped by"))
+              "175" => "Cancel if not shipped by",
+              "193" => "Period Start",
+              "194" => "Period End"))
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
@@ -5751,6 +5757,22 @@ module Stupidedi
               "NYC" => "New York Foreign Exchange",
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
+
+          E675  = t::ID.new(:E675 , "Schedule Type Qualifier"                , 2, 2,
+            s::CodeList.build(
+              "SH" => "Shipment Based"))
+
+          E676  = t::ID.new(:E676 , "Schedule Quantity Qualifier"             , 1, 1,
+            s::CodeList.build(
+              "A" => "Actual Discrete Quantities"))
+
+          E680  = t::ID.new(:E680 , "Forecast Qualifier"                      , 1, 1,
+            s::CodeList.build(
+              "C" => "Firm"))
+
+          E681  = t::ID.new(:E681 , "Forecast Timing Qualifier"             , 1, 1,
+            s::CodeList.build(
+              "D" => "Discrete"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(

@@ -15,7 +15,7 @@ module Stupidedi
         autoload :SM204, "stupidedi/contrib/004010/guides/SM204"
         autoload :QM214, "stupidedi/contrib/004010/guides/QM214"
         autoload :GF990, "stupidedi/contrib/004010/guides/GF990"
-
+        autoload :SS862, "stupidedi/contrib/004010/guides/SS862"
       end
     end
   end
