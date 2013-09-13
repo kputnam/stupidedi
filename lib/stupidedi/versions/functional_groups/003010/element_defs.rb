@@ -4734,7 +4734,8 @@ module Stupidedi
           E310  = t::AN.new(:E310 , "Location Identifier"                  , 1, 30)
           E319  = t::AN.new(:E319 , "Temperature Control"                  , 3, 6)
           E323  = t::DT.new(:E323 , "Purchase Order Date"                  , 6, 6)
-          E324  = t::AN.new(:E324 , "Purchase Order Number"                , 1, 22)
+          E324  = t::AN.new(:E324 , "Purchase Order Number"                , 10, 10)
+          E327  = t::AN.new(:E327 , "Purchase Order Date"                  , 1, 8)
           E328  = t::AN.new(:E328 , "Release Number"                       , 1, 30)
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
           E330  = t:: R.new(:E330 , "Quantity Ordered"                     , 1, 9)
@@ -7343,6 +7344,19 @@ module Stupidedi
               "NYC" => "New York Foreign Exchange",
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
+
+          E670  = t::ID.new(:E670 , "Change or Response Type Code"        , 2, 2,
+            s::CodeList.build(
+              "AI" => "Add Additional Item(s)",
+              "CA" => "Changes To Line Items",
+              "CB" => "Change of Date Terms",
+              "CC" => "Changes To Terms",
+              "CD" => "Change of Dates",
+              "NC" => "Concurrent Item (No Change)",
+              "PC" => "Price Change",
+              "QD" => "Quantity Decrease",
+              "QI" => "Quantity Increase"))
+          E671  = t:: R.new(:E671 , "Quantity Left to Receive"             , 1, 9)
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
