@@ -33,8 +33,11 @@ module Stupidedi
         autoload :GF990, # Response to a Load Tender
           "stupidedi/contrib/004010/transaction_set_defs/GF990"
 
-        autoload :SS862, # Response to a Load Tender
+        autoload :SS862, # 
           "stupidedi/contrib/004010/transaction_set_defs/SS862"
+
+        autoload :PS830, # Planning Schedule with Release Capability
+          "stupidedi/contrib/004010/transaction_set_defs/PS830"
 
       end
     end
