@@ -5758,6 +5758,10 @@ module Stupidedi
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
 
+          E673  = t::ID.new(:E673 , "Quantity Qualifier"                     , 2, 2,
+             s::CodeList.build(
+              "02" => "Cumulative Quantity"))
+
           E675  = t::ID.new(:E675 , "Schedule Type Qualifier"                , 2, 2,
             s::CodeList.build(
               "SH" => "Shipment Based"))
@@ -5766,6 +5770,8 @@ module Stupidedi
             s::CodeList.build(
               "A" => "Actual Discrete Quantities"))
 
+          E678  = t::ID.new(:E678 , "Ship/Delivery or Calendar Pattern Code"  , 1, 2)
+          E679  = t::ID.new(:E679 , "Ship/Delivery Pattern Time Code"         , 1, 1)
           E680  = t::ID.new(:E680 , "Forecast Qualifier"                      , 1, 1,
             s::CodeList.build(
               "C" => "Firm"))

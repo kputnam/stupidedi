@@ -226,6 +226,16 @@ module Stupidedi
 
           autoload :JIT,
             "stupidedi/versions/functional_groups/004010/segment_defs/JIT"
+
+          autoload :BFR,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BFR"            
+
+          autoload :SDP,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SDP"            
+
+          autoload :SHP,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SHP"            
+
         end
       end
     end
