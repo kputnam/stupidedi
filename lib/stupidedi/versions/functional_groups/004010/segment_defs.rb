@@ -236,6 +236,8 @@ module Stupidedi
           autoload :SHP,
             "stupidedi/versions/functional_groups/004010/segment_defs/SHP"            
 
+          autoload :TD5,
+            "stupidedi/versions/functional_groups/004010/segment_defs/TD5"         
         end
       end
     end

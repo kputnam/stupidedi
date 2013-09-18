@@ -17,6 +17,7 @@ module Stupidedi
         autoload :GF990, "stupidedi/contrib/004010/guides/GF990"
         autoload :SS862, "stupidedi/contrib/004010/guides/SS862"
         autoload :PS830, "stupidedi/contrib/004010/guides/PS830"
+        autoload :SH856, "stupidedi/contrib/004010/guides/SH856"
       end
     end
   end
