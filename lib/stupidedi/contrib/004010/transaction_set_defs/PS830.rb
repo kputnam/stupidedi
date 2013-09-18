@@ -20,8 +20,8 @@ module Stupidedi
           d::TableDef.header("Table 2 - Detail",
             d::LoopDef.build("LIN", d::RepeatCount.unbounded,
               s::LIN.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
-              s::UIT.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
-              s::PID.use( 80, r::Mandatory, d::RepeatCount.bounded(1)),
+              s::UIT.use( 20, r::Optional,  d::RepeatCount.bounded(1)),
+              s::PID.use( 80, r::Optional, d::RepeatCount.bounded(1)),
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(1),
                 s::N1.use( 320, r::Optional,  d::RepeatCount.bounded(1))),
@@ -34,9 +34,9 @@ module Stupidedi
                 s::SHP.use( 470, r::Optional,  d::RepeatCount.bounded(1)))),
 
             d::LoopDef.build("LIN", d::RepeatCount.unbounded,
-              s::LIN.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
-              s::UIT.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
-              s::PID.use( 80, r::Mandatory, d::RepeatCount.bounded(1)),
+              s::LIN.use( 10, r::Optional, d::RepeatCount.bounded(1)),
+              s::UIT.use( 20, r::Optional, d::RepeatCount.bounded(1)),
+              s::PID.use( 80, r::Optional, d::RepeatCount.bounded(1)),
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(1),
                 s::N1.use( 320, r::Optional,  d::RepeatCount.bounded(1))),

@@ -10,6 +10,7 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
+          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR UIT01"                , 0, 10)
 
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
@@ -87,6 +88,7 @@ module Stupidedi
               "L"  => "Investor Assigned Identification Number",
               "N"  => "Insured's Unique Identification Number",
               "S"  => "Title Insurance Policy Number",
+              "01" => "Nissan Billing Code",
               "10" => "Department of Defense Activity Address Code (DODAAC)",
               "11" => "Drug Enforcement Administration (DEA)",
               "12" => "Telephone Number (Phone)",
@@ -322,6 +324,7 @@ module Stupidedi
               "BT" => "Bill-to-Party",
               "BY" => "Buying Party (Purchaser)",
               "CN" => "Consignee",
+              "EV" => "Selling Agent",
               "SH" => "Shipper",
               "SF" => "Ship From",
               "ST" => "Ship To",
@@ -341,6 +344,10 @@ module Stupidedi
               "T" => "Trip Leased"))
           E103  = t::ID.new(:E103 , "Packaging Code"                       , 3, 5,
             s::CodeList.build(
+              "25" => "Corrugated or Solid",
+              "71" => "Not Otherwise Specified",
+              "90" => "Standard",
+              "94" => "Wood",
               "AMM" => "Ammo Pack",
               "BAG" => "Bag",
               "BAL" => "Bale",
@@ -350,6 +357,7 @@ module Stupidedi
               "BOX" => "Box",
               "BXT" => "Bucket",
               "CAS" => "Case",
+              "CNT" => "Container",
               "CRT" => "Crate",
               "CTN" => "Carton",
               "DRM" => "Drum",
@@ -4587,6 +4595,7 @@ module Stupidedi
               "CA" => "Case",
               "EA" => "Each",
               "LB" => "Pound",
+              "PC" => "Piece",
               "PL" => "Pallet/Unit Load",
               "TK" => "Tank",
               "IP" => "Master Pack of %",
@@ -5742,6 +5751,8 @@ module Stupidedi
               "ZX" => "Expungement of Prior Filing",
               "ZY" => "Cancellation of Filing",
               "ZZ" => "Mutually Defined"))
+
+          E649  = t:: R.new(:E649 , "Multiplier"                          , 1, 10)
 
           E665  = t::ID.new(:E665 , "Residue Indicator Code"               , 1, 1,
             s::CodeList.build(
@@ -7822,6 +7833,11 @@ module Stupidedi
               "D" => "Domestic (United States) Shipping Name"))
           E985  = t::ID.new(:E985 , "N.O.S. Indicator Code"                , 3, 3)
 
+          E1005 = t::ID.new(:E1005, "Hierarchical Structure Code"          , 4, 4,
+            s::CodeList.build(
+              "0004" => "Shipment, Order, Item"))
+
+
           E1019 = t::ID.new(:E1019, "Invoice Type Code"                    , 3, 3,
             s::CodeList.build(
               "IBM" => "Invoice By Mail",
@@ -9141,7 +9157,12 @@ module Stupidedi
           C001  = Schema::CompositeElementDef.build(:C001,
             "Composite Unit of Measure",
             "To identify a composite unit of measure",
-            E355.component_use(r::Mandatory, s::RepeatCount.bounded(1)))
+            E355.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
+            E0  .component_use(r::Optional),
+            E0  .component_use(r::Optional),
+            E355.component_use(r::Optional,  s::RepeatCount.bounded(1)),
+            E0  .component_use(r::Optional),
+            E649.component_use(r::Optional,  s::RepeatCount.bounded(1)))
 
           C040  = Schema::CompositeElementDef.build(:C040,
             "Reference Identifier",
