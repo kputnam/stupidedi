@@ -14,6 +14,7 @@ config = Stupidedi::Config.hipaa
 
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
+nondet = ARGV.delete('-N')
 
 ARGV.each do |path|
   # Reading the entire input at once is slightly faster than streaming
@@ -28,8 +29,21 @@ end
 
 stop = Time.now
 
-parser.zipper.map{|z| pp z.root.node }.
-  explain { puts "Non-deterministic state" }
+parser.zipper.map{|z| pp z.root.node }.explain do
+  # Multiple parse trees (non-deterministic state)
+  unless nondet 
+    puts "Non-deterministic state"
+  else
+    puts "Non-deterministic states (#{parser.active.length}):"
+    puts "#{"-" * 70}\n\n"
+
+    parser.active.each do |state|
+      zipper = state.node.zipper
+      pp zipper.root.node
+      puts "\n#{"-" * 70}\n\n"
+    end
+  end
+end
 
 begin
   a = parser.first
