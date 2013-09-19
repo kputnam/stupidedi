@@ -82,6 +82,7 @@ module Stupidedi
           x.register("002001") { Stupidedi::Versions::FunctionalGroups::TwoThousandOne::FunctionalGroupDef }
           x.register("003010") { Stupidedi::Versions::FunctionalGroups::ThirtyTen::FunctionalGroupDef }
           x.register("003040") { Stupidedi::Versions::FunctionalGroups::ThirtyForty::FunctionalGroupDef }
+          x.register("003050") { Stupidedi::Versions::FunctionalGroups::ThirtyFifty::FunctionalGroupDef }
           x.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
           x.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
         end
@@ -124,7 +125,7 @@ module Stupidedi
           x.register("004010", "SS", "862") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SS862 }
           x.register("004010", "PS", "830") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::PS830 }
           x.register("004010", "SH", "856") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SH856 }
-          
+
           #x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::SH856 }
 
           x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::Guides::SH856 }         
@@ -133,6 +134,8 @@ module Stupidedi
           x.register("003010", "PC", "860") { Stupidedi::Contrib::ThirtyTen::Guides::PC860 }
 
           x.register("003040", "WA", "142") { Stupidedi::Contrib::ThirtyForty::Guides::WA142 }
+
+          x.register("003050", "PO", "850") { Stupidedi::Contrib::ThirtyFifty::Guides::PO850 }
 
           #x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }
           # x.register("004010", "SM", "204") { Stupidedi::Contrib::FortyTen::Guides::SM204 }
