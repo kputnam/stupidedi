@@ -16,10 +16,10 @@ module Stupidedi
           d::TableDef.detail("Table 2 - Detail",
             d::LoopDef.build("HL", d::RepeatCount.bounded(200000),
               s:: HL.use( 200, r::Mandatory, d::RepeatCount.bounded(1)),
-              s::TD1.use(1000, r::Optional,  d::RepeatCount.bounded(20)),
-              s::TD5.use(1100, r::Optional,  d::RepeatCount.bounded(12)),
+              s::TD1.use(1000, r::Mandatory,  d::RepeatCount.bounded(20)),
+              s::TD5.use(1100, r::Mandatory,  d::RepeatCount.bounded(12)),
               s::TD3.use(1200, r::Optional,  d::RepeatCount.bounded(12)),
-              s::REF.use(1500, r::Optional,  d::RepeatCount.unbounded),
+              s::REF.use(1500, r::Mandatory,  d::RepeatCount.unbounded),
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(200),
                 s:: N1.use(3700, r::Mandatory, d::RepeatCount.bounded(1)),
@@ -28,7 +28,7 @@ module Stupidedi
 
               d::LoopDef.build("HL", d::RepeatCount.bounded(200000),
                 s:: HL.use(6200, r::Mandatory, d::RepeatCount.bounded(1)),
-                s::REF.use(6300, r::Optional,  d::RepeatCount.bounded(1)),
+                s::REF.use(6300, r::Mandatory, d::RepeatCount.bounded(1)),
 
                 d::LoopDef.build("HL", d::RepeatCount.bounded(200000),
                   s:: HL.use(6500, r::Mandatory, d::RepeatCount.bounded(1)),

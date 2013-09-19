@@ -382,6 +382,50 @@ module Stupidedi
               "TLD" => "Intermodal Trailer/Container Load (Rail)",
               "TRY" => "Tray"))
 
+
+          E103_1  = t::ID.new(:E103_1 , "Packaging Code"                       , 3, 3,
+            s::CodeList.build(
+              "AMM" => "Ammo Pack",
+              "BAG" => "Bag",
+              "BAL" => "Bale",
+              "BDL" => "Bundle",
+              "BIN" => "Bin",
+              "BOT" => "Bottle",
+              "BOX" => "Box",
+              "BXT" => "Bucket",
+              "CAS" => "Case",
+              "CNT" => "Container",
+              "CRT" => "Crate",
+              "CTN" => "Carton",
+              "DRM" => "Drum",
+              "JAR" => "Jar",
+              "KIT" => "Kit",
+              "LSE" => "Loose",
+              "LUG" => "Lug",
+              "PAL" => "Pail",
+              "PCK" => "Packed - not otherwise specified",
+              "PCS" => "Pieces",
+              "PKG" => "Package",
+              "PLT" => "Pallet",
+              "RCK" => "Rack",
+              "REL" => "Reel",
+              "ROL" => "Roll",
+              "SAK" => "Sack",
+              "SHT" => "Sheet",
+              "SKD" => "Skid",
+              "SKE" => "Skid, elevating or lift truck",
+              "SLP" => "Slip Sheet",
+              "TBN" => "Tote Bin",
+              "TLD" => "Intermodal Trailer/Container Load (Rail)",
+              "TRY" => "Tray"))
+
+          E103_2  = t::ID.new(:E103_2 , "Packaging Code"                       , 2, 2,
+            s::CodeList.build(
+              "25" => "Corrugated or Solid",
+              "71" => "Not Otherwise Specified",
+              "90" => "Standard",
+              "94" => "Wood"))
+
           E122  = t::ID.new(:E122 , "Rate/Value Qualifier"                 , 2, 2,
             s::CodeList.build(
               "FR" => "Flat Rate",
@@ -1805,6 +1849,7 @@ module Stupidedi
               "CST" => "Census State Code",
               "CTS" => "Census Tract Suffix",
               "CYC" => "Periodicity Code",
+              "CUR" => "Current Release Number",
               "DHH" => "Department of Health and Human Services Acquisition Regulation (HHSAR)",
               "DIS" => "District Number",
               "DNR" => "Deposit Number",
@@ -2243,8 +2288,8 @@ module Stupidedi
               "PP" => "Prepaid (by Seller)",
               "PU" => "Pickup",
               "TP" => "Third Party Pay"))
-
           E147  = t::ID.new(:E147 , "Shipment Qualifier"                   , 1, 1)
+
           E150  = t::ID.new(:E150 , "Special Charge or Allowance Code"     , 3, 3,
             s::CodeList.build(
               "000" => "Pump Out Charge",
@@ -4024,6 +4069,7 @@ module Stupidedi
               "VP" => "Vendor's (Seller's) Part Number",
               "UK" => "UPC/EAN Shipping Container Code",
               "BP" => "Buyer's Part Number",
+              "ON" => "Customer Order Number",
               "CB" => "Buyer's Part Number",
               "UP" => "UPC Consumer Packaging Code"))
 
@@ -4637,6 +4683,7 @@ module Stupidedi
               "002" => "Delivery Requested",
               "010" => "Requested ship",
               "011" => "Shipped",
+              "017" => "Estimated Delivery",
               "037" => "Ship not before",
               "038" => "Ship no later",
               "175" => "Cancel if not shipped by",
@@ -4705,7 +4752,9 @@ module Stupidedi
           E451  = t::AN.new(:E451 , "Warehouse Lot Number"                 , 1, 12)
           E455  = t::ID.new(:E455 , "Responsible Agency Code"              , 1, 2,
             s::CodeList.build(
-              "X" => "Accredited Standards Committee X12"))
+              "T" => "Transportation Data Coordinating Committee (TDCC)",
+              "X" => "Accredited Standards Committee X12",
+              "x" => "Accredited Standards Committee X12"))
 
           E460  = t::ID.new(:E460 , "Shipment Weight Code"                 , 1, 1)
           E472  = t::AN.new(:E472 , "Link Sequence Number"                 , 6, 6)
@@ -5785,11 +5834,13 @@ module Stupidedi
           E679  = t::ID.new(:E679 , "Ship/Delivery Pattern Time Code"         , 1, 1)
           E680  = t::ID.new(:E680 , "Forecast Qualifier"                      , 1, 1,
             s::CodeList.build(
-              "C" => "Firm"))
+              "C" => "Firm",
+              "D" => "Planning"))
 
           E681  = t::ID.new(:E681 , "Forecast Timing Qualifier"             , 1, 1,
             s::CodeList.build(
-              "D" => "Discrete"))
+              "D" => "Discrete",
+              "F" => "Flexible Interval (from Date X through Date Y)"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
@@ -5972,6 +6023,7 @@ module Stupidedi
               "22" => "Subscriber",
               "23" => "Dependent",
               "PT" => "Patient",
+               "I" => "Item",
                "S" => "Shipment",
                "T" => "Shipping Tare" ))
 
@@ -7835,6 +7887,7 @@ module Stupidedi
 
           E1005 = t::ID.new(:E1005, "Hierarchical Structure Code"          , 4, 4,
             s::CodeList.build(
+              "0001" => "Shipment, Order, Packaging, Item",
               "0004" => "Shipment, Order, Item"))
 
 
@@ -9157,12 +9210,12 @@ module Stupidedi
           C001  = Schema::CompositeElementDef.build(:C001,
             "Composite Unit of Measure",
             "To identify a composite unit of measure",
-            E355.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
+            E355.component_use(r::Mandatory),
             E0  .component_use(r::Optional),
             E0  .component_use(r::Optional),
-            E355.component_use(r::Optional,  s::RepeatCount.bounded(1)),
+            E355.component_use(r::Optional),
             E0  .component_use(r::Optional),
-            E649.component_use(r::Optional,  s::RepeatCount.bounded(1)))
+            E649.component_use(r::Optional))
 
           C040  = Schema::CompositeElementDef.build(:C040,
             "Reference Identifier",
@@ -9176,6 +9229,11 @@ module Stupidedi
             SyntaxNotes::P.build(3, 4),
             SyntaxNotes::P.build(5, 6))
 
+          C103  = Schema::CompositeElementDef.build(:C103,
+            "Packaging Code",
+            "Code identifying the type of packaging; Part 1: Packaging Form, Part 2: Packaging Material; if the Data Element is used, then Part 1 is always required",
+            E103_1.component_use(r::Mandatory),
+            E103_2.component_use(r::Mandatory))
 
         end
       end
