@@ -64,7 +64,7 @@ module Stupidedi
               b::Element(e::Required,    "Date")),
 
             b::Segment(240, s::TD5, "Carrier Details (Routing Sequence/Transit Time)",
-              r::Situational, d::RepeatCount.bounded(2),
+              r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transportation Method/Type Code", b::Values("A","AE","M","PG","R","RR","SE","SS")),
               b::Element(e::Required,    "Routing - Carrier's Name")),
 
@@ -85,7 +85,7 @@ module Stupidedi
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("PG")),
                 b::Element(e::Situational, "Reference Number - Business Type", b::Values("AC","AE","AS","BS","ER","ES","ET",
-                                            "GW","IS","MP","MT","ND","NS","NT","PR","RB","RC","RP","SD","SN","SP","ST","UK","VP")))),
+                    "GW","IS","MP","MT","ND","NS","NT","PR","RB","RC","RP","SD","SN","SP","ST","UK","VP")))),
 
             d::LoopDef.build("N9", d::RepeatCount.bounded(1),              
               b::Segment(330, s:: N9, "Reference Number",
@@ -156,7 +156,7 @@ module Stupidedi
 
           d::TableDef.header("Summary",
             b::Segment(10, s::CTT, "Transaction Totals",
-              r::Situational, d::RepeatCount.bounded(1),
+              r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Line Items")),
             b::Segment(30, s::SE, "Transaction Set Trailer",
               r::Required, d::RepeatCount.bounded(1),

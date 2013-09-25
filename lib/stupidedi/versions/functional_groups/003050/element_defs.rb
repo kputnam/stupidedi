@@ -452,6 +452,7 @@ module Stupidedi
               "SP" => "Sample",
               "NE" => "New Order",
               "DS" => "Drop Ship",
+              "RL" => "Release or Delivery Order",
               "SA" => "Stand Alone",
               "EO" => "Emergency Order",
               "RO" => "Rush Order"))
@@ -4798,6 +4799,7 @@ module Stupidedi
               "01" => "Cancellation",
               "04" => "Change",
               "05" => "Replace",
+              "06" => "Confirmation",
               "18" => "Reissue",
               "31" => "Allowance/Addition",
               "32" => "Recovery/Deduction"))
@@ -5723,6 +5725,7 @@ module Stupidedi
           E362  = t::Nn.new(:E362   , "Total Invoice Amount"               , 1, 10, 2)
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
             s::CodeList.build(
+              "ADD" => "Additional Information",
               "ZZZ" => "Mutually Defined"))
 
           E364  = t::AN.new(:E364  , "Communication Number"                , 1, 80)
