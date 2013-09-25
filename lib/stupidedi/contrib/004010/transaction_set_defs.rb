@@ -41,6 +41,9 @@ module Stupidedi
 
         autoload :SH856, # Ship Notice/Manifest
           "stupidedi/contrib/004010/transaction_set_defs/SH856"
+
+        autoload :SQ866, # Production Sequence
+          "stupidedi/contrib/004010/transaction_set_defs/SQ866"          
       end
     end
   end

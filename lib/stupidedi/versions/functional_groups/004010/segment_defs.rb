@@ -238,6 +238,10 @@ module Stupidedi
 
           autoload :TD5,
             "stupidedi/versions/functional_groups/004010/segment_defs/TD5"         
+
+          autoload :QTY,
+            "stupidedi/versions/functional_groups/004010/segment_defs/QTY"         
+
         end
       end
     end

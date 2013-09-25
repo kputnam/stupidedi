@@ -4071,7 +4071,9 @@ module Stupidedi
               "BP" => "Buyer's Part Number",
               "ON" => "Customer Order Number",
               "CB" => "Buyer's Part Number",
-              "UP" => "UPC Consumer Packaging Code"))
+              "JS" => "Job Sequence Number",
+              "UP" => "UPC Consumer Packaging Code",
+              "VV" => "Motor Vehicle ID Number"))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
@@ -4686,6 +4688,7 @@ module Stupidedi
               "017" => "Estimated Delivery",
               "037" => "Ship not before",
               "038" => "Ship no later",
+              "097" => "Transaction Creation",
               "175" => "Cancel if not shipped by",
               "193" => "Period Start",
               "194" => "Period End"))
@@ -5820,10 +5823,12 @@ module Stupidedi
 
           E673  = t::ID.new(:E673 , "Quantity Qualifier"                     , 2, 2,
              s::CodeList.build(
+              "01" => "Discrete Quantity",
               "02" => "Cumulative Quantity"))
 
           E675  = t::ID.new(:E675 , "Schedule Type Qualifier"                , 2, 2,
             s::CodeList.build(
+              "JS" => "Buyer Production Sequence Schedule",
               "SH" => "Shipment Based"))
 
           E676  = t::ID.new(:E676 , "Schedule Quantity Qualifier"             , 1, 1,
