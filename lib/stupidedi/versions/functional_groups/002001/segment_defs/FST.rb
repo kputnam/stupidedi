@@ -1,7 +1,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module TwoThousandOne
+      module FortyTen
         module SegmentDefs
 
           s = Schema

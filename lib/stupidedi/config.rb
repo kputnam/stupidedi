@@ -131,6 +131,7 @@ module Stupidedi
           #x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::SH856 }
 
           x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::Guides::SH856 }         
+          x.register("002001", "PO", "830") { Stupidedi::Contrib::TwoThousandOne::Guides::PO830 }         
 
           x.register("003010", "RA", "820") { Stupidedi::Contrib::ThirtyTen::Guides::RA820 }
           
