@@ -9,7 +9,9 @@ module Stupidedi
           t = ElementTypes
           r = ElementReqs
           s = Schema
-
+          
+          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR J2X01"                , 0, 10)
+          
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -7240,6 +7242,16 @@ module Stupidedi
               "NYC" => "New York Foreign Exchange",
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
+
+          E675  = t::ID.new(:E675 , "Schedule Type Qualifier"                , 2, 2,
+            s::CodeList.build(
+              "DL" => "Delivery Based",
+              "JS" => "Buyer Production Sequence Schedule",
+              "SH" => "Shipment Based"))
+
+          E676  = t::ID.new(:E676 , "Schedule Quantity Qualifier"             , 1, 1,
+            s::CodeList.build(
+              "A" => "Actual Discrete Quantities"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(

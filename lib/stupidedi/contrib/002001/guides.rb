@@ -12,6 +12,7 @@ module Stupidedi
         ElementReqs  = Stupidedi::Guides::FortyTen::ElementReqs
         
         autoload :SH856, "stupidedi/contrib/002001/guides/SH856"
+        autoload :PO830, "stupidedi/contrib/002001/guides/PO830"
       end
     end
   end
