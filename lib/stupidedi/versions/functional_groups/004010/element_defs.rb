@@ -331,7 +331,8 @@ module Stupidedi
               "WH" => "Warehouse",
               "MI" => "Planning Schedule/Material Release Issuer",
               "SI" => "Shipping Schedule Issuer",
-              "SU" => "Supplier/Manufacturer" ))
+              "SU" => "Supplier/Manufacturer",
+              "RC" => "Receiving Location" ))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -5804,14 +5805,19 @@ module Stupidedi
               "ZY" => "Cancellation of Filing",
               "ZZ" => "Mutually Defined"))
 
+
+          E646  = t:: R.new(:E646 , "Quantity Shipped to Date"             , 1, 9)
+
           E649  = t:: R.new(:E649 , "Multiplier"                          , 1, 10)
+
 
           E665  = t::ID.new(:E665 , "Residue Indicator Code"               , 1, 1,
             s::CodeList.build(
               "G" => "Residue Last Contained Description (Small Means of Containment)",
               "P" => "Residue Last Contained Description (Packages)",
               "R" => "Residue Last Contained Description (Rail Car)"))
-
+          
+          E668  = t::ID.new(:E668 , "Line Item Status Code"                , 2, 2)
           E669  = t::ID.new(:E669 , "Currency Market/Exchange Code"        , 3, 3,
             s::CodeList.build(
               "IMF" => "International Monetary Fund",
@@ -5820,7 +5826,7 @@ module Stupidedi
               "NYC" => "New York Foreign Exchange",
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
-
+          
           E673  = t::ID.new(:E673 , "Quantity Qualifier"                     , 2, 2,
              s::CodeList.build(
               "01" => "Discrete Quantity",
@@ -6016,6 +6022,7 @@ module Stupidedi
           E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3,
             s::CodeList.external("77"))
 
+          E728  = t::ID.new(:E728 , "Returnable Container Load Make-Up Code" , 1, 2)
           E729  = t::DT.new(:E729 , "Category - Ship Notice Date"          , 6, 6)
           E730  = t::TM.new(:E730 , "Subcategory - Ship Notice Time"       , 4, 4)
 

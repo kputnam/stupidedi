@@ -10,8 +10,8 @@ module Stupidedi
           r = ElementReqs
           s = Schema
           
-          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR J2X01"                , 0, 10)
-          
+#          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR J2X01"                , 0, 10)
+
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -426,8 +426,10 @@ module Stupidedi
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
           E88   = t::ID.new(:E88  , "Marks and Numbers Qualifier"          , 1, 2,
             s::CodeList.build(
+              "PB" => "Premarked by Buyer",
               "UP" => "U.P.C. Consumer Package Code (1-5-5-1)",
               "GM" => "SSCC-18 and Application Identifier"))
+
           E91   = t::ID.new(:E91  , "Transportation Method/Type Code"      , 1, 2,
             s::CodeList.build(
               "A"  => "Air",
@@ -460,7 +462,8 @@ module Stupidedi
               "SF" => "Ship From",
               "ST" => "Ship To",
               "WH" => "Warehouse",
-              "SU" => "Supplier/Manufacturer"))
+              "SU" => "Supplier/Manufacturer",
+              "MI" => "Planning Schedule/Material Release Issuer"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -4151,6 +4154,7 @@ module Stupidedi
               "BP" => "Buyer's Part Number",
               "CB" => "Buyer's Part Number",
               "ON" => "Customer Order Number",
+              "PO" => "Purchase Order Number",
               "SN" => "Serial Number",
               "UP" => "UPC Consumer Packaging Code"))
 
@@ -4713,7 +4717,8 @@ module Stupidedi
             s::CodeList.build(
               "00" => "Original",
               "01" => "Cancellation",
-              "04" => "Change"))
+              "04" => "Change",
+              "05" => "Replace" ))
 
           E354 = t::Nn.new(:E354 , "Number of Line Items"                  , 1, 6, 0)
           E355 = t::ID.new(:E355 , "Unit or Basis for Measurement Code"    , 2, 2,
@@ -5644,9 +5649,11 @@ module Stupidedi
               "BD" => "Buyer Name or Department",
               "CN" => "General Contact",
               "DC" => "Delivery Contact",
+              "EX" => "Expeditor",
               "IC" => "Information Contact",
               "SH" => "Shipper Contact",
-              "HM" => "Hazardous Material Contact"))
+              "HM" => "Hazardous Material Contact",
+              "OD" => "Order Department"))
           E367  = t::AN.new(:E367, "Contract Number"                       , 1, 30)
           E368  = t::AN.new(:E368, "Shipment/Order Status Code"            , 2, 2,
             s::CodeList.build(
@@ -5654,6 +5661,8 @@ module Stupidedi
               "CC" => "Shipment Complete on"))
 
           E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
+
+          E372  = t::AN.new(:E372, "Lading Liability Code - Nissan Part Description", 1, 25)
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
             s::CodeList.build(
@@ -7243,6 +7252,12 @@ module Stupidedi
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
 
+
+          E672  = t::ID.new(:E672 , "Resource Authorization Code"            , 2, 2,
+             s::CodeList.build(
+              "FI" => "Finished (Labor, Material, and Overhead/Burden)",
+              "MT" => "Material"))
+
           E675  = t::ID.new(:E675 , "Schedule Type Qualifier"                , 2, 2,
             s::CodeList.build(
               "DL" => "Delivery Based",
@@ -7252,6 +7267,26 @@ module Stupidedi
           E676  = t::ID.new(:E676 , "Schedule Quantity Qualifier"             , 1, 1,
             s::CodeList.build(
               "A" => "Actual Discrete Quantities"))
+
+          E678  = t::ID.new(:E678 , "Ship/Delivery or Calendar Pattern Code"  , 1, 2,
+            s::CodeList.build(
+              "B" => "Monday through Saturday",
+              "Y" => "None (Also Used to Cancel or Override a Previous Pattern"))
+
+          E679  = t::ID.new(:E679 , "Ship/Delivery Pattern Time Code"         , 1, 1,
+            s::CodeList.build(
+              "F" => "As Directed",
+              "Y" => "None (Also Used to Cancel or Override a Previous Pattern"))
+
+          E680  = t::ID.new(:E680 , "Forecast Qualifier"                      , 1, 1,
+            s::CodeList.build(
+              "C" => "New Firm Order",
+              "Z" => "Prior Firm Order",
+              "D" => "Planning/Forecast"))
+          E681  = t::ID.new(:E681 , "Forecast Timing Qualifier"             , 1, 1,
+            s::CodeList.build(
+              "D" => "Discrete",
+              "F" => "Flexible Interval (from Date X through Date Y)"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
