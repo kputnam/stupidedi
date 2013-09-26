@@ -5,7 +5,7 @@ module Stupidedi
         d = Schema
         r = SegmentReqs
         s = SegmentDefs
-
+        
         PO830 = d::TransactionSetDef.build("PO", "830", "Material Release for Manufacturing",
 
           d::TableDef.header("Table 1 - Header",
@@ -33,13 +33,14 @@ module Stupidedi
                 s::SDP.use( 580, r::Mandatory, d::RepeatCount.bounded(1)), 
                 s::FST.use( 590, r::Mandatory, d::RepeatCount.bounded(1))),
                 
-              s::ATH.use( 330, r::Optional, d::RepeatCount.bounded(2)),
-              s::TD5.use( 450, r::Optional, d::RepeatCount.bounded(1)),
-              s::MAN.use( 450, r::Optional, d::RepeatCount.bounded(1)))),
+              s::ATH.use( 610, r::Optional, d::RepeatCount.bounded(2)),
+              s::TD5.use( 650, r::Optional, d::RepeatCount.bounded(1)),
+              s::MAN.use( 680, r::Optional, d::RepeatCount.bounded(1)))),
 
           d::TableDef.summary("Table 3 - Summary",
-            s::CTT.use(380, r::Mandatory, d::RepeatCount.bounded(1)),
-            s:: SE.use(390, r::Mandatory, d::RepeatCount.bounded(1))))
+            s::CTT.use(690, r::Mandatory, d::RepeatCount.bounded(1)),
+            s:: SE.use(700, r::Mandatory, d::RepeatCount.bounded(1))))
+
 
       end
     end
