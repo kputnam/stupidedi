@@ -93,9 +93,7 @@ module Stupidedi
                   b::Element(e::Required,    "Entity Identifier Code", b::Values("SU")),
                   b::Element(e::Situational, "Name - Supplier Name"),
                   b::Element(e::Situational, "Identification Code Qualifier", b::Values("92")),
-                  b::Element(e::Situational, "Identification Code - Supplier Code"),
-                  b::Element(e::NotUsed,     "Entity Relationship Code"),
-                  b::Element(e::NotUsed,     "Entity Identifier Code")))
+                  b::Element(e::Situational, "Identification Code - Supplier Code")))
               ),
 
             d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
