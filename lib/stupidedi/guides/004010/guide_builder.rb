@@ -80,7 +80,7 @@ module Stupidedi
                 unless e_arguments.length == u.definition.component_uses.length
                   raise Exceptions::InvalidSchemaError,
                     "composite element #{u.definition.id} at #{segment_def.id}" <<
-                    "#{element_index} has #{u.definition.element_uses.length}" <<
+                    "#{element_index} has #{u.definition.component_uses.length}" <<
                     " component elements but #{e_arguments.length} were given"
                 end
 
