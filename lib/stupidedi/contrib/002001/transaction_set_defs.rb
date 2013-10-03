@@ -12,6 +12,8 @@ module Stupidedi
         autoload :SH856, # Ship Notice/Manifest
           "stupidedi/contrib/002001/transaction_set_defs/SH856"
 
+        autoload :PO830, # Material Release for Manufacturing
+          "stupidedi/contrib/002001/transaction_set_defs/PO830"          
       end
     end
   end

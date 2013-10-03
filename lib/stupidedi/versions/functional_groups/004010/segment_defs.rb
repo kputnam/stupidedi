@@ -215,7 +215,32 @@ module Stupidedi
           autoload :AK9,
             "stupidedi/versions/functional_groups/004010/segment_defs/AK9"
 
+          autoload :BSS,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BSS"
 
+          autoload :UIT,
+            "stupidedi/versions/functional_groups/004010/segment_defs/UIT"
+
+          autoload :FST,
+            "stupidedi/versions/functional_groups/004010/segment_defs/FST"
+
+          autoload :JIT,
+            "stupidedi/versions/functional_groups/004010/segment_defs/JIT"
+
+          autoload :BFR,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BFR"            
+
+          autoload :SDP,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SDP"            
+
+          autoload :SHP,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SHP"            
+
+          autoload :TD5,
+            "stupidedi/versions/functional_groups/004010/segment_defs/TD5"         
+
+          autoload :QTY,
+            "stupidedi/versions/functional_groups/004010/segment_defs/QTY"         
 
         end
       end
