@@ -27,12 +27,12 @@ module Stupidedi
               b::Element(e::Situational, "Account Number - Supplier Number"),
               b::Element(e::Situational, "Effective Entry Date - Issue Date")),
             b::Segment(50, s::REF, "Reference Numbers",
-              r::Situational, d::RepeatCount.bounded(5),
+              r::Required, d::RepeatCount.bounded(5),
               b::Element(e::Required,    "Reference Number Qualifier", b::Values("R2")),
               b::Element(e::Situational, "Reference Number", b::Values("CPICS","ERS","NLC")),
               b::Element(e::NotUsed, "Unknown")),
             b::Segment(60, s::DTM, "Date/Time/Period",
-              r::Situational, d::RepeatCount.bounded(1),
+              r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Date/Time Qualifier", b::Values("195")),
               b::Element(e::Required,    "Date")),
             d::LoopDef.build("N1", d::RepeatCount.bounded(1),              
@@ -42,19 +42,17 @@ module Stupidedi
                 b::Element(e::Situational, "Name - Supplier Contact")))),
 
 
-          d::TableDef.detail("Detail",            
-            d::LoopDef.build("LS", d::RepeatCount.bounded(1),              
-              b::Segment(10, s:: LS, "Loop Header",
-                r::Required, d::RepeatCount.unbounded,
-                b::Element(e::Required,    "Loop Identifier Code", b::Values("A")))),
+          d::TableDef.detail("Detail",                  
+            b::Segment(10, s:: LS, "Loop Header",
+              r::Required, d::RepeatCount.bounded(1),
+              b::Element(e::Required,    "Loop Identifier Code", b::Values("A"))),
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
               b::Segment( 20, s:: N1, "Name - Invoice Number/Check Number/Bill of Lading Number - Header",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("HH")),
                 b::Element(e::Situational, "Name - Header Reference Number")),
-
-              #d::LoopDef.build("RMT", d::RepeatCount.bounded(999999),   
+ 
               d::LoopDef.build("RMT", d::RepeatCount.unbounded,   
                 b::Segment( 30, s::RMT, "Remittance Advice",
                   r::Situational, d::RepeatCount.bounded(1),
@@ -96,29 +94,28 @@ module Stupidedi
                 b::Segment( 60, s::DTM, "Date/Time/Period",
                   r::Situational, d::RepeatCount.bounded(10),
                   b::Element(e::Required,    "Date/Time Qualifier", b::Values("011","193")),
-                  b::Element(e::Situational, "Date - Invoice Date"))),
+                  b::Element(e::Situational, "Date - Invoice Date")))),
 
 
-            d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
+            d::LoopDef.build("N1 - 2", d::RepeatCount.bounded(10000),
               b::Segment( 21, s:: N1, "Name - DM/CM Supplier Authorizer",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("AA")),
                 b::Element(e::Situational, "Name - Supplier Authorizer"))),
 
-            d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
+            d::LoopDef.build("N1 - 3", d::RepeatCount.bounded(10000),
               b::Segment( 22, s:: N1, "Name - DM/CM Nissan Contact",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("PJ")),
                 b::Element(e::Situational, "Name - Nissan Contact"))),
 
-            d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
+            d::LoopDef.build("N1 - 4", d::RepeatCount.bounded(10000),
               b::Segment( 22, s:: N1, "Name - Invoice Number/Check Number/Bill of Lading Number - Line Item",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("LI")),
                 b::Element(e::Situational, "Name - Invoice Number/Check Number/Bill of Lading")),
 
-              #d::LoopDef.build("RMT", d::RepeatCount.bounded(999999),
-              d::LoopDef.build("RMT", d::RepeatCount.unbounded,
+              d::LoopDef.build("RMT - 2", d::RepeatCount.unbounded,
                 b::Segment( 30, s::RMT, "Remittance Advice",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Reference Number Qualifier", b::Values("IX")),
@@ -155,11 +152,11 @@ module Stupidedi
                   r::Situational, d::RepeatCount.bounded(15),
                   b::Element(e::Required,    "Reference Number Qualifier", b::Values("UM")),
                   b::Element(e::Situational, "Reference Number - Supplier Unit of Measurement"),
-                  b::Element(e::NotUsed, "Unknown"))))),
+                  b::Element(e::NotUsed, "Unknown")))),
 
             b::Segment( 70, s:: LE, "Loop Trailer",
               r::Required, d::RepeatCount.bounded(1),
-                  b::Element(e::Required,    "Loop Identifier Code", b::Values("A")))),
+              b::Element(e::Required,    "Loop Identifier Code", b::Values("A")))),
    
 
           d::TableDef.header("Summary",
