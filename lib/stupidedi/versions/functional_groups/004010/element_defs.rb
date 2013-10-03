@@ -10,8 +10,6 @@ module Stupidedi
           r = ElementReqs
           s = Schema
 
-          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR UIT01"                , 0, 10)
-
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -7902,7 +7900,7 @@ module Stupidedi
               "0001" => "Shipment, Order, Packaging, Item",
               "0004" => "Shipment, Order, Item"))
 
-
+          E1018 = t:: R.new(:E1018 , "Exponent"                            , 1, 15)
           E1019 = t::ID.new(:E1019, "Invoice Type Code"                    , 3, 3,
             s::CodeList.build(
               "IBM" => "Invoice By Mail",
@@ -9222,22 +9220,22 @@ module Stupidedi
           C001  = Schema::CompositeElementDef.build(:C001,
             "Composite Unit of Measure",
             "To identify a composite unit of measure",
-            E355.component_use(r::Mandatory),
-            E0  .component_use(r::Optional),
-            E0  .component_use(r::Optional),
-            E355.component_use(r::Optional),
-            E0  .component_use(r::Optional),
-            E649.component_use(r::Optional))
+            E355 .component_use(r::Mandatory),
+            E1018.component_use(r::Optional),
+            E649 .component_use(r::Optional),                                    
+            E355 .component_use(r::Optional),
+            E1018.component_use(r::Optional),
+            E649 .component_use(r::Optional))
 
           C040  = Schema::CompositeElementDef.build(:C040,
             "Reference Identifier",
             "To identify one or more reference numbers or identification numbers as specified by the Reference Qualifier",
-            E128.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
-            E127.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
-            E128.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
-            E127.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
-            E128.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
-            E127.component_use(r::Mandatory, s::RepeatCount.bounded(1)),
+            E128.component_use(r::Mandatory),
+            E127.component_use(r::Mandatory),
+            E128.component_use(r::Mandatory),
+            E127.component_use(r::Mandatory),
+            E128.component_use(r::Mandatory),
+            E127.component_use(r::Mandatory),
             SyntaxNotes::P.build(3, 4),
             SyntaxNotes::P.build(5, 6))
 
