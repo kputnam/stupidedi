@@ -592,7 +592,17 @@ module Stupidedi
               "C4"  => "Change Number",
               "VR"  => "Vendor ID Number",
               "PG"  => "Product Group",
-              "CU"  => "Clear Text Clause"))
+              "CU"  => "Clear Text Clause",
+              "R2"  => "Remittance Advice Type",
+              "IV"  => "Seller's Invoice Number",
+              "AE"  => "Authorization for Expense (AFE) Number",
+              "PO"  => "Purchase Order Number",
+              "SI"  => "Shipper's Identifying Number for Shipment(SID)",
+              "IX"  => "Item Number",
+              "QI"  => "Quality Inspection Ara Identifier",
+              "RE"  => "Release Number",
+              "PM"  => "Part Number",
+              "UM"  => "Supplier Unit of Measurement - Nissan Unique Code"))
 
           E133  = t::ID.new(:E133 , "Routing Sequence Code"                , 1, 2,
             s::CodeList.build(

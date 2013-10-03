@@ -131,15 +131,14 @@ module Stupidedi
           x.register("002001", "PO", "830") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::PO830 }         
 
           x.register("003010", "RA", "820") { Stupidedi::Contrib::ThirtyTen::Guides::RA820 }
-          # x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::Guides::PO850 }  # OK
-          x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }  # non-deterministic result        
+
+          x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }
           x.register("003010", "PC", "860") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PC860 }
 
           x.register("003040", "WA", "142") { Stupidedi::Contrib::ThirtyForty::TransactionSetDefs::WA142 }
 
           x.register("003050", "PO", "850") { Stupidedi::Contrib::ThirtyFifty::TransactionSetDefs::PO850 }
 
-          #x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }
           # x.register("004010", "SM", "204") { Stupidedi::Contrib::FortyTen::Guides::SM204 }
           # x.register("004010", "QM", "214") { Stupidedi::Contrib::FortyTen::Guides::QM214 }
           # x.register("004010", "GF", "990") { Stupidedi::Contrib::FortyTen::Guides::GF990 }
