@@ -133,7 +133,7 @@ module Stupidedi
           x.register("003010", "RA", "820") { Stupidedi::Contrib::ThirtyTen::Guides::RA820 }
           # x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::Guides::PO850 }  # OK
           x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }  # non-deterministic result        
-          x.register("003010", "PC", "860") { Stupidedi::Contrib::ThirtyTen::Guides::PC860 }
+          x.register("003010", "PC", "860") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PC860 }
 
           x.register("003040", "WA", "142") { Stupidedi::Contrib::ThirtyForty::Guides::WA142 }
 
