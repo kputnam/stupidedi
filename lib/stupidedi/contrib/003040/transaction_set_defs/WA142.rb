@@ -10,7 +10,7 @@ module Stupidedi
 
           d::TableDef.header("Table 1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),          
-            s::BEG.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
+            s::BGN.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
             d::LoopDef.build("N1", d::RepeatCount.bounded(4),
               s:: N1.use( 30, r::Mandatory, d::RepeatCount.bounded(1)),
               s::PER.use( 80, r::Optional, d::RepeatCount.bounded(1)))),
@@ -18,17 +18,7 @@ module Stupidedi
           d::TableDef.detail("Table 2 - Detail",
             d::LoopDef.build("LX", d::RepeatCount.unbounded,
               s:: LX.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 21, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 22, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 23, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 24, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 25, r::Mandatory, d::RepeatCount.bounded(1)),              
-              s:: N9.use( 26, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 27, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 28, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 29, r::Mandatory, d::RepeatCount.bounded(1)),
-              s:: N9.use( 30, r::Mandatory, d::RepeatCount.bounded(1)),
+              s:: N9.use( 20, r::Mandatory, d::RepeatCount.bounded(11)),
 
               d::LoopDef.build("LIN", d::RepeatCount.unbounded,
                 s::LIN.use(  32, r::Mandatory,  d::RepeatCount.bounded(1)),
@@ -43,7 +33,7 @@ module Stupidedi
               d::LoopDef.build("REP", d::RepeatCount.unbounded,
                 s::REP.use( 310, r::Mandatory, d::RepeatCount.bounded(1)),
 
-                d::LoopDef.build("IT1", d::RepeatCount.bounded(1),
+                d::LoopDef.build("IT1", d::RepeatCount.unbounded,
                   s::IT1.use( 400, r::Optional, d::RepeatCount.bounded(1)))),
 
               d::LoopDef.build("AMT", d::RepeatCount.bounded(1),
