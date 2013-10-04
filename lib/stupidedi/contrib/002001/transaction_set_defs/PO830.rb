@@ -1,22 +1,19 @@
 module Stupidedi
   module Contrib
     module TwoThousandOne
-      module TransactionSetDefs
+      module TransactionSetDefs 
         d = Schema
         r = SegmentReqs
         s = SegmentDefs
         
         PO830 = d::TransactionSetDef.build("PO", "830", "Material Release for Manufacturing",
-
+          
           d::TableDef.header("Table 1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),          
             s::BFR.use( 20, r::Mandatory, d::RepeatCount.bounded(1))),
 
           d::TableDef.detail("Table 2 - Detail",
-            d::LoopDef.build("N1", d::RepeatCount.bounded(1),
-              s:: N1.use(  90, r::Optional, d::RepeatCount.bounded(1))),
-
-            d::LoopDef.build("N1", d::RepeatCount.bounded(1),
+            d::LoopDef.build("N1", d::RepeatCount.bounded(2),
               s:: N1.use(  90, r::Optional, d::RepeatCount.bounded(1)),
               s::PER.use( 140, r::Optional, d::RepeatCount.bounded(3))),
 
@@ -26,7 +23,7 @@ module Stupidedi
               s::J2X.use( 330, r::Optional, d::RepeatCount.bounded(1)),
               s::PER.use( 450, r::Optional, d::RepeatCount.bounded(1)),
 
-              d::LoopDef.build("N1", d::RepeatCount.bounded(1),
+              d::LoopDef.build("N1 - LIN", d::RepeatCount.bounded(1),
                 s:: N1.use(  510, r::Optional, d::RepeatCount.bounded(1))),
 
               d::LoopDef.build("SDP", d::RepeatCount.bounded(104),

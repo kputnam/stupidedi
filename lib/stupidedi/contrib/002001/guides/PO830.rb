@@ -15,7 +15,7 @@ module Stupidedi
         # Ship Notice/Manifest
         #
         PO830 = b.build(t::PO830,
-          d::TableDef.header("Heading",
+          d::TableDef.header("Header",
             b::Segment(10, s:: ST, "Transaction Set Header",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("830")),
@@ -33,14 +33,14 @@ module Stupidedi
               b::Element(e::NotUsed,     "BFR09"),
               b::Element(e::Situational, "Contract Number - Nissan Facility ID", b::Values("CP","DP","SP")))),
 
-          d::TableDef.detail("Detail",            
+          d::TableDef.header("Detail",
             d::LoopDef.build("N1 - LOOP1", d::RepeatCount.bounded(1),              
               b::Segment(90, s:: N1, "Name - Supplier Code",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("SU")),
                 b::Element(e::NotUsed,     "N102"),
                 b::Element(e::Situational, "Identification Code Qualifier", b::Values("92")),
-                b::Element(e::Situational, "Identification Code - Supplier Code assigned by Nissan")),               
+                b::Element(e::Situational, "Identification Code - Supplier Code assigned by Nissan"))),               
 
             d::LoopDef.build("N1 - LOOP2", d::RepeatCount.bounded(1),              
               b::Segment(90, s:: N1, "Name - Nissan Analyst",
@@ -93,14 +93,14 @@ module Stupidedi
                 b::Element(e::NotUsed,     "LIN27"),
                 b::Element(e::NotUsed,     "LIN28"),
                 b::Element(e::NotUsed,     "LIN29"),
-                b::Element(e::NotUsed,     "LIN30"),
+                b::Element(e::NotUsed,     "LIN30"), 
                 b::Element(e::NotUsed,     "LIN31")),
               b::Segment( 310, s::UNT, "Unit of Measure",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Unit or Basis for Measurement Code", b::Values("EA"))),
               b::Segment( 330, s::J2X, "Item Description",
                 r::Situational, d::RepeatCount.bounded(1),
-                b::Element(e::NotUsed,     "J2X01"),
+                b::Element(e::NotUsed,     "J2X01 - ITEM DESC QUALIFIER"),
                 b::Element(e::Situational, "Item Description Type", b::Values("F")),
                 b::Element(e::Required, "Lading Liability Code - Nissan's Part Description")),
               b::Segment( 450, s::PER, "Administrative Communications Contact - Nissan Parts Order Analyst",
@@ -121,9 +121,7 @@ module Stupidedi
                   b::Element(e::Required, "Entity Identifier Code", b::Values("ST")),
                   b::Element(e::NotUsed,  "Name - Dock Location"),
                   b::Element(e::NotUsed,  "N103"),
-                  b::Element(e::NotUsed,  "N104"),
-                  b::Element(e::NotUsed,  "N105"),
-                  b::Element(e::NotUsed,  "N106"))),
+                  b::Element(e::NotUsed,  "N104"))),
 
               d::LoopDef.build("SDP", d::RepeatCount.bounded(104),
                 b::Segment( 580, s::SDP, "Ship/Delivery Pattern",
@@ -162,7 +160,7 @@ module Stupidedi
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required, "Marks and Numbers Qualifier", b::Values("PB")),
                 b::Element(e::Required, "Marks and Numbers")))),
-
+          
           d::TableDef.header("Summary",
             b::Segment(690, s::CTT, "Transaction Totals",
               r::Required, d::RepeatCount.bounded(1),

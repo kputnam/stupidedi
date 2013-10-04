@@ -6,8 +6,7 @@ module Stupidedi
         r = SegmentReqs
         s = SegmentDefs
 
-        FA997 = d::TransactionSetDef.build("FA", "997",
-          "Functional Acknowledgment",
+        FA997 = d::TransactionSetDef.build("FA", "997", "Functional Acknowledgment",
 
           d::TableDef.header("Table 1 - Header",
             s:: ST.use(10, r::Mandatory, d::RepeatCount.bounded(1)),
