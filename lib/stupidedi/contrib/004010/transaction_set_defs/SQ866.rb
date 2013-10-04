@@ -20,7 +20,6 @@ module Stupidedi
               d::LoopDef.build("LIN", d::RepeatCount.unbounded,
                 s::LIN.use(150, r::Optional, d::RepeatCount.bounded(1)),
                 s::REF.use(160, r::Optional,  d::RepeatCount.unbounded),
-                s::REF.use(160, r::Optional,  d::RepeatCount.unbounded),
                 s::QTY.use(170, r::Optional,  d::RepeatCount.bounded(1))))),
 
           d::TableDef.header("Table 3 - Summary",
