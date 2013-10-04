@@ -5,7 +5,7 @@ GEM
     called_from (0.1.0)
     cantor (1.2.0)
     diff-lcs (1.1.3)
-    multi_json (1.7.9)
+    multi_json (1.8.0)
     rake (10.1.0)
     rcov (0.9.11)
     rdiscount (1.6.8)
@@ -23,7 +23,7 @@ GEM
     simplecov-html (0.7.1)
     term-ansicolor (1.2.2)
       tins (~> 0.8)
-    tins (0.8.4)
+    tins (0.11.0)
     yard (0.7.5)
 
 PLATFORMS
