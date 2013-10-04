@@ -7,7 +7,6 @@ module Stupidedi
         s = SegmentDefs
 
         SS862 = d::TransactionSetDef.build("SS", "862", "Shipping Schedule",
-
           d::TableDef.header("Table 1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BSS.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
