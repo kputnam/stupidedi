@@ -242,6 +242,12 @@ module Stupidedi
           autoload :QTY,
             "stupidedi/versions/functional_groups/004010/segment_defs/QTY"         
 
+          autoload :AK4,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK4"         
+
+          autoload :AK5,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK5"      
+            
         end
       end
     end
