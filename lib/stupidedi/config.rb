@@ -117,8 +117,6 @@ module Stupidedi
           x.register("004010", "AR", "943") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::AR943 }
           x.register("004010", "RE", "944") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::RE944 }
           x.register("004010", "SW", "945") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SW945 }
-          x.register("004010", "FA", "997") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::FA997 }
-
           x.register("004010", "SM", "204") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::SM204 }
           x.register("004010", "QM", "214") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::QM214 }
           x.register("004010", "GF", "990") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::GF990 }
