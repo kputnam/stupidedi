@@ -234,7 +234,7 @@ module Stupidedi
             "stupidedi/versions/functional_groups/002001/segment_defs/ATH"                
 
           autoload :TD5,
-            "stupidedi/versions/functional_groups/002001/segment_defs/TD5"                
+            "stupidedi/versions/functional_groups/002001/segment_defs/TD5"                           
 
         end
       end

@@ -22,27 +22,8 @@ module Stupidedi
               s:: N1.use(  20, r::Mandatory, d::RepeatCount.bounded(1)),
               d::LoopDef.build("RMT", d::RepeatCount.unbounded,
                 s::RMT.use(  30, r::Optional,  d::RepeatCount.bounded(1)),
-                s::REF.use(  50, r::Optional,  d::RepeatCount.bounded(1)),
-                s::REF.use(  51, r::Optional,  d::RepeatCount.bounded(1)),
-                s::REF.use(  52, r::Optional,  d::RepeatCount.bounded(1)),
-                s::REF.use(  53, r::Optional,  d::RepeatCount.bounded(12)),
-                s::DTM.use(  60, r::Optional,  d::RepeatCount.bounded(10))),
-
-              d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
-                s:: N1.use(  21, r::Optional, d::RepeatCount.bounded(1))),
-
-              d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
-                s:: N1.use(  22, r::Optional, d::RepeatCount.bounded(1))),
-
-              d::LoopDef.build("N1", d::RepeatCount.bounded(10000),
-                s:: N1.use(  22, r::Mandatory, d::RepeatCount.bounded(1)),
-                d::LoopDef.build("RMT", d::RepeatCount.unbounded,
-                  s::RMT.use(  30, r::Optional, d::RepeatCount.bounded(1)),
-                  s::REF.use(  50, r::Optional, d::RepeatCount.bounded(1)),              
-                  s::REF.use(  50, r::Optional, d::RepeatCount.bounded(1)),
-                  s::REF.use(  50, r::Optional, d::RepeatCount.bounded(15)),
-                  s::REF.use(  50, r::Optional, d::RepeatCount.bounded(15)),
-                  s::REF.use(  50, r::Optional, d::RepeatCount.bounded(15))))),
+                s::REF.use(  50, r::Optional,  d::RepeatCount.unbounded),
+                s::DTM.use(  60, r::Optional,  d::RepeatCount.bounded(10)))),
 
             s:: LE.use(  70, r::Mandatory, d::RepeatCount.bounded(1))),
 
