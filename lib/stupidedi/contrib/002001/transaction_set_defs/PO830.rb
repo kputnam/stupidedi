@@ -19,7 +19,6 @@ module Stupidedi
               s::LIN.use( 300, r::Mandatory, d::RepeatCount.bounded(1)), 
               s::UNT.use( 310, r::Mandatory, d::RepeatCount.bounded(1)),
               s::J2X.use( 330, r::Optional, d::RepeatCount.bounded(1)),
-              s::PER.use( 450, r::Optional, d::RepeatCount.bounded(1)),
 
               d::LoopDef.build("SDP", d::RepeatCount.bounded(104),
                 s::SDP.use( 580, r::Mandatory, d::RepeatCount.bounded(1)), 
