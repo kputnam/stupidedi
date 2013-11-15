@@ -156,7 +156,7 @@ module Stupidedi
             # "13" => "UCS Code (The UCS Code is a Code Used for UCS Transmissions; it includes the Area Code and Telephone Number of a Modem; it Does Not Include Punctation, Blanks, or Access Code)",
               "14" => "Duns Plus Suffix",
             # "15" => "Petroleum Accountants Society of Canada Company Code",
-            # "16" => "Duns Number With 4-Character Suffix",
+              "16" => "Duns Number With 4-Character Suffix",
             # "17" => "American Bankers Association (ABA) Transit Routing Number (Including Check Digit, 9 Digit)",
             # "18" => s::CodeList.external("420"),
             # "19" => s::CodeList.external("421"),

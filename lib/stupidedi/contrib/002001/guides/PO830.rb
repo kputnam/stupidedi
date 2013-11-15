@@ -12,7 +12,7 @@ module Stupidedi
         t = Contrib::TwoThousandOne::TransactionSetDefs
         #t = Contrib::FortyTen::TransactionSetDefs
         #
-        # Ship Notice/Manifest
+        # 830 Material Release for Manufacturing
         #
         PO830 = b.build(t::PO830,
           d::TableDef.header("Header",

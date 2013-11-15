@@ -379,7 +379,8 @@ module Stupidedi
               "SLP" => "Slip Sheet",
               "TBN" => "Tote Bin",
               "TLD" => "Intermodal Trailer/Container Load (Rail)",
-              "TRY" => "Tray"))
+              "TRY" => "Tray",
+              "PLT94" => "Pallet - Wood"))
 
 
           E103_1  = t::ID.new(:E103_1 , "Packaging Code"                       , 3, 3,
@@ -6054,7 +6055,8 @@ module Stupidedi
               "PT" => "Patient",
                "I" => "Item",
                "S" => "Shipment",
-               "T" => "Shipping Tare" ))
+               "T" => "Shipping Tare",
+               "P" => "Pack" ))
 
           E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
             s::CodeList.build(
@@ -9267,7 +9269,7 @@ module Stupidedi
             SyntaxNotes::P.build(3, 4),
             SyntaxNotes::P.build(5, 6))
 
-          C103  = Schema::CompositeElementDef.build(:C103,
+          C103  = Schema::CompositeElementDef.build(:C103, 
             "Packaging Code",
             "Code identifying the type of packaging; Part 1: Packaging Form, Part 2: Packaging Material; if the Data Element is used, then Part 1 is always required",
             E103_1.component_use(r::Mandatory),
