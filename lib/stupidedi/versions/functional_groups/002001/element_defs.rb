@@ -7453,9 +7453,25 @@ module Stupidedi
               "25" => "S4E Security End Segment Missing for S4S Security Start Segment",
               "26" => "S4S Security Start Segment Missing for S4E Security End Segment"))
 
+          E717  = t::ID.new(:E717 , "Transaction Set Acknowledgment Code"  , 1, 1,
+            s::CodeList.build(
+              "A" => "Accepted",
+              "E" => "Accepted But Errors Were Reported",
+              "M" => "Rejected, Message Authentication Code (MAC) Failed",
+              "R" => "Rejected",
+              "W" => "Rejected, Assurance Failed Validity Tests",
+              "X" => "Rejected, Content After Decryption Could Not Be Analyzed"))
+
+          E718  = t::ID.new(:E718 , "Transaction Set Syntax Error Code"    , 1, 3)
+
           E719  = t::Nn.new(:E719 , "Segment Position in Transaction Set"  , 1, 10, 0)
           E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3,
             s::CodeList.external("77"))
+
+          E722  = t::Nn.new(:E722 , "Element Position in Segment"          , 1, 2, 0)
+          E723  = t::ID.new(:E723 , "Data Element Syntax Error Code"       , 1, 3)          
+          E724  = t::AN.new(:E724 , "Copy of Bad Data Element"             , 1, 99)
+          E725  = t::Nn.new(:E725 , "Data Element Reference Number"        , 1, 4, 0)
 
           E728  = t::ID.new(:E728 , "Returnable Container Load Make-Up Code" , 1, 2)
           E729  = t::DT.new(:E729 , "Category - Ship Notice Date"          , 6, 6)
@@ -10517,6 +10533,9 @@ module Stupidedi
               "VB" => "Valued at 120 Day Marketing Time Method",
               "VC" => "Valued at 180 Day Marketing Time Method"))
           E1375 = t::AN.new(:E1375, "Interim Hazardous Material Regulatory Number", 1, 5)
+
+          E1528 = t::Nn.new(:E1528, "Component Data Element Position in Composite", 1, 2, 0)
+
           E1650 = t::ID.new(:E1650, "Shipment Status Code"                 , 2, 2,
             s::CodeList.build(
               "A3" => "Shipment Returned to Shipper",
@@ -10652,6 +10671,12 @@ module Stupidedi
             "Composite Unit of Measure",
             "To identify a composite unit of measure",
             E355.component_use(r::Mandatory, s::RepeatCount.bounded(1)))
+
+          C030  = Schema::CompositeElementDef.build(:C030,
+            "Position in Segment",
+            "",
+            E722.component_use(r::Mandatory),
+            E1528.component_use(r::Optional))
 
           C040  = Schema::CompositeElementDef.build(:C040,
             "Reference Identifier",
