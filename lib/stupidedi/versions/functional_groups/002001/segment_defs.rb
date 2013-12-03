@@ -212,6 +212,12 @@ module Stupidedi
           autoload :AK3,
             "stupidedi/versions/functional_groups/002001/segment_defs/AK3"
 
+          autoload :AK4,
+            "stupidedi/versions/functional_groups/002001/segment_defs/AK4"
+
+          autoload :AK5,
+            "stupidedi/versions/functional_groups/002001/segment_defs/AK5"
+
           autoload :AK9,
             "stupidedi/versions/functional_groups/002001/segment_defs/AK9"
 

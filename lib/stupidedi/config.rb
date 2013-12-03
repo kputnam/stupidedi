@@ -128,6 +128,7 @@ module Stupidedi
 
           x.register("002001", "SH", "856") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::SH856 }         
           x.register("002001", "PO", "830") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::PO830 }         
+          x.register("002001", "FA", "997") { Stupidedi::Contrib::TwoThousandOne::TransactionSetDefs::FA997 }
 
           x.register("003010", "RA", "820") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::RA820 }
           x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }

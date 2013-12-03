@@ -14,6 +14,9 @@ module Stupidedi
 
         autoload :PO830, # Material Release for Manufacturing
           "stupidedi/contrib/002001/transaction_set_defs/PO830"          
+
+        autoload :FA997, # Material Release for Manufacturing
+          "stupidedi/contrib/002001/transaction_set_defs/FA997"                  
       end
     end
   end
