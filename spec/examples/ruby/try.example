@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe "Object#try" do
-  let(:object) { mock("object") }
+  let(:object) { double("object") }
 
   it "calls a unary block" do
     object.should_receive(:message).with(no_args)

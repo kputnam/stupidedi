@@ -68,7 +68,7 @@ describe "Object#bind" do
 end
 
 describe "Object#tap" do
-  let(:object) { mock("object") }
+  let(:object) { double("object") }
 
   it "requires a block argument" do
     lambda { object.tap }.should raise_error(LocalJumpError)
@@ -85,7 +85,7 @@ describe "Object#tap" do
 end
 
 describe "Object#eigenclass" do
-  let(:object) { mock("object") }
+  let(:object) { double("object") }
 
   it "returns a Class" do
     object.eigenclass.should be_a(Class)
