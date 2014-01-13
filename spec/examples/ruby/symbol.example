@@ -98,19 +98,19 @@ describe "Symbol#call" do
   end
 
   it "sends a message to the first argument" do
-    receiver = mock("object")
+    receiver = double("object")
     receiver.should_receive(:message)
     :message.call(receiver)
   end
 
   it "passes the remaining arguments along" do
-    receiver = mock("object")
+    receiver = double("object")
     receiver.should_receive(:message).with("a", "b")
     :message.call(receiver, "a", "b")
   end
 
   it "does not flatten the argument list" do
-    receiver = mock("object")
+    receiver = double("object")
     receiver.should_receive(:message).with(["a", "b"], "c")
     :message.call(receiver, ["a", "b"], "c")
   end

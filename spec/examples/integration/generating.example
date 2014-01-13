@@ -98,10 +98,10 @@ describe "Generating" do
       context "when strict" do
         it "loudly complains" do
           lambda { isa(strict) }.should_not \
-            raise_error("required segment IEA is missing from interchange 00501")
+            raise_error(raise StandardError, "required segment IEA is missing from interchange 00501")
 
           lambda { isa(strict) }.should \
-            raise_error("required segment IEA is missing from interchange 00501")
+            raise_error(raise StandardError, "required segment IEA is missing from interchange 00501")
 
           strict.should be_first
         end
@@ -110,10 +110,10 @@ describe "Generating" do
       context "when non-strict" do
         it "quietly proceeds" do
           lambda { isa(relaxed) }.should_not \
-            raise_error("required segment IEA is missing from interchange 00501")
+            raise_error(raise StandardError, "required segment IEA is missing from interchange 00501")
 
           lambda { isa(relaxed) }.should_not \
-            raise_error("required segment IEA is missing from interchange 00501")
+            raise_error(raise StandardError, "required segment IEA is missing from interchange 00501")
 
           relaxed.should_not be_first
         end
@@ -134,7 +134,7 @@ describe "Generating" do
       context "when strict" do
         it "loudly complains" do
           lambda { isa(strict) }.should \
-            raise_error("required element ISA06 is blank")
+            raise_error(raise StandardError, "required element ISA06 is blank")
 
           strict.should be_empty
         end
@@ -143,7 +143,7 @@ describe "Generating" do
       context "when non-strict" do
         it "quietly proceeds" do
           lambda { isa(relaxed) }.should_not \
-            raise_error("required element ISA06 is blank")
+            raise_error(raise StandardError,"required element ISA06 is blank")
 
           relaxed.element(6).select{|e| e.node == "" }.should be_defined
           relaxed.element(6).select{|e| e.node.empty? }.should be_defined
@@ -167,7 +167,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { isa(strict) }.should \
-              raise_error("value XX not allowed in element ISA01")
+              raise_error(raise StandardError,"value XX not allowed in element ISA01")
 
             strict.should be_empty
           end
@@ -176,7 +176,7 @@ describe "Generating" do
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { isa(relaxed) }.should_not \
-              raise_error("value XX not allowed in element ISA01")
+              raise_error(raise StandardError,"value XX not allowed in element ISA01")
 
             relaxed.element(1).select{|e| e.node == "XX" }.should be_defined
             relaxed.element(1).select{|e| e.node.invalid? }.should_not be_defined
@@ -198,7 +198,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { isa(strict) }.should \
-              raise_error("invalid element ISA09")
+              raise_error(raise StandardError,"invalid element ISA09")
 
             strict.should be_empty
           end
@@ -207,7 +207,7 @@ describe "Generating" do
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { isa(relaxed) }.should_not \
-              raise_error("invalid element ISA09")
+              raise_error(raise StandardError, "invalid element ISA09")
 
             relaxed.element(9).select{|e| e.node.invalid? }.should be_defined
             relaxed.element(9).select{|e| e.node == "DATE" }.should_not be_defined
@@ -229,7 +229,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { isa(strict) }.should \
-              raise_error("invalid element ISA10")
+              raise_error(raise StandardError,"invalid element ISA10")
 
             strict.should be_empty
           end
@@ -238,7 +238,7 @@ describe "Generating" do
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { isa(relaxed) }.should_not \
-              raise_error("invalid element ISA10")
+              raise_error(raise StandardError,"invalid element ISA10")
 
             relaxed.element(10).select{|e| e.node.invalid? }.should be_defined
             relaxed.element(10).select{|e| e.node == "TIME" }.should_not be_defined
@@ -260,7 +260,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { isa(strict) }.should \
-              raise_error("invalid element ISA13")
+              raise_error(raise StandardError,"invalid element ISA13")
 
             strict.should be_empty
           end
@@ -269,7 +269,7 @@ describe "Generating" do
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { isa(relaxed) }.should_not \
-              raise_error("invalid element ISA13")
+              raise_error(raise StandardError, "invalid element ISA13")
 
             relaxed.element(13).select{|e| e.node.invalid? }.should be_defined
           end
@@ -294,7 +294,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { setup(strict) }.should \
-              raise_error("value is too long in element ISA13")
+              raise_error(raise StandardError, "value is too long in element ISA13")
           end
         end
         
@@ -340,14 +340,14 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { setup(strict) }.should \
-              raise_error("value is too long in element ISA06")
+              raise_error(raise StandardError, "value is too long in element ISA06")
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { setup(relaxed) }.should_not \
-              raise_error("value is too long in element ISA06")
+              raise_error(raise StandardError, "value is too long in element ISA06")
 
             relaxed.element(6).select{|e| e.node == "431777999xxxxxxxxxxx" }.should be_defined
             relaxed.element(6).select{|e| e.node.too_long? }.should be_defined
@@ -382,7 +382,7 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             lambda { setup(strict) }.should \
-              raise_error("value is too short in element ISA10")
+              raise_error(raise StandardError, "value is too short in element ISA10")
           end
         end
 
@@ -391,7 +391,7 @@ describe "Generating" do
             time = Time.now.utc
 
             lambda { setup(relaxed, time) }.should_not \
-              raise_error("value is too short in element ISA10")
+              raise_error(raise StandardError, "value is too short in element ISA10")
 
             relaxed.element(10).select{|e| e.node.hour == time.hour }.should be_defined
             relaxed.element(10).select{|e| e.node.too_short? }.should be_defined
@@ -419,14 +419,14 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             lambda { setup(strict) }.should \
-              raise_error("value is too long in element GS04")
+              raise_error(raise StandardError, "value is too long in element GS04")
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { setup(relaxed) }.should_not \
-              raise_error("value is too long in element GS04")
+              raise_error(raise StandardError, "value is too long in element GS04")
 
             relaxed.element(4).select{|e| e.node.year.should == 22222 }.should be_defined
           end
@@ -453,14 +453,14 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             lambda { setup(strict) }.should \
-              raise_error("value is too short in element GS04")
+              raise_error(raise StandardError, "value is too short in element GS04")
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
             lambda { setup(relaxed) }.should_not \
-              raise_error("value is too short in element GS04")
+              raise_error(raise StandardError, "value is too short in element GS04")
 
             relaxed.element(4).select{|e| e.node.year.should == 11 }.should be_defined
           end
@@ -492,7 +492,7 @@ describe "Generating" do
             setup(relaxed, "005010X222")
 
             lambda { relaxed.ST("837", relaxed.default, "005010X222") }.should \
-              raise_error("ST02 cannot be inferred")
+              raise_error(raise StandardError, "ST02 cannot be inferred")
           end
         end
 
@@ -501,7 +501,7 @@ describe "Generating" do
             setup(relaxed, "005010X221")
 
             lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }.should_not \
-              raise_error("ST02 cannot be inferred")
+              raise_error(raise StandardError, "ST02 cannot be inferred")
 
             relaxed.element(3).select{|e| e.node == "" }.should be_defined
             relaxed.element(3).select{|e| e.node.blank? }.should be_defined
@@ -513,7 +513,7 @@ describe "Generating" do
             setup(relaxed, "005010X222")
 
             lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }.should_not \
-              raise_error("ST02 cannot be inferred")
+              raise_error(raise StandardError, "ST02 cannot be inferred")
 
             relaxed.element(3).select{|e| e.node == "005010X222" }.should be_defined
           end
@@ -526,7 +526,7 @@ describe "Generating" do
             setup(relaxed, "005010X221")
 
             lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }.should_not \
-              raise_error("ST03 is not forbidden")
+              raise_error(raise StandardError, "ST03 is not forbidden")
 
             relaxed.element(3).select{|e| e.node == "" }.should be_defined
             relaxed.element(3).select{|e| e.node.blank? }.should be_defined
@@ -538,7 +538,7 @@ describe "Generating" do
             setup(relaxed, "005010X222")
 
             lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }.should \
-              raise_error("ST03 is not forbidden")
+              raise_error(raise StandardError, "ST03 is not forbidden")
           end
         end
       end
