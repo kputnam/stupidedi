@@ -615,6 +615,7 @@ describe "Parsing" do
 
       parser.parent.tap do |isa|
         isa.should have_distance(20).to(parser)
+#        isa.should have_structure(nil)
       end
     end
   end
