@@ -5034,7 +5034,10 @@ module Stupidedi
               "WT" => "Rail Waybill Request (425)"))
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
-            s::CodeList.external("881"))
+            s::CodeList.build(
+              "004010X091" => "Draft Standards Approved for Publication by ASC X12 Procedures Review Board through October 1997"
+            ))
+            #s::CodeList.external("881"))
           E481  = t::ID.new(:E481 , "Trace Type Code"                      , 1, 2,
             s::CodeList.build(
               "1" => "Current Transaction Trace Numbers",

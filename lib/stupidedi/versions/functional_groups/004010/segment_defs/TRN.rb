@@ -12,7 +12,7 @@ module Stupidedi
             "To uniquely identify a transaction to an application",
             e::E481 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E127 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E509 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E509 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E127 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end

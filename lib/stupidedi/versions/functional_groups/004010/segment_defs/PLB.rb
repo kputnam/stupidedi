@@ -27,7 +27,7 @@ module Stupidedi
             e::C042 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
             e::E782 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
 
-            SyntaxNotes::P.build( 5,  8),
+            SyntaxNotes::P.build( 5,  6),
             SyntaxNotes::P.build( 7,  8),
             SyntaxNotes::P.build( 9, 10),
             SyntaxNotes::P.build(11, 12),
