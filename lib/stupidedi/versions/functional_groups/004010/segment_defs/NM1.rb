@@ -12,8 +12,8 @@ module Stupidedi
             "To supply the full name of an individual or organizational entity",
             e::E98  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E1065.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E1035.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E1036.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E1035.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E1036.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E1037.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E1038.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
@@ -24,9 +24,7 @@ module Stupidedi
             e::E98  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
             SyntaxNotes::P.build( 8,  9),
-            SyntaxNotes::C.build(11, 10),
-            SyntaxNotes::C.build(12,  3))
-
+            SyntaxNotes::C.build(11, 10))
         end
       end
     end
