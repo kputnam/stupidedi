@@ -5,9 +5,9 @@ gem "cantor"     , "~> 1.2.0"
 
 group :development do
   gem "rake"
-  gem "rspec"      ,"~> 2.8.0"
-  gem "yard"       ,"~> 0.7.4"
-  gem "rdiscount"  ,"~> 1.6.8"
+  gem "rspec"      ,"~> 2.14.1"
+  gem "yard"       ,"~> 0.8.7"
+  gem "rdiscount"  ,"~> 2.1.7"
 
   gem "term-ansicolor"
   gem "blankslate"             ,:platforms => [:ruby_18, :mri_18, :mingw_18]
