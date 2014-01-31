@@ -451,7 +451,7 @@ describe "Parsing" do
       let(:dsl) do
         c = Stupidedi::Config.hipaa
         b = Stupidedi::Builder::BuilderDsl.build(c, false)
-        b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil) 
+        b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
         b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
         b. ST("837", "0001", b.default)
           b.BHT("0019", "00", "46X2A6", Time.now.utc, Time.now.utc, "CH")
@@ -511,7 +511,7 @@ describe "Parsing" do
       let(:dsl) do
         c = Stupidedi::Config.hipaa
         b = Stupidedi::Builder::BuilderDsl.build(c, false)
-        b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil) 
+        b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
         b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
         b. ST("837", "0001", b.default)
           b.BHT("0019", "00", "46X2A6", Time.now.utc, Time.now.utc, "CH")
@@ -550,7 +550,7 @@ describe "Parsing" do
       let(:dsl) do
         c = Stupidedi::Config.hipaa
         b = Stupidedi::Builder::BuilderDsl.build(c)
-        b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil) 
+        b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
         b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X221")
         b. ST("835", "0001")
           b.BPR("C", 150000, "C", "ACH", "CTX", "01", "999999992", "DA", "123456", "1512345678", nil, "01", "999988880", "DA", "98765", "20020913")
@@ -593,6 +593,81 @@ describe "Parsing" do
       end
     end
 
+  end
+
+  context "X091A1-HP835" do
+
+    it "parses 1-good.txt" do
+      parser = Fixtures.file("X091A1-HP835/1-good.txt")
+      parser.should be_deterministic
+      parser.should be_last
+
+      parser.segment.tap do |iea|
+        iea.node.position.line.should   == 1
+        iea.node.position.column.should == 606
+      end
+
+      parser.should have_sequence(%w(ISA GS ST BPR TRN REF N1 N3 N4 REF PER N1
+        REF LX CLP CAS NM1 PLB SE GE IEA))
+
+      parser.should have_separators(:element => "|", :component => "^",
+        :repetition => nil, :segment => "~")
+
+      parser.parent.tap do |isa|
+        isa.should have_distance(20).to(parser)
+        isa.should have_structure(
+          Ss(X(:ST),
+            R(:ISA), # No more ISAs
+            S(:GS, "HP", "MADE UP CLEARING HOUSE", "611358935", "20130508", nil, "3063") =>
+            Ss(R(:GS), # No more GSs
+                  S(:ST) =>
+                    Ss(R(:ST), # No more STs
+                       S(:BPR, nil, nil) =>
+                         Ss(S(:TRN),
+                            S(:N1, "PR"),
+                            S(:N1, "PE"),
+                            S(:LX, "1"),
+                            S(:PLB),
+                            S(:SE),
+                            S(:GE),
+                            S(:IEA)),
+                       S(:TRN, "1", "74122910359") =>
+                         Ss(X(:BPR)),
+
+                       # 1000A PAYER IDENTIFICATION
+                       S(:N1, "PR", "MADE UP HEALTH CENTER") =>
+                         Ss(S(:N3, "123 FAKE ST."),
+                            S(:N4),
+                            S(:REF, "2U", "80214"),
+                            S(:SE),
+                            S(:GE),
+                            S(:IEA)),
+
+                       # 1000B PAYEE IDENTIFICATION
+                       S(:N1, "PE", nil, "XX", "1386672277") =>
+                         Ss(S(:REF, "TJ"),
+                            S(:SE),
+                            S(:GE),
+                            S(:IEA)),
+
+                       # 2000 HEADER NUMBER
+                       S(:LX, "1") =>
+                         Ss(
+                          S(:CLP) =>
+                            Ss(S(:CAS, "PI", 23, "157.39"),
+                                 S(:NM1, "QC", nil, "DOE"))),
+
+                       S(:PLB, "341491692") =>
+                         Ss(S(:SE, 17, '0001'),
+                            S(:GE, 1, 3063),
+                            S(:IEA, 1, 3063)),
+
+                       S(:SE) => Ss(S(:GE),
+                                    S(:IEA))),
+                  S(:GE)  => Ss(S(:IEA)),
+                  S(:IEA) => Ss())))
+      end
+    end
   end
 
 end
