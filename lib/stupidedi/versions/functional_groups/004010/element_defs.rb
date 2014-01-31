@@ -33,7 +33,7 @@ module Stupidedi
               "FT" => "Flat Bed Trailer",
               "RC" => "Refrigerated (Reefer) Car",
               "RT" => "Controlled Temperature Trailer (Reefer)",
-              "SU" => "Supplier/Manufacturer", 
+              "SU" => "Supplier/Manufacturer",
               "TF" => "Trailer, Try Freight",
               "TL" => "Trailer (not otherwise specified)",
               "TV" => "Truck, Van"))
@@ -217,6 +217,7 @@ module Stupidedi
               "GC" => "GAS*CODE",
               "HC" => "Health Care Financing Administration",
               "HN" => "Health Insurance Claim (HIC) Number",
+              "II" => "United States National Individual Identifier",
               "LC" => "Agency Location Code (U.S. Government)",
               "LD" => "NISO Z39.53 Language Codes",
               "LE" => "ISO 639 Language Codes",
@@ -286,7 +287,7 @@ module Stupidedi
           E71   = t::Nn.new(:E71  , "Inquiry Request Number"               , 1, 3, 0)
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
-          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0) 
+          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
           E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
@@ -319,12 +320,19 @@ module Stupidedi
           E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 3,
             s::CodeList.build(
+              "74" => "Corrected Insured",
+              "82" => "Renderer Provider",
               "BT" => "Bill-to-Party",
               "BY" => "Buying Party (Purchaser)",
               "CN" => "Consignee",
+              "IL" => "Insured or Subscriber",
+              "PE" => "Payee",
+              "PR" => "Payer",
+              "QC" => "Patient",
               "SH" => "Shipper",
               "SF" => "Ship From",
               "ST" => "Ship To",
+              "TT" => "Transfer To",
               "WH" => "Warehouse"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
@@ -4008,13 +4016,26 @@ module Stupidedi
           E234  = t::AN.new(:E234 , "Product/Service ID"                   , 1, 48)
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
             s::CodeList.build(
+              "AD" => "American Dental Association Codes",
+              "BP" => "Buyer's Part Number",
+              "CB" => "Buyer's Part Number",
+              "ER" => "Jurisdiction Specific Procedure and Supply Codes",
+              "HC" => "Health Care Financing Administration Common Procedural Coding System (HCPCS) Codes",
+              "ID" => "International Classification of Diseases Clinical Modification (ICD-9-CM) - Procedure",
+              "IV" => "Home Infusion EDI Coalition (HIEC) Product/Service Code",
+              "N1" => "National Drug Code in 4-4-2 Format",
+              "N2" => "National Drug Code in 5-3-2 Format",
+              "N3" => "National Drug Code in 5-4-1 Format",
+              "N4" => "National Drug Code in 5-4-2 Format",
+              "ND" => "National Drug Code (NDC)",
+              "NU" => "National Uniform Billing Committee (NUBC) UB92 Codes",
+              "RB" => "National Uniform Billing Committee (NUBC) UB82 Codes",
+              "UK" => "UPC/EAN Shipping Container Code",
+              "UP" => "UPC Consumer Packaging Code",
               "VN" => "Vendor's (Seller's) Item Number",
               "VC" => "Vendor's (Seller's) Catalog Number",
               "VP" => "Vendor's (Seller's) Part Number",
-              "UK" => "UPC/EAN Shipping Container Code",
-              "BP" => "Buyer's Part Number",
-              "CB" => "Buyer's Part Number",
-              "UP" => "UPC Consumer Packaging Code"))
+              "ZZ" => "Mutually Defined"))
 
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
@@ -4035,6 +4056,15 @@ module Stupidedi
               "ZZ" => "Mutually Defined"))
 
           E301  = t::ID.new(:E301 , "Car Type Code"                        , 1, 4)
+          E305  = t::ID.new(:E305 , "Transaction Handling Code"            , 1, 2,
+            s::CodeList.build(
+              "C" => "Payment Accompanies Remittance Advice",
+              "D" => "Make Payment Only",
+              "H" => "Notification Only",
+              "I" => "Remittance Information Only",
+              "P" => "Prenotification of Future Transfers",
+              "U" => "Split Payment and Remittance",
+              "X" => "Handling Party's Option to Split Payment and Remittance"))
           E306  = t::ID.new(:E306 , "Action Code"                          , 1, 2,
             s::CodeList.build(
               "0"  => "Authorize",
@@ -4599,6 +4629,7 @@ module Stupidedi
           E365  = t::ID.new(:E365 , "Communcation Number Qualifier"        , 2, 2,
             s::CodeList.build(
               "EM" => "Electronic Mail",
+              "EX" => "Telephone Extension",
               "FX" => "Facsimile",
               "TE" => "Telephone"))
 
@@ -4606,6 +4637,7 @@ module Stupidedi
             s::CodeList.build(
               "BD" => "Buyer Name or Department",
               "CN" => "General Contact",
+              "CX" => "Payers Claim Office",
               "DC" => "Delivery Contact",
               "IC" => "Information Contact",
               "SH" => "Shipper Contact",
@@ -4624,9 +4656,17 @@ module Stupidedi
               "002" => "Delivery Requested",
               "010" => "Requested ship",
               "011" => "Shipped",
+              "036" => "Expiration",
               "037" => "Ship not before",
               "038" => "Ship no later",
-              "175" => "Cancel if not shipped by"))
+              "050" => "Received",
+              "150" => "Service Period Start",
+              "151" => "Service Period End",
+              "175" => "Cancel if not shipped by",
+              "232" => "Claim Statement Period Start",
+              "233" => "Claim Statement Period End",
+              "405" => "Production",
+              "472" => "service"))
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
@@ -4635,7 +4675,7 @@ module Stupidedi
           E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
           E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
-          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)          
+          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)
           E397  = t::AN.new(:E397 , "Color"                                , 1, 10)
           E398  = t:: R.new(:E398 , "Order Sizing Factor"                  , 1, 10)
           E399  = t::ID.new(:E399 , "Pallet Exchange Code"                 , 1, 1)
@@ -4665,6 +4705,52 @@ module Stupidedi
 
           E413  = t:: R.new(:E413 , "Quantity Received"                    , 1, 7)
           E416  = t::Nn.new(:E416 , "Pallet Block and Tiers"               , 6, 6, 0)
+
+          E426  = t::ID.new(:E426 , "Adjustment Reason Code"               , 2, 2,
+            s::CodeList.build(
+              "50" => "Late Charge",
+              "51" => "Interest Penalty Charge",
+              "72" => "Authorized Return",
+              "90" => "Early Payment Allowance",
+              "AH" => "Origination Fee",
+              "AM" => "Applied to Borrower's Account",
+              "AP" => "Acceleration of Benefits",
+              "B2" => "Rebate",
+              "B3" => "Recovery Allowance",
+              "BD" => "Bad Debt Adjustment",
+              "BN" => "Bonus",
+              "C5" => "Temporary Allowance",
+              "CR" => "Capitation Interest",
+              "CS" => "Adjustment",
+              "CT" => "Capitation Payment",
+              "CV" => "Capital Passthru",
+              "CW" => "Certified Registered Nurse Anesthetist Passthru",
+              "DM" => "Direct Medical Education Passthru",
+              "E3" => "Withholding",
+              "FB" => "Forwarding Balance",
+              "FC" => "Fund Allocation",
+              "GO" => "Graduate Medicale Education Passthru",
+              "HM" => "Hemophelia Clotting Factor Supplement",
+              "IP" => "Incentive Premium Payment",
+              "IR" => "Internal Revenue Service Withholding",
+              "IS" => "Interim Settlement",
+              "J1" => "Nonreimbursable",
+              "L3" => "Penalty",
+              "L6" => "Interest Owed",
+              "LE" => "Levy",
+              "LS" => "Lump Sum",
+              "OA" => "Organ Acquisition Passthru",
+              "OB" => "Offset for Affiliated Providers",
+              "PI" => "Periodic Interim Payment",
+              "PL" => "Payment Final",
+              "RA" => "Retro-activity Adjustment",
+              "RE" => "Return on Equity",
+              "SL" => "Student Loan Repayment",
+              "TL" => "Third Party Liability",
+              "WO" => "Overpayment Recovery",
+              "WU" => "Unspecified Recovery",
+              "ZZ" => "Mutually Defined"))
+
           E432  = t::ID.new(:E432 , "Date Qualifier"                       , 2, 2,
             s::CodeList.build(
               "02" => "Requested Delivery Date",
@@ -4701,6 +4787,15 @@ module Stupidedi
               "R" => "Change"))
 
           E474  = t::AN.new(:E474 , "Master Reference Number"              , 1, 22)
+          E478  = t::ID.new(:E478 , "Credit/Debit Flag Code"               , 1, 1,
+            s::CodeList.build(
+              "C"   => "Credit",
+              "D"   => "Debit",
+              "ACH" => "Automated Clearing House (ACH)",
+              "BOP" => "Financial Institution Option",
+              "CHK" => "Check",
+              "FWT" => "Federal Reserve Funds/Wire Transfer - Nonrepetitive",
+              "NON" => "Non-Payment Data"))
           E479  = t::ID.new(:E479 , "Functional Identifier Code"           , 2, 2,
             s::CodeList.build(
               "AA" => "Account Analysis (822)",
@@ -4939,13 +5034,55 @@ module Stupidedi
               "WT" => "Rail Waybill Request (425)"))
 
           E480  = t::AN.new(:E480 , "Version / Release / Identifier Code"  , 1, 12,
-            s::CodeList.external("881"))
+            s::CodeList.build(
+              "004010X091" => "Draft Standards Approved for Publication by ASC X12 Procedures Review Board through October 1997"
+            ))
+            #s::CodeList.external("881"))
+          E481  = t::ID.new(:E481 , "Trace Type Code"                      , 1, 2,
+            s::CodeList.build(
+              "1" => "Current Transaction Trace Numbers",
+              "2" => "Referenced Transaction Trace Numbers"))
 
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
+          E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
+            s::CodeList.build(
+              "01" => s::CodeList.external("4"),
+              "04" => s::CodeList.external("91")))
+          E507  = t::AN.new(:E507 , "DFI Identification Number"            , 3, 12,
+            s::CodeList.external("60"))
+          E508  = t::AN.new(:E508 , "Account Number"                       , 1, 35)
+          E509  = t::AN.new(:E509 , "Originating Company Identifier"       , 10,10)
+          E510  = t::AN.new(:E510 , "Originating Company Supplemental Code", 9, 9)
           E514  = t::ID.new(:E514 , "Reporting Code"                       , 1, 1,
             s::CodeList.build(
               "F" => "Full Detail",
               "U" => "Update"))
+
+          E522  = t::ID.new(:E522 , "Amount Qualifier Code"                , 1, 3,
+            s::CodeList.build(
+              "A8"  => "Noncovered Charges - Actual",
+              "AU"  => "Coverage Amount",
+              "B6"  => "Allowed -Actual",
+              "D"   => "Payor Amount Paid",
+              "D8"  => "Discount Amount",
+              "DY"  => "Per Day Limit",
+              "EAF" => "Amount Owed",
+              "F4"  => "Postage Claimed",
+              "F5"  => "Patient Amount Paid",
+              "I"   => "Interest",
+              "KH"  => "Deduction Amount",
+              "NE"  => "Net Billed",
+              "NL"  => "Negative Ledger Balance",
+              "T"   => "Tax",
+              "T2"  => "Total Claim Before Taxes",
+              "YU"  => "In Process",
+              "YY"  => "Returned",
+              "ZK"  => "Federal Medicare or Medicaid Payment Mandate Category 1",
+              "ZL"  => "Federal Medicare or Medicaid Payment Mandate Category 2",
+              "ZM"  => "Federal Medicare or Medicaid Payment Mandate Category 3",
+              "ZN"  => "Federal Medicare or Medicaid Payment Mandate Category 4",
+              "ZO"  => "Federal Medicare or Medicaid Payment Mandate Category 5",
+              "ZZ"  => "Mutually Defined"))
 
           E531  = t::AN.new(:E531 , "Agent Shipment ID Number"             , 1, 12)
           E554  = t::Nn.new(:E554 , "Assigned Number"                      , 1, 6, 0)
@@ -5133,6 +5270,10 @@ module Stupidedi
               "X0010" => "Combine All Same Day Shipment"))
 
           E567  = t::Nn.new(:E567 , "Equipment Length"                     , 4, 5, 0)
+          E569  = t::ID.new(:E569 , "Account Number Qualifier"             , 1, 3,
+            s::CodeList.build(
+              "DA" => "Demand Deposit",
+              "SG" => "Savings"))
           E571  = t::ID.new(:E571 , "Tare Qualifier Code"                  , 1, 1,
             s::CodeList.build(
               "A" => "Actual",
@@ -5176,7 +5317,7 @@ module Stupidedi
               "2" => "Certified or Cashier's or Company Check Only",
               "3" => "Certified or Cashier's or Company or Personal Check Only",
               "4" => "Cash or Certified Check Only"))
-          
+
           E628  = t::AN.new(:E628 , "Hierachical ID Number"                , 1, 12)
 
           E639  = t::ID.new(:E639 , "Basis of Unit Price Code"                           , 2, 2,
@@ -5752,6 +5893,30 @@ module Stupidedi
               "PHI" => "Philadelphia Foreign Exchange",
               "ZUR" => "Zurich (Switzerland) Exchange"))
 
+          E673  = t::ID.new(:E673 , "Quantity Qualifier"                   , 2, 2,
+            s::CodeList.build(
+              "90" => "Acknowledged Quantity",
+              "AA" => "Unacknowledged Quantity",
+              "CA" => "Covered - Actual",
+              "CD" => "Co-insured - Actual",
+              "FL" => "Units",
+              "LA" => "Life-time Reserve - Actual",
+              "LE" => "Life-time Reserve - Estimated",
+              "NA" => "Number of Non-covered Days",
+              "NE" => "Non-Covered Amount - Estimated",
+              "NR" => "Not Replaced Blood Units",
+              "OU" => "Outlier Days",
+              "PS" => "Prescription",
+              "PT" => "Patients",
+              "QA" => "Quantity Approved",
+              "QC" => "Quantity Disapproved",
+              "VS" => "Visits",
+              "ZK" => "Federal Medicare or Medicaid Payment Mandate Category 1",
+              "ZL" => "Federal Medicare or Medicaid Payment Mandate Category 2",
+              "ZM" => "Federal Medicare or Medicaid Payment Mandate Category 3",
+              "ZN" => "Federal Medicare or Medicaid Payment Mandate Category 4",
+              "ZO" => "Federal Medicare or Medicaid Payment Mandate Category 5"))
+
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
               "01" => "Parent",
@@ -5940,7 +6105,7 @@ module Stupidedi
             s::CodeList.build(
               "0" => "No Subordinate HL Segment in This Hierarchical Structure",
               "1" => "Additional Subordinate HL Data Segment in This Hierarchical Structure"))
-          
+
           E737  = t::ID.new(:E737 , "Measurement Reference ID Code"        , 2, 2,
             s::CodeList.build(
               "9L" => "Ninth Layer",
@@ -7507,6 +7672,7 @@ module Stupidedi
             s::CodeList.build(
               "RQ" => "Reportable Quantity"))
           E761  = t::Nn.new(:E761 , "Equipment Number Check Digit"         , 1, 1, 0)
+          E782  = t:: R.new(:E782 , "Monetary Amount"                      , 1, 18)
           E786  = t::ID.new(:E786 , "Security Level Code"                  , 2, 2,
             s::CodeList.build(
               "00" => "Company Non-Classified",
@@ -7531,6 +7697,10 @@ module Stupidedi
               "TEC" => "Technical or Chemical Group Name"))
 
           E809  = t::AN.new(:E809 , "Hazardous Material Shipment Information", 1, 25)
+          E812  = t::ID.new(:E812 , "Payment Format Code"                  , 3, 3,
+            s::CodeList.build(
+              "CCP" => "Cash Concentration/Disbursement plus Addenda (CCD+)(ACH)",
+              "CTX" => "Corporate Trade Exchange (CTX) (ACH)"))
           E819  = t::ID.new(:E819 , "Language Code"                        , 2, 3,
             s::CodeList.external("102"))
 
@@ -7784,6 +7954,8 @@ module Stupidedi
               "WS" => "Washcoat",
               "ZZ" => "Mutually Defined"))
 
+          E954  = t:: R.new(:E954 , "Percentage as Decimal"                , 1,  10)
+
           E983  = t::ID.new(:E983 , "Hazardous Class Qualifier"            , 1, 1,
             s::CodeList.build(
               "P" => "Primary",
@@ -7806,6 +7978,75 @@ module Stupidedi
               "B" => "Hazard Zone B",
               "C" => "Hazard Zone C",
               "D" => "Hazard Zone D"))
+
+          E1028 = t::AN.new(:E1028, "Claim Submitter's Identifier"         , 1, 38)
+          E1029 = t::ID.new(:E1029, "Claim Status Code"                    , 1, 2,
+            s::CodeList.build(
+              "1"  => "Processed as Primary",
+              "2"  => "Processed as Secondary",
+              "3"  => "Processed as Tertiary",
+              "4"  => "Denied",
+              "5"  => "Pended",
+              "10" => "Received, but not in process",
+              "13" => "Suspended",
+              "15" => "Suspended - investigation with field",
+              "16" => "Suspended - return with material",
+              "17" => "Suspended - review pending",
+              "19" => "Processed as Primary, Forwarded to Additional Payer(s)",
+              "20" => "Processed as Secondary, Forwarded to Additional Payer(s)",
+              "21" => "Processed as Tertiary, Forwarded to Additional Payer(s)",
+              "22" => "Reversal of Previous Payment",
+              "23" => "Not Our Claim, Forwarded to Additional Payer(s)",
+              "25" => "Predetermination Pricing Only - No Payment",
+              "27" => "Reviewed"))
+          E1032 = t::ID.new(:E1032, "Claim Filing Indicator Code"          , 1, 2,
+            s::CodeList.build(
+              "11" => "Other Non-Federal Programs",
+              "12" => "Preferred Provider Organization (PPO)",
+              "13" => "Point of Service (POS)",
+              "14" => "Exclusive Provider Organization (EPO)",
+              "15" => "Indemnity Insurance",
+              "16" => "Health Maintenance Organization (HMO) Medicare Risk",
+              "17" => "Dentail Maintenance Organization",
+              "AM" => "Automobile Medical",
+              "BL" => "Blue Cross/Blue Shield",
+              "CH" => "Champus",
+              "CI" => "Commercial Insurance Co.",
+              "DS" => "Disability",
+              "FI" => "Federal Employees Program",
+              "HM" => "Health Maintenance Organization",
+              "LM" => "Liability Medical",
+              "MA" => "Medicare Part A",
+              "MB" => "Medicare Part B",
+              "MC" => "Medicaid",
+              "OF" => "Other Federal Program",
+              "TV" => "Title V",
+              "VA" => "Veterans Affairs Plan",
+              "WC" => "Worker's Compensation Health Claim",
+              "ZZ" => "Mutually Defined"))
+
+          E1033 = t::ID.new(:E1033, "Claim Adjustment Group Code"          , 1, 12,
+            s::CodeList.build(
+              "CO" => "Contractual Obligations",
+              "CR" => "Corrections and Reversals",
+              "OA" => "Other adjustments",
+              "PI" => "Payor Initiated Reductions",
+              "PR" => "Patient Responsibility"))
+
+          E1034 = t::ID.new(:E1034, "Claim Adjustment Reason Code"         , 1, 5,
+            s::CodeList.external("139"))
+          E1035 = t::AN.new(:E1035, "Name Last or Organization Name"       , 1, 60)
+          E1036 = t::AN.new(:E1036, "Name First"                           , 1, 35)
+          E1037 = t::AN.new(:E1037, "Name Middle"                          , 1, 25)
+          E1038 = t::AN.new(:E1038, "Name Prefix"                          , 1, 10)
+          E1039 = t::AN.new(:E1039, "Name Suffix"                          , 1, 10)
+
+          E1048 = t::ID.new(:E1048, "Business Function Code"               , 1, 3)
+
+          E1065 = t::ID.new(:E1065, "Entity Type Qualifier"                , 1, 1,
+            s::CodeList.build(
+              "1" => "Person",
+              "2" => "Non-Person Entity"))
 
           E1073 = t::ID.new(:E1073, "Yes/No Condition or Response Code"    , 1, 1,
             s::CodeList.build(
@@ -8962,6 +9203,19 @@ module Stupidedi
               "S" => "South",
               "W" => "West"))
 
+          E1325 = t::ID.new(:E1325, "Claim Frequency Type Code"            , 1, 1,
+            s::CodeList.external("235"))
+
+          E1331 = t::AN.new(:E1331, "Facility Code Value"                  , 1, 2)
+
+          E1339 = t::AN.new(:E1339, "Procedure Modifier"                   , 2, 2)
+
+          E1352 = t::ID.new(:E1352, "Patient Status Code"                  , 1, 2,
+            s::CodeList.external("239"))
+
+          E1354 = t::ID.new(:E1354, "Diagnosis Related Group (DRG) Code"   , 1, 4,
+            s::CodeList.external("229"))
+
           E1373 = t::ID.new(:E1373, "Measurement Method or  Device Code"   , 2, 4,
             s::CodeList.build(
               "BM" => "Bellows Meter",
@@ -9115,6 +9369,17 @@ module Stupidedi
             "To identify a composite unit of measure",
             E355.component_use(r::Mandatory, s::RepeatCount.bounded(1)))
 
+          C003 = Schema::CompositeElementDef.build(:C003,
+            "Composite Medical Procedure Identifier",
+            "To identify a procedure by its standardized codes and applicable modifiers",
+            E235 .component_use(r::Mandatory),
+            E234 .component_use(r::Mandatory), # Qualified by C003-01
+            E1339.component_use(r::Optional),
+            E1339.component_use(r::Optional),
+            E1339.component_use(r::Optional),
+            E1339.component_use(r::Optional),
+            E352 .component_use(r::Optional))
+
           C040  = Schema::CompositeElementDef.build(:C040,
             "Reference Identifier",
             "To identify one or more reference numbers or identification numbers as specified by the Reference Qualifier",
@@ -9127,6 +9392,11 @@ module Stupidedi
             SyntaxNotes::P.build(3, 4),
             SyntaxNotes::P.build(5, 6))
 
+          C042 = Schema::CompositeElementDef.build(:C042,
+            "Adjustment Identifier",
+            "To provide the category and identifying reference information for an adjustment",
+            E426 .component_use(r::Mandatory),
+            E127 .component_use(r::Optional))
 
         end
       end
