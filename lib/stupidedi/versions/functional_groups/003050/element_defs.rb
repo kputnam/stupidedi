@@ -420,7 +420,7 @@ module Stupidedi
           E71   = t::Nn.new(:E71  , "Inquiry Request Number"               , 1, 3, 0)
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
-          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0) 
+          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
           E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
@@ -560,7 +560,7 @@ module Stupidedi
 
           E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)
           E124  = t::AN.new(:E124 , "Application Receiver's Code"          , 2, 15)
-          
+
           E127  = t::AN.new(:E127 , "Reference Number - Business Type"     , 1, 2,
             s::CodeList.build(
               "AC" => "Service Accessory",
@@ -4767,9 +4767,9 @@ module Stupidedi
               "TB" => "Prepaid To Border",
               "TD" => "Prepaid to Destination",
               "TP" => "Prepaid To Port"))
-          
+
           E335  = t::ID.new(:E335 , "Transportation Terms Code"            , 3, 3)
-          
+
           E336  = t::ID.new(:E336 , "Terms Type Code"                      , 2, 2,
             s::CodeList.build(
               "09" => "Proximo",
@@ -5721,7 +5721,7 @@ module Stupidedi
           E359  = t:: R.new(:E359   , "Allowance or Charge Rate - Supplier Rate" , 1, 9)
 
           E360  = t::Nn.new(:E360   , "Allowance or Charge Total Amount"   , 1, 9, 2)
-          E361  = t::Nn.new(:E361   , "Terms Discount Amount"              , 1, 10, 2)          
+          E361  = t::Nn.new(:E361   , "Terms Discount Amount"              , 1, 10, 2)
           E362  = t::Nn.new(:E362   , "Total Invoice Amount"               , 1, 10, 2)
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
             s::CodeList.build(
@@ -5783,7 +5783,7 @@ module Stupidedi
           E389  = t::Nn.new(:E389 , "Deferred Amount Due"                  , 1, 10, 2)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
           E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
-          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)          
+          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)
           E397  = t::AN.new(:E397 , "Color"                                , 1, 10)
           E398  = t:: R.new(:E398 , "Order Sizing Factor"                  , 1, 10)
           E399  = t::ID.new(:E399 , "Pallet Exchange Code"                 , 1, 1)
@@ -6355,7 +6355,7 @@ module Stupidedi
               "2" => "Certified or Cashier's or Company Check Only",
               "3" => "Certified or Cashier's or Company or Personal Check Only",
               "4" => "Cash or Certified Check Only"))
-          
+
           E628  = t::AN.new(:E628 , "Hierachical ID Number"                , 1, 12)
 
           E639  = t::ID.new(:E639 , "Basis of Unit Price Code"                           , 2, 2,
@@ -7371,7 +7371,7 @@ module Stupidedi
               "R" => "Residue Last Contained Description (Rail Car)"))
 
           E668  = t::ID.new(:E668 , "Line Item Status Code"                , 2, 2)
-          
+
           E669  = t::ID.new(:E669 , "Currency Market/Exchange Code"        , 3, 3,
             s::CodeList.build(
               "IMF" => "International Monetary Fund",
@@ -7570,7 +7570,7 @@ module Stupidedi
             s::CodeList.build(
               "0" => "No Subordinate HL Segment in This Hierarchical Structure",
               "1" => "Additional Subordinate HL Data Segment in This Hierarchical Structure"))
-          
+
           E737  = t::ID.new(:E737 , "Measurement Reference ID Code"        , 2, 2,
             s::CodeList.build(
               "9L" => "Ninth Layer",
@@ -9226,7 +9226,7 @@ module Stupidedi
             s::CodeList.build(
               "1" => "Adjustment Having Normal Effect on Inventory for Type of Transaction Set in which Code is Used",
               "2" => "Adjustment Having Reversal Effect on Inventory for Type of Transaction Set in Which Code is Used"))
-          
+
           E933  = t::AN.new(:E933 , "Free-Form Message Text"               , 1, 264)
           E935  = t::ID.new(:E935 , "Measurement Significance Code"        , 2, 2,
             s::CodeList.build(

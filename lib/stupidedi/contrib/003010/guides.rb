@@ -10,10 +10,11 @@ module Stupidedi
         GuideBuilder = Stupidedi::Guides::FortyTen::GuideBuilder
         SegmentReqs  = Stupidedi::Guides::FortyTen::SegmentReqs
         ElementReqs  = Stupidedi::Guides::FortyTen::ElementReqs
-        
+
         autoload :RA820, "stupidedi/contrib/003010/guides/RA820"
         autoload :PO850, "stupidedi/contrib/003010/guides/PO850"
         autoload :PC860, "stupidedi/contrib/003010/guides/PC860"
+
       end
     end
   end

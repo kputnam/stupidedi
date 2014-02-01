@@ -234,16 +234,17 @@ module Stupidedi
             "stupidedi/versions/functional_groups/003010/segment_defs/ITD"
 
           autoload :TD5,
-            "stupidedi/versions/functional_groups/003010/segment_defs/TD5"            
+            "stupidedi/versions/functional_groups/003010/segment_defs/TD5"
 
           autoload :MSG,
-            "stupidedi/versions/functional_groups/003010/segment_defs/MSG"                  
+            "stupidedi/versions/functional_groups/003010/segment_defs/MSG"
 
           autoload :BCH,
-            "stupidedi/versions/functional_groups/003010/segment_defs/BCH"                  
+            "stupidedi/versions/functional_groups/003010/segment_defs/BCH"
 
           autoload :POC,
-            "stupidedi/versions/functional_groups/003010/segment_defs/POC"   
+            "stupidedi/versions/functional_groups/003010/segment_defs/POC"
+
         end
       end
     end

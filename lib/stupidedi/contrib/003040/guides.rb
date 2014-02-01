@@ -10,8 +10,9 @@ module Stupidedi
         GuideBuilder = Stupidedi::Guides::FortyTen::GuideBuilder
         SegmentReqs  = Stupidedi::Guides::FortyTen::SegmentReqs
         ElementReqs  = Stupidedi::Guides::FortyTen::ElementReqs
-        
+
         autoload :WA142, "stupidedi/contrib/003040/guides/WA142"
+
       end
     end
   end

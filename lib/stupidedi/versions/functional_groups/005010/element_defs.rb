@@ -633,7 +633,7 @@ module Stupidedi
               "X" => "Rejected, Content After Decryption Could Not Be Analyzed"))
           E718  = t::ID.new(:E718 , "Transaction Set Syntax Error Code"    , 1, 3)
           E719  = t::Nn.new(:E719 , "Segment Position in Transaction Set"  , 1, 10, 0)
-          
+
           E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3)
             # S77
 

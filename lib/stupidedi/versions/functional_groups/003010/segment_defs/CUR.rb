@@ -13,7 +13,7 @@ module Stupidedi
             e::E98  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E100 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E280 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
-          
+
             # e::E98  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             # e::E100 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             # e::E669 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),

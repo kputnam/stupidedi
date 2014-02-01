@@ -270,26 +270,26 @@ module Stupidedi
             "stupidedi/versions/functional_groups/004010/segment_defs/JIT"
 
           autoload :BFR,
-            "stupidedi/versions/functional_groups/004010/segment_defs/BFR"            
+            "stupidedi/versions/functional_groups/004010/segment_defs/BFR"
 
           autoload :SDP,
-            "stupidedi/versions/functional_groups/004010/segment_defs/SDP"            
+            "stupidedi/versions/functional_groups/004010/segment_defs/SDP"
 
           autoload :SHP,
-            "stupidedi/versions/functional_groups/004010/segment_defs/SHP"            
+            "stupidedi/versions/functional_groups/004010/segment_defs/SHP"
 
           autoload :TD5,
-            "stupidedi/versions/functional_groups/004010/segment_defs/TD5"         
+            "stupidedi/versions/functional_groups/004010/segment_defs/TD5"
 
           autoload :QTY,
-            "stupidedi/versions/functional_groups/004010/segment_defs/QTY"         
+            "stupidedi/versions/functional_groups/004010/segment_defs/QTY"
 
           autoload :AK4,
-            "stupidedi/versions/functional_groups/004010/segment_defs/AK4"         
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK4"
 
           autoload :AK5,
-            "stupidedi/versions/functional_groups/004010/segment_defs/AK5"      
-            
+            "stupidedi/versions/functional_groups/004010/segment_defs/AK5"
+
         end
       end
     end
