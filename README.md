@@ -317,12 +317,12 @@ if result.fatal?
   result.explain{|reason| raise reason + " at #{result.position.inspect}" }
 end
 
-# Helper function
+# Helper function: fetch an element from the current segment
 def el(m, *ns, &block)
   if Stupidedi::Either === m
     m.tap{|m| el(m, *ns, &block) }
   else
-    yield(*ns.map{|n| m.element(*n).map(&:node).map(&:value).fetch(nil) })
+    yield(*ns.map{|n| m.elementn(n).map(&:value).fetch })
   end
 end
 

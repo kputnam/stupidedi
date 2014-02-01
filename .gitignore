@@ -1,5 +1,4 @@
 .yardoc
 doc/generated
-bin\*
-coverage/
+coverage
 .bundle

@@ -6,7 +6,7 @@
 --hide-void-return
 --no-private
 --output-dir      doc/generated
---asset           doc/images:.
+--asset           doc/images:images
 --load            ./yard/rspec-plugin/lib/yard-rspec.rb
 --load            ./yard/meta-plugin/lib/yard-meta.rb
 
