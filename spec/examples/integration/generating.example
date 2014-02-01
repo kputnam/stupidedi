@@ -260,7 +260,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             lambda { isa(strict) }.should \
-              raise_error(raise StandardError,"invalid element ISA13")
+              raise_error("invalid element ISA13")
 
             strict.should be_empty
           end
@@ -268,8 +268,7 @@ describe "Generating" do
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(relaxed) }.should_not \
-              raise_error(raise StandardError, "invalid element ISA13")
+            lambda { isa(relaxed) }.should_not raise_error
 
             relaxed.element(13).select{|e| e.node.invalid? }.should be_defined
           end
