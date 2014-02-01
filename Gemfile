@@ -7,7 +7,8 @@ group :development do
   gem "rake"
   gem "rspec"      ,"~> 2.14.1"
   gem "yard"       ,"~> 0.8.7"
-  gem "rdiscount"  ,"~> 2.1.7"
+  gem "redcarpet"  ,"~> 3.0.0"
+  #em "rdiscount"  ,"~> 2.1.7"
 
   gem "term-ansicolor"
   gem "blankslate"             ,:platforms => [:ruby_18, :mri_18, :mingw_18]

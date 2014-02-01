@@ -395,7 +395,7 @@ module Stupidedi
       end
 
       # Returns a `StateMachine` positioned on the next matching segment,
-      # excluding {InvalidSegmentVal}s, that satisfies the given element
+      # excluding {Values::InvalidSegmentVal}s, that satisfies the given element
       # constraints. The search space is limited to certain related elements
       # described in [Navigating.md]
       #
@@ -408,7 +408,7 @@ module Stupidedi
       end
 
       # Returns a `StateMachine` positioned on the next matching segment,
-      # including {InvalidSegmentVal}s, that satisfies the given element
+      # including {Values::InvalidSegmentVal}s, that satisfies the given element
       # constraints. The search space is limited to certain related elements
       # described in [Navigating.md]
       #
