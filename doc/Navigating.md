@@ -208,6 +208,7 @@ is not reachable will cause [`#find`][14] to raise an exception. To be clear,
 #### Sibling Segments
 
 <iframe src="images/837P-siblings.png" frameborder="no" scrolling="yes" height="430" width="100%"></iframe>
+<a href="images/837P-siblings.png">View diagram</a>
 
 Segments connected directly by a horizontal dashed black line are siblings and
 are reachable using [`#find`][14]. For instance, from the third `NM1`, the `N3`,
@@ -249,6 +250,7 @@ there are no segments in Loop 2000A that follow the child loops.
 #### Nephew Segments
 
 <iframe src="images/837P-nephews.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
+<a href="images/837P-nephews.png">View diagram</a>
 
 Segments that occur as the _first_ direct child of a sibling node are nephews.
 The siblings that _follow_ the first child are not directly reachable, but they
@@ -281,6 +283,7 @@ problems.
 #### Cousin Segments
 
 <iframe src="images/837P-cousins.png" frameborder="no" scrolling="yes" height="470" width="100%"></iframe>
+<a href="images/837P-cousins.png">View diagram</a>
 
 Segments that occurr as the _first_ child of a sibling of the parent node are
 cousins of the current segment. Similar to the restriction on nephew segments,
@@ -305,6 +308,7 @@ See [Element Constraints](#Element_Constraints) for information on how to find a
 #### Parent Segments
 
 <iframe src="images/837P-parents.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
+<a href="images/837P-parents.png">View diagram</a>
 
 Internal knowledge of the underlying tree structure makes it possible to
 *rewind* to the first segment of a parent structure, using the [`#parent`][15]

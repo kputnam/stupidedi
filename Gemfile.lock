@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    blankslate (2.1.2.3)
+    blankslate (3.1.2)
     called_from (0.1.0)
     cantor (1.2.0)
     diff-lcs (1.2.5)
