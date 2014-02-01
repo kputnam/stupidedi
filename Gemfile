@@ -7,7 +7,7 @@ group :development do
   gem "rake"
   gem "rspec"      ,"~> 2.14.1"
   gem "yard"       ,"~> 0.8.7"
-  gem "redcarpet"  ,"~> 3.0.0"
+  gem "redcarpet"  ,"~> 2.3.0"
   #em "rdiscount"  ,"~> 2.1.7"
 
   gem "term-ansicolor"
