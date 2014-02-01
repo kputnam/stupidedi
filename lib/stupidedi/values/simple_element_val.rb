@@ -37,7 +37,7 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :copy, "changes={}"
 
-      # True unless this value isn't included in {ElementUse#allowed_values}
+      # True unless this value isn't included in {AbstractElementUse#allowed_values}
       def allowed?
         empty? or invalid? or usage.allowed_values.include?(to_s)
       end

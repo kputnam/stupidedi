@@ -99,7 +99,7 @@ module Stupidedi
       #
       # @return [Integer]
       # @return nil if `element` is not present in the input
-      abstract :index, :args => %w(value)
+      abstract :index, :args => %w(element)
 
       # @group Advancing the Cursor
       ########################################################################

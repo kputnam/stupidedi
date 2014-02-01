@@ -67,7 +67,7 @@ module Stupidedi
       #
       # The only exception to the rule of preferring the {Instruction} which pops
       # the greatest number of states is when the {Instruction} is for ISA. We want
-      # to reuse one root {TransmissionVal} container for all children.
+      # to reuse one root {Values::TransmissionVal} container for all children.
       #
       class Deepest < ConstraintTable
         def initialize(instructions)

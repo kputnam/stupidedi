@@ -20,8 +20,7 @@ module Stupidedi
         true # @todo
       end
 
-      # @param [Class]  definition
-      # @param [String] definition
+      # @param [Class, String] definition
       def register(definition, &constructor)
         @table[definition] = constructor
       end
