@@ -234,13 +234,13 @@ module Stupidedi
             "stupidedi/versions/functional_groups/002001/segment_defs/J2X"
 
           autoload :SDP,
-            "stupidedi/versions/functional_groups/002001/segment_defs/SDP"                
+            "stupidedi/versions/functional_groups/002001/segment_defs/SDP"
 
           autoload :ATH,
-            "stupidedi/versions/functional_groups/002001/segment_defs/ATH"                
+            "stupidedi/versions/functional_groups/002001/segment_defs/ATH"
 
           autoload :TD5,
-            "stupidedi/versions/functional_groups/002001/segment_defs/TD5"                           
+            "stupidedi/versions/functional_groups/002001/segment_defs/TD5"
 
         end
       end

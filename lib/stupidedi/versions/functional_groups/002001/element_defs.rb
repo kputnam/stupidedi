@@ -9,8 +9,6 @@ module Stupidedi
           t = ElementTypes
           r = ElementReqs
           s = Schema
-          
-#          E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR J2X01"                , 0, 10)
 
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
@@ -420,7 +418,7 @@ module Stupidedi
           E71   = t::Nn.new(:E71  , "Inquiry Request Number"               , 1, 3, 0)
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
-          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0) 
+          E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
           E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
@@ -4697,7 +4695,7 @@ module Stupidedi
           E328  = t::AN.new(:E328 , "Release Number"                       , 1, 30)
           E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
           E330  = t:: R.new(:E330 , "Quantity Ordered"                     , 1, 9)
-          
+
           E335  = t::ID.new(:E335 , "Transportation Terms Code"            , 3, 3)
           E337  = t::TM.new(:E337 , "Time"                                 , 4, 4)
           E346  = t::ID.new(:E346 , "Application Type"                     , 2, 2,
@@ -5679,11 +5677,11 @@ module Stupidedi
 
           E382  = t:: R.new(:E382 , "Number of Units Shipped"              , 1, 10)
           E383  = t:: R.new(:E383 , "Quantity Difference"                  , 1, 9)
-          
+
           E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
           E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
-          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)          
+          E396  = t::AN.new(:E396 , "Shipment Identification"              , 2, 30)
           E397  = t::AN.new(:E397 , "Color"                                , 1, 10)
           E398  = t:: R.new(:E398 , "Order Sizing Factor"                  , 1, 10)
           E399  = t::ID.new(:E399 , "Pallet Exchange Code"                 , 1, 1)
@@ -6226,7 +6224,7 @@ module Stupidedi
               "2" => "Certified or Cashier's or Company Check Only",
               "3" => "Certified or Cashier's or Company or Personal Check Only",
               "4" => "Cash or Certified Check Only"))
-          
+
           E628  = t::AN.new(:E628 , "Hierachical ID Number"                , 1, 12)
 
           E639  = t::ID.new(:E639 , "Basis of Unit Price Code"                           , 2, 2,
@@ -7469,7 +7467,7 @@ module Stupidedi
             s::CodeList.external("77"))
 
           E722  = t::Nn.new(:E722 , "Element Position in Segment"          , 1, 2, 0)
-          E723  = t::ID.new(:E723 , "Data Element Syntax Error Code"       , 1, 3)          
+          E723  = t::ID.new(:E723 , "Data Element Syntax Error Code"       , 1, 3)
           E724  = t::AN.new(:E724 , "Copy of Bad Data Element"             , 1, 99)
           E725  = t::Nn.new(:E725 , "Data Element Reference Number"        , 1, 4, 0)
 
@@ -7489,7 +7487,7 @@ module Stupidedi
             s::CodeList.build(
               "0" => "No Subordinate HL Segment in This Hierarchical Structure",
               "1" => "Additional Subordinate HL Data Segment in This Hierarchical Structure"))
-          
+
           E737  = t::ID.new(:E737 , "Measurement Reference ID Code"        , 2, 2,
             s::CodeList.build(
               "9L" => "Ninth Layer",
