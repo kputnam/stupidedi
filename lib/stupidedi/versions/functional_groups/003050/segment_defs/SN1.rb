@@ -6,10 +6,10 @@ module Stupidedi
 
           s = Schema
           e = ElementDefs
-          r = ElementReqs 
+          r = ElementReqs
 
         # Definition might be outdated, working from ANSI X12 2001 specification
-        
+
           SN1 = s::SegmentDef.build(:SN1, "Item Detail (Shipment)",
             "To specify line-item detail relative to shipment",
             e::E350 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),

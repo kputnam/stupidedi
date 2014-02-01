@@ -8,8 +8,8 @@ module Stupidedi
         r = SegmentReqs
         e = ElementReqs
         s = Versions::FunctionalGroups::ThirtyTen::SegmentDefs
-        # t = Contrib::TwoThousandOne::TransactionSetDefs
         t = Contrib::ThirtyTen::TransactionSetDefs
+
         #
         # Ship Notice/Manifest
         #
@@ -25,7 +25,7 @@ module Stupidedi
               b::Element(e::Required,    "Transaction Set Purpose Code", b::Values("00","05","18")),
               b::Element(e::Required,    "Purchase Order Type Code", b::Values("BE","BK","SP")),
               b::Element(e::Required,    "Purchase Order Number"),
-              b::Element(e::NotUsed, "Unknown"), 
+              b::Element(e::NotUsed,     "Unknown"),
               b::Element(e::Situational, "Change Order Sequence Number"),
               b::Element(e::Situational, "Purchase Order Date")),
 
@@ -69,26 +69,26 @@ module Stupidedi
               b::Element(e::Required,    "Transportation Method/Type Code", b::Values("A","AE","M","PG","R","RR","SE","SS")),
               b::Element(e::Required,    "Routing - Carrier's Name")),
 
-            d::LoopDef.build("N9", d::RepeatCount.bounded(1),              
+            d::LoopDef.build("N9", d::RepeatCount.bounded(1),
               b::Segment(280, s:: N9, "Reference Number - Design Note Number",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("C4")),
                 b::Element(e::Situational, "Reference Number - Design Note Number"))),
 
-            d::LoopDef.build("N9", d::RepeatCount.bounded(1),              
+            d::LoopDef.build("N9", d::RepeatCount.bounded(1),
               b::Segment(281, s:: N9, "Reference Number - Supplier Code",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("VR")),
                 b::Element(e::Situational, "Reference Number"))),
 
-            d::LoopDef.build("N9", d::RepeatCount.bounded(1),              
+            d::LoopDef.build("N9", d::RepeatCount.bounded(1),
               b::Segment(282, s:: N9, "Reference Number - Business Type",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("PG")),
                 b::Element(e::Situational, "Reference Number - Business Type", b::Values("AC","AE","AS","BS","ER","ES","ET",
-                                            "GW","IS","MP","MT","ND","NS","NT","PR","RB","RC","RP","SD","SN","SP","ST","UK","VP")))),
+                                           "GW","IS","MP","MT","ND","NS","NT","PR","RB","RC","RP","SD","SN","SP","ST","UK","VP")))),
 
-            d::LoopDef.build("N9", d::RepeatCount.bounded(1),              
+            d::LoopDef.build("N9", d::RepeatCount.bounded(1),
               b::Segment(283, s:: N9, "Reference Number",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("CU")),
@@ -98,7 +98,7 @@ module Stupidedi
                 r::Situational, d::RepeatCount.bounded(1000),
                 b::Element(e::Required,    "Free-Form Message Text"))),
 
-            d::LoopDef.build("N1", d::RepeatCount.bounded(200),              
+            d::LoopDef.build("N1", d::RepeatCount.bounded(200),
               b::Segment(300, s::N1, "Name",
                 r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("BT","MP")),
@@ -119,11 +119,10 @@ module Stupidedi
                 b::Element(e::Required,    "City Name"),
                 b::Element(e::Situational, "State or Province Code"),
                 b::Element(e::Situational, "Postal Code"),
-                b::Element(e::NotUsed, "Unknown")))),
+                b::Element(e::NotUsed,     "Unknown")))),
 
-
-          d::TableDef.detail("Detail",            
-            d::LoopDef.build("POC", d::RepeatCount.bounded(100000),              
+          d::TableDef.detail("Detail",
+            d::LoopDef.build("POC", d::RepeatCount.bounded(100000),
               b::Segment(10, s::POC, "Line Item Change",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Situational, "Assigned Identification - Purchase Order Line Number"),
@@ -132,7 +131,7 @@ module Stupidedi
                 b::Element(e::Situational, "Quantity Left to Receive"),
                 b::Element(e::Situational, "Unit or Basis for Measurement Code",b::Values("EA")),
                 b::Element(e::Situational, "Unit Price"),
-                b::Element(e::NotUsed, "Unknown"), 
+                b::Element(e::NotUsed,     "Unknown"),
                 b::Element(e::Situational, "Product/Service ID Qualifier",b::Values("BP")),
                 b::Element(e::Situational, "Product/Service ID - Nissan Part Number"),
                 b::Element(e::Situational, "Product/Service ID Qualifier",b::Values("C4")),
@@ -142,16 +141,16 @@ module Stupidedi
                 b::Segment( 50, s::PID, "Product/Item Description",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Item Description Type", b::Values("F")),
-                  b::Element(e::NotUsed, "Unknown"),
-                  b::Element(e::NotUsed, "Unknown"),
-                  b::Element(e::NotUsed, "Unknown"),
+                  b::Element(e::NotUsed,     "Unknown"),
+                  b::Element(e::NotUsed,     "Unknown"),
+                  b::Element(e::NotUsed,     "Unknown"),
                   b::Element(e::Situational, "Description"))),
 
               d::LoopDef.build("N9", d::RepeatCount.bounded(1),
                 b::Segment(320, s:: N9, "Reference Number - Clear Text Clause",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Reference Number Qualifier", b::Values("CU")),
-                  b::Element(e::NotUsed, "Unknown")),
+                  b::Element(e::NotUsed,     "Unknown")),
 
                 b::Segment(330, s::MSG, "Message Text",
                   r::Situational, d::RepeatCount.bounded(1000),

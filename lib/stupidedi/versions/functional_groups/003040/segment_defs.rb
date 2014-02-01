@@ -234,34 +234,34 @@ module Stupidedi
             "stupidedi/versions/functional_groups/003040/segment_defs/ITD"
 
           autoload :TD5,
-            "stupidedi/versions/functional_groups/003040/segment_defs/TD5"            
+            "stupidedi/versions/functional_groups/003040/segment_defs/TD5"
 
           autoload :MSG,
-            "stupidedi/versions/functional_groups/003040/segment_defs/MSG"                  
+            "stupidedi/versions/functional_groups/003040/segment_defs/MSG"
 
           autoload :QTY,
-            "stupidedi/versions/functional_groups/003040/segment_defs/QTY"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/QTY"
 
           autoload :SSS,
-            "stupidedi/versions/functional_groups/003040/segment_defs/SSS"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/SSS"
 
           autoload :PRR,
-            "stupidedi/versions/functional_groups/003040/segment_defs/PRR"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/PRR"
 
           autoload :REP,
-            "stupidedi/versions/functional_groups/003040/segment_defs/REP"    
-        
+            "stupidedi/versions/functional_groups/003040/segment_defs/REP"
+
           autoload :IT1,
-            "stupidedi/versions/functional_groups/003040/segment_defs/IT1"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/IT1"
 
           autoload :AMT,
-            "stupidedi/versions/functional_groups/003040/segment_defs/AMT"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/AMT"
 
           autoload :TDS,
-            "stupidedi/versions/functional_groups/003040/segment_defs/TDS"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/TDS"
 
           autoload :BGN,
-            "stupidedi/versions/functional_groups/003040/segment_defs/BGN"    
+            "stupidedi/versions/functional_groups/003040/segment_defs/BGN"
 
         end
 

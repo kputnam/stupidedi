@@ -8,9 +8,8 @@ module Stupidedi
         r = SegmentReqs
         e = ElementReqs
         s = Versions::FunctionalGroups::TwoThousandOne::SegmentDefs
-        # s = Versions::FunctionalGroups::FortyTen::SegmentDefs
         t = Contrib::TwoThousandOne::TransactionSetDefs
-        #t = Contrib::FortyTen::TransactionSetDefs
+
         #
         # Ship Notice/Manifest
         #
@@ -32,15 +31,15 @@ module Stupidedi
             b::Segment(40, s::DTM, "Date/Time/Period",
               r::Situational, d::RepeatCount.bounded(10),
               b::Element(e::Required,    "Date/Time Qualifier", b::Values("011")),
-              b::Element(e::Situational, "Date - Ship Date"),              
+              b::Element(e::Situational, "Date - Ship Date"),
               b::Element(e::Situational, "Time - Ship Time"),
               b::Element(e::NotUsed,     "Time Code"),
               b::Element(e::NotUsed,     "Century"),
               b::Element(e::NotUsed,     "Date Time Period Format Qualifier"),
               b::Element(e::NotUsed,     "Date Time Period"))),
 
-          d::TableDef.detail("Detail",            
-            d::LoopDef.build("HL", d::RepeatCount.bounded(1),              
+          d::TableDef.detail("Detail",
+            d::LoopDef.build("HL", d::RepeatCount.bounded(1),
               b::Segment(50, s:: HL, "Hierarchical Level - Shipment Level",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Hierarchical ID Number", b::Values("1")),
@@ -52,7 +51,7 @@ module Stupidedi
                 b::Element(e::Required,    "Measurement Reference ID Code", b::Values("PD")),
                 b::Element(e::Required,    "Measurement Qualifier", b::Values("G")),
                 b::Element(e::Situational, "Measurement Value - Gross Weight"),
-                b::Element(e::Required, "Unit or Basis for Measurement Code", b::Values("LB")),
+                b::Element(e::Required,    "Unit or Basis for Measurement Code", b::Values("LB")),
                 b::Element(e::Situational, "Range Minimum", b::Values("0")),
                 b::Element(e::Situational, "Range Maximum", b::Values("0"))),
               b::Segment(160, s::TD1, "Carrier Details (Quantity and Weight)",
@@ -85,7 +84,6 @@ module Stupidedi
               #   b::Element(e::Situational, "Reference Number - Bill Of Lading Number"),
               #   b::Element(e::Situational, "Description"),
               #   b::Element(e::Situational, "Reference Identifier"))
-              
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(200),
                 b::Segment(270, s:: N1, "Name -Supplier",
@@ -93,8 +91,7 @@ module Stupidedi
                   b::Element(e::Required,    "Entity Identifier Code", b::Values("SU")),
                   b::Element(e::Situational, "Name - Supplier Name"),
                   b::Element(e::Situational, "Identification Code Qualifier", b::Values("92")),
-                  b::Element(e::Situational, "Identification Code - Supplier Code")))
-              ),
+                  b::Element(e::Situational, "Identification Code - Supplier Code")))),
 
             d::LoopDef.build("HL", d::RepeatCount.bounded(199999),
               b::Segment( 50, s:: HL, "Hierarchical Level - Tare Level",
@@ -181,21 +178,20 @@ module Stupidedi
                 b::Element(e::Situational, "Hierarchical Child Code", b::Values("0"))),
               b::Segment( 80, s::SN1, "Item Detail (Shipment)",
                 r::Situational, d::RepeatCount.bounded(1),
-                b::Element(e::NotUsed,  "Assigned Identification"),
-                b::Element(e::Required, "Number of Units Shipped"),
-                b::Element(e::Required, "Unit or Basis for Measurement Code"),
-                b::Element(e::NotUsed,  "Quantity Shipped to Date"),
-                b::Element(e::NotUsed,  "Quantity Ordered"),
-                b::Element(e::NotUsed,  "Unit or Basis for Measurement Code"),
-                b::Element(e::NotUsed,  "Returnable Container Load Make-Up Code"),
-                b::Element(e::NotUsed,  "Line Item Status Code")),
+                b::Element(e::NotUsed,     "Assigned Identification"),
+                b::Element(e::Required,    "Number of Units Shipped"),
+                b::Element(e::Required,    "Unit or Basis for Measurement Code"),
+                b::Element(e::NotUsed,     "Quantity Shipped to Date"),
+                b::Element(e::NotUsed,     "Quantity Ordered"),
+                b::Element(e::NotUsed,     "Unit or Basis for Measurement Code"),
+                b::Element(e::NotUsed,     "Returnable Container Load Make-Up Code"),
+                b::Element(e::NotUsed,     "Line Item Status Code")),
               b::Segment(200, s::REF, "Reference Numbers",
                 r::Situational, d::RepeatCount.bounded(200),
                 b::Element(e::Required,    "Reference Number Qualifier", b::Values("LS")),
                 b::Element(e::Situational, "Reference Number - Label Serial Number."),
                 b::Element(e::NotUsed,     "Description"),
-                b::Element(e::NotUsed,     "Reference Identifier")))),       
-
+                b::Element(e::NotUsed,     "Reference Identifier")))),
 
           d::TableDef.header("Summary",
             d::LoopDef.build("CTT", d::RepeatCount.bounded(1),
@@ -203,15 +199,16 @@ module Stupidedi
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Number of Line Items"),
                 b::Element(e::Situational, "Hash Total"),
-                b::Element(e::NotUsed,  "Weight"),
-                b::Element(e::NotUsed,  "Unit or Basis for Measurement Code"),
-                b::Element(e::NotUsed,  "Volume"),
-                b::Element(e::NotUsed,  "Unit or Basis for Measurement Code"),
-                b::Element(e::NotUsed,  "Description")),
+                b::Element(e::NotUsed,     "Weight"),
+                b::Element(e::NotUsed,     "Unit or Basis for Measurement Code"),
+                b::Element(e::NotUsed,     "Volume"),
+                b::Element(e::NotUsed,     "Unit or Basis for Measurement Code"),
+                b::Element(e::NotUsed,     "Description")),
               b::Segment(390, s:: SE, "Transaction Set Trailer",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Number of Included Segments"),
                 b::Element(e::Required,    "Transaction Set Control Number")))))
+
       end
     end
   end

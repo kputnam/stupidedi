@@ -2,6 +2,7 @@ module Stupidedi
   module Contrib
     module FortyTen
       module TransactionSetDefs
+
         d = Schema
         r = SegmentReqs
         s = SegmentDefs
@@ -16,12 +17,12 @@ module Stupidedi
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(2),
               s:: N1.use( 230, r::Optional,  d::RepeatCount.bounded(1)))),
-              
+
           d::TableDef.header("Table 2 - Detail",
             d::LoopDef.build("LIN", d::RepeatCount.unbounded,
               s::LIN.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
               s::UIT.use( 20, r::Optional,  d::RepeatCount.bounded(1)),
-              s::PID.use( 80, r::Optional, d::RepeatCount.bounded(1)),
+              s::PID.use( 80, r::Optional,  d::RepeatCount.bounded(1)),
 
               d::LoopDef.build("N1", d::RepeatCount.bounded(1),
                 s::N1.use( 320, r::Optional,  d::RepeatCount.bounded(1))),
@@ -32,8 +33,6 @@ module Stupidedi
 
               d::LoopDef.build("SHP", d::RepeatCount.bounded(1),
                 s::SHP.use( 470, r::Optional,  d::RepeatCount.bounded(1))))),
-
-
 
           d::TableDef.header("Table 3 - Summary",
             s::CTT.use( 10, r::Optional,  d::RepeatCount.bounded(1)),

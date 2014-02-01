@@ -3,9 +3,6 @@ module Stupidedi
     module ThirtyTen
       module TransactionSetDefs
 
-        # SegmentReqs = Versions::FunctionalGroups::FortyTen::SegmentReqs
-        # SegmentDefs = Versions::FunctionalGroups::FortyTen::SegmentDefs
-       
         SegmentReqs = Versions::FunctionalGroups::ThirtyTen::SegmentReqs
         SegmentDefs = Versions::FunctionalGroups::ThirtyTen::SegmentDefs
 
@@ -16,7 +13,8 @@ module Stupidedi
           "stupidedi/contrib/003010/transaction_set_defs/PO850"
 
         autoload :PC860, # Purchase Order Change
-          "stupidedi/contrib/003010/transaction_set_defs/PC860"          
+          "stupidedi/contrib/003010/transaction_set_defs/PC860"
+
       end
     end
   end
