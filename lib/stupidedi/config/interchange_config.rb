@@ -27,7 +27,7 @@ module Stupidedi
     class InterchangeConfig
       include Inspect
 
-      delegate :defined_at?, :to => :@table
+      Stupidedi.delegate self, :defined_at?, :to => :@table
 
       def initialize
         @table = Hash.new

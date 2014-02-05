@@ -65,4 +65,35 @@ module Stupidedi
       ::Kernel.caller.at(depth - 1).try(:split, ":")
     end
   end
+
+  def self.delegate(klass, *params)
+    unless params.last.is_a?(Hash)
+      raise ArgumentError,
+        "last argument must be :to => ..."
+    end
+
+    methods = params.init
+    target  = params.last.fetch(:to) or
+      raise ArgumentError,
+        ":to => ... cannot be nil"
+
+    file, line, = Stupidedi.caller
+
+    for m in methods
+      if m.to_s =~ /=$/
+        class_eval(<<-RUBY, file, line.to_i - 1)
+          def #{klass}.#{m}(value)
+            #{target}.#{m}(value)
+          end
+        RUBY
+      else
+        class_eval(<<-RUBY, file, line.to_i - 1)
+          def #{klass}.#{m}(*args, &block)
+            #{target}.#{m}(*args, &block)
+          end
+        RUBY
+      end
+    end
+
+  end
 end

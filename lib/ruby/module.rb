@@ -47,6 +47,7 @@ class Module
   #   end
   #
   # @return [void]
+
   # def delegate(*params)
   #   unless params.last.is_a?(Hash)
   #     raise ArgumentError,

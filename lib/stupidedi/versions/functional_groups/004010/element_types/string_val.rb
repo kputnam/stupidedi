@@ -103,7 +103,7 @@ module Stupidedi
               include Comparable
 
               # (string any* -> any)
-              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+              Stupidedi.delegate self, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
                 :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
@@ -192,7 +192,7 @@ module Stupidedi
               attr_reader :value
 
               # (string any* -> any)
-              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+              Stupidedi.delegate self, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
                 :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
