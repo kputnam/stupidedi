@@ -101,6 +101,9 @@ module Stupidedi
         end
       end
 
+      # Extracts the segment from the current state, if the current state is
+      # deterministic and positioned on a segment.
+      #
       # @return [Either<Values::SegmentVal>>]
       def segmentn
         segment.map(&:node)
@@ -191,7 +194,12 @@ module Stupidedi
         end
       end
 
-      # @return [Either<Zipper::AbstractCursor<Values::AbstractElementVal>>]
+      # Extracts the *mth* element from the current segment, if the current
+      # state is deterministic. Accepts optional arguments to extract a specific
+      # occurrence of a repeated element and/or a specific component from a
+      # composite element.
+      #
+      # @return [Either<Values::AbstractElementVal>]
       def elementn(m, n = nil, o = nil)
         element(m, n, o).map(&:node)
       end
@@ -308,7 +316,7 @@ module Stupidedi
       # there is a next segment. Optionally, a `count` argument may be
       # provided that indicates how many segments to advance.
       #
-      # @return [StateMachine]
+      # @return [Either<StateMachine>]
       def next(count = 1)
         unless count > 0
           raise ArgumentError,
@@ -430,6 +438,12 @@ module Stupidedi
         __count(true, id, elements)
       end
 
+      # Convenience method to iterate repeated occurrences of a segment by
+      # iteratively calling `find`. Beware this doesn't check that the segment
+      # is allowed to repeat, so calling `iterate(:XYZ)` may yield an `XYZ`
+      # segment and then throw an exception when searching for the second, if
+      # `XYZ` is not repeatable.
+      #
       # @yieldparam   [StateMachine]
       # @yieldreturn  [Object]
       # @return       [Either<Array<Object>>]
