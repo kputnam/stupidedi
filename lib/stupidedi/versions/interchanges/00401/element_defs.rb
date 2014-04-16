@@ -53,8 +53,9 @@ module Stupidedi
 
           class SeparatorElementVal < Values::SimpleElementVal
 
+            extend Forwardable
             def_delegators :@value, :to_s, :length
-            extend Forwardable   
+               
             
             def initialize(value, usage, position)
               @value = value
