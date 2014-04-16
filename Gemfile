@@ -13,7 +13,7 @@ group :development do
   gem "term-ansicolor"
   gem "blankslate"             ,:platforms => [:ruby_18, :mri_18, :mingw_18]
   gem "rcov"       ,"~> 0.9.9" ,:platforms => [:mri_18]
-  gem "simplecov"              ,:platforms => [:ruby_19, :ruby_20]
+  gem "simplecov"              ,:platforms => [:ruby_19, :ruby_20, :ruby_21]
 
   # We're using a patched version installed in yard/ until the
   # maintainer improves the plugin. The patch has been submitted
