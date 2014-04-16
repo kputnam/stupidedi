@@ -10,7 +10,7 @@ module Stupidedi
       # @return [Array<TableVal>]
       attr_reader :children
 
-      delegate :position, :to => "@children.head"
+      Stupidedi.delegate self, :position, :to => "@children.head"
 
       def initialize(definition, children)
         @definition, @children =

@@ -7,7 +7,7 @@ module Stupidedi
     class CompositeElementVal < AbstractElementVal
 
       # @return [CompositeElementDef]
-      delegate :definition, :to => :@usage
+      Stupidedi.delegate self, :definition, :to => :@usage
 
       # @return [Array<SimpleElementVal>]
       attr_reader :children
@@ -16,7 +16,7 @@ module Stupidedi
       # @return [CompositeElementUse]
       attr_reader :usage
 
-      delegate :position, :to => "@children.head"
+      Stupidedi.delegate self, :position, :to => "@children.head"
 
       def initialize(children, usage)
         @children, @usage =

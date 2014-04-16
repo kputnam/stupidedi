@@ -9,7 +9,7 @@ module Stupidedi
       # @return [Reader::SegmentTok]
       attr_reader :segment_tok
 
-      delegate :position, :to => :@segment_tok
+      Stupidedi.delegate self, :position, :to => :@segment_tok
 
       def initialize(reason, segment_tok)
         @reason, @segment_tok =

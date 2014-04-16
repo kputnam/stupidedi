@@ -193,7 +193,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              delegate :to_i, :to_d, :to_f, :to_r, :to_c, :to => :@value
+              Stupidedi.delegate self, :to_i, :to_d, :to_f, :to_r, :to_c, :to => :@value
 
               def initialize(value, usage, position)
                 @value = value

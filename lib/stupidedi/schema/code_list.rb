@@ -12,7 +12,7 @@ module Stupidedi
 
       class Internal < CodeList
 
-        delegate :at, :defined_at?, :to => :@hash
+        Stupidedi.delegate self, :at, :defined_at?, :to => :@hash
 
         def initialize(hash)
           @hash = hash

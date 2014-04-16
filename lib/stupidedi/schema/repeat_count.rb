@@ -5,7 +5,7 @@ module Stupidedi
       class Bounded < RepeatCount
         include Comparable
 
-        delegate :<=>, :to => :@max
+        Stupidedi.delegate self, :<=>, :to => :@max
 
         # @return [Integer]
         attr_reader :max
