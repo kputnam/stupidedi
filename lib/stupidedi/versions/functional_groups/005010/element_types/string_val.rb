@@ -103,13 +103,14 @@ module Stupidedi
               include Comparable
 
               # (string any* -> any)
-              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+              def_delegators :value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
                 :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-                :at, :empty?, :blank?, :to => :value
-
+                :at, :empty?, :blank?
+              extend Forwardable                 
+              
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -192,13 +193,14 @@ module Stupidedi
               attr_reader :value
 
               # (string any* -> any)
-              delegate :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
+              def_delegators :@value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
                 :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-                :at, :empty?, :blank?, :to => :@value
-
+                :at, :empty?, :blank?
+              extend Forwardable   
+              
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,

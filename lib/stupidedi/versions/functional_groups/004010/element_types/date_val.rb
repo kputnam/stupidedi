@@ -165,11 +165,13 @@ module Stupidedi
               include Comparable
 
               # (date any* -> any)
-              delegate :year, :month, :day, :cwday, :cweek, :downto, :upto,
+              def_delegators :@value, :year, :month, :day, :cwday, :cweek, :downto, :upto,
                 :step, :httpdate, :to_s, :to_i, :strftime, :iso8601, :rfc2822,
                 :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
                 :to_datetime, :to_int, :to_r, :to_c, :wday, :xmlschema, :yday,
-                :start, :to => :@value
+                :start
+              extend Forwardable   
+              
 
               # (date any* -> DateVal::Proper)
               extend Operators::Wrappers

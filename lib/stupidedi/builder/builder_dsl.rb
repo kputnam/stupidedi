@@ -14,8 +14,8 @@ module Stupidedi
       # @return [Boolean]
       attr_writer :strict
 
-      delegate :pretty_print, :segment, :element, :zipper, :successors,
-        :empty?, :first?, :last?, :deterministic?, :to => :@machine
+      extend Forwardable
+      def_delegators :@machine, :pretty_print, :segment, :element, :zipper, :successors, :empty?, :first?, :last?, :deterministic?
 
       def initialize(machine, strict = true)
         @machine = machine

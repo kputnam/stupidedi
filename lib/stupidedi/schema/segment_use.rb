@@ -29,10 +29,11 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      delegate :id, :code_lists, :to => :definition
-
-      delegate :required?, :optional?, :to => :requirement
-
+      extend Forwardable
+      def_delegators :definition, :id, :code_lists
+      
+      def_delegators :requirement, :required?, :optional?
+      
       def initialize(definition, position, requirement, repeat_count, parent)
         @definition, @position, @requirement, @repeat_count, @parent =
           definition, position, requirement, repeat_count, parent

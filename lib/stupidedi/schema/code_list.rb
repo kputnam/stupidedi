@@ -12,8 +12,9 @@ module Stupidedi
 
       class Internal < CodeList
 
-        delegate :at, :defined_at?, :to => :@hash
-
+        extend Forwardable
+        def_delegators :@hash, :at, :defined_at?
+        
         def initialize(hash)
           @hash = hash
         end
