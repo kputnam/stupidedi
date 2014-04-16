@@ -19,7 +19,8 @@ module Stupidedi
     class FunctionalGroupConfig
       include Inspect
 
-      delegate :defined_at?, :to => :@table
+      extend Forwardable
+      def_delegators :@table, :defined_at?
 
       def initialize
         @table = Hash.new

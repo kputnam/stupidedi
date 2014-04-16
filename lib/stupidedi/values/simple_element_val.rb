@@ -10,8 +10,10 @@ module Stupidedi
     class SimpleElementVal < AbstractElementVal
 
       # @return [SimpleElementDef]
-      delegate :definition, :to => :@usage
 
+      extend Forwardable
+      def_delegators :@usage, :definition
+      
       abstract :valid?
 
       # @return [String]
