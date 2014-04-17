@@ -5,8 +5,10 @@ module Stupidedi
     class SegmentVal < AbstractVal
 
       # @return [SegmentDef]
-      delegate :definition, :to => :@usage
 
+      extend Forwardable
+      def_delegators :@usage, :definition
+      
       # @return [Array<AbstractElementVal>]
       attr_reader :children
 

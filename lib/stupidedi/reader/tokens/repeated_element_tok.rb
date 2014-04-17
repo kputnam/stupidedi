@@ -10,8 +10,9 @@ module Stupidedi
 
       attr_reader :position
 
-      delegate :remainder, :to => "element_toks.last"
-
+      extend Forwardable
+      def_delegators "element_toks.last", :remainder
+  
       def initialize(element_toks, position)
         @element_toks, @position =
           element_toks, position

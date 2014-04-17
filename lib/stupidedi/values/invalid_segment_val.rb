@@ -9,7 +9,8 @@ module Stupidedi
       # @return [Reader::SegmentTok]
       attr_reader :segment_tok
 
-      delegate :position, :to => :@segment_tok
+      extend Forwardable
+      def_delegators :@segment_tok, :position
 
       def initialize(reason, segment_tok)
         @reason, @segment_tok =
