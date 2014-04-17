@@ -60,24 +60,28 @@ module Stupidedi
       # The current position as the number of elements previously read
       #
       # @return [Integer]
-      delegate :offset, :to => :position
-
+      extend Forwardable
+      def_delegators :position, :offset
+      
       # The line of the current position
       #
       # @return [Integer]
-      delegate :line, :to => :position
 
+      def_delegators :position, :line
+      
       # The column of the current position. The column resets to `1` each time
       # a newline is read
       #
       # @return [Integer]
-      delegate :column, :to => :position
 
+      def_delegators :position, :column
+      
       # The file name, URI, etc that identifies the input stream
       #
       # @return [String]
-      delegate :path, :to => :position
 
+      def_delegators :position, :path
+      
       # @group Reading the Input
       ########################################################################
 

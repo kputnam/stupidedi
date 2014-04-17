@@ -2,6 +2,7 @@ require "bigdecimal"
 require "time"
 require "date"
 require "set"
+require "forwardable"
 
 begin
   require "term/ansicolor" if $stdout.tty?

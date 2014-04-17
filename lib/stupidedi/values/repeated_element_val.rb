@@ -7,7 +7,9 @@ module Stupidedi
     class RepeatedElementVal < AbstractElementVal
 
       # @return [CompositeElementDef, SimpleElementDef]
-      delegate :definition, :to => :@usage
+
+      extend Forwardable
+      def_delegators :@usage, :definition
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children
@@ -16,8 +18,8 @@ module Stupidedi
       # @return [Schema::SimpleElementUse, Schema::CompositeElementUse
       attr_reader :usage
 
-      delegate :defined_at?, :length, :to => :@children
-
+      def_delegators :@children, :defined_at?, :length
+      
       def initialize(children, usage)
         @children, @usage =
           children, usage

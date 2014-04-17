@@ -14,8 +14,9 @@ module Stupidedi
       # @return [Array<SegmentVal, TransactionSetVal>]
       attr_reader :children
 
-      delegate :position, :to => "@children.head"
-
+      extend Forwardable
+      def_delegators "@children.head", :position
+      
       def initialize(definition, children)
         @definition, @children =
           definition, children
