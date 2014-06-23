@@ -7,24 +7,24 @@ describe "Parsing" do
     let(:parser) { Fixtures.file("X222-HC837/1-good.txt") }
 
     it "parses 1-good.txt" do
-      parser.should be_deterministic
-      parser.should be_last
+      expect(parser).to be_deterministic
+      expect(parser).to be_last
 
       parser.segment.tap do |iea|
-        iea.node.position.line.should   == 53
-        iea.node.position.column.should == 1
+        expect(iea.node.position.line).to eq(53)
+        expect(iea.node.position.column).to eq(1)
       end
 
-      parser.should have_sequence(%w(ISA GS ST BHT NM1 PER NM1 HL PRV NM1 N3 N4
+      expect(parser).to have_sequence(%w(ISA GS ST BHT NM1 PER NM1 HL PRV NM1 N3 N4
         REF NM1 N3 N4 HL SBR NM1 N3 N4 DMG NM1 N4 REF HL PAT NM1 N3 N4 DMG CLM
         REF HI LX SV1 DTP LX SV1 DTP LX SV1 DTP LX SV1 DTP SE GE IEA))
 
-      parser.should have_separators(:element => "*", :component => ":",
+      expect(parser).to have_separators(:element => "*", :component => ":",
                                     :repetition => "^", :segment => "~")
 
       parser.parent.tap do |isa|
         # Should have 49 total segments in the parse tree
-        isa.should have_distance(48).to(parser)
+        expect(isa).to have_distance(48).to(parser)
 
         # See matchers/navigation_matchers.rb
         #
@@ -35,7 +35,7 @@ describe "Parsing" do
         #  R: the segment might be reachable, but didn't occur
         #  X: the segment would never be reachable
         #
-        isa.should have_structure(
+        expect(isa).to have_structure(
           Ss(X(:ST),
              R(:ISA), # No more ISAs
              S(:GS, "HC", nil, nil, nil, nil, 1) =>
@@ -245,23 +245,23 @@ describe "Parsing" do
 
     it "parses 1-good.txt" do
       parser = Fixtures.file("X221-HP835/1-good.txt")
-      parser.should be_deterministic
-      parser.should be_last
+      expect(parser).to be_deterministic
+      expect(parser).to be_last
 
       parser.segment.tap do |iea|
-        iea.node.position.line.should   == 40
-        iea.node.position.column.should == 1
+        expect(iea.node.position.line).to eq(40)
+        expect(iea.node.position.column).to eq(1)
       end
 
-      parser.should have_sequence(%w(ISA GS ST BPR TRN DTM N1 N3 N4 REF REF
+      expect(parser).to have_sequence(%w(ISA GS ST BPR TRN DTM N1 N3 N4 REF REF
         N1 REF LX TS3 TS2 CLP CAS NM1 MIA DTM DTM AMT QTY LX TS3 CLP CAS
         NM1 MOA DTM AMT PLB SE GE IEA))
 
-      parser.should have_separators(:element => "+", :component => ">",
+      expect(parser).to have_separators(:element => "+", :component => ">",
                                     :repetition => "~", :segment => "\r")
 
       parser.parent.tap do |isa|
-        isa.should have_distance(35).to(parser)
+        expect(isa).to have_distance(35).to(parser)
 
         # See matchers/navigation_matchers.rb
         #
@@ -272,7 +272,7 @@ describe "Parsing" do
         #  R: the segment might be reachable, but didn't occur
         #  X: the segment would never be reachable
         #
-        isa.should have_structure(
+        expect(isa).to have_structure(
           Ss(X(:ST),
              R(:ISA), # No more ISAs
              S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
@@ -359,10 +359,10 @@ describe "Parsing" do
     context "issues with Table 3 (Summary)" do
       it "handles missing PLB" do
         parser = Fixtures.file("X221-HP835/2-good.txt")
-        parser.should be_deterministic
+        expect(parser).to be_deterministic
 
         parser.parent.tap do |isa|
-          isa.should have_structure(
+          expect(isa).to have_structure(
             Ss(X(:SE),
                X(:PLB),
                S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
@@ -381,10 +381,10 @@ describe "Parsing" do
 
       it "handles single PLB" do
         parser = Fixtures.file("X221-HP835/1-good.txt")
-        parser.should be_deterministic
+        expect(parser).to be_deterministic
 
         parser.parent.tap do |isa|
-          isa.should have_structure(
+          expect(isa).to have_structure(
             Ss(X(:SE),
                X(:PLB),
                S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
@@ -405,10 +405,10 @@ describe "Parsing" do
 
       it "handles multiple PLBs" do
         parser = Fixtures.file("X221-HP835/3a-good.txt")
-        parser.should be_deterministic
+        expect(parser).to be_deterministic
 
         parser.parent.tap do |isa|
-          isa.should have_structure(
+          expect(isa).to have_structure(
             Ss(X(:SE),
                X(:PLB),
                S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
@@ -476,29 +476,29 @@ describe "Parsing" do
 
           m = b.machine.first.flatmap{|x| x.sequence(:GS, :ST) }
 
-          m.map{|x| x.count(:HL, nil, nil, "20") }.should be_success(2)
-          m.map{|x| x.count(:HL, nil, nil, "22") }.should be_success(2)
-          m.map{|x| x.count(:HL, nil, nil, "23") }.should be_success(2)
+          expect(m.map{|x| x.count(:HL, nil, nil, "20") }).to be_success(2)
+          expect(m.map{|x| x.count(:HL, nil, nil, "22") }).to be_success(2)
+          expect(m.map{|x| x.count(:HL, nil, nil, "23") }).to be_success(2)
 
-          m.map{|x| x.count(:HL) }.should be_success(6)
+          expect(m.map{|x| x.count(:HL) }).to be_success(6)
 
-          m.flatmap{|x| x.sequence(:HL) }.
-            map{|x| x.count(:HL) }.should be_success(5)
+          expect(m.flatmap{|x| x.sequence(:HL) }.
+            map{|x| x.count(:HL) }).to be_success(5)
 
-          m.flatmap{|x| x.sequence(:HL, :HL) }.
-            map{|x| x.count(:HL) }.should be_success(4)
+          expect(m.flatmap{|x| x.sequence(:HL, :HL) }.
+            map{|x| x.count(:HL) }).to be_success(4)
 
-          m.flatmap{|x| x.sequence(:HL, :HL, :HL) }.
-            map{|x| x.count(:HL) }.should be_success(3)
+          expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL) }.
+            map{|x| x.count(:HL) }).to be_success(3)
 
-          m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL) }.
-            map{|x| x.count(:HL) }.should be_success(2)
+          expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL) }.
+            map{|x| x.count(:HL) }).to be_success(2)
 
-          m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL, :HL) }.
-            map{|x| x.count(:HL) }.should be_success(1)
+          expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL, :HL) }.
+            map{|x| x.count(:HL) }).to be_success(1)
 
-          m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL, :HL, :HL) }.
-            map{|x| x.count(:HL) }.should be_success(0)
+          expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL, :HL, :HL) }.
+            map{|x| x.count(:HL) }).to be_success(0)
         end if ss.respond_to?(:permutation)
       end
     end
@@ -528,13 +528,13 @@ describe "Parsing" do
           p.each{|es| b.send(:NM1, *es) }
 
           m = b.machine.parent
-          m.map{|x| x.count(:NM1) }.should be_success(2)
+          expect(m.map{|x| x.count(:NM1) }).to be_success(2)
 
-          m.flatmap{|x| x.sequence(:NM1) }.
-            map{|x| x.count(:NM1) }.should be_success(1)
+          expect(m.flatmap{|x| x.sequence(:NM1) }.
+            map{|x| x.count(:NM1) }).to be_success(1)
 
-          m.flatmap{|x| x.sequence(:NM1, :NM1) }.
-            map{|x| x.count(:NM1) }.should be_success(0)
+          expect(m.flatmap{|x| x.sequence(:NM1, :NM1) }.
+            map{|x| x.count(:NM1) }).to be_success(0)
         end if ss.respond_to?(:permutation)
       end
     end
@@ -576,19 +576,19 @@ describe "Parsing" do
           p.each{|es| b.send(:PER, *es) }
 
           m = b.machine.parent
-          m.map{|x| x.count(:PER) }.should be_success(4)
+          expect(m.map{|x| x.count(:PER) }).to be_success(4)
 
-          m.flatmap{|x| x.sequence(:PER) }.
-            map{|x| x.count(:PER) }.should be_success(3)
+          expect(m.flatmap{|x| x.sequence(:PER) }.
+            map{|x| x.count(:PER) }).to be_success(3)
 
-          m.flatmap{|x| x.sequence(:PER, :PER) }.
-            map{|x| x.count(:PER) }.should be_success(2)
+          expect(m.flatmap{|x| x.sequence(:PER, :PER) }.
+            map{|x| x.count(:PER) }).to be_success(2)
 
-          m.flatmap{|x| x.sequence(:PER, :PER, :PER) }.
-            map{|x| x.count(:PER) }.should be_success(1)
+          expect(m.flatmap{|x| x.sequence(:PER, :PER, :PER) }.
+            map{|x| x.count(:PER) }).to be_success(1)
 
-          m.flatmap{|x| x.sequence(:PER, :PER, :PER, :PER) }.
-            map{|x| x.count(:PER) }.should be_success(0)
+          expect(m.flatmap{|x| x.sequence(:PER, :PER, :PER, :PER) }.
+            map{|x| x.count(:PER) }).to be_success(0)
         end if ss.respond_to?(:permutation)
       end
     end
@@ -599,23 +599,23 @@ describe "Parsing" do
 
     it "parses 1-good.txt" do
       parser = Fixtures.file("X091A1-HP835/1-good.txt")
-      parser.should be_deterministic
-      parser.should be_last
+      expect(parser).to be_deterministic
+      expect(parser).to be_last
 
       parser.segment.tap do |iea|
-        iea.node.position.line.should   == 1
-        iea.node.position.column.should == 606
+        expect(iea.node.position.line).to eq(1)
+        expect(iea.node.position.column).to eq(606)
       end
 
-      parser.should have_sequence(%w(ISA GS ST BPR TRN REF N1 N3 N4 REF PER N1
+      expect(parser).to have_sequence(%w(ISA GS ST BPR TRN REF N1 N3 N4 REF PER N1
         REF LX CLP CAS NM1 PLB SE GE IEA))
 
-      parser.should have_separators(:element => "|", :component => "^",
+      expect(parser).to have_separators(:element => "|", :component => "^",
         :repetition => nil, :segment => "~")
 
       parser.parent.tap do |isa|
-        isa.should have_distance(20).to(parser)
-        isa.should have_structure(
+        expect(isa).to have_distance(20).to(parser)
+        expect(isa).to have_structure(
           Ss(X(:ST),
             R(:ISA), # No more ISAs
             S(:GS, "HP", "MADE UP CLEARING HOUSE", "611358935", "20130508", nil, "3063") =>

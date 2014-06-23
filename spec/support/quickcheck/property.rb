@@ -35,7 +35,7 @@ class QuickCheck
 
       @base.it(*args) do
         if property.setup.nil?
-          pending
+          skip
           return
         end
 

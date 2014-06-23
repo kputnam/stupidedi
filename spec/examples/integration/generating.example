@@ -9,7 +9,7 @@ describe "Generating" do
 
   context "unrecognized methods" do
     it "raises an exception" do
-      lambda { relaxed.xyz }.should \
+      expect(lambda { relaxed.xyz }).to \
         raise_error(NoMethodError)
     end
   end
@@ -31,21 +31,21 @@ describe "Generating" do
         isa(relaxed, "0050x")
 
         # An invalid ISA segment was added
-        relaxed.zipper.select{|z| z.node.invalid? }.should be_defined
+        expect(relaxed.zipper.select{|z| z.node.invalid? }).to be_defined
 
         # It's parent is an InvalidEnvelopeVal
-        relaxed.zipper.select{|z| z.parent.node.invalid? }.should be_defined
+        expect(relaxed.zipper.select{|z| z.parent.node.invalid? }).to be_defined
       end
     end
 
     context "when strict" do
       it "loudly complains" do
-        lambda do
+        expect(lambda do
           isa(strict, "0050x")
-        end.should raise_error('unknown interchange version "0050x"')
+        end).to raise_error('unknown interchange version "0050x"')
 
         # The ISA segment wasn't added
-        relaxed.should be_empty
+        expect(relaxed).to be_empty
       end
     end
   end
@@ -66,21 +66,21 @@ describe "Generating" do
       it "on the first interchange" do
         isa(relaxed, ":", "^")
 
-        relaxed.machine.separators.component.should == ":"
-        relaxed.machine.separators.repetition.should == "^"
+        expect(relaxed.machine.separators.component).to eq(":")
+        expect(relaxed.machine.separators.repetition).to eq("^")
       end
 
       it "on subsequent interchanges" do
         isa(relaxed, "$", "%")
         isa(relaxed, "@", "#")
 
-        relaxed.machine.separators.component.should == "@"
-        relaxed.machine.separators.repetition.should == "#"
+        expect(relaxed.machine.separators.component).to eq("@")
+        expect(relaxed.machine.separators.repetition).to eq("#")
 
-        relaxed.machine.prev.tap do |machine|
-          machine.separators.component.should == "$"
-          machine.separators.repetition.should == "%"
-        end.should be_defined
+        expect(relaxed.machine.prev.tap do |machine|
+          expect(machine.separators.component).to eq("$")
+          expect(machine.separators.repetition).to eq("%")
+        end).to be_defined
       end
     end
 
@@ -97,25 +97,25 @@ describe "Generating" do
 
       context "when strict" do
         it "loudly complains" do
-          lambda { isa(strict) }.should_not raise_error
+          expect(lambda { isa(strict) }).not_to raise_error
           # ("required segment IEA is missing from interchange 00501")
 
-          lambda { isa(strict) }.should \
+          expect(lambda { isa(strict) }).to \
             raise_error("required segment IEA is missing from interchange 00501")
 
-          strict.should be_first
+          expect(strict).to be_first
         end
       end
 
       context "when non-strict" do
         it "quietly proceeds" do
-          lambda { isa(relaxed) }.should_not raise_error
+          expect(lambda { isa(relaxed) }).not_to raise_error
           # ("required segment IEA is missing from interchange 00501")
 
-          lambda { isa(relaxed) }.should_not raise_error
+          expect(lambda { isa(relaxed) }).not_to raise_error
           # ("required segment IEA is missing from interchange 00501")
 
-          relaxed.should_not be_first
+          expect(relaxed).not_to be_first
         end
       end
     end
@@ -133,20 +133,20 @@ describe "Generating" do
 
       context "when strict" do
         it "loudly complains" do
-          lambda { isa(strict) }.should \
+          expect(lambda { isa(strict) }).to \
             raise_error("required element ISA06 is blank")
 
-          strict.should be_empty
+          expect(strict).to be_empty
         end
       end
 
       context "when non-strict" do
         it "quietly proceeds" do
-          lambda { isa(relaxed) }.should_not raise_error
+          expect(lambda { isa(relaxed) }).not_to raise_error
           # ("required element ISA06 is blank")
 
-          relaxed.element(6).select{|e| e.node == "" }.should be_defined
-          relaxed.element(6).select{|e| e.node.empty? }.should be_defined
+          expect(relaxed.element(6).select{|e| e.node == "" }).to be_defined
+          expect(relaxed.element(6).select{|e| e.node.empty? }).to be_defined
         end
       end
     end
@@ -166,20 +166,20 @@ describe "Generating" do
 
         context "when strict" do
           it "loudly complains" do
-            lambda { isa(strict) }.should \
+            expect(lambda { isa(strict) }).to \
               raise_error("value XX not allowed in element ISA01")
 
-            strict.should be_empty
+            expect(strict).to be_empty
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(relaxed) }.should_not raise_error
+            expect(lambda { isa(relaxed) }).not_to raise_error
             # ("value XX not allowed in element ISA01")
 
-            relaxed.element(1).select{|e| e.node == "XX" }.should be_defined
-            relaxed.element(1).select{|e| e.node.invalid? }.should_not be_defined
+            expect(relaxed.element(1).select{|e| e.node == "XX" }).to be_defined
+            expect(relaxed.element(1).select{|e| e.node.invalid? }).not_to be_defined
           end
         end
       end
@@ -197,20 +197,20 @@ describe "Generating" do
 
         context "when strict" do
           it "loudly complains" do
-            lambda { isa(strict) }.should raise_error
+            expect(lambda { isa(strict) }).to raise_error
             # ("invalid element ISA09")
 
-            strict.should be_empty
+            expect(strict).to be_empty
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(relaxed) }.should_not raise_error
+            expect(lambda { isa(relaxed) }).not_to raise_error
             # ("invalid element ISA09")
 
-            relaxed.element(9).select{|e| e.node.invalid? }.should be_defined
-            relaxed.element(9).select{|e| e.node == "DATE" }.should_not be_defined
+            expect(relaxed.element(9).select{|e| e.node.invalid? }).to be_defined
+            expect(relaxed.element(9).select{|e| e.node == "DATE" }).not_to be_defined
           end
         end
       end
@@ -228,20 +228,20 @@ describe "Generating" do
 
         context "when strict" do
           it "loudly complains" do
-            lambda { isa(strict) }.should \
+            expect(lambda { isa(strict) }).to \
               raise_error("invalid element ISA10")
 
-            strict.should be_empty
+            expect(strict).to be_empty
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(relaxed) }.should_not raise_error
+            expect(lambda { isa(relaxed) }).not_to raise_error
             # ("invalid element ISA10")
 
-            relaxed.element(10).select{|e| e.node.invalid? }.should be_defined
-            relaxed.element(10).select{|e| e.node == "TIME" }.should_not be_defined
+            expect(relaxed.element(10).select{|e| e.node.invalid? }).to be_defined
+            expect(relaxed.element(10).select{|e| e.node == "TIME" }).not_to be_defined
           end
         end
       end
@@ -259,18 +259,18 @@ describe "Generating" do
 
         context "when strict" do
           it "loudly complains" do
-            lambda { isa(strict) }.should \
+            expect(lambda { isa(strict) }).to \
               raise_error("invalid element ISA13")
 
-            strict.should be_empty
+            expect(strict).to be_empty
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { isa(relaxed) }.should_not raise_error
+            expect(lambda { isa(relaxed) }).not_to raise_error
 
-            relaxed.element(13).select{|e| e.node.invalid? }.should be_defined
+            expect(relaxed.element(13).select{|e| e.node.invalid? }).to be_defined
           end
         end
       end
@@ -292,18 +292,18 @@ describe "Generating" do
 
         context "when strict" do
           it "loudly complains" do
-            lambda { setup(strict) }.should \
+            expect(lambda { setup(strict) }).to \
               raise_error("value is too long in element ISA13")
           end
         end
-        
+
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(relaxed) }.should_not \
+            expect(lambda { setup(relaxed) }).not_to \
               raise_error
 
-            relaxed.element(13).select{|e| e.node == 1234567890 }.should be_defined
-            relaxed.element(13).select{|e| e.node.too_long? }.should be_defined
+            expect(relaxed.element(13).select{|e| e.node == 1234567890 }).to be_defined
+            expect(relaxed.element(13).select{|e| e.node.too_long? }).to be_defined
           end
         end
       end
@@ -338,18 +338,18 @@ describe "Generating" do
 
         context "when strict" do
           it "loudly complains" do
-            lambda { setup(strict) }.should \
+            expect(lambda { setup(strict) }).to \
               raise_error("value is too long in element ISA06")
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(relaxed) }.should_not raise_error
+            expect(lambda { setup(relaxed) }).not_to raise_error
             # ("value is too long in element ISA06")
 
-            relaxed.element(6).select{|e| e.node == "431777999xxxxxxxxxxx" }.should be_defined
-            relaxed.element(6).select{|e| e.node.too_long? }.should be_defined
+            expect(relaxed.element(6).select{|e| e.node == "431777999xxxxxxxxxxx" }).to be_defined
+            expect(relaxed.element(6).select{|e| e.node.too_long? }).to be_defined
           end
         end
       end
@@ -380,7 +380,7 @@ describe "Generating" do
 
         context "when strict" do
           it "complains loudly" do
-            lambda { setup(strict) }.should \
+            expect(lambda { setup(strict) }).to \
               raise_error("value is too short in element ISA10")
           end
         end
@@ -389,11 +389,11 @@ describe "Generating" do
           it "proceeds quietly" do
             time = Time.now.utc
 
-            lambda { setup(relaxed, time) }.should_not raise_error
+            expect(lambda { setup(relaxed, time) }).not_to raise_error
             # ("value is too short in element ISA10")
 
-            relaxed.element(10).select{|e| e.node.hour == time.hour }.should be_defined
-            relaxed.element(10).select{|e| e.node.too_short? }.should be_defined
+            expect(relaxed.element(10).select{|e| e.node.hour == time.hour }).to be_defined
+            expect(relaxed.element(10).select{|e| e.node.too_short? }).to be_defined
           end
         end
       end
@@ -417,17 +417,17 @@ describe "Generating" do
 
         context "when strict" do
           it "complains loudly" do
-            lambda { setup(strict) }.should \
+            expect(lambda { setup(strict) }).to \
               raise_error("value is too long in element GS04")
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(relaxed) }.should_not raise_error
+            expect(lambda { setup(relaxed) }).not_to raise_error
             # ("value is too long in element GS04")
 
-            relaxed.element(4).select{|e| e.node.year.should == 22222 }.should be_defined
+            expect(relaxed.element(4).select{|e| expect(e.node.year).to eq(22222) }).to be_defined
           end
         end
       end
@@ -451,17 +451,17 @@ describe "Generating" do
 
         context "when strict" do
           it "complains loudly" do
-            lambda { setup(strict) }.should \
+            expect(lambda { setup(strict) }).to \
               raise_error("value is too short in element GS04")
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            lambda { setup(relaxed) }.should_not raise_error
+            expect(lambda { setup(relaxed) }).not_to raise_error
             # ("value is too short in element GS04")
 
-            relaxed.element(4).select{|e| e.node.year.should == 11 }.should be_defined
+            expect(relaxed.element(4).select{|e| expect(e.node.year).to eq(11) }).to be_defined
           end
         end
       end
@@ -490,7 +490,7 @@ describe "Generating" do
           it "raises an error" do
             setup(relaxed, "005010X222")
 
-            lambda { relaxed.ST("837", relaxed.default, "005010X222") }.should \
+            expect(lambda { relaxed.ST("837", relaxed.default, "005010X222") }).to \
               raise_error("ST02 cannot be inferred")
           end
         end
@@ -499,11 +499,11 @@ describe "Generating" do
           it "generates an empty element" do
             setup(relaxed, "005010X221")
 
-            lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }.should_not raise_error
+            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }).not_to raise_error
             # ("ST02 cannot be inferred")
 
-            relaxed.element(3).select{|e| e.node == "" }.should be_defined
-            relaxed.element(3).select{|e| e.node.blank? }.should be_defined
+            expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
+            expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
           end
         end
 
@@ -511,10 +511,10 @@ describe "Generating" do
           it "generates a non-empty element value" do
             setup(relaxed, "005010X222")
 
-            lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }.should_not raise_error
+            expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }).not_to raise_error
             # ("ST02 cannot be inferred")
 
-            relaxed.element(3).select{|e| e.node == "005010X222" }.should be_defined
+            expect(relaxed.element(3).select{|e| e.node == "005010X222" }).to be_defined
           end
         end
       end
@@ -524,11 +524,11 @@ describe "Generating" do
           it "generates an empty element" do
             setup(relaxed, "005010X221")
 
-            lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }.should_not raise_error
+            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }).not_to raise_error
             #("ST03 is not forbidden")
 
-            relaxed.element(3).select{|e| e.node == "" }.should be_defined
-            relaxed.element(3).select{|e| e.node.blank? }.should be_defined
+            expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
+            expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
           end
         end
 
@@ -536,7 +536,7 @@ describe "Generating" do
           it "generates a non-empty element value" do
             setup(relaxed, "005010X222")
 
-            lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }.should \
+            expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }).to \
               raise_error("ST03 is not forbidden")
           end
         end

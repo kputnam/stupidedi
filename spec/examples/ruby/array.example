@@ -13,166 +13,166 @@ describe Array do
     context "on an empty array" do
       property("is false") do
         integer
-      end.check{|n| [].should_not be_defined_at(n) }
+      end.check{|n| expect([]).not_to be_defined_at(n) }
     end
   end
 
   describe "#head" do
     context "of an empty array" do
       it "is an error" do
-        lambda { [].head }.should raise_error
+        expect(lambda { [].head }).to raise_error
       end
     end
 
     context "of a one-element array" do
       it "is the first element" do
-        [1].head.should == 1
+        expect([1].head).to eq( 1)
       end
 
       property("is the first element") do
         integer
-      end.check{|x| [x].head.should == x }
+      end.check{|x| expect([x].head).to eq( x )}
     end
 
     context "of a two-element array" do
       it "is the first element" do
-        [1, 2].head.should == 1
+        expect([1, 2].head).to eq( 1)
       end
 
       property("is the first element") do
         [integer, integer]
-      end.check{|x,y| [x,y].head.should == x }
+      end.check{|x,y| expect([x,y].head).to eq( x ) }
     end
   end
 
   describe "#tail(n)" do
     context "of an empty array" do
       it "is an empty array" do
-        [].tail.should == []
+        expect([].tail).to eq([])
       end
     end
 
     context "of a one-element array" do
       it "is an empty array" do
-        [1].tail.should == []
+        expect([1].tail).to eq([])
       end
 
       property("is an empty array") do
         integer
-      end.check{|x| [x].tail.should == [] }
+      end.check{|x| expect([x].tail).to eq([]) }
     end
 
     context "of a two-element array" do
       it "contains only the second element" do
-        [1, 2].tail.should == [2]
+        expect([1, 2].tail).to eq([2])
       end
 
       property("contains only the second element") do
         [integer, integer]
-      end.check{|x,y| [x,y].tail.should == [y] }
+      end.check{|x,y| expect([x,y].tail).to eq([y]) }
     end
   end
 
   describe "#init(n)" do
     context "of an empty array" do
       it "is an empty array" do
-        [].init.should == []
+        expect([].init).to eq([])
       end
     end
 
     context "of a one-element array" do
       it "is an empty array" do
-        [1].init.should == []
+        expect([1].init).to eq([])
       end
 
       property("is an empty array") do
         integer
-      end.check{|x| [x].init.should == [] }
+      end.check{|x| expect([x].init).to eq([]) }
     end
 
     context "of a two-element array" do
       it "contains only the first element" do
-        [1, 2].init.should == [1]
+        expect([1, 2].init).to eq([1])
       end
 
       property("contains only the first element") do
         [integer, integer]
-      end.check{|x,y| [x,y].init.should == [x] }
+      end.check{|x,y| expect([x,y].init).to eq([x]) }
     end
   end
 
   describe "#drop(n)" do
     context "of an empty array" do
       it "is an empty array" do
-        [].drop(10).should == []
+        expect([].drop(10)).to eq([])
       end
 
       property("is an empty array") do
         integer.abs
-      end.check{|n| [].drop(n).should == [] }
+      end.check{|n| expect([].drop(n)).to eq([]) }
     end
 
     context "a negative number of elements" do
       property("raises an error") do
         integer.abs
       end.check do |n|
-        lambda { %w(a b).drop(-n) }.should raise_error
+        expect(lambda { %w(a b).drop(-n) }).to raise_error
       end
     end
 
     context "zero elements" do
       it "returns the original array" do
-        %w(a b).drop(0).should == %w(a b)
+        expect(%w(a b).drop(0)).to eq(%w(a b))
       end
 
       property("returns the original array") do
         with(:size, between(0, 25)) { array { integer }}
       end.check do |as|
-        as.drop(0).should == as
+        expect(as.drop(0)).to eq(as)
       end
     end
 
     context "one element" do
       context "from a one-element array" do
         it "is an empty array" do
-          %w(a).drop(1).should == []
+          expect(%w(a).drop(1)).to eq([])
         end
 
         property("is an empty array") do
           integer
-        end.check{|x| [x].drop(1).should == [] }
+        end.check{|x| expect([x].drop(1)).to eq([]) }
       end
 
       context "from a two-element array" do
         it "contains only the second element" do
-          %w(a b).drop(1).should == %w(b)
+          expect(%w(a b).drop(1)).to eq(%w(b))
         end
 
         property("contains only the second element") do
           [integer, integer]
-        end.check{|x,y| [x,y].drop(1).should == [y] }
+        end.check{|x,y| expect([x,y].drop(1)).to eq([y]) }
       end
     end
 
     context "two elements" do
       context "from a one-element array" do
         it "is an empty array" do
-          %w(a).drop(2).should == []
+          expect(%w(a).drop(2)).to eq([])
         end
 
         property("is an empty array") do
           integer
-        end.check{|x| [x].drop(2).should == [] }
+        end.check{|x| expect([x].drop(2)).to eq([]) }
       end
 
       context "from a two-element array" do
         it "is an empty array" do
-          %w(a b).drop(2).should == []
+          expect(%w(a b).drop(2)).to eq([])
         end
 
         property("is an empty array") do
           [integer, integer]
-        end.check{|x,y| [x,y].drop(2).should == [] }
+        end.check{|x,y| expect([x,y].drop(2)).to eq([]) }
       end
     end
   end
@@ -180,49 +180,49 @@ describe Array do
   describe "#drop_while" do
     context "when predicate is always satisfied" do
       it "is an empty array" do
-        [1, 2, 3, 2, 1].drop_while{|x| x >= 1 }.should == []
+        expect([1, 2, 3, 2, 1].drop_while{|x| x >= 1 }).to eq([])
       end
 
       property("is an empty array") do
         mkarray(between(0, 10))
       end.check do |as|
-        as.drop_while { true }.should == []
+        expect(as.drop_while { true }).to eq( [])
       end
     end
 
     context "when the first element does not satisfy the predicate" do
       it "is the original array" do
-        [1, 2, 3, 2, 1].drop_while{|x| x <= 0 }.should == [1, 2, 3, 2, 1]
+        expect([1, 2, 3, 2, 1].drop_while{|x| x <= 0 }).to eq([1, 2, 3, 2, 1])
       end
 
       property("is the original array") do
         mkarray(between(0, 10))
       end.check do |as|
-        as.drop_while { false }.should == as
+        expect(as.drop_while { false }).to eq(as)
       end
     end
 
     context "when the second element does not satisfy the predicate" do
       it "contains all except the first element" do
-        [1, 2, 3, 2, 1].drop_while{|x| x <= 1 }.should == [2, 3, 2, 1]
+        expect([1, 2, 3, 2, 1].drop_while{|x| x <= 1 }).to eq([2, 3, 2, 1])
       end
 
       property("contains all except the first element") do
         mkarray(between(2, 10))
       end.check do |as|
-        as.drop_while{|x| x <= 1 }.should == as.tail
+        expect(as.drop_while{|x| x <= 1 }).to eq( as.tail)
       end
     end
 
     context "when the third element does not satisfy the predicate" do
       it "contains all except the first two elements" do
-        [1, 2, 3, 2, 1].drop_while{|x| x <= 2 }.should == [3, 2, 1]
+        expect([1, 2, 3, 2, 1].drop_while{|x| x <= 2 }).to eq([3, 2, 1])
       end
 
       property("contains all except the first two elements") do
         mkarray(between(3, 10))
       end.check do |as|
-        as.drop_while {|x| x <= 2 }.should == as.tail.tail
+        expect(as.drop_while {|x| x <= 2 }).to eq(as.tail.tail)
       end
     end
   end
@@ -232,7 +232,7 @@ describe Array do
       property("is the original array") do
         mkarray(between(0, 10))
       end.check do |as|
-        as.drop_until { true }.should == as
+        expect(as.drop_until { true }).to eq(as)
       end
     end
 
@@ -240,7 +240,7 @@ describe Array do
       property("is an empty array") do
         mkarray(between(0, 10))
       end.check do |as|
-        as.drop_until { false }.should == []
+        expect(as.drop_until { false }).to eq([])
       end
     end
   end
@@ -248,85 +248,85 @@ describe Array do
   describe "#take(n)" do
     context "from an empty array" do
       it "is an empty array" do
-        [].take(10).should == []
+        expect([].take(10)).to eq([])
       end
 
       property("is an empty array") do
         integer.abs
-      end.check{|n| [].take(n).should == [] }
+      end.check{|n| expect([].take(n)).to eq([]) }
     end
 
     context "a negative number of elements" do
       property("raises an error") do
         integer.abs
       end.check do |n|
-        lambda { %w(a b).take(-n) }.should raise_error
+        expect(lambda { %w(a b).take(-n) }).to raise_error
       end
     end
 
     context "zero elements" do
       context "from a one-element array" do
         it "is an empty array" do
-          %w(a).take(0).should == []
+          expect(%w(a).take(0)).to eq([])
         end
 
         property("is an empty array") do
           integer
-        end.check{|x| [x].take(0).should == [] }
+        end.check{|x| expect([x].take(0)).to eq([]) }
       end
 
       context "from a two-element array" do
         it "is an empty array" do
-          %w(a b).take(0).should == []
+          expect(%w(a b).take(0)).to eq( [])
         end
 
         property("is an empty array") do
           [integer, integer]
-        end.check{|x,y| [x,y].take(0).should == [] }
+        end.check{|x,y| expect([x,y].take(0)).to eq([]) }
       end
     end
 
     context "one element" do
       context "from a one-element array" do
         it "contains only the first element" do
-          %w(a).take(1).should == %w(a)
+          expect(%w(a).take(1)).to eq( %w(a))
         end
 
         property("contains only the first element") do
           integer
-        end.check{|x| [x].take(1).should == [x] }
+        end.check{|x| expect([x].take(1)).to eq([x]) }
       end
 
       context "from a two-element array" do
         it "contains only the first element" do
-          %w(a b).take(1).should == %w(a)
+          expect(%w(a b).take(1)).to eq( %w(a))
         end
 
         property("contains only the first element") do
           [integer, integer]
-        end.check{|x,y| [x,y].take(1).should == [x] }
+        end.check{|x,y| expect([x,y].take(1)).to eq([x]) }
       end
     end
 
     context "two elements" do
       context "from a one-element array" do
         it "contains only the first element" do
-          %w(a).take(2).should == %w(a)
+          expect(%w(a).take(2)).to eq( %w(a))
         end
 
         property("contains only the first element") do
           integer
-        end.check{|x| [x].take(2).should == [x] }
+        end.check{|x| expect([x].take(2)).to eq([x]) }
       end
 
       context "from a two-element array" do
         it "contains only both the elements" do
-          %w(a b).take(2).should == %w(a b)
+          expect(%w(a b).take(2)).to eq( %w(a b))
         end
 
         property("contains only both the elements") do
           [integer, integer]
-        end.check{|x,y| [x,y].take(2).should == [x,y] }
+        end.check{|x,y| expect([x,y].take(2)).to eq([x,y]) }
       end
     end
   end
@@ -334,74 +334,74 @@ describe Array do
   describe "#take_while" do
     context "when predicate is always satisfied" do
       it "is the original array" do
-        [1, 2, 3, 2, 1].take_while{|x| x >= 1 }.should == [1, 2, 3, 2, 1]
+        expect([1, 2, 3, 2, 1].take_while{|x| x >= 1 }).to eq([1, 2, 3, 2, 1])
       end
 
       property("is the original array") do
         mkarray(between(0, 10))
       end.check do |as|
-        as.take_while { true }.should == as
+        expect(as.take_while { true }).to eq( as)
       end
     end
 
     context "when the first element does not satisfy the predicate" do
       it "is the empty array" do
-        [1, 2, 3, 2, 1].take_while{|x| x <= 0 }.should == []
+        expect([1, 2, 3, 2, 1].take_while{|x| x <= 0 }).to eq([])
       end
 
       property("is the empty array") do
         mkarray(between(1, 10))
       end.check do |as|
-        as.take_while { false }.should == []
+        expect(as.take_while { false }).to eq( [])
       end
     end
 
     context "when the second element does not satisfy the predicate" do
       it "contains only the first element" do
-        [1, 2, 3, 2, 1].take_while{|x| x <= 1 }.should == [1]
+        expect([1, 2, 3, 2, 1].take_while{|x| x <= 1 }).to eq([1])
       end
 
       property("contains only the first element") do
         mkarray(between(2, 10))
       end.check do |as|
-        as.take_while{|x| x <= 1 }.should == as[0, 1]
+        expect(as.take_while{|x| x <= 1 }).to eq(as[0, 1])
       end
     end
 
     context "when the third element does not satisfy the predicate" do
       it "contains only the first two elements" do
-        [1, 2, 3, 2, 1].take_while{|x| x <= 2 }.should == [1, 2]
+        expect([1, 2, 3, 2, 1].take_while{|x| x <= 2 }).to eq([1, 2])
       end
 
       property("contains only the first two elements") do
         mkarray(between(3, 10))
       end.check do |as|
-        as.take_while {|x| x <= 2 }.should == as[0, 2]
+        expect(as.take_while {|x| x <= 2 }).to eq(as[0, 2])
       end
     end
   end
 
   describe "#take_until" do
-    pending
+    skip
   end
 
   describe "#split_at" do
     context "index zero" do
       context "on an empty array" do
         it "returns [], []" do
-          [].split_at(0).should == [[], []]
+          expect([].split_at(0)).to eq([[], []])
         end
       end
 
       context "on a one-element array" do
         it "returns [], [a]" do
-          %w(a).split_at(0).should == [[], %w(a)]
+          expect(%w(a).split_at(0)).to eq([[], %w(a)])
         end
       end
 
       context "on a two-element array" do
         it "returns [], [a, b]" do
-          %w(a b).split_at(0).should == [[], %w(a b)]
+          expect(%w(a b).split_at(0)).to eq([[], %w(a b)])
         end
       end
     end
@@ -411,25 +411,25 @@ describe Array do
         property("is an error") do
           integer.abs
         end.check do |n|
-          lambda { [].split_at(-n) }.should raise_error
+          expect(lambda { [].split_at(-n) }).to raise_error
         end
       end
 
       context "on an empty array" do
         it "returns [], []" do
-          [].split_at(1).should == [[], []]
+          expect([].split_at(1)).to eq([[], []])
         end
       end
 
       context "on a one-element array" do
         it "returns [a], []" do
-          %w(a).split_at(1).should == [%w(a), []]
+          expect(%w(a).split_at(1)).to eq([%w(a), []])
         end
       end
 
       context "on a two-element array" do
         it "returns [a], [b]" do
-          %w(a b).split_at(1).should == [%w(a), %w(b)]
+          expect(%w(a b).split_at(1)).to eq( [%w(a), %w(b)] )
         end
       end
     end
@@ -437,19 +437,19 @@ describe Array do
     context "index two" do
       context "on an empty array" do
         it "returns [], []" do
-          [].split_at(2).should == [[], []]
+          expect([].split_at(2)).to eq( [[], []] )
         end
       end
 
       context "on a one-element array" do
         it "returns [a], []" do
-          %w(a).split_at(2).should == [%w(a), []]
+          expect(%w(a).split_at(2)).to eq( [%w(a), []] )
         end
       end
 
       context "on a two-element array" do
         it "returns [a, b], []" do
-          %w(a b).split_at(2).should == [%w(a b), []]
+          expect(%w(a b).split_at(2)).to eq( [%w(a b), []] )
         end
       end
     end
@@ -460,17 +460,17 @@ describe Array do
           [array { integer }, integer.abs]
         end
       end.check do |as, n|
-        as.split_at(n).should == [as.take(n), as.drop(n)]
+        expect(as.split_at(n)).to eq( [as.take(n), as.drop(n)] )
       end
     end
   end
 
   describe "#split_until" do
-    pending
+    skip
   end
 
   describe "#split_when" do
-    pending
+    skip
   end
 
 end

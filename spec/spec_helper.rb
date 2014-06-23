@@ -25,6 +25,10 @@ end
 RSpec.configure do |config|
   config.include(EitherMatchers)
 
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+  
   # rspec -I lib -t random spec
   # config.filter_run :random => true
 
