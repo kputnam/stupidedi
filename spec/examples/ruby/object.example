@@ -75,7 +75,7 @@ describe "Object#tap" do
   end
 
   it "yields the object to a block argument" do
-    object.should_receive(:message).with(:argument)
+    expect(object).to receive(:message).with(:argument)
     object.tap{|o| o.message(:argument) }
   end
 

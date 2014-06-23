@@ -4,17 +4,17 @@ describe "Object#try" do
   let(:object) { double("object") }
 
   it "calls a unary block" do
-    object.should_receive(:message).with(no_args)
+    expect(object).to receive(:message).with(no_args)
     object.try{|o| o.message }
   end
 
   it "calls a unary block" do
-    object.should_receive(:message).with(no_args)
+    expect(object).to receive(:message).with(no_args)
     object.try(&:message)
   end
 
   it "calls a nullary method" do
-    object.should_receive(:message).with(no_args)
+    expect(object).to receive(:message).with(no_args)
     object.try(:message)
   end
 
@@ -27,7 +27,7 @@ describe "Object#try" do
   end
 
   it "calls a unary method" do
-    object.should_receive(:message).with(:argument)
+    expect(object).to receive(:message).with(:argument)
     object.try(:message, :argument)
   end
 
@@ -36,7 +36,7 @@ describe "Object#try" do
   end
 
   it "calls a binary method" do
-    object.should_receive(:message).with(:first, :second)
+    expect(object).to receive(:message).with(:first, :second)
     object.try(:message, :first, :second)
   end
 end

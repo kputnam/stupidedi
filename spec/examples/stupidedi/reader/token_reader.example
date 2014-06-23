@@ -302,7 +302,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :IEA
-          value.should have(0).element_toks
+          expect(value.element_toks.size).to eq(0)
           remainder.input.should == "..."
           remainder.should be_stream
         end
@@ -314,7 +314,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :IEA
-          value.should have(2).element_toks
+          expect(value.element_toks.size).to eq(2)
           remainder.input.should == "..."
           remainder.should be_stream
         end
@@ -328,7 +328,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :ABC
-          value.should have(0).element_toks
+          expect(value.element_toks.size).to eq(0)
           remainder.input.should == "..."
         end
       end
@@ -348,7 +348,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :ABC
-          value.should have(1).element_toks
+          expect(value.element_toks.size).to eq(1)
           value.element_toks.head.value.should == "O"
         end
       end
@@ -359,7 +359,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :ABC
-          value.should have(1).element_toks
+          expect(value.element_toks.size).to eq(1)
           value.element_toks.head.value.should == ""
         end
       end
@@ -379,7 +379,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :ABC
-          value.should have(3).element_toks
+          expect(value.element_toks.size).to eq(3)
           value.element_toks.map(&:value).should == %w(M N O)
         end
       end
@@ -390,7 +390,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :ABC
-          value.should have(3).element_toks
+          expect(value.element_toks.size).to eq(3)
           value.element_toks.map(&:value).should == ["", "", ""]
         end
       end
@@ -401,7 +401,7 @@ describe Stupidedi::Reader::TokenReader do
         result.should be_defined
         result.map do |value, remainder|
           value.id.should == :ABC
-          value.should have(3).element_toks
+          expect(value.element_toks.size).to eq(3)
           value.element_toks.map(&:value).should == ["", "", "O"]
         end
       end
@@ -432,7 +432,7 @@ describe Stupidedi::Reader::TokenReader do
         result = reader.read_segment
         result.should be_defined
         result.map do |value, remainder|
-          value.should have(4).element_toks
+          expect(value.element_toks.size).to eq(4)
           value.element_toks.map(&:value).should == %w(W X Y Z)
         end
       end
@@ -464,7 +464,7 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(2).element_toks
+            expect(value.element_toks.size).to eq(2)
             value.element_toks.head.value.should == "W^X"
             value.element_toks.last.value.should == "Y^Z"
           end
@@ -486,7 +486,7 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(2).element_toks
+            expect(value.element_toks.size).to eq(2)
             value.element_toks.head.value.should == "W:X"
             value.element_toks.last.value.should == "Y:Z"
           end
@@ -528,13 +528,13 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
+            expect(value.element_toks.size).to eq(3)
             value.element_toks.head.value.should == "W"
 
-            value.element_toks.at(1).should have(1).component_toks
+            expect(value.element_toks.at(1).component_toks.size).to eq(1)
             value.element_toks.at(1).component_toks.head.value.should == "X"
 
-            value.element_toks.at(2).should have(1).component_toks
+            expect(value.element_toks.at(2).component_toks.size).to eq(1)
             value.element_toks.at(2).component_toks.head.value.should == "Y"
           end
         end
@@ -555,14 +555,14 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
+            expect(value.element_toks.size).to eq(3)
             value.element_toks.head.value.should == "W"
 
-            value.element_toks.at(1).should have(2).component_toks
+            expect(value.element_toks.at(1).component_toks.size).to eq(2)
             value.element_toks.at(1).component_toks.head.value.should == "X"
             value.element_toks.at(1).component_toks.last.value.should == "Y"
 
-            value.element_toks.at(2).should have(2).component_toks
+            expect(value.element_toks.at(2).component_toks.size).to eq(2)
             value.element_toks.at(2).component_toks.head.value.should == "M"
             value.element_toks.at(2).component_toks.last.value.should == "N"
           end
@@ -584,7 +584,7 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
+            expect(value.element_toks.size).to eq(3)
             value.element_toks.head.value.should == "W"
             value.element_toks.at(1).component_toks.map(&:value).should == ["X", "", "Z"]
             value.element_toks.at(2).component_toks.map(&:value).should == %w(M N O P)
@@ -607,7 +607,7 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
+            expect(value.element_toks.size).to eq(3)
             value.element_toks.head.value.should == "W"
             value.element_toks.at(1).component_toks.map(&:value).should == %w(X^Y Z)
             value.element_toks.at(2).component_toks.map(&:value).should == %w(M N^O)
@@ -633,7 +633,7 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(2).element_toks
+            expect(value.element_toks.size).to eq(2)
             value.element_toks.head.value.should == ""
           # value.element_toks.last.should have(0).element_toks
           end
@@ -655,8 +655,8 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(2).element_toks
-            value.element_toks.last.should have(1).element_toks
+            expect(value.element_toks.size).to eq(2)
+            expect(value.element_toks.last.element_toks.size).to eq(1)
             value.element_toks.last.element_toks.head.value.should == "X"
           end
         end
@@ -668,8 +668,8 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(2).element_toks
-            value.element_toks.last.should have(2).element_toks
+            expect(value.element_toks.size).to eq(2)
+            expect(value.element_toks.last.element_toks.size).to eq(2)
             value.element_toks.last.element_toks.head.value.should == "X"
             value.element_toks.last.element_toks.last.value.should == "Y"
           end
@@ -682,8 +682,8 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(2).element_toks
-            value.element_toks.last.should have(3).element_toks
+            expect(value.element_toks.size).to eq(2)
+            expect(value.element_toks.last.element_toks.size).to eq(3)
             value.element_toks.last.element_toks.map(&:value).should == %w(X Y Z)
           end
         end
@@ -715,7 +715,7 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
+            expect(value.element_toks.size).to eq(3)
           # value.element_toks.at(1).should have(0).element_toks
           end
         end
@@ -727,10 +727,10 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
-            value.element_toks.at(1).should have(1).element_toks
-            value.element_toks.at(1).element_toks.should have(1).element_toks
-            value.element_toks.at(1).element_toks.head.should have(2).component_toks
+            expect(value.element_toks.size).to eq(3)
+            # value.element_toks.at(1).should have(1).element_tok
+            expect(value.element_toks.at(1).element_toks.size).to eq(1)
+            expect(value.element_toks.at(1).element_toks.head.component_toks.size).to eq(2)
             value.element_toks.at(1).element_toks.head.component_toks.head.value.should == "A"
             value.element_toks.at(1).element_toks.head.component_toks.last.value.should == "B"
           end
@@ -743,8 +743,8 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
-            value.element_toks.at(1).element_toks.head.should have(2).component_toks
+            expect(value.element_toks.size).to eq(3)
+            expect(value.element_toks.at(1).element_toks.head.component_toks.size).to eq(2)
             value.element_toks.at(1).element_toks.head.component_toks.head.value.should == "A"
             value.element_toks.at(1).element_toks.head.component_toks.last.value.should == "B"
             value.element_toks.at(1).element_toks.last.component_toks.head.value.should == "C"
@@ -759,8 +759,8 @@ describe Stupidedi::Reader::TokenReader do
           result = reader.read_segment
           result.should be_defined
           result.map do |value, remainder|
-            value.should have(3).element_toks
-            value.element_toks.at(1).element_toks.head.should have(2).component_toks
+            expect(value.element_toks.size).to eq(3)
+            expect(value.element_toks.at(1).element_toks.head.component_toks.size).to eq(2)
             value.element_toks.at(1).element_toks.at(0).component_toks.head.value.should == "A"
             value.element_toks.at(1).element_toks.at(0).component_toks.last.value.should == "B"
             value.element_toks.at(1).element_toks.at(1).component_toks.head.value.should == "C"

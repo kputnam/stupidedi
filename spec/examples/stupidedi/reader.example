@@ -21,43 +21,43 @@ describe Stupidedi::Reader do
     end
 
     it "includes uppercase letters" do
-      ('A'..'Z').each{|c| is_basic?(c).should be_true }
+      ('A'..'Z').each{|c| is_basic?(c).should be true }
     end
 
     it "includes digits 0-9" do
-      is_basic?('0').should be_true
-      is_basic?('1').should be_true
-      is_basic?('2').should be_true
-      is_basic?('3').should be_true
-      is_basic?('4').should be_true
-      is_basic?('5').should be_true
-      is_basic?('6').should be_true
-      is_basic?('7').should be_true
-      is_basic?('8').should be_true
-      is_basic?('9').should be_true
+      is_basic?('0').should be true
+      is_basic?('1').should be true
+      is_basic?('2').should be true
+      is_basic?('3').should be true
+      is_basic?('4').should be true
+      is_basic?('5').should be true
+      is_basic?('6').should be true
+      is_basic?('7').should be true
+      is_basic?('8').should be true
+      is_basic?('9').should be true
     end
 
     it "includes special characters" do
-      is_basic?('!').should be_true
-      is_basic?('"').should be_true
-      is_basic?('&').should be_true
-      is_basic?("'").should be_true
-      is_basic?('(').should be_true
-      is_basic?(')').should be_true
-      is_basic?('*').should be_true
-      is_basic?('+').should be_true
-      is_basic?(',').should be_true
-      is_basic?('-').should be_true
-      is_basic?('.').should be_true
-      is_basic?('/').should be_true
-      is_basic?(':').should be_true
-      is_basic?(';').should be_true
-      is_basic?('?').should be_true
-      is_basic?('=').should be_true
+      is_basic?('!').should be true
+      is_basic?('"').should be true
+      is_basic?('&').should be true
+      is_basic?("'").should be true
+      is_basic?('(').should be true
+      is_basic?(')').should be true
+      is_basic?('*').should be true
+      is_basic?('+').should be true
+      is_basic?(',').should be true
+      is_basic?('-').should be true
+      is_basic?('.').should be true
+      is_basic?('/').should be true
+      is_basic?(':').should be true
+      is_basic?(';').should be true
+      is_basic?('?').should be true
+      is_basic?('=').should be true
     end
 
     it "includes the space character" do
-      is_basic?(' ').should be_true
+      is_basic?(' ').should be true
     end
   end
 
@@ -79,29 +79,29 @@ describe Stupidedi::Reader do
     end
 
     it "includes lowercase letters" do
-      ('a'..'z').each{|c| is_extended?(c).should be_true }
+      ('a'..'z').each{|c| is_extended?(c).should be true }
     end
 
     it "includes other special characters" do
-      is_extended?('%').should be_true
-      is_extended?('@').should be_true
-      is_extended?('[').should be_true
-      is_extended?(']').should be_true
-      is_extended?('_').should be_true
-      is_extended?('{').should be_true
-      is_extended?('}').should be_true
-      is_extended?('\\').should be_true
-      is_extended?('|').should be_true
-      is_extended?('<').should be_true
-      is_extended?('>').should be_true
-      is_extended?('~').should be_true
-      is_extended?('^').should be_true
-      is_extended?('`').should be_true
+      is_extended?('%').should be true
+      is_extended?('@').should be true
+      is_extended?('[').should be true
+      is_extended?(']').should be true
+      is_extended?('_').should be true
+      is_extended?('{').should be true
+      is_extended?('}').should be true
+      is_extended?('\\').should be true
+      is_extended?('|').should be true
+      is_extended?('<').should be true
+      is_extended?('>').should be true
+      is_extended?('~').should be true
+      is_extended?('^').should be true
+      is_extended?('`').should be true
     end
 
     it "includes national characters" do
-      is_extended?('#').should be_true
-      is_extended?('$').should be_true
+      is_extended?('#').should be true
+      is_extended?('$').should be true
     end
 
     it "includes select language characters" do

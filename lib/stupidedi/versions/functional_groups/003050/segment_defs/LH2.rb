@@ -1,8 +1,8 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      module ThirtyTen
-        module ThirtyFifty
+      module ThirtyFifty
+        module SegmentDefs
 
           s = Schema
           e = ElementDefs

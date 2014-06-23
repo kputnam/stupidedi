@@ -48,7 +48,7 @@ describe Stupidedi::Reader::DelegatedInput do
       property("is true") do
         with(:size, between(1, 25)) { [string, between(0, size - 1)] }
       end.check do |s, n|
-        mkinput(s).defined_at?(n).should be_true
+        mkinput(s).defined_at?(n).should be true
       end
     end
 
@@ -56,7 +56,7 @@ describe Stupidedi::Reader::DelegatedInput do
       property("is false") do
         with(:size, between(0, 25)) { [string, size] }
       end.check do |s, n|
-        mkinput(s).defined_at?(n).should be_false
+        mkinput(s).defined_at?(n).should be false
       end
     end
 
@@ -64,7 +64,7 @@ describe Stupidedi::Reader::DelegatedInput do
       property("is false") do
         with(:size, between(0, 25)) { [string, size + integer.abs] }
       end.check do |s, n|
-        mkinput(s).defined_at?(n).should be_false
+        mkinput(s).defined_at?(n).should be false
       end
     end
   end
