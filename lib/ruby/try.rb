@@ -1,5 +1,5 @@
 class Object
-  unless method_defined?(:try)
+
   # @group Combinators
   #############################################################################
 
@@ -14,14 +14,14 @@ class Object
   #   nil.try(:slice, 0, 3)         #=> nil
   #
 
-    def try(*args, &block)
-      if args.empty?
-        yield self
-      else
-        __send__(*args, &block)
-      end
+  def try(*args, &block)
+    if args.empty?
+      yield self
+    else
+      __send__(*args, &block)
     end
-  end
+  end unless method_defined?(:try)
+
 end
 
 class NilClass
