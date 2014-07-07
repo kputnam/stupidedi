@@ -24,8 +24,10 @@ module Enumerable
   #   [1,2].blank?    #=> false
   #   [].blank?       #=> false
   #
-  def blank?
-    empty?
+  unless respond_to?(:blank?)
+    def blank?
+      empty?
+    end
   end
 
   def present?
