@@ -1,8 +1,9 @@
 # Stupidedi
+[![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi) [![Gem Version](https://badge.fury.io/rb/stupidedi.svg)](http://badge.fury.io/rb/stupidedi)
 
 ![Screenshot](https://raw.github.com/kputnam/stupidedi/master/doc/images/edi-pp.png)
 
-* [![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi)
+
 * [GitHub project](http://github.com/kputnam/stupidedi)
 * [Human Documentation](https://github.com/kputnam/stupidedi/tree/master/doc)
 * [API Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
