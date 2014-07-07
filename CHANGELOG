@@ -1,3 +1,6 @@
+v 1.2.0 - June 24, 2014
+  - Don't redefine try, if active_support provides an implementation already (better rails support)
+  
 v 1.1.0 - June 24, 2014
   - Rspec 3.x support
   - Drop Ruby 1.8.7 support
