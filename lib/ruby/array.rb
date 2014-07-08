@@ -1,5 +1,13 @@
 class Array
 
+  def blank?
+    empty?
+  end
+
+  def present?
+    not empty?
+  end
+
   # Return the first item. Raises an `IndexError` if the Array is `empty?`.
   #
   # @example
