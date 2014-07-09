@@ -1,5 +1,5 @@
 # Stupidedi
-[![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/gh/kputnam%2Fstupidedi.svg)](http://badge.fury.io/gh/kputnam%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/kputnam/stupidedi.png)](https://codeclimate.com/github/kputnam/stupidedi)
+[![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/gh/kputnam%2Fstupidedi.svg)](http://badge.fury.io/gh/kputnam%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/kputnam/stupidedi.png)](https://codeclimate.com/github/kputnam/stupidedi) [![Inline docs](http://inch-ci.org/github/kputnam/stupidedi.png?branch=master)](http://inch-ci.org/github/kputnam/stupidedi) 
 
 ![Screenshot](https://raw.github.com/kputnam/stupidedi/master/doc/images/edi-pp.png)
 
