@@ -134,6 +134,7 @@ module Stupidedi
                   b::Element(e::Required,    "Special Services Code", b::Values("PP","SH","ZZ")),
                   b::Element(e::Situational, "Allowance or Charge Rate - Supplier Rate"),
                   b::Element(e::Situational, "Allowance or Charge Total Amount"),
+                  b::Element(e::NotUsed,     ""),
                   b::Element(e::Situational, "Quantity - Supplier Amount"))),
 
               d::LoopDef.build("PRR", d::RepeatCount.unbounded,
