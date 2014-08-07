@@ -21,7 +21,7 @@ module Stupidedi
               s::MSG.use( 290, r::Optional,  d::RepeatCount.bounded(1000))),
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(1),
-              s:: N1.use( 300, r::Optional,  d::RepeatCount.bounded(1)),
+              s:: N1.use( 300, r::Optional,  d::RepeatCount.bounded(2)),
               s:: N2.use( 310, r::Optional,  d::RepeatCount.bounded(1)),
               s:: N3.use( 320, r::Optional,  d::RepeatCount.bounded(1)),
               s:: N4.use( 330, r::Optional,  d::RepeatCount.bounded(1)))),
