@@ -98,9 +98,9 @@ module Stupidedi
                 r::Situational, d::RepeatCount.bounded(1000),
                 b::Element(e::Required,    "Free-Form Message Text"))),
 
-            d::LoopDef.build("N1", d::RepeatCount.bounded(200),
+            d::LoopDef.build("N1", d::RepeatCount.bounded(1),
               b::Segment(300, s::N1, "Name",
-                r::Situational, d::RepeatCount.bounded(1),
+                r::Situational, d::RepeatCount.bounded(2),
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("BT","MP")),
                 b::Element(e::Situational, "Name")),
 
