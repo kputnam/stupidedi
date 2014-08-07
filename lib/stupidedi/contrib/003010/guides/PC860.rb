@@ -40,6 +40,8 @@ module Stupidedi
               b::Element(e::Required,    "Shipment Method of Payment", b::Values("DE")),
               b::Element(e::Situational, "Location Qualifier", b::Values("AC")),
               b::Element(e::Situational, "Description"),
+              b::Element(e::NotUsed,     "Unknown"),
+              b::Element(e::NotUsed,     "Unknown"),
               b::Element(e::Situational, "Location Qualifier"),
               b::Element(e::Situational, "Description - Postal Code")),
 
@@ -66,6 +68,9 @@ module Stupidedi
 
             b::Segment(240, s::TD5, "Carrier Details (Routing Sequence/Transit Time)",
               r::Situational, d::RepeatCount.bounded(2),
+              b::Element(e::NotUsed,     "Unknown"),
+              b::Element(e::NotUsed,     "Unknown"),
+              b::Element(e::NotUsed,     "Unknown"),
               b::Element(e::Required,    "Transportation Method/Type Code", b::Values("A","AE","M","PG","R","RR","SE","SS")),
               b::Element(e::Required,    "Routing - Carrier's Name")),
 
