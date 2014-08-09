@@ -4215,7 +4215,9 @@ module Stupidedi
           E362  = t::Nn.new(:E362   , "Terms Discount Amount"              , 1, 10, 2)
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
             s::CodeList.build(
-              "ZZZ" => "Mutually Defined"))
+              "ZZZ" => "Mutually Defined",
+              "GEN" => "Entire Transaction Set",
+              "LIN" => "Line Item"))
 
           E364  = t::AN.new(:E364  , "Communication Number"                , 1, 80)
           E365  = t::ID.new(:E365 , "Communcation Number Qualifier"        , 2, 2,
@@ -4245,6 +4247,7 @@ module Stupidedi
             s::CodeList.build(
               "001" => "Cancel after",
               "002" => "Delivery Requested",
+              "003" => "",
               "007" => "Effective",
               "010" => "Requested ship",
               "011" => "Shipped",
@@ -5874,9 +5877,36 @@ module Stupidedi
 
           E671  = t:: R.new(:E671 , "Quantity Left to Receive"             , 1, 9)
 
+          E673  = t::ID.new(:E673 , "Quantity Qualifier"                   , 2, 2,
+            s::CodeList.build(
+              "01" => "Discrete Quantity",
+              "02" => "Cumulative Quantity",
+              "90" => "Acknowledged Quantity",
+              "AA" => "Unacknowledged Quantity",
+              "CA" => "Covered - Actual",
+              "CD" => "Co-insured - Actual",
+              "FL" => "Units",
+              "LA" => "Life-time Reserve - Actual",
+              "LE" => "Life-time Reserve - Estimated",
+              "NA" => "Number of Non-covered Days",
+              "NE" => "Non-Covered Amount - Estimated",
+              "NR" => "Not Replaced Blood Units",
+              "OU" => "Outlier Days",
+              "PS" => "Prescription",
+              "PT" => "Patients",
+              "QA" => "Quantity Approved",
+              "QC" => "Quantity Disapproved",
+              "VS" => "Visits",
+              "ZK" => "Federal Medicare or Medicaid Payment Mandate Category 1",
+              "ZL" => "Federal Medicare or Medicaid Payment Mandate Category 2",
+              "ZM" => "Federal Medicare or Medicaid Payment Mandate Category 3",
+              "ZN" => "Federal Medicare or Medicaid Payment Mandate Category 4",
+              "ZO" => "Federal Medicare or Medicaid Payment Mandate Category 5"))
+
           E675  = t::ID.new(:E675 , "Schedule Type Qualifier"              , 2, 2,
             s::CodeList.build(
-              "DL" => "Delivery Based"))
+              "DL" => "Delivery Based",
+              "SH" => "Shipment Based"))
 
           E676  = t::ID.new(:E676 , "Schedule Quantity Qualifier"          , 2, 2,
             s::CodeList.build(
@@ -5896,7 +5926,8 @@ module Stupidedi
               "D" => "Planning/Forecast"))
           E681  = t::ID.new(:E681 , "Forecast Timing Qualifier"             , 1, 1,
             s::CodeList.build(
-              "D" => "Discrete"))
+              "D" => "Discrete",
+              "F" => "Flexible Interval (from Date X through Date Y)"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
