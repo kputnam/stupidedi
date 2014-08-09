@@ -256,6 +256,9 @@ module Stupidedi
 
           autoload :FST,
             "stupidedi/versions/functional_groups/003010/segment_defs/FST"
+
+          autoload :SHP,
+            "stupidedi/versions/functional_groups/003010/segment_defs/SHP"  
         end
       end
     end

@@ -21,14 +21,25 @@ module Stupidedi
               s::LIN.use( 010, r::Mandatory, d::RepeatCount.bounded(1)),
               s::UIT.use( 020, r::Mandatory, d::RepeatCount.bounded(1)),
               s::PID.use( 80, r::Optional, d::RepeatCount.bounded(1)),
+              s:: N1.use( 90, r::Optional, d::RepeatCount.bounded(1)),
+              s::SDP.use( 290, r::Mandatory, d::RepeatCount.bounded(1)),
 
-              d::LoopDef.build("SDP", d::RepeatCount.bounded(260),
-                s::SDP.use( 290, r::Mandatory, d::RepeatCount.bounded(1)),
-                s::FST.use( 300, r::Mandatory, d::RepeatCount.bounded(260))),
+              d::LoopDef.build("NTE", d::RepeatCount.bounded(260),
+                s::NTE.use( 400, r::Optional, d::RepeatCount.bounded(1)),
+                s::FST.use( 300, r::Optional, d::RepeatCount.bounded(1))),
+
+              # d::LoopDef.build("SHP", d::RepeatCount.bounded(1),
+              #   s::FST.use( 301, r::Optional, d::RepeatCount.bounded(1)),
+              #   s::SHP.use( 470, r::Optional, d::RepeatCount.bounded(1))),
 
               s::MAN.use( 390, r::Optional, d::RepeatCount.bounded(10)))),
 
+            # d::LoopDef.build("FST", d::RepeatCount.bounded(1),
+            #   # s::FST.use( 301, r::Optional, d::RepeatCount.bounded(1)),
+            #   s::SHP.use( 470, r::Optional, d::RepeatCount.bounded(1)))),
+
           d::TableDef.summary("Table 3 - Summary",
+            # s::FST.use(301, r::Mandatory, d::RepeatCount.bounded(1)),
             s::CTT.use(010, r::Mandatory, d::RepeatCount.bounded(1)),
             s:: SE.use(020, r::Mandatory, d::RepeatCount.bounded(1))))
 
