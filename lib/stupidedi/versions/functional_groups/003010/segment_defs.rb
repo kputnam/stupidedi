@@ -245,6 +245,17 @@ module Stupidedi
           autoload :POC,
             "stupidedi/versions/functional_groups/003010/segment_defs/POC"
 
+          autoload :BFR,
+            "stupidedi/versions/functional_groups/003010/segment_defs/BFR"
+
+          autoload :UIT,
+            "stupidedi/versions/functional_groups/003010/segment_defs/UIT"
+
+          autoload :SDP,
+            "stupidedi/versions/functional_groups/003010/segment_defs/SDP"
+
+          autoload :FST,
+            "stupidedi/versions/functional_groups/003010/segment_defs/FST"
         end
       end
     end

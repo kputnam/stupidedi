@@ -5871,7 +5871,32 @@ module Stupidedi
               "PC" => "Price Change",
               "QD" => "Quantity Decrease",
               "QI" => "Quantity Increase"))
+
           E671  = t:: R.new(:E671 , "Quantity Left to Receive"             , 1, 9)
+
+          E675  = t::ID.new(:E675 , "Schedule Type Qualifier"              , 2, 2,
+            s::CodeList.build(
+              "DL" => "Delivery Based"))
+
+          E676  = t::ID.new(:E676 , "Schedule Quantity Qualifier"          , 2, 2,
+            s::CodeList.build(
+              "A" => "Actual Discrete Quantities"))
+
+          E678  = t::ID.new(:E678 , "Ship/Delivery or Calendar Pattern Code"  , 1, 2,
+            s::CodeList.build(
+              "Y" => "None"))
+
+          E679  = t::ID.new(:E679 , "Ship/Delivery Pattern Time Code"          , 1, 1,
+            s::CodeList.build(
+              "Y" => "None"))
+
+          E680  = t::ID.new(:E680 , "Forecast Qualifier"                      , 1, 1,
+            s::CodeList.build(
+              "C" => "New Firm Order",
+              "D" => "Planning/Forecast"))
+          E681  = t::ID.new(:E681 , "Forecast Timing Qualifier"             , 1, 1,
+            s::CodeList.build(
+              "D" => "Discrete"))
 
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
