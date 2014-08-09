@@ -134,6 +134,7 @@ module Stupidedi
           x.register("003010", "RA", "820") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::RA820 }
           x.register("003010", "PO", "850") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PO850 }
           x.register("003010", "PC", "860") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PC860 }
+          x.register("003010", "PS", "830") { Stupidedi::Contrib::ThirtyTen::TransactionSetDefs::PS830 }
 
           x.register("003040", "WA", "142") { Stupidedi::Contrib::ThirtyForty::TransactionSetDefs::WA142 }
 

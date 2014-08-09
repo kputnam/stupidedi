@@ -15,6 +15,9 @@ module Stupidedi
         autoload :PC860, # Purchase Order Change
           "stupidedi/contrib/003010/transaction_set_defs/PC860"
 
+        autoload :PS830, # Planning Schedule with Release Capability
+          "stupidedi/contrib/003010/transaction_set_defs/PS830"
+
       end
     end
   end
