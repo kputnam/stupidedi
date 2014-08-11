@@ -32,7 +32,7 @@ module Stupidedi
 
             # @return [SimpleElementUse]
             def simple_use(requirement, repeat_count, parent = nil)
-              if @code_list.try(:internal?)
+              if @code_list.attempt(:internal?)
                 Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.absolute(@code_list.codes), parent)
               else
                 Schema::SimpleElementUse.new(self, requirement, repeat_count, Sets.universal, parent)
@@ -41,7 +41,7 @@ module Stupidedi
 
             # @return [ComponentElementUse]
             def component_use(requirement, parent = nil)
-              if @code_list.try(:internal?)
+              if @code_list.attempt(:internal?)
                 Schema::ComponentElementUse.new(self, requirement, Sets.absolute(@code_list.codes), parent)
               else
                 Schema::ComponentElementUse.new(self, requirement, Sets.universal, parent)
@@ -315,7 +315,7 @@ module Stupidedi
 
                 codes = definition.code_list
 
-                if codes.try(&:internal?)
+                if codes.attempt(&:internal?)
                   if codes.defined_at?(@value)
                     value = "#{@value}: " << ansi.dark(codes.at(@value))
                   else

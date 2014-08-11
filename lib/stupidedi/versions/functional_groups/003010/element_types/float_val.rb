@@ -13,7 +13,7 @@ module Stupidedi
             def initialize(id, name, min_length, max_length, max_precision = nil, description = nil, parent = nil)
               super(id, name, min_length, max_length, description, parent)
 
-              if max_precision.try(:>, max_length)
+              if max_precision.attempt(:>, max_length)
                 raise ArgumentError,
                   "max_precision cannot be greater than max_length"
               end
@@ -74,7 +74,7 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
+                id = definition.attempt do |d|
                   "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
@@ -126,7 +126,7 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
+                id = definition.attempt do |d|
                   "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)
@@ -220,7 +220,7 @@ module Stupidedi
 
               # @return [String]
               def inspect
-                id = definition.try do |d|
+                id = definition.attempt do |d|
                   "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
                     if usage.forbidden?
                       ansi.forbidden(s)

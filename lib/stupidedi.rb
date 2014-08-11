@@ -63,7 +63,7 @@ module Stupidedi
     end
   else
     def self.caller(depth = 2)
-      ::Kernel.caller.at(depth - 1).try(:split, ":")
+      ::Kernel.caller.at(depth - 1).attempt(:split, ":")
     end
   end
 end

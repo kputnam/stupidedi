@@ -63,7 +63,7 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         if @children.empty?
-          id = definition.try do |d|
+          id = definition.attempt do |d|
             ansi.bold("[#{d.id.to_s}: #{d.name.to_s}]")
           end
           q.text(ansi.repeated("RepeatedElementVal#{id}"))

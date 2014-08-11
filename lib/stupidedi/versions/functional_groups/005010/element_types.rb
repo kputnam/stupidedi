@@ -115,7 +115,7 @@ module Stupidedi
 
             # @return [void]
             def pretty_print(q)
-              type = self.class.name.try{|n| n.split('::').last }
+              type = self.class.name.attempt{|n| n.split('::').last }
 
               if type.blank?
                 q.text @id.to_s

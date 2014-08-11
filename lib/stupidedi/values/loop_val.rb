@@ -37,7 +37,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = @definition.try do |d|
+        id = @definition.attempt do |d|
           ansi.bold("[#{d.id.to_s}]")
         end
 

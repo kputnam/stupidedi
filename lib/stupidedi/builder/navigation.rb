@@ -591,13 +591,13 @@ module Stupidedi
                        (# This is hairy, but we know the instruction is pushing some
                         # number of nested subtrees. We know from each AbstractState
                         # subclass that we both either push a single subtree
-                        op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
+                        op.segment_use.parent.eql?(x.segment_use.attempt(:parent)) or
                         # Or this instruction pushes one subtree while the other one
                         # pushes two (eg, a new loop inside of a table)
-                        op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
+                        op.segment_use.parent.eql?(x.segment_use.attempt(:parent).attempt(:parent)) or
                         # Or this instruction pushes two subtrees (eg, a new loop in
                         # a new table) and the other also pushes two subtrees.
-                        op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
+                        op.segment_use.parent.parent.eql?(x.segment_use.attempt(:parent)))
                     end
                   end
 

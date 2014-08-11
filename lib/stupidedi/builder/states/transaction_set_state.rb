@@ -44,10 +44,10 @@ module Stupidedi
         fgcode = parent.fgcode
 
         # ST01: Transaction Set Identifier Code
-        txcode = segment_tok.element_toks.at(0).try(:value)
+        txcode = segment_tok.element_toks.at(0).attempt(:value)
 
         # ST03: Implementation Convention Reference
-        version = segment_tok.element_toks.at(2).try(:value)
+        version = segment_tok.element_toks.at(2).attempt(:value)
 
         # Fall back to GS08 if ST03 isn't available
         if version.blank? or version.is_a?(Symbol)

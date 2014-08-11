@@ -5,46 +5,46 @@ describe "Object#try" do
 
   it "calls a unary block" do
     expect(object).to receive(:message).with(no_args)
-    object.try{|o| o.message }
+    object.attempt{|o| o.message }
   end
 
   it "calls a unary block" do
     expect(object).to receive(:message).with(no_args)
-    object.try(&:message)
+    object.attempt(&:message)
   end
 
   it "calls a nullary method" do
     expect(object).to receive(:message).with(no_args)
-    object.try(:message)
+    object.attempt(:message)
   end
 
   it "calls a nullary method with a unary block" do
-    %w(a b c).try(:map, &:length).should == [1, 1, 1]
+    %w(a b c).attempt(:map, &:length).should == [1, 1, 1]
   end
 
   it "calls a nullary method with a binary block" do
-    %w(abc def ghi).try(:inject, &:+).should == "abcdefghi"
+    %w(abc def ghi).attempt(:inject, &:+).should == "abcdefghi"
   end
 
   it "calls a unary method" do
     expect(object).to receive(:message).with(:argument)
-    object.try(:message, :argument)
+    object.attempt(:message, :argument)
   end
 
   it "calls a unary method with a binary block" do
-    %w(abc def ghi).try(:inject, 1){|sum, e| sum + e.length }.should == 10
+    %w(abc def ghi).attempt(:inject, 1){|sum, e| sum + e.length }.should == 10
   end
 
   it "calls a binary method" do
     expect(object).to receive(:message).with(:first, :second)
-    object.try(:message, :first, :second)
+    object.attempt(:message, :first, :second)
   end
 end
 
 describe "NilClass#try" do
-  specify { nil.try{ whatever }.should be_nil }
-  specify { nil.try(:a).should be_nil }
-  specify { nil.try(:a) { whatever }.should be_nil }
-  specify { nil.try(:a, :b, :c).should be_nil }
-  specify { nil.try(:a, :b, :c) { whatever }.should be_nil }
+  specify { nil.attempt{ whatever }.should be_nil }
+  specify { nil.attempt(:a).should be_nil }
+  specify { nil.attempt(:a) { whatever }.should be_nil }
+  specify { nil.attempt(:a, :b, :c).should be_nil }
+  specify { nil.attempt(:a, :b, :c) { whatever }.should be_nil }
 end

@@ -56,7 +56,7 @@ module Stupidedi
       end
 
       def repeatable?
-        @repeat_count.try{|r| r.include?(2) }
+        @repeat_count.attempt{|r| r.include?(2) }
       end
 
       # @see X222 B.1.1.3.11.1 Loop Control Segments

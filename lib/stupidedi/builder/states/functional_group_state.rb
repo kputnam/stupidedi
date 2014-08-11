@@ -49,11 +49,11 @@ module Stupidedi
       # @return [Zipper::AbstractCursor]
       def push(zipper, parent, segment_tok, segment_use, config)
         # GS08: Version / Release / Industry Identifier Code
-        version = segment_tok.element_toks.at(7).try(:value)
-        gscode  = version.try(:slice, 0, 6)
+        version = segment_tok.element_toks.at(7).attempt(:value)
+        gscode  = version.attempt(:slice, 0, 6)
 
         # GS01: Functional Identifier Code
-        fgcode = segment_tok.element_toks.at(0).try(:value)
+        fgcode = segment_tok.element_toks.at(0).attempt(:value)
 
         unless config.functional_group.defined_at?(gscode)
           return FailureState.push(

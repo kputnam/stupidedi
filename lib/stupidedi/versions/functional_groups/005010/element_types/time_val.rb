@@ -219,27 +219,27 @@ module Stupidedi
                   end
                 end
 
-                hh =   @hour.try{|h| "%02d" % h }  || "hh"
-                mm = @minute.try{|m| "%02d" % m }  || "mm"
-                ss = @second.try{|s| s.to_s("F") } || "ss"
+                hh =   @hour.attempt{|h| "%02d" % h }  || "hh"
+                mm = @minute.attempt{|m| "%02d" % m }  || "mm"
+                ss = @second.attempt{|s| s.to_s("F") } || "ss"
 
                 ansi.element("TM.value#{id}") << "(#{hh}:#{mm}:#{ss})"
               end
 
               # @return [String]
               def to_s(hh = "hh", mm = "mm", ss = "ss")
-                hh =   @hour.try{|h| "%02d" % h } || hh
-                mm = @minute.try{|m| "%02d" % m } || mm
-                ss = @second.try{|s| "%02f" % s } || ss
+                hh =   @hour.attempt{|h| "%02d" % h } || hh
+                mm = @minute.attempt{|m| "%02d" % m } || mm
+                ss = @second.attempt{|s| "%02f" % s } || ss
                 "#{hh}#{mm}#{ss}"
               end
 
               # @return [String]
               def to_x12(truncate = true)
-                hh =   @hour.try{|h| "%02d" % h }
-                mm = @minute.try{|m| "%02d" % m }
-                ss = @second.try{|s| "%02d" % s }
-                ff = @second.try do |s|
+                hh =   @hour.attempt{|h| "%02d" % h }
+                mm = @minute.attempt{|m| "%02d" % m }
+                ss = @second.attempt{|s| "%02d" % s }
+                ff = @second.attempt do |s|
                   s.frac.to_s("F").
                     gsub(/^0*\./, "").
                     gsub(/0+$/, "")
@@ -284,8 +284,8 @@ module Stupidedi
                   unless object =~ /^\d+$/
 
                 hour   = object.to_s.slice(0, 2).to_i
-                minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-                second = object.to_s.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
+                minute = object.to_s.slice(2, 2).attempt{|mm| mm.to_i unless mm.blank? }
+                second = object.to_s.slice(4, 2).attempt{|ss| ss.to_d unless ss.blank? }
 
                 if decimal = object.to_s.slice(6..-1)
                   second += "0.#{decimal}".to_d

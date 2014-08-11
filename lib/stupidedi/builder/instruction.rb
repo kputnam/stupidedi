@@ -92,7 +92,7 @@ module Stupidedi
           unless @push.nil?
             q.text ","
             q.breakable
-            q.text "push: #{@push.try{|c| c.name.split('::').last}}"
+            q.text "push: #{@push.attempt{|c| c.name.split('::').last}}"
           end
         end
       end

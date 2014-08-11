@@ -7,20 +7,20 @@ class Object
   # This is overridden by {NilClass#try}, which always returns `nil`.
   #
   # @example
-  #   "non-nil".try(&:length)       #=> 7
-  #   nil.try(&:length)             #=> nil
+  #   "non-nil".attempt(&:length)       #=> 7
+  #   nil.attempt(&:length)             #=> nil
   #
-  #   "non-nil".try(:slice, 0, 3)   #=> "non"
-  #   nil.try(:slice, 0, 3)         #=> nil
+  #   "non-nil".attempt(:slice, 0, 3)   #=> "non"
+  #   nil.attempt(:slice, 0, 3)         #=> nil
   #
 
-  def try(*args, &block)
+  def attempt(*args, &block)
     if args.empty?
       yield self
     else
       __send__(*args, &block)
     end
-  end unless method_defined?(:try)
+  end unless method_defined?(:attempt)
 
 end
 
@@ -31,15 +31,15 @@ class NilClass
   # Returns `nil` (when `self` is `nil`). This overrides {Object#try}
   #
   # @example
-  #   "non-nil".try(&:length) #=> 7
-  #   nil.try(&:length)       #=> nil
+  #   "non-nil".attempt(&:length) #=> 7
+  #   nil.attempt(&:length)       #=> nil
   #
-  #   "non-nil".try(:slice, 0, 3)   #=> "non"
-  #   nil.try(:slice, 0, 3)         #=> nil
+  #   "non-nil".attempt(:slice, 0, 3)   #=> "non"
+  #   nil.attempt(:slice, 0, 3)         #=> nil
   #
   # @return nil
 
-  def try(*args)
+  def attempt(*args)
     self
   end
 end
