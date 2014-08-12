@@ -133,7 +133,7 @@ module Stupidedi
             raise Exceptions::ParseError,
               "forbidden element #{descriptor} is present"
           else
-            if zipper.node.present?
+            if zipper.node.is_present?
               zipper.children.each_with_index do |z, i|
                 critique(z, "#{descriptor}-#{'%02d' % (i + 1)}")
               end

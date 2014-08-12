@@ -32,7 +32,7 @@ module Stupidedi
       def critique_isa(isa, acc)
         edit(:ISA07) do
           isa.element(7).tap do |e|
-            if e.node.present? and e.node.valid?
+            if e.node.is_present? and e.node.valid?
               unless %w(02 ZZ).include?(e.node)
                 acc.ta105(e, "R", "005", "must be '02', or 'ZZ'")
               end
@@ -42,7 +42,7 @@ module Stupidedi
 
         edit(:ISA12) do
           isa.element(12).tap do |e|
-            if e.node.present? and e.node.valid?
+            if e.node.is_present? and e.node.valid?
               unless e.node == "00401"
                 acc.ta105(e, "R", "017", "must be '00401'")
               end
@@ -77,28 +77,28 @@ module Stupidedi
           if nm1.element(2).select{|e| e.node == "2" }.defined?
             # First name
             nm1.element(4).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "505", "must not be present when NM102 is 2")
               end
             end
 
             # Middle name
             nm1.element(5).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "514", "must not be present when NM102 is 2")
               end
             end
 
             # Prefix name
             nm1.element(6).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
               end
             end
 
             # Suffix name
             nm1.element(7).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
               end
             end

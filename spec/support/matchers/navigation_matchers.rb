@@ -169,7 +169,7 @@ module NavigationMatchers
           result =
             begin
               machine.find(*selector).tap do |m|
-                if children.is_a?(Enumerable) and children.present?
+                if children.is_a?(Enumerable) and children.is_present?
                   navigate(m, children)
                 end
               end

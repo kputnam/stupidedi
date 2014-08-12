@@ -48,7 +48,7 @@ module Stupidedi
       # @return [AbstractSet<String>]
       def characters
         chars =
-          [@component, @repetition, @element, @segment].select(&:present?)
+          [@component, @repetition, @element, @segment].select(&:is_present?)
 
         Sets.absolute(chars.join.split(//), Reader::C_BYTES.split(//))
       end

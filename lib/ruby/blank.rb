@@ -11,7 +11,7 @@ class String
     self !~ /\S/
   end
 
-  def present?
+  def is_present?
     self =~ /\S/
   end
 end
@@ -30,7 +30,7 @@ end
 #     empty?
 #   end
 #
-#   def present?
+#   def is_present?
 #     not empty?
 #   end
 # end
@@ -46,7 +46,7 @@ class NilClass
     true
   end
 
-  def present?
+  def is_present?
     false
   end
 end
@@ -63,7 +63,7 @@ class Object
     false
   end
 
-  def present?
+  def is_present?
     true
   end
 end

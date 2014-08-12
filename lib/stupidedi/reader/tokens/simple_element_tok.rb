@@ -34,7 +34,7 @@ module Stupidedi
         @value.blank?
       end
 
-      def present?
+      def is_present?
         not blank?
       end
 

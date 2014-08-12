@@ -104,7 +104,7 @@ module Stupidedi
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
           invalid = true  # Were all possibly distinguishing elements invalid?
-          present = false # Were any possibly distinguishing elements present?
+          present = false # Were any possibly distinguishing elements is_present?
 
           @__basis ||= basis(shallowest(@instructions))
           @__basis.head.each do |(n, m), map|

@@ -337,28 +337,28 @@ module Stupidedi
           if nm1.element(2).select{|e| e.node == "2" }.defined?
             # First name
             nm1.element(4).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "505", "must not be present when NM102 is 2")
               end
             end
 
             # Middle name
             nm1.element(5).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "514", "must not be present when NM102 is 2")
               end
             end
 
             # Prefix name
             nm1.element(6).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
               end
             end
 
             # Suffix name
             nm1.element(7).tap do |e|
-              if e.node.present? and e.node.usage.optional?
+              if e.node.is_present? and e.node.usage.optional?
                 acc.stc01(e, "T", "A8", "125", "must not be present when NM102 is 2")
               end
             end
@@ -414,7 +414,7 @@ module Stupidedi
       def critique_n4(n4, acc)
         edit(:N4) do
           usa_canada =
-            n4.element(2).select(&:present?).defined? ||
+            n4.element(2).select(&:is_present?).defined? ||
             n4.element(4).select(&:blank?).defined?   ||
             n4.element(4).select{|e| e.node == "US" }.defined? ||
             n4.element(7).select(&:blank?).defined?
@@ -426,7 +426,7 @@ module Stupidedi
                 # Required
               end
             else
-              if e.node.present? and e.node.situational?
+              if e.node.is_present? and e.node.situational?
                 # Forbidden
               end
             end
@@ -442,7 +442,7 @@ module Stupidedi
           # Country Code
           n4.element(4).tap do |e|
             if usa_canada
-              if e.node.present? and e.node.situational?
+              if e.node.is_present? and e.node.situational?
                 # Forbidden
               end
             else
@@ -453,7 +453,7 @@ module Stupidedi
           # Country Subdivision Code
           n4.element(7).tap do |e|
             if usa_canada
-              if e.node.present? and e.node.situational?
+              if e.node.is_present? and e.node.situational?
                 # Forbidden
               end
             else

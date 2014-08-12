@@ -53,7 +53,7 @@ module Stupidedi
 
           # Transaction Set Identifier Code
           st.element(1).tap do |e|
-            if e.node.present? and e.node.valid?
+            if e.node.is_present? and e.node.valid?
               unless e.node == envelope_def.id
                 acc.ik502(e, "R", "6", "is not an allowed value")
               end
@@ -63,7 +63,7 @@ module Stupidedi
           st.parent.tap do |gs|
             # Functional Identifier Code
             gs.element(1).tap do |e|
-              if e.node.present? and e.node.valid?
+              if e.node.is_present? and e.node.valid?
                 unless e.node == envelope_def.functional_group
                   acc.ak905(e, "R", "1", "is not an allowed value")
                 end
@@ -137,13 +137,13 @@ module Stupidedi
           elsif zipper.node.usage.forbidden?
             acc.ik403(zipper, "R", "I10", "must not be present")
           else
-            if zipper.node.present?
+            if zipper.node.is_present?
               zipper.children.each{|z| recurse(z, acc) }
 
               d = zipper.node.definition
               d.syntax_notes.each do |s|
                 zs = s.errors(zipper)
-                ex = s.reason(zipper) if zs.present?
+                ex = s.reason(zipper) if zs.is_present?
                 zs.each{|c| acc.ik403(c, "R", "2", ex) }
               end
             end
@@ -161,7 +161,7 @@ module Stupidedi
             zipper.node.definition.tap do |d|
               d.syntax_notes.each do |s|
                 es = s.errors(zipper)
-                ex = s.reason(zipper) if es.present?
+                ex = s.reason(zipper) if es.is_present?
                 es.each{|c| acc.ik403(c, "R", "2", ex) }
               end
             end

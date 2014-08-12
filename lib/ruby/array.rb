@@ -4,7 +4,7 @@ class Array
     empty?
   end
 
-  def present?
+  def is_present?
     not empty?
   end
 

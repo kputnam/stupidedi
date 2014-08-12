@@ -37,13 +37,13 @@ module Stupidedi
 
       def satisfied?(zipper)
         forbidden(zipper).all?{|c| c.node.blank? } and
-          required(zipper).all?{|c| c.node.present? }
+          required(zipper).all?{|c| c.node.is_present? }
       end
 
       # @return [Array<Zipper::AbstractCursor<Values::AbstractElementVal>>]
       def errors(zipper)
-        f = forbidden(zipper).select{|c| c.node.present? }
-        r = required(zipper).reject{|c| c.node.present? }
+        f = forbidden(zipper).select{|c| c.node.is_present? }
+        r = required(zipper).reject{|c| c.node.is_present? }
 
         f.concat(r)
       end

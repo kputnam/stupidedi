@@ -29,7 +29,7 @@ module Stupidedi
         @element_toks.all(&:blank?)
       end
 
-      def present?
+      def is_present?
         not blank?
       end
     end

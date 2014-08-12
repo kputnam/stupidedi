@@ -33,11 +33,11 @@ module Stupidedi
       end
 
       # Is the element not blank?
-      def present?
+      def is_present?
         not empty?
       end
 
-      # Is the element not present?
+      # Is the element not is_present?
       def blank?
         empty?
       end
@@ -114,7 +114,7 @@ module Stupidedi
       # @return [AbstractSet<String>]
       def characters(result = Sets.absolute([], Reader::C_BYTES.split(//)))
         if leaf?
-          if present? and not separator?
+          if is_present? and not separator?
             result | to_x12.split(//)
           else
             result

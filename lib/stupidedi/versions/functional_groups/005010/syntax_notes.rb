@@ -15,9 +15,9 @@ module Stupidedi
           #
           class P < Schema::SyntaxNote
             def required(zipper)
-              if zipper.node.present?
+              if zipper.node.is_present?
                 xs = children(zipper)
-                xs.any?{|x| x.node.present? } ? xs : []
+                xs.any?{|x| x.node.is_present? } ? xs : []
               else
                 []
               end
@@ -28,7 +28,7 @@ module Stupidedi
             end
 
             def reason(zipper)
-              present = indexes.select{|n| zipper.child(n - 1).node.present? }
+              present = indexes.select{|n| zipper.child(n - 1).node.is_present? }
               missing = indexes - present
               "elements #{missing.join(", ")} must be present when elements #{present.join(", ")} are present"
             end
@@ -46,9 +46,9 @@ module Stupidedi
           #
           class R < Schema::SyntaxNote
             def required(zipper)
-              if zipper.node.present?
+              if zipper.node.is_present?
                 xs = children(zipper)
-                xs.any?{|x| x.node.present? } ? [] : xs
+                xs.any?{|x| x.node.is_present? } ? [] : xs
               else
                 []
               end
@@ -59,7 +59,7 @@ module Stupidedi
             end
 
             def reason(zipper)
-              present = indexes.select{|n| zipper.child(n - 1).node.present? }
+              present = indexes.select{|n| zipper.child(n - 1).node.is_present? }
               missing = indexes - present
               "at least one of elements #{missing.join(", ")} must be present"
             end
@@ -81,16 +81,16 @@ module Stupidedi
             end
 
             def forbidden(zipper)
-              if zipper.node.present?
+              if zipper.node.is_present?
                 xs = children(zipper)
-                xs.count{|x| x.node.present? } <= 1 ? [] : xs
+                xs.count{|x| x.node.is_present? } <= 1 ? [] : xs
               else
                 []
               end
             end
 
             def reason(zipper)
-              present = indexes.select{|n| zipper.child(n - 1).node.present? }
+              present = indexes.select{|n| zipper.child(n - 1).node.is_present? }
               "only one of elements #{present.join(", ")} may be present"
             end
           end
@@ -107,7 +107,7 @@ module Stupidedi
           #
           class C < Schema::SyntaxNote
             def required(zipper)
-              if zipper.child(indexes.head - 1).node.present?
+              if zipper.child(indexes.head - 1).node.is_present?
                 children(zipper).tail
               else
                 []
@@ -135,9 +135,9 @@ module Stupidedi
           #
           class L < Schema::SyntaxNote
             def required(zipper)
-              if zipper.child(indexes.head - 1).node.present?
+              if zipper.child(indexes.head - 1).node.is_present?
                 xs = children(zipper).tail
-                xs.any?{|x| x.node.present? } ? [] : xs
+                xs.any?{|x| x.node.is_present? } ? [] : xs
               else
                 []
               end

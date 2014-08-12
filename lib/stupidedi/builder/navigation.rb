@@ -587,7 +587,7 @@ module Stupidedi
                     op.push.nil?        ||
                     op.segment_use.nil? ||
                     1 >= zipper.node.instructions.instructions.count do |x|
-                      x.push.present? and
+                      x.push.is_present? and
                        (# This is hairy, but we know the instruction is pushing some
                         # number of nested subtrees. We know from each AbstractState
                         # subclass that we both either push a single subtree
@@ -643,7 +643,7 @@ module Stupidedi
             f_tok.component_toks.zip(e_val.children) do |c_tok, c_val|
               return true unless c_tok.blank? or c_val == c_tok.value
             end
-          elsif f_tok.present?
+          elsif f_tok.is_present?
             raise Exceptions::ParseError,
               "only simple and composite elements can be filtered"
           end
@@ -666,7 +666,7 @@ module Stupidedi
             f_tok.component_toks.zip(children) do |f_com, e_com|
               return true unless f_com.blank? or f_com.value == e_com.value
             end
-          elsif f_tok.present?
+          elsif f_tok.is_present?
             raise Exceptions::ParseError,
               "only simple and composite elements can be filtered"
           end

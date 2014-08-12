@@ -49,7 +49,7 @@ module Stupidedi
             end
 
             def code_lists(subset = Sets.universal)
-              if @code_list.present?
+              if @code_list.is_present?
                 @code_list.code_lists(subset)
               else
                 Sets.empty

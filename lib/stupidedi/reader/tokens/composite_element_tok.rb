@@ -34,7 +34,7 @@ module Stupidedi
         @component_toks.all?(&:blank?)
       end
 
-      def present?
+      def is_present?
         not blank?
       end
 

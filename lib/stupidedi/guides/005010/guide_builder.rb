@@ -28,7 +28,7 @@ module Stupidedi
                   "change the repeat count of #{x.id}"
               end
 
-              break if req.present?
+              break if req.is_present?
             end
           end
 
