@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Object do
-  describe "#blank?" do
+  describe "#blankness?" do
     it "is false" do
       Object.new.should_not be_blank
     end
@@ -9,9 +9,9 @@ describe Object do
 end
 
 describe String do
-  describe "#blank?" do
+  describe "#blankness?" do
     context "if string contains non-whitespace characters" do
-      specify "then is string.blank? is false" do
+      specify "then is string.blankness? is false" do
         "abc".should_not be_blank
         "  x".should_not be_blank
         " x ".should_not be_blank
@@ -20,13 +20,13 @@ describe String do
     end
 
     context "if string is #empty?" do
-      specify "then string.blank? is true" do
+      specify "then string.blankness? is true" do
         "".should be_blank
       end
     end
 
     context "if string contains only whitespace characters" do
-      specify "then string.blank? is true" do
+      specify "then string.blankness? is true" do
         "  ".should be_blank
         "\t".should be_blank
         "\n".should be_blank
@@ -38,15 +38,15 @@ describe String do
 end
 
 describe Enumerable do
-  describe "#blank?" do
+  describe "#blankness?" do
     context "if enum.empty?" do
-      specify "then enum.blank? is true" do
+      specify "then enum.blankness? is true" do
         [].should be_blank
       end
     end
 
     context "if not enum.empty?" do
-      specify "then enum.blank? is false" do
+      specify "then enum.blankness? is false" do
         [0].should_not be_blank
       end
     end
@@ -54,7 +54,7 @@ describe Enumerable do
 end
 
 describe NilClass do
-  describe "#blank?" do
+  describe "#blankness?" do
     it "is true" do
       nil.should be_blank
     end

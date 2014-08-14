@@ -5296,7 +5296,11 @@ module Stupidedi
               "T0070" => "Tools for Printing",
               "W0010" => "Warranties",
               "X0010" => "Combine All Same Day Shipment"))
-
+          #This is custom for Just Suspensions
+          E563  = t::ID.new(:E563 , "Sales Requirements"                   , 1, 2,
+            s::CodeList.build(
+              "N" => "No Back Order",
+              "Y" => "Back Order if Out of Stock"))
           E567  = t::Nn.new(:E567 , "Equipment Length"                     , 4, 5, 0)
           E569  = t::ID.new(:E569 , "Account Number Qualifier"             , 1, 3,
             s::CodeList.build(

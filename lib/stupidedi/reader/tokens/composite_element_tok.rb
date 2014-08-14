@@ -30,12 +30,12 @@ module Stupidedi
         false
       end
 
-      def blank?
-        @component_toks.all?(&:blank?)
+      def blankness?
+        @component_toks.all?(&:blankness?)
       end
 
       def is_present?
-        not blank?
+        not blankness?
       end
 
       def simple?

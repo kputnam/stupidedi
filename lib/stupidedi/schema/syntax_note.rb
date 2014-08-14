@@ -36,7 +36,7 @@ module Stupidedi
       abstract :reason, :args => %w(zipper)
 
       def satisfied?(zipper)
-        forbidden(zipper).all?{|c| c.node.blank? } and
+        forbidden(zipper).all?{|c| c.node.blankness? } and
           required(zipper).all?{|c| c.node.is_present? }
       end
 

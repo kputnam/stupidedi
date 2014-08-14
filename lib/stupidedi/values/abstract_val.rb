@@ -32,13 +32,13 @@ module Stupidedi
         not valid?
       end
 
-      # Is the element not blank?
+      # Is the element not blankness?
       def is_present?
         not empty?
       end
 
       # Is the element not is_present?
-      def blank?
+      def blankness?
         empty?
       end
 

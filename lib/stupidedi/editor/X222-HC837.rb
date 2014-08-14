@@ -106,7 +106,7 @@ module Stupidedi
         edit(:NM1) do
           # Organization/last name
           nm1.element(3).tap do |e|
-            if e.node.blank? and e.node.usage.optional?
+            if e.node.blankness? and e.node.usage.optional?
               acc.warn(e, "optional element is not present")
             end
           end
@@ -146,28 +146,28 @@ module Stupidedi
           if nm1.element(2).select{|e| e.node == "1" }.defined?
             # First name
             nm1.element(4).tap do |e|
-              if e.node.blank? and e.node.usage.optional?
+              if e.node.blankness? and e.node.usage.optional?
                 acc.warn(e, "optional element is not present")
               end
             end
 
             # Middle name
             nm1.element(5).tap do |e|
-              if e.node.blank? and e.node.usage.optional?
+              if e.node.blankness? and e.node.usage.optional?
                 acc.warn(e, "optional element is not present")
               end
             end
 
             # Prefix name
             nm1.element(6).tap do |e|
-              if e.node.blank? and e.node.usage.optional?
+              if e.node.blankness? and e.node.usage.optional?
                 acc.warn(e, "optional element is not present")
               end
             end
 
             # Suffix name
             nm1.element(7).tap do |e|
-              if e.node.blank? and e.node.usage.optional?
+              if e.node.blankness? and e.node.usage.optional?
                 acc.warn(e, "optional element is not present")
               end
             end
@@ -179,7 +179,7 @@ module Stupidedi
         edit(:N3) do
           n3.element(2).tap do |e|
             if e.node.usage.optional?
-              unless n3.element(1).reject(&:blank?).defined?
+              unless n3.element(1).reject(&:blankness?).defined?
                 # Second address line (N302) shouldn't be present if the
                 # first (N301) isn't also present
                 acc.warn(e, "second address line present without first line")

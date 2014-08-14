@@ -292,7 +292,7 @@ module Stupidedi
 
             # @return [FixnumVal]
             def value(object, usage, position)
-              if object.blank?
+              if object.blankness?
                 self::Empty.new(usage, position)
               elsif object.respond_to?(:to_d)
                 # The number of fractional digits is implied by usage.precision

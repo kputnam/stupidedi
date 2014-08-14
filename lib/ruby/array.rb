@@ -1,6 +1,6 @@
 class Array
 
-  def blank?
+  def blankness?
     empty?
   end
 

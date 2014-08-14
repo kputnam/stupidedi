@@ -441,7 +441,7 @@ Total Time: 18.95
                       0.00      0.00      0.00      0.00          178/345     Kernel#__send__
                       0.00      0.00      0.00      0.00          120/240     Array#defined_at?
                       0.00      0.00      0.00      0.00          129/617     String#to_i
-                      0.00      0.00      0.00      0.00        244/32103     String#blank?
+                      0.00      0.00      0.00      0.00        244/32103     String#blankness?
                       0.00      0.00      0.00      0.00           33/887     String#slice
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00       1117/30113     <Class::Stupidedi::Builder::AbstractState>#composite_element
@@ -652,7 +652,7 @@ Total Time: 18.95
    1.11%   0.42%      0.21      0.08      0.00      0.13            14426     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::IdentifierVal>#value
                       0.13      0.02      0.00      0.11     14426/524177     Class#new
                       0.00      0.00      0.00      0.00      12266/23473     String#to_s
-                      0.00      0.00      0.00      0.00      14426/32103     String#blank?
+                      0.00      0.00      0.00      0.00      14426/32103     String#blankness?
                       0.00      0.00      0.00      0.00      12266/22499     Kernel#respond_to?
 --------------------------------------------------------------------------------
                       0.20      0.00      0.00      0.20        1117/1117     <Class::Stupidedi::Builder::AbstractState>#element
@@ -721,7 +721,7 @@ Total Time: 18.95
                       0.16      0.07      0.00      0.09      11832/11832     Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::SimpleElementDef#value
    0.84%   0.37%      0.16      0.07      0.00      0.09            11832     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::StringVal>#value
                       0.06      0.00      0.00      0.06     11832/524177     Class#new
-                      0.02      0.02      0.00      0.00      11832/32103     String#blank?
+                      0.02      0.02      0.00      0.00      11832/32103     String#blankness?
                       0.01      0.01      0.00      0.00       8181/23473     String#to_s
                       0.00      0.00      0.00      0.00       8181/22499     Kernel#respond_to?
 --------------------------------------------------------------------------------
@@ -899,7 +899,7 @@ Total Time: 18.95
                       0.06      0.06      0.00      0.00        244/47516     Object#try
                       0.01      0.01      0.00      0.00        366/81855     Kernel#is_a?
                       0.00      0.00      0.00      0.00              7/7     String#to_f
-                      0.00      0.00      0.00      0.00        122/32103     String#blank?
+                      0.00      0.00      0.00      0.00        122/32103     String#blankness?
                       0.00      0.00      0.00      0.00        488/23473     String#to_s
                       0.00      0.00      0.00      0.00          122/617     String#to_i
                       0.00      0.00      0.00      0.00       122/524177     Class#new
@@ -982,25 +982,25 @@ Total Time: 18.95
                       0.00      0.00      0.00      0.00        122/32103     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::TimeVal>#value
                       0.00      0.00      0.00      0.00        881/32103     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::NumericVal>#value
                       0.00      0.00      0.00      0.00        244/32103     Object#try
-                      0.00      0.00      0.00      0.00        304/32103     Stupidedi::Reader::ComponentElementTok#blank?
+                      0.00      0.00      0.00      0.00        304/32103     Stupidedi::Reader::ComponentElementTok#blankness?
                       0.01      0.01      0.00      0.00       1551/32103     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::DecimalVal>#value
                       0.02      0.02      0.00      0.00      11832/32103     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::StringVal>#value
-                      0.02      0.02      0.00      0.00       2441/32103     Stupidedi::Reader::SimpleElementTok#blank?
-   0.26%   0.26%      0.05      0.05      0.00      0.00            32103     String#blank?
+                      0.02      0.02      0.00      0.00       2441/32103     Stupidedi::Reader::SimpleElementTok#blankness?
+   0.26%   0.26%      0.05      0.05      0.00      0.00            32103     String#blankness?
 --------------------------------------------------------------------------------
                       0.05      0.01      0.00      0.04        2593/2593     Array#each
    0.26%   0.05%      0.05      0.01      0.00      0.04             2593     Stupidedi::Builder::ConstraintTable::ValueBased#deconstruct
-                      0.02      0.00      0.00      0.02        2441/2441     Stupidedi::Reader::SimpleElementTok#blank?
+                      0.02      0.00      0.00      0.02        2441/2441     Stupidedi::Reader::SimpleElementTok#blankness?
                       0.01      0.01      0.00      0.00       2441/41119     NilClass#nil?
-                      0.01      0.00      0.00      0.01          152/152     Stupidedi::Reader::CompositeElementTok#blank?
+                      0.01      0.00      0.00      0.01          152/152     Stupidedi::Reader::CompositeElementTok#blankness?
                       0.00      0.00      0.00      0.00        2745/3045     Array#at
                       0.00      0.00      0.00      0.00        152/42819     Kernel#nil?
-                      0.00      0.00      0.00      0.00          152/304     Stupidedi::Reader::ComponentElementTok#blank?
+                      0.00      0.00      0.00      0.00          152/304     Stupidedi::Reader::ComponentElementTok#blankness?
 --------------------------------------------------------------------------------
                       0.05      0.00      0.00      0.05          122/122     Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::SimpleElementDef#value
    0.26%   0.00%      0.05      0.00      0.00      0.05              122     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::DateVal>#value
                       0.05      0.01      0.00      0.04       122/524177     Class#new
-                      0.00      0.00      0.00      0.00        244/32103     String#blank?
+                      0.00      0.00      0.00      0.00        244/32103     String#blankness?
                       0.00      0.00      0.00      0.00       122/269898     Fixnum#<
                       0.00      0.00      0.00      0.00        366/23473     String#to_s
                       0.00      0.00      0.00      0.00        122/81855     Kernel#is_a?
@@ -1011,7 +1011,7 @@ Total Time: 18.95
    0.26%   0.11%      0.05      0.02      0.00      0.03             1551     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::DecimalVal>#value
                       0.01      0.00      0.00      0.01      1551/524177     Class#new
                       0.01      0.01      0.00      0.00       1274/22499     Kernel#respond_to?
-                      0.01      0.01      0.00      0.00       1551/32103     String#blank?
+                      0.01      0.01      0.00      0.00       1551/32103     String#blankness?
                       0.00      0.00      0.00      0.00        1274/2052     String#to_d
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          31/6200     Stupidedi::Reader::SegmentDict::NonEmpty#at
@@ -1025,7 +1025,7 @@ Total Time: 18.95
    0.21%   0.00%      0.04      0.00      0.00      0.04               58     <Class::Stupidedi::Builder::TransactionSetState>#push
                       0.03      0.00      0.00      0.03           58/318     <Class::Stupidedi::Builder::TableState>#push
                       0.01      0.01      0.00      0.00            58/89     Stupidedi::Values::SegmentValGroup#at
-                      0.00      0.00      0.00      0.00         58/32103     String#blank?
+                      0.00      0.00      0.00      0.00         58/32103     String#blankness?
                       0.00      0.00      0.00      0.00            58/58     Stupidedi::Envelope::TransactionSetDef#empty
                       0.00      0.00      0.00      0.00        58/524177     Class#new
                       0.00      0.00      0.00      0.00          116/298     Stupidedi::Builder::AbstractState#config
@@ -1135,7 +1135,7 @@ Total Time: 18.95
                       0.03      0.02      0.00      0.01          881/881     Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::SimpleElementDef#value
    0.16%   0.11%      0.03      0.02      0.00      0.01              881     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::NumericVal>#value
                       0.01      0.00      0.00      0.01       881/524177     Class#new
-                      0.00      0.00      0.00      0.00        881/32103     String#blank?
+                      0.00      0.00      0.00      0.00        881/32103     String#blankness?
                       0.00      0.00      0.00      0.00         778/2052     String#to_d
                       0.00      0.00      0.00      0.00        778/22499     Kernel#respond_to?
 --------------------------------------------------------------------------------
@@ -1169,8 +1169,8 @@ Total Time: 18.95
                       0.00      0.00      0.00      0.00        116/32138     Object#cons
 --------------------------------------------------------------------------------
                       0.02      0.00      0.00      0.02        2441/2441     Stupidedi::Builder::ConstraintTable::ValueBased#deconstruct
-   0.11%   0.00%      0.02      0.00      0.00      0.02             2441     Stupidedi::Reader::SimpleElementTok#blank?
-                      0.02      0.02      0.00      0.00       2441/32103     String#blank?
+   0.11%   0.00%      0.02      0.00      0.00      0.02             2441     Stupidedi::Reader::SimpleElementTok#blankness?
+                      0.02      0.02      0.00      0.00       2441/32103     String#blankness?
 --------------------------------------------------------------------------------
                       0.02      0.00      0.00      0.02          318/318     Class#new
    0.11%   0.00%      0.02      0.00      0.00      0.02              318     Stupidedi::Values::TableVal#initialize
@@ -1342,7 +1342,7 @@ Total Time: 18.95
                       0.00      0.00      0.00      0.00          167/345     Kernel#__send__
 --------------------------------------------------------------------------------
                       0.01      0.00      0.00      0.01          152/152     Stupidedi::Builder::ConstraintTable::ValueBased#deconstruct
-   0.05%   0.00%      0.01      0.00      0.00      0.01              152     Stupidedi::Reader::CompositeElementTok#blank?
+   0.05%   0.00%      0.01      0.00      0.00      0.01              152     Stupidedi::Reader::CompositeElementTok#blankness?
                       0.01      0.00      0.00      0.01          152/152     Enumerable#all?
                       0.00      0.00      0.00      0.00          152/167     Symbol#to_proc
 --------------------------------------------------------------------------------
@@ -1356,7 +1356,7 @@ Total Time: 18.95
    0.05%   0.05%      0.01      0.01      0.00      0.00             1117     Stupidedi::Reader::TokenReader#composite
                       0.00      0.00      0.00      0.00        1117/1117     <Class::Stupidedi::Reader::CompositeElementTok>#build
 --------------------------------------------------------------------------------
-                      0.01      0.00      0.00      0.01          152/152     Stupidedi::Reader::CompositeElementTok#blank?
+                      0.01      0.00      0.00      0.01          152/152     Stupidedi::Reader::CompositeElementTok#blankness?
    0.05%   0.00%      0.01      0.00      0.00      0.01              152     Enumerable#all?
                       0.00      0.00      0.00      0.00        152/15300     Array#each
 --------------------------------------------------------------------------------
@@ -1754,7 +1754,7 @@ Total Time: 18.95
                       0.00      0.00      0.00      0.00          120/120     Stupidedi::Values::SegmentVal#defined_at?
                       0.00      0.00      0.00      0.00         120/3045     Array#at
 --------------------------------------------------------------------------------
-                      0.00      0.00      0.00      0.00          152/167     Stupidedi::Reader::CompositeElementTok#blank?
+                      0.00      0.00      0.00      0.00          152/167     Stupidedi::Reader::CompositeElementTok#blankness?
                       0.00      0.00      0.00      0.00           15/167     Integer#times
    0.00%   0.00%      0.00      0.00      0.00      0.00              167     Symbol#to_proc
                       0.00      0.00      0.00      0.00          167/167     Kernel#lambda
@@ -1793,7 +1793,7 @@ Total Time: 18.95
                       0.00      0.00      0.00      0.00          178/345     Object#try
                       0.00      0.00      0.00      0.00          167/345     Symbol#call
    0.00%   0.00%      0.00      0.00      0.00      0.00              345     Kernel#__send__
-                      0.00      0.00      0.00      0.00          152/304     Stupidedi::Reader::ComponentElementTok#blank?
+                      0.00      0.00      0.00      0.00          152/304     Stupidedi::Reader::ComponentElementTok#blankness?
                       0.00      0.00      0.00      0.00         15/26773     Stupidedi::Reader::TokenReader#read_simple_element
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          167/167     Symbol#to_proc
@@ -1913,8 +1913,8 @@ Total Time: 18.95
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          152/304     Stupidedi::Builder::ConstraintTable::ValueBased#deconstruct
                       0.00      0.00      0.00      0.00          152/304     Kernel#__send__
-   0.00%   0.00%      0.00      0.00      0.00      0.00              304     Stupidedi::Reader::ComponentElementTok#blank?
-                      0.00      0.00      0.00      0.00        304/32103     String#blank?
+   0.00%   0.00%      0.00      0.00      0.00      0.00              304     Stupidedi::Reader::ComponentElementTok#blankness?
+                      0.00      0.00      0.00      0.00        304/32103     String#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00            64/64     Class#new
    0.00%   0.00%      0.00      0.00      0.00      0.00               64     Stupidedi::Reader::SegmentDict::NonEmpty#initialize

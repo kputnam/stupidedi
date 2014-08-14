@@ -146,7 +146,7 @@ module Stupidedi
               subset  = map.at(value)
               present = true
 
-              unless subset.blank?
+              unless subset.blankness?
                 invalid = false
                 space  &= subset
 
@@ -383,14 +383,14 @@ module Stupidedi
           element_tok = element_toks.at(m)
           element_tok = element_tok.element_toks.at(0) if element_tok.attempt(:repeated?)
 
-          if element_tok.blank?
+          if element_tok.blankness?
             nil
           elsif n.nil?
             element_tok.value
           else
             element_tok = element_tok.component_toks.at(n)
 
-            if element_tok.blank?
+            if element_tok.blankness?
               nil
             else
               element_tok.value

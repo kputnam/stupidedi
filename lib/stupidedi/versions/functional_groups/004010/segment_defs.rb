@@ -289,6 +289,10 @@ module Stupidedi
 
           autoload :AK5,
             "stupidedi/versions/functional_groups/004010/segment_defs/AK5"
+          
+          #This is custom for Just Suspensions
+          autoload :CSH,
+            "stupidedi/versions/functional_groups/004010/segment_defs/CSH"
 
         end
       end

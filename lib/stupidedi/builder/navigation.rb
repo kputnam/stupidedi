@@ -638,10 +638,10 @@ module Stupidedi
 
         filter_tok.element_toks.zip(segment_val.children) do |f_tok, e_val|
           if f_tok.simple?
-            return true unless f_tok.blank? or e_val == f_tok.value
+            return true unless f_tok.blankness? or e_val == f_tok.value
           elsif f_tok.composite?
             f_tok.component_toks.zip(e_val.children) do |c_tok, c_val|
-              return true unless c_tok.blank? or c_val == c_tok.value
+              return true unless c_tok.blankness? or c_val == c_tok.value
             end
           elsif f_tok.is_present?
             raise Exceptions::ParseError,
@@ -660,11 +660,11 @@ module Stupidedi
         children = invalid_val.segment_tok.element_toks
         filter_tok.element_toks.zip(children) do |f_tok, e_tok|
           if f_tok.simple?
-            return true unless f_tok.blank? or f_tok.value == e_tok.value
+            return true unless f_tok.blankness? or f_tok.value == e_tok.value
           elsif f_tok.composite?
             children = e_tok.component_toks
             f_tok.component_toks.zip(children) do |f_com, e_com|
-              return true unless f_com.blank? or f_com.value == e_com.value
+              return true unless f_com.blankness? or f_com.value == e_com.value
             end
           elsif f_tok.is_present?
             raise Exceptions::ParseError,

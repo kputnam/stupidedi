@@ -13,11 +13,11 @@ module Stupidedi
             e::E19 .simple_use(r::Optional,  s::RepeatCount.bounded(1)),
             e::E156.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
             e::E116.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
-            e::E26 .simple_use(r::Optional,  s::RepeatCount.bounded(1)),
-            e::E309.simple_use(r::Relational,s::RepeatCount.bounded(1)),
-            e::E310.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
+            e::E26 .simple_use(r::Optional,  s::RepeatCount.bounded(1)))
+            #e::E309.simple_use(r::Relational,s::RepeatCount.bounded(1)),
+            #e::E310.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
 
-            SyntaxNotes::C.build(6, 5))
+            #SyntaxNotes::C.build(6, 5))
         end
       end
     end

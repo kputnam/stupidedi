@@ -14,14 +14,14 @@ module Stupidedi
             e::E92  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E324 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
             e::E328 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E373 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E367 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E587 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E1019.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E1166.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E1232.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E786 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E640 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
+            e::E373 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)))
+            #e::E367 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::E587 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::E1019.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::E1166.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::E1232.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::E786 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::E640 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
 
         end
       end

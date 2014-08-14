@@ -517,7 +517,7 @@ module Stupidedi
 
             # @return [DateVal]
             def value(object, usage, position)
-              if object.blank?
+              if object.blankness?
                 self::Empty.new(usage, position)
 
               elsif object.is_a?(String) or object.is_a?(StringVal)

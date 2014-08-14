@@ -151,15 +151,15 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00             1/33     Stupidedi::Builder::InterchangeBuilder#copy
                       0.00      0.00      0.00      0.00            7/169     Array#zip
                       0.00      0.00      0.00      0.00              7/7     Stupidedi::Reader::CompositeElementTok#repeated?
-                      0.00      0.00      0.00      0.00              7/7     Stupidedi::Reader::CompositeElementTok#blank?
+                      0.00      0.00      0.00      0.00              7/7     Stupidedi::Reader::CompositeElementTok#blankness?
                       0.00      0.00      0.00      0.00            27/27     #<Class:0xa52ada0>#required?
                       0.00      0.00      0.00      0.00            24/51     Stupidedi::Builder::LoopBuilder#copy
                       0.00      0.00      0.00      0.00            18/18     Stupidedi::Values::LoopVal#append_header_segment
-                      0.00      0.00      0.00      0.00            87/87     NilClass#blank?
+                      0.00      0.00      0.00      0.00            87/87     NilClass#blankness?
                       0.00      0.00      0.00      0.00            18/18     #<Class:0xa52ad3c>#required?
                       0.00      0.00      0.00      0.00             1/32     Stupidedi::Builder::FunctionalGroupBuilder#copy
                       0.00      0.00      0.00      0.00              1/1     Stupidedi::Envelope::FunctionalGroupVal#append_trailer_segment
-                      0.00      0.00      0.00      0.00            12/12     Stupidedi::Reader::ComponentElementTok#blank?
+                      0.00      0.00      0.00      0.00            12/12     Stupidedi::Reader::ComponentElementTok#blankness?
                       0.00      0.00      0.00      0.00          243/344     Stupidedi::Schema::LoopDef#entry_segment_uses
                       0.00      0.00      0.00      0.00            33/33     Array#push
                       0.00      0.00      0.00      0.00             7/35     Stupidedi::Builder::TableBuilder#copy
@@ -172,7 +172,7 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00          218/370     Stupidedi::Schema::ElementUse#composite?
                       0.00      0.00      0.00      0.00          211/211     Stupidedi::Reader::SimpleElementTok#repeated?
                       0.00      0.00      0.00      0.00          218/370     Stupidedi::Schema::RepeatCount::Bounded#include?
-                      0.00      0.00      0.00      0.00          442/442     Stupidedi::Reader::SimpleElementTok#blank?
+                      0.00      0.00      0.00      0.00          442/442     Stupidedi::Reader::SimpleElementTok#blankness?
                       0.00      0.00      0.00      0.00            4/321     Array#concat
                       0.00      0.00      0.00      0.00             4/35     Stupidedi::Builder::TableBuilder#successors
                       0.00      0.00      0.00      0.00              4/4     <Class::Stupidedi::Builder::TableBuilder>#start
@@ -351,7 +351,7 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00              1/1     Stupidedi::Envelope::TransactionSetDef#empty
                       0.00      0.00      0.00      0.00              1/1     Stupidedi::Configuration::TransactionSetConfig#lookup
                       0.00      0.00      0.00      0.00              1/3     Stupidedi::Builder::AbstractState#config
-                      0.00      0.00      0.00      0.00            1/481     String#blank?
+                      0.00      0.00      0.00      0.00            1/481     String#blankness?
                       0.00      0.00      0.00      0.00              1/1     Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::IdentifierVal::NonEmpty#to_s
                       0.00      0.00      0.00      0.00              1/3     Stupidedi::Values::SegmentVal#at
                       0.00      0.00      0.00      0.00             1/29     Array#first
@@ -968,7 +968,7 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00          33/1650     Stupidedi::Builder::FunctionalGroupBuilder#successors
                       0.00      0.00      0.00      0.00          32/1650     Stupidedi::Builder::InterchangeBuilder#successors
                       0.00      0.00      0.00      0.00          55/1650     Stupidedi::Builder::LoopBuilder#successors
-                      0.00      0.00      0.00      0.00           7/1650     Enumerable#blank?
+                      0.00      0.00      0.00      0.00           7/1650     Enumerable#blankness?
    0.00%   0.00%      0.00      0.00      0.00      0.00             1650     Array#empty?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00            18/29     Module#abstract
@@ -1280,10 +1280,10 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00            6/481     Object#try
                       0.00      0.00      0.00      0.00           10/481     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::NumericVal>#value
                       0.00      0.00      0.00      0.00            1/481     Stupidedi::Builder::FunctionalGroupBuilder#successors
-                      0.00      0.00      0.00      0.00          442/481     Stupidedi::Reader::SimpleElementTok#blank?
-                      0.00      0.00      0.00      0.00           12/481     Stupidedi::Reader::ComponentElementTok#blank?
+                      0.00      0.00      0.00      0.00          442/481     Stupidedi::Reader::SimpleElementTok#blankness?
+                      0.00      0.00      0.00      0.00           12/481     Stupidedi::Reader::ComponentElementTok#blankness?
                       0.00      0.00      0.00      0.00            7/481     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::DecimalVal>#value
-   0.00%   0.00%      0.00      0.00      0.00      0.00              481     String#blank?
+   0.00%   0.00%      0.00      0.00      0.00      0.00              481     String#blankness?
                       0.00      0.00      0.00      0.00         481/1723     Kernel#!~
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          274/274     OpenStruct#method_missing
@@ -1508,7 +1508,7 @@ Total Time: 0.21
    0.00%   0.00%      0.00      0.00      0.00      0.00             1915     IO#seek
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00        1242/1723     <Module::Stupidedi::Reader>#is_control_character?
-                      0.00      0.00      0.00      0.00         481/1723     String#blank?
+                      0.00      0.00      0.00      0.00         481/1723     String#blankness?
    0.00%   0.00%      0.00      0.00      0.00      0.00             1723     Kernel#!~
                       0.00      0.00      0.00      0.00        1723/1723     String#=~
 --------------------------------------------------------------------------------
@@ -1723,7 +1723,7 @@ Total Time: 0.21
    0.00%   0.00%      0.00      0.00      0.00      0.00                9     Object#try
                       0.00      0.00      0.00      0.00              3/6     Array#defined_at?
                       0.00      0.00      0.00      0.00             3/50     String#to_i
-                      0.00      0.00      0.00      0.00            6/481     String#blank?
+                      0.00      0.00      0.00      0.00            6/481     String#blankness?
                       0.00      0.00      0.00      0.00           9/1650     Array#empty?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00              1/1     Class#new
@@ -2104,7 +2104,7 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00             9/12     String#to_d
                       0.00      0.00      0.00      0.00             9/89     Kernel#respond_to?
                       0.00      0.00      0.00      0.00            9/684     Kernel#is_a?
-                      0.00      0.00      0.00      0.00           10/481     String#blank?
+                      0.00      0.00      0.00      0.00           10/481     String#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00              3/3     Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::SimpleElementDef#value
    0.00%   0.00%      0.00      0.00      0.00      0.00                3     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::TimeVal>#value
@@ -2113,7 +2113,7 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00             3/50     String#to_i
                       0.00      0.00      0.00      0.00            12/22     String#slice
                       0.00      0.00      0.00      0.00           12/184     String#to_s
-                      0.00      0.00      0.00      0.00            3/481     String#blank?
+                      0.00      0.00      0.00      0.00            3/481     String#blankness?
                       0.00      0.00      0.00      0.00            9/684     Kernel#is_a?
                       0.00      0.00      0.00      0.00            3/938     Kernel#nil?
 --------------------------------------------------------------------------------
@@ -2136,7 +2136,7 @@ Total Time: 0.21
    0.00%   0.00%      0.00      0.00      0.00      0.00              270     BasicObject#==
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00            87/87     Array#each
-   0.00%   0.00%      0.00      0.00      0.00      0.00               87     NilClass#blank?
+   0.00%   0.00%      0.00      0.00      0.00      0.00               87     NilClass#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          141/141     Array#each
    0.00%   0.00%      0.00      0.00      0.00      0.00              141     Stupidedi::AbsoluteSet#include?
@@ -2224,8 +2224,8 @@ Total Time: 0.21
    0.00%   0.00%      0.00      0.00      0.00      0.00                1     Stupidedi::Envelope::InterchangeDef#segment_uses
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00              7/7     Array#each
-   0.00%   0.00%      0.00      0.00      0.00      0.00                7     Stupidedi::Reader::CompositeElementTok#blank?
-                      0.00      0.00      0.00      0.00              7/7     Enumerable#blank?
+   0.00%   0.00%      0.00      0.00      0.00      0.00                7     Stupidedi::Reader::CompositeElementTok#blankness?
+                      0.00      0.00      0.00      0.00              7/7     Enumerable#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00              7/7     Array#each
    0.00%   0.00%      0.00      0.00      0.00      0.00                7     Stupidedi::Reader::CompositeElementTok#repeated?
@@ -2234,8 +2234,8 @@ Total Time: 0.21
    0.00%   0.00%      0.00      0.00      0.00      0.00               35     Stupidedi::Reader::SegmentTok#initialize
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          442/442     Array#each
-   0.00%   0.00%      0.00      0.00      0.00      0.00              442     Stupidedi::Reader::SimpleElementTok#blank?
-                      0.00      0.00      0.00      0.00          442/481     String#blank?
+   0.00%   0.00%      0.00      0.00      0.00      0.00              442     Stupidedi::Reader::SimpleElementTok#blankness?
+                      0.00      0.00      0.00      0.00          442/481     String#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          211/211     Array#each
    0.00%   0.00%      0.00      0.00      0.00      0.00              211     Stupidedi::Reader::SimpleElementTok#repeated?
@@ -2276,8 +2276,8 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00            13/13     Stupidedi::AbsoluteSet#include?
    0.00%   0.00%      0.00      0.00      0.00      0.00               13     Bignum#[]
 --------------------------------------------------------------------------------
-                      0.00      0.00      0.00      0.00              7/7     Stupidedi::Reader::CompositeElementTok#blank?
-   0.00%   0.00%      0.00      0.00      0.00      0.00                7     Enumerable#blank?
+                      0.00      0.00      0.00      0.00              7/7     Stupidedi::Reader::CompositeElementTok#blankness?
+   0.00%   0.00%      0.00      0.00      0.00      0.00                7     Enumerable#blankness?
                       0.00      0.00      0.00      0.00           7/1650     Array#empty?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00          128/128     Stupidedi::AbsoluteSet#include?
@@ -2345,7 +2345,7 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00             3/12     String#to_d
                       0.00      0.00      0.00      0.00             3/89     Kernel#respond_to?
                       0.00      0.00      0.00      0.00            3/684     Kernel#is_a?
-                      0.00      0.00      0.00      0.00            7/481     String#blank?
+                      0.00      0.00      0.00      0.00            7/481     String#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00            57/57     Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::SimpleElementDef#empty
    0.00%   0.00%      0.00      0.00      0.00      0.00               57     <Class::Stupidedi::Dictionaries::FunctionalGroups::FiftyTen::ElementTypes::IdentifierVal>#empty
@@ -2415,8 +2415,8 @@ Total Time: 0.21
                       0.00      0.00      0.00      0.00            2/278     Stupidedi::Values::SimpleElementVal#initialize
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00            12/12     Array#each
-   0.00%   0.00%      0.00      0.00      0.00      0.00               12     Stupidedi::Reader::ComponentElementTok#blank?
-                      0.00      0.00      0.00      0.00           12/481     String#blank?
+   0.00%   0.00%      0.00      0.00      0.00      0.00               12     Stupidedi::Reader::ComponentElementTok#blankness?
+                      0.00      0.00      0.00      0.00           12/481     String#blankness?
 --------------------------------------------------------------------------------
                       0.00      0.00      0.00      0.00              5/5     Class#new
    0.00%   0.00%      0.00      0.00      0.00      0.00                5     Stupidedi::Reader::CompositeElementTok#initialize

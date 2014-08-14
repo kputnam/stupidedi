@@ -503,7 +503,7 @@ describe "Generating" do
             # ("ST02 cannot be inferred")
 
             expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
-            expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
+            expect(relaxed.element(3).select{|e| e.node.blankness? }).to be_defined
           end
         end
 
@@ -528,7 +528,7 @@ describe "Generating" do
             #("ST03 is not forbidden")
 
             expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
-            expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
+            expect(relaxed.element(3).select{|e| e.node.blankness? }).to be_defined
           end
         end
 

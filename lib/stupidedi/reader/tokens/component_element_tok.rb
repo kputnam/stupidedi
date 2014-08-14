@@ -22,12 +22,12 @@ module Stupidedi
         q.pp(:component.cons(@value.cons))
       end
 
-      def blank?
-        @value.blank?
+      def blankness?
+        @value.blankness?
       end
 
       def is_present?
-        not blank?
+        not blankness?
       end
 
       def simple?

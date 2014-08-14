@@ -325,7 +325,7 @@ module Stupidedi
 
             # @return [FloatVal]
             def value(object, usage, position)
-              if object.blank?
+              if object.blankness?
                 self::Empty.new(usage, position)
               elsif object.respond_to?(:to_d)
                 begin

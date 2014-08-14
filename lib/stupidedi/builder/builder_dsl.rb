@@ -104,7 +104,7 @@ module Stupidedi
           if zipper.node.invalid?
             raise Exceptions::ParseError,
               "invalid element #{descriptor}"
-          elsif zipper.node.blank?
+          elsif zipper.node.blankness?
             if zipper.node.usage.required?
               raise Exceptions::ParseError,
                 "required element #{descriptor} is blank"
@@ -124,7 +124,7 @@ module Stupidedi
           end
 
         elsif zipper.node.composite?
-          if zipper.node.blank?
+          if zipper.node.blankness?
             if zipper.node.usage.required?
               raise Exceptions::ParseError,
                 "required element #{descriptor} is blank"

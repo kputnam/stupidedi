@@ -3,11 +3,11 @@ class String
   # True if the string is `empty?` or contains all whitespace
   #
   # @example
-  #   "abc".blank?    #=> false
-  #   "   ".blank?    #=> true
-  #   "".blank?       #=> true
+  #   "abc".blankness?    #=> false
+  #   "   ".blankness?    #=> true
+  #   "".blankness?       #=> true
   #
-  def blank?
+  def blankness?
     self !~ /\S/
   end
 
@@ -21,12 +21,12 @@ end
 #   # True if the collection is `empty?`
 #   #
 #   # @example
-#   #   [1,2].blank?    #=> false
-#   #   [].blank?       #=> false
+#   #   [1,2].blankness?    #=> false
+#   #   [].blankness?       #=> false
 #   #
-#   unless respond_to?(:blank?)
+#   unless respond_to?(:blankness?)
 #
-#   def blank?
+#   def blankness?
 #     empty?
 #   end
 #
@@ -37,12 +37,12 @@ end
 
 class NilClass
 
-  # Always `true`. Note this overrides {Object#blank?} which returns false.
+  # Always `true`. Note this overrides {Object#blankness?} which returns false.
   #
   # @example
-  #   nil.blank?    #=> true
+  #   nil.blankness?    #=> true
   #
-  def blank?
+  def blankness?
     true
   end
 
@@ -53,13 +53,13 @@ end
 
 class Object
 
-  # Always `false`. Note that {NilClass#blank?} is overridden to return `true`
+  # Always `false`. Note that {NilClass#blankness?} is overridden to return `true`
   #
   # @example
-  #   false.blank?    #=> false
-  #   100.blank?      #=> false
+  #   false.blankness?    #=> false
+  #   100.blankness?      #=> false
   #
-  def blank?
+  def blankness?
     false
   end
 

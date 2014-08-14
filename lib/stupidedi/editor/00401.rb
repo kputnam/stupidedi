@@ -63,7 +63,7 @@ module Stupidedi
         # Authorization Information Qualifier
         edit(:ISA01) do
           isa.element(1).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "010", "must be present")
             elsif not e.node.allowed?
               acc.ta105(e, "R", "010", "is not an allowed value")
@@ -74,7 +74,7 @@ module Stupidedi
         # Authorization Information
         edit(:ISA02) do
           isa.element(2).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "011", "must be present")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ta105(e, "R", "011", "is not a valid string")
@@ -85,7 +85,7 @@ module Stupidedi
         # Security Information Qualifier
         edit(:ISA03) do
           isa.element(3).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "012", "must be present")
             elsif not e.node.allowed?
               acc.ta105(e, "R", "012", "is not an allowed value")
@@ -96,7 +96,7 @@ module Stupidedi
         # Security Information
         edit(:ISA04) do
           isa.element(4).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "013", "must be present")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ta105(e, "R", "013", "is not a valid string")
@@ -107,7 +107,7 @@ module Stupidedi
         # Interchange ID Qualifier
         edit(:ISA05) do
           isa.element(5).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "005", "must be present")
             elsif not e.node.allowed?
               acc.ta105(e, "R", "005", "is not an allowed value")
@@ -118,7 +118,7 @@ module Stupidedi
         # Interchange Sender ID
         edit(:ISA06) do
           isa.element(6).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "006", "must be present")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ta105(e, "R", "006", "is not a valid string")
@@ -129,7 +129,7 @@ module Stupidedi
         # Interchange ID Qualifier
         edit(:ISA07) do
           isa.element(7).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "007", "must be present")
             elsif not e.node.allowed?
               acc.ta105(e, "R", "007", "is not an allowed value")
@@ -140,7 +140,7 @@ module Stupidedi
         # Interchange Receiver ID
         edit(:ISA08) do
           isa.element(8).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "008", "must be present")
             end
           end
@@ -149,7 +149,7 @@ module Stupidedi
         # Interchange Date
         edit(:ISA09) do
           isa.element(9).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "014", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "014", "is not a valid date")
@@ -170,7 +170,7 @@ module Stupidedi
         # Interchange Time
         edit(:ISA10) do
           isa.element(10).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "015", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "015", "is not a valid time")
@@ -189,7 +189,7 @@ module Stupidedi
         # Interchange Standards Identifier
         edit(:ISA11) do
           isa.element(11).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "026", "must be present")
             end
           end
@@ -198,7 +198,7 @@ module Stupidedi
         # Interchange Version ID
         edit(:ISA12) do
           isa.element(12).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "026", "must be present")
             end
           end
@@ -207,7 +207,7 @@ module Stupidedi
         # Interchange Control Number
         edit(:ISA13) do
           isa.element(13).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "018", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "018", "must be numeric")
@@ -220,7 +220,7 @@ module Stupidedi
         # Acknowledgment Requested
         edit(:ISA14) do
           isa.element(14).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "019", "must be present")
             elsif not e.node.allowed?
               acc.ta105(e, "R", "019", "is not an allowed value")
@@ -231,7 +231,7 @@ module Stupidedi
         # Interchange Usage Indicator
         edit(:ISA15) do
           isa.element(15).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "020", "must be present")
             elsif not e.node.allowed?
               acc.ta105(e, "R", "020", "is not an allowed value")
@@ -242,7 +242,7 @@ module Stupidedi
         # Component Element Separator
         edit(:ISA16) do
           isa.element(16).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "027", "must be present")
             elsif e.node.invalid? or not config.editor.an?(e.node)
               acc.ta105(e, "R", "027", "is not a valid string")
@@ -270,7 +270,7 @@ module Stupidedi
         # Group Control Number
         edit(:GS06) do
           gs06s.each do |number, dupes|
-            next if number.blank?
+            next if number.blankness?
             dupes.tail.each do |e|
               acc.ak905(e, "R", "19", "must be unique within interchange")
             end
@@ -292,7 +292,7 @@ module Stupidedi
         # Number of Included Functional Groups
         edit(:IEA01) do
           iea.element(1).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "021", "must be present")
             elsif e.node.invalid?
               acc.ta105(e, "R", "021", "must be numeric")
@@ -305,7 +305,7 @@ module Stupidedi
         # Interchange Control Number
         edit(:IEA02) do
           iea.element(2).tap do |e|
-            if e.node.blank?
+            if e.node.blankness?
               acc.ta105(e, "R", "001", "must be present")
             else
               isa.element(13).reject{|f| e.node == f.node }.tap do

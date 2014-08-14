@@ -115,7 +115,7 @@ module Stupidedi
             else
               acc.ik403(zipper, "R", "6", "is not a valid string")
             end
-          elsif zipper.node.blank?
+          elsif zipper.node.blankness?
             if zipper.node.usage.required?
               acc.ik403(zipper, "R", "1", "must be present")
             end
@@ -130,7 +130,7 @@ module Stupidedi
           end
 
         elsif zipper.node.composite?
-          if zipper.node.blank?
+          if zipper.node.blankness?
             if zipper.node.usage.required?
               acc.ik403(zipper, "R", "1", "must be present")
             end
@@ -191,7 +191,7 @@ module Stupidedi
             repeat  = child.repeat_count
             matches = group.at(child)
 
-            if matches.blank? and child.required?
+            if matches.blankness? and child.required?
               if child.loop?
                 acc.ik304(last, "R", "I7", "missing #{child.id} loop")
               else
@@ -207,7 +207,7 @@ module Stupidedi
               end
             end
 
-            last = matches.last unless matches.blank?
+            last = matches.last unless matches.blankness?
           end
 
         elsif zipper.node.table?
@@ -232,7 +232,7 @@ module Stupidedi
             matches = group.at(child)
             repeat  = child.repeat_count
 
-            if matches.blank? and child.required?
+            if matches.blankness? and child.required?
               if child.loop?
                 acc.ik304(last, "R", "I7", "missing #{child.id} loop")
               else
@@ -248,7 +248,7 @@ module Stupidedi
               end
             end
 
-            last = matches.last unless matches.blank?
+            last = matches.last unless matches.blankness?
           end
 
         elsif zipper.node.transaction_set?

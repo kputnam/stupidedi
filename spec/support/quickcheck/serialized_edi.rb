@@ -281,7 +281,7 @@ class QuickCheck
         def id
           (1..size).inject("") do |s,_|
             s << choose([char.basic, char.extended])
-          end.tap{|s| guard(!s.blank?) }
+          end.tap{|s| guard(!s.blankness?) }
         end
 
         # Generate a sized string representing a string element (AN)
@@ -290,7 +290,7 @@ class QuickCheck
         def an
           (1..size).inject("") do |s,_|
             s << choose([char.basic, char.extended])
-          end.tap{|s| guard(!s.blank?) }
+          end.tap{|s| guard(!s.blankness?) }
         end
 
         # Generate a sized string representing a date (DT)

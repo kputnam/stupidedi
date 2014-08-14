@@ -50,7 +50,7 @@ module Stupidedi
         version = segment_tok.element_toks.at(2).attempt(:value)
 
         # Fall back to GS08 if ST03 isn't available
-        if version.blank? or version.is_a?(Symbol)
+        if version.blankness? or version.is_a?(Symbol)
           # GS08: Version / Release / Industry Identifier Code
           version = parent.version
         end
