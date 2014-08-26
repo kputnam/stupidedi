@@ -96,7 +96,15 @@ module Stupidedi
         element_uses = args.take_while{|x| x.is_a?(AbstractElementUse) }
         syntax_notes = args.drop(element_uses.length)
 
-        # @todo: Validate SyntaxNotes
+        # @todo: Validate SyntaxNotes (beyond this rudimentary validation)
+        syntax_notes.each do |sn|
+          unless sn.indexes.max - 1 <= element_uses.length
+            raise Exceptions::InvalidSchemaError,
+              "Syntax note for #{id} (#{element_uses.length} elements) " <<
+              "refers to non-existent element #{sn.indexes.max}"
+          end
+        end
+
         new(id, name, purpose, element_uses, syntax_notes, nil)
       end
 

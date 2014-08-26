@@ -52,10 +52,6 @@ module Stupidedi
 
       def children(zipper)
         indexes.map{|n| zipper.child(n - 1) }
-      rescue
-        pp zipper.node
-        pp indexes
-        raise $!
       end
     end
 
