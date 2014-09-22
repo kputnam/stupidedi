@@ -30,9 +30,9 @@ module Stupidedi
 
               d::LoopDef.build("SDP", d::RepeatCount.bounded(260),
                 s::SDP.use( 290, r::Optional, d::RepeatCount.bounded(1)),
-                d::LoopDef.build("NTE", d::RepeatCount.unbounded,
-                  s::NTE.use( 400, r::Optional, d::RepeatCount.unbounded),
-                  s::FST.use( 410, r::Optional, d::RepeatCount.unbounded))),
+                # d::LoopDef.build("NTE", d::RepeatCount.unbounded,
+                #   s::NTE.use( 400, r::Optional, d::RepeatCount.unbounded)),
+                s::FST.use( 410, r::Optional, d::RepeatCount.unbounded)),
 
               d::LoopDef.build("SHP", d::RepeatCount.bounded(25),
                 s::SHP.use( 480, r::Optional, d::RepeatCount.bounded(1)),
