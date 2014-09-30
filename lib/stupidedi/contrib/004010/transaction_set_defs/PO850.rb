@@ -28,7 +28,15 @@ module Stupidedi
               s::PO1.use( 10, r::Mandatory, d::RepeatCount.bounded(1))),
 
             d::LoopDef.build("PID", d::RepeatCount.bounded(1000),
-              s::PID.use( 50, r::Optional,  d::RepeatCount.bounded(1)))),
+              s::PID.use( 50, r::Optional,  d::RepeatCount.bounded(1))),
+
+            d::LoopDef.build("SCH", d::RepeatCount.bounded(200),
+              s::SCH.use( 295, r::Optional, d::RepeatCount.bounded(1))),
+
+            d::LoopDef.build("N1", d::RepeatCount.bounded(200),
+              s::N1.use( 350, r::Optional, d::RepeatCount.bounded(1)),
+              s::N3.use( 370, r::Optional,  d::RepeatCount.bounded(2)),
+              s::N4.use( 380, r::Optional,  d::RepeatCount.bounded(1)))),
 
           d::TableDef.header("Table 3 - Summary",
             d::LoopDef.build("CTT", d::RepeatCount.bounded(1),
