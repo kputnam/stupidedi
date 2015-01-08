@@ -24,6 +24,10 @@ module Stupidedi
                                  Reader::SegmentDict.empty)
       end
 
+      def respond_to_missing?(name, include_private = false)
+        SEGMENT_ID =~ name.to_s || super
+      end
+
       def strict?
         @strict
       end
