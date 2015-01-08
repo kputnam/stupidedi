@@ -12,6 +12,16 @@ describe "Generating" do
       expect(lambda { relaxed.xyz }).to \
         raise_error(NoMethodError)
     end
+
+    it "does not respond to invalid segment name" do
+      expect(relaxed.respond_to?(:bad_segment_name)).to be false
+    end
+  end
+
+  context "recognized methods" do
+    it "responds to valid segment name" do
+      expect(relaxed.respond_to?(:ISA)).to be true
+    end
   end
 
   context "unrecognized interchange version" do
