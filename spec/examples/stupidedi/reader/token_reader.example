@@ -35,7 +35,7 @@ describe Stupidedi::Reader::TokenReader do
     Stupidedi::Reader::Separators.new(component, repetition, element, segment)
   end
 
-  def mkreader(input, separators = separators, segment_dict = dictionary)
+  def mkreader(input, separators = separators(), segment_dict = dictionary())
     Stupidedi::Reader::TokenReader.new(input, separators, segment_dict)
   end
 
