@@ -4047,12 +4047,8 @@ module Stupidedi
               "VN" => "Vendor's (Seller's) Item Number",
               "VC" => "Vendor's (Seller's) Catalog Number",
               "VP" => "Vendor's (Seller's) Part Number",
-              "UK" => "UPC/EAN Shipping Container Code",
-              "BP" => "Buyer's Part Number",
               "ON" => "Customer Order Number",
-              "CB" => "Buyer's Part Number",
               "JS" => "Job Sequence Number",
-              "UP" => "UPC Consumer Packaging Code",
               "VV" => "Motor Vehicle ID Number",
               "ZZ" => "Mutually Defined"))
 
@@ -4118,7 +4114,6 @@ module Stupidedi
               "T"  => "Status Query",
               "U"  => "Reject",
               "V"  => "Respond",
-              "A"  => "reply or answer",
               "W"  => "Reverse",
               "X"  => "Recommend",
               "Y"  => "Not Recommend",
@@ -5788,7 +5783,6 @@ module Stupidedi
               "SB" => "Second Notice of Balance Due",
               "SC" => "Deprescription",
               "SD" => "Supply Process Deficiency",
-              "SE" => "Special Bilateral",
               "SF" => "Single Family Program",
               "SG" => "Sample Goods Invoice",
               "SH" => "Shipment Status Notification",
