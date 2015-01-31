@@ -86,8 +86,8 @@ module Stupidedi
         if element_use.simple?
           if element_use.repeatable?
             element_toks = element_tok.element_toks
-            element_vals = element_toks.map do |element_tok|
-              mksimple(designator, element_use, element_tok)
+            element_vals = element_toks.map do |element_tok1|
+              mksimple(designator, element_use, element_tok1)
             end
 
             mkrepeated(designator, element_use, element_vals)
@@ -97,8 +97,8 @@ module Stupidedi
         else
           if element_use.repeatable?
             element_toks = element_tok.element_toks
-            element_vals = element_toks.map do |element_tok|
-              mkcomposite(designator, element_use, element_tok)
+            element_vals = element_toks.map do |element_tok1|
+              mkcomposite(designator, element_use, element_tok1)
             end
 
             mkrepeated(designator, element_use, element_vals)

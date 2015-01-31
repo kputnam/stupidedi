@@ -102,10 +102,10 @@ module Stupidedi
         # all the nodes to the right of the spine. Remember this is contained
         # within the subtree under lspine.head
         lspine.each{|z| between << z.node }
-        lspine.tail.reverse.each do |zipper|
-          until zipper.last?
-            zipper = zipper.next
-            between.concat(zipper.flatten)
+        lspine.tail.reverse.each do |zipper1|
+          until zipper1.last?
+            zipper2 = zipper1.next
+            between.concat(zipper2.flatten)
           end
         end
 
