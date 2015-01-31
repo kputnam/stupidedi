@@ -9,9 +9,9 @@ module Stupidedi
         reader  = reader.read_segment
 
         while reader.defined?
-          reader = reader.flatmap do |segment_tok, reader|
+          reader = reader.flatmap do |segment_tok, reader1|
             machine, reader =
-              machine.insert(segment_tok, reader)
+              machine.insert(segment_tok, reader1)
 
             reader.read_segment
           end
