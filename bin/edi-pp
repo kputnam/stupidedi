@@ -31,7 +31,7 @@ stop = Time.now
 
 parser.zipper.map{|z| pp z.root.node }.explain do
   # Multiple parse trees (non-deterministic state)
-  unless nondet 
+  unless nondet
     puts "Non-deterministic state"
   else
     puts "Non-deterministic states (#{parser.active.length}):"
@@ -49,7 +49,7 @@ begin
   a = parser.first
   b = parser.last
 
-  a.flatmap{|a| b.flatmap{|b| a.distance(b) }}.
+  a.flatmap{|a1| b.flatmap{|b1| a1.distance(b1) }}.
     tap{|d| puts "#{d + 1} segments" }
 end
 
