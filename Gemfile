@@ -10,6 +10,10 @@ group :development do
   gem "yard"       ,"~> 0.8.7"
   gem "redcarpet"  ,"~> 2.3.0"
   #em "rdiscount"  ,"~> 2.1.7"
+  gem "pry", :platforms => [:ruby_19]
+  gem "pry-byebug", :platforms => [:ruby_20, :ruby_21]
+  gem "guard"
+  gem "guard-rspec", require: false
 
   gem "term-ansicolor"
   gem "blankslate"             ,:platforms => [:ruby_18, :mri_18, :mingw_18]

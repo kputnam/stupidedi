@@ -54,6 +54,7 @@ module Stupidedi
       #
       # @return [void]
       def register(version, function, transaction, definition = nil, &constructor)
+binding.pry
         if block_given?
           @table[Array[version, nil, transaction]] = constructor
         else
