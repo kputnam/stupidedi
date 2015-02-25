@@ -24,7 +24,6 @@ module Stupidedi
               s::LIN.use( 100, r::Optional,  d::RepeatCount.bounded(1)),
               s::DTM.use( 300, r::Optional,  d::RepeatCount.bounded(10)),
               s::REF.use( 400, r::Optional,  d::RepeatCount.unbounded),
-              s::REF.use( 400, r::Optional,  d::RepeatCount.unbounded),
               s::PID.use( 700, r::Optional,   d::RepeatCount.bounded(200)),
               s::PO4.use(1000, r::Mandatory,  d::RepeatCount.bounded(1)),
               d::LoopDef.build("CTP", d::RepeatCount.bounded(100),
