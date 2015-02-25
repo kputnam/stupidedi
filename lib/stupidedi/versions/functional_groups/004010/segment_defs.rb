@@ -28,6 +28,9 @@ module Stupidedi
           autoload :B10,
             "stupidedi/versions/functional_groups/004010/segment_defs/B10"
 
+          autoload :BCT,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BCT"
+
           autoload :BEG,
             "stupidedi/versions/functional_groups/004010/segment_defs/BEG"
 
@@ -43,6 +46,9 @@ module Stupidedi
 
           autoload :CLP,
             "stupidedi/versions/functional_groups/004010/segment_defs/CLP"
+
+          autoload :CTP,
+            "stupidedi/versions/functional_groups/004010/segment_defs/CTP"
 
           autoload :CTT,
             "stupidedi/versions/functional_groups/004010/segment_defs/CTT"

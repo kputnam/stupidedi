@@ -338,7 +338,8 @@ module Stupidedi
               "ST" => "Ship To",
               "SU" => "Supplier/Manufacturer",
               "TT" => "Transfer To",
-              "WH" => "Warehouse"))
+              "WH" => "Warehouse",
+              "OB" => "Ordered By"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -4030,11 +4031,13 @@ module Stupidedi
             s::CodeList.build(
               "AD" => "American Dental Association Codes",
               "BP" => "Buyer's Part Number",
+              "BL" => "Brand/Label",
               "CB" => "Buyer's Part Number",
               "ER" => "Jurisdiction Specific Procedure and Supply Codes",
               "HC" => "Health Care Financing Administration Common Procedural Coding System (HCPCS) Codes",
               "ID" => "International Classification of Diseases Clinical Modification (ICD-9-CM) - Procedure",
               "IV" => "Home Infusion EDI Coalition (HIEC) Product/Service Code",
+              "MG" => "Manufacturer's Part Number",
               "N1" => "National Drug Code in 4-4-2 Format",
               "N2" => "National Drug Code in 5-3-2 Format",
               "N3" => "National Drug Code in 5-4-1 Format",
@@ -4052,6 +4055,7 @@ module Stupidedi
               "VV" => "Motor Vehicle ID Number",
               "ZZ" => "Mutually Defined"))
 
+          E236  = t::ID.new(:E236 , "Price Identifier Code"                , 3, 3)
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
           E277  = t::ID.new(:E277 , "UN/NA Identification Code"            , 6, 6)
@@ -4070,6 +4074,7 @@ module Stupidedi
               "09" => "Hold or Reserve Stock",
               "ZZ" => "Mutually Defined"))
 
+          E289  = t::Nn.new(:E289 , "Multiple Price Quantity"              , 1, 2, 0)
           E301  = t::ID.new(:E301 , "Car Type Code"                        , 1, 4)
           E305  = t::ID.new(:E305 , "Transaction Handling Code"            , 1, 2,
             s::CodeList.build(
@@ -4670,6 +4675,7 @@ module Stupidedi
             s::CodeList.build(
               "001" => "Cancel after",
               "002" => "Delivery Requested",
+              "007" => "Effective",
               "010" => "Requested ship",
               "011" => "Shipped",
               "017" => "Estimated Delivery",
@@ -5066,6 +5072,7 @@ module Stupidedi
               "1" => "Current Transaction Trace Numbers",
               "2" => "Referenced Transaction Trace Numbers"))
 
+          E499  = t::AN.new(:E499 , "Condition Value"                      , 1, 10)
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
           E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
             s::CodeList.build(
@@ -5901,6 +5908,7 @@ module Stupidedi
               "ZZ" => "Mutually Defined"))
 
           E646  = t:: R.new(:E646 , "Quantity Shipped to Date"             , 1, 9)
+          E648  = t::ID.new(:E648 , "Price Multiplier Qualifier"           , 3, 3)
           E649  = t:: R.new(:E649 , "Multiplier"                           , 1, 10)
           E665  = t::ID.new(:E665 , "Residue Indicator Code"               , 1, 1,
             s::CodeList.build(
@@ -5965,6 +5973,11 @@ module Stupidedi
               "D" => "Discrete",
               "F" => "Flexible Interval (from Date X through Date Y)"))
 
+          E683  = t::ID.new(:E683 , "Catalog Purpose Code"                 , 1, 1,
+            s::CodeList.build(
+              "PC" => "Price Catalog"))
+
+          E687  = t::ID.new(:E687 , "Class of Trade Code"                  , 2, 2)
           E706  = t::ID.new(:E706 , "Entity Relationship Code"             , 2, 2,
             s::CodeList.build(
               "01" => "Parent",

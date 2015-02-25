@@ -45,6 +45,9 @@ module Stupidedi
         autoload :SQ866, # Production Sequence
           "stupidedi/contrib/004010/transaction_set_defs/SQ866"
 
+        autoload :SC832, # Price/Sales Catalog
+          "stupidedi/contrib/004010/transaction_set_defs/SC832"
+
       end
     end
   end
