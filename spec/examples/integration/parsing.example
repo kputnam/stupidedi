@@ -3,6 +3,23 @@ require "spec_helper"
 describe "Parsing" do
   include NavigationMatchers
 
+  context "279-HB270" do
+    let(:parser) { Fixtures.file("X270-HB270/1-good.txt") }
+
+    it "parses 1-good.txt" do
+      parser.should be_deterministic
+      parser.should be_last
+
+      parser.segment.tap do |iea|
+        iea.node.position.line.should   == 53
+        iea.node.position.column.should == 1
+      end
+
+
+    end
+
+  end
+
   context "X222-HC837" do
     let(:parser) { Fixtures.file("X222-HC837/1-good.txt") }
 

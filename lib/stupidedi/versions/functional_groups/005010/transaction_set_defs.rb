@@ -7,12 +7,12 @@ module Stupidedi
           # 005010X187 xx269
 
           # 005010X279 Eligibility, Coverage or Benefit Inquiry
-#          autoload :HS270, # Eligibility, Coverage or Benefit Inquiry
-#            "stupidedi/versions/functional_groups/005010/transaction_set_defs/HS270"
+          autoload :HS270, # Eligibility, Coverage or Benefit Inquiry
+            "stupidedi/versions/functional_groups/005010/transaction_set_defs/HS270"
 
           # 005010X279 Eligibility, Coverage or Benefit Response
-#          autoload :HB271, # Eligibility, Coverage or Benefit Response
-#            "stupidedi/versions/functional_groups/005010/transaction_set_defs/HB271"
+          autoload :HB271, # Eligibility, Coverage or Benefit Response
+            "stupidedi/versions/functional_groups/005010/transaction_set_defs/HB271"
 
           # 005010X209 xx274
           # 005010X254 xx275

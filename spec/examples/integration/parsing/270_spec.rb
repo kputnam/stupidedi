@@ -35,8 +35,6 @@ describe "Parsing" do
         #  X: the segment would never be reachable
         #
 
-binding.pry
-
         expect(isa).to have_structure(
           Ss(X(:ST),
             R(:ISA),
