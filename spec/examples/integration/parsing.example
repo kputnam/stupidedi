@@ -3,19 +3,48 @@ require "spec_helper"
 describe "Parsing" do
   include NavigationMatchers
 
-  context "279-HB270" do
-    let(:parser) { Fixtures.file("X270-HB270/1-good.txt") }
+  context "279-HB271" do
+    let(:parser) { Fixtures.file("X279-HB271/1-good.txt") }
 
     it "parses 1-good.txt" do
       parser.should be_deterministic
       parser.should be_last
 
       parser.segment.tap do |iea|
-        iea.node.position.line.should   == 53
-        iea.node.position.column.should == 1
+        expect(iea.node.position.line).to eq(30)
+        expect(iea.node.position.column).to eq(1)
       end
 
+      expect(parser).to have_sequence(%w(ISA GS ST BHT HL NM1 HL NM1 HL TRN NM1 N3 N4 DMG DTP EB EB LS NM1 LE EB EB EB SE GE IEA))
 
+      expect(parser).to have_separators(:element => "*", :component => ":",
+                                    :repetition => "^", :segment => "~")
+
+
+      parser.parent.tap do |isa|
+        expect(isa).to have_distance(25).to(parser)
+
+        # See matchers/navigation_matchers.rb
+        # Ss: list of segment matchers
+        #  C: composite element
+        #  S: the segment might be reachable, and /is/ reachable
+        #  R: the segment might be reachable, but didn't occur
+        #  X: the segment would never be reachable
+
+        expect(isa).to have_structure(
+          Ss(X(:ST),
+             R(:ISA),
+             S(:GS, "HB", nil, nil, nil, nil, 1) => 
+               Ss(R(:GS), 
+                  S(:ST) => 
+                    Ss(R(:ST),
+                    S(:BHT) => 
+                      Ss(S(:NM1, "PR"))
+                 )
+               )
+             )
+          )
+      end
     end
 
   end
