@@ -15,18 +15,6 @@ rescue LoadError
   warn $!
 end if RUBY_VERSION >= "1.9"
 
-begin
-  require "pry"
-rescue LoadError
-  warn $!
-end if RUBY_VERSION = "1.9"
-
-begin
-  require "pry-byebug"
-rescue LoadError
-  warn $!
-end if RUBY_VERSION >= "2.0"
-
 # Require supporting files with custom matchers and macros
 Pathname.new(File.dirname(__FILE__)).tap do |specdir|
   Dir["#{specdir}/support/**/*.rb"].each do |file|
