@@ -16,24 +16,24 @@ class String
   end
 end
 
-# module Enumerable
-#
-#   # True if the collection is `empty?`
-#   #
-#   # @example
-#   #   [1,2].blank?    #=> false
-#   #   [].blank?       #=> false
-#   #
-#   unless respond_to?(:blank?)
-#
-#   def blank?
-#     empty?
-#   end
-#
-#   def present?
-#     not empty?
-#   end
-# end
+module Enumerable
+
+  # True if the collection is `empty?`
+  #
+  # @example
+  #   [1,2].blank?    #=> false
+  #   [].blank?       #=> false
+  #
+  unless respond_to?(:blank?)
+    def blank?
+      empty?
+    end
+  end
+
+  def present?
+    not empty?
+  end
+end
 
 class NilClass
 
