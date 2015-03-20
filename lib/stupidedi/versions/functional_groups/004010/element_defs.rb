@@ -4698,6 +4698,7 @@ module Stupidedi
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
           E382  = t:: R.new(:E382 , "Number of Units Shipped"              , 1, 10)
           E383  = t:: R.new(:E382 , "Quantity Difference"                  , 1, 9)
+          E384  = t:: R.new(:E384 , "Gross Weight Per Pack"                , 1, 9)
           E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
           E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
           E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
