@@ -20,6 +20,7 @@ module Stupidedi
               "1"  => s::CodeList.external("16"),
               "9"  => s::CodeList.external("16"),
               "21" => s::CodeList.external("121"),
+              "24" => "Employer's Identification Number",
               "34" => "Social Security Number",
               "38" => s::CodeList.external("5"),
               "46" => "Electronic Transmitter Identification Number (ETIN)",
@@ -30,6 +31,7 @@ module Stupidedi
               "BS" => "Blue Shield Provider Number",
               "C"  => "Insured's Changed Unique Identification Number",
               "CF" => s::CodeList.external("91"),
+              "FA" => s::CodeList.external("67"),
               "FI" => "Fediral Taxpayer's Identification Number",
               "HN" => "Health Insurance Claim (HIC) Number",
               "II" => "Standard Unique Health Identifier for each Individual in the United States",
@@ -44,6 +46,7 @@ module Stupidedi
               "PP" => "Pharmacy Processor Number",
               "SJ" => s::CodeList.external("22"),
               "SL" => "State License Number",
+              "SV" => "Service Provider Number",
               "UP" => "Unique Physician Identification Number (UPIN)",
               "XV" => s::CodeList.external("540"),
               "XX" => s::CodeList.external("537")))
@@ -56,8 +59,11 @@ module Stupidedi
           E98   = t::ID.new(:E98  , "Entity Identifier Code"               , 2, 3,
             s::CodeList.build(
               "03"  => "Dependent",
+              "13"  => "Contracted Service Provider",
+              "1I"  => "Preferred Provider Organization (PPO)",
               "1P"  => "Provider",
               "1Z"  => "Home Health Care",
+              "2B"  => "Third-Party Administrator",
               "36"  => "Employer",
               "40"  => "Receiver",
               "41"  => "Submitter",
@@ -67,6 +73,7 @@ module Stupidedi
               "73"  => "Other Physician",
               "74"  => "Corrected Insured",
               "77"  => "Service Location",
+              "80"  => "Hospital",
               "82"  => "Rendering Provider",
               "85"  => "Billing Provider",
               "87"  => "Pay-to Provider",
@@ -77,11 +84,18 @@ module Stupidedi
               "DQ"  => "Supervising Physician",
               "FA"  => "Facility",
               "GB"  => "Other Insured",
+              "GP"  => "General Practicioner",
+              "GW"  => "Group",
               "HK"  => "Subscriber",
+              "I3"  => "Independent Physicians Association (IPA)",
               "IL"  => "Insured or Subscriber",
               "LI"  => "Independent Lab",
+              "LR"  => "Legal Representation",
               "MSC" => "Mammography Screening Center",
+              "OC"  => "Origin Carrier",
               "P3"  => "Primary Care Provider",
+              "P4"  => "Prior Insurance Carrier",
+              "P5"  => "Plan Sponsor",
               "PE"  => "Payee",
               "PR"  => "Payer",
               "PRP" => "Primary Payer",
@@ -93,7 +107,12 @@ module Stupidedi
               "SEP" => "Secondary Payer",
               "TL"  => "Testing Laboratory",
               "TTP" => "Tertiary Payer",
-              "TU"  => "Third Party Repricing Organization (TPO)"))
+              "TU"  => "Third Party Repricing Organization (TPO)",
+              "VER" => "Party Performing Verification",
+              "VN"  => "Vendor",
+              "VY"  => "Organization Completing Configuration Change",
+              "X3"  => "Utilization Management Organization",
+              "Y2" => "Managed Care Organization"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -110,6 +129,7 @@ module Stupidedi
               "04"  => s::CodeList.external("91"),
               "0B"  => "State License Number",
               "0K"  => "Policy Form Identifying Number",
+              "18"  => "Plan Number",
               "1A"  => "Blue Cross Provider Number",
               "1B"  => "Blue Shield Provider Number",
               "1C"  => "Medicare Provider Number",
@@ -123,6 +143,9 @@ module Stupidedi
               "1W"  => "Member Identification Number",
               "28"  => "Employee Identification Number",
               "2U"  => "Payer Identification Number",
+              "3H"  => "Case Number",
+              "49"  => "Family Unit Number",
+              "4A"  => "Personal Identification Number (PIN)",
               "4N"  => "Special Payment Reference Number",
               "6P"  => "Group Number",
               "6R"  => "Provider Control Number",
@@ -131,6 +154,7 @@ module Stupidedi
               "9C"  => "Adjusted Repriced Claim Reference Number",
               "9D"  => "Adjusted Repriced Line Item Reference Number",
               "9F"  => "Referral Number",
+              "ALS" => "Alternative List ID",
               "ABY" => s::CodeList.external("540"),
               "AP"  => "Ambulatory Payment Classification",
               "APC" => s::CodeList.external("468"),
@@ -139,6 +163,8 @@ module Stupidedi
               "BT"  => "Batch Number",
               "CE"  => "Class of Contract Code",
               "CPT" => s::CodeList.external("133"),
+              "CLI" => "Coverage List ID",
+              "CT"  => "Contract Number",
               "D3"  => s::CodeList.external("307"),
               "D9"  => "Claim Number",
               "DNS" => s::CodeList.external("16"),
@@ -146,30 +172,44 @@ module Stupidedi
               "E9"  => "Attachment Code",
               "EA"  => "Medical Record Identification Number",
               "EI"  => "Employer's Identification Number",
+              "EJ"  => "Patient Account Number",
+              "EL"  => "Electronic device pin number",
               "EO"  => "Submitter Identification Number",
               "EV"  => "Receiver Identification Number",
               "EW"  => "Mammography Certification Number",
               "F2"  => "Version Code - Local",
               "F4"  => "Facility Certification Number",
               "F5"  => "Medicare Version Code",
+              "F6"  => "Health Insurance Claim (HIC) Number",
               "F8"  => "Original Reference Number",
               "FJ"  => "Line Item Control Number",
+              "FO"  => "Drug Formulary Number",
               "FY"  => "Claim Office Number",
               "G1"  => "Prior Authorization Number",
               "G2"  => "Provider Commercial Number",
               "G3"  => "Predetermination of Benefits Identification Number",
+              "GH"  => "Identification Card Serial Number",
               "HI"  => s::CodeList.external("121"),
+              "HJ"  => "Identity Card Number",
               "HPI" => s::CodeList.external("537"),
               "ICD" => s::CodeList.external("131"),
+              "IF"  => "Issue Number",
               "IG"  => "Insurance Policy Number",
+              "JD"  => "User Identification",
               "LOI" => s::CodeList.external("663"),
               "LU"  => "Location Number",
               "LX"  => "Qualified Products List",
               "MRC" => s::CodeList.external("844"),
+              "M7" => "Medical Assistance Category",
               "NF"  => s::CodeList.external("245"),
+              "N5"  => "Provider Plan Network Identification Number",
+              "N6"  => "Plan Network Identification Number",
+              "N7"  => "Facility Network Identification Number",
+              "NQ"  => "Medicaid Recipient Identification Number",
               "P4"  => "Project Code",
               "PQ"  => "Payee Indentification",
               "PXC" => s::CodeList.external("682"),
+              "Q4"  => "Prior Identifier Number",
               "RB"  => "Rate code number",
               "SY"  => "Social Security Number",
               "T4"  => "Signal Code",
@@ -182,11 +222,12 @@ module Stupidedi
           E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 15)
           E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
             s::CodeList.build(
+              "270" => "Eligibility, Coverage, or Benefit Inquiry",
+              "271" => "Eligibility, Coverage, or Benefit Information",
               "277" => "Health Care Information Status Notification",
               "835" => "Health Care Claim Payment/Advice",
               "837" => "Health Care Claim",
               "999" => "Implementation Acknowledgement"))
-
           E156  = t::ID.new(:E156 , "State or Province Code"               , 2, 2,
             s::CodeList.external("22"))
 
@@ -224,7 +265,8 @@ module Stupidedi
               "UK" => "GTIN 14-digit Data Structure",
               "UP" => "UCC - 12",
               "RB" => s::CodeList.external("132"),
-              "WK" => s::CodeList.external("843")))
+              "WK" => s::CodeList.external("843"),
+              "ZZ" => "Mutually Defined"))
 
           E236  = t::ID.new(:E236 , "Price Identifier Code"                , 3, 3)
           E280  = t:: R.new(:E280 , "Exchange Rate"                        , 4, 10)
@@ -261,7 +303,9 @@ module Stupidedi
           E353  = t::ID.new(:E353 , "Transaction Set Purpose Code"         , 2, 2,
             s::CodeList.build(
               "00" => "Original",
+              "06" => "Confirmation",
               "08" => "Status",
+              "11" => "Response",
               "18" => "Reissue"))
 
           E355  = t::ID.new(:E355 , "Unit or Basis for Measurement Code"   , 2, 2,
@@ -276,7 +320,10 @@ module Stupidedi
               "MJ" => "Minutes",
               "ML" => "Milliliter",
               "MO" => "Months",
-              "UN" => "Units"))
+              "UN" => "Units",
+              "VS" => "Visit",
+              "WK" => "Week",
+              "YR" => "Years"))
 
           E363  = t::ID.new(:E363 , "Note Reference Code"                  , 3, 3,
             s::CodeList.build(
@@ -289,11 +336,17 @@ module Stupidedi
           E364  = t::AN.new(:E364 , "Communication Number"                 , 1, 256)
           E365  = t::ID.new(:E365 , "Communication Number Qualifier"       , 2, 2,
             s::CodeList.build(
+              "AP" => "Alternate Telephone",
+              "BN" => "Beeper Number",
+              "CP" => "Cellular Phone",
+              "ED" => "Electronic Data Interchange Access Number",
               "EM" => "Electronic Mail",
               "EX" => "Telephone Extension",
               "FX" => "Facsimile",
+              "HP" => "Home Phone Number",
               "TE" => "Telephone",
-              "UR" => "Uniform Resource Locator (URL)"))
+              "UR" => "Uniform Resource Locator (URL)",
+              "WP" => "Work Phone Number"))
 
           E366  = t::ID.new(:E366 , "Contract Function Code"               , 2, 2,
             s::CodeList.build(
@@ -311,33 +364,61 @@ module Stupidedi
               "090" => "Report Start",
               "091" => "Report End",
               "096" => "Discharge",
+              "102" => "Issue",
               "150" => "Service Period Start",
               "151" => "Service Period End",
+              "152" => "Effective Date of Charge",
+              "193" => "Period Start",
+              "194" => "Period End",
+              "198" => "Completion",
               "232" => "Claim Statement Period Start",
               "233" => "Claim Statement Period End",
+              "290" => "Coordination of Benefits",
+              "291" => "Plan",
+              "292" => "Benefit",
+              "295" => "Primary Care Provider",
               "296" => "Initial Disability Period Return To Work",
               "297" => "Initial Disability Period Last Day Worked",
               "304" => "Latest Visit or Consultation",
+              "307" => "Eligibility",
               "314" => "Disability",
+              "318" => "Added",
+              "340" => "Consolidated Omnibus Budget Reconciliation Act (COBRA) Begin",
+              "341" => "Consolidated Omnibus Budget Reconciliation Act (COBRA) End",
+              "342" => "Premium Paid to Date Begin",
+              "343" => "Premium Paid to Date End",
+              "346" => "Plan Begin",
+              "347" => "Plan End",
+              "348" => "Benefit Begin",
+              "349" => "Benefit End",
+              "356" => "Eligibility Begin",
+              "357" => "Eligibility End",
               "360" => "Initial Disability Period Start",
               "361" => "Initial Disability Period End",
+              "382" => "Enrollment",
               "405" => "Production",
               "431" => "Onset of Current Symptoms or Illness",
               "435" => "Admission",
               "439" => "Accident",
+              "442" => "Date of Death",
               "444" => "First Visit or Consultation",
               "453" => "Acute Manifestation of a Chronic Condition",
               "454" => "Initial Treatment",
               "455" => "Last X-Ray",
+              "458" => "Certification",
               "461" => "Last Certification",
               "463" => "Begin Therapy",
               "471" => "Prescription",
               "472" => "Service",
               "484" => "Last Menstrual Period",
+              "539" => "Policy Effective",
+              "540" => "Policy Expiration",
               "573" => "Date Claim Paid",
               "607" => "Certification Revision",
+              "636" => "Date of Last Update",
               "738" => "Most Recent Hemoglobin or Hematocrit or Both",
-              "739" => "Most Recent Serum Creatine"))
+              "739" => "Most Recent Serum Creatine",
+              "771" => "Status"))
 
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
           E426  = t::ID.new(:E426 , "Adjustment Reason Code"               , 2, 2,
@@ -477,6 +558,28 @@ module Stupidedi
               "6" => "Daily"))
 
           E609  = t::Nn.new(:E609 , "Count"                                , 1, 9, 0)
+          E615  = t::ID.new(:E615 , "Time Period Qualifier"                , 1, 2,
+            s::CodeList.build(
+              "6"  => "Hour",
+              "7"  => "Day",
+              "13" => "24 Hours",
+              "21" => "Years",
+              "22" => "Service Year",
+              "23" => "Calendar Year",
+              "24" => "Year to Date",
+              "25" => "Contract",
+              "26" => "Episode",
+              "27" => "Visit",
+              "28" => "Outlier",
+              "29" => "Remaining",
+              "30" => "Exceeded",
+              "31" => "Not Exceeded",
+              "32" => "Lifetime",
+              "33" => "Lifetime Remaining",
+              "34" => "Month",
+              "35" => "Week",
+              "36" => "Admission"))
+          E616  = t::Nn.new(:E616 , "Number of Periods"                    , 1, 3, 0)
           E618  = t::ID.new(:E618 , "Implementation Transaction Set Syntax Error Code", 1, 3,
             s::CodeList.build(
               "1"  => "Transaction Set Not Supported",
@@ -564,27 +667,101 @@ module Stupidedi
           E669  = t::ID.new(:E669 , "Currency Market/Exchnage Code"        , 3, 3)
           E673  = t::ID.new(:E673 , "Quantity Qualifier"                   , 2, 2,
             s::CodeList.build(
+              "8H" => "Minimum",         
               "90" => "Acknowledged Quantity",
               "AA" => "Unacknowledged Quantity",
-              "CA" => "Covered - Actual",
-              "CD" => "Co-insured - Actual",
-              "FL" => "Units",
-              "LA" => "Life-time Reserve - Actual",
-              "LE" => "Life-time Reserve - Estimated",
-              "NE" => "Non-Covered Amount - Estimated",
-              "NR" => "Not Replaced Blood Units",
-              "OU" => "Outlier Days",
-              "PS" => "Prescription",
-              "PT" => "Patients",
-              "QA" => "Quantity Approved",
+              "99" => "Quantity Used",   
+              "CA" => "Covered - Actual",        
+              "CD" => "Co-insured - Actual",     
+              "CE" => "Covered - Estimated",     
+              "D3" => "Number of Co-insurance Days",     
+              "DB" => "Deductible Blood Units",  
+              "DT" => "Dependent Total",         
+              "DY" => "Days",    
+              "ET" => "Employee Total",  
+              "FL" => "Units",   
+              "HS" => "Hours",   
+              "LA" => "Life-time Reserve - Actual",      
+              "LE" => "Life-time Reserve - Estimated",   
+              "M2" => "Maximum",         
+              "MN" => "Month",   
+              "NE" => "Non-Covered - Estimated",         
+              "NR" => "Not Replaced Blood Units",        
+              "OU" => "Outlier Days",    
+              "P6" => "Number of Services or Procedures",        
+              "PS" => "Prescription",    
+              "PT" => "Patients",        
+              "QA" => "Quantity Approved",       
               "QC" => "Quantity Disapproved",
-              "VS" => "Visits",
-              "ZK" => "Federal Medicare or Medicaid Payment Mandate Category 1",
-              "ZL" => "Federal Medicare or Medicaid Payment Mandate Category 2",
-              "ZM" => "Federal Medicare or Medicaid Payment Mandate Category 3",
-              "ZN" => "Federal Medicare or Medicaid Payment Mandate Category 4",
-              "ZO" => "Federal Medicare or Medicaid Payment Mandate Category 5"))
+              "S7" => "Age, High Value",         
+              "S8" => "Age, Low Value",  
+              "TO" => "Total",   
+              "VS" => "Visits",  
+              "YY" => "Years",   
+              "ZK" => "Federal Medicare or Medicaid Payment Mandate - Category 1",
+              "ZL" => "Federal Medicare or Medicaid Payment Mandate - Category 2",
+              "ZM" => "Federal Medicare or Medicaid Payment Mandate - Category 3",
+              "ZN" => "Federal Medicare or Medicaid Payment Mandate - Category 4",
+              "ZO" => "Federal Medicare or Medicaid Payment Mandate - Category 5"))
 
+
+          E678  = t::ID.new(:E678 , "Ship/Delivery or Calendar Pattern Code", 1, 2,
+            s::CodeList.build(
+              "1"   => "1st Week of the Month",
+              "2"   => "2nd Week of the Month",
+              "3"   => "3rd Week of the Month",
+              "4"   => "4th Week of the Month",
+              "5"   => "5th Week of the Month",
+              "6"   => "1st & 3rd Weeks of the Month",
+              "7"   => "2nd & 4th Weeks of the Month",
+              "8"   => "1st Working Day of Period",
+              "9"   => "Last Working Day of Period",
+              "A"   => "Monday through Friday",
+              "B"   => "Monday through Saturday",
+              "C"   => "Monday through Sunday",
+              "D"   => "Monday",
+              "E"   => "Tuesday",
+              "F"   => "Wednesday",
+              "G"   => "Thursday",
+              "H"   => "Friday",
+              "J"   => "Saturday",
+              "K"   => "Sunday",
+              "L"   => "Monday through Thursday",
+              "M"   => "Immediately",
+              "N"   => "As Directed",
+              "O"   => "Daily Mon. through Fri.",
+              "P"   => "1/2 Mon. & 1/2 Thurs.",
+              "Q"   => "1/2 Tues. & 1/2 Thurs.",
+              "R"   => "1/2 Wed. & 1/2 Fri.",
+              "S"   => "Once Anytime Mon. through Fri.",
+              "SG"  => "Tuesday through Friday",
+              "SL"  => "Monday, Tuesday and Thursday",
+              "SP"  => "MOnday, Tuesday and Friday",
+              "SX"  => "Wednesday and Thursday",
+              "SY"  => "Monday, Wednesday and Thursday",
+              "SZ"  => "Tuesday, Thursday and Friday",
+              "SGT" => "uesday through Friday",
+              "SLM" => "onday, Tuesday and Thursday",
+              "SPM" => "onday, Tuesday and Friday",
+              "SXW" => "ednesday and Thursday",
+              "SYM" => "onday, Wednesday and Thursday",
+              "SZT" => "uesday, Thursday and Friday",
+              "T"   => "1/2 Tue. & 1/2 Fri.",
+              "U"   => "1/2 Mon. & 1/2 Wed.",
+              "V"   => "1/3 Mon., 1/3 Wed., 1/3 Fri.",
+              "W"   => "Whenever Necessary",
+              "X"   => "1/2 By Wed., Bal. By Fri.",
+              "Y"   => "None (Also Used to Cancel or Override a Previous Pattern)"))
+          E679  = t::ID.new(:E679 , "Ship/Delivery Pattern Time Code"      , 1, 1,
+            s::CodeList.build(
+              "A" => "1st Shift (Normal Working Hours)",
+              "B" => "2nd Shift",
+              "C" => "3rd Shift",
+              "D" => "A.M.",
+              "E" => "P.M.",
+              "F" => "As Directed",
+              "G" => "Any Shift",
+              "Y" => "None (Also Used to Cancel or Override a Previous Pattern)"))
           E687  = t::ID.new(:E687 , "Class of Trade Code"                  , 2, 2)
           E704  = t::ID.new(:E704 , "Paperwork/Report Action Code"         , 1, 2)
             # @note Copied from an unverified 4010 internet source
@@ -762,8 +939,77 @@ module Stupidedi
               "CCP" => "Cash Concentration/Disbursement plus Addenda (CCD+)(ACH)",
               "CTX" => "Corporate Trade Exchange (CTX) (ACH)"))
 
+          E875  = t::ID.new(:E875 , "Maintenance Type Code"                , 3, 3)
+
+          E889  = t::ID.new(:E889 , "Follow-up Action Code"                , 1, 1,
+            s::CodeList.build(
+              "C" => "Please Correct and Resubmit",
+              "N" => "Resubmission Not Allowed",
+              "P" => "Please Resubmit Original Transaction",
+              "R" => "Resubmission Allowed",
+              "S" => "Do Not Resubmit; Inquiry Initiated to a Third Party",
+              "W" => "Please Wait 30 Days and Resubmit",
+              "X" => "Please Wait 10 Days and Resubmit",
+              "Y" => "Do Not Resubmit; We Will Hold Your Request and Respond Again Shortly"))
+
           E901  = t::ID.new(:E901 , "Reject Reason Code"                   , 2, 2,
             s::CodeList.build(
+              "04" => "Authorized Quantity Exceeded",
+              "15" => "Required application data missing",
+              "33" => "Input Errors",
+              "35" => "Out of Network",
+              "41" => "Authorization/Access Restrictions",
+              "42" => "Unable to Respond at Current Time",
+              "43" => "Invalid/Missing Provider Identification",
+              "44" => "Invalid/Missing Provider Name",
+              "45" => "Invalid/Missing Provider Specialty",
+              "46" => "Invalid/Missing Provider Phone Number",
+              "47" => "Invalid/Missing Provider State",
+              "48" => "Invalid/Missing Referring Provider Identification Number",
+              "49" => "Provider is Not Primary Care Physician",
+              "50" => "Provider Ineligible for Inquiries",
+              "51" => "Provider Not on File",
+              "52" => "Service Dates Not Within Provider Plan Enrollment",
+              "53" => "Inquired Benefit Inconsistent with Provider Type",
+              "54" => "Inappropriate Product/Service ID Qualifier",
+              "55" => "Inappropriate Product/Service ID",
+              "56" => "Inappropriate Date",
+              "57" => "Invalid/Missing Date(s) of Service",
+              "58" => "Invalid/Missing Date-of-Birth",
+              "59" => "Invalid/Missing Date-of-Death",
+              "60" => "Date of Birth Follows Date(s) of Service",
+              "61" => "Date of Death Precedes Date(s) of Service",
+              "62" => "Date of Service Not Within Allowable Inquiry Period",
+              "63" => "Date of Service in Future",
+              "64" => "Invalid/Missing Patient ID",
+              "65" => "Invalid/Missing Patient Name",
+              "66" => "Invalid/Missing Patient Gender Code",
+              "67" => "Patient Not Found",
+              "68" => "Duplicate Patient ID Number",
+              "69" => "Inconsistent with Patient's Age",
+              "70" => "Inconsistent with Patient's Gender",
+              "71" => "Patient Birth Date Does Not Match That for the Patient on the Database",
+              "72" => "Invalid/Missing Subscriber/Insured ID",
+              "73" => "Invalid/Missing Subscriber/Insured Name",
+              "74" => "Invalid/Missing Subscriber/Insured Gender Code",
+              "75" => "Subscriber/Insured Not Found",
+              "76" => "Duplicate Subscriber/Insured ID Number",
+              "77" => "Subscriber Found, Patient Not Found",
+              "78" => "Subscriber/Insured Not in Group/Plan Identified ",
+              "79" => "Invalid Participant Identification",
+              "80" => "No Response received - Transaction Terminated",
+              "97" => "Invalid or Missing Provider Address",
+              "98" => "Experimental Service or Procedure",
+              "AA" => "Authorization Number Not Found",
+              "AE" => "Requires Primary Care Physician Authorization",
+              "AF" => "Invalid/Missing Diagnosis Code(s)",
+              "AG" => "Invalid/Missing Procedure Code(s)",
+              "AO" => "Additional Patient Condition Information Required",
+              "CI" => "Certification Information Does Not Match Patient",
+              "E8" => "Requires Medical Review",
+              "IA" => "Invalid Authorization Number Format",
+              "IP" => "Inappropriate Provider Role",
+              "MA" => "Missing Authorization Number",
               "T1" => "Cannot Identify Provider as TPO (Third Party Organization) Participant",
               "T2" => "Cannot Identify Payer as TPO (Third Party Organization) Participant",
               "T3" => "Cannot Identify Insured as TPO (Third Party Organization) Participant",
@@ -774,12 +1020,14 @@ module Stupidedi
           E923  = t::ID.new(:E923 , "Prognosis Code"                       , 1, 1)
 
           E933  = t::AN.new(:E933 , "Free-form Message Text"               , 1, 264)
+          E934  = t::AN.new(:E934 , "Printer Carriage Control Code"        , 2, 2)
           E935  = t::ID.new(:E935 , "Measurement Significance Code"        , 2, 2)
           E936  = t::ID.new(:E936 , "Measurement Attribute Code"           , 2, 2)
           E954  = t:: R.new(:E954 , "Percentage as Decimal"                , 1,  10)
           E1005 = t::ID.new(:E1005, "Hierarchical Structure Code"          , 4, 4,
             s::CodeList.build(
               "0019" => "Information Source, Subscriber, Dependent",
+              "0022" => "Information Source, Information Receiver, Subscriber, Dependent",
               "0085" => "Information Source, Information Receiver, Provider of Service, Patient"))
 
           E1018 = t:: R.new(:E1018, "Exponent"                             , 1, 15)
@@ -869,6 +1117,7 @@ module Stupidedi
             s::CodeList.build(
               "N" => "No",
               "Y" => "Yes",
+              "U" => "Uncertain",
               "W" => "Not Applicable"))
 
           E1109 = t::ID.new(:E1109, "Race or Ethnicity Code"               , 1, 1)
@@ -884,6 +1133,7 @@ module Stupidedi
               "41" => "Medicare Secondary Blank Lung",
               "42" => "Medicare Secondary Veteran's Administration",
               "43" => "Medicare Secondary Disabled Beneficiary Under Age 65 with Large Group Health Plan (LGHP)",
+              "44" => "Nature of Injury",
               "47" => "Medicare Secondary, Other Liability Insurance is Primary",
               "70" => "Hospice",
               "75" => "Functional Limitations",
@@ -908,6 +1158,7 @@ module Stupidedi
               "H" => "Payer Responsibility Eleven"))
 
           E1143 = t::ID.new(:E1143, "Coordination of Benefits Code"        , 1, 1)
+          E1165 = t::ID.new(:E1165, "Confidentiality Code"                 , 1, 1)
           E1166 = t::ID.new(:E1166, "Contract Type Code"                   , 2, 2,
             s::CodeList.build(
               "01" => "Diagnosis Related Group (DRG)",
@@ -918,14 +1169,69 @@ module Stupidedi
               "06" => "Percent",
               "09" => "Other"))
 
+          E1167 = t:: R.new(:E1167, "Sample Selection Modulus"             , 1, 6)
+          E1201 = t::ID.new(:E1201, "Information Status Code"              , 1, 1,
+            s::CodeList.build(
+              "A" => "Partial",
+              "C" => "Current",
+              "L" => "Latest",
+              "O" => "Oldest",
+              "P" => "Prior",
+              "S" => "Second Most Current",
+              "T" => "Third Most Current"))
+
+          E1203 = t::ID.new(:E1203, "Maintenance Reason Code"              , 2, 3)
+          E1204 = t::AN.new(:E1204, "Plan Coverage Description"            , 1, 50)
+          E1207 = t::ID.new(:E1207, "Coverage Level Code"                  , 3, 3,
+            s::CodeList.build(
+              "CHD" => "Children Only",
+              "DEP" => "Dependents Only",
+              "ECH" => "Employee and Children",
+              "EMP" => "Employee Only",
+              "ESP" => "Employee and Spouse",
+              "FAM" => "Family",
+              "IND" => "Individual",
+              "SPC" => "Spouse and Children",
+              "SPO" => "Spouse Only"))
+          E1216 = t::ID.new(:E1216, "Benefit Status Code"                  , 1, 1)
+
+          E1218 = t::ID.new(:E1218, "Medicare Plan Code"                   , 1, 1,
+            s::CodeList.build(
+              "A" => "Medicare Part A",
+              "B" => "Medicare Part B",
+              "C" => "Medicare Part A and B",
+              "D" => "Medicare",
+              "E" => "No Medicare",
+              "F" => "Medicare Part D",
+              "G" => "Medicare Part A and D",
+              "H" => "Medicare Part B and D",
+              "I" => "Medicare Part A, B, and D"))
+
+          E1219 = t::ID.new(:E1219, "CORBA Qualifying Event Code"          , 1, 2)
           E1220 = t::ID.new(:E1220, "Student Status Code"                  , 1, 1)
           E1221 = t::ID.new(:E1221, "Provider Code"                        , 1, 3,
             s::CodeList.build(
+              "AD" => "Admitting",
+              "AT" => "Attending",
               "BI" => "Billing",
-              "PE" => "Performing"))
-
-          E1222 = t::AN.new(:E1222, "Provider Specialty Code"              , 1, 3)
-            # @note Copied from an unverified 4010 internet source
+              "CO" => "Consulting",
+              "CV" => "Covering",
+              "H" => "Hospital",
+              "HH" => "Home Health Care",
+              "LA" => "Laboratory",
+              "OT" => "Other Physician",
+              "P1" => "Pharmacist",
+              "P2" => "Pharmacy",
+              "PC" => "Primary Care Physician",
+              "PE" => "Performing",
+              "R" => "Rural Health Clinic",
+              "RF" => "Referring",
+              "SB" => "Submitting",
+              "SK" => "Skilled Nursing Facility",
+              "SU" => "Supervising" ))
+ 
+           E1222 = t::AN.new(:E1222, "Provider Specialty Code"              , 1, 3)
+             # @note Copied from an unverified 4010 internet source
 
           E1223 = t::ID.new(:E1223, "Provider Organization Code"           , 3, 3)
           E1250 = t::ID.new(:E1250, "Date Time Period Format Qualifier"    , 2, 3,
@@ -1025,6 +1331,7 @@ module Stupidedi
               "LOI" => s::CodeList.external("663"),
               "NUB" => s::CodeList.external("132"),
               "NDC" => s::CodeList.external("240"),
+              "NI"  => s::CodeList.external("241"), #TODO Check if this is not going to cause other issues
               "PR"  => s::CodeList.external("131"),
               "PB"  => s::CodeList.external("407"),
               "REC" => s::CodeList.external("860"),
@@ -1037,7 +1344,8 @@ module Stupidedi
               "TC"  => s::CodeList.external("359"),
               "TD"  => s::CodeList.external("131"),
               "TQ"  => s::CodeList.external("135"),
-              "UT"  => s::CodeList.external("528")))
+              "UT"  => s::CodeList.external("528"),
+              "ZZ"  => s::CodeList.external("529")))
 
           E1271 = t::AN.new(:E1271, "Industry Code"                        , 1, 30,
             s::CodeList.external("508"))
@@ -1108,19 +1416,51 @@ module Stupidedi
           E1335 = t::ID.new(:E1335, "Insulin Type Code"                    , 1, 3)
           E1336 = t::ID.new(:E1336, "Insurance Type Code"                  , 1, 3,
             s::CodeList.build(
-              "02" => "Physically Handicapped Children's Program",
-              "03" => "Special Federal Funding",
-              "05" => "Disability",
-              "09" => "Second Opinion or Surgery",
               "12" => "Medicare Secondary Working Aged Beneficiary or Spouse with Employer Group Health Plan",
-              "13" => "Medicare Secondary End-Stage Renal Disease Beneficiary in the Mandated Coordination Period",
+              "13" => "Medicare Secondary End-Stage Renal Disease Beneficiary in the Mandated Coordination Period with an Employer's Group Health Plan",
               "14" => "Medicare Secondary, No-fault Insurance including Auto is Primary",
               "15" => "Medicare Secondary Worker's Compensation",
-              "16" => "Medicare Secondary Public Health Service (PHS) or Other Federal Agency",
-              "41" => "Medicare Secondary Blank Lung",
+              "16" => "Medicare Secondary Public Health Service (PHS)or Other Federal Agency",
+              "41" => "Medicare Secondary Black Lung",
               "42" => "Medicare Secondary Veteran's Administration",
               "43" => "Medicare Secondary Disabled Beneficiary Under Age 65 with Large Group Health Plan (LGHP)",
-              "47" => "Medicare Secondary, Other Liability Insurance is Primary"))
+              "47" => "Medicare Secondary, Other Liability Insurance is Primary",
+              "AP" => "Auto Insurance Policy",
+              "C1" => "Commercial",
+              "CO" => "Consolidated Omnibus Budget Reconciliation Act (COBRA)",
+              "CP" => "Medicare Conditionally Primary",
+              "D" => "Disability",
+              "DB" => "Disability Benefits",
+              "EP" => "Exclusive Provider Organization",
+              "FF" => "Family or Friends",
+              "GP" => "Group Policy",
+              "HM" => "Health Maintenance Organization (HMO)",
+              "HN" => "Health Maintenance Organization (HMO) - Medicare Risk",
+              "HS" => "Special Low Income Medicare Beneficiary",
+              "IN" => "Indemnity",
+              "IP" => "Individual Policy",
+              "LC" => "Long Term Care",
+              "LD" => "Long Term Policy",
+              "LI" => "Life Insurance",
+              "LT" => "Litigation",
+              "MA" => "Medicare Part A",
+              "MB" => "Medicare Part B",        
+              "MC" => "Medicaid",
+              "MH" => "Medigap Part A",
+              "MI" => "Medigap Part B",
+              "MP" => "Medicare Primary",
+              "OT" => "Other",
+              "PE" => "Property Insurance - Personal",
+              "PL" => "Personal",
+              "PP" => "Personal Payment (Cash - No Insurance)",
+              "PR" => "Preferred Provider Organization (PPO)",
+              "PS" => "Point of Service (POS)",
+              "QM" => "Qualified Medicare Beneficiary",
+              "RP" => "Property Insurance - Real",
+              "SP" => "Supplemental Policy",
+              "TF" => "Tax Equity Fiscal Responsibility Act (TEFRA)",
+              "WC" => "Workers Compensation",
+              "WU" => "Wrap Up Policy"))
 
           E1337 = t::ID.new(:E1337, "Level of Care Code"                   , 1, 1)
           E1338 = t::ID.new(:E1338, "Level of Service Code"                , 1, 3)
@@ -1180,6 +1520,45 @@ module Stupidedi
           E1371 = t:: R.new(:E1371, "Unit Rate"                            , 1, 10)
           E1383 = t::ID.new(:E1383, "Claim Submission Reason Code"         , 2, 2)
           E1384 = t::ID.new(:E1384, "Patient Location Code"                , 1, 1)
+          E1390 = t::ID.new(:E1390, "Eligibility or Benefit Information Code", 1, 2,
+            s::CodeList.build(
+              "1"  => "Active Coverage",
+              "2"  => "Active - Full Risk Capitation",
+              "3"  => "Active - Services Capitated",
+              "4"  => "Active - Services Capitated to Primary Care Physician",
+              "5"  => "Active - Pending Investigation",
+              "6"  => "Inactive",
+              "7"  => "Inactive - Pending Eligibility Update",
+              "8"  => "Inactive - Pending Investigation",
+              "A"  => "Co-Insurance",
+              "B"  => "Co-Payment",
+              "C"  => "Deductible",
+              "CB" => "Coverage Basis",
+              "D"  => "Benefit Description",
+              "E"  => "Exclusions",
+              "F"  => "Limitations",
+              "G"  => "Out of Pocket (Stop Loss)",
+              "H"  => "Unlimited",
+              "I"  => "Non-Covered",
+              "J"  => "Cost Containment",
+              "K"  => "Reserve",
+              "L"  => "Primary Care Provider",
+              "M"  => "Pre-existing Condition",
+              "MC" => "Managed Care Coordinator",
+              "N"  => "Services Restricted to Following Provider",
+              "O"  => "Not Deemed a Medical Necessity",
+              "P"  => "Benefit Disclaimer",
+              "Q"  => "Second Surgical Opinion Required",
+              "R"  => "Other or Additional Payor",
+              "S"  => "Prior Year(s) History",
+              "T"  => "Card(s) Reported Lost/Stolen",
+              "U"  => "Contact Following Entity for Eligibility or Benefit Information",
+              "V"  => "Cannot Process",
+              "W"  => "Other Source of Data",
+              "X"  => "Health Care Facility",
+              "Y"  => "Spend Down"))
+
+          E1470 = t::Nn.new(:E1470, "Number"                               , 1, 9, 0)
           E1473 = t::ID.new(:E1473, "Pricing Methodology"                  , 2, 2,
             s::CodeList.build(
               "00" => "Zero Pricing (Not Covered Under Contract)",
@@ -1232,7 +1611,94 @@ module Stupidedi
               "6" => "Other"))
 
           E1528 = t::Nn.new(:E1528, "Component Data Element Position in Composite", 1, 2, 0)
+          E1595 = t::ID.new(:E1595, "Government Service Affilition Code"   , 1, 1,
+            s::CodeList.build(
+              "A" => "Air Force",
+              "B" => "Air Force Reserves",
+              "C" => "Army",
+              "D" => "Army Reserves",
+              "E" => "Coast Guard",
+              "F" => "Marine Corps",
+              "G" => "Marine Corps Reserves",
+              "H" => "National Guard",
+              "I" => "Navy",
+              "J" => "Navy Reserves",
+              "K" => "Other",
+              "L" => "Peace Corp",
+              "M" => "Regular Armed Forces",
+              "N" => "Reserves",
+              "O" => "U.S. Public Health Service",
+              "Q" => "Foreign Military",
+              "R" => "American Red Cross",
+              "S" => "Department of Defense",
+              "U" => "United Services Organization",
+              "W" => "Military Sealift Command"))
+          E1596 = t::ID.new(:E1596, "Military Service Rank"                , 1, 1,
+            s::CodeList.build(
+              "A1" => "Admiral",
+              "A2" => "Airman",
+              "A3" => "Airman First Class",
+              "B1" => "Basic Airman",
+              "B2" => "Brigadier General",
+              "C1" => "Captain",
+              "C2" => "Chief Master Sergeant",
+              "C3" => "Chief Petty Officer",
+              "C4" => "Chief Warrant",
+              "C5" => "Colonel",
+              "C6" => "Commander",
+              "C7" => "Commodore",
+              "C8" => "Corporal",
+              "C9" => "Corporal Specialist 4",
+              "E1" => "Ensign",
+              "F1" => "First Lieutenant",
+              "F2" => "First Sergeant",
+              "F3" => "First Sergeant-Master Sergeant",
+              "F4" => "Fleet Admiral",
+              "G1" => "General",
+              "G4" => "Gunnery Sergeant",
+              "L1" => "Lance Corporal",
+              "L2" => "Lieutenant",
+              "L3" => "Lieutenant Colonel",
+              "L4" => "Lieutenant Commander",
+              "L5" => "Lieutenant General",
+              "L6" => "Lieutenant Junior Grade",
+              "M1" => "Major",
+              "M2" => "Major General",
+              "M3" => "Master Chief Petty Officer",
+              "M4" => "Master Gunnery Sergeant Major",
+              "M5" => "Master Sergeant",
+              "M6" => "Master Sergeant Specialist 8",
+              "P1" => "Petty Officer First Class",
+              "P2" => "Petty Officer Second Class",
+              "P3" => "Petty Officer Third Class",
+              "P4" => "Private",
+              "P5" => "Private First Class",
+              "R1" => "Rear Admiral",
+              "R2" => "Recruit",
+              "S1" => "Seaman",
+              "S2" => "Seaman Apprentice",
+              "S3" => "Seaman Recruit",
+              "S4" => "Second Lieutenant",
+              "S5" => "Senior Chief Petty Officer",
+              "S6" => "Senior Master Sergeant",
+              "S7" => "Sergeant",
+              "S8" => "Sergeant First Class Specialist 7",
+              "S9" => "Sergeant Major Specialist 9",
+              "SA" => "Sergeant Specialist 5",
+              "SB" => "Staff Sergeant",
+              "SC" => "Staff Sergeant Specialist 6",
+              "T1" => "Technical Sergeant",
+              "V1" => "Vice Admiral",
+              "W1" => "Warrant Officer"))
+
           E1686 = t::Nn.new(:E1686, "Repeating Data Element Position"      , 1, 4, 0)
+
+          E1701 = t::ID.new(:E1701, "Eligibility Reason Code"              , 1, 1,
+            s::CodeList.build(
+              "0" => "Age",
+              "1" => "Disability",
+              "2" => "End Stage Renal Disease (ESRD)"))
+          
           E1705 = t::AN.new(:E1705, "Implementation Convention Reference"  , 1, 35)
           E1715 = t::ID.new(:E1715, "Country Subdivision Code"             , 1, 3,
             s::CodeList.external("5"))
@@ -1378,6 +1844,14 @@ module Stupidedi
             E1271.component_use(r::Mandatory),
             E98  .component_use(r::Optional),
             E1270.component_use(r::Optional))
+
+          C052 = Schema::CompositeElementDef.build(:C052,
+            "Medicare Status Code",
+            "To provide Medicare coverage and associated reason for Medicare eligibility",
+            E1218.component_use(r::Mandatory),
+            E1701.component_use(r::Optional),
+            E1701.component_use(r::Optional),
+            E1701.component_use(r::Optional))
 
           C056 = Schema::CompositeElementDef.build(:C056,
             "Composite Race or Ethnicity Information",

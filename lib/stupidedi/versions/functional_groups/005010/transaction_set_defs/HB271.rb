@@ -34,7 +34,6 @@ module Stupidedi
                   s::INS.use(1100, r::Optional,  d::RepeatCount.bounded(1)),
                   s:: HI.use(1150, r::Optional,  d::RepeatCount.bounded(1)),
                   s::DTP.use(1200, r::Optional,  d::RepeatCount.bounded(9)),
-                  s::LUI.use(1250, r::Optional,  d::RepeatCount.bounded(9)),
                   s::MPI.use(1275, r::Optional,  d::RepeatCount.bounded(9)),
 
                   d::LoopDef.build("2110", d::RepeatCount.unbounded,
@@ -43,26 +42,10 @@ module Stupidedi
                     s::REF.use(1400, r::Optional,  d::RepeatCount.bounded(9)),
                     s::DTP.use(1500, r::Optional,  d::RepeatCount.bounded(20)),
                     s::AAA.use(1600, r::Optional,  d::RepeatCount.bounded(9)),
-                    s::VEH.use(1700, r::Optional,  d::RepeatCount.bounded(1)),
-                    s::PID.use(1800, r::Optional,  d::RepeatCount.bounded(1)),
-                    s::PDR.use(1900, r::Optional,  d::RepeatCount.bounded(1)),
-                    s::PDP.use(2000, r::Optional,  d::RepeatCount.bounded(1)),
-                    s::LIN.use(2100, r::Optional,  d::RepeatCount.bounded(1)),
-                    s:: EM.use(2200, r::Optional,  d::RepeatCount.bounded(1)),
-                    s::SD1.use(2300, r::Optional,  d::RepeatCount.bounded(1)),
-                    s::PKD.use(2400, r::Optional,  d::RepeatCount.bounded(1)),
                     s::MSG.use(2500, r::Optional,  d::RepeatCount.bounded(10)),
 
                     d::LoopDef.build("2115", d::RepeatCount.unbounded,
-                      s::III.use(2600, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::DTP.use(2700, r::Optional,  d::RepeatCount.bounded(5)),
-                      s::AMT.use(2800, r::Optional,  d::RepeatCount.bounded(5)),
-                      s::PCT.use(2900, r::Optional,  d::RepeatCount.bounded(5)),
-
-                      d::LoopDef.build("2117", d::RepeatCount.unbounded,
-                        s:: LQ.use(3000, r::Optional,  d::RepeatCount.bounded(1)),
-                        s::AMT.use(3100, r::Optional,  d::RepeatCount.bounded(5)),
-                        s::PCT.use(3200, r::Optional,  d::RepeatCount.bounded(5)))),
+                      s::III.use(2600, r::Optional,  d::RepeatCount.bounded(1))),
 
                     s:: LS.use(3300, r::Optional,  d::RepeatCount.bounded(1)),
 
