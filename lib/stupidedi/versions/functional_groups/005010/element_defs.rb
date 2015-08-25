@@ -30,7 +30,7 @@ module Stupidedi
               "BS" => "Blue Shield Provider Number",
               "C"  => "Insured's Changed Unique Identification Number",
               "CF" => s::CodeList.external("91"),
-              "FI" => "Fediral Taxpayer's Identification Number",
+              "FI" => "Federal Taxpayer's Identification Number",
               "HN" => "Health Insurance Claim (HIC) Number",
               "II" => "Standard Unique Health Identifier for each Individual in the United States",
               "LD" => s::CodeList.external("457"),
