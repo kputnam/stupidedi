@@ -8,10 +8,7 @@ GC.disable
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
 
-# config = Stupidedi::Config.default
-config = Stupidedi::Config.contrib
-# config = Stupidedi::Config.hipaa
-
+config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
 nondet = ARGV.delete('-N')
