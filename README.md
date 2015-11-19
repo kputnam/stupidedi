@@ -232,7 +232,7 @@ Perform validation on a file
 require "stupidedi"
 
 # You can customize this to delegate to your own grammar definitions, if needed.
-config = Stupidedi::Config.default
+config = Stupidedi::Config.hipaa
 
 b = Stupidedi::Builder::BuilderDsl.build(config)
 
@@ -301,7 +301,7 @@ end
 ```ruby
 require "stupidedi"
 
-config = Stupidedi::Config.default
+config = Stupidedi::Config.hipaa
 parser = Stupidedi::Builder::StateMachine.build(config)
 
 input  = if RUBY_VERSION > "1.8"
