@@ -9,8 +9,8 @@ rescue LoadError
 end
 
 begin
-# require "simplecov"
-# SimpleCov.start
+  require "simplecov"
+  SimpleCov.start
 rescue LoadError
   warn $!
 end if RUBY_VERSION >= "1.9"
