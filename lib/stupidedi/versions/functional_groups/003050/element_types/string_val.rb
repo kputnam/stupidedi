@@ -140,12 +140,7 @@ module Stupidedi
               def coerce(other)
                 # me, he = other.coerce(self)
                 # me <OP> he
-                if other.respond_to?(:to_str)
-                  return copy(:value => other.to_str), self
-                else
-                  raise TypeError,
-                    "cannot coerce StringVal to #{other.class}"
-                end
+                return copy(:value => other.to_str), self
               end
 
               def value
@@ -235,12 +230,7 @@ module Stupidedi
               def coerce(other)
                 # me, he = other.coerce(self)
                 # me <OP> he
-                if other.respond_to?(:to_str)
-                  return copy(:value => other.to_str), self
-                else
-                  raise TypeError,
-                    "cannot coerce StringVal to #{other.class}"
-                end
+                return copy(:value => other.to_str), self
               end
 
               def too_long?
@@ -378,11 +368,11 @@ module Stupidedi
             def value(object, usage, position)
               if object.blank?
                 self::Empty.new(usage, position)
-              elsif object.respond_to?(:to_s)
-                self::NonEmpty.new(object.to_s.rstrip, usage, position)
               else
-                self::Invalid.new(object, usage, position)
+                self::NonEmpty.new(object.to_s.rstrip, usage, position)
               end
+            rescue
+              self::Invalid.new(object, usage, position)
             end
 
             # @endgroup

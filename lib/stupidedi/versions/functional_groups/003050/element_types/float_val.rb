@@ -204,12 +204,7 @@ module Stupidedi
               def coerce(other)
                 # self', other' = other.coerce(self)
                 # self' * other'
-                if other.respond_to?(:to_d)
-                  return copy(:value => other.to_d), self
-                else
-                  raise TypeError,
-                    "cannot coerce FloatVal to #{other.class}"
-                end
+                return copy(:value => other.to_d), self
               end
 
               def valid?
@@ -330,15 +325,11 @@ module Stupidedi
             def value(object, usage, position)
               if object.blank?
                 self::Empty.new(usage, position)
-              elsif object.respond_to?(:to_d)
-                begin
-                  self::NonEmpty.new(object.to_d, usage, position)
-                rescue ArgumentError
-                  self::Invalid.new(object, usage, position)
-                end
               else
-                self::Invalid.new(object, usage, position)
+                self::NonEmpty.new(object.to_d, usage, position)
               end
+            rescue
+              self::Invalid.new(object, usage, position)
             end
 
             # @endgroup

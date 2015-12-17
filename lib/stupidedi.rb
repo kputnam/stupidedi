@@ -2,7 +2,6 @@ require "bigdecimal"
 require "time"
 require "date"
 require "set"
-require "forwardable"
 
 begin
   require "term/ansicolor" if $stdout.tty?
@@ -12,7 +11,6 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
-#equire "ruby/exception"
 require "ruby/symbol"
 require "ruby/object"
 require "ruby/module"
@@ -28,8 +26,6 @@ require "ruby/try"
 require "ruby/instance_exec"
 
 module Stupidedi
-  using Refinements
-
   autoload :Builder,      "stupidedi/builder"
   autoload :Config,       "stupidedi/config"
   autoload :Contrib,      "stupidedi/contrib"

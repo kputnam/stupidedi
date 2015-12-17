@@ -205,12 +205,7 @@ module Stupidedi
               def coerce(other)
                 # me, he = other.coerce(self)
                 # me <OP> he
-                if other.respond_to?(:to_date)
-                  return DateVal.value(other, usage, position), self
-                else
-                  raise TypeError,
-                    "cannot coerce DateVal to #{other.class}"
-                end
+                return DateVal.value(other, usage, position), self
               end
 
               def valid?
