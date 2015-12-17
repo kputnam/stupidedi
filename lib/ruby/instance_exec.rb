@@ -1,7 +1,7 @@
 module Stupidedi
   module Refinements
-    refine Object do
 
+    refine Object do
       if RUBY_VERSION < "1.9"
         module InstanceExecHelper; end
         include InstanceExecHelper
@@ -23,7 +23,7 @@ module Stupidedi
           end
         end
       end
-
     end
+
   end
 end

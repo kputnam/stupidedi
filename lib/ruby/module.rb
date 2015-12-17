@@ -1,7 +1,7 @@
 module Stupidedi
   module Refinements
-    refine Module do
 
+    refine Module do
       # Creates an abstract method
       #
       # @example
@@ -35,21 +35,7 @@ module Stupidedi
           RUBY
         end
       end
-
-      # Creates a method (or methods) that delegates messages to an instance
-      # variable or another instance method.
-      #
-      # @example
-      #   class WrappedCollection
-      #     delegate :size, :add, :to => :@wrapped
-      #
-      #     def initialize(wrapped)
-      #       @wrapped = wrapped
-      #     end
-      #   end
-      #
-      # @return [void]
-
     end
+
   end
 end

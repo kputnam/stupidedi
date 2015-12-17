@@ -6,8 +6,6 @@ module Stupidedi
       def to_time
         self
       end
-
-      public :to_time
     end
 
     class << Time
@@ -18,8 +16,6 @@ module Stupidedi
       def to_time
         Time.parse(self)
       end
-
-      public :to_time
     end
 
   end

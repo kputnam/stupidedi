@@ -1,7 +1,7 @@
 module Stupidedi
   module Refinements
-    refine Symbol do
 
+    refine Symbol do
       # Returns a proc that calls self on the proc's parameter
       #
       # @example
@@ -22,5 +22,6 @@ module Stupidedi
         receiver.__send__(self, *args)
       end
     end
+
   end
 end

@@ -1,7 +1,7 @@
 module Stupidedi
   module Refinements
-    refine String do
 
+    refine String do
       # Return the one-character string at the given index
       #
       # @example
@@ -73,5 +73,6 @@ module Stupidedi
         nil
       end
     end
+
   end
 end

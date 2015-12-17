@@ -1,7 +1,7 @@
 module Stupidedi
   module Refinements
-    refine String do
 
+    refine String do
       # True if the string is `empty?` or contains all whitespace
       #
       # @example
@@ -18,27 +18,7 @@ module Stupidedi
       end
     end
 
-    # module Enumerable
-    #
-    #   # True if the collection is `empty?`
-    #   #
-    #   # @example
-    #   #   [1,2].blank?    #=> false
-    #   #   [].blank?       #=> false
-    #   #
-    #   unless respond_to?(:blank?)
-    #
-    #   def blank?
-    #     empty?
-    #   end
-    #
-    #   def present?
-    #     not empty?
-    #   end
-    # end
-
-    class NilClass
-
+    refine NilClass do
       # Always `true`. Note this overrides {Object#blank?} which returns false.
       #
       # @example
@@ -53,8 +33,7 @@ module Stupidedi
       end
     end
 
-    class Object
-
+    refine Object do
       # Always `false`. Note that {NilClass#blank?} is overridden to return `true`
       #
       # @example
@@ -69,5 +48,6 @@ module Stupidedi
         true
       end
     end
+
   end
 end

@@ -1,7 +1,7 @@
 module Stupidedi
   module Refinements
-    refine Array do
 
+    refine Array do
       def blank?
         empty?
       end
@@ -189,5 +189,6 @@ module Stupidedi
       # @endgroup
       #############################################################################
     end
+
   end
 end
