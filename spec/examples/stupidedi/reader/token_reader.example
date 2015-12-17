@@ -1,4 +1,5 @@
 require "spec_helper"
+using Stupidedi::Refinements
 
 describe Stupidedi::Reader::TokenReader do
   include QuickCheck::SerializedEdi::Macro
@@ -140,7 +141,7 @@ describe Stupidedi::Reader::TokenReader do
 
     context "when s is a suffix of the input" do
       property("returns empty reader") do
-        p, s = string(:alnum).bind{|s| s.split_at(between(0, s.length)) }
+        p, s = string(:alnum).bind{|t| t.split_at(between(0, t.length)) }
         guard("#{p}#{s}".index(s) >= p.length)
         [p, s]
       end.check do |p, s|

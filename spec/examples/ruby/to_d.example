@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require "spec_helper"
+using Stupidedi::Refinements
 
 describe Float do
   describe "#to_d" do

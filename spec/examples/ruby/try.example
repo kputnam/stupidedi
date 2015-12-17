@@ -1,4 +1,5 @@
 require "spec_helper"
+using Stupidedi::Refinements
 
 describe "Object#try" do
   let(:object) { double("object") }

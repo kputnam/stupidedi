@@ -1,4 +1,5 @@
 require "spec_helper"
+using Stupidedi::Refinements
 
 describe "Symbol#to_proc" do
   include QuickCheck::Macro
@@ -48,27 +49,7 @@ describe "Symbol#to_proc" do
     :call.to_proc.call(lambda{|*bs| bs.length }, *as).should == as.length
   end
 
-# it "shortens the syntax when passing n-ary blocks", :ruby => 1.8 do
-#   list = []
-
-#   # avert your eyes, lisp haters!
-#   [[:zero?,     1       ],  #=> 1.__send__(:zero?)            == 1.zero?
-#    [:length,    "string"],  #=> "string".__send__(:length)    == "string".length
-#    [:+,         "a", "b"],  #=> "a".__send__(:+, "b")         == "a" + "b"
-#    [:fetch, {}, "a", "b"],  #=> {}.__send__(:fetch, "a", "b") == {}.fetch("a","b")
-#    [:[]=, list,  2, true],  #=> list.__send__(:[]=, 2, true)  == list[2] = true
-#    [:call, :length, "ab"]]. #=> :length.__send__(:call, "ab") == "ab".length
-
-#    map(&:call).should == [1.zero?,
-#                           "string".length,
-#                           ("a" + "b"),
-#                           {}.fetch("a","b"),
-#                           true,
-#                           "ab".length]
-#   list[2].should == true
-# end
-
-  it "shortens the syntax when passing n-ary blocks" do
+  pending "shortens the syntax when passing n-ary blocks" do
     list = []
 
     # avert your eyes, lisp haters!

@@ -1,4 +1,5 @@
 require "support/quickcheck"
+using Stupidedi::Refinements
 
 class QuickCheck
 
