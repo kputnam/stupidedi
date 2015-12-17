@@ -31,7 +31,6 @@ module Stupidedi
       ########################################################################
 
       # (see AbstractInput#take)
-      extend Forwardable
       def_delegators :@delegate, :take
       
       # (see AbstractInput#at)

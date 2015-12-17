@@ -105,7 +105,6 @@ module Stupidedi
               include Comparable
 
               # (string any* -> any)
-              extend Forwardable
               def_delegators :value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
                 :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
@@ -196,7 +195,6 @@ module Stupidedi
               attr_reader :value
 
               # (string any* -> any)
-              extend Forwardable
               def_delegators :@value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
                 :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,

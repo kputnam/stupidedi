@@ -6,11 +6,10 @@ module Stupidedi
     class AbstractElementUse < AbstractUse
       include Inspect
 
-      extend Forwardable      
       def_delegators :requirement, :forbidden?, :required?, :optional?
 
       def_delegators :definition, :code_lists
-      
+
       # @return [ElementReq]
       abstract :requirement
 

@@ -10,9 +10,8 @@ module Stupidedi
 
       # @return [CompositeElementDef]
 
-      extend Forwardable
       def_delegators :@usage, :definition
-      
+
       # @return [Array<SimpleElementVal>]
       attr_reader :children
       alias component_vals children
@@ -21,7 +20,7 @@ module Stupidedi
       attr_reader :usage
 
       def_delegators "@children.head", :position
-        
+
       def initialize(children, usage)
         @children, @usage =
           children, usage

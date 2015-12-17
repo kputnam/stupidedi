@@ -8,9 +8,8 @@ module Stupidedi
 
       # @return [SegmentDef]
 
-      extend Forwardable
       def_delegators :@usage, :definition
-      
+
       # @return [Array<AbstractElementVal>]
       attr_reader :children
 

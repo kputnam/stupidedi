@@ -28,9 +28,8 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      extend Forwardable
       def_delegators :entry_segment_use, :requirement
-      
+
       def_delegators :requirement, :required?, :optional?
 
       def initialize(id, repeat_count, header_segment_uses, loop_defs, trailer_segment_uses, parent)

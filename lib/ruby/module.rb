@@ -35,6 +35,26 @@ module Stupidedi
           RUBY
         end
       end
+
+      def def_delegators(target, *methods)
+        file, line, = Stupidedi.caller
+
+        for m in methods
+          if m.to_s =~ /=$/
+            class_eval(<<-RUBY, file, line.to_i - 1)
+              def #{m}(value)
+                #{target}.#{m}(value)
+              end
+            RUBY
+          else
+            class_eval(<<-RUBY, file, line.to_i - 1)
+              def #{m}(*args, &block)
+                #{target}.#{m}(*args, &block)
+              end
+            RUBY
+          end
+        end
+      end
     end
 
   end

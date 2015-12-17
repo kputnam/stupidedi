@@ -21,7 +21,6 @@ module Stupidedi
     class FunctionalGroupConfig
       include Inspect
 
-      extend Forwardable
       def_delegators :@table, :defined_at?
 
       def initialize

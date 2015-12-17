@@ -184,9 +184,7 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              extend Forwardable
               def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
-              
 
               def initialize(value, usage, position)
                 @value = value
