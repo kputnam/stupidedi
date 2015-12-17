@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   class Config
 
     class CodeListConfig
@@ -8,7 +10,9 @@ module Stupidedi
         @table = Hash.new
       end
 
-      alias customize tap
+      def customize(&block)
+        tap(&block)
+      end
 
       def register(id, &constructor)
         @table[id] = constructor

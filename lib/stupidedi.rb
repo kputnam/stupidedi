@@ -12,8 +12,6 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
-# Monkey patches
-
 #equire "ruby/exception"
 require "ruby/symbol"
 require "ruby/object"
@@ -30,6 +28,8 @@ require "ruby/try"
 require "ruby/instance_exec"
 
 module Stupidedi
+  using Refinements
+
   autoload :Builder,      "stupidedi/builder"
   autoload :Config,       "stupidedi/config"
   autoload :Contrib,      "stupidedi/contrib"
@@ -63,7 +63,9 @@ module Stupidedi
     end
   else
     def self.caller(depth = 2)
-      ::Kernel.caller.at(depth - 1).try(:split, ":")
+      if k = ::Kernel.caller.at(depth - 1)
+        k.split(":")
+      end
     end
   end
 end

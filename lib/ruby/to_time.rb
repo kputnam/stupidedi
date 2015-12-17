@@ -1,24 +1,26 @@
-class Time
-  unless method_defined?(:to_time)
-    # @return [Time]
-    def to_time
-      self
+module Stupidedi
+  module Refinements
+
+    refine Time do
+      # @return [Time]
+      def to_time
+        self
+      end
+
+      public :to_time
     end
-  end
 
-  public :to_time
-
-  class << self
-    public :parse
-  end
-end
-
-class String
-  unless method_defined?(:to_time)
-    def to_time
-      Time.parse(self)
+    class << Time
+      public :parse
     end
-  end
 
-  public :to_time
+    refine String do
+      def to_time
+        Time.parse(self)
+      end
+
+      public :to_time
+    end
+
+  end
 end

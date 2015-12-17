@@ -1,4 +1,5 @@
 module Stupidedi
+  using Refinements
 
   class Config
     autoload :CodeListConfig,         "stupidedi/config/code_list_config"
@@ -32,7 +33,9 @@ module Stupidedi
       @editor           = EditorConfig.new
     end
 
-    alias customize tap
+    def customize(&block)
+      tap(&block)
+    end
 
     # @return [void]
     def pretty_print(q)

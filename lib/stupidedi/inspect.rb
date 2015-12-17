@@ -1,4 +1,5 @@
 module Stupidedi
+  using Refinements
 
   #
   # When an exception is raised, in some cases `#inspect` is called on a

@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Versions
     module FunctionalGroups
       autoload :TwoThousandOne, "stupidedi/versions/functional_groups/002001"

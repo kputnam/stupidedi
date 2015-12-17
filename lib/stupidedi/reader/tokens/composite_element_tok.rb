@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Reader
 
     class CompositeElementTok

@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   class Config
 
     #
@@ -35,7 +37,9 @@ module Stupidedi
         @table = Hash.new
       end
 
-      alias customize tap
+      def customize(&block)
+        tap(&block)
+      end
 
       #
       # @example

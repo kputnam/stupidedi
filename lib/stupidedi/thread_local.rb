@@ -1,4 +1,5 @@
 module Stupidedi
+  using Refinements
 
   #
   # @example

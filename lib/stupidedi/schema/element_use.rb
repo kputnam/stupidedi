@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Schema
 
     class AbstractElementUse < AbstractUse

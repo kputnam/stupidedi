@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Zipper
     autoload :AbstractCursor, "stupidedi/zipper/abstract_cursor"
     autoload :DanglingCursor, "stupidedi/zipper/dangling_cursor"

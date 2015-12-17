@@ -1,33 +1,33 @@
-class Time
-  unless method_defined?(:to_date)
-    def to_date
-      Date.civil(year, month, day)
+module Stupidedi
+  module Refinements
+
+    refine Time do
+      def to_date
+        Date.civil(year, month, day)
+      end
+
+      public :to_date
     end
-  end
 
-  public :to_date
-end
+    refine String do
+      def to_date
+        Date.parse(self)
+      end
 
-class String
-  unless method_defined?(:to_date)
-    def to_date
-      Date.parse(self)
+      public :to_date
     end
-  end
 
-  public :to_date
-end
+    refine Date do
+      def to_date
+        self
+      end
 
-class Date
-  unless method_defined?(:to_date)
-    def to_date
-      self
+      public :to_date
     end
-  end
 
-  public :to_date
+    class << Date
+      public :parse
+    end
 
-  class << self
-    public :parse
   end
 end
