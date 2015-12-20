@@ -1,4 +1,6 @@
 class Stupidedi
+  using Refinements
+
   module Editor
 
     class FortyTenEd

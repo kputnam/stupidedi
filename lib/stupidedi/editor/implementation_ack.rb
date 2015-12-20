@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Editor
 
     # Generates an FA 999 acknowledgement
