@@ -165,7 +165,7 @@ module Stupidedi
 
 
           d::TableDef.header("Summary",
-            b::Segment(0100, s::CTT, "Transaction Totals",
+            b::Segment(100, s::CTT, "Transaction Totals",
               r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Line Items"),
               b::Element(e::NotUsed, "Hash Total"),
@@ -174,7 +174,7 @@ module Stupidedi
               b::Element(e::NotUsed,  "Volume"),
               b::Element(e::NotUsed,  "Unit or Basis for Measurement Code"),
               b::Element(e::NotUsed,  "Description")),
-            b::Segment(0200, s:: SE, "Transaction Set Trailer",
+            b::Segment(200, s:: SE, "Transaction Set Trailer",
               r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Number of Included Segments"),
               b::Element(e::Required,    "Transaction Set Control Number"))))
