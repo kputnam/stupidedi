@@ -88,7 +88,7 @@ module Stupidedi
               b::Segment( 020, s::UIT, "Unit of Measure",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Unit or Basis for Measurement Code", b::Values("LB"))),
-              b::Segment( 080, s::PID, "Product/Item Description",
+              b::Segment( 80, s::PID, "Product/Item Description",
                 r::Situational, d::RepeatCount.bounded(1000),
                 b::Element(e::Required,     "Item Description Type",  b::Values("F")),
                 b::Element(e::Situational, "Product/Process Characteristic Code", b::Values("9B")),
