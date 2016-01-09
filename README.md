@@ -18,17 +18,10 @@ notices, and health care claims. It is similar to XML in some ways,
 but precedes it by about 15 years; so if you think XML sucks, you
 will love to hate EDI.
 
-### Beware / Help Wanted
+### Credits
 
-Stupidedi monkey patches some classes in the Ruby standard library. These
-are listed in `lib/ruby`. Rails users and other ActiveSupport users have
-reported problems caused by these patches, since they are unintentionally
-incompatible.
-
-There is a pull request ([72](https://github.com/kputnam/stupidedi/pull/72))
-which should solve these. Please test the `refinements` branch and provide
-feedback -- it imposes a requirement of Ruby 2.1+, but should otherwise be
-a seemless change.
+* __Author__: [Kyle Putnam](https://github.com/kputnam)
+* __Maintainer__: [Isi Robayna](https://github.com/irobayna)
 
 ## What problem does it solve?
 
