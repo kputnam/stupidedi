@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Editor
 
     class X222 < AbstractEd

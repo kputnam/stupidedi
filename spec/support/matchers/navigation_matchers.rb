@@ -1,5 +1,6 @@
 module NavigationMatchers
   extend RSpec::Matchers::DSL
+  using Stupidedi::Refinements
 
   matcher :have_parent do |parent|
     match do |child|

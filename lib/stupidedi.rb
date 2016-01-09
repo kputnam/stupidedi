@@ -2,7 +2,6 @@ require "bigdecimal"
 require "time"
 require "date"
 require "set"
-require "forwardable"
 
 begin
   require "term/ansicolor" if $stdout.tty?
@@ -12,15 +11,11 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
-# Monkey patches
-
-#equire "ruby/exception"
 require "ruby/symbol"
 require "ruby/object"
 require "ruby/module"
 require "ruby/array"
 require "ruby/hash"
-require "ruby/enumerable"
 require "ruby/string"
 require "ruby/blank"
 require "ruby/to_d"
@@ -63,7 +58,9 @@ module Stupidedi
     end
   else
     def self.caller(depth = 2)
-      ::Kernel.caller.at(depth - 1).try(:split, ":")
+      if k = ::Kernel.caller.at(depth - 1)
+        k.split(":")
+      end
     end
   end
 end

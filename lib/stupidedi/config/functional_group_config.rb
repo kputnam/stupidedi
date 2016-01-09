@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   class Config
 
     #
@@ -19,14 +21,15 @@ module Stupidedi
     class FunctionalGroupConfig
       include Inspect
 
-      extend Forwardable
       def_delegators :@table, :defined_at?
 
       def initialize
         @table = Hash.new
       end
 
-      alias customize tap
+      def customize(&block)
+        tap(&block)
+      end
 
       # @return [void]
       def register(version, definition = nil, &constructor)

@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Versions
     module Interchanges
       module FourOhOne
@@ -53,7 +55,6 @@ module Stupidedi
 
           class SeparatorElementVal < Values::SimpleElementVal
 
-            extend Forwardable
             def_delegators :@value, :to_s, :length
                
             

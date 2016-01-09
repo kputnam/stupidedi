@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Schema
 
     # The 5010 X12 "condition designator"s include

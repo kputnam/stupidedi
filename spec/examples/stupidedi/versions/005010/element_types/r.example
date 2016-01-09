@@ -1,4 +1,5 @@
 require "spec_helper"
+using Stupidedi::Refinements
 
 describe Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementTypes do
   describe "FloatVal" do

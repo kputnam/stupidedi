@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     class TransactionSetVal < AbstractVal
@@ -10,9 +12,8 @@ module Stupidedi
       # @return [Array<TableVal>]
       attr_reader :children
 
-      extend Forwardable        
       def_delegators "@children.head", :position
-        
+
       def initialize(definition, children)
         @definition, @children =
           definition, children

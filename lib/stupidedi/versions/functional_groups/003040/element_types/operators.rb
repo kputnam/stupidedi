@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Versions
     module FunctionalGroups
       module ThirtyForty
@@ -13,7 +15,7 @@ module Stupidedi
                 ops.each do |op|
                   class_eval(<<-RUBY, file, line.to_i - 1)
                     def #{op}(&block)
-                      copy(:value => value.__send__(:#{op}, &block))
+                      copy(:value => value.#{op}(&block))
                     end
                   RUBY
                 end
@@ -39,17 +41,24 @@ module Stupidedi
                     "must pass :coerce => :method"
                 end
 
+                # Note that we can't test respond_to?(coerce) because coerce is
+                # often a refinement method, like #to_d, #to_time, etc. Currently
+                # respond_to? returns false on refinment methods, so we just call
+                # the method and assume a NoMethodError is due to coerce (hopefully
+                # not some other missing method)
                 ops.each do |op|
                   class_eval(<<-RUBY, file, line.to_i - 1)
                     def #{op}(other, &block)
-                      if other.respond_to?(:#{coerce})
-                        copy(:value => value.__send__(:#{op}, other.#{coerce}, &block))
-                      elsif other.respond_to?(:coerce)
-                        me, he = other.coerce(self)
-                        copy(:value => me.__send__(:#{op}, he, &block).#{coerce})
-                      else
-                        raise TypeError,
-                          "cannot coerce \#{other.class} to \#{self.class}"
+                      begin
+                        copy(:value => value.#{op}(other.#{coerce}, &block))
+                      rescue NoMethodError
+                        begin
+                          me, he = other.coerce(self)
+                          copy(:value => me.#{op}(he, &block).#{coerce})
+                        rescue NoMethodError
+                          raise TypeError,
+                            "cannot coerce \#{other.class} to \#{self.class}"
+                        end
                       end
                     end
                   RUBY
@@ -76,17 +85,24 @@ module Stupidedi
                     "must pass :coerce => :method"
                 end
 
+                # Note that we can't test respond_to?(coerce) because coerce is
+                # often a refinement method, like #to_d, #to_time, etc. Currently
+                # respond_to? returns false on refinment methods, so we just call
+                # the method and assume a NoMethodError is due to coerce (hopefully
+                # not some other missing method)
                 ops.each do |op|
                   class_eval(<<-RUBY, file, line.to_i - 1)
                     def #{op}(other, &block)
-                      if other.respond_to?(:#{coerce})
-                        value.__send__(:#{op}, other.#{coerce}, &block)
-                      elsif other.respond_to?(:coerce)
-                        me, he = other.coerce(self)
-                        me.__send__(:#{op}, he, &block)
-                      else
-                        raise TypeError,
-                          "cannot coerce \#{other.class} to \#{self.class}"
+                      begin
+                        value.#{op}(other.#{coerce}, &block)
+                      rescue NoMethodError
+                        begin
+                          me, he = other.coerce(self)
+                          me.#{op}(he, &block)
+                        rescue NoMethodError
+                          raise TypeError,
+                            "cannot coerce \#{other.class} to \#{self.class}"
+                        end
                       end
                     end
                   RUBY
@@ -101,7 +117,7 @@ module Stupidedi
                 ops.each do |op|
                   class_eval(<<-RUBY, file, line.to_i - 1)
                     def #{op}(*args, &block)
-                      copy(:value => value.__send__(:#{op}, *args, &block))
+                      copy(:value => value.#{op}(*args, &block))
                     end
                   RUBY
                 end

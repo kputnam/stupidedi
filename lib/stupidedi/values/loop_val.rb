@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     #
@@ -14,9 +16,8 @@ module Stupidedi
       # @return [Array<SegmentVal, LoopVal>]
       attr_reader :children
 
-      extend Forwardable
       def_delegators "@children.head", :position
-      
+
       def initialize(definition, children)
         @definition, @children =
           definition, children

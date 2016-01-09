@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     #
@@ -8,7 +10,6 @@ module Stupidedi
 
       # @return [CompositeElementDef, SimpleElementDef]
 
-      extend Forwardable
       def_delegators :@usage, :definition
 
       # @return [Array<AbstractElementVal>]
@@ -19,7 +20,7 @@ module Stupidedi
       attr_reader :usage
 
       def_delegators :@children, :defined_at?, :length
-      
+
       def initialize(children, usage)
         @children, @usage =
           children, usage

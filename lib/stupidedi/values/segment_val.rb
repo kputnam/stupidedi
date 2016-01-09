@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     # @see X222 B.1.1.3.4 Data Segment
@@ -6,9 +8,8 @@ module Stupidedi
 
       # @return [SegmentDef]
 
-      extend Forwardable
       def_delegators :@usage, :definition
-      
+
       # @return [Array<AbstractElementVal>]
       attr_reader :children
 

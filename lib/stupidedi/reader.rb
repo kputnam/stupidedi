@@ -1,6 +1,7 @@
 # encoding: ISO-8859-1
-
 module Stupidedi
+  using Refinements
+
   module Reader
     autoload :Result,       "stupidedi/reader/result"
     autoload :Success,      "stupidedi/reader/result"

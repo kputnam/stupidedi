@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     class InvalidEnvelopeVal < AbstractVal
@@ -6,9 +8,8 @@ module Stupidedi
       # @return [Array<SegmentVal>]
       attr_reader :children
 
-      extend Forwardable
       def_delegators "@children.head", :position
-        
+
       def initialize(children)
         @children = children
       end

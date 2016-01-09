@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     class InvalidSegmentVal < AbstractVal
@@ -9,7 +11,6 @@ module Stupidedi
       # @return [Reader::SegmentTok]
       attr_reader :segment_tok
 
-      extend Forwardable
       def_delegators :@segment_tok, :position
 
       def initialize(reason, segment_tok)

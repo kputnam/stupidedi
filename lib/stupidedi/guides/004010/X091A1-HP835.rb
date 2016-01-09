@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Guides
     module FortyTen
       module X091A1

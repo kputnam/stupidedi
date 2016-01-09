@@ -16,10 +16,9 @@ rescue LoadError
 end if RUBY_VERSION >= "1.9"
 
 # Require supporting files with custom matchers and macros
-Pathname.new(File.dirname(__FILE__)).tap do |specdir|
-  Dir["#{specdir}/support/**/*.rb"].each do |file|
-    require Pathname.new(file).relative_path_from(specdir)
-  end
+specdir = Pathname.new(File.dirname(__FILE__))
+Dir["#{specdir}/support/**/*.rb"].each do |file|
+  require Pathname.new(file).relative_path_from(specdir)
 end
 
 RSpec.configure do |config|

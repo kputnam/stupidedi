@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Guides
     module FiftyTen
       module X222

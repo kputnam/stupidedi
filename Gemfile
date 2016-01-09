@@ -16,6 +16,9 @@ group :development do
   gem "rcov"       ,"~> 0.9.9" ,:platforms => [:mri_18]
   gem "simplecov"              ,:platforms => [:ruby_19, :ruby_20, :ruby_21]
 
+  # Older versions of Bundler fail because :ruby_22 isn't allowed
+  gem "simplecov"              ,:platforms => [:ruby_22] if RUBY_VERSION >= "2.2.0"
+
   # We're using a patched version installed in yard/ until the
   # maintainer improves the plugin. The patch has been submitted
   # to the author.

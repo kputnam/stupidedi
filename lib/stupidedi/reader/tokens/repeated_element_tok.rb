@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Reader
 
     class RepeatedElementTok
@@ -10,7 +12,6 @@ module Stupidedi
 
       attr_reader :position
 
-      extend Forwardable
       def_delegators "element_toks.last", :remainder
   
       def initialize(element_toks, position)

@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Versions
     module Interchanges
       module FourOhOne

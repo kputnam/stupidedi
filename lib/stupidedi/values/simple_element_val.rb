@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Values
 
     #
@@ -11,9 +13,8 @@ module Stupidedi
 
       # @return [SimpleElementDef]
 
-      extend Forwardable
       def_delegators :@usage, :definition
-      
+
       abstract :valid?
 
       # @return [String]

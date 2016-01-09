@@ -1,13 +1,14 @@
 module Stupidedi
+  using Refinements
+
   module Schema
 
     class RepeatCount
       class Bounded < RepeatCount
         include Comparable
 
-        extend Forwardable
         def_delegators :@max, :<=>
-        
+
         # @return [Integer]
         attr_reader :max
 

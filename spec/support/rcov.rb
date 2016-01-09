@@ -13,7 +13,7 @@ if defined? Rcov or defined? SimpleCov
     # like Object.constants.include?("Object") #=> true
     history = Hash.new
 
-    lambda do |namespace, recurse|
+    f = lambda do |namespace, recurse|
       history[namespace] = true
 
       for child in namespace.constants
@@ -29,8 +29,8 @@ if defined? Rcov or defined? SimpleCov
           $stderr.puts "   file: #{$!.backtrace.first}"
         end
       end
-    end.bind do |recurse|
-      recurse.call(root, recurse)
     end
+
+    f.call(root, f)
   end.call(Stupidedi)
 end

@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Versions
     module FunctionalGroups
       module FortyTen
@@ -193,7 +195,6 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              extend Forwardable
               def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
                  
               
@@ -213,12 +214,7 @@ module Stupidedi
               def coerce(other)
                 # self', other' = other.coerce(self)
                 # self' * other'
-                if other.respond_to?(:to_d)
-                  return copy(:value => other.to_d), self
-                else
-                  raise TypeError,
-                    "cannot coerce FixnumVal to #{other.class}"
-                end
+                return copy(:value => other.to_d), self
               end
 
               def valid?
@@ -295,15 +291,13 @@ module Stupidedi
             def value(object, usage, position)
               if object.blank?
                 self::Empty.new(usage, position)
-              elsif object.respond_to?(:to_d)
+              else
                 # The number of fractional digits is implied by usage.precision
                 factor = 10 ** usage.definition.precision
 
                 self::NonEmpty.new(object.to_d / factor, usage, position)
-              else
-                self::Invalid.new(object, usage, position)
               end
-            rescue ArgumentError
+            rescue
               self::Invalid.new(object, usage, position)
             end
 

@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Versions
     module FunctionalGroups
       module TwoThousandOne
@@ -165,7 +167,6 @@ module Stupidedi
               include Comparable
 
               # (date any* -> any)
-              extend Forwardable
               def_delegators :@value, :year, :month, :day, :cwday, :cweek, :downto, :upto,
                 :step, :httpdate, :to_s, :to_i, :strftime, :iso8601, :rfc2822,
                 :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
@@ -204,12 +205,7 @@ module Stupidedi
               def coerce(other)
                 # me, he = other.coerce(self)
                 # me <OP> he
-                if other.respond_to?(:to_date)
-                  return DateVal.value(other, usage, position), self
-                else
-                  raise TypeError,
-                    "cannot coerce DateVal to #{other.class}"
-                end
+                return DateVal.value(other, usage, position), self
               end
 
               def valid?

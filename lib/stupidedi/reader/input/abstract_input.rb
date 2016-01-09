@@ -1,4 +1,6 @@
 module Stupidedi
+  using Refinements
+
   module Reader
 
     #
@@ -60,7 +62,6 @@ module Stupidedi
       # The current position as the number of elements previously read
       #
       # @return [Integer]
-      extend Forwardable
       def_delegators :position, :offset
       
       # The line of the current position
