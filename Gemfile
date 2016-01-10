@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 
-gem "called_from", :platforms => [:ruby_18, :mri_18, :mingw_18]
-gem "cantor"     , "~> 1.2.1"
+gem "cantor", "~> 1.2.1"
 
 group :development do
   gem "rake"
