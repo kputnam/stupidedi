@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: ISO-8859-1
 module Stupidedi
   using Refinements
@@ -38,7 +39,8 @@ module Stupidedi
 
     # @private
     # @return [String]
-    C_BYTES    = (0..255).inject(""){|string, c| string << c }.freeze
+    # C_BYTES    = (0..255).inject(""){|string, c| string << c }.freeze
+    C_BYTES    = (0..255).inject(""){|string, c| string + [c].pack('U') }
 
     # @private
     # @return [Hash]

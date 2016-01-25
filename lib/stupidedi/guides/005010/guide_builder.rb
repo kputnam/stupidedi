@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -78,7 +79,8 @@ module Stupidedi
           element_index = "00"
           element_uses  = elements.zip(segment_def.element_uses).map do |e, u|
             e_tag, e_requirement, e_name, e_arguments = e
-            element_index.succ!
+            # element_index.succ!
+            element_index = element_index.succ
 
             unless e_tag == :Element
               raise Exceptions::InvalidSchemaError,
@@ -110,7 +112,8 @@ module Stupidedi
                 component_index = "00"
                 component_uses  = e_arguments.zip(u.definition.component_uses).map do |e, c|
                   c_tag, c_requirement, c_name, c_arguments = e
-                  component_index.succ!
+                  # component_index.succ!
+                  component_index = component_index.succ
 
                   unless c_tag == :Element
                     raise Exceptions::InvalidSchemaError,

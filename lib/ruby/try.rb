@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Stupidedi
   module Refinements
-    
+
     refine Object do
       # @group Combinators
       #############################################################################

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   module Contrib
     module FortyTen
@@ -112,7 +114,7 @@ module Stupidedi
                 b::Element(e::Situational, "City Name"),
                 b::Element(e::Situational, "State or Province Code"),
                 b::Element(e::Situational, "Postal Code"),
-                b::Element(e::Situational, "Country Code")))),           
+                b::Element(e::Situational, "Country Code")))),
 
           d::TableDef.header("Summary",
             d::LoopDef.build("CTT", d::RepeatCount.bounded(1),

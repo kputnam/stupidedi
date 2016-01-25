@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   module Schema
     autoload :AbstractDef,          "stupidedi/schema/abstract_def"

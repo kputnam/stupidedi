@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   using Refinements
 
@@ -67,7 +69,8 @@ module Stupidedi
         unless segment_dict.defined_at?(id)
           element_idx  = "00"
           elements.each do |e_tag, e_val, e_position|
-            element_idx.succ!
+            # element_idx.succ!
+            element_idx = element_idx.succ
 
             # If the element is a regular Ruby value "ABC", the way this
             # proc's arguments are assigned would be e_tag = "ABC", and
@@ -95,7 +98,8 @@ module Stupidedi
 
           element_idx  = "00"
           element_uses.zip(elements) do |e_use, (e_tag, e_val, e_position)|
-            element_idx.succ!
+            # element_idx.succ!
+            element_idx = element_idx.succ
             designator = "#{id}#{element_idx}"
 
             if e_use.repeatable?
@@ -167,8 +171,8 @@ module Stupidedi
         component_idx  = "0"
         component_toks = []
         component_uses.zip(components) do |c_use, (c_tag, c_val, c_position)|
-          component_idx.succ!
-
+          # component_idx.succ!
+          component_idx = component_idx.succ
           unless c_val.nil?
             raise ArgumentError,
               "#{designator}-#{component_idx} is a component element"

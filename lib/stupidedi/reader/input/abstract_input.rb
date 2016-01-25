@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -63,26 +64,26 @@ module Stupidedi
       #
       # @return [Integer]
       def_delegators :position, :offset
-      
+
       # The line of the current position
       #
       # @return [Integer]
 
       def_delegators :position, :line
-      
+
       # The column of the current position. The column resets to `1` each time
       # a newline is read
       #
       # @return [Integer]
 
       def_delegators :position, :column
-      
+
       # The file name, URI, etc that identifies the input stream
       #
       # @return [String]
 
       def_delegators :position, :path
-      
+
       # @group Reading the Input
       ########################################################################
 

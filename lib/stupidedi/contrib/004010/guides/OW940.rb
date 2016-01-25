@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   module Contrib
     module FortyTen
@@ -117,4 +119,3 @@ module Stupidedi
     end
   end
 end
-

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -32,15 +33,15 @@ module Stupidedi
 
       # (see AbstractInput#take)
       def_delegators :@delegate, :take
-      
+
       # (see AbstractInput#at)
 
       def_delegators :@delegate, :at
-      
+
       # (see AbstractInput#index)
 
       def_delegators :@delegate, :index
-      
+
       # @group Advancing the Cursor
       ########################################################################
 
@@ -75,7 +76,7 @@ module Stupidedi
       # (see AbstractInput#empty?)
       def_delegators :@delegate, :empty?
 
-    
+
       # (see AbstractInput#==)
       def_delegators :@delegate, :==
 
