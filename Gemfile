@@ -4,11 +4,11 @@ gem "cantor", "~> 1.2.1"
 
 group :development do
   gem "rake"
-  gem "rspec"      ,"3.0.0"
+  gem "rspec"      ,"3.4.0"
   gem "rspec-collection_matchers"
   gem "yard"       ,"~> 0.8.7"
-  gem "redcarpet"  ,"~> 2.3.0"
-  #em "rdiscount"  ,"~> 2.1.7"
+  gem "redcarpet"  ,"~> 3.3.4"
+
 
   gem "term-ansicolor"
   gem "blankslate"             ,:platforms => [:ruby_18, :mri_18, :mingw_18]

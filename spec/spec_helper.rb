@@ -21,13 +21,15 @@ Dir["#{specdir}/support/**/*.rb"].each do |file|
   require Pathname.new(file).relative_path_from(specdir)
 end
 
+RSpec::Expectations.configuration.warn_about_potential_false_positives = false
+
 RSpec.configure do |config|
   config.include(EitherMatchers)
 
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]
   end
-  
+
   # rspec -I lib -t random spec
   # config.filter_run :random => true
 
