@@ -11,7 +11,7 @@ module Stupidedi
           NTE = s::SegmentDef.build(:NTE, "Note/Special Instruction",
             "To transmit information in a free-form format, if necessary, for comment or special instruction",
             e::E363 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::E352 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)))
+            e::E3   .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)))
 
         end
       end

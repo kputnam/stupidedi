@@ -14,6 +14,7 @@ module Stupidedi
           E0    = t:: R.new(:E0  , "FAKE ELEMENT FOR RMT 5,6,8"         , 0, 0)
 
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
+          E3    = t::AN.new(:E3   , "Number of Accepted Transaction Sets"  , 1, 60)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
           E23   = t::ID.new(:E23  , "Commodity Code Qualifier"             , 1, 1,
@@ -4216,7 +4217,6 @@ module Stupidedi
           E362  = t::Nn.new(:E362   , "Terms Discount Amount"              , 1, 10, 2)
           E363  = t::ID.new(:E363  , "Note Reference Code"                 , 3, 3,
             s::CodeList.build(
-              "ZZZ" => "Mutually Defined",
               "GEN" => "Entire Transaction Set",
               "LIN" => "Line Item"))
 
