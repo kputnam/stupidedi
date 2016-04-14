@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   module Builder
     autoload :ConstraintTable,      "stupidedi/builder/constraint_table"

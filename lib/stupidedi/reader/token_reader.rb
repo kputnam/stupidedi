@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   using Refinements
 
@@ -62,7 +64,8 @@ module Stupidedi
           position += 1
 
           unless is_control?(character)
-            buffer << character
+            # buffer << character
+            buffer = buffer + character
 
             if s.length == buffer.length
               if s == buffer
@@ -255,7 +258,8 @@ module Stupidedi
               break
             end
 
-            buffer << character
+            # buffer << character
+            buffer = buffer + character
           end
         end
 
@@ -333,7 +337,8 @@ module Stupidedi
         #   # @todo: Read this as data but sound the alarms
           end
 
-          buffer << character
+          # buffer << character
+          buffer = buffer + character
         end
 
         failure("reached end of input without finding a simple data element")
@@ -369,7 +374,8 @@ module Stupidedi
             end
           end
 
-          buffer << character
+          # buffer << character
+          buffer = buffer + character
         end
 
         failure("reached end of input without finding a component data element")

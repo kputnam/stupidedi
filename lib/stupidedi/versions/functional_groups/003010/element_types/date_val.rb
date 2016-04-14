@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -172,8 +173,8 @@ module Stupidedi
                 :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
                 :to_datetime, :to_int, :to_r, :to_c, :wday, :xmlschema, :yday,
                 :start
-              
-              
+
+
               # (date any* -> DateVal::Proper)
               extend Operators::Wrappers
               wrappers :+, :<<, :>>, :next_day, :next_month, :next_year,

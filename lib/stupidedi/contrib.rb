@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   module Contrib
     autoload :FortyTen,   		"stupidedi/contrib/004010"

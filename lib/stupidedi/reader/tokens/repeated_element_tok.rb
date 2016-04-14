@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -13,7 +14,7 @@ module Stupidedi
       attr_reader :position
 
       def_delegators "element_toks.last", :remainder
-  
+
       def initialize(element_toks, position)
         @element_toks, @position =
           element_toks, position

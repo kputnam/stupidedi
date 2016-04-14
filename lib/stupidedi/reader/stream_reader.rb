@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   using Refinements
 
@@ -136,8 +138,9 @@ module Stupidedi
 
           unless Reader.is_control_character?(character)
             # Slide the "window" forward one character
-            buffer = buffer.slice!(1..-1) << character.upcase
-
+            # buffer = buffer.slice!(1..-1) << character.upcase
+            buffer = buffer.slice(1..-1)
+            buffer = buffer << character.upcase
             if buffer == "ISA"
               return success(advance(position))
             end

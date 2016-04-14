@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -196,8 +197,8 @@ module Stupidedi
               attr_reader :value
 
               def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
-              
-              
+
+
               def initialize(value, usage, position)
                 @value = value
                 super(usage, position)

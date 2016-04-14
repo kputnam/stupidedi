@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -152,8 +153,8 @@ module Stupidedi
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
                 :at, :empty?, :blank?
-              
-              
+
+
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -236,8 +237,8 @@ module Stupidedi
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
                 :at, :empty?, :blank?
-                            
-              
+
+
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,

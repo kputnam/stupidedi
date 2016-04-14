@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -83,7 +84,7 @@ module Stupidedi
             out << "*"
             tmp  = ""
             node.children.each{|e| build(e, tmp) }
-            tmp.gsub!(/:*$/, "")
+            tmp = tmp.gsub(/:*$/, "")
             out << tmp
           elsif node.component?
             out << "#{node}:"
@@ -100,7 +101,7 @@ module Stupidedi
         # out << ": #{node.definition.name}</div></div>\n"
           tmp  = ""
           node.children.each{|e| build(e, tmp) }
-          tmp.gsub!(/\**$/, "")
+          tmp = tmp.gsub(/\**$/, "")
           out << "#{tmp}~</div></div>\n"
 
         elsif node.loop?

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -99,4 +100,3 @@ module Stupidedi
 
   end
 end
-

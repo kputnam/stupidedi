@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -28,7 +29,7 @@ module Stupidedi
     #
     class InterchangeConfig
       include Inspect
-      
+
       def initialize
         @table = Hash.new
       end

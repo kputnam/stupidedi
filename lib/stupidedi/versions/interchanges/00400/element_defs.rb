@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -56,7 +57,7 @@ module Stupidedi
           class SeparatorElementVal < Values::SimpleElementVal
 
             def_delegators :@value, :to_s, :length
-            
+
             def initialize(value, usage, position)
               @value = value
               super(usage, position)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   using Refinements
 
@@ -65,7 +67,8 @@ module Stupidedi
         element_vals = []
         element_idx  = "00"
         element_uses.zip(element_toks) do |element_use, element_tok|
-          element_idx.succ!
+          # element_idx.succ!
+          element_idx = element_idx.succ
           position = element_tok.position if element_tok
 
           element_vals <<
@@ -126,7 +129,8 @@ module Stupidedi
         component_vals = []
         component_idx  = "00"
         component_uses.zip(component_toks) do |component_use, component_tok|
-          component_idx.succ!
+          # component_idx.succ!
+          component_idx = component_idx.succ
           position = component_tok.position if component_tok
 
           component_vals <<

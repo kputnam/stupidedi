@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Stupidedi
   module Values
     autoload :AbstractVal,          "stupidedi/values/abstract_val"

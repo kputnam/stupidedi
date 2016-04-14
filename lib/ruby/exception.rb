@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # require "continuation" if RUBY_VERSION >= "1.9"
 #
 # class Exception

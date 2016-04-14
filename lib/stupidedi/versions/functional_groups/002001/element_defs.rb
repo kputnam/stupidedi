@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: ISO-8859-1
 module Stupidedi
   using Refinements
