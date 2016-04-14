@@ -13,9 +13,10 @@ module Stupidedi
           TD1 = s::SegmentDef.build(:TD1, "Carrier Details (Quantity and Weight)",
             "To specify the transportation details relative to commodity, weight, and quantity",
             e::E103 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-           #e::C103 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
-            e::E80  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)))
-
+            e::E80  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
+            e::E187 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E81  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            e::E355 .simple_use(r::Optional,   s::RepeatCount.bounded(1)))
         end
       end
     end
