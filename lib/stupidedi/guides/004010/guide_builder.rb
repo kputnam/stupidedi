@@ -52,7 +52,7 @@ module Stupidedi
         def Segment(position, segment_def, name, requirement, repeat_count, *elements)
           unless elements.length == segment_def.element_uses.length
             raise Exceptions::InvalidSchemaError,
-              "segment #{segment_def.id} has #{segment_def.element_uses.length}" <<
+              "segment #{segment_def.id} has #{segment_def.element_uses.length}" +
               " elements but #{elements.length} arguments were specified"
           end
 
@@ -82,8 +82,8 @@ module Stupidedi
               unless e_requirement.forbidden?
                 unless e_arguments.length == u.definition.component_uses.length
                   raise Exceptions::InvalidSchemaError,
-                    "composite element #{u.definition.id} at #{segment_def.id}" <<
-                    "#{element_index} has #{u.definition.component_uses.length}" <<
+                    "composite element #{u.definition.id} at #{segment_def.id}" +
+                    "#{element_index} has #{u.definition.component_uses.length}" +
                     " component elements but #{e_arguments.length} were given"
                 end
 
@@ -96,7 +96,7 @@ module Stupidedi
 
                   unless c_tag == :Element
                     raise Exceptions::InvalidSchemaError,
-                      "given argument for #{segment_def.id}#{element_index}" <<
+                      "given argument for #{segment_def.id}#{element_index}" +
                       "-#{component_index} must be Element(...)"
                   end
 

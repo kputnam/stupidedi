@@ -119,7 +119,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("ID.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("ID.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]
@@ -153,8 +153,8 @@ module Stupidedi
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
                 :at, :empty?, :blank?
-                 
-              
+
+
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -237,7 +237,7 @@ module Stupidedi
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
                 :at, :empty?, :blank?
-                               
+
 
               # (string any* -> StringVal)
               extend Operators::Wrappers
@@ -310,7 +310,7 @@ module Stupidedi
 
                 if codes.try(&:internal?)
                   if codes.defined_at?(@value)
-                    value = "#{@value}: " << ansi.dark(codes.at(@value))
+                    value = "#{@value}: " + ansi.dark(codes.at(@value))
                   else
                     value = ansi.red(@value)
                   end
@@ -318,7 +318,7 @@ module Stupidedi
                   value = @value
                 end
 
-                ansi.element("ID.value#{id}") << "(#{value})"
+                ansi.element("ID.value#{id}") + "(#{value})"
               end
             end
 

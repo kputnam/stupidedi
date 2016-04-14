@@ -152,8 +152,8 @@ module Stupidedi
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-                :at, :empty?, :blank?      
-              
+                :at, :empty?, :blank?
+
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -235,8 +235,8 @@ module Stupidedi
                 :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
                 :=~, :match, :partition, :rpatition, :each, :split, :scan,
                 :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-                :at, :empty?, :blank?      
-              
+                :at, :empty?, :blank?
+
               # (string any* -> StringVal)
               extend Operators::Wrappers
               wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -308,7 +308,7 @@ module Stupidedi
 
                 if codes.try(&:internal?)
                   if codes.defined_at?(@value)
-                    value = "#{@value}: " << ansi.dark(codes.at(@value))
+                    value = "#{@value}: " + ansi.dark(codes.at(@value))
                   else
                     value = ansi.red(@value)
                   end

@@ -119,7 +119,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("ID.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("ID.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]
@@ -310,7 +310,6 @@ module Stupidedi
 
                 if codes.try(&:internal?)
                   if codes.defined_at?(@value)
-                    # value = "#{@value}: " << ansi.dark(codes.at(@value))
                     value = "#{@value}: " + ansi.dark(codes.at(@value))
                   else
                     value = ansi.red(@value)
@@ -319,7 +318,7 @@ module Stupidedi
                   value = @value
                 end
 
-                ansi.element("ID.value#{id}") << "(#{value})"
+                ansi.element("ID.value#{id}") + "(#{value})"
               end
             end
 

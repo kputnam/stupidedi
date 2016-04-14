@@ -104,7 +104,7 @@ module Stupidedi
         syntax_notes.each do |sn|
           unless sn.indexes.max - 1 <= element_uses.length
             raise Exceptions::InvalidSchemaError,
-              "Syntax note for #{id} (#{element_uses.length} elements) " <<
+              "Syntax note for #{id} (#{element_uses.length} elements) " +
               "refers to non-existent element #{sn.indexes.max}"
           end
         end

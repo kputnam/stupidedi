@@ -311,7 +311,7 @@ module Stupidedi
 
                 if codes.try(&:internal?)
                   if codes.defined_at?(@value)
-                    value = "#{@value}: " << ansi.dark(codes.at(@value))
+                    value = "#{@value}: " + ansi.dark(codes.at(@value))
                   else
                     value = ansi.red(@value)
                   end
@@ -319,7 +319,7 @@ module Stupidedi
                   value = @value
                 end
 
-                ansi.element("ID.value#{id}") << "(#{value})"
+                ansi.element("ID.value#{id}") + "(#{value})"
               end
             end
 
