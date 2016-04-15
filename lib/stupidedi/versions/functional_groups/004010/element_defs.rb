@@ -6176,6 +6176,7 @@ module Stupidedi
               "23" => "Dependent",
               "PT" => "Patient",
               "I"  => "Item",
+              "O"   => "Order",
               "S"  => "Shipment",
               "T"  => "Shipping Tare",
               "P"  => "Pack"))
