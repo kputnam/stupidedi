@@ -4037,6 +4037,7 @@ module Stupidedi
               "ER" => "Jurisdiction Specific Procedure and Supply Codes",
               "HC" => "Health Care Financing Administration Common Procedural Coding System (HCPCS) Codes",
               "ID" => "International Classification of Diseases Clinical Modification (ICD-9-CM) - Procedure",
+              "IN" => "Buyer's Item Number",
               "IV" => "Home Infusion EDI Coalition (HIEC) Product/Service Code",
               "MG" => "Manufacturer's Part Number",
               "N1" => "National Drug Code in 4-4-2 Format",
