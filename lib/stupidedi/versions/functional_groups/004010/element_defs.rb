@@ -4047,6 +4047,7 @@ module Stupidedi
               "ND" => "National Drug Code (NDC)",
               "NU" => "National Uniform Billing Committee (NUBC) UB92 Codes",
               "RB" => "National Uniform Billing Committee (NUBC) UB82 Codes",
+              "SN" => "Serial Number",
               "UK" => "UPC/EAN Shipping Container Code",
               "UP" => "UPC Consumer Packaging Code",
               "VN" => "Vendor's (Seller's) Item Number",
