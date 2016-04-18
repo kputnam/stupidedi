@@ -6180,7 +6180,8 @@ module Stupidedi
               "O"   => "Order",
               "S"  => "Shipment",
               "T"  => "Shipping Tare",
-              "P"  => "Pack"))
+              "P"  => "Pack",
+              "K"  => "Kit"))
 
           E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
             s::CodeList.build(
