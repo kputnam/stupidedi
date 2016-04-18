@@ -193,6 +193,9 @@ module Stupidedi
           autoload :S5,
             "stupidedi/versions/functional_groups/004010/segment_defs/S5"
 
+          autoload :SLN,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SLN"
+
           autoload :SN1,
             "stupidedi/versions/functional_groups/004010/segment_defs/SN1"
 
