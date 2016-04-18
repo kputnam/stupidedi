@@ -5912,6 +5912,10 @@ module Stupidedi
           E646  = t:: R.new(:E646 , "Quantity Shipped to Date"             , 1, 9)
           E648  = t::ID.new(:E648 , "Price Multiplier Qualifier"           , 3, 3)
           E649  = t:: R.new(:E649 , "Multiplier"                           , 1, 10)
+          E662  = t::ID.new(:E662 , "Relationship Code"                    , 1, 1,
+            s::CodeList.build(
+              "I" => "Included"))
+
           E665  = t::ID.new(:E665 , "Residue Indicator Code"               , 1, 1,
             s::CodeList.build(
               "G" => "Residue Last Contained Description (Small Means of Containment)",
