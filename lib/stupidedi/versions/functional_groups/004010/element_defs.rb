@@ -65,7 +65,7 @@ module Stupidedi
           E60   = t:: R.new(:E60  , "Freight Rate"                         , 1, 9)
           E61   = t::AN.new(:E61  , "Free-Form Message"                    , 1, 30)
           E65   = t:: R.new(:E65  , "Height"                               , 1, 8)
-          E66   = t::ID.new(:E66  , "Identification Code Qualifier"        , 2, 3,
+          E66   = t::ID.new(:E66  , "Identification Code Qualifier"        , 1, 3,
             s::CodeList.build(
               "1"  => "D-U-N-S Number, Dun & Bradstreet",
               "2"  => "Standard Carrier Alpha Code (SCAC)",
@@ -4038,6 +4038,7 @@ module Stupidedi
               "ER" => "Jurisdiction Specific Procedure and Supply Codes",
               "HC" => "Health Care Financing Administration Common Procedural Coding System (HCPCS) Codes",
               "ID" => "International Classification of Diseases Clinical Modification (ICD-9-CM) - Procedure",
+              "IN" => "Buyer's Item Number",
               "IV" => "Home Infusion EDI Coalition (HIEC) Product/Service Code",
               "MG" => "Manufacturer's Part Number",
               "N1" => "National Drug Code in 4-4-2 Format",
@@ -4047,6 +4048,7 @@ module Stupidedi
               "ND" => "National Drug Code (NDC)",
               "NU" => "National Uniform Billing Committee (NUBC) UB92 Codes",
               "RB" => "National Uniform Billing Committee (NUBC) UB82 Codes",
+              "SN" => "Serial Number",
               "UK" => "UPC/EAN Shipping Container Code",
               "UP" => "UPC Consumer Packaging Code",
               "VN" => "Vendor's (Seller's) Item Number",
@@ -5912,6 +5914,10 @@ module Stupidedi
           E646  = t:: R.new(:E646 , "Quantity Shipped to Date"             , 1, 9)
           E648  = t::ID.new(:E648 , "Price Multiplier Qualifier"           , 3, 3)
           E649  = t:: R.new(:E649 , "Multiplier"                           , 1, 10)
+          E662  = t::ID.new(:E662 , "Relationship Code"                    , 1, 1,
+            s::CodeList.build(
+              "I" => "Included"))
+
           E665  = t::ID.new(:E665 , "Residue Indicator Code"               , 1, 1,
             s::CodeList.build(
               "G" => "Residue Last Contained Description (Small Means of Containment)",
@@ -6177,9 +6183,11 @@ module Stupidedi
               "23" => "Dependent",
               "PT" => "Patient",
               "I"  => "Item",
+              "O"   => "Order",
               "S"  => "Shipment",
               "T"  => "Shipping Tare",
-              "P"  => "Pack"))
+              "P"  => "Pack",
+              "K"  => "Kit"))
 
           E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
             s::CodeList.build(

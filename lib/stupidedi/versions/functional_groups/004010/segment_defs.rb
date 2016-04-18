@@ -182,6 +182,9 @@ module Stupidedi
           autoload :PO4,
             "stupidedi/versions/functional_groups/004010/segment_defs/PO4"
 
+          autoload :PRF,
+            "stupidedi/versions/functional_groups/004010/segment_defs/PRF"
+
           autoload :QTY,
             "stupidedi/versions/functional_groups/004010/segment_defs/QTY"
 
@@ -190,6 +193,9 @@ module Stupidedi
 
           autoload :S5,
             "stupidedi/versions/functional_groups/004010/segment_defs/S5"
+
+          autoload :SLN,
+            "stupidedi/versions/functional_groups/004010/segment_defs/SLN"
 
           autoload :SN1,
             "stupidedi/versions/functional_groups/004010/segment_defs/SN1"
