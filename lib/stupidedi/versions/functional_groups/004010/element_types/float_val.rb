@@ -184,10 +184,10 @@ module Stupidedi
 
               # @return [BigDecimal]
               attr_reader :value
-              
+
               def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
-                 
-              
+
+
               def initialize(value, usage, position)
                 @value = value
                 super(usage, position)
@@ -262,7 +262,9 @@ module Stupidedi
                   if truncate
                     int   = @value.to_i.to_s
                     sign  = (int < 0) ? "-" : ""
-                    return sign << int.abs.to_s.take(definition.max_length)
+                    sign  = sign + int.abs.to_s.take(definition.max_length)
+                    return sign
+                    # return sign << int.abs.to_s.take(definition.max_length)
                   else
                     return @value.to_i.abs
                   end
@@ -287,7 +289,7 @@ module Stupidedi
                 if rounded.zero?
                   "0" * definition.min_length
                 else
-                  sign << rounded.abs.to_s("F").
+                  sign = sign + rounded.abs.to_s("F").
                     gsub(/^0+/, ""). # leading zeros
                     gsub(/0+$/, ""). # trailing zeros
                     gsub(/\.$/, ""). # trailing decimal point
