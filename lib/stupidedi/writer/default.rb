@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module Stupidedi
   using Refinements
 
@@ -16,7 +15,7 @@ module Stupidedi
 
       #
       # @return out
-      def write(out = "")
+      def write
         common  = @separators.characters & @zipper.node.characters
         message = common.to_a.map(&:inspect).join(", ")
 
@@ -24,7 +23,7 @@ module Stupidedi
           raise Exceptions::OutputError,
             "separators #{message} occur as data"
         end
-
+        out = ""
         recurse(@zipper.node, @separators, out)
         return out
       end
@@ -75,7 +74,7 @@ module Stupidedi
         # empty segments here.
         return if s.empty?
 
-        out = out + s.id.to_s
+        out << s.id.to_s
 
         # Trailing empty elements (including component elements) can be omitted,
         # so "NM1*XX*1:2::::*****~" should be abbreviated to "NM1*XX*1:2~".
@@ -83,28 +82,28 @@ module Stupidedi
           reverse.drop_while(&:empty?).reverse  # Remove the trailing empties
 
         elements.each do |e|
-          out = out + separators.element
+          out << separators.element
           element(e, separators, out)
         end
 
-        out = out + separators.segment
+        out << separators.segment
       end
 
       def element(e, separators, out)
         if e.simple?
-          out = out + e.to_x12
+          out << e.to_x12
 
         elsif e.composite?
           components = e.children.
             reverse.drop_while(&:empty?).reverse
 
           unless components.empty?
-            out = out + components.head.to_x12
+            out << components.head.to_x12
           end
 
           components.tail.each do |c|
-            out = out + separators.component
-            out = out + c.to_x12
+            out << separators.component
+            out << c.to_x12
           end
 
         elsif e.repeated?
@@ -116,7 +115,7 @@ module Stupidedi
           end
 
           occurrences.tail.each do |o|
-            out = out + separators.repetition
+            out << separators.repetition
             element(o, separators, out)
           end
         end
