@@ -289,7 +289,7 @@ module Stupidedi
                 if rounded.zero?
                   "0" * definition.min_length
                 else
-                  sign = sign + rounded.abs.to_s("F").
+                  sign + rounded.abs.to_s("F").
                     gsub(/^0+/, ""). # leading zeros
                     gsub(/0+$/, ""). # trailing zeros
                     gsub(/\.$/, ""). # trailing decimal point
