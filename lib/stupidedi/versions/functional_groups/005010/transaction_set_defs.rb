@@ -50,6 +50,10 @@ module Stupidedi
           autoload :HP835, # Health Care Claim Payment/Advice
             "stupidedi/versions/functional_groups/005010/transaction_set_defs/HP835"
 
+          # 005010X220 Foo Bar Baz
+          autoload :BE834, # Health Care Claim Payment/Advice
+            "stupidedi/versions/functional_groups/005010/transaction_set_defs/BE834"
+
           # 005010X222 Health Care Claim: Professional
           # 005010X223 Health Care Claim: Institutional
           # 005010X224 Health Care Claim: Dental

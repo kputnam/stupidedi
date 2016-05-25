@@ -187,6 +187,7 @@ module Stupidedi
             s::CodeList.build(
               "277" => "Health Care Information Status Notification",
               "835" => "Health Care Claim Payment/Advice",
+              "834" => "Benefit Enrollment and Maintenance",
               "837" => "Health Care Claim",
               "999" => "Implementation Acknowledgement"))
 
