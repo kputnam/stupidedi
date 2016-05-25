@@ -21,6 +21,10 @@ module Stupidedi
         autoload :HP835,  "stupidedi/guides/005010/X221-HP835"
       end
 
+      module X220A1
+        autoload :BE834,  "stupidedi/guides/005010/X220A1-BE834"
+      end
+
       module X221A1
         autoload :HP835,  "stupidedi/guides/005010/X221A1-HP835"
       end
