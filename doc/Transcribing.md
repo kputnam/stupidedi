@@ -22,8 +22,6 @@ top-level tables can be written as `TableDef.header`, `TableDef.detail`, and
 > a detail table can be repeated, while a summary table cannot, and the `SE`
 > segment should only occur once in a document.
 
-![](images/transcribing-table.png)
-
 ## Loops
 
 Loops are groups of segments which have a particular starting segment that
