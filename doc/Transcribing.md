@@ -8,7 +8,7 @@ this:
 
 ## Tables
 
-The overall structure of the grammr is given in section 2.2 of the
+The overall structure of the grammar is given in section 2.2 of the
 documentation (be sure it is marked `IMPLEMENTATION` and not `STANDARD`). The
 top-level tables can be written as `TableDef.header`, `TableDef.detail`, and
 `TableDef.summary`.
