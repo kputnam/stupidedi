@@ -65,7 +65,7 @@ module Stupidedi
           E60   = t:: R.new(:E60  , "Freight Rate"                         , 1, 9)
           E61   = t::AN.new(:E61  , "Free-Form Message"                    , 1, 30)
           E65   = t:: R.new(:E65  , "Height"                               , 1, 8)
-          E66   = t::ID.new(:E66  , "Identification Code Qualifier"        , 2, 3,
+          E66   = t::ID.new(:E66  , "Identification Code Qualifier"        , 1, 2,
             s::CodeList.build(
               "1"  => "D-U-N-S Number, Dun & Bradstreet",
               "2"  => "Standard Carrier Alpha Code (SCAC)",
