@@ -59,16 +59,15 @@ Segments can be described using `BuilderDsl.Segment(offset, id, name,
 usage, repeat_count, *elements)`. The first argument comes from the `Pos. #`
 column in the table diagram above. For instance, the `NM1 Patient Name` segment
 has an offset of 150. The usage argument is denoted in a few places: on the
-above diagram, it is the `Usage` column; this indicates if the segment is
-required or optional.
+above diagrams, it is the labeled `Usage`; this indicates if the segment is
+required or optional, or if its presence depends on other conditions.
 
 ## Elements
 
 Elements are (apart from composite elements), some kind of atomic data type,
 like a string, number, date, etc. Each place a segment is specified in the
-grammar, its element properties are also specified. Beware that each "usage"
-of a segment with the same identifier (e.g., `NM1`) will have different details
-about its elements.
+grammar, its element properties are also specified. Beware that each place that
+a segment appears can have different details about its elements, per-occurence.
 
 ![](images/transcribing-segment-diagram.png)
 
@@ -81,7 +80,7 @@ diagram, but we'll ignore those for now.
 
 ![](images/transcribing-element-detail.png)
 
-The third section of each segment specification gives a name to each element,
+The third section of each element detail gives a name to each element,
 usually in the gray section labeled `IMPLEMENTATION NAME`, and also specifies
 its usage, allowed values, and minimum and maximum lengths. The usage indicator
 is in the first column, name and allowed values in the fourth. Minimum and
