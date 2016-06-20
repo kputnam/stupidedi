@@ -13,7 +13,7 @@ documentation (be sure it is marked `IMPLEMENTATION` and not `STANDARD`). The
 top-level tables can be written as `TableDef.header`, `TableDef.detail`, and
 `TableDef.summary`.
 
-![](images/transcribing-tables.png)
+![](images/transcribing-table.png)
 
 > Note for some reason, some grammars show the `SE` segment at the end of a
 > detail table, rather than in its own summary table. The `SE` segment is the
