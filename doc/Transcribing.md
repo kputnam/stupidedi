@@ -44,11 +44,16 @@ grammar, it can be given a different name, different flags to indicate which
 fields are required or optional, different set of allowed values in each field,
 and a different number of allowed repeats.
 
-![](images/transcribing-segment-detail.png)
-
 One of the most commonly used segments is `NM1`, which is generally some kind of
 name. In the above example, you an `NM1 Patient Name`, but there are many others
 in the grammar for different people.
+
+![](images/transcribing-segment-detail.png)
+
+The important parts of the image above have probably already been transcribed in
+an existing `SegmentDef` (unless you find a segment that hasn't been defined), which
+are the same across all grammars (all the X12 attributes). The "loop", "usage", and
+"repeat count" were described earlier, but are again shown here.
 
 Segments can be described using `BuilderDsl.Segment(offset, id, name,
 usage, repeat_count, *elements)`. The first argument comes from the `Pos. #`
@@ -64,11 +69,6 @@ like a string, number, date, etc. Each place a segment is specified in the
 grammar, its element properties are also specified. Beware that each "usage"
 of a segment with the same identifier (e.g., `NM1`) will have different details
 about its elements.
-
-The important parts of the image above have probably already been transcribed in
-a `SegmentDef` (unless you find a segment that hasn't been defined), which are
-the same across all grammars (all the X12 attributes). The "loop", "usage", and
-"repeat count" were described earlier, but are again shown here.
 
 ![](images/transcribing-segment-diagram.png)
 
