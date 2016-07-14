@@ -96,7 +96,8 @@ module Stupidedi
               "SEP" => "Secondary Payer",
               "TL"  => "Testing Laboratory",
               "TTP" => "Tertiary Payer",
-              "TU"  => "Third Party Repricing Organization (TPO)"))
+              "TU"  => "Third Party Repricing Organization (TPO)",
+              "ZZ"  => "Mutually Defined"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -161,6 +162,7 @@ module Stupidedi
               "G1"  => "Prior Authorization Number",
               "G2"  => "Provider Commercial Number",
               "G3"  => "Predetermination of Benefits Identification Number",
+              "G4"  => "Peer Review Organization (PRO) Approval Number",
               "HI"  => s::CodeList.external("121"),
               "HPI" => s::CodeList.external("537"),
               "ICD" => s::CodeList.external("131"),
@@ -284,10 +286,22 @@ module Stupidedi
           E363  = t::ID.new(:E363 , "Note Reference Code"                  , 3, 3,
             s::CodeList.build(
               "ADD" => "Additional Information",
+              "ALG" => "Allergies",
               "CER" => "Certification Narrative",
               "DCP" => "Goals, Rehabilitation Potential, or Discharge Plans",
               "DGN" => "Diagnosis Description",
-              "TPO" => "Third Party Organization Notes"))
+              "DME" => "Durable Medical Equipment (DME) and Supplies",
+              "MED" => "Medications",
+              "NTR" => "Nutritional Requirements",
+              "ODT" => "Orders for Disciplines and Treatments",
+              "RHB" => "Functional Limitations, Reason Homebound, or Both",
+              "RLH" => "Reasons Patient Leaves Home",
+              "RNH" => "Times and Reasons Patient Not at Home",
+              "SET" => "Unusual Home, Social Environment, or Both",
+              "SFM" => "Safety Measures",
+              "SPT" => "Supplementary Plan of Treatment",
+              "TPO" => "Third Party Organization Notes",
+              "UPI" => "Updated Information"))
 
           E364  = t::AN.new(:E364 , "Communication Number"                 , 1, 256)
           E365  = t::ID.new(:E365 , "Communication Number Qualifier"       , 2, 2,
@@ -326,6 +340,7 @@ module Stupidedi
               "361" => "Initial Disability Period End",
               "405" => "Production",
               "431" => "Onset of Current Symptoms or Illness",
+              "434" => "Statement",
               "435" => "Admission",
               "439" => "Accident",
               "444" => "First Visit or Consultation",
@@ -446,10 +461,13 @@ module Stupidedi
               "D8"  => "Discount Amount",
               "DY"  => "Per Day Limit",
               "EAF" => "Amount Owed",
+              "F3"  => "Patient Responsibility - Estimated",
               "F4"  => "Postage Claimed",
               "F5"  => "Patient Amount Paid",
+              "GT"  => "Goods and Services Tax",
               "I"   => "Interest",
               "KH"  => "Deduction Amount",
+              "N8"  => "Miscellaneous Taxes",
               "NL"  => "Negative Ledger Balance",
               "T"   => "Tax",
               "T2"  => "Total Claim Before Taxes",
@@ -871,6 +889,7 @@ module Stupidedi
           E1073 = t::ID.new(:E1073, "Yes/No Condition or Response Code"    , 1, 1,
             s::CodeList.build(
               "N" => "No",
+              "U" => "Unknown",
               "Y" => "Yes",
               "W" => "Not Applicable"))
 
@@ -924,6 +943,7 @@ module Stupidedi
           E1220 = t::ID.new(:E1220, "Student Status Code"                  , 1, 1)
           E1221 = t::ID.new(:E1221, "Provider Code"                        , 1, 3,
             s::CodeList.build(
+              "AT" => "Attending",
               "BI" => "Billing",
               "PE" => "Performing"))
 
