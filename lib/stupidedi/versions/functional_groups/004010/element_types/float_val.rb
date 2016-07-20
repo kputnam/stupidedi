@@ -264,7 +264,6 @@ module Stupidedi
                     sign  = (int < 0) ? "-" : ""
                     sign  = sign + int.abs.to_s.take(definition.max_length)
                     return sign
-                    # return sign << int.abs.to_s.take(definition.max_length)
                   else
                     return @value.to_i.abs
                   end

@@ -196,8 +196,8 @@ module Stupidedi
               # @return [BigDecimal]
               attr_reader :value
 
-              def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c   
-              
+              def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
+
               def initialize(value, usage, position)
                 @value = value
                 super(usage, position)
@@ -256,10 +256,10 @@ module Stupidedi
                 # Leading zeros must be suppressed unless necessary to satisfy a
                 # minimum length requirement
                 if truncate
-                  sign << nn.abs.to_s.take(definition.max_length).
+                  sign = sign + nn.abs.to_s.take(definition.max_length).
                                       rjust(definition.min_length, "0")
                 else
-                  sign << nn.abs.to_s.rjust(definition.min_length, "0")
+                  sign = sign + nn.abs.to_s.rjust(definition.min_length, "0")
                 end
               end
 
