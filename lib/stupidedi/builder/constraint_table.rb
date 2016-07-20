@@ -126,7 +126,7 @@ module Stupidedi
               else
                 if strict
                   designator = "#{segment_tok.id}#{'%02d' % (n + 1)}"
-                  designator << "-%02d" % m unless m.nil?
+                  designator = designator + "-%02d" % m unless m.nil?
 
                   raise ArgumentError,
                     "#{value.inspect} is not allowed in #{designator}"
@@ -160,7 +160,7 @@ module Stupidedi
               else
                 if strict
                   designator = "#{segment_tok.id}#{'%02d' % n}"
-                  designator << "-%02d" % m unless m.nil?
+                  designator = designator + "-%02d" % m unless m.nil?
 
                   raise ArgumentError,
                     "#{value.inspect} is not allowed in #{designator}"

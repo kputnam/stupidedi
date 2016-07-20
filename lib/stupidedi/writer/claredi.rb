@@ -12,9 +12,9 @@ module Stupidedi
 
       # @return [String]
       def write(out = "")
-        out << "<html><head>\n#{style}</head>\n<body>\n"
+        out = out + "<html><head>\n#{style}</head>\n<body>\n"
         build(@node, out)
-        out << "</body></html>"
+        out + "</body></html>"
       end
 
     private
@@ -81,62 +81,62 @@ module Stupidedi
         if node.element?
 
           if node.composite?
-            out << "*"
+            out = out + "*"
             tmp  = ""
             node.children.each{|e| build(e, tmp) }
             tmp = tmp.gsub(/:*$/, "")
-            out << tmp
+            out + tmp
           elsif node.component?
-            out << "#{node}:"
+            out + "#{node}:"
           elsif node.repeated?
-            out << "^"
+            out + "^"
             node.children.each{|e| build(e, out) }
           else
-            out << "*#{node}"
+            out + "*#{node}"
           end
 
         elsif node.segment?
-          out << "<div class=segment><div class=label title='#{node.definition.name}'>"
-          out << '% 3s' % node.definition.id
-        # out << ": #{node.definition.name}</div></div>\n"
+          out = out + "<div class=segment><div class=label title='#{node.definition.name}'>"
+          out = out + '% 3s' % node.definition.id
+        # out = out + ": #{node.definition.name}</div></div>\n"
           tmp  = ""
           node.children.each{|e| build(e, tmp) }
           tmp = tmp.gsub(/\**$/, "")
-          out << "#{tmp}~</div></div>\n"
+          out + "#{tmp}~</div></div>\n"
 
         elsif node.loop?
           m = /^(\w+) (.+)$/.match(node.definition.id)
           id, name = m.captures
           name = name.split(/\s+/).map(&:capitalize).join(" ")
 
-          out << "<div class=loop><div class=label>#{name} (#{id})</div>\n"
+          out = out + "<div class=loop><div class=label>#{name} (#{id})</div>\n"
           node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          out + "</div>\n"
 
         elsif node.table?
-          out << "<div class=table><div class=label>#{node.definition.id}</div>\n"
+          out = out + "<div class=table><div class=label>#{node.definition.id}</div>\n"
           node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          out + "</div>\n"
 
         elsif node.transaction_set?
-          out << "<div class=transaction><div class=label>Transaction Set #{node.definition.id}</div>\n"
+          out = out + "<div class=transaction><div class=label>Transaction Set #{node.definition.id}</div>\n"
           node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          out + "</div>\n"
 
         elsif node.functional_group?
-          out << "<div class=functionalgr><div class=label>Functional Group #{node.definition.id}</div>\n"
+          out = out + "<div class=functionalgr><div class=label>Functional Group #{node.definition.id}</div>\n"
           node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          out + "</div>\n"
 
         elsif node.interchange?
-          out << "<div class=interchange><div class=label>Interchange #{node.definition.id}</div>\n"
+          out = out + "<div class=interchange><div class=label>Interchange #{node.definition.id}</div>\n"
           node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          out + "</div>\n"
 
         elsif node.transmission?
-          out << "<div class=transmission>\n"
+          out = out + "<div class=transmission>\n"
           node.children.each{|c| build(c, out) }
-          out << "</div>\n"
+          out + "</div>\n"
         end
       end
     end

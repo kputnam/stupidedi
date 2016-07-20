@@ -142,7 +142,7 @@ module Stupidedi
               "#{designator} segment has only #{length} elements"
           end
 
-          designator << "%02d" % m
+          designator  = designator + "%02d" % m
           value       = s.child(m - 1)
 
           if n.nil?
