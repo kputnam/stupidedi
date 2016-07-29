@@ -93,7 +93,7 @@ module Stupidedi
                     elsif preview.length <= 3
                       preview.inspect
                     else
-                      (preview.take(3) << "...").inspect
+                      (preview.take(3) + "...").inspect
                     end
 
           q.text preview
