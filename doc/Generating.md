@@ -2,7 +2,7 @@ Generating X12
 ==============
 
 Stupidedi has a simple interface for generating X12 documents. Once you have
-defined a transaction set or implementation guide (see {file:Defining.md Defining}),
+defined a transaction set or implementation guide (see [Defining](unwritten/Defining.md)) ,
 you can generate well-formed documents using [`BuilderDsl`][1].
 
   [1]: Stupidedi/Builder/BuilderDsl.html
