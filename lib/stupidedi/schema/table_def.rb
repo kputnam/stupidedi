@@ -126,10 +126,10 @@ module Stupidedi
       end
 
       # @return [TableDef]
-      def detail(id, *children)
+      def detail(id, *children, repeatable: true)
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 2, true, header, loop_defs, trailer, nil)
+        new(id, 2, repeatable, header, loop_defs, trailer, nil)
       end
 
       # @return [TableDef]
