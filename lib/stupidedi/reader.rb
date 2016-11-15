@@ -39,7 +39,6 @@ module Stupidedi
 
     # @private
     # @return [String]
-    # C_BYTES    = (0..255).inject(""){|string, c| string << c }.freeze
     C_BYTES    = (0..255).inject(""){|string, c| string + [c].pack('U') }
 
     # @private

@@ -297,7 +297,7 @@ b.machine.zipper.tap do |z|
   # You can also serialize any subtree within the document (e.g., everything inside
   # some ST..SE transaction set, or a single loop. Here, z.root is the entire tree.
   w = Stupidedi::Writer::Default.new(z.root, separators)
-  w.write($stdout)
+  print w.write()
 end
 ```
 

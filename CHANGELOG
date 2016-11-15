@@ -1,3 +1,6 @@
+v 1.2.12 - July 29, 2016
+  - Fix a few issues with immutable strings
+  
 v 1.2.2 - July 8, 2014
   - Remove definition of module Enumerable::blank? and present?
   - Add blank?, present? to Array class

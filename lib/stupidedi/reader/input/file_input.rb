@@ -73,7 +73,7 @@ module Stupidedi
 
         until @io.eof?
           buffer.slice!(0)
-          buffer << @io.read(1)
+          buffer = buffer + @io.read(1)
 
           if buffer == value
             return @io.tell - @offset - length
@@ -133,7 +133,7 @@ module Stupidedi
                     elsif preview.length <= 3
                       preview.inspect
                     else
-                      (preview.take(3) << "...").inspect
+                      (preview.take(3) + "...").inspect
                     end
 
           q.text preview
