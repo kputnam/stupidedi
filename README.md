@@ -1,5 +1,5 @@
 # Stupidedi
-[![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/gh/kputnam%2Fstupidedi.svg)](http://badge.fury.io/gh/kputnam%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/kputnam/stupidedi.png)](https://codeclimate.com/github/kputnam/stupidedi) [![Inline docs](http://inch-ci.org/github/kputnam/stupidedi.png?branch=master)](http://inch-ci.org/github/kputnam/stupidedi) 
+[![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/gh/kputnam%2Fstupidedi.svg)](http://badge.fury.io/gh/kputnam%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/kputnam/stupidedi.png)](https://codeclimate.com/github/kputnam/stupidedi) [![Inline docs](http://inch-ci.org/github/kputnam/stupidedi.png?branch=master)](http://inch-ci.org/github/kputnam/stupidedi)
 
 ![Screenshot](https://raw.github.com/kputnam/stupidedi/master/doc/images/edi-pp.png)
 
@@ -205,10 +205,10 @@ Pretty print the syntax tree
             TableVal[Table 3 - Summary](
               SegmentVal[SE: Transaction Set Trailer](
                 Nn.value[  E96: Number of Included Segments](45),
-                AN.value[ E329: Transaction Set Control Number](0021)))), 
+                AN.value[ E329: Transaction Set Control Number](0021)))),
           SegmentVal[GE: Functional Group Trailer](
             Nn.value[  E97: Number of Transaction Sets Included](1),
-            Nn.value[  E28: Group Control Number](1))), 
+            Nn.value[  E28: Group Control Number](1))),
         SegmentVal[IEA: Interchange Control Trailer](
           Nn.value[  I16: Number of Included Functional Groups](1),
           Nn.value[  I12: Interchange Control Number](905))))
@@ -344,4 +344,10 @@ parser.first
   .flatmap{|m| m.find(:CLP) }
   .flatmap{|m| m.find(:NM1, "QC") }
   .tap{|m| el(m, 3, 4){|l,f| puts "Patient: #{l}, #{f}" }}
+```
+
+### Testing
+
+```ruby
+rake spec
 ```
