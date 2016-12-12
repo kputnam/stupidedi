@@ -20,7 +20,7 @@ ARGV.each do |path|
   # parser, r = parser.read(Stupidedi::Reader.build(content))
 
   File.open(path) do |io|
-    parser, result = parser.read(Stupidedi::Reader.build(io))
+    parser, _result = parser.read(Stupidedi::Reader.build(io))
   end
 end
 
