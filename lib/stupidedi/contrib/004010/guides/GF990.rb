@@ -32,7 +32,12 @@ module Stupidedi
             b::Segment(30, s::N9, "Reference Identification",
               r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Reference Identification Qualifier"),
-              b::Element(e::Situational, "Reference Identification")),
+              b::Element(e::Situational, "Reference Identification"),
+              b::Element(e::Situational, "Free-form Description"),
+              b::Element(e::Situational, "Date"),
+              b::Element(e::Situational, "Time"),
+              b::Element(e::Situational, "Time Code"),
+              b::Element(e::Situational, "Reference Identifier")),
 
             b::Segment(60, s::K1, "Remarks",
               r::Situational, d::RepeatCount.bounded(10),
