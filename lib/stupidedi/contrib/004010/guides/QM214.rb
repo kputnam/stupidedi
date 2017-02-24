@@ -118,7 +118,7 @@ module Stupidedi
                 r::Situational, d::RepeatCount.bounded(10),
                 b::Element(e::Situational, "Reference Identification"),
                 b::Element(e::Required,    "Reference Identification Qualifier"),
-                b::Element(e::Required,    "Description")),
+                b::Element(e::NotUsed,    "Description")),
 
               b::Segment(200, s::AT8, "Shipment Weight, Packaging and Quantity Data",
                 r::Situational, d::RepeatCount.bounded(10),
