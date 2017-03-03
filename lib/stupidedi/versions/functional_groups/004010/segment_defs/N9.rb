@@ -17,7 +17,7 @@ module Stupidedi
             e::E373 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E337 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E623 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-            e::C040 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+            #e::C040 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
 
             SyntaxNotes::R.build(2, 3),
             SyntaxNotes::C.build(6, 5))
