@@ -240,6 +240,19 @@ module Stupidedi
                   b::Element(e::Situational, "Communication Number"),
                   b::Element(e::Situational, "Communication Number"))),
 
+              d::LoopDef.build("LOOP 0350",
+                d::RepeatCount.bounded(1),    
+                b::Segment(150, s::OID, "Order Identification Detail",
+                  r::Situational, d::RepeatCount.bounded(9),
+                  b::Element(e::Required,    "Reference Identification"),
+                  b::Element(e::Required,    "Purchase Order Number"),
+                  b::Element(e::Required,    "Unit or Basis for Measurement Code"),
+                  b::Element(e::Required,    "Quantity"),
+                  b::Element(e::Situational, "Weight Unit Code"),
+                  b::Element(e::Situational, "Weight"),
+                  b::Element(e::Situational, "Volume Unit Qualifier"),
+                  b::Element(e::Situational, "Volume"))),
+
               d::LoopDef.build("LOOP 0320",
                 d::RepeatCount.bounded(99),
                 b::Segment(130, s::L5, "Description, Marks and Numbers",
@@ -265,7 +278,7 @@ module Stupidedi
                   b::Element(e::Situational, "Volume Unit Qualifier"),
                   b::Element(e::Situational, "Volume")),
                   
-                b::Segment(350, s::OID, "Order Identification Detail",
+                b::Segment(150, s::OID, "Order Identification Detail",
                   r::Situational, d::RepeatCount.bounded(9),
                   b::Element(e::Required,    "Reference Identification"),
                   b::Element(e::Required,    "Purchase Order Number"),
