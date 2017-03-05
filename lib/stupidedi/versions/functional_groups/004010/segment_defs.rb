@@ -68,6 +68,9 @@ module Stupidedi
           autoload :AT8,
             "stupidedi/versions/functional_groups/004010/segment_defs/AT8"
 
+          autoload :OID,
+            "stupidedi/versions/functional_groups/004010/segment_defs/OID"
+
           autoload :B2A,
             "stupidedi/versions/functional_groups/004010/segment_defs/B2A"
 
