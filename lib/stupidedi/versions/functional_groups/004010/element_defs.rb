@@ -13,6 +13,7 @@ module Stupidedi
           s = Schema
 
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
+          E16   = t::ID.new(:E16  , "Charge Method of Payment"             , 1, 1)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
           E23   = t::ID.new(:E23  , "Commodity Code Qualifier"             , 1, 1,
@@ -27,6 +28,8 @@ module Stupidedi
             s::CodeList.external("5"))
 
           E28   = t::Nn.new(:E28  , "Group Control Number"                 , 1, 9, 0)
+          E32   = t::DT.new(:E32  , "Invoice Due Date"                     , 8, 8)
+          E39   = t::ID.new(:E39  , "Entitlement Code"                     , 1, 1)
 
           E40   = t::ID.new(:E40   , "Equipment Description Code"          , 2, 2,
             s::CodeList.build(
@@ -38,6 +41,8 @@ module Stupidedi
               "TF" => "Trailer, Try Freight",
               "TL" => "Trailer (not otherwise specified)",
               "TV" => "Truck, Van"))
+
+          E46   = t::AN.new(:E46  , "Ex Parte"                             , 4, 4)
 
           E56   = t::ID.new(:E56  , "Type of Service Code"                 , 2, 2,
             s::CodeList.build(
@@ -288,19 +293,23 @@ module Stupidedi
           E67   = t::AN.new(:E67  , "Identification Code"                  , 2, 80)
           E71   = t::Nn.new(:E71  , "Inquiry Request Number"               , 1, 3, 0)
           E74   = t:: R.new(:E74  , "Declared Value"                       , 2, 12)
+          E76   = t::AN.new(:E76  , "Invoice Number"                       , 1, 22)
           E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
           E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
           E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
+          E82   = t:: R.new(:E82  , "Length"                               , 1, 8)
           E86   = t::ID.new(:E86  , "Total Equipment"                      , 1, 3)
           E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
           E88   = t::ID.new(:E88  , "Marks and Numbers Qualifier"          , 1, 2,
             s::CodeList.build(
               "UP" => "U.P.C. Consumer Package Code (1-5-5-1)",
               "GM" => "SSCC-18 and Application Identifier"))
+          E90   = t:: R.new(:E90  , "Height"                               , 1, 8)
           E91   = t::ID.new(:E91  , "Transportation Method/Type Code"      , 1, 2,
             s::CodeList.build(
               "A"  => "Air",
               "H"  => "Customer Pickup",
+              "J"  => "Motor",
               "M"  => "Motor (Common Carrier)",
               "R"  => "Rail",
               "S"  => "Ocean",
@@ -402,6 +411,8 @@ module Stupidedi
           E116  = t::ID.new(:E116 , "Postal Code"                          , 3, 15,
             s::CodeList.external("51"))
           E117  = t::Nn.new(:E117 , "Prepaid Amount"                       , 1, 15, 2)
+          E119  = t::AN.new(:E119 , "Rate Basis Number"                    , 1, 6)
+          E120  = t::AN.new(:E120 , "Rate Combination Point"               , 3, 9)
           E121  = t::ID.new(:E121 , "Rate Class Code"                      , 1, 3,
             s::CodeList.build(
               "A"   => "Alternate Rating",
@@ -3966,6 +3977,7 @@ module Stupidedi
               "WTV" => "Weight Verification",
               "ZZZ" => "Mutually Defined"))
 
+          E153  = t::AN.new(:E153 , "Special Handling Description"         , 2, 30)
           E154  = t::ID.new(:E154 , "Standard Point Location Code"         , 6, 9)
           E156  = t::ID.new(:E156  , "State or Province Code"              , 2, 2,
             s::CodeList.external("22"))
@@ -3980,7 +3992,12 @@ module Stupidedi
           E165  = t::Nn.new(:E165 , "Stop Sequence Number"                 , 1, 3, 0)
           E166  = t::AN.new(:E166 , "Address Information"                  , 1, 55)
           E167  = t::Nn.new(:E167 , "Tare Weight"                          , 3, 8, 0)
-          E171  = t::AN.new(:E171 , "Tarriff Number"                       , 1, 7)
+          E168  = t::ID.new(:E168 , "Tariff Agency Code"                   , 1, 4)
+          E169  = t::AN.new(:E169 , "Tariff Item Number"                   , 1, 16)
+          E170  = t::Nn.new(:E170 , "Tariff Item Part"                     , 1, 2, 0)
+          E171  = t::AN.new(:E171 , "Tariff Number"                        , 1, 7)
+          E172  = t::AN.new(:E172 , "Tariff Section"                       , 1, 2)
+          E173  = t::AN.new(:E173 , "Tariff Supplement"                    , 1, 4)
           E176  = t::ID.new(:E176 , "Time Qualifier"                       , 1, 2,
             s::CodeList.build(
               "I" => "Ship Not Before Time",
@@ -4014,19 +4031,27 @@ module Stupidedi
               "A" => "Accomplished",
               "P" => "Pending"))
           E191  = t::Nn.new(:E191 , "Advances"                             , 1, 9, 2)
+          E193  = t::Nn.new(:E193 , "Net Amount Due"                       , 1, 12, 2)
           E200  = t::AN.new(:E200 , "Hazardous Materials Page"             , 1, 6)
+          E202  = t::ID.new(:E202 , "Correction Indicator"                 , 2, 2,
+            s::CodeList.build(
+              "RB" => "Rebilling (Ignore previous bill)"))
           E205  = t::Nn.new(:E205 , "Dunnage"                              , 1, 6, 0)
           E206  = t::AN.new(:E206 , "Equipment Initial"                    , 1, 4)
           E207  = t::AN.new(:E207 , "Equipment Number"                     , 1, 10)
+          E211  = t::ID.new(:E215 , "Packaging Form Code"                  , 3, 3)
           E212  = t:: R.new(:E212 , "Unit Price"                           , 1, 17)
           E213  = t::Nn.new(:E213 , "Lading Line Item Number"              , 1, 3, 0)
           E215  = t::ID.new(:E215 , "Hazardous Classification"             , 1, 30)
           E218  = t::ID.new(:E218 , "Hazardous Placard Notation Code"      , 14,40)
           E219  = t::AN.new(:E219 , "Position"                             , 1, 3)
+          E220  = t:: R.new(:E215 , "Billed/Rated-as Quantity"             , 1, 11)
+          E221  = t::ID.new(:E215 , "Billed/Rated-as Qualifier"            , 2, 2)
           E222  = t::ID.new(:E222 , "Hazardous Endorsement Code"           , 4, 25,
             s::CodeList.external("83"))
           E224  = t::ID.new(:E224 , "Hazardous Material Shipping Name"     , 1, 25)
           E225  = t::AN.new(:E225 , "Seal Number"                          , 2, 15)
+          E227  = t::AN.new(:E227 , "Tariff Column"                        , 1, 2)
           E232  = t::Nn.new(:E232 , "Weight Allowance"                     , 2, 6, 0)
           E234  = t::AN.new(:E234 , "Product/Service ID"                   , 1, 48)
           E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
@@ -4058,9 +4083,77 @@ module Stupidedi
               "ZZ" => "Mutually Defined"))
 
           E236  = t::ID.new(:E236 , "Price Identifier Code"                , 3, 3)
+          E241  = t::ID.new(:E241 , "Protective Service Code"              , 1, 4)
+          E242  = t::ID.new(:E242 , "Vent Instruction Code"                , 1, 7)
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
-          E277  = t::ID.new(:E277 , "UN/NA Identification Code"            , 6, 6)
+          E276  = t::AN.new(:E276 , "Special Charge Description"           , 2, 25,
+            s::CodeList.build(
+              "020" => "Address Correction",
+              "405" => "Fuel Surcharge",
+              "455" => "Insurance Premium",
+              "520" => "Oversize Premium",
+              "ADH" => "Advance Charges Handling",
+              "APT" => "Appointment (Notification)",
+              "ARB" => "Arbitrary (In Addition to Through Rates and Charges)",
+              "BEY" => "Beyond Freight Charges",
+              "BND" => "Bond Charges",
+              "CLN" => "Cleaning Charge",
+              "COL" => "Fee for Collecting COD Charge",
+              "DEL" => "Delivery Charge",
+              "DET" => "Detention of Trailers",
+              "DIV" => "Diversion and Reconsignment",
+              "DTL" => "Detention Loading",
+              "DTU" => "Detention Unloading",
+              "DTV" => "Detention (Vehicle)",
+              "EIC" => "Export/Import Charge",
+              "EVC" => "Excessive Value Charge",
+              "EXW" => "Excess Weight",
+              "FUE" => "Fuel Charge",
+              "HAN" => "Handling Charges on Distribution Freight Forwarded Beyond",
+              "HAZ" => "Hazardous Cargo Charge",
+              "HOL" => "Sunday or Holiday Pick-up or Delivery",
+              "IDL" => "Inside Delivery",
+              "IPU" => "Inside Pick-up",
+              "LAB" => "Extra Labor (Helper Service)",
+              "LFT" => "Lift Gate (Truck) or Forklift Service at Pick-up/Delivery",
+              "LOA" => "Loading (Labor Charges)",
+              "MNC" => "Notify Consignee",
+              "MRK" => "Marking or Tagging Charge",
+              "MSC" => "Other Accessorial Service Charge",
+              "MSG" => "Miscellaneous Charge",
+              "OVR" => "Over Dimension",
+              "PBE" => "Permits Bond Escort Attendant",
+              "PER" => "Permit Charge",
+              "PSC" => "Protective Service - Cold",
+              "PSG" => "Protective Service Security with Armed Guards",
+              "RCC" => "Reconsignment Charge",
+              "RCL" => "Redelivery",
+              "REP" => "Residential Pick-up",
+              "RES" => "Residential Delivery",
+              "SCL" => "Scale Charge",
+              "SEG" => "Segregating (Sorting)",
+              "SER" => "Service Charge (i.e. White Glove, Show Freight)",
+              "SOC" => "Stop-off Charge",
+              "SPC" => "Special Permits",
+              "SPT" => "Spotting of Trailer",
+              "SRG" => "Storage",
+              "SSC" => "Stripping, Sorting, and Consolidation",
+              "SSF" => "Single Shipment Fee",
+              "STR" => "Storage in Transit",
+              "SUF" => "Sufferance Warehouse Charge (Export or Import)",
+              "TAX" => "Tax Charge",
+              "TRA" => "Travel Charge",
+              "TRF" => "Transfer Charge",
+              "UND" => "Unloading",
+              "UNL" => "Unloading (Labor Charge)",
+              "URC" => "Unloading/Reloading Charge",
+              "VOR" => "Vehicle Ordered but Not Used",
+              "WRC" => "Load Weighing Charge",
+              "WTV" => "Weight Verification Charge"))
+
+          E257 = t::ID.new(:E257 , "Tariff Application Code"               , 1, 1)
+          E277 = t::ID.new(:E277 , "UN/NA Identification Code"             , 6, 6)
           E280  = t:: R.new(:E280 , "Exchange Rate"                        , 4, 10)
           E285  = t::AN.new(:E285 , "Depositor Order Number"               , 1, 22)
           E286  = t::ID.new(:E286 , "Product/Service Condition Code"       , 2, 2,
@@ -4077,6 +4170,8 @@ module Stupidedi
               "ZZ" => "Mutually Defined"))
 
           E289  = t::Nn.new(:E289 , "Multiple Price Quantity"              , 1, 2, 0)
+          E294  = t::Nn.new(:E294 , "Tariff Distance"                      , 1, 5, 0)
+          E295  = t::ID.new(:E295 , "Distance Qualifier"                   , 1, 1)
           E301  = t::ID.new(:E301 , "Car Type Code"                        , 1, 4)
           E305  = t::ID.new(:E305 , "Transaction Handling Code"            , 1, 2,
             s::CodeList.build(
@@ -4672,6 +4767,7 @@ module Stupidedi
               "CC" => "Shipment Complete on"))
 
           E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
+          E372  = t::ID.new(:E372, "Liability Code"                        , 1, 1)
           E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
           E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
             s::CodeList.build(
@@ -4787,6 +4883,7 @@ module Stupidedi
               "11" => "Shipped Date",
               "17" => "Estimated Delivery Date",
               "19" => "Date Unloaded",
+              "35" => "Delivered On This Date",
               "37" => "Ship Not Before Date",
               "38" => "Ship Not Later Than Date",
               "53" => "Deliver Not Before Date",

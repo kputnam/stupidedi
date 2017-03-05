@@ -31,6 +31,9 @@ module Stupidedi
         autoload :QM214,
           "stupidedi/contrib/004010/transaction_set_defs/QM214"
 
+        autoload :IM210,
+                 "stupidedi/contrib/004010/transaction_set_defs/IM210"
+
         autoload :GF990, # Response to a Load Tender
           "stupidedi/contrib/004010/transaction_set_defs/GF990"
 
