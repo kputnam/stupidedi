@@ -166,9 +166,11 @@ module Stupidedi
                 b::Element(e::Situational,  "Billed/Rated-as Qualifier"),
                 b::Element(e::Situational,  "Weight"),
                 b::Element(e::Situational,  "Weight Qualifier"),
-                b::Element(e::Situational,  "Inspected/Weight Qualifier"),
+                b::Element(e::Situational,  "Volume"),
+                b::Element(e::Situational,  "Volume Qualifier"),
                 b::Element(e::Situational,  "Lading Quantity"),
                 b::Element(e::Situational,  "Packaging Form Code")),
+
               b::Segment(180, s::L1, "Rate and Charges",
                 r::Required, d::RepeatCount.bounded(10),
                 b::Element(e::Situational,  "Lading Line Item Number"),

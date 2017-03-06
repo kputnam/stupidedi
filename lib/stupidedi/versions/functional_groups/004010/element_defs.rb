@@ -4013,7 +4013,8 @@ module Stupidedi
 
           E187  = t::ID.new(:E187 , "Weight Qualifier"                     , 1, 2,
             s::CodeList.build(
-              "G" => "Gross Weight"))
+              "G" => "Gross Weight",
+              "N" => "Net Weight"))
 
           E188  = t::ID.new(:E188 , "Weight Unit Code"                     , 1, 1,
             s::CodeList.build(
@@ -4782,6 +4783,7 @@ module Stupidedi
               "038" => "Ship no later",
               "050" => "Received",
               "097" => "Transaction Creation",
+              "140" => "Actual",
               "150" => "Service Period Start",
               "151" => "Service Period End",
               "175" => "Cancel if not shipped by",
