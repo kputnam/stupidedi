@@ -23,7 +23,7 @@ module Stupidedi
               s:: N1.use(110, r::Mandatory,  d::RepeatCount.bounded(1)),
               s:: N3.use(130, r::Mandatory,  d::RepeatCount.bounded(2)),
               s:: N4.use(140, r::Mandatory,  d::RepeatCount.bounded(1)),
-              s:: N9.use(150, r::Mandatory,  d::RepeatCount.bounded(5)))),
+              s:: N9.use(150, r::Optional,  d::RepeatCount.bounded(5)))),
 
             d::LoopDef.build("0200", d::RepeatCount.bounded(10),
               s:: N7.use(160, r::Mandatory,  d::RepeatCount.bounded(1))),

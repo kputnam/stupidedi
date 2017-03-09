@@ -21,7 +21,8 @@ module Stupidedi
             e::E202  .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
             e::E32 .simple_use(r::Mandatory,   s::RepeatCount.bounded(1)),
             e::E374 .simple_use(r::Mandatory,   s::RepeatCount.bounded(1)),
-            e::E140 .simple_use(r::Mandatory,   s::RepeatCount.bounded(1)))
+            e::E140 .simple_use(r::Mandatory,   s::RepeatCount.bounded(1)),
+            e::E373 .simple_use(r::Optional,  s::RepeatCount.bounded(1)))
 
         end
       end
