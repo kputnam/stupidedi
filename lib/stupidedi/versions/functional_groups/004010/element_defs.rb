@@ -350,7 +350,9 @@ module Stupidedi
               "SU" => "Supplier/Manufacturer",
               "TT" => "Transfer To",
               "WH" => "Warehouse",
-              "OB" => "Ordered By"))
+              "OB" => "Ordered By",
+              "N5" => "Signed BOL",
+              "FR" => "Contacted Customer"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
@@ -5440,7 +5442,9 @@ module Stupidedi
           E610  = t::Nn.new(:E610 , "Amount"                               , 1, 15, 2)
           E623  = t::ID.new(:E623 , "Time Code"                            , 2, 2,
             s::CodeList.build(
-              "LT" => "Local Time (Preferred Usage - Explain in detail)"))
+              "LT" => "Local Time (Preferred Usage - Explain in detail)",
+              "MT" => "Mountain Time",
+              "CT" => "Central Time"))
 
           E625  = t::ID.new(:E625 , "COD Method of Payment Code"           , 1, 1,
             s::CodeList.build(
