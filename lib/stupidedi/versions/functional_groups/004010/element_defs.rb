@@ -4038,6 +4038,8 @@ module Stupidedi
           E200  = t::AN.new(:E200 , "Hazardous Materials Page"             , 1, 6)
           E202  = t::ID.new(:E202 , "Correction Indicator"                 , 2, 2,
             s::CodeList.build(
+              "AD" => "Adjustment of Previous Freight Bill Charges",
+              "BD" => "Balance Due Indicator",
               "RB" => "Rebilling (Ignore previous bill)"))
           E205  = t::Nn.new(:E205 , "Dunnage"                              , 1, 6, 0)
           E206  = t::AN.new(:E206 , "Equipment Initial"                    , 1, 4)
