@@ -57,7 +57,7 @@ module Stupidedi
               b::Element(e::NotUsed,     "Time Code")),
 
             b::Segment(80, s::R3, "Route Information - Motor",
-              r::Required, d::RepeatCount.bounded(1),
+              r::Required, d::RepeatCount.bounded(12),
               b::Element(e::Required,    "Standard Carrier Alpha Code"),
               b::Element(e::Required,    "Routing Sequence Code"),
               b::Element(e::Situational, "City Name"),
@@ -69,7 +69,7 @@ module Stupidedi
               b::Element(e::Situational, "Free-form Description")),
 
             b::Segment(90, s::H3, "Line Item - Quantity and Weight",
-              r::Situational, d::RepeatCount.bounded(1),
+              r::Situational, d::RepeatCount.bounded(6),
               b::Element(e::Situational, "Special Handling Code"),
               b::Element(e::Situational, "Special Handling Description"),
               b::Element(e::Situational, "Protective Service Code"),
