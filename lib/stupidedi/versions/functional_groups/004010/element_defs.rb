@@ -352,7 +352,11 @@ module Stupidedi
               "WH" => "Warehouse",
               "OB" => "Ordered By",
               "N5" => "Signed BOL",
-              "FR" => "Contacted Customer"))
+              "FR" => "Contacted Customer",
+              "PW" => "Pick Up Address",
+              "AB" => "Additional Pick Up Address",
+              "DA" => "Delivery Address",
+              "AE" => "Addtional Delivery Address"))
 
           E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
             s::CodeList.external("5"))
