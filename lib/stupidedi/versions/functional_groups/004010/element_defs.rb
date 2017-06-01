@@ -9437,6 +9437,7 @@ module Stupidedi
               "A7" => "Refused by Consignee",
               "A9" => "Shipment Damaged",
               "AF" => "Carrier Departed Pick-up Location with Shipment",
+              "AA" => "Estimated Pick Up",
               "AG" => "Estimated Delivery",
               "AH" => "Attempted Delivery",
               "AI" => "Shipment has been Reconsigned",
