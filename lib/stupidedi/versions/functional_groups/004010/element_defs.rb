@@ -4095,7 +4095,7 @@ module Stupidedi
           E241  = t::ID.new(:E241 , "Protective Service Code"              , 1, 4)
           E242  = t::ID.new(:E242 , "Vent Instruction Code"                , 1, 7)
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
-          E257 = t::ID.new(:E257 , "Tariff Application Code"               , 1, 1)
+          E257  = t::ID.new(:E257 , "Tariff Application Code"               , 1, 1)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
           E276  = t::AN.new(:E276 , "Special Charge Description"           , 2, 25,
             s::CodeList.build(
@@ -4162,7 +4162,7 @@ module Stupidedi
               "WRC" => "Load Weighing Charge",
               "WTV" => "Weight Verification Charge"))
 
-          E277 = t::ID.new(:E277 , "UN/NA Identification Code"             , 6, 6)
+          E277  = t::ID.new(:E277 , "UN/NA Identification Code"             , 6, 6)
           E280  = t:: R.new(:E280 , "Exchange Rate"                        , 4, 10)
           E285  = t::AN.new(:E285 , "Depositor Order Number"               , 1, 22)
           E286  = t::ID.new(:E286 , "Product/Service Condition Code"       , 2, 2,
