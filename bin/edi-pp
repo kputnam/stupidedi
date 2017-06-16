@@ -8,21 +8,7 @@ GC.disable
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
 
-# config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
-config = Stupidedi::Config.new
-
-config.interchange.tap do |c|
-  c.register("00400") { Stupidedi::Versions::Interchanges::FourHundred::InterchangeDef }
-  c.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
-end
-
-config.functional_group.tap do |c|
-  c.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
-end
-
-config.transaction_set.tap do |c|
-  c.register("004010", "SM", "204", Stupidedi::Contrib::FortyTen::Guides::SM204)
-end
+config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
 
 parser = Stupidedi::Builder::StateMachine.build(config)
 start  = Time.now
