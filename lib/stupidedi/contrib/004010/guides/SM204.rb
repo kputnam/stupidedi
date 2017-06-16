@@ -161,7 +161,7 @@ module Stupidedi
                 b::Element(e::NotUsed,     "Seal Number"),
                 b::Element(e::NotUsed,     "Seal Number")))),
 
-          d::TableDef.header("Detail",
+          d::TableDef.detail("Detail",
             d::LoopDef.build("LOOP 0300",
               d::RepeatCount.bounded(999),
               b::Segment(10, s::S5, "Stop Off Details",
@@ -356,7 +356,7 @@ module Stupidedi
                       b::Element(e::NotUsed,     "Hazardous Material Shipment Information"),
                       b::Element(e::NotUsed,     "Hazardous Material Shipment Information"))))))),
 
-          d::TableDef.header("Summary",
+          d::TableDef.summary("Summary",
             b::Segment(10, s::L3, "Total Weight and Charges",
               r::Situational, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Weight"),

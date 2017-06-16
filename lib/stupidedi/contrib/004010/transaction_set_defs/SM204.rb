@@ -58,7 +58,7 @@ module Stupidedi
                     s::LH3.use(145, r::Optional,  d::RepeatCount.bounded(10)),
                     s::LFH.use(146, r::Optional,  d::RepeatCount.bounded(20))))))),
 
-          d::TableDef.detail("Summary",
+          d::TableDef.summary("Summary",
             s:: L3.use(10, r::Optional,  d::RepeatCount.bounded(1)),
             s:: SE.use(20, r::Mandatory, d::RepeatCount.bounded(1))))
       end
