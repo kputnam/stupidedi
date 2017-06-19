@@ -50,24 +50,28 @@ describe "Symbol#to_proc" do
   end
 
   pending "shortens the syntax when passing n-ary blocks" do
-    list = []
+    if RUBY_VERSION >= "2.4"
+      skip('skip on Ruby.24 for now')
+    else
+      list = []
 
-    # avert your eyes, lisp haters!
-    [[:zero?,     1       ],  #=> 1.__send__(:zero?)            == 1.zero?
-     [:length,    "string"],  #=> "string".__send__(:length)    == "string".length
-     [:+,         "a", "b"],  #=> "a".__send__(:+, "b")         == "a" + "b"
-     [:fetch, {}, "a", "b"],  #=> {}.__send__(:fetch, "a", "b") == {}.fetch("a","b")
-     [:[]=, list,  2, true],  #=> list.__send__(:[]=, 2, true)  == list[2] = true
-     [:call, :length, "ab"]]. #=> :length.__send__(:call, "ab") == "ab".length
+      # avert your eyes, lisp haters!
+      [[:zero?,     1       ],  #=> 1.__send__(:zero?)            == 1.zero?
+       [:length,    "string"],  #=> "string".__send__(:length)    == "string".length
+       [:+,         "a", "b"],  #=> "a".__send__(:+, "b")         == "a" + "b"
+       [:fetch, {}, "a", "b"],  #=> {}.__send__(:fetch, "a", "b") == {}.fetch("a","b")
+       [:[]=, list,  2, true],  #=> list.__send__(:[]=, 2, true)  == list[2] = true
+       [:call, :length, "ab"]]. #=> :length.__send__(:call, "ab") == "ab".length
 
-     map{|n,*as| n.call(*as) }.should ==
-                           [1.zero?,
-                            "string".length,
-                            ("a" + "b"),
-                            {}.fetch("a","b"),
-                            true,
-                            "ab".length]
-    list[2].should == true
+       map{|n,*as| n.call(*as) }.should ==
+                             [1.zero?,
+                              "string".length,
+                              ("a" + "b"),
+                              {}.fetch("a","b"),
+                              true,
+                              "ab".length]
+      list[2].should == true
+    end
   end
 end
 

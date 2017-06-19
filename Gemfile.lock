@@ -3,19 +3,19 @@ GEM
   specs:
     blankslate (3.1.3)
     cantor (1.2.1)
-    diff-lcs (1.2.5)
+    diff-lcs (1.3)
     docile (1.1.5)
-    json (1.8.3)
-    rake (10.5.0)
+    json (2.1.0)
+    rake (12.0.0)
     rcov (0.9.11)
     redcarpet (3.3.4)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
       rspec-mocks (~> 3.4.0)
-    rspec-collection_matchers (1.1.2)
+    rspec-collection_matchers (1.1.3)
       rspec-expectations (>= 2.99.0.beta1)
-    rspec-core (3.4.1)
+    rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -24,15 +24,15 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
-    simplecov (0.11.1)
+    simplecov (0.14.1)
       docile (~> 1.1.0)
-      json (~> 1.8)
+      json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
-    simplecov-html (0.10.0)
-    term-ansicolor (1.3.2)
+    simplecov-html (0.10.1)
+    term-ansicolor (1.6.0)
       tins (~> 1.0)
-    tins (1.8.2)
-    yard (0.8.7.6)
+    tins (1.14.0)
+    yard (0.9.9)
 
 PLATFORMS
   ruby
@@ -47,7 +47,7 @@ DEPENDENCIES
   rspec-collection_matchers
   simplecov
   term-ansicolor
-  yard (~> 0.8.7)
+  yard (~> 0.9.5)
 
 BUNDLED WITH
-   1.11.2
+   1.14.6
