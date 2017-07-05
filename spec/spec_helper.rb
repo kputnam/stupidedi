@@ -1,4 +1,5 @@
 require File.expand_path("../../lib/stupidedi", __FILE__)
+require 'pathname'
 
 begin
   # RSpec-1: https://github.com/dchelimsky/rspec
