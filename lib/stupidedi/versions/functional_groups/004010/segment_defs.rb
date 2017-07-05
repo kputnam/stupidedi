@@ -68,8 +68,6 @@ module Stupidedi
           autoload :AT8,
             "stupidedi/versions/functional_groups/004010/segment_defs/AT8"
 
-          autoload :OID,
-            "stupidedi/versions/functional_groups/004010/segment_defs/OID"
 
           autoload :B2A,
             "stupidedi/versions/functional_groups/004010/segment_defs/B2A"
@@ -118,6 +116,9 @@ module Stupidedi
 
           autoload :L7,
                    "stupidedi/versions/functional_groups/004010/segment_defs/L7"
+
+          autoload :LAD,
+                   "stupidedi/versions/functional_groups/004010/segment_defs/LAD"
 
           autoload :LIN,
             "stupidedi/versions/functional_groups/004010/segment_defs/LIN"
@@ -187,6 +188,9 @@ module Stupidedi
 
           autoload :NTE,
             "stupidedi/versions/functional_groups/004010/segment_defs/NTE"
+
+          autoload :OID,
+            "stupidedi/versions/functional_groups/004010/segment_defs/OID"
 
           autoload :PLB,
             "stupidedi/versions/functional_groups/004010/segment_defs/PLB"

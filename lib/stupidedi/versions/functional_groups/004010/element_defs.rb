@@ -7740,6 +7740,7 @@ module Stupidedi
               "ZZN" => "Zinc",
               "ZZR" => "Zirconium",
               "ZZZ" => "Mutually Defined"))
+          E739  = t:: R.new(:E739 , "Measurement Value"                    , 1, 20)
 
           E740  = t:: R.new(:E740 , "Range Minimum"                        , 1, 20)
           E741  = t:: R.new(:E741 , "Range Maximum"                        , 1, 20)
