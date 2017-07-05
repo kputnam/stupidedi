@@ -8,6 +8,7 @@ module Stupidedi
         SegmentReqs  = Stupidedi::Guides::FortyTen::SegmentReqs
         ElementReqs  = Stupidedi::Guides::FortyTen::ElementReqs
 
+        autoload :IM210, "stupidedi/contrib/004010/guides/IM210"
         autoload :PO850, "stupidedi/contrib/004010/guides/PO850"
         autoload :OW940, "stupidedi/contrib/004010/guides/OW940"
         autoload :AR943, "stupidedi/contrib/004010/guides/AR943"

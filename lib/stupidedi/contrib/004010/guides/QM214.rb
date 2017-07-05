@@ -45,7 +45,9 @@ module Stupidedi
                 b::Element(e::Required,    "Entity Identifier Code"),
                 b::Element(e::Required,    "Name"),
                 b::Element(e::Situational, "Identification Code Qualifier"),
-                b::Element(e::Situational, "Identification Code")),
+                b::Element(e::Situational, "Identification Code"),
+                b::Element(e::Situational, "Entity Relation Code"),
+                b::Element(e::Situational, "Entity Identifier Code")),
 
               b::Segment(70, s::N3, "Address Information",
                 r::Situational, d::RepeatCount.bounded(2),
@@ -57,7 +59,10 @@ module Stupidedi
                 b::Element(e::Situational, "City Name"),
                 b::Element(e::Situational, "State or Province Code"),
                 b::Element(e::Situational, "Postal Code"),
-                b::Element(e::Situational, "Country Code"))),
+                b::Element(e::Situational, "Country Code"),
+                b::Element(e::Situational, "Location Qualifier"),
+                b::Element(e::Situational, "Location Identifier"))),
+
 
             # BUG: Getting "undefined method 'position' for
             # #<Stupidedi::Schema::LoopDef when a segment is sandwiched
@@ -95,18 +100,25 @@ module Stupidedi
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Situational, "City Name"),
                   b::Element(e::Situational, "State or Province Code"),
-                  b::Element(e::Situational, "Country Code")),
+                  b::Element(e::Situational, "Country Code"),
+                  b::Element(e::Situational, "Longitude Code"),
+                  b::Element(e::Situational, "Latitude Code"),
+                  b::Element(e::Situational, "Direction Identifier Code"),
+                  b::Element(e::Situational, "Direction Identifier Code"),
+                  b::Element(e::Situational, "Postal Code")),
 
                 b::Segment(146, s::MS2, "Equipment or Container Owner and Type",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Situational, "Standard Carrier Alpha Code"),
-                  b::Element(e::Situational, "Equipment Number"))),
+                  b::Element(e::Situational, "Equipment Number"),
+                  b::Element(e::Situational, "Equipment Description Code"),
+                  b::Element(e::Situational, "Equipment Number Check Digit"))),
 
               b::Segment(150, s::L11, "Business Instructions and Reference Number",
                 r::Situational, d::RepeatCount.bounded(10),
                 b::Element(e::Situational, "Reference Identification"),
                 b::Element(e::Required,    "Reference Identification Qualifier"),
-                b::Element(e::Required,    "Description")),
+                b::Element(e::Situational, "Description")),
 
               b::Segment(200, s::AT8, "Shipment Weight, Packaging and Quantity Data",
                 r::Situational, d::RepeatCount.bounded(10),

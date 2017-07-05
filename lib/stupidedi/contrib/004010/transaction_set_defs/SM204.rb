@@ -36,6 +36,7 @@ module Stupidedi
               s:: S5.use(10, r::Mandatory, d::RepeatCount.bounded(1)),
               s::L11.use(20, r::Optional,  d::RepeatCount.bounded(200)),
               s::G62.use(30, r::Optional,  d::RepeatCount.bounded(2)),
+              s::LAD.use(50, r::Optional, d::RepeatCount.bounded(999)),
               s::NTE.use(65, r::Optional,  d::RepeatCount.bounded(20)),
 
               d::LoopDef.build("0310", d::RepeatCount.bounded(1),
@@ -56,9 +57,26 @@ module Stupidedi
                     s::LH1.use(143, r::Optional,  d::RepeatCount.bounded(1)),
                     s::LH2.use(144, r::Optional,  d::RepeatCount.bounded(4)),
                     s::LH3.use(145, r::Optional,  d::RepeatCount.bounded(10)),
-                    s::LFH.use(146, r::Optional,  d::RepeatCount.bounded(20))))))),
+                    s::LFH.use(146, r::Optional,  d::RepeatCount.bounded(20))))),
 
-          d::TableDef.detail("Summary",
+              d::LoopDef.build("0350", d::RepeatCount.bounded(999),
+                s::OID.use(150, r::Optional, d::RepeatCount.bounded(1)),
+
+                d::LoopDef.build("0360", d::RepeatCount.bounded(99),
+                  s:: L5.use(190, r::Optional, d::RepeatCount.bounded(1)),
+                  s::AT8.use(195, r::Optional, d::RepeatCount.bounded(1)),
+
+                  d::LoopDef.build("0365", d::RepeatCount.bounded(99),
+                    s::G61.use(200, r::Optional, d::RepeatCount.bounded(1)),
+                    s::L11.use(201, r::Optional, d::RepeatCount.bounded(5)),
+
+                    d::LoopDef.build("0370", d::RepeatCount.bounded(25),
+                      s::LH1.use(203, r::Optional, d::RepeatCount.bounded(1)),
+                      s::LH2.use(204, r::Optional, d::RepeatCount.bounded(4)),
+                      s::LH3.use(205, r::Optional, d::RepeatCount.bounded(10)),
+                      s::LFH.use(206, r::Optional, d::RepeatCount.bounded(20)))))))),
+
+          d::TableDef.summary("Summary",
             s:: L3.use(10, r::Optional,  d::RepeatCount.bounded(1)),
             s:: SE.use(20, r::Mandatory, d::RepeatCount.bounded(1))))
       end
