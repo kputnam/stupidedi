@@ -46,7 +46,12 @@ module Stupidedi
             b::Segment(60, s::N9, "Reference Identification",
               r::Situational, d::RepeatCount.bounded(300),
               b::Element(e::Required, "Reference Identification Qualifier"),
-              b::Element(e::Situational, "Reference Identification")),
+              b::Element(e::Required, "Reference Identification"),
+              b::Element(e::NotUsed, "Free-form Description"),
+              b::Element(e::NotUsed, "Date"),
+              b::Element(e::NotUsed, "Time"),
+              b::Element(e::NotUsed, "Time Code"),
+              b::Element(e::NotUsed, "Reference Identifier")),
 
             b::Segment(70, s::G62, "Date/Time",
               r::Situational, d::RepeatCount.bounded(1),
@@ -103,8 +108,13 @@ module Stupidedi
 
               b::Segment(150, s::N9, "Reference Identification",
                 r::Situational, d::RepeatCount.bounded(5),
+                b::Element(e::Required, "Reference Identification Qualifier"),
                 b::Element(e::Situational, "Reference Identification"),
-                b::Element(e::Situational, "Reference Identification Qualifier"))),
+                b::Element(e::NotUsed, "Free-form Description"),
+                b::Element(e::NotUsed, "Date"),
+                b::Element(e::NotUsed, "Time"),
+                b::Element(e::NotUsed, "Time Code"),
+                b::Element(e::NotUsed, "Reference Identifier"))),
 
             d::LoopDef.build("0200",
               d::RepeatCount.bounded(10),
@@ -144,8 +154,13 @@ module Stupidedi
 
               b::Segment(130, s::N9, "Reference Identification",
                 r::Situational, d::RepeatCount.bounded(5),
+                b::Element(e::Required, "Reference Identification Qualifier"),
                 b::Element(e::Situational, "Reference Identification"),
-                b::Element(e::Situational, "Reference Identification Qualifier")),
+                b::Element(e::NotUsed, "Free-form Description"),
+                b::Element(e::NotUsed, "Date"),
+                b::Element(e::NotUsed, "Time"),
+                b::Element(e::NotUsed, "Time Code"),
+                b::Element(e::NotUsed, "Reference Identifier")),
 
               b::Segment(140, s::L5, "Description, Marks and Numbers",
                 r::Situational, d::RepeatCount.bounded(30),
@@ -249,3 +264,4 @@ module Stupidedi
     end
   end
 end
+
