@@ -155,8 +155,9 @@ module Stupidedi
 
                     d::LoopDef.build("2440", d::RepeatCount.unbounded,
                       s:: LQ.use(5510, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::FRM.use(5520, r::Mandatory, d::RepeatCount.bounded(99)))))),
+                      s::FRM.use(5520, r::Mandatory, d::RepeatCount.bounded(99))))))),
 
+            d::TableDef.summary("Table 3 - Summary",
               s:: SE.use(5550, r::Mandatory, d::RepeatCount.bounded(1))))
 
         end
