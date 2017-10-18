@@ -28,6 +28,7 @@ GEM
     yard (0.9.9)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
@@ -42,4 +43,4 @@ DEPENDENCIES
   yard (~> 0.9.5)
 
 BUNDLED WITH
-   1.13.6
+   1.15.4

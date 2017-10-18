@@ -158,9 +158,10 @@ describe Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementTypes do
         specify { (a + b).should == "12.5".to_d }
 
         specify { (a.to_d - b.to_d).should == "8.5".to_d  }
-        specify { (a - b.to_d).should == "8.5".to_d  }
-        specify { (a.to_d - b).should == "8.5".to_d  }
-        specify { (a - b).should == "8.5".to_d  }
+        specify { (a - b.to_d).should == "8.5".to_d }
+        specify("", unless: RUBY_PLATFORM == "java") { (a.to_d - b).should == "8.5".to_d }
+        pending("", if: RUBY_PLATFORM == "java") { (a.to_d - b).should == "8.5".to_d }
+        specify { (a - b).should == "8.5".to_d }
 
         specify { (a.to_d % b.to_d).should == "0.5".to_d }
         specify { (a % b.to_d).should == "0.5".to_d }
