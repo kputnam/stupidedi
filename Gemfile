@@ -8,7 +8,7 @@ group :development do
 
   gem "rspec-collection_matchers"
   gem "yard"       ,"~> 0.9.5"
-  gem "redcarpet"  ,"~> 3.3.4"
+  gem "redcarpet"  ,"~> 3.3.4", :platforms => [:mri]
 
 
   gem "term-ansicolor"
