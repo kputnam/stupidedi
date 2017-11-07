@@ -202,6 +202,19 @@ module Stupidedi
                 b::Element(e::Situational, "Volume Unit Qualifier"),
                 b::Element(e::Situational, "Volume")),
 
+              b::Segment(55, s::AT5, "Special Handling",
+                r::Situational, d::RepeatCount.bounded(1),
+                b::Element(e::Required,    "Special Handling Code"),
+                b::Element(e::NotUsed,     "Not Used"),
+                b::Element(e::Required,    "Special Handling Description")),
+
+              b::Segment(60, s::PLD, "Pallet Information",
+                r::Situational, d::RepeatCount.bounded(1),
+                b::Element(e::Required,    "Quantity of Pallets Shipped"),
+                b::Element(e::NotUsed,     "Pallet Exchange Code"),
+                b::Element(e::NotUsed,     "Weight Unit Code"),
+                b::Element(e::NotUsed,     "Weight")),
+
               b::Segment(65, s::NTE, "Note/Special Instruction",
                 r::Situational, d::RepeatCount.bounded(20),
                 b::Element(e::Situational, "Note Reference Code"),

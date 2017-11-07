@@ -62,6 +62,9 @@ module Stupidedi
           autoload :DTM,
             "stupidedi/versions/functional_groups/004010/segment_defs/DTM"
 
+          autoload :AT5,
+            "stupidedi/versions/functional_groups/004010/segment_defs/AT5"
+
           autoload :AT7,
             "stupidedi/versions/functional_groups/004010/segment_defs/AT7"
 
