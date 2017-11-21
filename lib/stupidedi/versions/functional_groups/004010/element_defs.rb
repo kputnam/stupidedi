@@ -412,7 +412,8 @@ module Stupidedi
             s::CodeList.build(
               "FR" => "Flat Rate",
               "PM" => "Per Mile",
-              "PL" => "Per Load"))
+              "PL" => "Per Load",
+              "FC" => "Flat Charge"))
 
           E116  = t::ID.new(:E116 , "Postal Code"                          , 3, 15,
             s::CodeList.external("51"))
@@ -3993,7 +3994,9 @@ module Stupidedi
               "CL" => "Complete Load",
               "CU" => "Complete Unload",
               "PL" => "Part Load",
-              "PU" => "Part Unload"))
+              "PU" => "Part Unload",
+              "LD" => "Load",
+              "UL" => "Unload"))
 
           E165  = t::Nn.new(:E165 , "Stop Sequence Number"                 , 1, 3, 0)
           E166  = t::AN.new(:E166 , "Address Information"                  , 1, 55)
@@ -4010,7 +4013,9 @@ module Stupidedi
               "K" => "Ship Not Later Than Time",
               "G" => "Deliver Not Before Time",
               "L" => "Deliver Not Later Than Time",
-              "1" => "Must Respond By"))
+              "1" => "Must Respond By",
+              "8" => "Actual Pickup Time",
+              "9" => "Actual Delivery Time"))
 
           E183  = t:: R.new(:E183 , "Volume"                               , 1, 8)
           E184  = t::ID.new(:E184 , "Volume Unit Qualifier"                , 1, 1,
@@ -4898,7 +4903,9 @@ module Stupidedi
               "38" => "Ship Not Later Than Date",
               "53" => "Deliver Not Before Date",
               "54" => "Deliver Not Later Than Date",
-              "64" => "Must Respond By"))
+              "64" => "Must Respond By",
+              "86" => "Actual Pickup Date"))
+
           E433  = t::ID.new(:E433 , "F.O.B. Point Code"                    , 2, 2,
             s::CodeList.build(
               "01" => "City",

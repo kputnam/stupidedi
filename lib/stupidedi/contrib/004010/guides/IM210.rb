@@ -57,7 +57,7 @@ module Stupidedi
               b::Element(e::NotUsed,     "Time Code")),
 
             b::Segment(80, s::R3, "Route Information - Motor",
-              r::Required, d::RepeatCount.bounded(12),
+              r::Situational, d::RepeatCount.bounded(12),
               b::Element(e::Required,    "Standard Carrier Alpha Code"),
               b::Element(e::Required,    "Routing Sequence Code"),
               b::Element(e::Situational, "City Name"),
@@ -134,6 +134,60 @@ module Stupidedi
                 b::Element(e::NotUsed,     "Equipment Type"),
                 b::Element(e::NotUsed,     "Standard Carrier Alpha Code"),
                 b::Element(e::NotUsed,     "Car Type Code")))),
+
+          d::TableDef.detail("Stop Detail",
+            d::LoopDef.build("0300",
+              d::RepeatCount.unbounded,
+
+              b::Segment(10, s::S5, "Stop Off Details", r::Required, d::RepeatCount.bounded(1),
+                b::Element(e::Required, "Stop Off Index"),
+                b::Element(e::Required, "Stop Off Type"),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  ""),
+                b::Element(e::NotUsed,  "")
+              ),
+              b::Segment(30, s::G62, "Date/Time", r::Situational, d::RepeatCount.bounded(1),
+                b::Element(e::Situational, "Date Qualifier"),
+                b::Element(e::Situational, "Date"),
+                b::Element(e::Situational, "Time Qualifier"),
+                b::Element(e::Situational, "Time"),
+                b::Element(e::NotUsed, "")
+              ),
+
+              d::LoopDef.build("0300",
+                d::RepeatCount.unbounded,
+
+                b::Segment(70, s::N1, "Name", r::Situational, d::RepeatCount.bounded(1),
+                  b::Element(e::Situational, "Entity Identifier Code"),
+                  b::Element(e::Situational, "Name"),
+                  b::Element(e::Situational, "Identification Code Qualifier"),
+                  b::Element(e::Situational, "Identification Code"),
+                  b::Element(e::NotUsed, ""),
+                  b::Element(e::NotUsed, "")
+                ),
+
+                b::Segment(90, s::N3, "Address Information", r::Situational, d::RepeatCount.bounded(1),
+                  b::Element(e::Situational, "Address Information"),
+                  b::Element(e::Situational, "Address Information")
+                ),
+
+                b::Segment(100, s::N4, "Geographic Location", r::Situational, d::RepeatCount.bounded(1),
+                  b::Element(e::Situational, "City Name"),
+                  b::Element(e::Situational, "State or Province Code"),
+                  b::Element(e::Situational, "Postal Code"),
+                  b::Element(e::Situational, "Country Code"),
+                  b::Element(e::Situational, "Location Qualifier"),
+                  b::Element(e::Situational, "Location Identifier")
+                )
+              )
+            )
+          ),
 
           d::TableDef.detail("Detail",
             d::LoopDef.build("0400",
