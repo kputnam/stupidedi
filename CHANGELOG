@@ -1,4 +1,9 @@
-v.1.2.14 - June 19, 2017
+v 1.2.15 - Dec 20, 2017
+  - Gemfile Updates (fix security vulnerability CVE-2017-17042)
+  - Add Ruby 2.5.0-preview1 support
+  - Add 2.4.3 & 2.5.0-preview1 ruby versions to Travis CI
+
+v 1.2.14 - June 19, 2017
   - Gemfile Updates
   - use BigDecimal string refinement only on ruby versions < 2.4
   - remove rake from gemspec
