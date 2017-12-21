@@ -7,7 +7,7 @@ group :development do
   gem "rspec"      ,"3.5.0"
 
   gem "rspec-collection_matchers"
-  gem "yard"       ,"~> 0.9.5"
+  gem "yard"       ,"~> 0.9.11"
   gem "redcarpet"  ,"~> 3.3.4", :platforms => [:mri]
 
 

@@ -25,7 +25,7 @@ GEM
     term-ansicolor (1.6.0)
       tins (~> 1.0)
     tins (1.14.0)
-    yard (0.9.9)
+    yard (0.9.12)
 
 PLATFORMS
   java
@@ -40,7 +40,7 @@ DEPENDENCIES
   rspec (= 3.5.0)
   rspec-collection_matchers
   term-ansicolor
-  yard (~> 0.9.5)
+  yard (~> 0.9.11)
 
 BUNDLED WITH
-   1.15.4
+   1.16.0.pre.3
