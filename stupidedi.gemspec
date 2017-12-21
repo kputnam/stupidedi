@@ -4,10 +4,10 @@ Gem::Specification.new do |s|
   s.name        = "stupidedi"
   s.summary     = "Parse, generate, validate ASC X12 EDI"
   s.description = "Ruby API for parsing and generating ASC X12 EDI transactions"
-  s.homepage    = "https://github.com/kputnam/stupidedi"
+  s.homepage    = "https://github.com/irobayna/stupidedi"
 
   s.version = Stupidedi::VERSION
-  s.date    = "2016-07-29"
+  s.date    = "2017-12-20"
   s.author  = "Kyle Putnam"
   s.email   = "putnam.kyle@gmail.com"
 
