@@ -4,16 +4,16 @@ gem "cantor", "~> 1.2.1"
 
 group :development do
   gem "rake"
-  gem "rspec"      ,"3.5.0"
+  gem "rspec"      , "3.7.0"
 
   gem "rspec-collection_matchers"
-  gem "yard"       ,"~> 0.9.11"
-  gem "redcarpet"  ,"~> 3.3.4", :platforms => [:mri]
+  gem "yard"       ,"~> 0.9.12"
+  gem "redcarpet"  ,"~> 3.4.0", :platforms => [:mri]
 
 
   gem "term-ansicolor"
   gem "blankslate"             ,:platforms => [:ruby_18, :mri_18, :mingw_18]
-  gem "rcov"       ,"~> 0.9.9" ,:platforms => [:mri_18]
+  gem "rcov"       ,"~> 1.0.0" ,:platforms => [:mri_18]
   # gem "simplecov"
   # We're using a patched version installed in yard/ until the
   # maintainer improves the plugin. The patch has been submitted

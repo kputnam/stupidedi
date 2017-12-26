@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
 
   s.version = Stupidedi::VERSION
   s.date    = "2017-12-20"
-  s.author  = "Kyle Putnam"
-  s.email   = "putnam.kyle@gmail.com"
+  s.author  = "Kyle Putnam/Isi Robayna"
+  s.email   = "irobayna@gmail.com"
 
   s.files             = ["README.md", "Rakefile",
                          "bin/*",
@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.require_path      = "lib"
 
   s.add_dependency "term-ansicolor", "~> 1.3"
-  s.add_dependency "cantor",         "1.2.1"
+  s.add_dependency "cantor",         "~> 1.2.1"
   # s.metadata["yard.run"] = "yard doc"
 end
