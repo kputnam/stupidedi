@@ -316,6 +316,7 @@ module Stupidedi
               "T"  => "Best Way (Shippers Option)",
               "U"  => "Private Parcel Service",
               "X"  => "Intermodal (Piggyback)",
+              "FL" => "Flatbed",
               "LT" => "Less Than Trailer Load (LTL)"))
 
           E92   = t::ID.new(:E92  , "Purchase Order Type Code"             , 2, 2,
@@ -4013,6 +4014,7 @@ module Stupidedi
               "K" => "Ship Not Later Than Time",
               "G" => "Deliver Not Before Time",
               "L" => "Deliver Not Later Than Time",
+              "W" => "Effective Time",
               "1" => "Must Respond By",
               "8" => "Actual Pickup Time",
               "9" => "Actual Delivery Time"))
@@ -4894,6 +4896,7 @@ module Stupidedi
             s::CodeList.build(
               "02" => "Requested Delivery Date",
               "04" => "Purchase Order Date",
+              "09" => "Process Date",
               "10" => "Requested Ship Date",
               "11" => "Shipped Date",
               "17" => "Estimated Delivery Date",
@@ -5457,6 +5460,7 @@ module Stupidedi
             s::CodeList.build(
               "LT" => "Local Time (Preferred Usage - Explain in detail)",
               "MT" => "Mountain Time",
+              "GM" => "Greenwich Mean Time",
               "CT" => "Central Time"))
 
           E625  = t::ID.new(:E625 , "COD Method of Payment Code"           , 1, 1,

@@ -61,8 +61,16 @@ module Stupidedi
                 b::Element(e::Situational, "Postal Code"),
                 b::Element(e::Situational, "Country Code"),
                 b::Element(e::Situational, "Location Qualifier"),
-                b::Element(e::Situational, "Location Identifier"))),
+                b::Element(e::Situational, "Location Identifier")),
 
+              b::Segment(90, s::G62, "Date/Time",
+                r::Situational, d::RepeatCount.bounded(1),
+                b::Element(e::Situational, "Date Qualifier"),
+                b::Element(e::Situational, "Date"),
+                b::Element(e::Situational, "Time Qualifier"),
+                b::Element(e::Situational, "Time"),
+                b::Element(e::Situational, "Time Code")
+              )),
 
             # BUG: Getting "undefined method 'position' for
             # #<Stupidedi::Schema::LoopDef when a segment is sandwiched
