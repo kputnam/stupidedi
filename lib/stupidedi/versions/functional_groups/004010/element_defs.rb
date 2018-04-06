@@ -4793,6 +4793,7 @@ module Stupidedi
               "010" => "Requested ship",
               "011" => "Shipped",
               "017" => "Estimated Delivery",
+              "035" => "Delivered",
               "036" => "Expiration",
               "037" => "Ship not before",
               "038" => "Ship no later",
