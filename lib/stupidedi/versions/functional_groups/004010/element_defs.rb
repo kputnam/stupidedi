@@ -5459,9 +5459,17 @@ module Stupidedi
           E623  = t::ID.new(:E623 , "Time Code"                            , 2, 2,
             s::CodeList.build(
               "LT" => "Local Time (Preferred Usage - Explain in detail)",
-              "MT" => "Mountain Time",
               "GM" => "Greenwich Mean Time",
-              "CT" => "Central Time"))
+              "AS" => "Alaska Standard Time",
+              "AT" => "Alaska Time",
+              "CS" => "Central Standard Time",
+              "CT" => "Central Time",
+              "ES" => "Eastern Standard Time",
+              "ET" => "Eastern Time",
+              "MS" => "Mountain Standard Time",
+              "MT" => "Mountain Time",
+              "PS" => "Pacific Standard Time",
+              "PT" => "Pacific Time"))
 
           E625  = t::ID.new(:E625 , "COD Method of Payment Code"           , 1, 1,
             s::CodeList.build(
