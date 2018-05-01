@@ -64,6 +64,12 @@ module Stupidedi
               b::Element(e::Required,    "Transportation Method/Type Code"),
               b::Element(e::Situational, "State or Province Code")),
 
+            b::Segment(110, s::AT5, "Special Handling",
+              r::Situational, d::RepeatCount.bounded(50),
+              b::Element(e::Required,    "Special Handling Code"),
+              b::Element(e::NotUsed,     "Not Used"),
+              b::Element(e::Required,    "Special Handling Description")),
+
             b::Segment(120, s::PLD, "Pallet Information",
               r::Situational, d::RepeatCount.bounded(1),
                 b::Element(e::Required, "Quantity of Pallets Shipped"),
