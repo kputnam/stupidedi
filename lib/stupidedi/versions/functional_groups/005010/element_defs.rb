@@ -539,6 +539,7 @@ module Stupidedi
             s::CodeList.build(
               "BE" => "Benefit Enrollment and Maintenance",
               "FA" => "Functional or Implementation Acknowledgment Transaction Sets",
+              "GF" => "Response to a Load Tender (990)",
               "HC" => "Health Care Claim",
               "HI" => "Health Care Services Review Information",
               "HN" => "Health Care Information Status Notification",
