@@ -4000,7 +4000,7 @@ module Stupidedi
               "UL" => "Unload"))
 
           E165  = t::Nn.new(:E165 , "Stop Sequence Number"                 , 1, 3, 0)
-          E166  = t::AN.new(:E166 , "Address Information"                  , 1, 55)
+          E166  = t::AN.new(:E166 , "Address Information"                  , 1, 999)
           E167  = t::Nn.new(:E167 , "Tare Weight"                          , 3, 8, 0)
           E168  = t::ID.new(:E168 , "Tariff Agency Code"                   , 1, 4)
           E169  = t::AN.new(:E169 , "Tariff Item Number"                   , 1, 16)
