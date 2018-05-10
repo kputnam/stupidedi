@@ -4103,7 +4103,7 @@ module Stupidedi
           E242  = t::ID.new(:E242 , "Vent Instruction Code"                , 1, 7)
           E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
           E267  = t::Nn.new(:E267 , "Net Explosive Quantity"               , 1, 10, 0)
-          E276  = t::AN.new(:E276 , "Special Charge Description"           , 2, 25,
+          E276  = t::AN.new(:E276 , "Special Charge Description"           , 2, 99,
             s::CodeList.build(
               "020" => "Address Correction",
               "405" => "Fuel Surcharge",
