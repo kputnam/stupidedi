@@ -231,7 +231,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element(" R.value#{id}") << "(#{to_s})"
+                ansi.element(" R.value#{id}") + "(#{to_s})"
               end
 
               # @return [String]

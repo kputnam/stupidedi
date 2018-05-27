@@ -239,7 +239,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("Nn.value#{id}") << "(#{to_s})"
+                ansi.element("Nn.value#{id}") + "(#{to_s})"
               end
 
               # @return [String]

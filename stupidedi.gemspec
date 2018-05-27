@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/irobayna/stupidedi"
 
   s.version = Stupidedi::VERSION
-  s.date    = "2017-12-20"
+  s.date    = "2018-05-27"
   s.author  = "Kyle Putnam/Isi Robayna"
   s.email   = "irobayna@gmail.com"
 

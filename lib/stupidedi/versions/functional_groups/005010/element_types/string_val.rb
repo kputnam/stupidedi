@@ -262,7 +262,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("AN.value#{id}") << "(#{@value})"
+                ansi.element("AN.value#{id}") + "(#{@value})"
               end
 
               def valid?

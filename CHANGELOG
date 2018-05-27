@@ -1,3 +1,7 @@
+v 1.2.16 - May 27, 2018
+  - Fix item #127 (https://github.com/irobayna/stupidedi/issues/127)
+  - Ruby 2.5.1 support
+  
 v 1.2.15 - Dec 20, 2017
   - Gemfile Updates (fix security vulnerability CVE-2017-17042)
   - Add Ruby 2.5.0-preview1 support
