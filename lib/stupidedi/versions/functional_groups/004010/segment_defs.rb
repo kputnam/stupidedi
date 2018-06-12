@@ -37,6 +37,9 @@ module Stupidedi
           autoload :BEG,
             "stupidedi/versions/functional_groups/004010/segment_defs/BEG"
 
+          autoload :BAK,
+            "stupidedi/versions/functional_groups/004010/segment_defs/BAK"
+
           autoload :BPR,
             "stupidedi/versions/functional_groups/004010/segment_defs/BPR"
 

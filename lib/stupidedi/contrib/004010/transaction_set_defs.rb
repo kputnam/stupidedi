@@ -10,6 +10,9 @@ module Stupidedi
         autoload :PO850, # Purchase Order
           "stupidedi/contrib/004010/transaction_set_defs/PO850"
 
+        autoload :PR855, # Purchase Order
+          "stupidedi/contrib/004010/transaction_set_defs/PR855"
+
         autoload :OW940, # Warehouse Shipping Order
           "stupidedi/contrib/004010/transaction_set_defs/OW940"
 
