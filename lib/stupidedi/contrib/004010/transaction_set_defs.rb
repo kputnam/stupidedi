@@ -52,6 +52,9 @@ module Stupidedi
         autoload :SC832, # Price/Sales Catalog
           "stupidedi/contrib/004010/transaction_set_defs/SC832"
 
+        autoload :RA820, # Remittance Advice
+          "stupidedi/contrib/004010/transaction_set_defs/RA820"
+
       end
     end
   end
