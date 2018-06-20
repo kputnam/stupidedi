@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Stupidedi
-  VERSION = "1.2.27.transfix"
+  VERSION = "1.2.28.transfix"
 end
