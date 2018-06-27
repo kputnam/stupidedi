@@ -5187,7 +5187,8 @@ module Stupidedi
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
           E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
             s::CodeList.build(
-              "01" => s::CodeList.external("4"),
+              "01" => s::CodeList.external("4"), #ABA
+              "02" => "SWIFT",
               "04" => s::CodeList.external("91")))
           E507  = t::AN.new(:E507 , "DFI Identification Number"            , 3, 12,
             s::CodeList.external("60"))
@@ -5437,7 +5438,12 @@ module Stupidedi
               "RV" => "Rejected - Violates Industry Practices",
               "ZZ" => "Mutually Defined"))
 
-          E591  = t::ID.new(:E591 , "Payment Method Code"                  , 3, 3)
+          E591 = t::ID.new(:E591, "Payment Method Code"                    , 3, 3,
+             s::CodeList.build(
+                 "ACH" => "Automated Clearing House (ACH) transactions",
+                 "PBD" => "Check Payments",
+                 "FWT" => "Domestic Wire Transfer Payments",
+                 "SWT" => "International Wire Transfer Payments"))
           E595  = t::ID.new(:E595 , "Compartment ID Code"                  , 1, 1,
             s::CodeList.build(
               "1" => "Brake End",
