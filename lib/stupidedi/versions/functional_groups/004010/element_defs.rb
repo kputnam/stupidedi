@@ -4048,6 +4048,10 @@ module Stupidedi
           E205  = t::Nn.new(:E205 , "Dunnage"                              , 1, 6, 0)
           E206  = t::AN.new(:E206 , "Equipment Initial"                    , 1, 4)
           E207  = t::AN.new(:E207 , "Equipment Number"                     , 1, 10)
+          E208  = t::ID.new(:E208 , "Hazardous Material Code Qualifier"    , 1, 1,
+            s::CodeList.build(
+              "D" => "Hazardous Material Code Qualifier"))
+          E209  = t::ID.new(:E209 , "Hazardous Material Class Code Description", 3, 3)
           E211  = t::ID.new(:E215 , "Packaging Form Code"                  , 3, 3)
           E212  = t:: R.new(:E212 , "Unit Price"                           , 1, 17)
           E213  = t::Nn.new(:E213 , "Lading Line Item Number"              , 1, 3, 0)
@@ -6288,7 +6292,8 @@ module Stupidedi
               "I"  => "Item",
               "S"  => "Shipment",
               "T"  => "Shipping Tare",
-              "P"  => "Pack"))
+              "P"  => "Pack",
+              "O"  => "Order"))
 
           E736  = t::ID.new(:E736 , "Hierarchical Child Code"              , 1, 1,
             s::CodeList.build(
