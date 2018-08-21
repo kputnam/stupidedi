@@ -128,6 +128,7 @@ module Stupidedi
       base.customize do |c|
         c.transaction_set.customize do |x|
           x.register("004010", "PO", "850") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::PO850 }
+          x.register("004010", "PR", "855") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::PR855 }
           x.register("004010", "OW", "940") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::OW940 }
           x.register("004010", "AR", "943") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::AR943 }
           x.register("004010", "RE", "944") { Stupidedi::Contrib::FortyTen::TransactionSetDefs::RE944 }
