@@ -2276,7 +2276,7 @@ module Stupidedi
               "TP" => "Third Party Pay"))
 
           E147  = t::ID.new(:E147 , "Shipment Qualifier"                   , 1, 1)
-          E150  = t::ID.new(:E150 , "Special Charge or Allowance Code"     , 3, 3,
+          E150  = t::ID.new(:E150 , "Special Charge or Allowance Code"     , 2, 3,
             s::CodeList.build(
               "000" => "Pump Out Charge",
               "002" => "Renewal",
@@ -2756,6 +2756,7 @@ module Stupidedi
               "EPS" => "Environmental Protection Service",
               "ERS" => "Empty Return",
               "ERT" => "Satisfactory Service Standards Charge",
+              "ES" =>  "Escort Service",
               "ESA" => "Early Ship Allowance",
               "ESC" => "Emergency Service",
               "ESD" => "Estimated Customs Duty (Dutypaid - Charge)",
