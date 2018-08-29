@@ -1,7 +1,11 @@
 v 1.2.18 - wip
   - SH856 rework
   - PR855 support (v4010) 
-
+  - This change fixes this issue, as if decimal is an empty string, it will be changed to 0 before to_d is called on it
+    https://github.com/irobayna/stupidedi/pull/132
+    Update  lib/stupidedi/versions/functional_groups/004010/element_types/time_val.rb
+    
+    
 v 1.2.17 - Aug 4, 2018
   - EDI 270 / 271 support - Health Care Eligibility Benefit Inquiry and Response
     X279-HS270
