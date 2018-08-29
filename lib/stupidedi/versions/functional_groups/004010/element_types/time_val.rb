@@ -291,6 +291,7 @@ module Stupidedi
                 second = object.to_s.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
 
                 if decimal = object.to_s.slice(6..-1)
+                  decimal = 0 if decimal.empty?
                   second += "0.#{decimal}".to_d
                 end
 
