@@ -7897,6 +7897,8 @@ module Stupidedi
           E809  = t::AN.new(:E809 , "Hazardous Material Shipment Information", 1, 25)
           E812  = t::ID.new(:E812 , "Payment Format Code"                  , 3, 3,
             s::CodeList.build(
+              "PPD" => "Prearranged Payment and Deposit (PPD+) (ACH)",
+              "CCD" => "Cash Concentration/Disbursement (CCD+) (ACH)",
               "CCP" => "Cash Concentration/Disbursement plus Addenda (CCD+)(ACH)",
               "CTX" => "Corporate Trade Exchange (CTX) (ACH)"))
           E819  = t::ID.new(:E819 , "Language Code"                        , 2, 3,
