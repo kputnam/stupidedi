@@ -55,6 +55,9 @@ module Stupidedi
         autoload :RA820, # Remittance Advice
           "stupidedi/contrib/004010/transaction_set_defs/RA820"
 
+        autoload :AG824, # Application Advice
+          "stupidedi/contrib/004010/transaction_set_defs/AG824"
+
       end
     end
   end
