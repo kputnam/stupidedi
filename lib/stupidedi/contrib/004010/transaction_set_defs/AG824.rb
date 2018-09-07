@@ -9,7 +9,7 @@ module Stupidedi
         r = SegmentReqs
         s = SegmentDefs
 
-        RA820 = d::TransactionSetDef.build("AG", "824", "Application Advice",
+        AG824 = d::TransactionSetDef.build("AG", "824", "Application Advice",
           d::TableDef.header("Table 1 - Header",
             s:: ST.use(10, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BGN.use(20, r::Mandatory, d::RepeatCount.bounded(1)),
