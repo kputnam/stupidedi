@@ -13,6 +13,7 @@ module Stupidedi
           s = Schema
 
           E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
+          E3    = t::AN.new(:E3   , "Free Form Message"                    , 1, 60)
           E16   = t::ID.new(:E16  , "Charge Method of Payment"             , 1, 1)
           E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
           E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
@@ -415,6 +416,12 @@ module Stupidedi
               "FR" => "Flat Rate",
               "PM" => "Per Mile",
               "PL" => "Per Load"))
+
+          E110   = t::ID.new(:E110  , "Purchase Order Type Code"             , 2, 2,
+                            s::CodeList.build(
+                                "GA" => "Functional Group Accept",
+                                "GP" => "Functional Group Partial Accept/Reject",
+                                "GR" => "Functional Group Reject"))
 
           E116  = t::ID.new(:E116 , "Postal Code"                          , 3, 15,
             s::CodeList.external("51"))
@@ -6026,7 +6033,9 @@ module Stupidedi
               "ZY" => "Cancellation of Filing",
               "ZZ" => "Mutually Defined"))
 
+          E641  = t::ID.new(:E641 , "Status Reason Code"                   , 3, 3)
           E646  = t:: R.new(:E646 , "Quantity Shipped to Date"             , 1, 9)
+          E647  = t::ID.new(:E647 , "Application Error Condition Code"     , 1, 3)
           E648  = t::ID.new(:E648 , "Price Multiplier Qualifier"           , 3, 3)
           E649  = t:: R.new(:E649 , "Multiplier"                           , 1, 10)
           E665  = t::ID.new(:E665 , "Residue Indicator Code"               , 1, 1,
@@ -8155,6 +8164,8 @@ module Stupidedi
               "ZZ" => "Mutually Defined"))
 
           E954  = t:: R.new(:E954 , "Percentage as Decimal"                , 1,  10)
+
+          E961  = t::AN.new(:E961 , "Data Element New Content"             , 1, 99)
 
           E983  = t::ID.new(:E983 , "Hazardous Class Qualifier"            , 1, 1,
             s::CodeList.build(
