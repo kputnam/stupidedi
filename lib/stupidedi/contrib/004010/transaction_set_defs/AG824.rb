@@ -19,17 +19,14 @@ module Stupidedi
             )
           ),
           d::TableDef.detail("Table 2 - Detail",
-            d::LoopDef.build("OTI", d::RepeatCount.unbounded,
-              s::OTI.use(10, r::Mandatory,  d::RepeatCount.bounded(1)),
+            d::LoopDef.build("OTI", d::RepeatCount.bounded(1),
+              s::OTI.use(10, r::Optional,  d::RepeatCount.bounded(1)),
+              s::REF.use(40, r::Optional,  d::RepeatCount.bounded(1)),
               s::AMT.use(50, r::Optional,  d::RepeatCount.unbounded),
               s::QTY.use(60, r::Optional,  d::RepeatCount.unbounded),
-              d::LoopDef.build("OTI", d::RepeatCount.unbounded,
-                s::OTI.use(65, r::Optional,  d::RepeatCount.bounded(1)),
-                s::AMT.use(67, r::Optional,  d::RepeatCount.bounded(1)),
-                s::TED.use(70, r::Optional,  d::RepeatCount.bounded(1)),
-              ),
+              s::TED.use(70, r::Optional,  d::RepeatCount.bounded(1)),
             ),
-             s:: SE.use(90, r::Mandatory, d::RepeatCount.bounded(1))
+            s:: SE.use(90, r::Mandatory, d::RepeatCount.bounded(1))
           )
         )
 
