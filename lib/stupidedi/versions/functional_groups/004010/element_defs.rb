@@ -335,6 +335,7 @@ module Stupidedi
               "82" => "Renderer Provider",
               "BT" => "Bill-to-Party",
               "BY" => "Buying Party (Purchaser)",
+              "C1" => "Payee Name (2-party wires) or Beneficiary Receiving Bank (3-party wires)",
               "CN" => "Consignee",
               "EV" => "Selling Agent",
               "MI" => "Planning Schedule/Material Release Issuer",
@@ -342,6 +343,7 @@ module Stupidedi
               "PE" => "Payee",
               "PR" => "Payer",
               "QC" => "Patient",
+              "RB" => "Receiving Bank",
               "RC" => "Receiving Location",
               "SH" => "Shipper",
               "SI" => "Shipping Schedule Issuer",
@@ -5189,7 +5191,8 @@ module Stupidedi
           E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
           E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
             s::CodeList.build(
-              "01" => s::CodeList.external("4"),
+              "01" => s::CodeList.external("4"), #ABA
+              "02" => "SWIFT",
               "04" => s::CodeList.external("91")))
           E507  = t::AN.new(:E507 , "DFI Identification Number"            , 3, 12,
             s::CodeList.external("60"))
@@ -5439,7 +5442,12 @@ module Stupidedi
               "RV" => "Rejected - Violates Industry Practices",
               "ZZ" => "Mutually Defined"))
 
-          E591  = t::ID.new(:E591 , "Payment Method Code"                  , 3, 3)
+          E591 = t::ID.new(:E591, "Payment Method Code"                    , 3, 3,
+             s::CodeList.build(
+                 "ACH" => "Automated Clearing House (ACH) transactions",
+                 "PBD" => "Check Payments",
+                 "FWT" => "Domestic Wire Transfer Payments",
+                 "SWT" => "International Wire Transfer Payments"))
           E595  = t::ID.new(:E595 , "Compartment ID Code"                  , 1, 1,
             s::CodeList.build(
               "1" => "Brake End",
@@ -7894,6 +7902,8 @@ module Stupidedi
           E809  = t::AN.new(:E809 , "Hazardous Material Shipment Information", 1, 25)
           E812  = t::ID.new(:E812 , "Payment Format Code"                  , 3, 3,
             s::CodeList.build(
+              "PPD" => "Prearranged Payment and Deposit (PPD+) (ACH)",
+              "CCD" => "Cash Concentration/Disbursement (CCD+) (ACH)",
               "CCP" => "Cash Concentration/Disbursement plus Addenda (CCD+)(ACH)",
               "CTX" => "Corporate Trade Exchange (CTX) (ACH)"))
           E819  = t::ID.new(:E819 , "Language Code"                        , 2, 3,
