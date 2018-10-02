@@ -13,6 +13,10 @@ module Stupidedi
       autoload :ElementReqs,  "stupidedi/guides/005010/element_reqs"
       autoload :GuideBuilder, "stupidedi/guides/005010/guide_builder"
 
+      module X212
+        autoload :HR276,  "stupidedi/guides/005010/X212-HR276"
+      end
+
       module X214
         autoload :HN277,  "stupidedi/guides/005010/X214-HN277"
       end

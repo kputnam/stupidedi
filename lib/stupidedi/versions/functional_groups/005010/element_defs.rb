@@ -185,7 +185,7 @@ module Stupidedi
               "3L"  => "Branch Identifier",
               "4A"  => "Personal Identification Number (PIN)",
               "4N"  => "Special Payment Reference Number",
-	      "49"  => "Family Unit Number",
+              "49"  => "Family Unit Number",
               "60"  => "Account Suffix Code",
               "6M"  => "Application Number",
               "6O"  => "Cross Reference Number",
@@ -196,7 +196,7 @@ module Stupidedi
               "9C"  => "Adjusted Repriced Claim Reference Number",
               "9D"  => "Adjusted Repriced Line Item Reference Number",
               "9F"  => "Referral Number",
-	      "9K"  => "Servicer",
+              "9K"  => "Servicer",
               "9V"  => "Payment Category",
               "9X"  => "Account Category",
               "ABB" => "Personal ID Number",
@@ -236,7 +236,7 @@ module Stupidedi
               "G1"  => "Prior Authorization Number",
               "G2"  => "Provider Commercial Number",
               "G3"  => "Predetermination of Benefits Identification Number",
-	      "GH"  => "Identification Card Serial Number",
+              "GH"  => "Identification Card Serial Number",
               "G4"  => "Peer Review Organization (PRO) Approval Number",
               "GE"  => "Geographic Number",
               "HI"  => s::CodeList.external("121"),
@@ -284,6 +284,7 @@ module Stupidedi
             s::CodeList.build(
               "270" => "Eligibility, Coverage, or Benefit Inquiry",
               "271" => "Eligibility, Coverage, or Benefit Information",
+              "276" => "Health Care Claim Status Request",
               "277" => "Health Care Information Status Notification",
               "834" => "Benefit Enrollment and Maintenance",
               "835" => "Health Care Claim Payment/Advice",
@@ -653,6 +654,7 @@ module Stupidedi
               "N8"  => "Miscellaneous Taxes",
               "NL"  => "Negative Ledger Balance",
               "P3"  => "Premium Amount",
+              "T3"  => "Total Submitted Charges",
 	       "PB"  => "Billed Amount",
               "R"   => "Spend Down",
               "T"   => "Tax",
@@ -1226,6 +1228,7 @@ module Stupidedi
           E954  = t:: R.new(:E954 , "Percentage as Decimal"                , 1,  10)
           E1005 = t::ID.new(:E1005, "Hierarchical Structure Code"          , 4, 4,
             s::CodeList.build(
+              "0010" => "Information Source, Information Receiver, Provider of Service, Subscriber, Dependent",
               "0019" => "Information Source, Subscriber, Dependent",
               "0022" => "Information Source, Information Receiver, Subscriber, Dependent",
               "0085" => "Information Source, Information Receiver, Provider of Service, Patient"))

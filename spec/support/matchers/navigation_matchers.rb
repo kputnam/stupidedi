@@ -244,5 +244,4 @@ module NavigationMatchers
       end
     end
   end
-
 end
