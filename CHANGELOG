@@ -1,8 +1,8 @@
-v 1.2.19 - Aug 4, 2018
+v 1.2.19 - Oct 8, 2018
   - EDI 276 support - Health Care Claim Status Inquiry
     X212-HR276
 
-v 1.2.18 - wip
+v 1.2.18 - 
   - SH856 rework
   - PR855 support (v4010) 
   - This change fixes this issue, as if decimal is an empty string, it will be changed to 0 before to_d is called on it
