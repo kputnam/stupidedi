@@ -301,6 +301,18 @@ b.machine.zipper.tap do |z|
 end
 ```
 
+Please note that two writers are available. As shown above `Stupidedi::Writer::Default` will output data encoded in plain x12 format. While `Stupidedi::Writer::Claredi` will output a formatted HTML string.
+
+`Stupidedi::Writer::Claredi#write` operates on `StringIO`.
+
+```ruby
+b.machine.zipper.tap do |z|
+  w = Stupidedi::Writer::Claredi.new(z.root)
+
+  File.open('output.html', 'w') { |f| f.write w.write }
+end
+```
+
 ### Reading, Traversing
 
 ```ruby
