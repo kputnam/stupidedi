@@ -2,14 +2,6 @@ require "pathname"
 abspath = Pathname.new(File.dirname(__FILE__)).expand_path
 relpath = abspath.relative_path_from(Pathname.pwd)
 
-begin
-# require "rubygems"
-# require "bundler/setup"
-rescue LoadError
-  warn "couldn't load bundler:"
-  warn "  #{$!}"
-end
-
 task :default => :spec
 
 task :console do
@@ -18,9 +10,9 @@ end
 
 begin
   require "rspec/core/rake_task"
+
   RSpec::Core::RakeTask.new do |t|
     t.verbose = false
-    t.pattern = "#{relpath}/spec/examples/**/*.example"
 
     t.rspec_opts  = %w(--color --format p)
     t.rspec_opts << "-I#{abspath}/spec"
@@ -28,8 +20,8 @@ begin
 rescue LoadError => first
   begin
     require "spec/rake/spectask"
+
     Spec::Rake::SpecTask.new do |t|
-      t.pattern = "#{relpath}/spec/examples/**/*.example"
       t.spec_opts << "--color"
       t.spec_opts << "--format p"
       t.libs << "#{abspath}/spec"
@@ -54,7 +46,6 @@ begin
       t.rcov_opts = "--exclude spec/,gems/,00401"
 
       t.verbose = false
-      t.pattern = "#{relpath}/spec/examples/**/*.example"
 
       t.rspec_opts  = %w(--color --format p)
       t.rspec_opts << "-I#{abspath}/spec"
@@ -66,7 +57,6 @@ begin
         t.rcov = true
         t.rcov_opts = %w(--exclude spec/,gems/)
 
-        t.pattern = "#{relpath}/spec/examples/**/*.example"
         t.spec_opts << "--color"
         t.spec_opts << "--format=p"
         t.libs << "#{abspath}/spec"
