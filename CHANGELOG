@@ -1,3 +1,7 @@
+v 1.2.20 - Oct 23, 2018
+  - Json Writer functionality - Traverse stupidedit internal tree to a ruby hash
+  - Ruby 2.5.3 support
+
 v 1.2.19 - Oct 8, 2018
   - EDI 276 support - Health Care Claim Status Inquiry
     X212-HR276
