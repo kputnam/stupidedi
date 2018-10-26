@@ -325,7 +325,7 @@ Converting the tree to a JSON document is intentionally not included in the libr
 
 The shown approach allows to define custom traversing logic for the nodes with ability to change hash keys and values to whatever is needed.
 
-Please refer to [this readme](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json.MD) and [this nodes implementation](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json/) for more information.
+Please refer to [this readme](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json.MD) and [these nodes implementation](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json/) for more information.
 
 ### Reading, Traversing
 
