@@ -9496,7 +9496,8 @@ module Stupidedi
               "X5" => "Arrived at Delivery Location Loading Dock",
               "X6" => "En Route to Delivery Location",
               "X8" => "Arrived at Pick-up Location Loading Dock",
-              "XB" => "Shipment Acknowledged"))
+              "XB" => "Shipment Acknowledged",
+              "ZZ" => "Shipment Dispatched"))
 
           E1651 = t::ID.new(:E1651, "Shipment Status or Appointment Reason Code" , 2, 2,
             s::CodeList.build(
