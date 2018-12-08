@@ -3,6 +3,7 @@ v 1.3.21 (WIP) - Dec 2018 ** Breaking Changes **
   - Configurable limit of non-determinism (fixes #129) https://github.com/irobayna/stupidedi/pull/145
   - Add utility to obfuscate data in X12 files https://github.com/irobayna/stupidedi/pull/147
   - Fix potential frozen string issues in pretty_print methods https://github.com/irobayna/stupidedi/pull/148
+  - Remove erroneous code mappings from element definitions
   
 v 1.2.20 - Oct 23, 2018
   - Json Writer functionality - Traverse stupidedit internal tree to a ruby hash
