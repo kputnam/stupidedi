@@ -24,16 +24,34 @@ module Stupidedi
           id, element_toks, position, remainder
       end
 
+      # @return [SegmentTok]
+      def copy(changes = {})
+        SegmentTok.new \
+          changes.fetch(:id, @id),
+          changes.fetch(:element_toks, @element_toks),
+          changes.fetch(:position, @position),
+          changes.fetch(:remainder, @remainder)
+      end
+
       def pretty_print(q)
         q.pp(:segment.cons(@id.cons(@element_toks)))
       end
 
       def blank?
-        @element_toks.all(&:blank?)
+        @element_toks.all?(&:blank?)
       end
 
       def present?
         not blank?
+      end
+
+      def to_s(separators)
+        if blank?
+          "#{id}#{separators.segment}"
+        else
+          es = @element_toks.map{|x| x.to_s(separators) }
+          id.cons(es).join(separators.element) + separators.segment
+        end
       end
     end
 

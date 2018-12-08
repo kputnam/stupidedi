@@ -21,6 +21,14 @@ module Stupidedi
           value, position, remainder
       end
 
+      # @return [SimpleElementTok]
+      def copy(changes = {})
+        SimpleElementTok.new \
+          changes.fetch(:value, @value),
+          changes.fetch(:position, @position),
+          changes.fetch(:remainder, @remainder)
+      end
+
       def pretty_print(q)
         q.pp(:simple.cons(@value.cons))
       end
@@ -47,6 +55,10 @@ module Stupidedi
 
       def composite?
         false
+      end
+
+      def to_s(separators)
+        @value
       end
     end
 
