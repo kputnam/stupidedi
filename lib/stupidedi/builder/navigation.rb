@@ -453,7 +453,7 @@ module Stupidedi
       # @return       [Either<Array<Object>>]
       def iterate(id, *elements)
         a = []
-        m = find(id, *elements)
+        m = __find(false, id, elements, true)
         return m unless m.defined?
 
         while m.defined?
@@ -485,9 +485,15 @@ module Stupidedi
     private
 
       # @return [Either<StateMachine>]
-      def __find(invalid, id, elements)
+      def __find(invalid, id, elements, assert_repeatable = false)
         reachable = false
         matches   = []
+
+        # Note op.segment_use.nil? is true when searching for ISA,
+        # GS, and ST, because we can't know the SegmentUse until we
+        # deconstruct the token and looked up the versions numbers
+        # in the Config. Nonetheless, we know ISA, GS, and ST can repeat
+        repeatable = [:ISA, :GS, :ST].include?(id)
 
         @active.each do |zipper|
           matched      = false
@@ -514,6 +520,8 @@ module Stupidedi
             op_,  = group
             state = zipper
             value = zipper.node.zipper
+
+            repeatable ||= op_.segment_use.try(:repeatable?)
 
             # 1. Move upward (possibly zero times)
             op_.pop_count.times do
@@ -623,6 +631,11 @@ module Stupidedi
               end
             end
           end
+        end
+
+        if assert_repeatable and not repeatable
+          raise Exceptions::ParseError,
+            "#{id} segment is not repeatable"
         end
 
         if not reachable
