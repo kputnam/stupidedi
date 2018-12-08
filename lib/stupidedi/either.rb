@@ -131,7 +131,7 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        other.is_a?(Either) and other.select{|x| x == @value }.defined?
+        other.is_a?(self.class) and other.select{|x| x == @value }.defined?
       end
 
       # @return [void]
