@@ -4804,7 +4804,7 @@ module Stupidedi
               "232" => "Claim Statement Period Start",
               "233" => "Claim Statement Period End",
               "405" => "Production",
-              "472" => "service"))
+              "472" => "Service"))
 
           E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
           E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
@@ -5494,7 +5494,6 @@ module Stupidedi
               "1A" => "Unique Item Tracking Control Report",
               "1B" => "Unique Item Tracking Report Reconciliation",
               "1C" => "Unique Item Tracking Item Data Change",
-              "SE" => "CODE SOURCE 350",
               "1E" => "New Group Initial Enrollment",
               "20" => "Air Export Waybill and Invoice",
               "21" => "Air Import Invoice",
@@ -5508,7 +5507,6 @@ module Stupidedi
               "30" => "Delivery",
               "31" => "Subrogation Demand",
               "33" => "Normal",
-              "Co" => "orming to a standard practice",
               "34" => "Emergency Request",
               "35" => "Short Notice Request",
               "36" => "Damage Notification",
@@ -5905,6 +5903,7 @@ module Stupidedi
               "SB" => "Second Notice of Balance Due",
               "SC" => "Deprescription",
               "SD" => "Supply Process Deficiency",
+              "SE" => "Special Bilateral",
               "SF" => "Single Family Program",
               "SG" => "Sample Goods Invoice",
               "SH" => "Shipment Status Notification",
