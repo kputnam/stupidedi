@@ -48,7 +48,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("TransmissionVal") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("TransmissionVal") + "(#{@children.map(&:inspect).join(', ')})"
       end
     end
 

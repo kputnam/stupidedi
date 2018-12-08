@@ -90,7 +90,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("DT.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]
@@ -282,7 +282,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(#{"%04d-%02d-%02d" % [year, month, day]})"
+                ansi.element("DT.value#{id}") + "(#{"%04d-%02d-%02d" % [year, month, day]})"
               end
 
               # @return [String]
@@ -463,7 +463,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("DT.value#{id}") << "(XX#{"%02d-%02d-%02d" % [@year, @month, @day]})"
+                ansi.element("DT.value#{id}") + "(XX#{"%02d-%02d-%02d" % [@year, @month, @day]})"
               end
 
               # @return [String]

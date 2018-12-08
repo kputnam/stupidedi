@@ -79,7 +79,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("AN.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("AN.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]
@@ -260,7 +260,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("AN.value#{id}") << "(#{@value})"
+                ansi.element("AN.value#{id}") + "(#{@value})"
               end
 
               def valid?
