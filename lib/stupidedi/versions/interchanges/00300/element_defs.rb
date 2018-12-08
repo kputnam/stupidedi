@@ -98,7 +98,7 @@ module Stupidedi
 
             def inspect
               id = definition.try{|d| ansi.bold("[#{d.id}]") }
-              ansi.element("SeparatorElementVal.value#{id}") << "(#{@value || "nil"})"
+              ansi.element("SeparatorElementVal.value#{id}") + "(#{@value || "nil"})"
             end
           end
 

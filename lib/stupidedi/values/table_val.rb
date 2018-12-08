@@ -55,7 +55,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.table("Table") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.table("Table") + "(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]

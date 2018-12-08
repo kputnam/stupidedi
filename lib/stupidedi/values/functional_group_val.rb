@@ -92,7 +92,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("Group") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Group") + "(#{@children.map(&:inspect).join(', ')})"
       end
 
       def ==(other)

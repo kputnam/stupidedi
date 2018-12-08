@@ -76,7 +76,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("TM.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("TM.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]

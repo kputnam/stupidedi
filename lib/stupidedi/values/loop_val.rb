@@ -59,7 +59,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.loop("Loop") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.loop("Loop") + "(#{@children.map(&:inspect).join(', ')})"
       end
 
       # @return [Boolean]

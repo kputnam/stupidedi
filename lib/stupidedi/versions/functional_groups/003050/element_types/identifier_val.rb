@@ -119,7 +119,7 @@ module Stupidedi
                   end
                 end
 
-                ansi.element("ID.invalid#{id}") << "(#{ansi.invalid(@value.inspect)})"
+                ansi.element("ID.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
               end
 
               # @return [String]
@@ -317,7 +317,7 @@ module Stupidedi
                   value = @value
                 end
 
-                ansi.element("ID.value#{id}") << "(#{value})"
+                ansi.element("ID.value#{id}") + "(#{value})"
               end
             end
 
