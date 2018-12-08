@@ -21,6 +21,14 @@ module Stupidedi
           component_toks, position, remainder
       end
 
+      # @return [CompositeElementTok]
+      def copy(changes = {})
+        CompositeElementTok.new \
+          changes.fetch(:component_toks, @component_toks),
+          changes.fetch(:position, @position),
+          changes.fetch(:remainder, @remainder)
+      end
+
       def pretty_print(q)
         q.pp(:composite.cons(@component_toks))
       end
@@ -47,6 +55,15 @@ module Stupidedi
 
       def composite?
         true
+      end
+
+      def to_s(separators)
+        if blank?
+          ""
+        else
+          cs = @component_toks.map{|x| x.to_s(separators) }
+          cs.join(separators.component)
+        end
       end
     end
 
