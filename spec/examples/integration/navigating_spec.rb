@@ -49,6 +49,50 @@ describe "Navigating" do
     end
   end
 
+  context "repeatable segments" do
+    specify "can be iterated" do
+      expect(lambda do
+        payment.flatmap do |m|
+          m.iterate(:ISA) do |isa|
+            raise "didn't expect a second ISA segment"
+          end
+        end
+      end).not_to raise_error
+    end
+
+    specify "can be iterated" do
+      expect(lambda do
+        payment.flatmap do |m|
+          m.iterate(:GS) do |gs|
+            expect(gs.segment.tap do |segment|
+              expect(segment.node.id).to eq(:GS)
+            end).to be_defined
+
+            gs.iterate(:ST) do |st|
+              expect(st.segment.tap do |segment|
+                expect(segment.node.id).to eq(:ST)
+              end).to be_defined
+            end
+          end
+        end
+      end).not_to raise_error
+    end
+  end
+
+  context "non-repeatable segments" do
+    specify "cannot be iterated" do
+      expect(lambda do
+        payment.flatmap do |m|
+          m.iterate(:GS) do |gs|
+            gs.iterate(:ST) do |st|
+              st.iterate(:BHT)
+            end
+          end
+        end
+      end).to raise_error("BHT segment is not repeatable")
+    end
+  end
+
   describe "error handling" do
     context "accessing an undefined element" do
       it "raises an exception" do
