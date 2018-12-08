@@ -7,21 +7,49 @@ module Stupidedi
 
     module Generation
 
-      # @return [(StateMachine, Either<Reader::TokenReader>)]
-      def read(reader)
-        machine = self
-        reader  = reader.read_segment
+      # Consumes all input from `reader` and returns the updated
+      # {StateMachine} along with the result of the last attempt
+      # to read a segment.
+      #
+      # The `nondeterminism` argument specifies a limit on how many
+      # parse trees can be built simultaneously due to ambiguity in
+      # the input and/or specification. This prevents runaway memory
+      # CPU consumption (see GH-129), and will return a {Result.failure}
+      # once exceeded.
+      #
+      # The default value is 1, resulting in an error if any input
+      # is ambiguous.
+      #
+      # NOTE: The error is detected *after* the resources are already
+      # been consumed. The extra parse trees are returned (in memory)
+      # via the {StateMachine} to aide diagnosis.
+      #
+      # @return [(StateMachine, Reader::Result)]
+      def read(reader, options = {})
+        limit    = options.fetch(:nondeterminism, 1)
+        machine  = self
+        reader_e = reader.read_segment
 
-        while reader.defined?
-          reader = reader.flatmap do |segment_tok, reader1|
-            machine, reader =
-              machine.insert(segment_tok, reader1)
+        while reader_e.defined?
+          reader_e = reader_e.flatmap do |segment_tok, reader|
+            machine, reader_ =
+              machine.insert(segment_tok, reader)
 
-            reader.read_segment
+            if machine.active.length <= limit
+              reader_.read_segment
+            else
+              matches = machine.active.map do |m|
+                segment_def = m.node.zipper.node.definition
+                "#{segment_def.id} #{segment_def.name}"
+              end.join(", ")
+
+              return machine,
+                Reader::Result.failure("too much non-determinism: #{matches}", reader_.input, true)
+            end
           end
         end
 
-        return machine, reader
+        return machine, reader_e
       end
 
       # @return [(StateMachine, Reader::TokenReader)]
