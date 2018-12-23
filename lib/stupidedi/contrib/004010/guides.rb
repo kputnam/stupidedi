@@ -10,7 +10,6 @@ module Stupidedi
 
         autoload :IM210, "stupidedi/contrib/004010/guides/IM210"
         autoload :PO850, "stupidedi/contrib/004010/guides/PO850"
-        autoload :PR855, "stupidedi/contrib/004010/guides/PR855"
         autoload :OW940, "stupidedi/contrib/004010/guides/OW940"
         autoload :AR943, "stupidedi/contrib/004010/guides/AR943"
         autoload :RE944, "stupidedi/contrib/004010/guides/RE944"
