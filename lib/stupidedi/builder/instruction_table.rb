@@ -20,6 +20,10 @@ module Stupidedi
           @__drop = Hash.new
         end
 
+        def hash
+          [NonEmpty, state].hash
+        end
+
         # @return [InstructionTable]
         def copy(changes = {})
           NonEmpty.new \
@@ -50,7 +54,15 @@ module Stupidedi
 
         # @return [Array<Instruction>]
         def matches(segment_tok, strict = false)
-          @__matches ||= begin
+          if constraints.defined_at?(segment_tok.id)
+            constraints.at(segment_tok.id).matches(segment_tok, strict)
+          else
+            []
+          end
+        end
+
+        def constraints
+          @__constraints ||= begin
             constraints = Hash.new
 
             # Group instructions by segment identifier
@@ -64,12 +76,6 @@ module Stupidedi
             end
 
             constraints
-          end
-
-          if @__matches.defined_at?(segment_tok.id)
-            @__matches.at(segment_tok.id).matches(segment_tok, strict)
-          else
-            []
           end
         end
 
@@ -137,6 +143,12 @@ module Stupidedi
               q.pp e
             end
           end
+        end
+
+      private
+
+        def state
+          [@instructions, @pop]
         end
       end
 
