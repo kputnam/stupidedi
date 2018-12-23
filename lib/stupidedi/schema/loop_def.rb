@@ -142,7 +142,24 @@ module Stupidedi
           raise Exceptions::InvalidSchemaError,
             "first child must be a SegmentUse"
         elsif header.head.repeat_count.include?(2)
-          "first child must have RepeatCount.bounded(1)"
+          raise Exceptions::InvalidSchemaError,
+            "first child must have RepeatCount.bounded(1)"
+        end
+
+        trailer.each.with_index do |s, k|
+          unless s.segment?
+            if s.respond_to?(:pretty_inspect)
+              raise Exceptions::InvalidSchemaError,
+                "arguments after last child LoopDef (#{loop_defs.last.id}) " +
+                "must be segments, but #{k+1} arguments later is not a "  +
+                "SegmentUse: #{s.pretty_inspect}"
+            else
+              raise Exceptions::InvalidSchemaError,
+                "arguments after last child LoopDef (#{loop_defs.last.id}) " +
+                "must be segments, but #{k+1} arguments later is not a "  +
+                "SegmentUse: #{s.inspect}"
+            end
+          end
         end
 
         new(id, repeat_count, header, loop_defs, trailer, nil)

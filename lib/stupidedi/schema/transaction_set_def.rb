@@ -84,6 +84,18 @@ module Stupidedi
 
       # @return [TransactionSetDef]
       def build(functional_group, id, name, *table_defs)
+        table_defs.each.with_index do |t, k|
+          unless t.table?
+            if t.respond_to?(:pretty_inspect)
+              raise Exceptions::InvalidSchemaError,
+                "argument #{k+4} is not a TableDef: #{t.pretty_inspect}"
+            else
+              raise Exceptions::InvalidSchemaError,
+                "argument #{k+4} is not a TableDef: #{t.inspect}"
+            end
+          end
+        end
+
         new(functional_group, id, name, table_defs)
       end
     end
