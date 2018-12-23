@@ -40,7 +40,7 @@ module Stupidedi
     class << InitialState
 
       # @return [InitialState]
-      def build
+      def build(zipper)
         new(
           Reader::Separators.empty,
           Reader::SegmentDict.empty,
@@ -52,13 +52,13 @@ module Stupidedi
 
           # Create a new parse tree with a Transmission as the root, and descend
           # to the placeholder where the first child node will be placed.
-          Zipper.build(Values::TransmissionVal.new),
+          zipper.build(Values::TransmissionVal.new),
           [])
       end
 
       # @return [Zipper::AbstractCursor]
-      def start
-        Zipper.build(build)
+      def start(zipper)
+        zipper.build(build(zipper))
       end
     end
 
