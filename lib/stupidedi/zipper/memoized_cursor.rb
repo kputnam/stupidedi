@@ -25,10 +25,12 @@ module Stupidedi
       # @group Querying the Tree Location
       #########################################################################
 
+      # (see AbstractCursor#leaf?)
       def leaf?
         @node.leaf? or @node.children.empty?
       end
 
+      # (see AbstractCursor#root?)
       def root?
         false
       end
