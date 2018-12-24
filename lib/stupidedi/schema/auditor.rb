@@ -128,13 +128,13 @@ module Stupidedi
                 raise Exceptions::InvalidSchemaError,
                   "proceeding from [#{pp_machine(machine)}], the element " +
                   "#{designators.join(", ")} is designated optional, but " +
-                  "is necessary to make choose between:\n"                 +
+                  "is necessary to choose between:\n"                 +
                   table.instructions.map{|x| pp_instruction(x) }.join
               else
                 raise Exceptions::InvalidSchemaError,
                   "proceeding from [#{pp_machine(machine)}], the elements " +
                   "#{designators.join(", ")} are designated optional, but " +
-                  "at least one is necessary to make choose between:\n"     +
+                  "at least one is necessary to choose between:\n"     +
                   table.instructions.map{|x| pp_instruction(x) }.join
               end
 
@@ -146,7 +146,7 @@ module Stupidedi
               when 0
                 raise Exceptions::InvalidSchemaError,
                   "proceeding from [#{pp_machine(machine)}], there are no " +
-                  "constraints on segment #{segment_id} to make choose "    +
+                  "constraints on segment #{segment_id} to choose "    +
                   "between:\n" + table.instructions.map{|x| pp_instruction(x) }.join
               when 1
                 raise Exceptions::InvalidSchemaError,
@@ -180,7 +180,7 @@ module Stupidedi
                   "proceeding from [#{pp_machine(machine)}], the elements "  +
                   "#{designators.join(", ")} are designated optional in at " +
                   "least one case each, but at least one is necessary to "   +
-                  " make choose between:\n" +
+                  "choose between:\n" +
                   table.instructions.map{|x| pp_instruction(x) }.join
               end
 
@@ -377,7 +377,7 @@ module Stupidedi
 
         # These lists of elements are re-used when Auditor needs to construct
         # an ISA, GS, or ST segment as it walks the definition.
-        isa_elements = 
+        isa_elements =
           [ "00", "AUTHORIZATION",
             "00", "PASSWORD",
             "ZZ", "SUBMITTER ID",

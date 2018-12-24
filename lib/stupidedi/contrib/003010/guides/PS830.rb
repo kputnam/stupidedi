@@ -31,7 +31,7 @@ module Stupidedi
               b::Element(e::Required,    "Date - Horizon End Date"),
               b::Element(e::Required,    "Date - Release Issue Date"),
               b::Element(e::Required,    "Date"),
-              b::Element(e::Situational,  "Purchase Order Number"))
+              b::Element(e::Situational,  "Purchase Order Number")),
 
             # b::Segment(30, s::NTE, "Note/Special Instruction",
             #   r::Situational, d::RepeatCount.bounded(100),
@@ -146,7 +146,7 @@ module Stupidedi
                   b::Element(e::Situational, "Quantity"),
                   b::Element(e::Situational, "Date/Time Qualifier", b::Values("003")),
                   b::Element(e::Situational, "Date -  Forecast Start Date"),
-                  b::Element(e::Situational, "Date - Estimated Delivery/Horizon End Date")))),
+                  b::Element(e::Situational, "Date - Estimated Delivery/Horizon End Date"))))),
 
           d::TableDef.header("Summary",
             b::Segment(10, s::CTT, "Transaction Totals",

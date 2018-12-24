@@ -29,9 +29,9 @@ module Stupidedi
                 s:: N3.use(1000, r::Optional,  d::RepeatCount.unbounded),
                 s:: N4.use(1100, r::Optional,  d::RepeatCount.bounded(1)),
                 s::REF.use(1200, r::Optional,  d::RepeatCount.unbounded),
-                s::PER.use(1300, r::Optional,  d::RepeatCount.unbounded)),
+                s::PER.use(1300, r::Optional,  d::RepeatCount.unbounded),
                 s::RDM.use(1400, r::Optional,  d::RepeatCount.bounded(1)),
-                s::DTM.use(1500, r::Optional,  d::RepeatCount.bounded(1))),
+                s::DTM.use(1500, r::Optional,  d::RepeatCount.bounded(1)))),
 
             d::TableDef.detail("Table 2 - Detail",
               d::LoopDef.build("2000", d::RepeatCount.unbounded,
