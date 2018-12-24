@@ -17,9 +17,8 @@ group :development do
   gem "rcov"       ,"~> 1.0.0" ,:platforms => [:mri_18]
 
   # https://github.com/colszowka/simplecov#ruby-version-compatibility
-  gem "simplecov"              ,:platforms => [:ruby_19, :ruby_20, :ruby_21,
-                                               :ruby_22, :ruby_23, :ruby_24,
-                                               :ruby_25]
+  gem "simplecov"              ,:platforms => [:ruby_25]
+
   # We're using a patched version installed in yard/ until the
   # maintainer improves the plugin. The patch has been submitted
   # to the author.
