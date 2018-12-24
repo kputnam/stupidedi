@@ -14,7 +14,7 @@ module Stupidedi
       # @return [Reader::SegmentDict]
       abstract :segment_dict
 
-      # @return [Zipper::AbstractCursor]
+      # @return [Zipper::AbstractCursor<Values::SegmentVal>]
       abstract :zipper
 
       # @return [Array<AbstractState>]

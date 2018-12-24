@@ -18,7 +18,7 @@ module Stupidedi
           node, Root
       end
 
-      # @group Query the Tree Location
+      # @group Querying the Tree Location
       #########################################################################
 
       # (see AbstractCursor#depth)

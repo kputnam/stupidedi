@@ -24,6 +24,9 @@ module Stupidedi
       # @return [Array<Instruction>]
       abstract :matches, :args => %w(segment_tok)
 
+      # @return [Array<Instruction>]
+      attr_reader :instructions
+
       #
       # Performs no filtering of the {Instruction} list. This is used when there
       # already is a single {Instruction} or when a {Reader::SegmentTok} doesn't
@@ -107,21 +110,25 @@ module Stupidedi
 
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
-          invalid = true  # Were all possibly distinguishing elements invalid?
+          invalid = true  # Were all present possibly distinguishing elements invalid?
           present = false # Were any possibly distinguishing elements present?
 
-          @__basis ||= basis(shallowest(@instructions))
-          @__basis.head.each do |(n, m), map|
+          disjoint, distinct = basis(@instructions)
+
+          # First check single elements that can narrow the search space to
+          # a single matching Instruction.
+          disjoint.each do |(n, m), map|
             value = deconstruct(segment_tok.element_toks, n, m)
 
             case value
             when nil, :not_used, :default
-              # ignore
+              # value wasn't present in segment_tok, can't use it to decide
             else
               singleton = map.at(value)
               present   = true
 
               unless singleton.nil?
+                # Success, search is terminated
                 return singleton
               else
                 if strict
@@ -140,13 +147,14 @@ module Stupidedi
           # the combination of elements to iteratively narrow the search space
           space = @instructions
 
-          # @todo: These filters should be ordered by probable effectiveness,
+          # @todo: These filters could be ordered by probable effectiveness,
           # so we narrow the search space by the largest amount in the fewest
           # number of steps.
-          @__basis.last.each do |(n, m), map|
+          distinct.each do |(n, m), map|
             value = deconstruct(segment_tok.element_toks, n, m)
 
             unless value.nil?
+              # Lookup which instructions are compatible with this input
               subset  = map.at(value)
               present = true
 
@@ -155,9 +163,11 @@ module Stupidedi
                 space  &= subset
 
                 if space.length <= 1
+                  # Success, search is terminated
                   return space
                 end
               else
+                # This value isn't compatible with any instruction
                 if strict
                   designator = "#{segment_tok.id}#{'%02d' % n}"
                   designator = designator + "-%02d" % m unless m.nil?
@@ -170,13 +180,26 @@ module Stupidedi
           end
 
           if invalid and present
+            # Some elements were present, but all contained invalid values, and
+            # even ignoring those we could not narrow the matches to a single
+            # instruction.
+            #
+            # We could return the remaining search space, but it is safest to
+            # mark this as an invalid segment and avoid the non-determinism
             []
           else
+            # Some elements were present and none were invalid, but it was not
+            # possible to narrow the set of matches to a single instruction.
+            #
+            # It seems wrong to mark the segment invalid. The worst thing you
+            # could say about the input is that it may have been missing a
+            # required element that could have resolved the ambiguity; but it's
+            # also possible all required elements were present and the grammar
+            # is the problem (not the input). So here we return the remaining
+            # search space, which will cause non-determinism in the parser.
             space
           end
         end
-
-      private
 
         # Resolve conflicts between instructions that have identical SegmentUse
         # values. For each SegmentUse, this chooses the Instruction that pops
@@ -203,84 +226,87 @@ module Stupidedi
 
         # @return [Array(Array<(Integer, Integer, Map)>, Array<(Integer, Integer, Map)>)]
         def basis(instructions)
-          disjoint_elements = []
-          distinct_elements = []
+          @__basis ||= begin
+            instructions      = shallowest(instructions)
+            disjoint_elements = []
+            distinct_elements = []
 
-          # The first SegmentUse is used to represent the structure that must
-          # be shared by the others: number of elements and type of elements
-          element_uses = instructions.head.segment_use.definition.element_uses
+            # The first SegmentUse is used to represent the structure that must
+            # be shared by the others: number of elements and type of elements
+            element_uses = instructions.head.segment_use.definition.element_uses
 
-          # Iterate over each element across all SegmentUses (think columns)
-          #   NM1*[IL]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
-          #   NM1*[40]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
-          element_uses.length.times do |n|
-            if element_uses.at(n).composite?
-              ms = 0 .. element_uses.at(n).definition.component_uses.length - 1
-            else
-              ms = [nil]
-            end
+            # Iterate over each element across all SegmentUses (think columns)
+            #   NM1*[IL]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
+            #   NM1*[40]*[  ]*..*..*..*..*..*[  ]*..*..*{..}*..
+            element_uses.length.times do |n|
+              if element_uses.at(n).composite?
+                ms = 0 .. element_uses.at(n).definition.component_uses.length - 1
+              else
+                ms = [nil]
+              end
 
-            # If this is a composite element, we iterate over each component.
-            # Otherwise this loop iterates once with the index {m} set to nil.
-            ms.each do |m|
-              last  = nil        # the last subset we examined
-              total = Sets.empty # the union of all examined subsets
+              # If this is a composite element, we iterate over each component.
+              # Otherwise this loop iterates once with the index {m} set to nil.
+              ms.each do |m|
+                last  = nil        # the last subset we examined
+                total = Sets.empty # the union of all examined subsets
 
-              distinct = false
-              disjoint = true
+                distinct = false
+                disjoint = true
 
-              instructions.each do |i|
-                element_use = i.segment_use.definition.element_uses.at(n)
+                instructions.each do |i|
+                  element_use = i.segment_use.definition.element_uses.at(n)
 
-                unless m.nil?
-                  element_use = element_use.definition.component_uses.at(m)
+                  unless m.nil?
+                    element_use = element_use.definition.component_uses.at(m)
+                  end
+
+                  allowed_vals = element_use.allowed_values
+
+                  # We want to know if every instruction's set of allowed values
+                  # is disjoint (with one another). Instead of comparing each set
+                  # with every other set, which takes (N-1)! comparisons, we can
+                  # do it in N steps.
+                  disjoint &&= allowed_vals.disjoint?(total)
+
+                  # We also want to know if one instruction's set of allowed vals
+                  # contains elements that aren't present in at least one other
+                  # set. The opposite condition is easy to test: all sets contain
+                  # the same elements (are equal). So we can similarly, check this
+                  # condition in N steps rather than (N-1)!
+                  distinct ||= allowed_vals != last unless last.nil?
+
+                  total = allowed_vals.union(total)
+                  last  = allowed_vals
                 end
 
-                allowed_vals = element_use.allowed_values
+              # puts "#{n}.#{m}: disjoint(#{disjoint}) distinct(#{distinct})"
 
-                # We want to know if every instruction's set of allowed values
-                # is disjoint (with one another). Instead of comparing each set
-                # with every other set, which takes (N-1)! comparisons, we can
-                # do it in N steps.
-                disjoint &&= allowed_vals.disjoint?(total)
+                if disjoint
+                  # Since each instruction's set of allowed values is disjoint, we
+                  # can build a function/hash that returns the single instruction,
+                  # given one of the values. When given a value outside the set of
+                  # all (combined) values, it returns nil.
+                  disjoint_elements << [[n, m], build_disjoint(total, n, m, instructions)]
+                elsif distinct
+                  # Not all instructions have the same set of allowed values. So
+                  # we can build a function/hash that accepts one of the values
+                  # and returns the subset of the instructions where that value
+                  # can occur. This might be some, none, or all of the original
+                  # instructions, so clearly this provides less information than
+                  # if each allowed value set was disjoint.
 
-                # We also want to know if one instruction's set of allowed vals
-                # contains elements that aren't present in at least one other
-                # set. The opposite condition is easy to test: all sets contain
-                # the same elements (are equal). So we can similarly, check this
-                # condition in N steps rather than (N-1)!
-                distinct ||= allowed_vals != last unless last.nil?
-
-                total = allowed_vals.union(total)
-                last  = allowed_vals
-              end
-
-            # puts "#{n}.#{m}: disjoint(#{disjoint}) distinct(#{distinct})"
-
-              if disjoint
-                # Since each instruction's set of allowed values is disjoint, we
-                # can build a function/hash that returns the single instruction,
-                # given one of the values. When given a value outside the set of
-                # all (combined) values, it returns nil.
-                disjoint_elements << [[n, m], build_disjoint(total, n, m, instructions)]
-              elsif distinct
-                # Not all instructions have the same set of allowed values. So
-                # we can build a function/hash that accepts one of the values
-                # and returns the subset of the instructions where that value
-                # can occur. This might be some, none, or all of the original
-                # instructions, so clearly this provides less information than
-                # if each allowed value set was disjoint.
-
-                # Currently disabled (and untested) because it doesn't look like
-                # any of the HIPAA schemas would use this -- so testing it would
-                # be a pain.
-                #
-                distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
+                  # Currently disabled (and untested) because it doesn't look like
+                  # any of the HIPAA schemas would use this -- so testing it would
+                  # be a pain.
+                  #
+                  distinct_elements << [[n, m], build_distinct(total, n, m, instructions)]
+                end
               end
             end
-          end
 
-          [disjoint_elements, distinct_elements]
+            [disjoint_elements, distinct_elements]
+          end
         end
 
         # @return [Hash<String, Array<Instruction>>]

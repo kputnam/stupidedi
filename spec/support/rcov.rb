@@ -10,23 +10,28 @@
 if defined? Rcov or defined? SimpleCov
   lambda do |root|
     # Prevent walking in circles due to cycles in the graph
-    # like Object.constants.include?("Object") #=> true
     history = Hash.new
+    ansi    = Stupidedi::Color.ansi
 
     f = lambda do |namespace, recurse|
       history[namespace] = true
 
       for child in namespace.constants
         begin
-          next if child.to_s == "Contrib"
+          name  = [namespace, child].join("::")
           value = namespace.const_get(child)
 
           if value.is_a?(Module) and not history[value]
             recurse.call(value, recurse)
           end
+        rescue Stupidedi::Exceptions::InvalidSchemaError
+          $stderr.puts "warning: #{ansi.red("#{$!.class} #{$!.message}")}"
+          $stderr.puts " module: #{name}"
+          $stderr.puts
         rescue LoadError, NameError
-          $stderr.puts "warning: #{$!.class} #{$!.message}"
-          $stderr.puts "   file: #{$!.backtrace.first}"
+          $stderr.puts "warning: #{ansi.red("#{$!.class} #{$!.message}")}"
+          $stderr.puts " module: #{name}"
+          $stderr.puts
         end
       end
     end

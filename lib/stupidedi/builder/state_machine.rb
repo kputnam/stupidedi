@@ -14,11 +14,17 @@ module Stupidedi
       # @return [Config]
       attr_reader :config
 
-      # @return [Array<Zipper::AbstractCursor>]
+      # @return [Array<Zipper::AbstractCursor<StateMachine::AbstractState>>]
       attr_reader :active
 
       def initialize(config, active)
         @config, @active = config, active
+      end
+
+      def copy(changes = {})
+        StateMachine.new \
+          changes.fetch(:config, @config),
+          changes.fetch(:active, @active)
       end
 
       # @return [Reader::Separators]
@@ -47,8 +53,8 @@ module Stupidedi
       #########################################################################
 
       # @return [StateMachine]
-      def build(config)
-        StateMachine.new(config, InitialState.start.cons)
+      def build(config, zipper = Zipper::Tree)
+        StateMachine.new(config, InitialState.start(zipper).cons)
       end
 
       # @endgroup

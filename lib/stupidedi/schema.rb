@@ -2,6 +2,7 @@
 
 module Stupidedi
   module Schema
+    autoload :Auditor,              "stupidedi/schema/auditor"
     autoload :AbstractDef,          "stupidedi/schema/abstract_def"
     autoload :AbstractUse,          "stupidedi/schema/abstract_use"
 

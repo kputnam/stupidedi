@@ -18,6 +18,9 @@ module Stupidedi
       # @return [Boolean]
       attr_writer :strict
 
+      # @return [DslReader]
+      attr_reader :reader
+
       def_delegators :@machine, :pretty_print, :segment, :element, :zipper, :successors, :empty?, :first?, :last?, :deterministic?
 
       def initialize(machine, strict = true)
@@ -80,6 +83,8 @@ module Stupidedi
               while p.respond_to?(:parent)
                 break if qancestors.include?(p)
 
+                # Now that we're sure that this syntax node (loop, table, etc)
+                # is done being constructed, we can perform more validations.
                 critique(p)
                 p = p.parent
               end

@@ -33,7 +33,7 @@ module Stupidedi
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
           changes.fetch(:zipper, @zipper),
-          changes.fetch(:children, @zipper)
+          changes.fetch(:children, @children)
       end
     end
 

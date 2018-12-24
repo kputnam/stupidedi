@@ -57,6 +57,10 @@ module Stupidedi
           segment_id || segment_use.definition.id, segment_use, pop, drop, push
       end
 
+      def hash
+        [Instruction, state].hash
+      end
+
       # @return [Instruction]
       def copy(changes = {})
         Instruction.new \
@@ -99,6 +103,12 @@ module Stupidedi
             q.text "push: #{@push.try{|c| c.name.split('::').last}}"
           end
         end
+      end
+
+    private
+
+      def state
+        [@segment_id, @segment_use, @pop_count, @drop_count, @push].hash
       end
     end
 

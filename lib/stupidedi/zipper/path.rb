@@ -7,6 +7,8 @@ module Stupidedi
 
     class AbstractPath
 
+      abstract :root?
+
       # @return [AbstractPath]
       abstract :parent
 
@@ -34,6 +36,10 @@ module Stupidedi
 
     # @private
     Root = Class.new(AbstractPath) do
+
+      def root?
+        true
+      end
 
       # @return self
       def parent
@@ -91,6 +97,10 @@ module Stupidedi
       def initialize(left, parent, right)
         @left, @parent, @right =
           left, parent, right
+      end
+
+      def root?
+        false
       end
 
       # (see AbstractPath#last?)
