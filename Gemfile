@@ -4,7 +4,7 @@ gem "cantor", "~> 1.2.1"
 
 group :development do
   gem "rake"
-  gem "rspec"      , "3.7.0"
+  gem "rspec"      , "3.8.0"
 
   gem "rspec-collection_matchers"
   gem "yard"       ,"~> 0.9.12"
