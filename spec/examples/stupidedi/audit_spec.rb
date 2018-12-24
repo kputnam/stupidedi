@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Stupidedi::Schema::Auditor, :focus => true do
+describe Stupidedi::Schema::Auditor do
 
   def self.definitions
     ansi = Stupidedi::Color.ansi
@@ -51,7 +51,7 @@ describe Stupidedi::Schema::Auditor, :focus => true do
   end
 
   pending "Stupidedi::Schema::Auditor Stupidedi::Guides::FiftyTen::X223::HC837I" do
-    Stupidedi::Schema::Auditor.build(Stupidedi::Schema::Auditor Stupidedi::Guides::FiftyTen::X223::HC837I).audit
+    Stupidedi::Schema::Auditor.build(Stupidedi::Guides::FiftyTen::X223::HC837I).audit
   end
 
 end
