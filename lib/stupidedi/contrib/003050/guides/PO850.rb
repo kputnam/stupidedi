@@ -67,9 +67,9 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Unknown"),
                   b::Element(e::Situational, "Description") )),
 
-              d::LoopDef.build("DTM", d::RepeatCount.bounded(1),
+              d::LoopDef.build("DTM", d::RepeatCount.bounded(10),
                 b::Segment(210, s::DTM, "Date/Time Reference",
-                  r::Situational, d::RepeatCount.bounded(10),
+                  r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Date/Time Qualifier", b::Values("002")),
                   b::Element(e::Situational, "Date"),
                   b::Element(e::NotUsed,     "Unknown"),

@@ -15,7 +15,7 @@ module Stupidedi
             s::W06.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(10),
-              s:: N1.use(140, r::Mandatory,  d::RepeatCount.bounded(3))),
+              s:: N1.use(140, r::Mandatory,  d::RepeatCount.bounded(1))),
 
             s::G62.use(110, r::Optional,  d::RepeatCount.bounded(2)),
             s::W27.use(130, r::Mandatory, d::RepeatCount.bounded(1))),

@@ -11,6 +11,15 @@ module Stupidedi
           r = SegmentReqs
           s = SegmentDefs
 
+          # NOTE: This definition is not usable as-is, because it references
+          # segments that we don't have definitions for. The HB270 and HB271
+          # *standards* refer to these, but the *implementation guide* doesn't
+          # use or include definitions for these: LUI, VEH, PID, PDR, PDP, EM,
+          # SD1, PKD, PCT.
+          #
+          # Furthermore, the 2120 NM1 loop is in conflict with the 2100 NM1
+          # loop because both don't have any constraints (the implementation
+          # guides do have the necessary constraints).
           HB271 = d::TransactionSetDef.build("HB", "271",
             "Eligibility, Coverage, or Benefit Information",
 
@@ -25,6 +34,9 @@ module Stupidedi
                 s::AAA.use(250, r::Optional,  d::RepeatCount.bounded(9)),
 
                 d::LoopDef.build("2100", d::RepeatCount.unbounded,
+                  # This NM1 needs to have a constraint on NM1-01 to avoid
+                  # ambiguity with 2120 NM1, but the particular constraints
+                  # need to be specified in the implementation guide
                   s::NM1.use( 300, r::Mandatory, d::RepeatCount.bounded(1)),
                   s::REF.use( 400, r::Optional,  d::RepeatCount.bounded(9)),
                   s:: N2.use( 500, r::Optional,  d::RepeatCount.bounded(1)),
@@ -67,17 +79,21 @@ module Stupidedi
                         s::AMT.use(3100, r::Optional,  d::RepeatCount.bounded(5)))),
                       # s::PCT.use(3200, r::Optional,  d::RepeatCount.bounded(5)))),
 
-                    s:: LS.use(3300, r::Optional,  d::RepeatCount.bounded(1)),
+                    d::LoopDef.build("2120 LS", d::RepeatCount.bounded(1),
+                      s:: LS.use(3300, r::Optional,  d::RepeatCount.bounded(1)),
 
-                    d::LoopDef.build("2120", d::RepeatCount.unbounded,
-                      s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
-                      s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
-                      s:: N3.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
-                      s:: N4.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::PER.use(3800, r::Optional,  d::RepeatCount.bounded(3)),
-                      s::PRV.use(3900, r::Optional,  d::RepeatCount.bounded(1))),
+                      # d::LoopDef.build("2120", d::RepeatCount.unbounded,
+                      #   # This NM1 needs to have a constraint on NM1-01 to avoid
+                      #   # ambiguity with 2100 NM1, but the particular constraints
+                      #   # need to be specified in the implementation guide
+                      #   s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
+                      #   s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
+                      #   s:: N3.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
+                      #   s:: N4.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
+                      #   s::PER.use(3800, r::Optional,  d::RepeatCount.bounded(3)),
+                      #   s::PRV.use(3900, r::Optional,  d::RepeatCount.bounded(1))),
 
-                    s:: LE.use(4000, r::Optional,  d::RepeatCount.bounded(1)))))),
+                      s:: LE.use(4000, r::Optional,  d::RepeatCount.bounded(1))))))),
 
             d::TableDef.summary("Table 3 - Summary",
               s:: SE.use(4100, r::Mandatory, d::RepeatCount.bounded(1))))

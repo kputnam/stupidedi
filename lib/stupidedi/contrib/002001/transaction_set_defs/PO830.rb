@@ -14,8 +14,8 @@ module Stupidedi
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BFR.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
 
-            d::LoopDef.build("N1", d::RepeatCount.bounded(1),
-              s:: N1.use(  90, r::Optional, d::RepeatCount.bounded(2)),
+            d::LoopDef.build("N1", d::RepeatCount.bounded(2),
+              s:: N1.use(  90, r::Optional, d::RepeatCount.bounded(1)),
               s::PER.use( 140, r::Optional, d::RepeatCount.bounded(3)))),
 
           d::TableDef.detail("Table 2 - Detail",

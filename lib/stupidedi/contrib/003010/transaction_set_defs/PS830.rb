@@ -31,7 +31,7 @@ module Stupidedi
                 s::SDP.use( 290, r::Optional, d::RepeatCount.bounded(1)),
                 s::FST.use( 301, r::Optional, d::RepeatCount.bounded(1)),
                 d::LoopDef.build("NTE", d::RepeatCount.bounded(100),
-                  s::NTE.use(  30, r::Optional, d::RepeatCount.bounded(100)),
+                  s::NTE.use(  30, r::Optional, d::RepeatCount.bounded(1)),
                   s::FST.use( 300, r::Optional, d::RepeatCount.bounded(260)))),
 
               # s::SDP.use( 291, r::Optional, d::RepeatCount.bounded(1)),

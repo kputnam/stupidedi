@@ -30,13 +30,7 @@ module Stupidedi
               s:: N1.use( 310, r::Optional,  d::RepeatCount.bounded(1)),
               s:: N3.use( 330, r::Optional,  d::RepeatCount.bounded(2)),
               s:: N4.use( 340, r::Optional,  d::RepeatCount.unbounded),
-              s::REF.use( 350, r::Optional,  d::RepeatCount.bounded(12))),
-            d::LoopDef.build("HL", d::RepeatCount.bounded(200),
-              s:: N1.use( 310, r::Optional,  d::RepeatCount.bounded(1)),
-              s:: N1.use( 310, r::Optional,  d::RepeatCount.bounded(1)),              
-              s::REF.use( 350, r::Optional,  d::RepeatCount.bounded(12))),
-
-          ),
+              s::REF.use( 350, r::Optional,  d::RepeatCount.bounded(12)))),
 
           d::TableDef.summary("Table 4 - Summary",
             s::CTT.use(100, r::Optional,  d::RepeatCount.bounded(1)),

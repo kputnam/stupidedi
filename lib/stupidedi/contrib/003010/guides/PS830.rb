@@ -31,7 +31,7 @@ module Stupidedi
               b::Element(e::Required,    "Date - Horizon End Date"),
               b::Element(e::Required,    "Date - Release Issue Date"),
               b::Element(e::Required,    "Date"),
-              b::Element(e::Situational,  "Purchase Order Number"),
+              b::Element(e::Situational,  "Purchase Order Number")),
 
             # b::Segment(30, s::NTE, "Note/Special Instruction",
             #   r::Situational, d::RepeatCount.bounded(100),
@@ -44,7 +44,7 @@ module Stupidedi
                 b::Element(e::Required,    "Entity Identifier Code", b::Values("BT")),
                 b::Element(e::Situational, "Name"),
                 b::Element(e::Situational, "Identification Code Qualifier", b::Values("1")),
-                b::Element(e::Situational,  "Identification Code"))))),
+                b::Element(e::Situational,  "Identification Code")))),
 
           d::TableDef.header("Detail",
             d::LoopDef.build("LIN", d::RepeatCount.bounded(10000),
@@ -105,7 +105,7 @@ module Stupidedi
 
               d::LoopDef.build("SDP", d::RepeatCount.bounded(100),
                 b::Segment( 290, s::SDP, "Ship/Delivery Pattern",
-                  r::Situational, d::RepeatCount.unbounded,
+                  r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Ship/Delivery or Calendar Pattern Code", b::Values("Y")),
                   b::Element(e::Required,    "Ship/Delivery Pattern Time Code", b::Values("Y"))),
 
@@ -123,7 +123,7 @@ module Stupidedi
 
                 d::LoopDef.build("NTE", d::RepeatCount.bounded(100),
                   b::Segment(30, s::NTE, "Note/Special Instruction",
-                    r::Situational, d::RepeatCount.bounded(100),
+                    r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Situational, "Note Reference Code", b::Values("GEN","LIN")),
                     b::Element(e::Required,  "Free Form Message")),
 
