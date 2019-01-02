@@ -10,8 +10,8 @@ module Stupidedi
           autoload :AAA,
             "stupidedi/versions/functional_groups/005010/segment_defs/AAA"
 
-         autoload :ACT,
-           "stupidedi/versions/functional_groups/005010/segment_defs/ACT"
+          autoload :ACT,
+            "stupidedi/versions/functional_groups/005010/segment_defs/ACT"
 
           autoload :AK1,
             "stupidedi/versions/functional_groups/005010/segment_defs/AK1"
@@ -91,8 +91,11 @@ module Stupidedi
           autoload :DTP,
             "stupidedi/versions/functional_groups/005010/segment_defs/DTP"
 
- 	  autoload :EB,
+          autoload :EB,
             "stupidedi/versions/functional_groups/005010/segment_defs/EB"
+
+          autoload :EC,
+            "stupidedi/versions/functional_groups/005010/segment_defs/EC"
 
           autoload :EQ,
             "stupidedi/versions/functional_groups/005010/segment_defs/EQ"
@@ -114,9 +117,9 @@ module Stupidedi
 
           autoload :HLH,
             "stupidedi/versions/functional_groups/005010/segment_defs/HLH"
-	    
-	  autoload :III,
-            "stupidedi/versions/functional_groups/005010/segment_defs/III"  
+
+          autoload :III,
+            "stupidedi/versions/functional_groups/005010/segment_defs/III"
 
           autoload :ICM,
             "stupidedi/versions/functional_groups/005010/segment_defs/ICM"
