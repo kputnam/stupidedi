@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 module Stupidedi
-  using Refinements
 
-  module Versions
-    module Interchanges
-      autoload :TwoHundred, "stupidedi/versions/interchanges/00200"
-      autoload :ThreeHundred, "stupidedi/versions/interchanges/00300"
-      autoload :FourHundred, "stupidedi/versions/interchanges/00400"
-      autoload :FourOhOne, "stupidedi/versions/interchanges/00401"
-      autoload :FiveOhOne, "stupidedi/versions/interchanges/00501"
-    end
+  module Interchanges
+    autoload :TwoHundred,   "stupidedi/interchanges/00200"
+    autoload :ThreeHundred, "stupidedi/interchanges/00300"
+    autoload :FourHundred,  "stupidedi/interchanges/00400"
+    autoload :FourOhOne,    "stupidedi/interchanges/00401"
+    autoload :FiveOhOne,    "stupidedi/interchanges/00501"
+    autoload :ElementTypes, "stupidedi/interchanges/element_types"
   end
+
 end

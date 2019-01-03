@@ -1,10 +1,10 @@
 require "spec_helper"
 using Stupidedi::Refinements
 
-describe Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementTypes do
+describe Stupidedi::Versions::FiftyTen::ElementTypes do
   describe "FloatVal" do
 
-    let(:x5010) { Stupidedi::Versions::FunctionalGroups::FiftyTen }
+    let(:x5010) { Stupidedi::Versions::FiftyTen }
     let(:types) { x5010::ElementTypes }
     let(:req)   { x5010::ElementReqs }
     let(:rep)   { Stupidedi::Schema::RepeatCount }

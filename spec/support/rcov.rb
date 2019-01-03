@@ -27,6 +27,7 @@ if defined? Rcov or defined? SimpleCov
         rescue Stupidedi::Exceptions::InvalidSchemaError
           $stderr.puts "warning: #{ansi.red("#{$!.class} #{$!.message}")}"
           $stderr.puts " module: #{name}"
+          $stderr.puts "  trace: #{$!.backtrace[0..-30].map{|x| "  " + x}.join("\n")}"
           $stderr.puts
         rescue LoadError, NameError
           $stderr.puts "warning: #{ansi.red("#{$!.class} #{$!.message}")}"

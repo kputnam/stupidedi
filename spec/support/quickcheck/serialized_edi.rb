@@ -2,15 +2,8 @@ require "support/quickcheck"
 using Stupidedi::Refinements
 
 class QuickCheck
-
-  #
-  #
-  #
   class SerializedEdi < ::QuickCheck
 
-    #
-    #
-    #
     module Macro
       def self.included(base)
         base.extend(ClassMethods)
@@ -114,10 +107,7 @@ class QuickCheck
       Delegators::Current.new(self)
     end
 
-    #
-    #
-    #
-    class Delegator < Stupidedi::BlankSlate
+    class Delegator < BasicObject
       def initialize(quickcheck)
         @quickcheck = quickcheck
       end
@@ -129,14 +119,7 @@ class QuickCheck
       end
     end
 
-    #
-    #
-    #
     module Delegators
-
-      #
-      #
-      #
       class Char < Delegator
 
         # Generate a single basic character
@@ -171,11 +154,7 @@ class QuickCheck
         end
       end
 
-      #
-      #
-      #
       class Stream < Delegator
-
         # Generate a sized string of control characters
         #
         # @return [String]
@@ -230,11 +209,7 @@ class QuickCheck
         end
       end
 
-      #
-      #
-      #
       class SimpleElement < Delegator
-
         # Generate a string representing a blank element
         #
         # @return [String]
@@ -330,16 +305,10 @@ class QuickCheck
         end
       end
 
-      #
-      #
-      #
       class CompositeElement < Delegator
         # @todo
       end
 
-      #
-      #
-      #
       class Segment < Delegator
 
         # @private
@@ -360,11 +329,7 @@ class QuickCheck
         end
       end
 
-      #
-      #
-      #
       class Document < Delegator
-
         # Generate four random delimiters with the restriction that they cannot
         # be control characters, spaces, tabs, numbers, letters, underscores, or
         # numerical symbols, and each delimiter must be unique.
@@ -387,13 +352,9 @@ class QuickCheck
         end
       end
 
-      #
-      #
-      #
       class Current < Delegator
         # @todo
       end
-
     end
 
   end

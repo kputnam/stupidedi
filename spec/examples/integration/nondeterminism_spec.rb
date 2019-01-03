@@ -17,8 +17,8 @@ describe "Non-determinism" do
 
   let(:schema) do
     d = Stupidedi::Schema
-    r = Stupidedi::Versions::FunctionalGroups::FiftyTen::SegmentReqs
-    s = Stupidedi::Versions::FunctionalGroups::FiftyTen::SegmentDefs
+    r = Stupidedi::Versions::FiftyTen::SegmentReqs
+    s = Stupidedi::Versions::FiftyTen::SegmentDefs
 
     d::TransactionSetDef.build("BE", "000", "Example of Ambiguous Grammar",
       d::TableDef.header("Table 1",

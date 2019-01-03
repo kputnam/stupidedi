@@ -369,14 +369,18 @@ module Stupidedi
 
     class << Auditor
 
-      def build(definition)
-        # Use dummy identifiers to link definition to the parser
-        config  = mkconfig(definition, "ISA11", "GS01", "GS08", "ST01")
+      def build(transaction_set_def, functional_group_def=nil)
+        functional_group_def ||= infer_functional_group_def(transaction_set_def)
+
+        # Use dummy identifiers to link transaction_set_def to the parser
+        config  = mkconfig(transaction_set_def, functional_group_def,
+                           "ISA11", "GS01", "GS08", "ST01")
+
         builder = Builder::BuilderDsl.new(
           Builder::StateMachine.build(config, Zipper::Stack), false)
 
         # These lists of elements are re-used when Auditor needs to construct
-        # an ISA, GS, or ST segment as it walks the definition.
+        # an ISA, GS, or ST segment as it walks the transaction_set_def
         isa_elements =
           [ "00", "AUTHORIZATION",
             "00", "PASSWORD",
@@ -405,23 +409,21 @@ module Stupidedi
         new(builder.machine, builder.reader, isa_elements, gs_elements, st_elements)
       end
 
-      def mkconfig(definition, isa11, gs01, gs08, st01)
-        segment = definition.table_defs.head.header_segment_uses.head.definition
+      def infer_functional_group_def(transaction_set_def)
+        raise ArgumentError,
+          "cannot infer FunctionalGroupDef from TransactionSetDef"
+      end
 
-        # Infer the FunctionalGroupDef based on the given `definition`
-        element = segment.element_uses.head.definition
-        version = element.class.name.split('::').slice(0..-3)
-        grpdefn = Object.const_get("FunctionalGroupDef".snoc(version).join('::'))
-
+      def mkconfig(definition, functional_group_def, isa11, gs01, gs08, st01)
         Config.new.customize do |c|
           c.interchange.customize do |x|
             # We can use whatever interchange version we like, it does not
             # have any bearing or relationship to the given `definition`
-            x.register(isa11, Versions::Interchanges::FiveOhOne::InterchangeDef)
+            x.register(isa11, Interchanges::FiveOhOne::InterchangeDef)
           end
 
           c.functional_group.customize do |x|
-            x.register(gs08, grpdefn)
+            x.register(gs08, functional_group_def)
           end
 
           c.transaction_set.customize do |x|

@@ -1,18 +1,14 @@
 # frozen_string_literal: true
 module Stupidedi
-  module Versions
-    module Interchanges
-      module FiveOhOne
-        module SegmentDefs
+  module Interchanges
+    module FiveOhOne
+      module SegmentDefs
+        s = Schema
+        e = ElementDefs
+        r = ElementReqs
 
-          s = Schema
-          e = ElementDefs
-          r = FunctionalGroups::FiftyTen::ElementReqs
-
-          # @todo: Where's the documentation for this?
-          ISE = s::SegmentDef.build(:ISE, "Deferred Delivery Request", "")
-
-        end
+        # @todo
+        ISE = s::SegmentDef.build(:ISE, "Deferred Delivery Request", "")
       end
     end
   end

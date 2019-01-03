@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
@@ -12,9 +11,7 @@ module Stupidedi
     # @see X222 B.1.1.3.1 Data Element
     #
     class SimpleElementVal < AbstractElementVal
-
       # @return [SimpleElementDef]
-
       def_delegators :@usage, :definition
 
       abstract :valid?

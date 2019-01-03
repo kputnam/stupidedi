@@ -4,7 +4,7 @@ using Stupidedi::Refinements
 describe Stupidedi::Reader::TokenReader do
   include QuickCheck::SerializedEdi::Macro
 
-  let(:ty) { Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementTypes }
+  let(:ty) { Stupidedi::Versions::FiftyTen::ElementTypes }
   let(:r)  { ty::R .new("R" , "Float",          1, 1) }
   let(:n0) { ty::N0.new("N0", "Whole Number",   1, 1) }
   let(:n1) { ty::N1.new("N1", "Tenths Place",   1, 1) }
@@ -21,7 +21,7 @@ describe Stupidedi::Reader::TokenReader do
   let(:dt) { ty::DT.new("DT", "Date",           8, 8) }
   let(:tm) { ty::TM.new("TM", "Time",           4, 6) }
 
-  let(:rq) { Stupidedi::Versions::FunctionalGroups::FiftyTen::ElementReqs }
+  let(:rq) { Stupidedi::Versions::FiftyTen::ElementReqs }
   let(:s)  { Stupidedi::Schema }
 
   let(:separators) do

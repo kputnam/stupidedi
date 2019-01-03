@@ -1,26 +1,12 @@
 # frozen_string_literal: true
 module Stupidedi
-  using Refinements
+  module Interchanges
+    module FourOhOne
+      autoload :ElementDefs,    "stupidedi/interchanges/00401/element_defs"
+      autoload :SegmentDefs,    "stupidedi/interchanges/00401/segment_defs"
+      autoload :InterchangeDef, "stupidedi/interchanges/00401/interchange_def"
 
-  module Versions
-    module Interchanges
-
-      #
-      # @see FunctionalGroups::FortyTen
-      #
-      module FourOhOne
-
-        autoload :ElementDefs,
-          "stupidedi/versions/interchanges/00401/element_defs"
-
-        autoload :SegmentDefs,
-          "stupidedi/versions/interchanges/00401/segment_defs"
-
-        autoload :InterchangeDef,
-          "stupidedi/versions/interchanges/00401/interchange_def"
-
-      end
-
+      ElementReqs = Versions::Common::ElementReqs
     end
   end
 end

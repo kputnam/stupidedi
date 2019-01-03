@@ -1,45 +1,37 @@
 # frozen_string_literal: true
 module Stupidedi
-  using Refinements
+  module Interchanges
+    module FourHundred
+      s = Schema
+      r = Versions::FortyTen::ElementReqs
 
-  module Versions
-    module Interchanges
+      InterchangeDef = Class.new(Schema::InterchangeDef) do
+        # @group Constructors
+        #####################################################################
 
-      #
-      # @see Values::InterchangeDef
-      #
-      module FourHundred
+        # @return [Values::InterchangeVal]
+        def empty(separators)
+          Values::InterchangeVal.new(self, [], separators)
+        end
 
-        s = Schema
-        r = FunctionalGroups::FortyTen::ElementReqs
+        # @endgroup
+        #####################################################################
 
-        InterchangeDef = Class.new(Schema::InterchangeDef) do
-          # @group Constructors
-          #####################################################################
+        # @return [Module]
+        def segment_dict
+          SegmentDefs
+        end
 
-          # @return [Values::InterchangeVal]
-          def empty(separators)
-            Values::InterchangeVal.new(self, [], separators)
-          end
+        # @return [Reader::Separators]
+        def separators(isa)
+          Reader::Separators.new(isa.element(16).to_s, nil, nil, nil)
+        end
 
-          # @endgroup
-          #####################################################################
-
-          # @return [Module]
-          def segment_dict
-            SegmentDefs
-          end
-
-          # @return [Reader::Separators]
-          def separators(isa)
-            Reader::Separators.new(isa.element(16).to_s, nil, nil, nil)
-          end
-
-          # @return [SegmentVal]
-          def replace_separators(isa, separators)
-            isa.copy \
-              :separators => separators,
-              :children   =>
+        # @return [SegmentVal]
+        def replace_separators(isa, separators)
+          isa.copy \
+            :separators => separators,
+            :children   =>
               [isa.element(1),
                isa.element(2),
                isa.element(3),
@@ -56,16 +48,12 @@ module Stupidedi
                isa.element(14),
                isa.element(15),
                isa.element(16).copy(:value => separators.component)]
-          end
-        end.new "00400",
-          # Interchange header
-          [ SegmentDefs::ISA.use(1, r::Mandatory, s::RepeatCount.bounded(1)),
-            SegmentDefs::TA1.use(4, r::Optional,  s::RepeatCount.unbounded) ],
+        end
+      end.new "00400",
+        [ SegmentDefs::ISA.use(1, r::Mandatory, s::RepeatCount.bounded(1)),
+          SegmentDefs::TA1.use(4, r::Optional,  s::RepeatCount.unbounded) ],
+        [ SegmentDefs::IEA.use(5, r::Mandatory, s::RepeatCount.bounded(1)) ]
 
-          # Interchange trailer
-          [ SegmentDefs::IEA.use(5, r::Mandatory, s::RepeatCount.bounded(1)) ]
-
-      end
     end
   end
 end
