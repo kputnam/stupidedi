@@ -7,8 +7,8 @@ module Stupidedi
         e = ElementDefs
         r = ElementReqs
 
-        EC  = s::SegmentDef.build(:EC, "Health Coverage",
-          "To provide information on health coverage",
+        EC  = s::SegmentDef.build(:EC, "Employment Class",
+          "To provide class of employment information",
           e::E1176.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
           e::E1176.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
           e::E1176.simple_use(r::Optional,   s::RepeatCount.bounded(1)),

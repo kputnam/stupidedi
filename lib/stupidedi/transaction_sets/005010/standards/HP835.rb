@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 module Stupidedi
   module TransactionSets
-  module FiftyTen
-    module Standards
+    module FiftyTen
+      module Standards
         b = Builder
         d = Schema
         r = SegmentReqs

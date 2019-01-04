@@ -2,7 +2,6 @@
 module Stupidedi
   module Versions
     module ThirtyFifty
-
       module SegmentDefs
         autoload :AK1, "stupidedi/versions/003050/segment_defs/AK1"
         autoload :AK2, "stupidedi/versions/003050/segment_defs/AK2"
@@ -91,7 +90,6 @@ module Stupidedi
         autoload :W66, "stupidedi/versions/003050/segment_defs/W66"
         autoload :W76, "stupidedi/versions/003050/segment_defs/W76"
       end
-
     end
   end
 end
