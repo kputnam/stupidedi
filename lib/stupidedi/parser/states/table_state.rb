@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class TableState < AbstractState
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -93,8 +90,6 @@ module Stupidedi
           is.concat(sequence(table_def.trailer_segment_uses, is.length))
         end
       end
-
     end
-
   end
 end

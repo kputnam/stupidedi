@@ -74,6 +74,11 @@ module Stupidedi
       def position
         nil
       end
+
+      def strip_heredoc
+        indent = scan(/^[ \t]*(?=\S)/).min.try(&:size) || 0
+        gsub(/^[ \t]{#{indent}}/, "")
+      end
     end
 
   end

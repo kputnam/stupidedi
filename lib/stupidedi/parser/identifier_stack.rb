@@ -1,10 +1,10 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
+    # @todo: Documentation
+    #
     class IdentifierStack
       def initialize(id)
         @state = Empty.new(id)
@@ -14,11 +14,19 @@ module Stupidedi
         @state.id
       end
 
+      # Creates a new interchange control number (ISA-XX) and pushes it onto
+      # the internal identifier stack.
+      #
+      # @return [String]
       def isa
         @state = @state.isa
         @state.id
       end
 
+      # Creates a new functional group control number (ISA-XX) and pushes it onto
+      # the internal identifier stack.
+      #
+      # @return [String]
       def gs
         @state = @state.gs
         @state.id
@@ -42,8 +50,8 @@ module Stupidedi
         @state.__send__(name, *args)
       end
 
-      # State Representations
       #########################################################################
+      # State Representations
 
       class Empty
         def initialize(id)

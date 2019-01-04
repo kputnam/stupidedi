@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     module Generation
-
       # Consumes all input from `reader` and returns the updated
       # {StateMachine} along with the result of the last attempt
       # to read a segment.

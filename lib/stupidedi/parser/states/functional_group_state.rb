@@ -2,10 +2,8 @@
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class FunctionalGroupState < AbstractState
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -95,6 +93,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

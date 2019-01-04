@@ -30,7 +30,6 @@ if RUBY_PLATFORM == "java"
 end
 
 module Stupidedi
-  autoload :Builder,          "stupidedi/builder"
   autoload :Color,            "stupidedi/color"
   autoload :Config,           "stupidedi/config"
   autoload :Editor,           "stupidedi/editor"
@@ -38,6 +37,7 @@ module Stupidedi
   autoload :Exceptions,       "stupidedi/exceptions"
   autoload :Inspect,          "stupidedi/inspect"
   autoload :Interchanges,     "stupidedi/interchanges"
+  autoload :Parser,           "stupidedi/parser"
   autoload :Reader,           "stupidedi/reader"
   autoload :Schema,           "stupidedi/schema"
   autoload :Sets,             "stupidedi/sets"

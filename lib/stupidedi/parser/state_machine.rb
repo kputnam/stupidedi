@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class StateMachine
       include Inspect
       include Navigation
@@ -60,6 +58,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

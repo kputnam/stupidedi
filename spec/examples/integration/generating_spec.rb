@@ -4,8 +4,8 @@ describe "Generating" do
   include NavigationMatchers
 
   let(:config)  { Stupidedi::Config.hipaa }
-  let(:strict)  { Stupidedi::Builder::BuilderDsl.build(config, true)  }
-  let(:relaxed) { Stupidedi::Builder::BuilderDsl.build(config, false) }
+  let(:strict)  { Stupidedi::Parser::BuilderDsl.build(config, true)  }
+  let(:relaxed) { Stupidedi::Parser::BuilderDsl.build(config, false) }
 
   context "unrecognized methods" do
     it "raises an exception" do

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class AbstractState
       include Inspect
 
@@ -30,9 +28,6 @@ module Stupidedi
       # @return [void]
       def pretty_print(q)
         q.text self.class.name.split('::').last
-      # q.text "[#{zipper.node.class.name.split('::').last}]"
-      # q.text "[#{zipper.node.definition.id}]"
-
         q.group(2, "(", ")") do
           q.breakable ""
 
@@ -333,6 +328,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

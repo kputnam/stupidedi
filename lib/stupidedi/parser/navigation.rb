@@ -1,14 +1,11 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     module Navigation
-
-      # @group Querying the Current Position
       #########################################################################
+      # @group Querying the Current Position
 
       # @return [Array<InstructionTable>]
       def successors
@@ -727,8 +724,6 @@ module Stupidedi
           state
         end
       end
-
     end
-
   end
 end

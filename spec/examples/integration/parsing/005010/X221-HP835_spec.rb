@@ -236,7 +236,7 @@ describe "X221-HP835" do
         #     2000C HL*..*..*23
         let(:dsl) do
           c = Stupidedi::Config.hipaa
-          b = Stupidedi::Builder::BuilderDsl.build(c, false)
+          b = Stupidedi::Parser::BuilderDsl.build(c, false)
           b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc,
             Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
           b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
@@ -297,7 +297,7 @@ describe "X221-HP835" do
         #     1000B NM1*40
         let(:dsl) do
           c = Stupidedi::Config.hipaa
-          b = Stupidedi::Builder::BuilderDsl.build(c, false)
+          b = Stupidedi::Parser::BuilderDsl.build(c, false)
           b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc,
             Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
           b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
@@ -336,7 +336,7 @@ describe "X221-HP835" do
         #       PER*IC
         let(:dsl) do
           c = Stupidedi::Config.hipaa
-          b = Stupidedi::Builder::BuilderDsl.build(c)
+          b = Stupidedi::Parser::BuilderDsl.build(c)
           b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc,
             Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
           b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X221")

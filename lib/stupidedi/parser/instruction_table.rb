@@ -1,15 +1,12 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class InstructionTable
       include Inspect
 
       class NonEmpty < InstructionTable
-
         # @return [Array<Instruction>]
         attr_reader :instructions
 

@@ -2,10 +2,8 @@
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class InterchangeState < AbstractState
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -92,6 +90,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

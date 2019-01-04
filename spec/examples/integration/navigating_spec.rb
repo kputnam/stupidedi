@@ -24,7 +24,7 @@ describe "Navigating" do
     specify "the second ISA's parent is the first ISA" do
       payment.flatmap do |isa|
         isa.last.tap do |iea|
-          b = Stupidedi::Builder::BuilderDsl.new(iea, false)
+          b = Stupidedi::Parser::BuilderDsl.new(iea, false)
           b.ISA("00", "",
                 "00", "",
                 "ZZ", "",
@@ -110,7 +110,7 @@ describe "Navigating" do
       it "returns a failure" do
         expect(payment.flatmap(&:last).tap do |iea|
           # non-strict builder used to append a bad segment (ISA version)
-          b = Stupidedi::Builder::BuilderDsl.new(iea, false)
+          b = Stupidedi::Parser::BuilderDsl.new(iea, false)
           b.ISA("00", "",
                 "00", "",
                 "ZZ", "",

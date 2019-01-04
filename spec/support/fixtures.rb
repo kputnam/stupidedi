@@ -4,7 +4,7 @@ Fixtures = Class.new do
     @files = Hash.new{|h,k| h[k] = parse(k) }
 
     @config  = Stupidedi::Config.hipaa
-    @machine = Stupidedi::Builder::StateMachine.build(@config)
+    @machine = Stupidedi::Parser::StateMachine.build(@config)
   end
 
   def file(path)

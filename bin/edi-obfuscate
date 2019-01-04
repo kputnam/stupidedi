@@ -84,16 +84,14 @@ def simple(e, u)
     return e
   end
 
-  if type.end_with?("AN")
+  if e.string?
     e.copy(value: "_" * u.definition.min_length)
-  elsif type == "TM"
-    e.copy(value: "0" * e.value.length)
-  elsif type == "DT"
-    if e.value.length == 8
-      e.copy(value: "20151230")
-    else
-      e.copy(value: "151230")
-    end
+  elsif e.time?
+    e.copy(hour: 0, minute: 0, second: 0)
+  elsif e.date?
+    e.copy(year: 2020, month: 1, day: 30)
+  elsif e.numeric?
+    e.copy(value: 1)
   else
     e
   end

@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
-    class TransmissionState < AbstractState
-
+  module Parser
+    class InitialState < AbstractState
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -27,9 +24,9 @@ module Stupidedi
           separators, segment_dict, instructions, zipper, children
       end
 
-      # @return [TransmissionState]
+      # @return [InitialState]
       def copy(changes = {})
-        TransmissionState.new \
+        InitialState.new \
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
@@ -38,26 +35,28 @@ module Stupidedi
       end
     end
 
-    class << TransmissionState
-      # @group Constructors
-      #########################################################################
+    class << InitialState
+      # @return [InitialState]
+      def build(zipper)
+        new(
+          Reader::Separators.empty,
+          Reader::SegmentDict.empty,
 
-      # @return [Zipper::AbstractCursor]
-      def push(zipper, parent, segment_tok, segment_use, config)
-        zipper = zipper.append_child new(
-          parent.separators,
-          parent.segment_dict,
-          parent.instructions.push([
-            Instruction.new(:ISA, nil, 0, 0, InterchangeState)]),
-          parent.zipper.dangle.last,
+          InstructionTable.build(
+            # We initially accept only a single segment. When reading the "ISA"
+            # segment, we push a new InterchangeState.
+            Instruction.new(:ISA, nil, 0, 0, TransmissionState).cons),
+
+          # Create a new parse tree with a Transmission as the root, and descend
+          # to the placeholder where the first child node will be placed.
+          zipper.build(Values::TransmissionVal.new),
           [])
-
-        InterchangeState.push(zipper, zipper.node, segment_tok, segment_use, config)
       end
 
-      # @endgroup
-      #########################################################################
+      # @return [Zipper::AbstractCursor]
+      def start(zipper)
+        zipper.build(build(zipper))
+      end
     end
-
   end
 end

@@ -1,11 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
-    #
+  module Parser
     # The {ConstraintTable} is a data structure that contains one or more
     # {Instruction} values for the same segment identifier. Each concrete
     # subclass implements different strategies for narrowing down the
@@ -20,14 +17,12 @@ module Stupidedi
     # is done here.
     #
     class ConstraintTable
-
       # @return [Array<Instruction>]
       abstract :matches, :args => %w(segment_tok)
 
       # @return [Array<Instruction>]
       attr_reader :instructions
 
-      #
       # Performs no filtering of the {Instruction} list. This is used when there
       # already is a single {Instruction} or when a {Reader::SegmentTok} doesn't
       # provide any more information to filter the list.
@@ -43,7 +38,6 @@ module Stupidedi
         end
       end
 
-      #
       # Chooses the {Instruction} that pops the greatest number of states. For
       # example, in the X222 837P an HL segment signals the start of a new
       # 2000 loop, but may or may not begin a new Table 2 -- the specifications
@@ -71,7 +65,6 @@ module Stupidedi
         end
       end
 
-      #
       # The only exception to the rule of preferring the {Instruction} which pops
       # the greatest number of states is when the {Instruction} is for ISA. We want
       # to reuse one root {Values::TransmissionVal} container for all children.
@@ -97,7 +90,6 @@ module Stupidedi
         end
       end
 
-      #
       # Chooses the subset of {Instruction} values based on the distinguishing
       # values allowed by each {Schema::SegmentUse}. For instance, there are
       # often several loops that begin with `NM1`, which are distinguished by

@@ -4,8 +4,8 @@ require "pp"
 describe "Non-determinism" do
   include NavigationMatchers
 
-  let(:strict)  { Stupidedi::Builder::BuilderDsl.build(config, true)  }
-  let(:relaxed) { Stupidedi::Builder::BuilderDsl.build(config, false) }
+  let(:strict)  { Stupidedi::Parser::BuilderDsl.build(config, true)  }
+  let(:relaxed) { Stupidedi::Parser::BuilderDsl.build(config, false) }
 
   let(:config) do
     Stupidedi::Config.default.customize do |c|
@@ -101,7 +101,7 @@ describe "Non-determinism" do
          "N1*6Y*LINDA BELCHER~",
          suffix].join("\n")
 
-      machine = Stupidedi::Builder::StateMachine.build(config)
+      machine = Stupidedi::Parser::StateMachine.build(config)
       machine.read(Stupidedi::Reader.build(input), nondeterminism: nondeterminism)
     end
 

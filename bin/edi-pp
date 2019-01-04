@@ -9,16 +9,17 @@ GC.disable
 require "term/ansicolor" if ARGV.delete("-C")
 
 config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser::StateMachine.build(config)
 start  = Time.now
-nondet = ARGV.delete('-N')
+nondet = ARGV.delete("-N")
 
 ARGV.each do |path|
   # Reading the entire input at once is slightly faster than streaming
   # from a file handle.
+  #
   # content   = File.read(path, :encoding => "ISO-8859-1")
   # parser, r = parser.read(Stupidedi::Reader.build(content))
-
+  #
   File.open(path) do |io|
     parser, _result = parser.read(Stupidedi::Reader.build(io))
   end

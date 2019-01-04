@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
+  module Parser
     class LoopState < AbstractState
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -78,6 +75,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

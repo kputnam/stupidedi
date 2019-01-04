@@ -1,25 +1,22 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
-  module Builder
-
-    class FailureState < AbstractState
-
+  module Parser
+    class TransmissionState < AbstractState
       # @return [Reader::Separators]
       attr_reader :separators
 
       # @return [Reader::SegmentDict]
       attr_reader :segment_dict
 
-      # @return [Zipper::AbstractCursor]
-      attr_reader :zipper
-
       # @return [InstructionTable]
       attr_reader :instructions
 
-      # @return [Array<FailureState>]
+      # @return [Zipper::AbstractCursor]
+      attr_reader :zipper
+
+      # @return [Array<AbstractState>]
       attr_reader :children
 
       def initialize(separators, segment_dict, instructions, zipper, children)
@@ -27,8 +24,9 @@ module Stupidedi
           separators, segment_dict, instructions, zipper, children
       end
 
+      # @return [TransmissionState]
       def copy(changes = {})
-        FailureState.new \
+        TransmissionState.new \
           changes.fetch(:separators, @separators),
           changes.fetch(:segment_dict, @segment_dict),
           changes.fetch(:instructions, @instructions),
@@ -37,37 +35,25 @@ module Stupidedi
       end
     end
 
-    class << FailureState
+    class << TransmissionState
       # @group Constructors
       #########################################################################
 
       # @return [Zipper::AbstractCursor]
-      def push(zipper, parent, segment_tok, reason)
-        envelope_val = Values::InvalidEnvelopeVal.new([])
-        segment_val  = Values::InvalidSegmentVal.new(reason, segment_tok)
-
-        zipper.append_child new(
+      def push(zipper, parent, segment_tok, segment_use, config)
+        zipper = zipper.append_child new(
           parent.separators,
           parent.segment_dict,
-          parent.instructions.push([]),
-          parent.zipper.append(envelope_val).append_child(segment_val),
+          parent.instructions.push([
+            Instruction.new(:ISA, nil, 0, 0, InterchangeState)]),
+          parent.zipper.dangle.last,
           [])
-      end
 
-      def mksegment(segment_tok, parent)
-        segment_val = Values::InvalidSegmentVal.new \
-          "unexpected segment", segment_tok
-
-        new(parent.separators,
-            parent.segment_dict,
-            parent.instructions,
-            parent.zipper.append(segment_val),
-            [])
+        InterchangeState.push(zipper, zipper.node, segment_tok, segment_use, config)
       end
 
       # @endgroup
       #########################################################################
     end
-
   end
 end
