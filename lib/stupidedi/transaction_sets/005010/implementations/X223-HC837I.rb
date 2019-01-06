@@ -14,7 +14,7 @@ module Stupidedi
             d::LoopDef.build("2300 CLAIM INFORMATION",
                 d::RepeatCount.bounded(100),
                 b::Segment(1300, s::CLM, "Claim Information",
-                  r::Required, d::RepeatCount.bounded(1),
+                  r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Patient Control Number", b::MaxLength(20)),
                   b::Element(e::Required,    "Total Claim Charge Amount"),
                   b::Element(e::NotUsed,     "Claim Filing Indicator Code"),
@@ -1777,7 +1777,7 @@ module Stupidedi
                       b::Element(e::Required,    "Reference Identification Qualifier", b::Values("0B", "1G", "G2", "LU")),
                       b::Element(e::Required,    "Other Payer Rendering Provider Secondary Identifier"),
                       b::Element(e::NotUsed,     "Description"),
-                      b::Element(e::NotUsed,     "REFERENCE IDENTIFIER")))),
+                      b::Element(e::NotUsed,     "REFERENCE IDENTIFIER"))),
 
                   d::LoopDef.build("2330H OTHER PAYER REFERRING PROVIDER",
                     d::RepeatCount.bounded(1),
@@ -1823,7 +1823,7 @@ module Stupidedi
                       b::Element(e::Required,    "Reference Identification Qualifier", b::Values("G2", "LU")),
                       b::Element(e::Required,    "Other Payer Billing Provider Identifier"),
                       b::Element(e::NotUsed,     "Description"),
-                      b::Element(e::NotUsed,     "REFERENCE IDENTIFIER"))),
+                      b::Element(e::NotUsed,     "REFERENCE IDENTIFIER")))),
 
                 d::LoopDef.build("2400 SERVICE LINE NUMBER",
                   d::RepeatCount.bounded(999),
