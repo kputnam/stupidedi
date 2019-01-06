@@ -277,6 +277,7 @@ module Stupidedi
             "271" => "Eligibility, Coverage, or Benefit Information",
             "276" => "Health Care Claim Status Request",
             "277" => "Health Care Information Status Notification",
+            "820" => "Payment/Remittance Advice",
             "834" => "Benefit Enrollment and Maintenance",
             "835" => "Health Care Claim Payment/Advice",
             "837" => "Health Care Claim",

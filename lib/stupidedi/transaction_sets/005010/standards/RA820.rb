@@ -134,8 +134,8 @@ module Stupidedi
 
                     d::LoopDef.build("ENT/RMR/ADX/IT1/SAC", d::RepeatCount.unbounded,
                       s::SAC.use(2720, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::TXI.use(2730, r::Optional,  d::RepeatCount.unbounded)),
-                      s::DTM.use(2740, r::Optional,  d::RepeatCount.bounded(10))),
+                      s::TXI.use(2730, r::Optional,  d::RepeatCount.unbounded),
+                      s::DTM.use(2740, r::Optional,  d::RepeatCount.bounded(10)))),
 
                     d::LoopDef.build("ENT/RMR/ADX/IT1/SLN", d::RepeatCount.unbounded,
                       s::SLN.use(2750, r::Optional,  d::RepeatCount.bounded(1)),
@@ -182,8 +182,8 @@ module Stupidedi
                   s::DTP.use(3450, r::Optional,  d::RepeatCount.unbounded),
 
                   d::LoopDef.build("LX/NM1/PEN/INV", d::RepeatCount.unbounded,
-                    s::INV.use(3500, r::Optional,  d::RepeatCount.bounded(1))),
-                    s::DTP.use(3550, r::Optional,  d::RepeatCount.unbounded)))),
+                    s::INV.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
+                    s::DTP.use(3550, r::Optional,  d::RepeatCount.unbounded))))),
 
             d::LoopDef.build("N9", d::RepeatCount.unbounded,
               s:: N9.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
