@@ -59,12 +59,14 @@ module Stupidedi
 
                     d::LoopDef.build("2117", d::RepeatCount.unbounded,
                       s:: LQ.use(3000, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::AMT.use(3100, r::Optional,  d::RepeatCount.bounded(5))),
-                      s::PCT.use(3200, r::Optional,  d::RepeatCount.bounded(5))),
+                      s::AMT.use(3100, r::Optional,  d::RepeatCount.bounded(5)),
+                      s::PCT.use(3200, r::Optional,  d::RepeatCount.bounded(5)))),
 
                   d::LoopDef.build("2120 LS", d::RepeatCount.bounded(1),
                     s:: LS.use(3300, r::Optional,  d::RepeatCount.bounded(1)),
 
+                    # @todo: NM1 3400 conflicts with NM1 300... maybe we should
+                    # always choose lowest pop_count?
                     d::LoopDef.build("2120", d::RepeatCount.unbounded,
                       s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
                       s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
