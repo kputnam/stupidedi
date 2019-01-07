@@ -1,5 +1,4 @@
 module EitherMatchers
-
   def be_defined
     BeDefined.new
   end
@@ -49,5 +48,4 @@ module EitherMatchers
       "be defined"
     end
   end
-
 end

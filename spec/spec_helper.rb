@@ -1,27 +1,10 @@
 require File.expand_path("../../lib/stupidedi", __FILE__)
-require "pathname"
+require "rspec"
 require "pp"
 
 begin
-  # RSpec-1: https://github.com/dchelimsky/rspec
-  require "spec"
-rescue LoadError
-  # RSpec-2: https://github.com/rspec/rspec
-  require "rspec"
-end
-
-begin
-  require "simplecov"
-  SimpleCov.start
-rescue LoadError
-  warn $!
-end if RUBY_VERSION >= "1.9"
-
-# Require supporting files with custom matchers and macros
-begin
-  specdir = Pathname.new(File.dirname(__FILE__))
-  Dir["#{specdir}/support/**/*.rb"].each do |file|
-    require Pathname.new(file).relative_path_from(specdir)
+  Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|
+    require file
   end
 end
 
@@ -31,7 +14,7 @@ RSpec.configure do |config|
   config.include(EitherMatchers)
 
   config.expect_with :rspec do |c|
-    c.syntax = [:should, :expect]
+    c.syntax = :expect
   end
 
   # Use either of these to run only specs marked 'focus: true'

@@ -3,7 +3,6 @@ using Stupidedi::Refinements
 
 class QuickCheck
   class SerializedEdi < ::QuickCheck
-
     module Macro
       def self.included(base)
         base.extend(ClassMethods)
@@ -121,7 +120,6 @@ class QuickCheck
 
     module Delegators
       class Char < Delegator
-
         # Generate a single basic character
         #
         # @return [Character]
@@ -310,7 +308,6 @@ class QuickCheck
       end
 
       class Segment < Delegator
-
         # @private
         SEGMENT_ID = /^[A-Z][A-Z0-9]{1,2}$/
 
@@ -356,6 +353,5 @@ class QuickCheck
         # @todo
       end
     end
-
   end
 end

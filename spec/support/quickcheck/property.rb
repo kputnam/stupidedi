@@ -1,6 +1,5 @@
 class QuickCheck
   class Property
-
     # @return [String]
     attr_reader :name
 
@@ -85,7 +84,6 @@ class QuickCheck
               raise $!
             end
           end
-
         end
       end
     end
@@ -100,6 +98,5 @@ class QuickCheck
       def progress(completed, total)
       end
     end
-
   end
 end

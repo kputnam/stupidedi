@@ -1,5 +1,6 @@
 using Stupidedi::Refinements
 
+#
 # This class is designed to be subclassed, to avoid polluting the minimal
 # base class. Subclasses can add parameters with the macro "has_parameter",
 # and parameters are inherited when subclassing.
@@ -70,7 +71,6 @@ class QuickCheck
   class GuardFailure < StandardError; end
 
   class NoMoreTries < StandardError
-
     # @return [Integer]
     attr_reader :limit
 
