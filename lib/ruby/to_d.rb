@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 require "bigdecimal"
-require "bigdecimal/util"
 require "rational"
 
 module Stupidedi
   module Refinements
-
     refine BigDecimal do
       # @return [BigDecimal] self
       def to_d
@@ -14,29 +11,27 @@ module Stupidedi
       end
     end
 
-    if RUBY_VERSION < "2.4"
-      refine String do
-        BIGDECIMAL = /\A[+-]?            (?# optional leading sign            )
-                      (?:
-                        (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)
-                        (?:\d*?\.?\d+) ) (?# optional whole with decimal      )
-                      (?:E[+-]?\d+)?     (?# optional exponent                )
-                     \Z/ix
+    BIGDECIMAL = /\A[+-]?            (?# optional leading sign            )
+                  (?:
+                    (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)
+                    (?:\d*?\.?\d+) ) (?# optional whole with decimal      )
+                  (?:E[+-]?\d+)?     (?# optional exponent                )
+                 \Z/ix
 
-        # Converts the string to a BigDecimal after validating the format. If the
-        # string does not match the pattern for a valid number, an `ArgumentError`
-        # is raised.
-        #
-        # @example
-        #   "1.0".to_d  #=> BigDecimal("1.0")
-        #
-        # @return [BigDecimal]
-        def to_d
-          if BIGDECIMAL =~ self
-            BigDecimal(to_s)
-          else
-            raise ArgumentError, "#{inspect} is not a valid number"
-          end
+    refine String do
+      # Converts the string to a BigDecimal after validating the format. If the
+      # string does not match the pattern for a valid number, an `ArgumentError`
+      # is raised.
+      #
+      # @example
+      #   "1.0".to_d  #=> BigDecimal("1.0")
+      #
+      # @return [BigDecimal]
+      def to_d
+        if BIGDECIMAL =~ self
+          BigDecimal(to_s)
+        else
+          raise ArgumentError, "#{inspect} is not a valid number"
         end
       end
     end
