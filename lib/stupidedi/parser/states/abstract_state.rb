@@ -27,7 +27,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        q.text self.class.name.split('::').last
+        q.text self.class.name.split("::").last
         q.group(2, "(", ")") do
           q.breakable ""
 

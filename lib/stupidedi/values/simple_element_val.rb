@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @abstract This must be subclassed to add type- and version-specific
     #   functionality. For instance, DateVal adds `#day`, `#month`, etc.
@@ -77,6 +76,5 @@ module Stupidedi
         not @usage.component?
       end
     end
-
   end
 end

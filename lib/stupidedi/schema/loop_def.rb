@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X222.pdf 2.2.2 Loops
     # @see X222.pdf B.1.3.12.4 Loops of Data Segments
@@ -168,6 +166,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

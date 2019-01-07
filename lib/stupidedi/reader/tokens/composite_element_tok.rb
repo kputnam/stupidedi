@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class CompositeElementTok
       include Inspect
 
@@ -79,6 +78,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

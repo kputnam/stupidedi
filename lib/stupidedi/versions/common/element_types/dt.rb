@@ -5,7 +5,6 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         #
         # Simple element definition for date elements
         #
@@ -199,8 +198,6 @@ module Stupidedi
             end
 
             def coerce(other)
-              # me, he = other.coerce(self)
-              # me <OP> he
               return DateVal.value(other, usage, position), self
             end
 
@@ -493,7 +490,6 @@ module Stupidedi
                 @month == other.month)
             end
           end
-
         end
 
         class << DateVal
@@ -562,7 +558,6 @@ module Stupidedi
         DateVal::Proper.eigenclass.send(:public, :new)
         DateVal::Invalid.eigenclass.send(:public, :new)
         DateVal::Improper.eigenclass.send(:public, :new)
-
       end
     end
   end

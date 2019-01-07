@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class RepeatedElementTok
       include Inspect
 
@@ -62,6 +61,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

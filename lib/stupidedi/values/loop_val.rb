@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X222.pdf B.1.1.3.12.2 Data Segment Groups
     # @see X222.pdf B.1.1.3.12.4 Loops of Data Segments
@@ -59,7 +57,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.loop("Loop") + "(#{@children.map(&:inspect).join(', ')})"
+        ansi.loop("Loop") + "(#{@children.map(&:inspect).join(", ")})"
       end
 
       # @return [Boolean]
@@ -69,6 +67,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

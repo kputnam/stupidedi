@@ -5,7 +5,6 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         class Nn < SimpleElementDef
           # @return [Integer]
           attr_reader :precision
@@ -84,7 +83,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -135,7 +134,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -206,8 +205,6 @@ module Stupidedi
             end
 
             def coerce(other)
-              # self', other' = other.coerce(self)
-              # self' * other'
               return copy(:value => other.to_d), self
             end
 
@@ -222,7 +219,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -304,7 +301,6 @@ module Stupidedi
         FixnumVal::Invalid.eigenclass.send(:public, :new)
         FixnumVal::NonEmpty.eigenclass.send(:public, :new)
       end
-
     end
   end
 end

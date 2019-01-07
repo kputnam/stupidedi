@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   class Config
-
     class CodeListConfig
       include Inspect
 
@@ -42,6 +41,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

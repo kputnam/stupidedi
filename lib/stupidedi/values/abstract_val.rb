@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class AbstractVal
       include Inspect
       include Color
@@ -127,8 +125,6 @@ module Stupidedi
           children.inject(result){|r,c| c.characters(r) }
         end
       end
-
     end
-
   end
 end

@@ -3,7 +3,6 @@ module Stupidedi
   module TransactionSets
     module Common
       module Implementations
-
         #
         # @see X222.pdf 2.2 Implementation Usage
         #
@@ -26,7 +25,6 @@ module Stupidedi
           # occur except when the condition holds.
           Situational = Schema::SegmentReq.new(false, false, "S")
         end
-
       end
     end
   end

@@ -3,7 +3,6 @@ module Stupidedi
   module TransactionSets
     module Common
       module Implementations
-
         #
         # @see X222.pdf 2.2 Implementation Usage
         #
@@ -32,7 +31,6 @@ module Stupidedi
           # This element must never be sent.
           NotUsed = Schema::ElementReq.new(false, true,  "N")
         end
-
       end
     end
   end

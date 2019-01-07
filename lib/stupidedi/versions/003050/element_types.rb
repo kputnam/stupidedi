@@ -3,19 +3,23 @@ module Stupidedi
   module Versions
     module ThirtyFifty
       module ElementTypes
-        autoload :DT, "stupidedi/versions/003050/element_types/date_val"
-        autoload :R,  "stupidedi/versions/003050/element_types/float_val"
-        autoload :ID, "stupidedi/versions/003050/element_types/identifier_val"
-        autoload :Nn, "stupidedi/versions/003050/element_types/fixnum_val"
-        autoload :AN, "stupidedi/versions/003050/element_types/string_val"
-        autoload :TM, "stupidedi/versions/003050/element_types/time_val"
+        DT               = Common::ElementTypes::DT
+        DateVal          = Common::ElementTypes::DateVal
 
-        autoload :DateVal,        "stupidedi/versions/003050/element_types/date_val"
-        autoload :FloatVal,       "stupidedi/versions/003050/element_types/float_val"
-        autoload :IdentifierVal,  "stupidedi/versions/003050/element_types/identifier_val"
-        autoload :FixnumVal,      "stupidedi/versions/003050/element_types/fixnum_val"
-        autoload :StringVal,      "stupidedi/versions/003050/element_types/string_val"
-        autoload :TimeVal,        "stupidedi/versions/003050/element_types/time_val"
+        R                = Common::ElementTypes::R
+        FloatVal         = Common::ElementTypes::FloatVal
+
+        ID               = Common::ElementTypes::ID
+        IdentifierVal    = Common::ElementTypes::IdentifierVal
+
+        Nn               = Common::ElementTypes::Nn
+        FixnumVal        = Common::ElementTypes::FixnumVal
+
+        AN               = Common::ElementTypes::AN
+        StringVal        = Common::ElementTypes::StringVal
+
+        TM               = Common::ElementTypes::TM
+        TimeVal          = Common::ElementTypes::TimeVal
 
         SimpleElementDef = Common::ElementTypes::SimpleElementDef
       end

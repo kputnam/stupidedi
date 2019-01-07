@@ -3,9 +3,7 @@ module Stupidedi
   using Refinements
 
   module Writer
-
     class Claredi
-
       def initialize(node)
         @node = node
       end
@@ -96,8 +94,8 @@ module Stupidedi
           end
 
         elsif node.segment?
-          out << "<div class=segment><div class=label title='#{node.definition.name}'>"
-          out << '% 3s' % node.definition.id
+          out << %q(<div class="segment"><div class="label" title="#{node.definition.name}">)
+          out << "% 3s" % node.definition.id
           # out << ": #{node.definition.name}</div></div>\n"
           tmp  = StringIO.new
           node.children.each{|e| build(e, tmp) }
@@ -109,32 +107,32 @@ module Stupidedi
           id, name = m.captures
           name = name.split(/\s+/).map(&:capitalize).join(" ")
 
-          out << "<div class=loop><div class=label>#{name} (#{id})</div>\n"
+          out << %q(<div class="loop"><div class="label">#{name} (#{id})</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
         elsif node.table?
-          out << "<div class=table><div class=label>#{node.definition.id}</div>\n"
+          out << %q(<div class="table"><div class="label">#{node.definition.id}</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
         elsif node.transaction_set?
-          out << "<div class=transaction><div class=label>Transaction Set #{node.definition.id}</div>\n"
+          out << %q(<div class="transaction"><div class="label">Transaction Set #{node.definition.id}</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
         elsif node.functional_group?
-          out << "<div class=functionalgr><div class=label>Functional Group #{node.definition.id}</div>\n"
+          out << %q(<div class="functionalgr"><div class="label">Functional Group #{node.definition.id}</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
         elsif node.interchange?
-          out << "<div class=interchange><div class=label>Interchange #{node.definition.id}</div>\n"
+          out << %q(<div class="interchange"><div class="label">Interchange #{node.definition.id}</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
         elsif node.transmission?
-          out << "<div class=transmission>\n"
+          out << %q(<div class="transmission">\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
         end

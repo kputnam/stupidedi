@@ -1,17 +1,13 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X222.pdf B.1.1.3.2 Repeating Data Elements
     #
     class RepeatedElementVal < AbstractElementVal
-
       # @return [CompositeElementDef, SimpleElementDef]
-
       def_delegators :@usage, :definition
 
       # @return [Array<AbstractElementVal>]
@@ -110,6 +106,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

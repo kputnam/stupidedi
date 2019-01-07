@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   class Config
-
     #
     # The implementation version specified in GS08 and ST03 indicates which
     # implementation guide governs the transaction. Because each guide may
@@ -91,6 +90,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

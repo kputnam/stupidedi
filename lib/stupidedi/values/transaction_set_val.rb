@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class TransactionSetVal < AbstractVal
       include SegmentValGroup
 
@@ -55,7 +53,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("Transaction") + "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Transaction") + "(#{@children.map(&:inspect).join(", ")})"
       end
 
       # @return [Boolean]
@@ -65,6 +63,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

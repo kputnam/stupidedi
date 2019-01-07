@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class TransactionSetDef < AbstractDef
       include Inspect
 
@@ -81,7 +79,6 @@ module Stupidedi
     end
 
     class << TransactionSetDef
-
       # @return [TransactionSetDef]
       def build(functional_group, id, name, *table_defs)
         table_defs.each.with_index do |t, k|
@@ -99,6 +96,5 @@ module Stupidedi
         new(functional_group, id, name, table_defs)
       end
     end
-
   end
 end

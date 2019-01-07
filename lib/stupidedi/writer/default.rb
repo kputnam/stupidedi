@@ -2,9 +2,7 @@ module Stupidedi
   using Refinements
 
   module Writer
-
     class Default
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -120,8 +118,6 @@ module Stupidedi
           end
         end
       end
-
     end
-
   end
 end

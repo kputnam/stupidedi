@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X12-5.pdf 3.2.1 Basic Interchange Service Request
     # @see X222.pdf B.1.1.4.1 Interchange Control Structures
@@ -88,7 +86,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("Interchange") + "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Interchange") + "(#{@children.map(&:inspect).join(", ")})"
       end
 
       # @return [Boolean]
@@ -98,6 +96,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

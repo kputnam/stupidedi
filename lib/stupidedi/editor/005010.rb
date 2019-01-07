@@ -3,14 +3,12 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     #
     # Critiques (edits) a "005010" functional groups (GS/GE), then selects the
     # appropriate editor, according to the config, and edits each transaction
     # set (ST/SE)
     #
     class FiftyTenEd < AbstractEd
-
       # @return [Config]
       attr_reader :config
 
@@ -465,8 +463,6 @@ module Stupidedi
           end
         end
       end
-
     end
-
   end
 end

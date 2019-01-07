@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class InvalidSegmentVal < AbstractVal
-
       # @return [String]
       attr_reader :reason
 
@@ -77,6 +74,5 @@ module Stupidedi
         eql?(other)
       end
     end
-
   end
 end

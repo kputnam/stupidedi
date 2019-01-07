@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class TableDef < AbstractDef
       # @return [String]
       attr_reader :id
@@ -142,6 +140,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

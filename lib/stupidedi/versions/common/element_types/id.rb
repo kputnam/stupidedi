@@ -5,9 +5,7 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         class ID < SimpleElementDef
-
           # @return [Schema::CodeList]
           attr_reader :code_list
 
@@ -63,7 +61,6 @@ module Stupidedi
         # @see X222.pdf B.1.1.3.1.3 Identifier
         #
         class IdentifierVal < Values::SimpleElementVal
-
           def id?
             true
           end
@@ -82,7 +79,6 @@ module Stupidedi
           end
 
           class Invalid < IdentifierVal
-
             # @return [Object]
             attr_reader :value
 
@@ -107,7 +103,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -179,8 +175,6 @@ module Stupidedi
             end
 
             def coerce(other)
-              # me, he = other.coerce(self)
-              # me <OP> he
               return copy(:value => other.to_str), self
             end
 
@@ -195,7 +189,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -268,8 +262,6 @@ module Stupidedi
             end
 
             def coerce(other)
-              # me, he = other.coerce(self)
-              # me <OP> he
               return copy(:value => other.to_str), self
             end
 
@@ -294,7 +286,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -320,7 +312,6 @@ module Stupidedi
               ansi.element("ID.value#{id}") + "(#{value})"
             end
           end
-
         end
 
         class << IdentifierVal
@@ -353,7 +344,6 @@ module Stupidedi
         IdentifierVal::Invalid.eigenclass.send(:public, :new)
         IdentifierVal::NonEmpty.eigenclass.send(:public, :new)
       end
-
     end
   end
 end

@@ -4,7 +4,6 @@ module Stupidedi
   module Writer
     class Json
       class NullNode
-
         def initialize(*)
         end
 

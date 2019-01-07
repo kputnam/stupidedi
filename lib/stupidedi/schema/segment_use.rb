@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X222.pdf B.1.1.3.12.5 Data Segments in a Transaction Set
     #
@@ -97,6 +95,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

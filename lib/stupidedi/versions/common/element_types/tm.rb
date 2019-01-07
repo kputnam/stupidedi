@@ -5,7 +5,6 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         class TM < SimpleElementDef
           def initialize(id, name, min_length, max_length, description = nil, parent = nil)
             super(id, name, min_length, max_length, description)
@@ -30,7 +29,6 @@ module Stupidedi
         # @see X222.pdf B.1.1.3.1.6 Time
         #
         class TimeVal < Values::SimpleElementVal
-
           def time?
             true
           end
@@ -44,7 +42,6 @@ module Stupidedi
           end
 
           class Invalid < TimeVal
-
             # @return [Object]
             attr_reader :value
 
@@ -64,7 +61,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -99,7 +96,6 @@ module Stupidedi
           # use the {TimeVal.empty} constructor.
           #
           class Empty < TimeVal
-
             def valid?
               true
             end
@@ -111,7 +107,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -148,7 +144,6 @@ module Stupidedi
           # instead, use the {TimeVal.value} constructor.
           #
           class NonEmpty < TimeVal
-
             # @return [Integer]
             attr_reader :hour
 
@@ -210,7 +205,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -264,7 +259,6 @@ module Stupidedi
                 other.second == @second)
             end
           end
-
         end
 
         class << TimeVal

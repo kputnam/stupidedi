@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     #
     # Provides an abstract interface for a positioned cursor within an
     # element-based input stream. The main operations are implemented by the
@@ -134,6 +133,5 @@ module Stupidedi
       # @return [Boolean]
       abstract :==, :args => %w(other)
     end
-
   end
 end

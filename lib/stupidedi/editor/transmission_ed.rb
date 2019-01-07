@@ -3,9 +3,7 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     class TransmissionEd < AbstractEd
-
       # @return [Config]
       attr_reader :config
 
@@ -88,6 +86,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     class ResultSet
       include Inspect
 
@@ -67,6 +66,5 @@ module Stupidedi
         @warns   << result
       end
     end
-
   end
 end

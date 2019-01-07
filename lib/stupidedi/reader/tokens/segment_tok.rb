@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class SegmentTok
       include Inspect
 
@@ -67,6 +66,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

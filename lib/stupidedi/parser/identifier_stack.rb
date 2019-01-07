@@ -174,6 +174,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

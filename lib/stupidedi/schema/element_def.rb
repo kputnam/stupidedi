@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class AbstractElementDef < AbstractDef
       include Inspect
 
@@ -33,7 +31,6 @@ module Stupidedi
     # @see X222 B.1.1.3.1 Data Element
     #
     class SimpleElementDef < AbstractElementDef
-
       # @return [SimpleElementUse, ComponentElementUse]
       abstract :parent
 
@@ -79,7 +76,6 @@ module Stupidedi
     # @see X222 B.1.1.3.3 Composite Data Structure
     #
     class CompositeElementDef < AbstractElementDef
-
       # @return [Array<ComponentElementUse>]
       attr_reader :component_uses
 
@@ -172,6 +168,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

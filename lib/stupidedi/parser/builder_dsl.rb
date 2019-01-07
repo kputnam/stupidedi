@@ -145,7 +145,7 @@ module Stupidedi
           else
             if zipper.node.present?
               zipper.children.each_with_index do |z, i|
-                critique(z, "#{descriptor}-#{'%02d' % (i + 1)}")
+                critique(z, "#{descriptor}-#{"%02d" % (i + 1)}")
               end
 
               d = zipper.node.definition
@@ -174,7 +174,7 @@ module Stupidedi
             end
           else
             zipper.children.each_with_index do |z, i|
-              critique(z, "#{descriptor}#{'%02d' % (i + 1)}")
+              critique(z, "#{descriptor}#{"%02d" % (i + 1)}")
             end
 
             d = zipper.node.definition
@@ -264,7 +264,6 @@ module Stupidedi
 
     # @private
     class DslReader
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -286,6 +285,5 @@ module Stupidedi
         false
       end
     end
-
   end
 end

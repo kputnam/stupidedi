@@ -138,7 +138,6 @@ module Stupidedi
           end
         end || reader
       end
-
     end
   end
 end

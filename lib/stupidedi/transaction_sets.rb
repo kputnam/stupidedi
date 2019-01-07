@@ -1,6 +1,8 @@
 module Stupidedi
   module TransactionSets
     autoload :Builder,        "stupidedi/transaction_sets/builder"
+    autoload :Validation,     "stupidedi/transaction_sets/validation"
+
     autoload :Common,         "stupidedi/transaction_sets/common"
     autoload :TwoThousandOne, "stupidedi/transaction_sets/002001"
     autoload :ThirtyTen,      "stupidedi/transaction_sets/003010"

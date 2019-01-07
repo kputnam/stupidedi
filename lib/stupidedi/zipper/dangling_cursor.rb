@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class DanglingCursor < AbstractCursor
-
       # @return [AbstractCursor]
       attr_reader :parent
 
@@ -102,6 +99,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

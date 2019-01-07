@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class AbstractDef
-
       def usage?
         false
       end
@@ -73,6 +70,5 @@ module Stupidedi
         false
       end
     end
-
   end
 end

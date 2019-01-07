@@ -4,13 +4,11 @@ module Stupidedi
 
   module Versions
     module Common
-
       #
       # @see X222.pdf A.1.3.4 Syntax Notes
       # @see X222.pdf A.1.3.8 Condition Designator
       #
       module SyntaxNotes
-
         #
         # Paired or Multiple: if any element specified in the relational
         # condition is present, then all of the elements specified must
@@ -169,7 +167,6 @@ module Stupidedi
           end
         end
       end
-
     end
   end
 end

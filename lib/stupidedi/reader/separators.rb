@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     #
     # Stores the separators used to tokenize X12 from an input stream and
     # serialize it to an output stream.
@@ -12,7 +10,6 @@ module Stupidedi
     # @see X222.pdf B.1.1.2.5 Delimiters
     #
     class Separators
-
       # @return [String]
       attr_accessor :component  # :
 
@@ -84,6 +81,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

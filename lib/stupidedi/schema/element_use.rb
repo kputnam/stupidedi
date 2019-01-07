@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class AbstractElementUse < AbstractUse
       include Inspect
 
@@ -250,6 +248,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

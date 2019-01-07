@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     class Position
       include Inspect
 
@@ -68,6 +66,5 @@ module Stupidedi
         new(nil, line, nil, path)
       end
     end
-
   end
 end

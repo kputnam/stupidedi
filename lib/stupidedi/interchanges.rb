@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 module Stupidedi
-
   module Interchanges
     autoload :TwoHundred,   "stupidedi/interchanges/00200"
     autoload :ThreeHundred, "stupidedi/interchanges/00300"
@@ -9,5 +8,4 @@ module Stupidedi
     autoload :FiveOhOne,    "stupidedi/interchanges/00501"
     autoload :ElementTypes, "stupidedi/interchanges/element_types"
   end
-
 end

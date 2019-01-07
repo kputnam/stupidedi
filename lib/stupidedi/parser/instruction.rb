@@ -71,7 +71,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = '% 3s' % @segment_id.to_s
+        id = "% 3s" % @segment_id.to_s
 
         unless @segment_use.nil?
           width = 18
@@ -85,21 +85,20 @@ module Stupidedi
           end
         end
 
-        q.text "Instruction[#{'% 3s' % id}]"
+        q.text "Instruction[#{"% 3s" % id}]"
 
         q.group(6, "(", ")") do
           q.breakable ""
+
+          unless @segment_use.nil?
+            q.text "position: #{@segment_use.position},"
+            q.breakable
+          end
 
           q.text "pop: #{@pop_count},"
           q.breakable
 
           q.text "drop: #{@drop_count}"
-
-          unless @push.nil?
-            q.text ","
-            q.breakable
-            q.text "push: #{@push.try{|c| c.name.split('::').last}}"
-          end
         end
       end
 
@@ -109,6 +108,5 @@ module Stupidedi
         [@segment_id, @segment_use, @pop_count, @drop_count, @push].hash
       end
     end
-
   end
 end

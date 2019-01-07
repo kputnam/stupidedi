@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
+    #
     # The 5010 X12 "condition code"s include
     #   P - Paired or Multiple (if one then all)
     #   R - Required (at least one)
@@ -16,7 +15,6 @@ module Stupidedi
     # @see X222.pdf B.1.1.3.9 Condition Designator
     #
     class SyntaxNote
-
       # @return [Array<Integer>]
       attr_reader :indexes
 
@@ -58,6 +56,5 @@ module Stupidedi
         indexes.map{|n| zipper.child(n - 1) }
       end
     end
-
   end
 end

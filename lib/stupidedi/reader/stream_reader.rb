@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     #
     # The {StreamReader} is intended to scan the input for a valid ISA segment,
     # after which the {TokenReader} class can be used to tokenize the remaining
@@ -170,7 +168,6 @@ module Stupidedi
       def result(value, remainder)
         Reader::Success.new(value, remainder)
       end
-
     end
   end
 end

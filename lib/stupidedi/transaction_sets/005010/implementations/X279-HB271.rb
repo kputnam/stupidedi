@@ -739,7 +739,7 @@ module Stupidedi
                           b::Element(e::NotUsed,         "Surface/Layer/Position Code"),
                           b::Element(e::NotUsed,         "Surface/Layer/Position Code"),
                           b::Element(e::NotUsed,         "Surface/Layer/Position Code"))),
-   
+
                       # The X12 standard and X279 specification place the LS and LE segments
                       # at the same depth as 2115D and 2120D loops. This is not supported by
                       # stupidedi -- loops must be contain zero or more header segments, followed

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
@@ -15,7 +14,6 @@ module Stupidedi
   # since it does not descend into the object.
   #
   module Inspect
-
     # @return [String]
     def inspect
       if self.class.name.empty?
@@ -25,5 +23,4 @@ module Stupidedi
       end + ":0x#{object_id.abs.to_s(16)} ...>"
     end
   end
-
 end

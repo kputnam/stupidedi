@@ -1,17 +1,13 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X222.pdf B.1.1.3.3 Composite Data Structure
     #
     class CompositeElementVal < AbstractElementVal
-
       # @return [CompositeElementDef]
-
       def_delegators :@usage, :definition
 
       # @return [Array<SimpleElementVal>]
@@ -95,6 +91,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

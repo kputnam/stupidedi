@@ -2,7 +2,6 @@
 module Stupidedi
   module Versions
     module TwoThousandOne
-
       module ElementDefs
         t = ElementTypes
         r = ElementReqs
@@ -10572,7 +10571,6 @@ module Stupidedi
           SyntaxNotes::P.build(3, 4),
           SyntaxNotes::P.build(5, 6))
       end
-
     end
   end
 end

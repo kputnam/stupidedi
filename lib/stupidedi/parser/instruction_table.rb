@@ -136,7 +136,7 @@ module Stupidedi
                 q.breakable
               end
 
-              q.text "#{'% 2s' % index}: "
+              q.text "#{"% 2s" % index}: "
               q.pp e
             end
           end

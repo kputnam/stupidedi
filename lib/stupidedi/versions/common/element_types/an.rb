@@ -5,7 +5,6 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         class AN < SimpleElementDef
           def companion
             StringVal
@@ -65,7 +64,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -135,8 +134,6 @@ module Stupidedi
             end
 
             def coerce(other)
-              # me, he = other.coerce(self)
-              # me <OP> he
               return copy(:value => other.to_str), self
             end
 
@@ -151,7 +148,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -224,8 +221,6 @@ module Stupidedi
             end
 
             def coerce(other)
-              # me, he = other.coerce(self)
-              # me <OP> he
               return copy(:value => other.to_str), self
             end
 
@@ -246,7 +241,7 @@ module Stupidedi
             # @return [String]
             def inspect
               id = definition.bind do |d|
-                "[#{'% 5s' % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -264,6 +259,21 @@ module Stupidedi
               true
             end
 
+            # Parse the string into a date (Date), date time (Time), or a range
+            # of either according to the given format specifier.
+            #
+            #   D8:  CCYYMMDD
+            #   DB:  MMDDCCYY
+            #   DDT: CCYYMMDD-CCYYMMDDHHMM
+            #   DT:  CCYYMMDDHHMM
+            #   DTD: CCYYMMDDHHMM-CCYYMMDD
+            #   DTS: CCYYMMDDHHMMSS-CCYYMMDDHHMMSS
+            #   RD:  MMDDCCYY-MMDDCCYY
+            #   RD8: CCYYMMDD-CCYYMMDD
+            #   RDT: CCYYMMDDHHMM-CCYYMMDDHHMM
+            #   RTS: CCYYMMDDHHMMSS
+            #
+            # @return [Date | Time | Range<Date> | Range<Time>]
             def to_date(format)
               case format
               when "D8"  # CCYYMMDD
@@ -348,7 +358,6 @@ module Stupidedi
               end
             end
           end
-
         end
 
         class << StringVal
@@ -380,7 +389,6 @@ module Stupidedi
         StringVal::Empty.eigenclass.send(:public, :new)
         StringVal::Invalid.eigenclass.send(:public, :new)
         StringVal::NonEmpty.eigenclass.send(:public, :new)
-
       end
     end
   end

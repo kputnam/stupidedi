@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
@@ -35,7 +34,6 @@ module Stupidedi
   end
 
   class << Zipper
-
     # @group Constructors
     ###########################################################################
 
@@ -44,5 +42,4 @@ module Stupidedi
       Zipper::Tree.build(node)
     end
   end
-
 end

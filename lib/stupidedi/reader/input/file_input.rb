@@ -3,15 +3,13 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     #
     # @note This class is not thread-safe. If more than one `Thread` has access
-    #   to the same instance, and they simultaneously call methods on that
-    #   instance, the methods may produce incorrect results and the object might
-    #   be left in an inconsistent state.
+    # to the same instance, and they simultaneously call methods on that
+    # instance, the methods may produce incorrect results and the object might
+    # be left in an inconsistent state.
     #
     class FileInput < AbstractInput
-
       # @return [IO]
       attr_reader :io
 
@@ -153,6 +151,5 @@ module Stupidedi
           changes.fetch(:size, @size)
       end
     end
-
   end
 end

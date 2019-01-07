@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Color
-
     def self.ansi
       @__ansi ||=
         if defined?(::Term::ANSIColor)
@@ -91,6 +90,5 @@ module Stupidedi
         @base.__send__(name, *args)
       end
     end
-
   end
 end

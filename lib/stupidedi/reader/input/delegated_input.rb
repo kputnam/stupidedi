@@ -3,9 +3,7 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class DelegatedInput < AbstractInput
-
       def initialize(delegate, offset = 0, line = 1, column = 1)
         @delegate, @offset, @line, @column =
           delegate, offset, line, column
@@ -35,11 +33,9 @@ module Stupidedi
       def_delegators :@delegate, :take
 
       # (see AbstractInput#at)
-
       def_delegators :@delegate, :at
 
       # (see AbstractInput#index)
-
       def_delegators :@delegate, :index
 
       # @group Advancing the Cursor
@@ -112,6 +108,5 @@ module Stupidedi
           changes.fetch(:column, @column)
       end
     end
-
   end
 end

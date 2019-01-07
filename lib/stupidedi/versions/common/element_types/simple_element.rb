@@ -5,7 +5,6 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         class SimpleElementDef < Schema::SimpleElementDef
           # @return [Symbol]
           attr_reader :id
@@ -77,7 +76,7 @@ module Stupidedi
 
           # @return [void]
           def pretty_print(q)
-            type = self.class.name.try{|n| n.split('::').last }
+            type = self.class.name.try{|n| n.split("::").last }
 
             if type.blank?
               q.text @id.to_s
@@ -86,7 +85,6 @@ module Stupidedi
             end
           end
         end
-
       end
     end
   end

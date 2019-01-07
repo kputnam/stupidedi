@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Writer
     autoload :Claredi,  "stupidedi/writer/claredi"

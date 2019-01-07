@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     module Result
-
       # @return [Position]
       def position
         if @remainder.respond_to?(:position)
@@ -167,6 +164,5 @@ module Stupidedi
         block.call(@reason, @remainder)
       end
     end
-
   end
 end

@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
+    #
     # The 5010 X12 "condition designator"s include
     #   M - Mandatory
     #   O - Optional
@@ -24,7 +23,6 @@ module Stupidedi
     # @see X222.pdf 2.2.1 Industry Usage
     #
     class ElementReq
-
       def initialize(required, forbidden, to_s)
         @required, @forbidden, @to_s =
           required, forbidden, to_s
@@ -55,6 +53,5 @@ module Stupidedi
         @to_s
       end
     end
-
   end
 end

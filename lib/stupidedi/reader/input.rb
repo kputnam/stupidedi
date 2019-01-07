@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     module Input
     end
 
@@ -29,6 +27,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

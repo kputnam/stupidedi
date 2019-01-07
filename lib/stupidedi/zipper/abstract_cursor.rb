@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class AbstractCursor
-
       # @return [#leaf?, #children, #copy]
       abstract :node
 
@@ -350,6 +347,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

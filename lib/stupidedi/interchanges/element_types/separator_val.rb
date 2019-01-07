@@ -4,7 +4,6 @@ module Stupidedi
 
   module Interchanges
     module ElementTypes
-
       class Separator < Versions::Common::ElementTypes::AN
         def companion
           SeparatorVal

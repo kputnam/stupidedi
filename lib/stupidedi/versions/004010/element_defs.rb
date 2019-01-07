@@ -2,7 +2,6 @@
 module Stupidedi
   module Versions
     module FortyTen
-
       module ElementDefs
         t = ElementTypes
         r = ElementReqs
@@ -9508,7 +9507,6 @@ module Stupidedi
           E103.component_use(r::Mandatory),
           E103.component_use(r::Mandatory))
       end
-
     end
   end
 end

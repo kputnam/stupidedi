@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   class Config
-
     #
     # The interchange control segments (ISA/ISE) are versioned independently
     # from the functional group segments (GS/GE). Because different interchange
@@ -81,6 +80,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

@@ -5,7 +5,6 @@ module Stupidedi
   module Versions
     module Common
       module ElementTypes
-
         module Operators
           module Unary
             def unary_operators(*ops)
@@ -123,7 +122,6 @@ module Stupidedi
             end
           end
         end
-
       end
     end
   end

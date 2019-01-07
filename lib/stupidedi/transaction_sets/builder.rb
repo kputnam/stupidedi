@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module TransactionSets
-
     #
     # {Builder} is a simple DSL for construction a transaction set
     #
@@ -177,6 +176,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class AbstractPath
-
       abstract :root?
 
       # @return [AbstractPath]
@@ -36,7 +33,6 @@ module Stupidedi
 
     # @private
     Root = Class.new(AbstractPath) do
-
       def root?
         true
       end
@@ -84,7 +80,6 @@ module Stupidedi
     end.new
 
     class Hole < AbstractPath
-
       # (see AbstractPath#right)
       attr_reader :left
 
@@ -133,6 +128,5 @@ module Stupidedi
         position == other.position
       end
     end
-
   end
 end
