@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine String do
       # True if the string is `empty?` or contains all whitespace
       #
@@ -50,6 +48,5 @@ module Stupidedi
         true
       end
     end
-
   end
 end

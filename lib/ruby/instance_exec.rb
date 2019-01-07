@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 module Stupidedi
   module Refinements
-
     refine Object do
       if RUBY_VERSION < "1.9"
         module InstanceExecHelper; end
@@ -25,6 +24,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 module Stupidedi
   module Refinements
-
     refine Object do
       # @group List Constructors
       #############################################################################
@@ -64,6 +63,5 @@ module Stupidedi
         class << self; self; end
       end
     end
-
   end
 end

@@ -25,10 +25,6 @@ require "ruby/to_time"
 require "ruby/try"
 require "ruby/instance_exec"
 
-if RUBY_PLATFORM == "java"
-  require "ruby/jruby_hack"
-end
-
 module Stupidedi
   autoload :Color,            "stupidedi/color"
   autoload :Config,           "stupidedi/config"

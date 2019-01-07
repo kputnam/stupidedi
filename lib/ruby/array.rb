@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine Array do
       def blank?
         empty?
@@ -224,6 +222,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

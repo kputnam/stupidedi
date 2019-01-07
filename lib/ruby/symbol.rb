@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine Symbol do
       # Returns a proc that calls self on the proc's parameter
       #
@@ -24,6 +22,5 @@ module Stupidedi
         receiver.__send__(self, *args)
       end
     end
-
   end
 end
