@@ -23,6 +23,27 @@ module Stupidedi
       # @return [Array<Instruction>]
       attr_reader :instructions
 
+      def copy(changes = {})
+        self.class.new \
+          changes.fetch(:instructions, instructions)
+      end
+
+      # @return [void]
+      def pretty_print(q)
+        name = self.class.name.split("::").last
+        q.text "#{name}.build"
+        q.group(2, "([", "])") do
+          q.breakable
+          instructions.each do |op|
+            unless q.current_group.first?
+              q.text ","
+              q.breakable
+            end
+            q.pp op
+          end
+        end
+      end
+
       # Performs no filtering of the {Instruction} list. This is used when there
       # already is a single {Instruction} or when a {Reader::SegmentTok} doesn't
       # provide any more information to filter the list.
@@ -52,15 +73,8 @@ module Stupidedi
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
           @__matches ||= begin
-            shallowest = @instructions.head
-
-            @instructions.tail.each do |i|
-              if i.pop_count > shallowest.pop_count
-                shallowest = i
-              end
-            end
-
-            shallowest.cons
+            shallowest = @instructions.map(&:pop_count).max
+            @instructions.select{|i| i.pop_count == shallowest }
           end
         end
       end
@@ -77,15 +91,8 @@ module Stupidedi
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
           @__matches ||= begin
-            deepest = @instructions.head
-
-            @instructions.tail.each do |i|
-              if i.pop_count < deepest.pop_count
-                deepest = i
-              end
-            end
-
-            deepest.cons
+            deepest = @instructions.map(&:pop_count).min
+            @instructions.select{|i| i.pop_count == deepest }
           end
         end
       end
@@ -124,7 +131,7 @@ module Stupidedi
                 return singleton
               else
                 if strict
-                  designator = "#{segment_tok.id}#{'%02d' % (n + 1)}"
+                  designator = "#{segment_tok.id}#{"%02d" % (n + 1)}"
                   designator = designator + "-%02d" % m unless m.nil?
 
                   raise ArgumentError,
@@ -161,7 +168,7 @@ module Stupidedi
               else
                 # This value isn't compatible with any instruction
                 if strict
-                  designator = "#{segment_tok.id}#{'%02d' % n}"
+                  designator = "#{segment_tok.id}#{"%02d" % n}"
                   designator = designator + "-%02d" % m unless m.nil?
 
                   raise ArgumentError,
@@ -199,21 +206,11 @@ module Stupidedi
         #
         # @return [Array<Instruction>]
         def shallowest(instructions)
-          shallowest = Hash.new
-
-          instructions.each do |i|
-            key = i.segment_use.object_id
-
-            if shallowest.defined_at?(key)
-              if shallowest.at(key).pop_count < i.pop_count
-                shallowest[key] = i
-              end
-            else
-              shallowest[key] = i
-            end
+          grouped = instructions.group_by{|i| i.segment_use.object_id }
+          grouped.flat_map do |k, is|
+            shallowest = is.map(&:pop_count).max
+            is.select{|i| i.pop_count == shallowest }
           end
-
-          shallowest.values
         end
 
         # @return [Array(Array<(Integer, Integer, Map)>, Array<(Integer, Integer, Map)>)]
@@ -420,7 +417,6 @@ module Stupidedi
           end
         end
       end
-
     end
 
     class << ConstraintTable
@@ -463,6 +459,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

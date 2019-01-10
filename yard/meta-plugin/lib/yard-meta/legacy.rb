@@ -88,5 +88,4 @@ class LegacyDelegateMethodHandler < YARD::Handlers::Ruby::Legacy::Base
       end
     end
   end
-
 end
