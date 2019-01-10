@@ -26,6 +26,9 @@ require "ruby/try"
 require "ruby/instance_exec"
 
 module Stupidedi
+  # @todo deprecated
+  autoload :Builder,          "stupidedi/builder"
+
   autoload :Color,            "stupidedi/color"
   autoload :Config,           "stupidedi/config"
   autoload :Editor,           "stupidedi/editor"
