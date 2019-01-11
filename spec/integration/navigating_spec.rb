@@ -1,10 +1,10 @@
-require "spec_helper"
+using Stupidedi::Refinements
 
 describe "Navigating" do
   include NavigationMatchers
 
-  let(:payment) { Fixtures.file("005010/X221-HP835/1-good.txt").first  }
-  let(:claim)   { Fixtures.file("005010/X222-HC837/3b-good.txt").first }
+  let(:payment) { Fixtures.parse!("005010/X221-HP835/pass/1.x12").head.first  }
+  let(:claim)   { Fixtures.parse!("005010/X222-HC837/pass/3b.x12").head.first }
 
   context "unqualified segments" do
   end

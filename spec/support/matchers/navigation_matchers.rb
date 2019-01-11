@@ -106,7 +106,7 @@ module NavigationMatchers
         backward = @backwards[@expected.length - k]
 
         if e != forward
-          return "segment #{k+1} was #{forward} not #{e}"
+          return "segment #{k+1} was #{forward}, not #{e}"
         end
       end
 

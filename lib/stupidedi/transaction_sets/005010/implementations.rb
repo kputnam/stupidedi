@@ -39,15 +39,18 @@ module Stupidedi
         end
 
         module X222
-          autoload :HC837P,  "stupidedi/transaction_sets/005010/implementations/X222-HC837P"
+          autoload :HC837,  "stupidedi/transaction_sets/005010/implementations/X222-HC837"
+          autoload :HC837P, "stupidedi/transaction_sets/005010/implementations/X222-HC837P"
         end
 
         module X222A1
-          autoload :HC837P,  "stupidedi/transaction_sets/005010/implementations/X222A1-HC837P"
+          autoload :HC837,  "stupidedi/transaction_sets/005010/implementations/X222A1-HC837"
+          autoload :HC837P, "stupidedi/transaction_sets/005010/implementations/X222A1-HC837P"
         end
 
         module X223
-          autoload :HC837I,  "stupidedi/transaction_sets/005010/implementations/X223-HC837I"
+          autoload :HC837,  "stupidedi/transaction_sets/005010/implementations/X223-HC837"
+          autoload :HC837I, "stupidedi/transaction_sets/005010/implementations/X223-HC837I"
         end
 
         module X231

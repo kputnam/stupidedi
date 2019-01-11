@@ -2,7 +2,8 @@ using Stupidedi::Refinements
 
 describe "X091A1-HP835" do
   include NavigationMatchers
-  let(:parser) { Fixtures.file("004010/X091A1-HP835/1-good.txt") }
+
+  let(:parser) { Fixtures.parse!("004010/X091A1-HP835/pass/1.x12").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }

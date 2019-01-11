@@ -3,7 +3,7 @@ using Stupidedi::Refinements
 describe "Stupidedi::TransactionSets::Implementations::X222::HC837" do
   include NavigationMatchers
 
-  let(:parser) { Fixtures.file("005010/X222-HC837/1-good.txt") }
+  let(:parser) { Fixtures.parse!("005010/X222-HC837/pass/1.x12").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }

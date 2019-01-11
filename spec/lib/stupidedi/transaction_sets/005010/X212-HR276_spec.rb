@@ -4,7 +4,7 @@ describe "X212-HR276" do
   include NavigationMatchers
 
   describe "parser" do
-    let(:parser) { Fixtures.file("005010/X212-HR276/1-good.txt") }
+    let(:parser) { Fixtures.parse!("005010/X212-HR276/pass/1.x12").head }
 
     describe "parser" do
       let(:iea) { parser.segment.fetch }

@@ -1,4 +1,5 @@
 describe "Stupidedi::TransactionSets" do
+
   # @return [Array<(String, TransactionSetDef)>]
   def self.transaction_set_defs
     lambda do |root|
@@ -52,5 +53,18 @@ describe "Stupidedi::TransactionSets" do
           transaction_set_def, functional_group_def).audit
       end
     end
+  end
+
+  Fixtures.passing.each do |path, config, name|
+    it path do
+      expect(lambda do
+        Fixtures.parse!(path, config)
+      end).not_to raise_error
+    end
+  end
+
+  Fixtures.failing.each do |path, config, name|
+    # @todo
+    skip path
   end
 end

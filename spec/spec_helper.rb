@@ -1,6 +1,6 @@
 require File.expand_path("../../lib/stupidedi", __FILE__)
-require "rspec"
 require "#{File.dirname(__FILE__)}/support/coverage.rb"
+require "pp"
 
 begin
   Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|

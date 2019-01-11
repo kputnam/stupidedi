@@ -3,7 +3,7 @@ using Stupidedi::Refinements
 describe "X221-HP835" do
   include NavigationMatchers
 
-  let(:parser) { Fixtures.file("005010/X221-HP835/1-good.txt") }
+  let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/1.x12").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }
@@ -132,7 +132,7 @@ describe "X221-HP835" do
 
     context "with issues in Table 3 (Summary)" do
       context "with missing PLB" do
-        let(:parser) { Fixtures.file("005010/X221-HP835/2-good.txt") }
+        let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/2.x12").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -157,7 +157,7 @@ describe "X221-HP835" do
       end
 
       context "with single PLB" do
-        let(:parser) { Fixtures.file("005010/X221-HP835/1-good.txt") }
+        let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/1.x12").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -184,7 +184,7 @@ describe "X221-HP835" do
       end
 
       context "with multiple PLBs" do
-        let(:parser) { Fixtures.file("005010/X221-HP835/3a-good.txt") }
+        let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/3a.x12").head }
 
         it "is handled" do
           expect(parser).to be_deterministic

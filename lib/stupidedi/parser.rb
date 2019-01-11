@@ -22,4 +22,11 @@ module Stupidedi
     autoload :TransactionSetState,  "stupidedi/parser/states/transaction_set_state"
     autoload :TransmissionState,    "stupidedi/parser/states/transmission_state"
   end
+
+  class << Parser
+    # @return [StateMachine]
+    def build(*args)
+      Parser::StateMachine.build(*args)
+    end
+  end
 end
