@@ -84,14 +84,15 @@ def simple(e, u)
     return e
   end
 
-  if e.string?
+  case type
+  when /AN$/
     e.copy(value: "_" * u.definition.min_length)
-  elsif e.time?
-    e.copy(hour: 0, minute: 0, second: 0)
-  elsif e.date?
-    e.copy(year: 2020, month: 1, day: 30)
-  elsif e.numeric?
-    e.copy(value: 1)
+  when "TM"
+    e.copy(value: "0" * u.definition.min_length)
+  when "DT"
+    e.copy(value: "0" * u.definition.min_length)
+  when "Nn", "R"
+    e.copy(value: "0" * u.definition.min_length)
   else
     e
   end
