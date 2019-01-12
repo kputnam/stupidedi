@@ -8,6 +8,7 @@ module Stupidedi
         autoload :AR943, "stupidedi/transaction_sets/004010/standards/AR943"
         autoload :FA997, "stupidedi/transaction_sets/004010/standards/FA997"
         autoload :GF990, "stupidedi/transaction_sets/004010/standards/GF990"
+        autoload :HP835, "stupidedi/transaction_sets/004010/standards/HP835"
         autoload :IM210, "stupidedi/transaction_sets/004010/standards/IM210"
         autoload :OW940, "stupidedi/transaction_sets/004010/standards/OW940"
         autoload :PO850, "stupidedi/transaction_sets/004010/standards/PO850"
