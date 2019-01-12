@@ -453,7 +453,8 @@ module Stupidedi
       # @return       [Either<Array<Object>>]
       def iterate(id, *elements)
         a = []
-        m = __find(false, id, elements, true)
+        # m = __find(false, id, elements, true)
+        m = __find(false, id, elements, false)
         return m unless m.defined?
 
         while m.defined?
