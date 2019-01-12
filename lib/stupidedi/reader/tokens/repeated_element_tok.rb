@@ -47,6 +47,15 @@ module Stupidedi
       def composite?
         false
       end
+
+      def to_s(separators)
+        if blank?
+          ""
+        else
+          rs = @element_toks.map{|x| x.to_s(separators) }
+          rs.join(separators.repetition)
+        end
+      end
     end
 
     class << RepeatedElementTok
