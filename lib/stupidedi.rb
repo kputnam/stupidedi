@@ -12,7 +12,6 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
-require "ruby/symbol"
 require "ruby/object"
 require "ruby/module"
 require "ruby/array"
