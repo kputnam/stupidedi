@@ -5,6 +5,7 @@ describe "Navigating" do
 
   let(:payment) { Fixtures.file("X221-HP835/1-good.txt").first  }
   let(:claim)   { Fixtures.file("X222-HC837/3b-good.txt").first }
+  let(:drugs)   { Fixtures.file("X222-HC837/10a-good.txt").first }
 
   context "unqualified segments" do
   end
@@ -47,13 +48,20 @@ describe "Navigating" do
         expect(isa.node.id).to eq(:ISA)
       end).to be_defined
     end
+
+    specify do
+      expect(payment.flatmap(&:segmentn).tap do |isa|
+        expect(isa).to be_segment
+        expect(isa.id).to be == :ISA
+      end).to be_defined
+    end
   end
 
-  context "repeatable segments" do
+  context "repeatable loops" do
     specify "can be iterated" do
       expect(lambda do
-        payment.flatmap do |m|
-          m.iterate(:ISA) do |isa|
+        payment.flatmap do |isa|
+          isa.iterate(:ISA) do |_|
             raise "didn't expect a second ISA segment"
           end
         end
@@ -62,16 +70,30 @@ describe "Navigating" do
 
     specify "can be iterated" do
       expect(lambda do
-        payment.flatmap do |m|
-          m.iterate(:GS) do |gs|
-            expect(gs.segment.tap do |segment|
-              expect(segment.node.id).to eq(:GS)
+        payment.flatmap do |isa|
+          isa.iterate(:GS) do |gs|
+            expect(gs.segmentn.tap do |segment|
+              expect(segment.id).to eq(:GS)
             end).to be_defined
 
             gs.iterate(:ST) do |st|
-              expect(st.segment.tap do |segment|
-                expect(segment.node.id).to eq(:ST)
+              expect(st.segmentn.tap do |segment|
+                expect(segment.id).to eq(:ST)
               end).to be_defined
+            end
+          end
+        end
+      end).not_to raise_error
+    end
+
+    specify "can be iterated" do
+      expect(lambda do
+        payment.flatmap do |isa|
+          isa.iterate(:GS) do |gs|
+            gs.iterate(:ST) do |st|
+              st.iterate(:LX) do |lx|
+                expect(lx.segmentn.fetch.id).to be == :LX
+              end
             end
           end
         end
@@ -79,13 +101,78 @@ describe "Navigating" do
     end
   end
 
+  # N1*PR is not repeatable, but the parser is less strict because there are
+  # sibling N1 segments (N1*PE); extra segments would be caught in BuilderDsl
+  context "non-repeatable loops" do
+    specify "cannot be iterated" do
+      expect(lambda do
+        payment.flatmap do |isa|
+          isa.find(:GS).flatmap do |gs|
+            gs.find(:ST).flatmap do |st|
+              st.iterate(:N1, "PR") do |n1|
+                expect(n1.segmentn.fetch.id).to be == :N1
+              end
+            end
+          end
+        end
+      end).not_to raise_error
+    end
+  end
+
+  # REF*EV is not repeatable, but the parser is less strict because there are
+  # sibling REF segments (REF*PR); extra segments would be caught in BuilderDsl
+  context "non-repeatable qualified segments" do
+    specify "can be iterated" do
+      expect(lambda do
+        payment.flatmap do |isa|
+          isa.find(:GS).flatmap do |gs|
+            gs.find(:ST).flatmap do |st|
+              st.iterate(:REF) do |ref|
+                expect(ref.segmentn.fetch.id).to be == :REF
+                expect(ref.elementn(1).fetch.value).to be == "EV"
+              end
+
+              st.iterate(:REF, "EV") do |ref|
+                expect(ref.segmentn.fetch.id).to be == :REF
+                expect(ref.elementn(1).fetch.value).to be == "EV"
+              end
+            end
+          end
+        end
+      end).not_to raise_error
+    end
+  end
+
+  context "non-repeatable loops" do
+    specify "cannot be iterated" do
+      expect(lambda do
+        drugs.flatmap do |isa|
+          isa.find(:GS).flatmap do |gs|
+            gs.find(:ST).flatmap do |st|
+              st.find(:HL, nil, nil, "22").flatmap do |hl|
+                hl.find(:CLM).flatmap do |clm|
+                  clm.find(:LX, 2).flatmap do |lx|
+                    lx.iterate(:LIN) do |lin|
+                      expect(lin.segmentn.fetch.id).to be == :LIN
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end).to raise_error("LIN segment is not repeatable")
+    end
+  end
+
   context "non-repeatable segments" do
     specify "cannot be iterated" do
       expect(lambda do
-        payment.flatmap do |m|
-          m.iterate(:GS) do |gs|
-            gs.iterate(:ST) do |st|
-              st.iterate(:BHT)
+        payment.flatmap do |isa|
+          isa.find(:GS).flatmap do |gs|
+            gs.find(:ST).flatmap do |st|
+              st.iterate(:BHT) do |bht|
+              end
             end
           end
         end
