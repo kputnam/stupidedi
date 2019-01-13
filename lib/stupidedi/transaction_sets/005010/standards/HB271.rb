@@ -65,15 +65,14 @@ module Stupidedi
                   d::LoopDef.build("2120 LS", d::RepeatCount.bounded(1),
                     s:: LS.use(3300, r::Optional,  d::RepeatCount.bounded(1)),
 
-                    # @todo: NM1 3400 conflicts with NM1 300... maybe we should
-                    # always choose lowest pop_count?
-                    d::LoopDef.build("2120", d::RepeatCount.unbounded,
-                      s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
-                      s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
-                      s:: N3.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
-                      s:: N4.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
-                      s::PER.use(3800, r::Optional,  d::RepeatCount.bounded(3)),
-                      s::PRV.use(3900, r::Optional,  d::RepeatCount.bounded(1))),
+                    # @todo: NM1 3400 conflicts with NM1 at position 300
+                    # d::LoopDef.build("2120", d::RepeatCount.unbounded,
+                    #   s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
+                    #   s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
+                    #   s:: N3.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
+                    #   s:: N4.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
+                    #   s::PER.use(3800, r::Optional,  d::RepeatCount.bounded(3)),
+                    #   s::PRV.use(3900, r::Optional,  d::RepeatCount.bounded(1))),
 
                     s:: LE.use(4000, r::Optional,  d::RepeatCount.bounded(1))))))),
 
