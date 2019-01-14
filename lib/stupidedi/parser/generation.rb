@@ -36,8 +36,11 @@ module Stupidedi
               reader_.read_segment
             else
               matches = machine.active.map do |m|
-                segment_def = m.node.zipper.node.definition
-                "#{segment_def.id} #{segment_def.name}"
+                if segment_def = m.node.zipper.node.definition
+                  "#{segment_def.id} #{segment_def.name}"
+                else
+                  m.node.zipper.node.inspect
+                end
               end.join(", ")
 
               return machine,

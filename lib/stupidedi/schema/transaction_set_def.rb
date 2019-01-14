@@ -91,6 +91,22 @@ module Stupidedi
                 "argument #{k+4} is not a TableDef: #{t.inspect}"
             end
           end
+
+          next unless t.repeatable?
+
+          [t.header_segment_uses, t.loop_defs, t.trailer_segment_uses].each do |s|
+            opt, req = s.split_until(&:optional?)
+            prefix   = opt.concat(req.take(1))
+
+            if x = prefix.find(&:repeatable?)
+              raise Exceptions::InvalidSchemaError,
+                %Q("#{x.id}" is an entry point into "#{t.id}", and both are marked
+                repeatable; "#{x.id}" should not be repeatable to avoid generating
+                an ambiguous grammar).join
+            end
+
+            break if req.present?
+          end
         end
 
         new(functional_group, id, name, table_defs)

@@ -181,8 +181,7 @@ module NavigationMatchers
           begin
             interpret(tag, result, selector)
           rescue Exception
-            $!.message << " from #{PP.pp(machine, "")}"
-            raise
+            raise "#{$!.message} from #{PP.pp(machine, "")}"
           end
         end
       elsif selectors.is_a?(Array)
@@ -201,8 +200,7 @@ module NavigationMatchers
           begin
             interpret(tag, result, selector)
           rescue Exception
-            $!.message << " from #{PP.pp(machine, "")}"
-            raise
+            raise "#{$!.message} from #{PP.pp(machine, "")}"
           end
         end
       end

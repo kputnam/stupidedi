@@ -1,8 +1,8 @@
 require "spec_helper"
-require "pp"
 
 describe "Non-determinism" do
   include NavigationMatchers
+  using Stupidedi::Refinements
 
   let(:strict)  { Stupidedi::Parser::BuilderDsl.build(config, true)  }
   let(:relaxed) { Stupidedi::Parser::BuilderDsl.build(config, false) }
@@ -20,16 +20,16 @@ describe "Non-determinism" do
     r = Stupidedi::Versions::FiftyTen::SegmentReqs
     s = Stupidedi::Versions::FiftyTen::SegmentDefs
 
-    d::TransactionSetDef.build("BE", "000", "Example of Ambiguous Grammar",
+    d::TransactionSetDef.build("BE", "999", "Example of Ambiguous Grammar",
       d::TableDef.header("Table 1",
         s::ST.use(10, r::Mandatory, d::RepeatCount.bounded(1))),
       d::TableDef.detail("Table 2",
-        d::LoopDef.build("Loop 1", d::RepeatCount.bounded(1),
+        d::LoopDef.build("Loop 1", d::RepeatCount.unbounded,
           s::N1.use(20, r::Mandatory, d::RepeatCount.bounded(1)),
-          s::N3.use(30, r::Optional,  d::RepeatCount.bounded(1))),
-        d::LoopDef.build("Loop 2", d::RepeatCount.bounded(1),
-          s::N1.use(40, r::Mandatory, d::RepeatCount.bounded(1)),
-          s::N4.use(50, r::Optional,  d::RepeatCount.bounded(1)))),
+          s::N3.use(30, r::Optional,  d::RepeatCount.bounded(1)),
+          d::LoopDef.build("Loop 1.1", d::RepeatCount.unbounded,
+            s::N1.use(40, r::Mandatory, d::RepeatCount.bounded(1)),
+            s::N4.use(50, r::Optional,  d::RepeatCount.bounded(1))))),
       d::TableDef.summary("Table 3",
         s::SE.use(60, r::Mandatory, d::RepeatCount.bounded(1))))
   end
@@ -72,8 +72,7 @@ describe "Non-determinism" do
             .N1("6Y", "BOB BELCHER")
             .N1("6Y", "NON DETERMINISM") # could be Loop 1 or Loop 2
             .N3("OCEAN AVENUE")          # could only be Loop 1
-            .machine.active.length
-          ).to eq(2)
+            .machine.active.length).to eq(2)
         end
 
         it "does not discard invalid trees" do
@@ -81,24 +80,20 @@ describe "Non-determinism" do
             .N1("6Y", "BOB BELCHER")
             .N1("6Y", "NON DETERMINISM") # could be Loop 1 or Loop 2
             .N4("UNKNOWN CITY")          # could only be Loop 2
-            .machine.active.length
-          ).to eq(2)
+            .machine.active.length).to eq(2)
         end
       end
     end
   end
 
   context "reading" do
-    def read(suffix, nondeterminism: 1)
-      input =
-        ["ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~",
-         "GS*BE*SENDER ID*RECEIVER ID*19991231*0802*1*x*005010~",
-         "ST*999*0000*005010~",
-         "N1*6Y*LINDA BELCHER~",
-         suffix].join("\n")
+    def read(input, nondeterminism: 1)
+      builder     = prelude(relaxed).N1("6Y", "LINDA BELCHER")
+      separators  = Stupidedi::Reader::Separators.new(":", "^", "*", "~")
 
-      machine = Stupidedi::Parser::StateMachine.build(config)
-      machine.read(Stupidedi::Reader.build(input), nondeterminism: nondeterminism)
+      input  = Stupidedi::Reader::Input.build(input)
+      reader = Stupidedi::Reader::TokenReader.new(input, separators, builder.reader.segment_dict)
+      builder.machine.read(reader, nondeterminism: nondeterminism)
     end
 
     context "when nondenterminism = 1" do
@@ -132,28 +127,29 @@ describe "Non-determinism" do
 
       it "too much ambiguity causes a failure" do
         machine, result = read(
-          "N1*6Y*NON DETERMINISM~" \
-          "N1*6Y*THIS IS TOO MUCH~...", nondeterminism: 2)
+          ["N1*XX*WHAT IS THIS?~",  # 2
+           "N1*YY*LOOP 1 OR 2~",    # 4
+           "..."].join, nondeterminism: 2)
 
         expect(result).to be_fatal # no useable parse tree
-        expect(result.remainder).to be == "..."
         expect(machine).to_not be_deterministic
-        expect(machine.active.length).to be == 1 + 2
+        expect(machine.active.length).to be == 4
+        expect(result.remainder).to be == "..."
       end
     end
 
     context "when nondenterminism = 3" do
       it "too much ambiguity causes a failure" do
         machine, result = read(
-          "N1*6Y*NON DETERMINISM~" \
-          "N1*6Y*BLAH BLAH BLAH~" \
-          "N1*6Y*THIS IS TOO MUCH~" \
-          "N1*6Y*NOT GONNA SEE THIS~...", nondeterminism: 3)
+          ["N1*XX*WHAT IS THIS?~",  # 2
+           "N1*YY*LOOP 1 OR 2?~",   # 4
+           "N1*ZZ*EXPLOSION~",      # 8
+           "..."].join, nondeterminism: 3)
 
         expect(result).to be_fatal # no useable parse tree
-        expect(result.remainder).to be == "N1*6Y*NOT GONNA SEE THIS~..."
         expect(machine).to_not be_deterministic
-        expect(machine.active.length).to be == 1 + 2*2
+        expect(machine.active.length).to be == 4
+        expect(result.remainder).to be == "N1*ZZ*EXPLOSION~..."
       end
     end
   end

@@ -12,7 +12,7 @@ module Stupidedi
     class << Builder
       # @return [Schema::TransactionSetDef]
       def build(functional_group, id, name, *table_defs)
-        Schema::TransactionSetDef.new(functional_group, id, name, table_defs)
+        Schema::TransactionSetDef.build(functional_group, id, name, *table_defs)
       end
 
       # @group Element Constraints
@@ -56,7 +56,6 @@ module Stupidedi
         element_index = "00"
         element_uses  = elements.zip(segment_def.element_uses).map do |e, u|
           e_tag, e_requirement, e_name, e_arguments = e
-          # element_index.succ!
           element_index = element_index.succ
 
           unless e_tag == :Element
@@ -89,7 +88,6 @@ module Stupidedi
               component_index = "00"
               component_uses  = e_arguments.zip(u.definition.component_uses).map do |e1, c|
                 c_tag, c_requirement, c_name, c_arguments = e1
-                # component_index.succ!
                 component_index = component_index.succ
 
                 unless c_tag == :Element
@@ -113,8 +111,7 @@ module Stupidedi
           end
         end
 
-        segment_def.copy(:name => name).
-          copy(:element_uses => element_uses).
+        segment_def.copy(:name => name, :element_uses => element_uses).
           use(position, requirement, repeat_count)
       end
 

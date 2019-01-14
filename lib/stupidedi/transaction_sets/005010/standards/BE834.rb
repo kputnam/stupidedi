@@ -163,8 +163,7 @@ module Stupidedi
 
                 s:: LE.use(6885, r::Optional, d::RepeatCount.bounded(1)))),
 
-            s::SE.use(6900, r::Mandatory, d::RepeatCount.bounded(1)),
-            repeatable: false))
+            s::SE.use(6900, r::Mandatory, d::RepeatCount.bounded(1))))
 
       end
     end

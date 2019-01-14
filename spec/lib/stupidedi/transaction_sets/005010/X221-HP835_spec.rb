@@ -59,17 +59,35 @@ describe "X221-HP835" do
                           S(:DTM),
                           S(:N1, "PR"),
                           S(:N1, "PE"),
+                          X(:N1, "XX"),
                           S(:LX, "110212"),
                           S(:LX, "130212"),
+                          X(:TS3),
+                          X(:TS2),
+                          X(:CLP),
                           S(:PLB),
+                          S(:PLB, "6543210903"),
                           S(:SE),
                           S(:GE),
                           S(:IEA)),
                      S(:TRN, "1", "12345") =>
-                       Ss(X(:BPR)),
+                       Ss(R(:ST),
+                          X(:TRN),
+                          X(:BPR),
+                          S(:LX, "110212"),
+                          S(:LX, "130212"),
+                          X(:TS3),
+                          X(:TS2),
+                          X(:CLP),
+                          S(:PLB, "6543210903"),
+                          S(:SE)),
 
                      S(:DTM, "405", Date.civil(2002, 9, 13)) =>
-                       Ss(X(:TRN)),
+                       Ss(X(:TRN),
+                          X(:DTM),
+                          S(:N1),
+                          X(:N2),
+                          X(:REF)),
 
                      # 1000A PAYER IDENTIFICATION
                      S(:N1, "PR", "INSURANCE COMPANY OF TIMBUCKTU") =>
@@ -77,6 +95,13 @@ describe "X221-HP835" do
                           S(:N4),
                           S(:REF, "2U", "999"),
                           S(:REF, "NF", "12345"),
+                          S(:LX, "110212"),
+                          S(:LX, "130212"),
+                          R(:LX, "000000"),
+                          X(:TS3),
+                          X(:TS2),
+                          X(:CLP),
+                          S(:PLB, "6543210903"),
                           S(:SE),
                           S(:GE),
                           S(:IEA)),
@@ -114,15 +139,17 @@ describe "X221-HP835" do
                                S(:AMT, "AU", 17000))),
 
                      S(:PLB, "6543210903") =>
-                       Ss(S(:SE, 32, 1234),
+                       Ss(R(:PLB),
+                          S(:SE, 32, 1234),
                           S(:GE, 1, 1),
                           S(:IEA, 1, 905)),
                      S(:PLB, nil, "20021231") =>
-                       Ss(S(:SE, "32", "1234"),
+                       Ss(R(:PLB),
+                          S(:SE, "32", "1234"),
                           S(:GE, "1", "1"),
                           S(:IEA, "1", "905")),
-                     S(:PLB, nil, nil, C("CV", "CP")) => Ss(),
-                     S(:PLB, nil, nil, nil, "-1.27")  => Ss(),
+                     S(:PLB, nil, nil, C("CV", "CP")) => Ss(R(:PLB), S(:SE), X(:LX), X(:BPR)),
+                     S(:PLB, nil, nil, nil, "-1.27")  => Ss(R(:PLB), S(:SE), X(:LX), X(:N1)),
 
                      S(:SE) => Ss(S(:GE),
                                   S(:IEA))),
@@ -168,16 +195,21 @@ describe "X221-HP835" do
                  X(:PLB),
                  S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
                    Ss(X(:SE),
+                      X(:LX),
                       X(:PLB),
                       S(:ST) =>
                         Ss(S(:LX) =>
                              Ss(S(:SE),
                                 S(:PLB)),
                            S(:SE) =>
-                             Ss(X(:PLB),
+                             Ss(R(:ST),
+                                X(:LX),
+                                X(:PLB),
                                 X(:SE)),
                            S(:PLB) =>
-                             Ss(R(:PLB), # only one PLB
+                             Ss(R(:ST),
+                                X(:LX),
+                                R(:PLB), # only one PLB
                                 S(:SE))))))
           end
         end
@@ -195,9 +227,13 @@ describe "X221-HP835" do
                  X(:PLB),
                  S(:GS, "HP", nil, nil, "19991231", nil, 1) =>
                    Ss(X(:SE),
+                      X(:LX),
                       X(:PLB),
                       S(:ST) =>
-                        Ss(S(:LX) =>
+                        Ss(R(:ST),
+                           R(:GS),
+                           R(:ISA),
+                           S(:LX) =>
                              Ss(S(:SE),
                                 S(:PLB),
                                 S(:PLB, "9876543210"),

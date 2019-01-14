@@ -587,8 +587,7 @@ module Stupidedi
                         b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8", "RD8")),
                         b::Element(e::Required,    "Member Reporting Category Effective Date(s)", b::MaxLength(35))))),
                   b::Segment(6885, s::LE, "Additional Reporting Categories Loop Termination", r::Situational, d::RepeatCount.bounded(1),
-                    b::Element(e::Required,    "Loop Identifier Code", b::Values("2700"))))),
-              repeatable: false),
+                    b::Element(e::Required,    "Loop Identifier Code", b::Values("2700")))))),
 
             # This structure doesn't match the specification, but it does ensure
             # that the first occurrence of SE terminates the transaction set.

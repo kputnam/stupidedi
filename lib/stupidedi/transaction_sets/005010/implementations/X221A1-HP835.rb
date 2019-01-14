@@ -192,7 +192,7 @@ module Stupidedi
 
             d::TableDef.detail("Table 2 - Detail",
               d::LoopDef.build("2000 HEADER NUMBER",
-                d::RepeatCount.bounded(1),
+                d::RepeatCount.unbounded,
                 b::Segment(30, s::LX, "Header Number",
                   r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Assigned Number")),

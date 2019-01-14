@@ -549,7 +549,6 @@ module Stupidedi
               #    descend to some segment and compare it to the criteria. In
               #    most circumstances, this segment is directly below this
               if target.eql?(state.node.instructions)
-
                 # 3. Move downward a number of nodes. Ultimately, we need to
                 #    descend to a segment, but we have to be careful...
                 _value = value
@@ -574,10 +573,10 @@ module Stupidedi
                     if __value.node.invalid?
                       invalid and not __filter?(filter_tok, __value.node)
                     else
-                      # Note op.segment_use.nil? is true when searching for ISA,
+                      # @note op.segment_use.nil? is true when searching for ISA,
                       # GS, and ST, because we can't know the SegmentUse until we
-                      # deconstruct the token and looked up the versions numbers
-                      # in the Config.
+                      # deconstruct the token and look up the versions numbers
+                      # in the Config
                       ops.any?{|op| op.segment_use.nil? or op.segment_use.eql?(__value.node.usage) } \
                         and not filter?(filter_tok, __value.node)
                     end
@@ -592,23 +591,23 @@ module Stupidedi
                     break
                   end
 
-                  ops = non_leaders     ||= group.reject do |op|
-                    op.push.nil?        ||
-                    op.segment_use.nil? ||
-                    1 >= zipper.node.instructions.instructions.count do |x|
-                      x.push.present? and
-                       (# This is hairy, but we know the instruction is pushing some
-                        # number of nested subtrees. We know from each AbstractState
-                        # subclass that we both either push a single subtree
-                        op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
-                        # Or this instruction pushes one subtree while the other one
-                        # pushes two (eg, a new loop inside of a table)
-                        op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
-                        # Or this instruction pushes two subtrees (eg, a new loop in
-                        # a new table) and the other also pushes two subtrees.
-                        op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
-                    end
-                  end
+                  # ops = non_leaders     ||= group.reject do |op|
+                  #   op.push.nil?        ||
+                  #   op.segment_use.nil? ||
+                  #   1 >= zipper.node.instructions.instructions.count do |x|
+                  #     x.push.present? and
+                  #      (# This is hairy, but we know the instruction is pushing some
+                  #       # number of nested subtrees. We know from each AbstractState
+                  #       # subclass that we both either push a single subtree
+                  #       op.segment_use.parent.eql?(x.segment_use.try(:parent)) or
+                  #       # Or this instruction pushes one subtree while the other one
+                  #       # pushes two (eg, a new loop inside of a table)
+                  #       op.segment_use.parent.eql?(x.segment_use.try(:parent).try(:parent)) or
+                  #       # Or this instruction pushes two subtrees (eg, a new loop in
+                  #       # a new table) and the other also pushes two subtrees.
+                  #       op.segment_use.parent.parent.eql?(x.segment_use.try(:parent)))
+                  #   end
+                  # end
 
                   break if ops.empty?
                   break if _value.last?

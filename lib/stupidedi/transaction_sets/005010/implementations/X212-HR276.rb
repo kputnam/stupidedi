@@ -17,7 +17,6 @@ module Stupidedi
                 b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("276")),
                 b::Element(e::Required,    "Transaction Set Control Number"),
                 b::Element(e::Required,    "Version, Release, or Industry Identifier", b::Values("005010X212"))),
-
               b::Segment(200, s::BHT, "Beginning of Hierarchical Transaction",
                 r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Hierarchical Structure Code", b::Values("0010")),

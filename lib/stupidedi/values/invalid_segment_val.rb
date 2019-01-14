@@ -58,6 +58,11 @@ module Stupidedi
         nil
       end
 
+      # @return nul
+      def definition
+        nil
+      end
+
       # @return [void]
       def pretty_print(q)
         id = ansi.invalid("[#{@segment_tok.id}]")
