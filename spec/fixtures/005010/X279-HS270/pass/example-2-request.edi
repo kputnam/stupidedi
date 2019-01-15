@@ -1,0 +1,126 @@
+Example 2
+
+  Example 2 is for a patient who is the dependent of a subscriber. There are two
+  responses in this section. The first response is a positive response where the
+  dependent was found. The second response is a rejection for a provider not
+  authorized to access the payer's eligibility system.
+
+Generic request by a physician for the patient's (dependent) eligibility.
+
+  This is an example of an eligibility request from an individual provider to a
+  payer. The physician is inquiring if the patient (the dependent) has coverage.
+  The request is from Marcus Jones to the ABC Company. This example uses the
+  Primary Search Option (see Section 1.4.8 - Search Options) for a dependent who
+  is the patient and is for a generic request for Eligibility (see Section 1.4.7 -
+  Implementation-Compliant Use of the 270/271 Transaction Set).
+
+ST*270*1235*005010X279~
+  Transaction Set ID Code             = 270 (Eligibility, Coverage or Benefit Inquiry)
+  Transaction Set Control Number      = 1235
+  Implementation Convention Reference = 005010X279
+
+BHT*0022*13*10001235*20060501*1320~
+  Hierarchical Structure Code  = 0022 (Information Source, Information Receiver, Subscriber, Dependent)
+  Transaction Set Purpose Code = 13 (Request) Identification
+  Reference Identification     = 10001235
+  Date                         = 20060501 (May 1, 2006)
+  Time                         = 1:20 PM
+
+HL*1**20*1~
+  Hierarchical ID Number        = 1
+  Hierarchical Parent ID Number = * not used
+  Hierarchical Level Code       = 20 (Information Source)
+  Hierarchical Child Code       = 1
+
+NM1*PR*2*ABC COMPANY*****PI*842610001~
+  Entity Identifier Code        = PR (Payer)
+  Entity Type Qualifier         = 2 (Non-person)
+  Last Name                     = ABC Company
+  First Name                    = * not used
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = PI (Payer Identification)
+  Identification Code           = 842610001
+
+HL*2*1*21*1~
+  Hierarchical ID Number        = 2
+  Hierarchical Parent ID Number = 1
+  Hierarchical Level Code       = 21
+  Hierarchical Child Code       = 1
+
+NM1*1P*1*JONES*MARCUS****SV*0202034~
+  Entity Identifier Code        = 1P (Provider)
+  Entity Type Qualifier         = 1 (Person)
+  Last Name                     = Jones
+  First Name                    = Marcus
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = SV Service Provider Number
+  Identification Code           = 0202034
+
+HL*3*2*22*1~
+  Hierarchical ID Number        = 3
+  Hierarchical Parent ID Number = 2
+  Hierarchical Level Code       = 21
+  Hierarchical Child Code       = 1
+
+NM1*IL*1******MI*11122333301~
+  Entity Identifier Code        = IL (Insured or Subscriber)
+  Entity Type Qualifier         = 1 (Person)
+  Last Name                     = * not used
+  First Name                    = * not used
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = MI (Member Identification Number)
+  Identification Code           = 11122333301
+
+HL*4*3*23*0~
+  Hierarchical ID Number        = 4
+  Hierarchical Parent ID Number = 3
+  Hierarchical Level Code       = 23
+  Hierarchical Child Code       = 0
+
+TRN*1*93175-012547*9877281234~
+  Trace Type Code                = 1 (Current Transaction Trace Number)
+  Reference Identification       = 93175-012547
+  Originating Company Identifier = 9877281234
+  Reference Identification       = * not used
+
+NM1*03*1*SMITH*MARY~
+  Entity Identifier Code = 03 (Dependent)
+  Entity Type Qualifier  = 1 (Person)
+  Last Name              = Smith
+  First Name             = Mary
+  Middle Name            = * not used
+  Name Prefix            = * not used
+  Name Suffix            = * not used * not used
+  Identification Code    = * not used
+
+DMG*D8*19781014~
+  Date Time Period Format = D8 (Date Expressed in Format CCYYMMDD)
+  Date Time Period        = 19781014
+
+DTP*291*D8*20060501~
+  Date/Time Qualifier               = 291 (Plan)
+  Date Time Period Format Qualifier = D8 (Dates Expressed in Format CCYYMMDD)
+  Date Time Period                  = 20060501(May 1, 2006)
+
+EQ*30~
+  Service Type Code = 30 (Health Benefit Plan Coverage
+
+SE*15*1234~
+  Number of Included Segments    = 15
+  Transaction Set Control Number = 1234
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIV
+ERS.ID...*030101*1253*^*00501*000000905*1*T*:~GS*HS*SENDER C
+ODE*RECEIVER CODE*19991231*0802*1*X*005010X279~ST*270*1235*0
+05010X279~BHT*0022*13*10001235*20060501*1320~HL*1**20*1~NM1*
+PR*2*ABC COMPANY*****PI*842610001~HL*2*1*21*1~NM1*1P*1*JONES
+*MARCUS****SV*0202034~HL*3*2*22*1~NM1*IL*1******MI*111223333
+01~HL*4*3*23*0~TRN*1*93175-012547*9877281234~NM1*03*1*SMITH*
+MARY~DMG*D8*19781014~DTP*291*D8*20060501~EQ*30~SE*15*1234~GE
+*1*1~IEA*1*000000905~

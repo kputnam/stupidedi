@@ -1,0 +1,252 @@
+Property and Casualty
+
+Healthcare Bill to Property & Casualty Payer
+
+The requirements for submitting of Healthcare bills to Property & Casualty payers are presented here.
+
+  Healthcare bills can be submitted to a Property & Casualty (P&C) payer.
+  Because coverage is triggered by a specific event, certain information is
+  critical to the billing process.
+
+  P&C bills must include both the bill information as well as the information
+  related to the event that caused the injury or illness. Information concerning
+  the event is necessary to associate a bill with the P&C claim.
+
+  P&C insurance is governed by State Insurance Regulations, Departments of
+  Labor, Worker’s Compensation Boards, or other jurisdictionally defined
+  entities, which often mandates compliance with Jurisdiction-specific
+  procedures.
+
+  The Business Need: Provider to P&C Payer Bill Transmission
+
+  • The date of accident/occurrence/onset of symptoms (Date of Loss) is a
+    critical piece of information and must always be transmitted in the “Date -
+    Accident” DTP segment within Loop ID-2300 (Claim loop).
+
+  • The Date of Loss is used to determine the eligibility of coverage.
+
+  • The unique identification number, referred to in P&C as a claim number, must
+    be provided. The claim number is transmitted in the REF segment of Loop
+    ID-2010BA if the patient is the subscriber or in the REF segment of Loop
+    ID-2010CA if the patient is not the subscriber.
+
+    Without a date of loss on the bill and claim number, the bill will
+    incomplete and may be rejected.
+
+Example 1 - Automobile Accident
+
+  BUSINESS SCENARIO              : Automobile Accident
+    CLAIM TYPE                   : Automobile Accident
+    TYPE OF BILL                 : Emergency Care
+    PRIMARY PAYER                : Property & Casualty Insurer
+    The patient is a different person than the subscriber. The payer is a
+    commercial Property & Casualty Insurance Company.
+
+  DATE OF ACCIDENT               : 10/31/2005
+
+  SUBSCRIBER                     : Hal Howling
+    SUBSCRIBER ADDRESS           : 327 Bronco Drive, Getaway, CA, 99999
+    POLICY NUMBER                : B999-777-91G
+    INSURANCE COMPANY            : Heisman Insurance Company
+    CLAIM NUMBER                 : 32-3232-32
+
+  PATIENT                        : D.J. Dimpson
+    PATIENT ADDRESS              : 32 Buffalo Run, Rocking Horse, CA, 99666
+    SEX                          : M
+    DOB                          : 06/01/48
+    CONTACT NUMBER               : (815) 766-5902
+
+  DESTINATION PAYER/RECEIVER     : Heisman Insurance Company
+    PAYER ADDRESS                : 1 Trophy Lane, NYAC, NY, 10032
+    PAYER ID                     : 999888777
+
+  BILLING PROVIDER/SENDER        : Associated Medical Group
+    PROVIDER SPECIALTY           : General Practice
+    TIN                          : 579999999
+    NATIONAL PROVIDER IDENTIFIER : 1253695747
+    ADDRESS                      : 10 1/2 Shoemaker Street, Cobbler, CA, 99997
+    TELEPHONE                    : 212-555-7987
+
+  PAY-TO-PROVIDER                : Associated Medical Group
+
+  RENDERING PROVIDER             : Bruno Moglie, MD
+    NATIONAL PROVIDER IDENTIFIER : 2366552595
+
+  SERVICE FACILITY LOCATION      : Associated Medical Group
+    PROVIDER SPECIALTY           : General Practice
+    TIN                          : 579999999
+    NATIONAL PROVIDER IDENTIFIER : 1253695747
+    ADDRESS                      : 101 East Pryor Street, Loma Linda, CA. 99622
+    TELEPHONE                    : 342-555-7987
+    PATIENT ACCOUNT NUMBER       : 900-00-0032
+
+  CASE: The patient was a passenger in the subscriber’s automobile. The patient
+  suffered a head and neck injury.
+
+  DIAGNOSIS                      : 854.0
+
+  SERVICES RENDERED              : Office visit, Drain Abscess.
+                                     DOS = 10/31/2005,
+                                     POS = Office,
+                                     TOS = Medical Care
+
+    CHARGES                      : Office visit = $150.00,
+                                   Suture wound = $35.00.
+                                   Total charges = $185.00.
+
+SEG # | LOOP SEGMENT/ELEMENT STRING
+------|------------------------------------------------------------------------
+    1 | HEADER
+      | ST TRANSACTION SET HEADER
+      | ST*837*0021*005010X222~
+
+    2 | BHT BEGINNING OF HIERARCHICAL TRANSACTION
+      | BHT*0019*00*0125*20051111*1524*CH~
+
+    3 | 1000A SUBMITTER
+      | NM1 SUBMITTER
+      | NM1*41*2*ASSOCIATED MEDICAL GROUP*****46*1253695747~
+
+    4 | PER SUBMITTER EDI CONTACT INFORMATION
+      | PER*IC*JANICE HENDRIX*TE*2125557987~
+
+    5 | 1000B RECEIVER
+      | NM1 RECEIVER NAME
+      | NM1*40*2*HEISMAN INSURANCE COMPANY*****46*999888777~
+
+    6 | 2000A BILLING/PAY-TO PROVIDER HL LOOP
+      | HL BILLING PROVIDER
+      | HL*1**20*1~
+
+    7 | 2010AA BILLING PROVIDER
+      | NM1 BILLING PROVIDER NAME
+      | NM1*85*2*ASSOCIATED MEDICAL GROUP*****XX*1253695747~
+
+    8 | N3 BILLING PROVIDER ADDRESS
+      | N3*10 1/2 SHOEMAKER STREET~
+
+    9 | N4 BILLING PROVIDER CITY/STATE/ZIP CODE
+      | N4*COBBLER*CA*99997~
+
+   10 | REF BILLING PROVIDER SECONDARY IDENTIFICATION
+      | REF*EI*579999999~
+      | 2000B SUBSCRIBER HL LOOP
+
+   11 | HL - SUBSCRIBER
+      | HL*2*1*22*1~
+
+   12 | SBR SUBSCRIBER INFORMATION
+      | SBR*P********AM~
+
+   13 | 2010BA SUBSCRIBER
+      | NM1 SUBSCRIBER NAME
+      | NM1*IL*1*HOWLING*HAL****MI*B99977791G~
+
+   14 | 2010BB SUBSCRIBER/PAYER
+      | NM1 PAYER NAME
+      | NM1*PR*2*HEISMAN INSURANCE COMPANY*****PI*999888777~
+
+   15 | 2000C PATIENT HL LOOP
+      | HL - PATIENT
+      | HL*3*2*23*0~
+
+   16 | PAT PATIENT INFORMATION
+      | PAT*21~
+
+   17 | 2010CA PATIENT NAME
+      | NM1 PATIENT NAME
+      | NM1*QC*1*DIMPSON*DJ~
+
+   18 | N3 PATIENT STREET ADDRESS
+      | N3*32 BUFFALO RUN~
+
+   19 | N4 PATIENT CITY/STATE/ZIP
+      | N4*ROCKING HORSE*CA*99666~
+
+   20 | DMG PATIENT DEMOGRAPHIC INFORMATION
+      | DMG*D8*19480601*M~
+
+   21 | REF PROPERTY AND CASUALTY CLAIM NUMBER
+      | REF*Y4*32323232~
+
+   22 | PER PROPERTY AND CASUALTY PATIENT CONTACT INFORMATION
+      | PER*IC*DJ DIMPSON*TE*8157665902~
+
+   23 | 2300 CLAIM
+      | CLM CLAIM LEVEL INFORMATION
+      | CLM*900000032*185***11:B:1*Y*A*Y*Y**AA:::CA~
+
+   24 | DTP DATE - ACCIDENT
+      | DTP*439*D8*20051031~
+
+   25 | DTP DATE - PROPERTY AND CASUALTY DATE OF FIRST CONTACT
+      | DTP*444*D8*20051031~
+
+   26 | HEALTH CARE DIAGNOSIS CODES
+      | HI*BK:8540~
+
+   27 | 2310B RENDERING PROVIDER
+      | NM1 RENDERING PROVIDER NAME
+      | NM1*82*1*MOGLIE*BRUNO****XX*2366552595~
+
+   28 | PRV RENDERING PROVIDER SPECIALTY INFORMATION
+      | PRV*PE*PXC*208D00000X~
+
+   29 | 2310C SERVICE FACILITY LOCATION
+      | NM1 SERVICE FACILITY LOCATION
+      | NM1*77*2*ASSOCIATED MEDICAL GROUP*****XX*1235767887~
+
+   30 | N3 SERVICE FACILITY LOCATION ADDRESS
+      | N3*101 EAST PRYOR STREET~
+
+   31 | N4 SERVICE FACILITY LOCATION CITY/STATE/ZIP
+      | N4*LOMA LINDA*CA*99622~
+
+   32 | PER PROPERTY AND CASUALTY SERVICE FACILITY CONTACT INFORMATION
+      | PER*IC*KAREN SPARKLE*TE*3425557987~
+
+   33 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*1~
+
+   34 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:99201*150*UN*1***1**Y~
+
+   35 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*D8*20051031~
+
+   36 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*2~
+
+   37 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:26010*35*UN*1***1**Y~
+
+   38 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*D8*20051031~
+
+   39 | TRAILER
+      | SE TRANSACTION SET TRAILER
+      | SE*39*0021~
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HC*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*0021*005010X222~BHT*0019*00*0125*20051111*1524*CH~NM1
+*41*2*ASSOCIATED MEDICAL GROUP*****46*1253695747~PER*IC*JANI
+CE HENDRIX*TE*2125557987~NM1*40*2*HEISMAN INSURANCE COMPANY*
+****46*999888777~HL*1**20*1~NM1*85*2*ASSOCIATED MEDICAL GROU
+P*****XX*1253695747~N3*10 1/2 SHOEMAKER STREET~N4*COBBLER*CA
+*99997~REF*EI*579999999~HL*2*1*22*1~SBR*P********AM~NM1*IL*1
+*HOWLING*HAL****MI*B99977791G~NM1*PR*2*HEISMAN INSURANCE COM
+PANY*****PI*999888777~HL*3*2*23*0~PAT*21~NM1*QC*1*DIMPSON*DJ
+~N3*32 BUFFALO RUN~N4*ROCKING HORSE*CA*99666~DMG*D8*19480601
+*M~REF*Y4*32323232~PER*IC*DJ DIMPSON*TE*8157665902~CLM*90000
+0032*185***11:B:1*Y*A*Y*Y**AA:::CA~DTP*439*D8*20051031~DTP*4
+44*D8*20051031~HI*BK:8540~NM1*82*1*MOGLIE*BRUNO****XX*236655
+2595~PRV*PE*PXC*208D00000X~NM1*77*2*ASSOCIATED MEDICAL GROUP
+*****XX*1235767887~N3*101 EAST PRYOR STREET~N4*LOMA LINDA*CA
+*99622~PER*IC*KAREN SPARKLE*TE*3425557987~LX*1~SV1*HC:99201*
+150*UN*1***1**Y~DTP*472*D8*20051031~LX*2~SV1*HC:26010*35*UN*
+1***1**Y~DTP*472*D8*20051031~SE*39*0021~
+GE*1*1~
+IEA*1*000000905~

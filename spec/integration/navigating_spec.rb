@@ -3,8 +3,8 @@ using Stupidedi::Refinements
 describe "Navigating" do
   include NavigationMatchers
 
-  let(:payment) { Fixtures.parse!("005010/X221-HP835/pass/1.x12").head.first  }
-  let(:claim)   { Fixtures.parse!("005010/X222-HC837/pass/3b.x12").head.first }
+  let(:payment) { Fixtures.parse!("005010/X221-HP835/case/1.edi").head.first  }
+  let(:claim)   { Fixtures.parse!("005010/X222-HC837/case/3b.edi").head.first }
 
   context "unqualified segments" do
   end

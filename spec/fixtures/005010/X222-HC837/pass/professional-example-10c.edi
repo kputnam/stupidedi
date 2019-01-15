@@ -1,0 +1,371 @@
+Drug Example 3 - Home Infusion Therapy Pharmacy (Adjudicated with HCPCS in Loop 2400 or NDC in Loop 2410)
+
+Example of services from a home infusion therapy pharmacy, which includes the billing for the drugs delivered for administration in the home and where adjudication may be from either HCPCS code found in SV1 or NDC number provided in Loop 2410.
+
+  SUBSCRIBER/PATIENT                : Steve A. Smith
+    ADDRESS                         : 15210 Juliet Lane, Libertyville, IL 60048
+    SEX                             : M
+    DOB                             : 5/1/1943
+    SUBSCRIBER IDENTIFICATION #     : MBRID12345
+    GROUP #                         : GRP01020102
+
+  DESTINATION RECEIVER              : XYZ Receiver
+    ETIN                            : 369852758
+
+  DESTINATION PAYER                 : R&R Health Plan
+    NATIONAL PLAN IDENTIFIER        : PLANID12345
+
+  SUBMITTER                         : Quality Billing Service Corporation
+    ETIN                            : 587654321
+    CONTACT PERSON AND PHONE NUMBER : Bud Holly, (801) 726-8899
+
+  BILLING PROVIDER/SENDER           : Professional Home IV, LLC
+    ADDRESS                         : 1500 Industrial Drive, Libertyville, IL 60048
+    TIN                             : 10-1234567
+    NATIONAL PROVIDER IDENTIFIER    : 1234567893
+    CONTACT PERSON AND PHONE NUMBER : Brenda Holly, (801) 999-9999
+
+  PAY-TO PROVIDER                   : Professional Home IV, LLC
+
+  ORDERING PROVIDER                 : Marcus Welby
+    NATIONAL PROVIDER IDENTIFIER    : 1112223338
+
+  PATIENT ACCOUNT NUMBER            : CLM012345
+
+  DIAGNOSIS                         : 465.9
+
+  CASE: The service is provided over a date span from 2/1/2004 to 2/7/2004 for
+  prescriptions that the physician prescribed on 1/30/2004.
+
+  Provided is ceftriaxone, 2 gm IV, q24h over 7 days for gravity infusion
+  through PICC line to treat an acute upper respiratory infection. 20mls sterile
+  water is the diluent for reconstitution of the ceftriaxone which is compounded
+  into 100ml saline IV mini-bags. Also provided are all administration supplies
+  and the pole necessary for the ceftriaxone infusion. Additionally, provided
+  are all administration supplies, and flushing solutions (sodium chloride and
+  heparin) prepackaged by the manufacturer in pre-filled syringes.
+
+  Drug service lines in this example begin after submission of a daily per diem
+  charge of $200 per day of therapy, coded with HCPCS S9500 in the LX*1 service
+  line.
+
+  The drugs are coded with HCPCS j-codes and with NDC numbers. The quantity of
+  units for each pair of HCPCS j-code and NDC is not always the same. In HCPCS
+  drug coding, the billed units of measure is described in the specific code
+  description. For NDC coding in home infusion therapy claims, the billed units
+  equal the containers used, e.g. number of vials, number of bags, etc.:
+
+  • If the health plan is to adjudicate the drug claim using the provided HCPCS
+    drug code (such as J0696 in LX*2), the plan obtains the charges, unit of
+    measure and quantity billed for the HCPCS drug code from the SV1 segment.
+    While the provider has sent the information of loop 2410, the plan may or may
+    not use it for other purposes.
+
+  • However, if the health plan adjudicates the drug claim using loop 2410
+    information, this means the plan uses charges submitted in SV102 while
+    quantity and unit of measure are obtained from CTP04 and CTP05. While the unit
+    of measure and quantity in SV103 and SV104 are to reflect the units
+    appropriate for the HCPCS drug code description, the plan is not using them
+    for adjudication.
+
+  • For example, in the LX*2 service line, 56 HCPCS units of ceftriaxone (HCPCS
+    code of J0696) is billed by the provider for total charge amount of $682.50.
+    Equivalently, the provider is billing 7 units of ceftriaxone (NDC number
+    00004-1965-01 for Rocephin®). As 00004-1965-01 Rocephin comes in a physical
+    container of 2gm vials, this means that the provider’s charge per vial of
+    Rocephin is $97.50. As the HCPCS description for J0696 is "injection,
+    ceftriaxone sodium, per 250 mg", 8 units if J0696 is equivalent to 1 unit of
+    00004-1965-01 ceftriaxone 2gm vial.
+
+  • As another example, in LX*3 we state much more briefly that billed are 14
+    vials of sterile water, NDC 63323-0249-10. As each vial contains 10mls of
+    sterile water, 28 units of HCPCS J7051 are billed since the HCPCS description
+    is "sterile saline or water, up to 5 cc". Note: If there had existed a HCPCS
+    drug code for 10mls of sterile water, say code JXXXX for "sterile water, 10
+    cc", then the solution for LX*3 in the complete example that follows would
+    have instead been:
+
+      LX*3~ SV1*HC:JXXXX*15.12*UN*14*12**1~
+      DTP*472*RD8*20040201-20040207~ DTP*471*D8*20040130~
+      LIN**N4*63323024910~ CTP****14*UN~ REF*XZ*2530001~
+      NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+  • For certain service lines, the HCPCS code submitted is J3490 "unclassified
+    drugs" because there is a lack of clarity as to which of multiple available
+    HCPCS j-codes are to be selected from. As therefore there are multiple
+    occurrences of J3490, payers should not reject occurrences of J3490 because of
+    overlapping dates.
+
+  • When J3490 is used (see service lines LX*4, LX*5, and LX*6), specification
+    of amount charged, quantity billed, unit of measure, NDC number and
+    prescription number is similar to the solution provided in the previous
+    example where HCPCS S5000 and S5001 were used in service lines LX*2 through
+    LX*6.
+
+  • Service lines LX*2, LX*3 and LX*4 contain the prescription drugs that are
+    elements of the compound. Service lines LX*5 and LX*6 are for non-compounded
+    prescription drugs.
+
+  Service lines LX*2, LX*3 and LX*4 contain the drugs that are elements of the
+  compound. Service lines LX*5 and LX*6 are for non-compounded prescription
+  drugs.
+
+  The primary purpose of this example is to demonstrate how drugs are billed
+  along with services when provided by a home infusion therapy pharmacy. Billing
+  for the drugs is found in segments #25-64 below.
+
+SEG # | LOOP SEGMENT/ELEMENT STRING
+------|------------------------------------------------------------------------
+    1 | HEADER
+      | ST TRANSACTION SET HEADER
+      | ST*837*0711*005010X222~
+
+    2 | BHT BEGINNING OF HIERARCHICAL TRANSACTION
+      | BHT*0019*00*0013*20040301*1200*CH~
+
+    3 | 1000A SUBMITTER
+      | NM1 SUBMITTER
+      | NM1*41*2*Quality Billing Service
+      | Corporation*****46*587654321~
+
+    4 | PER SUBMITTER EDI CONTACT INFORMATION
+      | PER*IC*Bud Holly*TE*8017268899~
+
+    5 | 1000B RECEIVER
+      | NM1 RECEIVER NAME
+      | NM1*40*2*XYZ Receiver*****46*369852758~
+
+    6 | 2000A BILLING PROVIDER HL LOOP
+      | HL - BILLING PROVIDER
+      | HL*1**20*1~
+
+    7 | 2010AA BILLING PROVIDER
+      | NM1 BILLING PROVIDER NAME
+      | NM1*85*2*Professional Home IV, LLC*****XX*1234567893~
+
+    8 | N3 BILLING PROVIDER ADDRESS
+      | N3*1500 Industrial Drive~
+
+    9 | N4 BILLING PROVIDER CITY
+      | N4*Libertyville*IL*60048~
+
+   10 | REF BILLING PROVIDER SECONDARY IDENTIFICATION
+      | REF*EI*10-1234567~
+
+   11 | PER BILLING PROVIDER CONTACT INFORMATION
+      | PER*IC*Brenda Holly*TE*8019999999~
+
+   12 | 2000B SUBSCRIBER HL LOOP
+      | HL - SUBSCRIBER
+      | HL*2*1*22*0~
+
+   13 | SBR SUBSCRIBER INFORMATION
+      | SBR*P*18*GRP01020102******CI~
+
+   14 | 2010BA SUBSCRIBER
+      | NM1*IL*1*Smith*Steve*A***MI*MBRID01234~
+
+   15 | N3 SUBSCRIBER ADDRESS
+      | N3*15210 Juliet Lane~
+
+   16 | N4 SUBSCRIBER CITY
+      | N4*Libertyville*IL*60048~
+
+   17 | DMG SUBSCRIBER DEMOGRAPHIC INFORMATION
+      | DMG*D8*19430501*M~
+
+   18 | 2010BB SUBSCRIBER / PAYER
+      | NM1 PAYER NAME
+      | NM1*PR*2*R&R Health Plan*****XY*PLANID12345~
+
+   19 | 2300 CLAIM
+      | CLM CLAIM LEVEL INFORMATION
+      | CLM*CLMNO12345*2232.93***12:B:1*Y*A*Y*Y~
+
+   20 | HI HEALTH CARE DIAGNOSIS CODE
+      | HI*BK:4659~
+
+   21 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*1~
+
+   22 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:S9500*1400.00*UN*7*12**1~
+
+   23 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*RD8*20040201-20040207~
+
+   24 | 2420E ORDERING PROVIDER NAME
+      | NM1 ORDERING PROVIDER NAME
+      | NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+   25 | 2400 SERVICE LINE
+      | LX*2~
+
+   26 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:J0696*682.50*UN*56*12**1~
+
+   27 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*RD8*20040201-20040207~
+
+   28 | DTP DATE – PRESCRIPTION DATE
+      | DTP*471*D8*20040130~
+
+   29 | 2410 DRUG IDENTIFICATION
+      | LIN DRUG IDENTIFICATION
+      | LIN**N4*00004196501~
+
+   30 | CTP DRUG QUANTITY
+      | CTP****7*UN~
+
+   31 | REF PRESCRIPTION NUMBER
+      | REF*XZ*2530001~
+
+   32 | 2420E ORDERING PROVIDER NAME
+      | NM1 ORDERING PROVIDER NAME
+      | NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+   33 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*3~
+
+   34 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:J7051*15.12*UN*28*12**1~
+
+   35 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*RD8*20040201-20040207~
+
+   36 | DTP DATE – PRESCRIPTION DATE
+      | DTP*471*D8*20040130~
+
+   37 | 2410 DRUG IDENTIFICATION
+      | LIN DRUG IDENTIFICATION
+      | LIN**N4*63323024910~
+
+   38 | CTP DRUG QUANTITY
+      | CTP****14*UN~
+
+   39 | REF PRESCRIPTION NUMBER
+      | REF*XZ*2530001~
+
+   40 | 2420E ORDERING PROVIDER NAME
+      | NM1 ORDERING PROVIDER NAME
+      | NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+   41 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*4~
+
+   42 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:J3490:::::Sod Chl 0.9% see NDC#*67.69*UN*7*12**1~
+
+   43 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*RD8*20040201-20040207~
+
+   44 | DTP DATE – PRESCRIPTION DATE
+      | DTP*471*D8*20040130~
+
+   45 | 2410 DRUG IDENTIFICATION
+      | LIN DRUG IDENTIFICATION
+      | LIN**N4*00338004938~
+
+   46 | CTP DRUG QUANTITY
+      | CTP****7*UN~
+
+   47 | REF PRESCRIPTION NUMBER
+      | REF*XZ*2530001~
+
+   48 | 2420E ORDERING PROVIDER NAME
+      | NM1 ORDERING PROVIDER NAME
+      | NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+   49 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*5~
+
+   50 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:J3490:::::Sod Chl 0.9% see NDC#*57.12*UN*14*12**1~
+      | DTP DATE - SERVICE DATE(S)
+
+   51 | DTP*472*RD8*20040201-20040207~
+      | DTP DATE – PRESCRIPTION DATE
+
+   52 | DTP*471*D8*20040130~
+      | 2410 DRUG IDENTIFICATION
+
+   53 | LIN DRUG IDENTIFICATION
+      | LIN**N4*08290033010~
+
+   54 | CTP DRUG QUANTITY
+      | CTP****14*UN~
+
+   55 | REF PRESCRIPTION NUMBER
+      | REF*XZ*2530002~
+
+   56 | 2420E ORDERING PROVIDER NAME
+      | NM1 ORDERING PROVIDER NAME
+      | NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+   57 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*6~
+
+   58 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:J3490:::::Hep Lock see NDC#*10.50*UN*7*12**1~
+
+   59 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*RD8*20040201-20040207~
+
+   60 | DTP DATE – PRESCRIPTION DATE
+      | DTP*471*D8*20040130~
+
+   61 | 2410 DRUG IDENTIFICATION
+      | LIN DRUG IDENTIFICATION
+      | LIN**N4*08290038005~
+
+   62 | CTP DRUG QUANTITY
+      | CTP****7*UN~
+
+   63 | REF PRESCRIPTION NUMBER
+      | REF*XZ*2530003~
+
+   64 | 2420E ORDERING PROVIDER NAME
+      | NM1 ORDERING PROVIDER NAME
+      | NM1*DK*1*Welby*Marcus****XX*1112223338~
+
+   65 | TRAILER
+      | SE TRANSACTION SET TRAILER
+      | SE*65*0711~
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HC*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*0711*005010X222~BHT*0019*00*0013*20040301*1200*CH~NM1
+*41*2*Quality Billing Service Corporation*****46*587654321~P
+ER*IC*Bud Holly*TE*8017268899~NM1*40*2*XYZ Receiver*****46*3
+69852758~HL*1**20*1~NM1*85*2*Professional Home IV, LLC*****X
+X*1234567893~N3*1500 Industrial Drive~N4*Libertyville*IL*600
+48~REF*EI*10-1234567~PER*IC*Brenda Holly*TE*8019999999~HL*2*
+1*22*0~SBR*P*18*GRP01020102******CI~NM1*IL*1*Smith*Steve*A**
+*MI*MBRID01234~N3*15210 Juliet Lane~N4*Libertyville*IL*60048
+~DMG*D8*19430501*M~NM1*PR*2*R&R Health Plan*****XY*PLANID123
+45~CLM*CLMNO12345*2232.93***12:B:1*Y*A*Y*Y~HI*BK:4659~LX*1~S
+V1*HC:S9500*1400.00*UN*7*12**1~DTP*472*RD8*20040201-20040207
+~NM1*DK*1*Welby*Marcus****XX*1112223338~LX*2~SV1*HC:J0696*68
+2.50*UN*56*12**1~DTP*472*RD8*20040201-20040207~DTP*471*D8*20
+040130~LIN**N4*00004196501~CTP****7*UN~REF*XZ*2530001~NM1*DK
+*1*Welby*Marcus****XX*1112223338~LX*3~SV1*HC:J7051*15.12*UN*
+28*12**1~DTP*472*RD8*20040201-20040207~DTP*471*D8*20040130~L
+IN**N4*63323024910~CTP****14*UN~REF*XZ*2530001~NM1*DK*1*Welb
+y*Marcus****XX*1112223338~LX*4~SV1*HC:J3490:::::Sod Chl 0.9%
+see NDC#*67.69*UN*7*12**1~DTP*472*RD8*20040201-20040207~DTP*
+471*D8*20040130~LIN**N4*00338004938~CTP****7*UN~REF*XZ*25300
+01~NM1*DK*1*Welby*Marcus****XX*1112223338~LX*5~SV1*HC:J3490:
+::::Sod Chl 0.9% see NDC#*57.12*UN*14*12**1~DTP*472*RD8*2004
+0201-20040207~DTP*471*D8*20040130~LIN**N4*08290033010~CTP***
+*14*UN~REF*XZ*2530002~NM1*DK*1*Welby*Marcus****XX*1112223338
+~LX*6~SV1*HC:J3490:::::Hep Lock see NDC#*10.50*UN*7*12**1~DT
+P*472*RD8*20040201-20040207~DTP*471*D8*20040130~LIN**N4*0829
+0038005~CTP****7*UN~REF*XZ*2530003~NM1*DK*1*Welby*Marcus****
+XX*1112223338~SE*65*0711~
+GE*1*1~
+IEA*1*000000905~

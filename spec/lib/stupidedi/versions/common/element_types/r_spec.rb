@@ -174,8 +174,8 @@ describe "Stupidedi::Versions::Common::ElementTypes::R" do
       specify { expect(a * b).to            be == "21.0".to_d }
 
       specify { expect(a.to_d + b.to_d).to  be == "12.5".to_d }
-        specify { expect(a + b.to_d).to     be == "12.5".to_d }
-        specify { expect(a.to_d + b).to     be == "12.5".to_d }
+      specify { expect(a + b.to_d).to       be == "12.5".to_d }
+      specify { expect(a.to_d + b).to       be == "12.5".to_d }
       specify { expect(a + b).to            be == "12.5".to_d }
 
       specify { expect(a.to_d - b.to_d).to  be == "8.5".to_d }

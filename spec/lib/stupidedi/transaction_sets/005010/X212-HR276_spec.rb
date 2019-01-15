@@ -1,10 +1,10 @@
 using Stupidedi::Refinements
 
-describe "X212-HR276" do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276" do
   include NavigationMatchers
 
   describe "parser" do
-    let(:parser) { Fixtures.parse!("005010/X212-HR276/pass/1.x12").head }
+    let(:parser) { Fixtures.parse!("005010/X212-HR276/case/1.edi").head }
 
     describe "parser" do
       let(:iea) { parser.segment.fetch }

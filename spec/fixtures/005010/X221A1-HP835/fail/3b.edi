@@ -1,0 +1,60 @@
+Business Scenario 3b
+
+The patient has three insurance companies. The total charge for the claim is $1766.50. The primary payer allowed $1600.00 and applied a contractual adjustment of $166.50 as part of the provider’s fee schedule. The allowed amount was paid at 80% after a $500.00 deductible. The primary payer paid $880.00.
+
+
+Errors Found in File 835 5010X221-3b
+* W10009:Padding, spaces or control characters detected after segment terminator.
+* H10203:Functional Group ID 'XX' mismatch - Transaction Set is type 'HP'
+* H11204:Code Value 'XX' not used for element 'GS01'
+* W10046:Syntax Error for BPR02, trailing zeros following the decimal point should be suppressed.
+* B51124:This Zip Code is not valid for this State.
+* H50010:Invalid ZIP Code ('11114'), not in USPS tables.
+* W25219:The value of FI is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* B51124:This Zip Code is not valid for this State.
+* H46336:Coverage Amount AMT sgement (AMT01= "AU") was expected since the claim paid amount (CLP04) was not zero.
+* W45225:Class of Contract Code is recommended in PPO situations or whenever the provider's payment is impacted bya health plan contract.
+* W10046:Syntax Error for CLP04, trailing zeros following the decimal point should be suppressed.
+* H10046:Syntax error: NM109 was found but NM108 was missing. X12 syntax rule: 'P0809' - if one element is present, all must be present.
+* H10006:Value '789123456' is too long.
+* H20203:Element NM110 is present, though marked 'Not Used'
+* W25219:The value of BS is only to be used if the provider is not a covered health care provider under the NPI mandate.
+* W25222:When the provider doesn't have an NPI, the Tax ID is the preferred ID for the Rendering Provider.
+* H46339:An AMT segment reporting the Allowed Amount (AMT01=B6) was expected since the service paid amount is greater than zero (SVC03>0).
+* H10614:Missing Mandatory 'SVC0102'
+* H20628:The value '187.50' does not match the format for a "NUBC Revenue Code". Revenue codes must be 4 digits, usually including a leading zero."
+* H51102:'187.50' is not a valid NUBC Revenue Code.
+* H10614:Missing Mandatory 'SVC0602'
+* H10005:Value '1' is too short for 'SVC0601'
+* H11204:Code Value '1' not used for element 'SVC0601'
+* W25229:Generally, this should be code value HPI since most providers are mandated to have a National Provider Identifier.
+* H20204:Code Value 'AU' at element 'AMT01' is valid in the X12 standard, but not in this HIPAA implementation
+* H10904:Number of Included Segments '38' does not match actual segment count '23'.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*XX*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X221A1~
+ST*835*0001~
+BPR*I*187.50*C*CHK************20050412~
+TRN*1*0012524879*1559123456~
+REF*EV*030240928~
+DTM*405*20050412~
+N1*PR*YOUR TAX DOLLARS AT WORK~
+N3*481A00 DEER RUN ROAD~
+N4*WEST PALM BCH*FL*11114~
+N1*PE*ACME MEDICAL CENTER*FI*599944521~
+N3*PO BOX 863382~
+N4*ORLANDO*FL*55115~
+REF*PQ*10488~
+LX*1~
+CLP*0001000054*3*1766.5*187.50**12*50580155533~
+NM1*QC*1*ISLAND*ELLIS*E****MI*789123456~
+NM1*82*2*JONES JONES ASSOCIATES*****BS*AB34U~
+DTM*232*20050120~
+SVC*HC*24599*1766.5*187.50**1~
+DTM*472*20050120~
+CAS*OA*23*1579~
+REF*1B*44280~
+AMT*AU*1700~
+SE*38*0001~
+GE*1*1~
+IEA*1*000000905~

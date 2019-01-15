@@ -1,0 +1,170 @@
+Example 9 - Anesthesia
+
+Patient is the same as the subscriber. Payer is Medicare. Encounter is billed
+directly to Medicare.
+
+  SUBSCRIBER/PATIENT                : Margaret Jones
+    ADDRESS                         : 123 Rainbow Road, Nashville, TN 37232
+    TELEPHONE                       : 615-555-1212
+    SEX                             : F
+    DOB                             : 03/03/1974
+    EMPLOYER                        : ACME Inc.
+    SUBSCRIBER #                    : 123456789A
+
+  SECONDARY COVERAGE
+
+  DESTINATION PAYER                 : ABC Payer
+    PAYER ADDRESS                   : P.O. Box 1465, Nashville, TN, 37232
+    PAYER ORGANIZATION ID           : 05440
+
+  RECEIVER                          : ABC Payer
+    EDI #                           : 05440
+
+  BILLING PROVIDER/SENDER           : Provider Medical Group
+    ADDRESS                         : 1234 West End Ave, Nashville, TN, 37232
+    NPI #                           : 2366554859
+    TIN                             : 756473826
+    EDI #                           : N305
+    CONTACT PERSON AND PHONE NUMBER : Nina, 615-555-1212 ext.911
+
+  RENDERING PROVIDER                : Dr. Jacob E. Townsend/Anesthesiologist
+    NPI                             : 5678912345
+    MEDICARE PROVIDER ID #          : 9741234
+    PLACE OF SERVICE                : Provider OP Hospital
+    PLACE OF SERVICE ADDRESS        : 345 Main Drive, Nashville, TN,37232
+    PLACE OF SERVICE ID #           : 43294867
+
+  PATIENT ACCOUNT NUMBER            : 543211230
+  CASE                              : Laser Eye Surgery.
+
+  VISIT                             : DOS=1/12/2005 POS=Outpatient Hospital
+  SERVICES                          : Anesthesia for the Laser Eye Surgery
+  CHARGES                           : Anesthesia, 61 minutes = $827.00
+  CONCURRENCY                       : 2 cases
+  PHYSICAL STATUS                   : Normal
+  PATIENT CONTROL #                 : 153829140
+  MEDICAL RECORD ID #               : 006653794
+
+  TOTAL CHARGES                     : $827.00
+
+  ELECTRONIC ROUTE                  : Billing Provider (sender) to ABC PAYER direct
+
+SEG # | LOOP SEGMENT/ELEMENT STRING
+------|------------------------------------------------------------------------
+    1 | HEADER
+      | ST TRANSACTION SET HEADER
+      | ST*837*0001*005010X222~
+
+    2 | BHT BEGINNING OF HIERARCHICAL
+      | BHT*0019*00*0123*20050117*1023*CH~
+
+    3 | 1000A SUBMITTER
+      | NM1 SUBMITTER
+      | NM1*41*2*PROVIDER MEDICAL GROUP*****46*N305~
+
+    4 | PER SUBMITTER EDI CONTACT INFORMATION
+      | PER*IC*NINA*TE*6155551212*EX*911~
+
+    5 | 1000B RECEIVER
+      | NM1 RECEIVER NAME
+      | NM1*40*2*ABC PAYER*****46*05440~
+
+    6 | 2000A BILLING PROVIDER HL LOOP
+      | HL - BILLING PROVIDER
+      | HL*1**20*1~
+
+    7 | 2010AA BILLING PROVIDER
+      | NM1 BILLING PROVIDER NAME
+      | NM1*85*2*PROVIDER MEDICAL GROUP*****XX*2366554859~
+
+    8 | N3 BILLING PROVIDER ADDRESS
+      | N3*1234 WEST END AVE~
+
+    9 | N4 BILLING PROVIDER CITY/STATE/ZIP
+      | N4*NASHVILLE*TN*37232~
+
+    0 | REF BILLING PROVIDER TAX IDENTIFICATION
+      | REF*EI*756473826~
+
+    1 | 2000B SUBSCRIBER HL LOOP
+      | HL - SUBSCRIBER
+      | HL*2*1*22*0~
+
+    2 | SBR SUBSCRIBER INFORMATION
+      | SBR*P*18*******MB~
+
+    3 | 2010BA SUBSCRIBER
+      | NM1 SUBSCRIBER NAME
+      | NM1*IL*1*JONES*MARGARET****MI*123456789A~
+
+    4 | N3 SUBSCRIBER STREET ADDRESS
+      | N3*123 RAINBOW ROAD~
+
+    5 | N4 SUBSCRIBER CITY/STATE/ZIP
+      | N4*NASHVILLE*TN*37232~
+
+    6 | DMG SUBSCRIBER DEMOGRAPHIC INFORMATION
+      | DMG*D8*19740303*F~
+
+    7 | 2010BB SUBSCRIBER / PAYER
+      | NM1 PAYER NAME
+      | NM1*PR*2*ABC PAYER*****PI*05440~
+
+    8 | 2300 CLAIM
+      | CLM CLAIM LEVEL INFORMATION
+      | CLM*153829140*827***22>B>1*Y*A*Y*Y~
+
+    9 | HI HEALTH CARE DIAGNOSIS CODES
+      | HI*BK>36616~
+
+    0 | 2310B RENDERING PROVIDER
+      | NM1 RENDERING PROVIDER NAME
+      | NM1*82*1*TOWNSEND*JACOB*E***XX*5678912345~
+
+    1 | PRV RENDERING PROVIDER TAXONOMY INFORMATION
+      | PRV*PE*ZZ*207L00000X~
+
+    2 | REF RENDERING PROVIDER SECONDARY IDENTIFICATION
+      | REF*G2*9741234~
+
+    3 | 2310C SERVICE FACILITY LOCATION
+      | NM1 SERVICE FACILITY LOCATION
+      | NM1*77*2*PROVIDER OP HOSP*****XX*432198765~
+
+    4 | N3 SERVICE FACILITY LOCATION
+      | N3*345 MAIN DRIVE~
+
+    5 | N4 SERVICE FACILITY LOCATION CITY/STATE/ZIP
+      | N4*NASHVILLE*TN*37232~
+
+    6 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNT
+      | LX*1~
+
+    7 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC>00142>QK>QS>P1*827*MJ*61***1~
+
+    8 | DTP DATE - SERVICE DATE
+      | DTP*472*D8*20050112~
+
+    9 | TRAILER
+      | SE TRANSACTION SET TRAILER
+      | SE*29*0001~
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HC*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*0001*005010X222~BHT*0019*00*0123*20050117*1023*CH~NM1
+*41*2*PROVIDER MEDICAL GROUP*****46*N305~PER*IC*NINA*TE*6155
+551212*EX*911~NM1*40*2*ABC PAYER*****46*05440~HL*1**20*1~NM1
+*85*2*PROVIDER MEDICAL GROUP*****XX*2366554859~N3*1234 WEST
+END AVE~N4*NASHVILLE*TN*37232~REF*EI*756473826~HL*2*1*22*0~S
+BR*P*18*******MB~NM1*IL*1*JONES*MARGARET****MI*123456789A~N3
+*123 RAINBOW ROAD~N4*NASHVILLE*TN*37232~DMG*D8*19740303*F~NM
+1*PR*2*ABC PAYER*****PI*05440~CLM*153829140*827***22>B>1*Y*A
+*Y*Y~HI*BK>36616~NM1*82*1*TOWNSEND*JACOB*E***XX*5678912345~P
+RV*PE*ZZ*207L00000X~REF*1G*A41234~NM1*77*2*PROVIDER OP HOSP*
+****XX*432198765~N3*345 MAIN DRIVE~N4*NASHVILLE*TN*37232~LX*
+1~SV1*HC>00142>QK>QS>P1*827*MJ*61***1~DTP*472*D8*20050112~SE
+*29*0001~
+GE*1*1~
+IEA*1*000000905~

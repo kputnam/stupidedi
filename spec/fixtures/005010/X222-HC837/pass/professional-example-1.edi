@@ -1,0 +1,222 @@
+Example 1 - Commercial Health Insurance
+
+Patient is a different person than the Subscriber. Payer is commercial health insurance company.
+
+  SUBSCRIBER                            : Jane Smith
+    PATIENT ADDRESS                     : 236 N. Main St., Miami, Fl, 33413
+    TELEPHONE NUMBER                    : 305-555-1111
+    SEX                                 : F
+    DOB                                 : 05/01/43
+    EMPLOYER                            : ACME Inc.
+    GROUP #                             : 2222-SJ
+    KEY INSURANCE COMPANY ID #          : JS00111223333
+
+  PATIENT                               : Ted Smith
+    PATIENT ADDRESS                     : 236 N. Main St., Miami, Fl, 33413
+    TELEPHONE NUMBER                    : 305-555-1111
+    SEX                                 : M
+    DOB                                 : 05/01/73
+    KEY INSURANCE COMPANY ID #          : JS01111223333
+
+  DESTINATION PAYER                     : Key Insurance Company
+    PAYER ADDRESS                       : 3333 Ocean St. South Miami, FL 33000
+    PAYER ID                            : 999996666
+
+  SUBMITTER                             : Premier Billing Service
+    EDI #                               : TGJ23
+    CONTACT PERSON AND PHONE NUMBER     : JERRY, 305-555-2222 ext. 231
+
+  RECEIVER                              : Key Insurance Company
+    EDI #                               : 66783JJT
+
+  BILLING PROVIDER                      : Dr. Ben Kildare,
+    ADDRESS                             : 234 Seaway St, Miami, FL, 33111
+    NPI                                 : 9876543210
+    TIN                                 : 587654321
+    KEY INSURANCE COMPANY PROVIDER ID # : KA6663 Taxonomy Code: 203BF0100Y
+
+  PAY-TO PROVIDER                       : Kildare Associates,
+    PROVIDER ADDRESS                    : 2345 Ocean Blvd, Miami, Fl 33111
+
+  RENDERING PROVIDER                    : Dr. Ben Kildare
+
+  PATIENT ACCOUNT NUMBER                : 2-646-3774
+    CASE                                : Patient has sore throat.
+
+  INITIAL VISIT                         : DOS=10/03/06. POS=Office
+    SERVICES                            : Office visit, intermediate service, established patient, throat culture.
+    CHARGES                             : Office first visit = $40.00, Lab test for strep = $15.00
+
+  FOLLOW-UP VISIT                       : DOS=10/10/06 POS=Office Antibiotics didn’t work (pain continues).
+    SERVICES                            : Office visit, intermediate service, established patient, mono screening.
+    CHARGES                             : Follow-up visit = $35.00, lab test for mono = $10.00.
+
+  TOTAL CHARGES                         : $100.00.
+
+  ELECTRONIC ROUTE                      : Billing provider (sender), to VAN to Key Insurance Company (receiver). VAN claim identification number = 17312345600006351.
+
+SEG # | LOOP SEGMENT/ELEMENT STRING
+------|------------------------------------------------------------------------
+    1 | HEADER
+      | ST TRANSACTION SET HEADER
+      | ST*837*0021*005010X222~
+
+    2 | BHT BEGINNING OF HIERARCHICAL TRANSACTION
+      | BHT*0019*00*244579*20061015*1023*CH~
+
+    3 | 1000A SUBMITTER
+      | NM1 SUBMITTER NAME
+      | NM1*41*2*PREMIER BILLING SERVICE*****46*TGJ23~
+
+    4 | PER SUBMITTER EDI CONTACT INFORMATION
+      | PER*IC*JERRY*TE*3055552222*EX*231~
+
+    5 | 1000B RECEIVER
+      | NM1 RECEIVER NAME
+      | NM1*40*2*KEY INSURANCE COMPANY*****46*66783JJT~
+
+    6 | 2000A BILLING PROVIDER HL LOOP
+      | HL - BILLING PROVIDER
+      | HL*1**20*1~
+
+    7 | PRV BILLING PROVIDER SPECIALTY INFORMATION
+      | PRV*BI*PXC*203BF0100Y~
+
+    8 | 2010AA BILLING PROVIDER
+      | NM1 BILLING PROVIDER NAME
+      | NM1*85*2*BEN KILDARE SERVICE*****XX*9876543210~
+
+    9 | N3 BILLING PROVIDER ADDRESS
+      | N3*234 SEAWAY ST~
+
+   10 | N4 BILLING PROVIDER LOCATION
+      | N4*MIAMI*FL*33111~
+
+   11 | REF - BILLING PROVIDER TAX IDENTIFICATION
+      | REF*EI*587654321~
+
+   12 | 2010AB PAY-TO PROVIDER
+      | NM1 PAY-TO PROVIDER NAME
+      | NM1*87*2~
+
+   13 | N3 PAY-TO PROVIDER ADDRESS
+      | N3*2345 OCEAN BLVD~
+
+   14 | N4 PAY-TO PROVIDER CITY
+      | N4*MAIMI*FL*33111~
+
+   15 | 2000B SUBSCRIBER HL LOOP
+      | HL - SUBSCRIBER
+      | HL*2*1*22*1~
+
+   16 | SBR SUBSCRIBER INFORMATION
+      | SBR*P**2222-SJ******CI~
+
+   17 | 2010BA SUBSCRIBER
+      | NM1 SUBSCRIBER NAME
+      | NM1*IL*1*SMITH*JANE****MI*JS00111223333~
+
+   18 | DMG SUBSCRIBER DEMOGRAPHIC INFORMATION
+      | DMG*D8*19430501*F~
+
+   19 | 2010BB PAYER
+      | NM1 PAYER NAME
+      | NM1*PR*2*KEY INSURANCE COMPANY*****PI*999996666~
+
+   20 | REF BILLING PROVIDER SECONDARY IDENTIFICATION
+      | REF*G2*KA6663~
+
+   21 | 2000C PATIENT HL LOOP
+      | HL - PATIENT
+      | HL*3*2*23*0~
+
+   22 | PAT PATIENT INFORMATION
+      | PAT*19~
+
+   23 | 2010CA PATIENT
+      | NM1 PATIENT NAME
+      | NM1*QC*1*SMITH*TED~
+
+   24 | N3 PATIENT ADDRESS
+      | N3*236 N MAIN ST~
+
+   25 | N4 PATIENT CITY/STATE/ZIP
+      | N4*MIAMI*FL*33413~
+
+   26 | DMG PATIENT DEMOGRAPHIC INFORMATION
+      | DMG*D8*19730501*M~
+
+   27 | 2300 CLAIM
+      | CLM CLAIM LEVEL INFORMATION
+      | CLM*26463774*100***11:B:1*Y*A*Y*I~
+
+   28 | REF CLAIM IDENTIFICATION NUMBER FOR CLEARING HOUSES (Added by C.H.)
+      | REF*D9*17312345600006351~
+
+   29 | HI HEALTH CARE DIAGNOSIS CODES
+      | HI*BK:0340*BF:V7389~
+
+   30 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*1~
+
+   31 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:99213*40*UN*1***1~
+
+   32 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*D8*20061003~
+
+   33 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*2~
+
+   34 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:87070*15*UN*1***1~
+
+   35 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*D8*20061003~
+
+   36 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*3~
+
+   37 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:99214*35*UN*1***2~
+
+   38 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*D8*20061010~
+
+   39 | 2400 SERVICE LINE
+      | LX SERVICE LINE COUNTER
+      | LX*4~
+
+   40 | SV1 PROFESSIONAL SERVICE
+      | SV1*HC:86663*10*UN*1***2~
+
+   41 | DTP DATE - SERVICE DATE(S)
+      | DTP*472*D8*20061010~
+
+   42 | TRAILER
+      | SE TRANSACTION SET TRAILER
+      | SE*42*0021~
+
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HC*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X222~
+ST*837*0021*005010X222~BHT*0019*00*244579*20061015*1023*CH~N
+M1*41*2*PREMIER BILLING SERVICE*****46*TGJ23~PER*IC*JERRY*TE
+*3055552222*EX*231~NM1*40*2*KEY INSURANCE COMPANY*****46*667
+83JJT~HL*1**20*1~PRV*BI*PXC*203BF0100Y~NM1*85*2*BEN KILDARE
+SERVICE*****XX*9876543210~N3*234 SEAWAY ST~N4*MIAMI*FL*33111
+~REF*EI*587654321~NM1*87*2~N3*2345 OCEAN BLVD~N4*MAIMI*FL*33
+111~HL*2*1*22*1~SBR*P**2222-SJ******CI~NM1*IL*1*SMITH*JANE**
+**MI*JS00111223333~DMG*D8*19430501*F~NM1*PR*2*KEY INSURANCE
+COMPANY*****PI*999996666~REF*G2*KA6663~HL*3*2*23*0~PAT*19~NM
+1*QC*1*SMITH*TED~N3*236 N MAIN ST~N4*MIAMI*FL*33413~DMG*D8*1
+9730501*M~CLM*26463774*100***11:B:1*Y*A*Y*I~REF*D9*173123456
+00006351~HI*BK:0340*BF:V7389~LX*1~SV1*HC:99213*40*UN*1***1~D
+TP*472*D8*20061003~LX*2~SV1*HC:87070*15*UN*1***1~DTP*472*D8*
+20061003~LX*3~SV1*HC:99214*35*UN*1***2~DTP*472*D8*20061010~L
+X*4~SV1*HC:86663*10*UN*1***2~DTP*472*D8*20061010~SE*42*0021~
+GE*1*1~
+IEA*1*000000905~

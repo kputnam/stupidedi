@@ -1,0 +1,31 @@
+Business Case Scenario 3 -- Enroll an Employee in a Managed Care Product
+
+William Smith is enrolling in the HMO product effective 6/1/1996. He has
+selected Dr. Bernard Brown as his primary care physician for the program. Mr.
+Smith is already Dr. Brown's patient. Dr. Brown's provider number is 143766.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*BE*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X220~
+ST*834*0001*005010X220~
+BGN*00*12456*19980520*1200****2~
+N1*P5**FI*999888777~
+N1*IN**FI*654456654~
+INS*Y*18*021*20*A***FT~
+REF*0F*202443307~
+REF*1L*123456001~
+DTP*356*D8*19960112~
+NM1*IL*1*SMITH*WILLIAM****
+34*202443307~
+PER*IP**HP*7172343334*WP*
+7172341240~
+N3*1715 SOUTHWIND AVENUE~
+N4*ANYTOWN*PA*171110000~
+DMG*D8*19700614*M~
+HD*021**HMO~
+DTP*348*D8*19960601~
+LX*01~
+NM1*P3*1*BROWN*BERNARD**DR**
+SV*143766*25~
+SE*18*12345~
+GE*1*1~
+IEA*1*000000905~

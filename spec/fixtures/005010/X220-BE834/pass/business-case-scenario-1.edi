@@ -1,0 +1,91 @@
+Business Case Scenario 1 -- Enroll an Employee in Multiple Health Care Insurance Products
+
+John Doe is enrolling in three health care products -- health, dental, and
+vision. He also has Coordination of Benefits (COB) with another insurance
+company.
+
+X12 SYNTAX                        COMMENTS
+-------------------------------------------------------------------------------
+ST*834*0001*005010X220~          | Used to indicate the start of a transaction
+                                 | set and to specify a transaction set control
+                                 | number.
+                                 |
+BGN*00*12456*19980520*1200****2~ | This is an original transaction uniquely
+                                 | identified by the sender with reference
+                                 | #12456. The transaction was created on
+                                 | 5/20/1998 at 12:00 Noon.
+                                 |
+N1*P5**FI*999888777~             | Specifies the sponsor/sender's tax ID number.
+                                 |
+N1*IN**FI*654456654~             | Specifies the insurance company/receiver's tax
+                                 | ID number.
+                                 |
+INS*Y*18*021*20*A***FT~          | Beginning of Table 2. Indicates that the
+                                 | subscriber (John Doe) is adding coverage as an
+                                 | active employee.
+                                 |
+REF*0F*123456789~                | John's subscriber ID number.
+                                 |
+REF*1L*123456001~                | This is the group number assigned by the
+                                 | carrier.
+                                 |
+DTP*356*D8*19960523~             | The eligibility date for this transaction is
+                                 | 5/23/1996.
+                                 |
+NM1*IL*1*DOE*JOHN*P***34*        | Subscriber's name.
+123456789~                       |
+                                 |
+PER*IP**HP*7172343334*WP*        | John's home phone number is (717)234-3334 and
+7172341240~                      | his work number is (717)234-1240
+                                 |
+N3*100 MARKET ST*APT 3G~         | This is John's street address.
+                                 |
+N4*CAMP                          | This is John's city, state zip code and
+HILL*PA*17011**CY*CUMBERLAND~    | county.
+                                 |
+DMG*D8*19400816*M~               | This is John's date of birth and gender
+                                 |
+HD*021**HLT~                     | John is enrolling in a health benefit.
+                                 |
+DTP*348*D8*19960601~             | The benefits under this plan begin 6/01/1996
+                                 |
+COB*P*890111*5~                  | This lets the carrier know that John has COB
+                                 | with another company.
+                                 |
+HD*021**DEN~                     | John is enrolling in the Dental benefit.
+                                 |
+DTP*348*D8*19960601~             | The benefits under this plan begin 6/01/1996
+                                 |
+HD*021**VIS~                     | John is enrolling in the Vision benefit.
+                                 |
+DTP*348*D8*19960601~             | The benefits under this plan begin 6/01/1996
+                                 |
+SE*21*12345~                     | End of transaction set. 21 segments were sent
+                                 | and the control number in the ST segment is
+                                 | 12345.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*BE*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X220~
+ST*834*0001*005010X220~
+BGN*00*12456*19980520*1200****2~
+N1*P5**FI*999888777~
+N1*IN**FI*654456654~
+INS*Y*18*021*20*A***FT~
+REF*0F*123456789~
+REF*1L*123456001~
+DTP*356*D8*19960523~
+NM1*IL*1*DOE*JOHN*P***34*123456789~
+PER*IP**HP*7172343334*WP*7172341240~
+N3*100 MARKET ST*APT 3G~
+N4*CAMP HILL*PA*17011**CY*CUMBERLAND~
+DMG*D8*19400816*M~
+HD*021**HLT~
+DTP*348*D8*19960601~
+COB*P*890111*5~
+HD*021**DEN~
+DTP*348*D8*19960601~
+HD*021**VIS~
+DTP*348*D8*19960601~
+SE*21*12345~
+GE*1*1~
+IEA*1*000000905~

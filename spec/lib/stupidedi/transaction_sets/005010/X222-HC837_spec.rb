@@ -1,9 +1,9 @@
 using Stupidedi::Refinements
 
-describe "Stupidedi::TransactionSets::Implementations::X222::HC837" do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X222::HC837" do
   include NavigationMatchers
 
-  let(:parser) { Fixtures.parse!("005010/X222-HC837/pass/1.x12").head }
+  let(:parser) { Fixtures.parse!("005010/X222-HC837/case/1.edi").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }

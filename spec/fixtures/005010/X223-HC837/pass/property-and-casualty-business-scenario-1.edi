@@ -1,0 +1,249 @@
+Property and Casualty
+
+Healthcare Bill to Property & Casualty Payer
+
+  The requirements for submitting of Healthcare bills to Property & Casualty
+  payers are presented here.
+
+837 Transaction Set
+
+  Healthcare bills can be submitted to a Property & Casualty (P&C) payer. Because
+  coverage is triggered by a specific event, certain information is critical to
+  the billing process.
+
+  P&C bills must include both the bill information as well as the information
+  related to the event that caused the injury or illness. Information concerning
+  the event is necessary to associate a bill with the P&C claim.
+
+  P&C insurance is governed by State Insurance Regulations, Departments of Labor,
+  Worker’s Compensation Boards, or other jurisdictionally defined entities, which
+  often mandates compliance with Jurisdiction-specific procedures.
+
+The Business Need: Provider to P&C Payer Bill Transmission
+
+  • The date of accident/occurrence/onset of symptoms (Date of Loss) is a critical
+    piece of information and must always be transmitted in the "Date - Accident" DTP
+    segment within Loop ID-2300 (Claim loop).
+
+  • The Date of Loss is used to determine the eligibility of coverage.
+
+  • The unique identification number, referred to in P&C as a claim number, must
+    be provided. The claim number is transmitted in the REF segment of Loop
+    ID-2010BA if the patient is the subscriber or in the REF segment of Loop
+    ID-2010CA if the patient is not the subscriber.
+
+  Without a date of loss on the bill and claim number, the bill will incomplete
+  and may be rejected.
+
+Business Scenario 1 - Automobile Accident
+
+  CLAIM TYPE                     : AUTOMOBILE ACCIDENT
+    TYPE OF BILL                 : HOSPITAL
+    PRIMARY PAYER                : PROPERTY & CASUALTY INSURER
+    THE PATIENT IS A DIFFERENT PERSON THAN THE SUBSCRIBER. THE PAYER IS A
+    COMMERCIAL PROPERTY & CASUALTY INSURANCE COMPANY.
+
+  DATE OF ACCIDENT               : 10/31/2005
+    SUBSCRIBER                   : HAL HOWLING
+    SUBSCRIBER ADDRESS           : 327 BRONCO DRIVE, GETAWAY, CA, 99999
+    POLICY NUMBER                : B999-777-91G
+    INSURANCE COMPANY            : HEISMAN INSURANCE COMPANY
+    CLAIM NUMBER                 : 32-3232-32
+
+  PATIENT                        : RON MEXICO
+    PATIENT ADDRESS              : 32 BUFFALO RUN, ROCKING HORSE, CA, 99666
+    SEX                          : M
+    DOB                          : 06/01/48
+
+  DESTINATION PAYER/RECEIVER     : HEISMAN INSURANCE COMPANY PAYER
+    ADDRESS                      : 1 TROPHY LANE, NY, NY, 10032
+    PAYER ID                     : 999888777
+
+  BILLING PROVIDER/SENDER        : HALL OF FAME MEMORIAL HOSPITAL
+    TIN                          : 737373737
+    NATIONAL PROVIDER IDENTIFIER : 2365259638
+    ADDRESS                      : 1 CANTON ROAD, BROKEN FIELD, CA, 99998
+
+  PAY-TO-PROVIDER                : HALL OF FAME MEMORIAL HOSPITAL
+
+  ATTENDING PROVIDER             : VINCENT LOMBARDO, MD
+
+  PATIENT ACCOUNT NUMBER         : 000-00-0032
+    CASE                         : THE PATIENT WAS A PASSENGER IN THE
+    SUBSCRIBER’S AUTOMOBILE, AND THE PATIENT REPORTS THAT HIS HAND WAS CUT WHEN
+    THE CAR WAS STRUCK IN THE REAR.
+
+  DIAGNOSIS                      : 884.2,
+                                   E975.0,
+                                   E986.0
+
+  SERVICES RENDERED              : OUTPATIENT E/R VISIT,
+                                   LACERATION REPAIR,
+                                   HISTOLOGY TEST
+                                     DOS = 10/31/2005,
+                                     POS = E/R,
+                                     TOS = OUTPATIENT
+    CHARGES                      : E/R ROOM = $150.00,
+                                   LACERATION REPAIR = $75.00,
+                                   DNA TEST = $100.00,
+                                   E/R ATTENDING PHYSICIAN = $220.00.
+                                   TOTAL CHARGES = $545.00.
+
+SEG # | LOOP SEGMENT/ELEMENT STRING
+------|------------------------------------------------------------------------
+      | HEADER
+      | ST TRANSACTION SET HEADER
+      | ST*837*557766*005010X223~
+
+      | BHT BEGINNING OF HIERARCHICAL TRANSACTION
+      | BHT*0019*00*0324*20051111*1800*CH~
+
+      | 1000A SUBMITTER
+      | NM1 SUBMITTER NAME
+      | NM1*41*2*HALL OF FAME MEMORIAL HOSPITAL*****46*737373737~
+
+      | PER SUBMITTER EDI CONTACT INFORMATION
+      | PER*IC*KATE CASEY*TE*7152569877~
+
+      | 1000B RECEIVER
+      | NM1 RECEIVER NAME
+      | NM1*40*2*HEISMAN INSURANCE COMPANY*****46*999888777~
+
+      | 2000A BILLING PROVIDER HL LOOP
+      | HL*1**20*1~
+
+      | PRV BILLING PROVIDER SPECIALTY
+      | PRV*BI*PXC*203BA0200N~
+
+      | NM1 BILLING PROVIDER NAME
+      | NM1*85*2*HALL OF FAME MEMORIAL HOSPITAL*****XX*2365259638~
+
+      | N3 BILLING PROVIDER ADDRESS
+      | N3*1 CANTON ROAD~
+
+      | N4 BILLING PROVIDER LOCATION
+      | N4*BROKEN FIELD*CA*99998~
+
+      | REF BILLING PROVIDER SECONDARY IDENTIFICATION
+      | REF*EI*737373737~
+
+      | 2000B SUBSCRIBER HL LOOP
+      | HL*2*1*22*1~
+
+      | SBR SUBSCRIBER INFORMATION
+      | SBR*P********AM~
+
+      | 2010BA SUBSCRIBER
+      | NM1*IL*1*HOWLING*HAL****MI*B999777791G~
+
+      | 2010BB PAYER
+      | NM1*PR*2*HEISMAN INSURANCE COMPANY*****PI*999888777~
+
+      | 2000C PATIENT HL LOOP
+      | HL*3*2*23*0~
+
+      | PAT PATIENT INFORMATION
+      | PAT*21~
+
+      | NM1 PATIENT NAME
+      | NM1*QC*1*MEXICO*RON~
+
+      | N3 PATIENT ADDRESS
+      | N3*32 BUFFALO RUN~
+
+      | N4 PATIENT CITY/STATE/ZIP CODE
+      | N4*ROCKING HORSE*CA*99666~
+
+      | DMG PATIENT DEMOGRAPHIC INFORMATION
+      | DMG*D8*19480601*M~
+
+      | REF PROPERTY AND CASUALTY CLAIM NUMBER
+      | REF*Y4*32323232~
+
+      | 2300 CLAIM
+      | CLM*67236695521*545***13:A:1*Y*A*Y*Y~
+
+      | DTP STATEMENT DATES
+      | DTP*434*RD8*20051031-20051101~
+
+      | CL1 INSTITUTIONAL CLAIM CODE
+      | CL1*3*7*1~
+
+      | REF AUTO ACCIDENT STATE
+      | REF*LU*CA~
+
+      | HI PRINCIPLE DIAGNOIS
+      | HI*BK:8842~
+
+      | HI PATIENT’S REASON FOR VISIT
+      | HI*PR:8842~
+
+      | HI EXTERNAL CAUSE OF INJURY
+      | HI*BN:E9750*BN:E9860~
+
+      | 2310A ATTENDING PROVIDER NAME
+      | NM1 ATTENDING PROVIDER NAME
+      | NM1*71*1*LOMBARDO*VINCENT****XX*2533698543~
+
+      | 2400 SERVICE LINE NUMBER
+      | LX SERVICE LINE NUMBER
+      | LX*1~
+
+      | SV2 INSTITUTIONAL SERVICE LINE
+      | SV2*0450*HC:98765*150*UN*1~
+
+      | DTP DATE - SERVICE DATE
+      | DTP*472*D8*20051031~
+
+      | LX SERVICE LINE NUMBER
+      | LX*2~
+
+      | SV2 INSTITUTIONAL SERVICE LINE
+      | SV2*0360*HC:26591*75*UN*1~
+
+      | DTP DATE - SERVICE DATE
+      | DTP*472*D8*20051031~
+
+      | LX SERVICE LINE NUMBER
+      | LX*3~
+
+      | SV2 INSTITUTIONAL SERVICE LINE
+      | SV2*0312*HC:86225*100*UN*2~
+
+      | DTP DATE - SERVICE DATE
+      | DTP*472*D8*20051031~
+
+      | LX SERVICE LINE NUMBER
+      | LX*4~
+
+      | SV2 INSTITUTIONAL SERVICE LINE
+      | SV2*0360*HC:99283*220*UN*1~
+
+      | DTP DATE - SERVICE DATE
+      | DTP*472*D8*20051031~
+
+      | TRAILER
+      | SE - TRANSACTION SET TRAILER
+      | SE*43*557766~
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HC*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X223~
+ST*837*557766*005010X223~BHT*0019*00*0324*20051111*1800*CH~N
+M1*41*2*HALL OF FAME MEMORIAL HOSPITAL*****46*737373737~PER*
+IC*kate casey*TE*7152569877~NM1*40*2*HEISMAN INSURANCE COMPA
+NY*****46*999888777~HL*1**20*1~PRV*BI*pxc*203BA0200N~NM1*85*
+2*HALL OF FAME MEMORIAL HOSPITAL*****XX*2365259638~N3*1 CANT
+ON ROAD~N4*BROKEN FIELD*CA*99998~REF*EI*737373737~HL*2*1*22*
+1~SBR*P********AM~NM1*IL*1*HOWLING*HAL****MI*B999777791G~NM1
+*PR*2*HEISMAN INSURANCE COMPANY*****PI*999888777~HL*3*2*23*0
+~PAT*21~NM1*QC*1*MEXICO*RON~N3*32 BUFFALO RUN~N4*ROCKING HOR
+SE*CA*99666~DMG*D8*19480601*M~REF*Y4*32323232~CLM*6723669552
+1*545***13:A:1*Y*A*Y*Y~DTP*434*RD8*20051031-20051101~CL1*3*7
+*1~REF*LU*CA~HI*BK:8842~HI*PR:8842~HI*BN:E9750*BN:E9860~NM1*
+71*1*LOMBARDO*VINCENT****XX*2533698543~LX*1~SV2*0450*HC:9876
+5*150*UN*1~DTP*472*D8*20051031~LX*2~SV2*0360*HC:26591*75*UN*
+1~DTP*472*D8*20051031~LX*3~SV2*0312*HC:86225*100*UN*2~DTP*47
+2*D8*20051031~LX*4~SV2*0360*HC:99283*220*UN*1~DTP*472*D8*200
+51031~SE*43*557766~
+GE*1*1~
+IEA*1*000000905~

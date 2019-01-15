@@ -1,9 +1,9 @@
 using Stupidedi::Refinements
 
-describe "X221-HP835" do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221::HP835" do
   include NavigationMatchers
 
-  let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/1.x12").head }
+  let(:parser) { Fixtures.parse!("005010/X221-HP835/case/1.edi").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }
@@ -14,7 +14,7 @@ describe "X221-HP835" do
     end
 
     it "knows iea position" do
-      expect(iea.node.position.line).to eq(40)
+      expect(iea.node.position.line).to eq(47)
       expect(iea.node.position.column).to eq(1)
     end
 
@@ -32,8 +32,8 @@ describe "X221-HP835" do
 
     it "has defined sequence" do
       expect(parser).to have_sequence(%w(
-        ISA GS ST BPR TRN DTM N1 N3 N4 REF REF N1 REF LX TS3 TS2 CLP CAS NM1 MIA
-        DTM DTM AMT QTY LX TS3 CLP CAS NM1 MOA DTM AMT PLB SE GE IEA))
+        ISA GS ST BPR TRN DTM N1 N3 N4 REF REF N1 REF LX TS3 TS2 CLP CAS NM1
+        MIA DTM DTM AMT QTY LX TS3 CLP CAS NM1 MOA DTM AMT PLB SE GE IEA))
     end
 
     it "is correct" do
@@ -159,7 +159,7 @@ describe "X221-HP835" do
 
     context "with issues in Table 3 (Summary)" do
       context "with missing PLB" do
-        let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/2.x12").head }
+        let(:parser) { Fixtures.parse!("005010/X221-HP835/case/2.edi").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -184,7 +184,7 @@ describe "X221-HP835" do
       end
 
       context "with single PLB" do
-        let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/1.x12").head }
+        let(:parser) { Fixtures.parse!("005010/X221-HP835/case/1.edi").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -216,7 +216,7 @@ describe "X221-HP835" do
       end
 
       context "with multiple PLBs" do
-        let(:parser) { Fixtures.parse!("005010/X221-HP835/pass/3a.x12").head }
+        let(:parser) { Fixtures.parse!("005010/X221-HP835/case/3a.edi").head }
 
         it "is handled" do
           expect(parser).to be_deterministic

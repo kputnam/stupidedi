@@ -1,0 +1,110 @@
+Example 1
+
+  Example 1 is for a subscriber who is also the patient. There are two responses
+  in this section. The first response is a positive response where the
+  subscriber was found. The second response is a rejection for a provider not
+  authorized to access the payer's eligibility system.
+
+Generic request by a clinic for the patient's (subscriber) eligibility.
+
+  This is an example of an eligibility request from a clinic to a payer
+  processed in Real Time (see Section 1.4.3 - Batch and Real Time). The clinic
+  is inquiring if the patient (the subscriber) has coverage. The request is from
+  Bone and Joint Clinic to the ABC Company. This example uses the Primary Search
+  Option (see Section 1.4.8 - Search Options) for a subscriber who is the
+  patient and is for a generic request for Eligibility (see Section 1.4.7 -
+  Implementation-Compliant Use of the 270/271 Transaction Set).
+
+ST*270*1234*005010X279~
+  Transaction Set ID Code             = 270 (Eligibility, Coverage or Benefit Inquiry)
+  Transaction Set Control Number      = 1234
+  Implementation Convention Reference = 005010X279
+
+BHT*0022*13*10001234*20060501*1319~
+  Hierarchical Structure Code             = 0022 (Information Source, Information Receiver, Subscriber, Dependent)
+  Transaction Set Purpose Code            = 13 (Request)
+  Identification Reference Identification = 10001234
+  Date                                    = 20060501 (May 1, 2006)
+  Time                                    = 1:19 PM
+
+HL*1**20*1~
+  Hierarchical ID Number        = 1
+  Hierarchical Parent ID Number = * not used
+  Hierarchical Level Code       = 20 (Information Source)
+  Hierarchical Child Code       = 1
+
+NM1*PR*2*ABC COMPANY*****PI*842610001~
+  Entity Identifier Code        = PR (Payer)
+  Entity Type Qualifier         = 2 (Non-person)
+  Last Name                     = ABC Company
+  First Name                    = * not used
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = PI (Payer Identification)
+  Identification Code           = 842610001
+
+HL*2*1*21*1~
+  Hierarchical ID Number        = 2
+  Hierarchical Parent ID Number = 1
+  Hierarchical Level Code       = 21
+  Hierarchical Child Code       = 1
+
+NM1*1P*2*BONE AND JOINT CLINIC*****SV*2000035~
+  Entity Identifier Code        = 1P (Provider)
+  Entity Type Qualifier         = 2 (Non-Person)
+  Last Name                     = Bone and Joint Clinic
+  First Name                    = * not used
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = SV Service Provider Number
+  Identification Code           = 2000035
+
+HL*3*2*22*0~
+  Hierarchical ID Number        = 3
+  Hierarchical Parent ID Number = 2
+  Hierarchical Level Code       = 22
+  Hierarchical Child Code       = 0
+
+TRN*1*93175-012547*9877281234~
+  Trace Type Code                = 1 (Current Transaction Trace Number)
+  Reference Identification       = 93175-012547
+  Originating Company Identifier = 9877281234
+  Reference Identification       = * not used
+
+NM1*IL*1*SMITH*ROBERT****MI* 11122333301~
+  Entity Identifier Code = IL (Insured or Subscriber) Entity Type Qualifier = 1 (Person)
+  Last Name = Smith
+  First Name = Robert
+  Middle Name = * not used
+  Name Prefix = * not used
+  Name Suffix = * not used
+  Identification Code Qualifier = MI (Member Identification Number)
+  Identification Code = 11122333301
+
+DMG*D8*19430519~
+  Date Time Period Format = D8 (Date Expressed in Format CCYYMMDD)
+  Date Time Period        = 19430519
+
+DTP*291*D8*20060501~
+  Date/Time Qualifier               = 291 (Plan)
+  Date Time Period Format Qualifier = D8 (Dates Expressed in Format CCYYMMDD)
+  Date Time Period                  = 20060501 (May 1, 2006)
+
+EQ*30~
+  Service Type Code = 30 (Health Benefit Plan Coverage
+
+SE*13*1234~
+  Number of Included Segments    = 13
+  Transaction Set Control Number = 1234
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIV
+ERS.ID...*030101*1253*^*00501*000000905*1*T*:~GS*HS*SENDER C
+ODE*RECEIVER CODE*19991231*0802*1*X*005010X279~ST*270*1234*0
+05010X279~BHT*0022*13*10001234*20060501*1319~HL*1**20*1~NM1*
+PR*2*ABC COMPANY*****PI*842610001~HL*2*1*21*1~NM1*1P*2*BONE 
+AND JOINT CLINIC*****SV*2000035~HL*3*2*22*0~TRN*1*93175-0125
+47*9877281234~NM1*IL*1*SMITH*ROBERT****MI* 11122333301~DMG*D
+8*19430519~DTP*291*D8*20060501~EQ*30~SE*13*1234~GE*1*1~IEA*1
+*000000905~

@@ -1,0 +1,68 @@
+Business Scenario 1
+
+Dollars and data are being sent together through the banking system to pay
+Medicare Part A institutional claims.
+
+This scenario depicts the use of the ANSI ASC X12 835 in a governmental
+institutional environment. The electronic transmission of funds request and the
+remittance detail are contained within this single 835. In this scenario, one or
+more Depository Financial Institutions is involved in transferring information
+from the sender to the receiver.
+
+The following assumptions pertain to scenario one:
+
+• The dollars move using the ACH network from the Bank of Payorea, ABA#
+  999999992, account number 123456 to the Bank of No Return, ABA# 999988880,
+  checking account number 98765. The money moves on September 13, 2002.
+
+• The Insurance Company of Timbucktu, Federal tax ID # 512345678 and Medicare
+  Intermediary ID# 999, is paying Regional Hope Hospital, National Provider Number
+  6543210903. This is for one inpatient and one outpatient claim.
+
+• For the inpatient claim, the patient’s name is Sam O. Jones. The Health
+  Insurance Claim Number is 666-66-6666A. The Claim Submitter’s Identifier is
+  666123. The date of the hospitalization was August 16, 2002 to August 24, 2002.
+  Total charges reported are $211,366.97. Paid amount is $138,018.40. There is no
+  patient responsibility. Contractual adjustment is $73,348.57. No service line
+  detail is provided.
+
+• For the outpatient claim, the patient’s name is Liz E. Border, Health
+  Insurance Claim Number 996-66-9999B. The Claim Submitter’s Identifier is 777777.
+  The date of service is May 12, 2002. Total charges reported are $15,000. Paid
+  amount is $11,980.33. Contractual adjustment is $3,019.67. There is no service
+  line information.
+
+• There is a Capital Pass Through Amount (CV) payment to the provider for $1.27.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HP*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X221~
+ST*835*1234~
+BPR*C*150000*C*ACH*CTX*01*999999992*DA*123456*1512345678**01*999988880*DA*98765*20020913~
+TRN*1*12345*1512345678~
+DTM*405*20020916~
+N1*PR*INSURANCE COMPANY OF TIMBUCKTU~
+N3*1 MAIN STREET~
+N4*TIMBUCKTU*AK*89111~
+REF*2U*999~
+N1*PE*REGIONAL HOPE HOSPITAL*XX*6543210903~
+LX*110212~
+TS3*6543210903*11*20021231*1*211366.97****138018.4**73348.57~
+TS2*2178.45*1919.71**56.82*197.69*4.23~
+CLP*666123*1*211366.97*138018.4**MA*1999999444444*11*1~
+CAS*CO*45*73348.57~
+NM1*QC*1*JONES*SAM*O***HN*666666666A~
+MIA*0***138018.4~
+DTM*232*20020816~
+DTM*233*20020824~
+QTY*CA*8~
+LX*130212~
+TS3*6543210909*13*19961231*1*15000****11980.33**3019.67~
+CLP*777777*1*15000*11980.33**MB*1999999444445*13*1~
+CAS*CO*45*3019.67~
+NM1*QC*1*BORDER*LIZ*E***HN*996669999B~
+MOA***MA02~
+DTM*232*20020512~
+PLB*6543210903*20021231*CV:CP*-1.27~
+SE*28*1234~
+GE*1*1~
+IEA*1*000000905~

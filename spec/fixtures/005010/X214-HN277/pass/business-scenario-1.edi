@@ -1,0 +1,67 @@
+Business Scenario 1: Clearinghouse Example - Accepted File (some claims rejected)
+
+In the following example, Best Billing Service (Electronic Transmitter ID Number
+S00001) submitted an 837 Professional claim file to First Clearinghouse (Elec-
+tronic Transmitter ID Number CLHR00) on February 5, 2006 for Smith Clinic (Em-
+ployer Tax ID Number 123456789). First Clearinghouse processed the file on
+February 5, 2006 and notified Best Billing Service that although the file for
+charges totaling $1,000.00 was accepted, there were individual claims that were
+rejected. Following is the status information for the claims contained in the
+837 claims transmission file:
+
+John Doe’s (Member ID Number 00ABCD1234) claim for $200.00 for dates of service
+January 28, 2006 through January 31, 2006 was accepted and forwarded to the
+payer.
+
+Jane Doe’s (Member ID Number 45613027602) claim for $500.00 for date of service
+January 15, 2006 was rejected because it is missing the rendering provider
+number on the service/detail line with the HCPC procedure code of “22305" with a
+modifier of ”22" for a charge of $350.00. This is required for the payer to
+process the claim, so the clearinghouse has established an edit to pro- hibit
+acceptance of claims without the necessary identification number.
+
+Helen Vest’s (Member ID Number 45602708901) claim for $300.00 for date of
+service January 20, 2006 was rejected because the source of payment (claim fil-
+ing indicator) was not valid for the payer for this claim.
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIVERS.ID...*030101*1253*^*00501*000000905*1*T*:~
+GS*HN*SENDER CODE*RECEIVER CODE*19991231*0802*1*X*005010X214~
+ST*277*0001*005010X214~
+BHT*0085*08*277X2140001*20060205*1635*TH~
+HL*1**20*1~
+NM1*AY*2*FIRST CLEARINGHOUSE*****46*CLHR00~
+TRN*1*200102051635S00001ABCDEF~
+DTP*050*D8*20060205~
+DTP*009*D8*20060205~
+HL*2*1*21*1~
+NM1*41*2*BEST BILLING SERVICE*****46*S00001~
+TRN*2*2002020542857~
+STC*A0:16:PR*20060205*WQ*1000~
+QTY*90*1~
+QTY*AA*2~
+AMT*YU*200~
+AMT*YY*800~
+HL*3*2*19*1~
+NM1*85*2*SMITH CLINIC*****FI*123456789~
+HL*4*3*PT~
+NM1*QC*1*DOE*JOHN****MI*00ABCD1234~
+TRN*2*DOE01428~
+STC*A0:16:PR*20060205*WQ*200~
+REF*1K*22029500123407X~
+DTP*472*RD8*20060128-20060131~
+HL*5*3*PT~
+NM1*QC*1*DOE*JANE****MI*45613027602~
+TRN*2*DOE0221~
+STC*A3:21:82*20060205*U*500~
+DTP*472*D8*20060115~
+SVC*HC:22305:22*350*****1~
+STC*A3:122**U*******A3:153:82~
+REF*FJ*11~
+HL*6*3*PT~
+NM1*QC*1*VEST*HELEN****MI*45602708901~
+TRN*2*VEST0303~
+STC*A3:401*20060205*U*300~
+DTP*472*RD8*20060120-20060120~
+SE*37*0001~
+GE*1*1~
+IEA*1*000000905~

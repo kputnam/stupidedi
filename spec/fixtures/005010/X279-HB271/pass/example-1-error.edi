@@ -1,0 +1,73 @@
+Response
+
+Error response from the payer to a clinic that is not eligible for inquiries
+with the payer.
+
+This is an example of an eligibility response from a payer to a clinic based on
+the request in example Section 3.1.1 - Request. The request validation segment
+is used in this example to indicate that the provider is not eligible for
+inquiries.
+
+ST*271*4323*005010X279~
+  Transaction Set ID Code             = 271 (Eligibility, Coverage or Benefit Information)
+  Transaction Set Control Number      = 4323
+  Implementation Convention Reference = 005010X279
+
+BHT*0022*11*10001234*20060501*1319~
+  Hierarchical Structure Code             = 0022 (Information Source, Information Receiver, Subscriber, Dependent)
+  Transaction Set Purpose Code            = 11 (Response)
+  Identification Reference Identification = 10001234
+  Date                                    = 20060501 (May 1, 2006)
+  Time                                    = 1:19 PM
+
+HL*1**20*1~
+  Hierarchical ID Number        = 1
+  Hierarchical Parent ID Number = * not used
+  Hierarchical Level Code       = 20 (Information Source)
+  Hierarchical Child Code       = 1
+
+NM1*PR*2*ABC COMPANY*****PI*842610001~
+  Entity Identifier Code        = PR (Payer)
+  Entity Type Qualifier         = 2 (Non-person)
+  Last Name                     = ABC Company
+  First Name                    = * not used
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = PI (Payer Identification)
+  Identification Code           = 842610001
+
+HL*2*1*21*1~
+  Hierarchical ID Number        = 2
+  Hierarchical Parent ID Number = 1
+  Hierarchical Level Code       = 21
+  Hierarchical Child Code       = 1
+
+NM1*1P*2*BONE AND JOINT CLINIC*****SV*2000035~
+  Entity Identifier Code        = 1P (Provider)
+  Entity Type Qualifier         = 2 (Non-Person)
+  Last Name                     = Bone and Joint Clinic
+  First Name                    = * not used
+  Middle Name                   = * not used
+  Name Prefix                   = * not used
+  Name Suffix                   = * not used
+  Identification Code Qualifier = SV Service Provider Number
+  Identification Code           = 2000035
+
+AAA*Y**50*N~
+  Validity Code         = Y (Yes)
+  Agency Qualifier Code = * not used
+  Reject Reason Code    = 50 (Provider Ineligible For Inquiries)
+  Follow-Up Action Code = N (Resubmission Not Allowed)
+
+SE*8*4323~
+  Number of Included Segments    = 8
+  Transaction Set Control Number = 4323
+
+ISA*00*..........*01*SECRET....*ZZ*SUBMITTERS.ID..*ZZ*RECEIV
+ERS.ID...*030101*1253*^*00501*000000905*1*T*:~GS*HS*SENDER C
+ODE*RECEIVER CODE*19991231*0802*1*X*005010X279~ST*271*4323*0
+05010X279~BHT*0022*11*10001234*20060501*1319~HL*1**20*1~NM1*
+PR*2*ABC COMPANY*****PI*842610001~HL*2*1*21*1~NM1*1P*2*BONE 
+AND JOINT CLINIC*****SV*2000035~AAA*Y**50*N~SE*8*4323~GE*1*1
+~IEA*1*000000905~

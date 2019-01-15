@@ -12,13 +12,19 @@ Fixtures = Class.new do
   end
 
   def passing
-    Dir["#{@root}/*/*/pass/**"].map do |path|
+    Dir["#{@root}/*/*/pass/**/*.edi"].sort.map do |path|
       mkconfig(*parts(path.slice(@root.length+1..-1)))
     end
   end
 
   def failing
-    Dir["#{@root}/*/*/fail/**"].map do |path|
+    Dir["#{@root}/*/*/fail/**/*.edi"].sort.map do |path|
+      mkconfig(*parts(path.slice(@root.length+1..-1)))
+    end
+  end
+
+  def skipping
+    Dir["#{@root}/*/*/skip/**/*.edi"].sort.map do |path|
       mkconfig(*parts(path.slice(@root.length+1..-1)))
     end
   end
@@ -72,7 +78,7 @@ private
     end
   end
 
-  # @return [String, Stupidedi::Config, Stupidedi::Schema::TransactionSetDef]
+  # @return [String, Stupidedi::Config, String]
   def mkconfig(version, kind, gs01, gs08, st01, path)
     # Stupidedi::TransactionSets::FiftyTen::Implementations
     v = ["Stupidedi", "TransactionSets", version, kind]
