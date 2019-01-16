@@ -49,6 +49,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [String]
+      def descriptor
+        "segment #{id} #{name}"
+      end
+
       # @return [SegmentUse]
       def use(position, requirement, repeat_count)
         SegmentUse.new(self, position, requirement, repeat_count, nil)

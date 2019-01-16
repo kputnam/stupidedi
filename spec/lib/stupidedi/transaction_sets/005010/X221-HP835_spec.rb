@@ -23,7 +23,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221::HP835" do
         :element    => "+",
         :component  => ">",
         :repetition => "~",
-        :segment    => "\r")
+        :segment    => "\n")
     end
   end
 

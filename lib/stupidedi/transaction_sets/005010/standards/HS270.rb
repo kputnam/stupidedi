@@ -9,11 +9,11 @@ module Stupidedi
         s = SegmentDefs
 
         HS270 = b.build("HS", "270", "Eligibility, Coverage, or Benefit Inquiry",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BHT.use(200, r::Mandatory, d::RepeatCount.bounded(1))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("2000", d::RepeatCount.unbounded,
               s:: HL.use( 100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::TRN.use( 200, r::Optional,  d::RepeatCount.bounded(9)),

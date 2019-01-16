@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         SM204 = b.build("SM", "204", "Motor Carrier Load Tender",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s:: B2.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
             s::B2A.use( 30, r::Mandatory, d::RepeatCount.bounded(1)),
@@ -30,7 +30,7 @@ module Stupidedi
               s::MEA.use(208, r::Optional,  d::RepeatCount.bounded(1)),
               s:: M7.use(210, r::Optional,  d::RepeatCount.bounded(2)))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("0300", d::RepeatCount.unbounded,
               s:: S5.use(10, r::Mandatory, d::RepeatCount.bounded(1)),
               s::L11.use(20, r::Optional,  d::RepeatCount.bounded(200)),

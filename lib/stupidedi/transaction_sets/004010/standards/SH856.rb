@@ -9,12 +9,12 @@ module Stupidedi
         s = SegmentDefs
 
         SH856 = b.build("SH", "856", "Ship Notice/Manifest",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BSN.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
             s::DTM.use( 40, r::Optional,  d::RepeatCount.bounded(10))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("HL", d::RepeatCount.bounded(200000),
               s:: HL.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
               s::MEA.use( 80, r::Optional,  d::RepeatCount.bounded(40)),
@@ -30,7 +30,7 @@ module Stupidedi
               s:: N4.use( 340, r::Optional,  d::RepeatCount.unbounded),
               s::REF.use( 350, r::Optional,  d::RepeatCount.bounded(12)))),
 
-          d::TableDef.summary("Table 4 - Summary",
+          d::TableDef.summary("4 - Summary",
             s::CTT.use(100, r::Optional,  d::RepeatCount.bounded(1)),
             s:: SE.use(200, r::Mandatory, d::RepeatCount.bounded(1))))
 

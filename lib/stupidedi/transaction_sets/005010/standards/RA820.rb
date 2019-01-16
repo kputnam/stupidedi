@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         RA820 = b.build("RA", "820", "Payment Order/Remittance Advice",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BHT.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
             s::NTE.use(300, r::Optional,  d::RepeatCount.unbounded),
@@ -28,7 +28,7 @@ module Stupidedi
               s::RDM.use(1300, r::Optional,  d::RepeatCount.bounded(1)),
               s::DTM.use(1400, r::Optional,  d::RepeatCount.bounded(1)))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("ENT", d::RepeatCount.unbounded,
               s::ENT.use( 100, r::Optional,  d::RepeatCount.bounded(1)),
 
@@ -228,7 +228,7 @@ module Stupidedi
                   s::ASM.use(5400, r::Optional,  d::RepeatCount.bounded(1)),
                   s::ADX.use(5500, r::Optional,  d::RepeatCount.bounded(1))))))),
 
-          d::TableDef.summary("Table 3 - Summary",
+          d::TableDef.summary("3 - Summary",
             s:: SE.use( 100, r::Mandatory, d::RepeatCount.bounded(1))))
 
       end

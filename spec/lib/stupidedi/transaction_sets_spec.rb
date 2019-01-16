@@ -60,7 +60,7 @@ describe "Stupidedi::TransactionSets" do
         Fixtures.skipping
 
   all.group_by{|_, _, name| name }.sort.each do |name, group|
-    describe name.split("::").slice(2..-1).join("::") do
+    # describe name.split("::").slice(2..-1).join("::") do
       if Object.const_defined?(name)
         group.each do |path, config, name|
           case path
@@ -98,11 +98,11 @@ describe "Stupidedi::TransactionSets" do
         end
 
       else
-        pending do
+        pending name.split("::").slice(2..-1).join("::") do
           raise NameError, "uninitialized constant #{name}"
         end
       end
-    end
+    # end
   end
 
 end

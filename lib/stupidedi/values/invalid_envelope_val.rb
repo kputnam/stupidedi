@@ -7,7 +7,7 @@ module Stupidedi
       # @return [Array<SegmentVal>]
       attr_reader :children
 
-      def_delegators "@children.head", :position
+      def_delegators "@children.head", :descriptor, :position, :reason
 
       def initialize(children)
         @children = children

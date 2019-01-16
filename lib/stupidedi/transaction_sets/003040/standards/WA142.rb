@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         WA142 = b.build("WA", "142", "Product Service Claim",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BGN.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
 
@@ -17,7 +17,7 @@ module Stupidedi
               s:: N1.use( 30, r::Mandatory, d::RepeatCount.bounded(1)),
               s::PER.use( 80, r::Optional,  d::RepeatCount.bounded(1)))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("LX", d::RepeatCount.unbounded,
               s:: LX.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
               s:: N9.use( 20, r::Mandatory, d::RepeatCount.bounded(11)),
@@ -41,7 +41,7 @@ module Stupidedi
               d::LoopDef.build("AMT", d::RepeatCount.bounded(1),
                 s::AMT.use( 450, r::Optional,  d::RepeatCount.bounded(1))))),
 
-          d::TableDef.summary("Table 3 - Summary",
+          d::TableDef.summary("3 - Summary",
             d::LoopDef.build("TDS", d::RepeatCount.bounded(1),
               s::TDS.use( 10, r::Optional,  d::RepeatCount.bounded(1))),
 

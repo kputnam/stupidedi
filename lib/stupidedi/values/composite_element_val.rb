@@ -7,15 +7,15 @@ module Stupidedi
     # @see X222.pdf B.1.1.3.3 Composite Data Structure
     #
     class CompositeElementVal < AbstractElementVal
-      # @return [CompositeElementDef]
-      def_delegators :@usage, :definition
-
       # @return [Array<SimpleElementVal>]
       attr_reader :children
+
       alias component_vals children
 
       # @return [CompositeElementUse]
       attr_reader :usage
+
+      def_delegators :@usage, :definition, :descriptor
 
       def_delegators "@children.head", :position
 

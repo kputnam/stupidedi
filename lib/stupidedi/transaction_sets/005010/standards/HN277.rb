@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         HN277 = b.build("HN", "277", "Heath Care Information Status Notification",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BHT.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
             s::REF.use(300, r::Optional,  d::RepeatCount.bounded(10)),
@@ -22,7 +22,7 @@ module Stupidedi
               s::REF.use(800, r::Optional,  d::RepeatCount.bounded(2)),
               s::PER.use(900, r::Optional,  d::RepeatCount.bounded(1)))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("2000", d::RepeatCount.unbounded,
               s:: HL.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::SBR.use(200, r::Optional,  d::RepeatCount.bounded(1)),

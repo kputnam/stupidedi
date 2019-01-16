@@ -8,7 +8,7 @@ module Stupidedi
     #
     class RepeatedElementVal < AbstractElementVal
       # @return [CompositeElementDef, SimpleElementDef]
-      def_delegators :@usage, :definition
+      def_delegators :@usage, :definition, :descriptor
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children

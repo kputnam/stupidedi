@@ -10,6 +10,9 @@ module Stupidedi
       # @return [SimpleElementDef, CompositeElementDef, LoopDef, SegmentDef, TableDef]
       abstract :definition
 
+      # @return [String]
+      abstract :descriptor
+
       # @see X222.pdf B.1.3.10 Absence of Data
       def empty?
         @children.all?(&:empty?)

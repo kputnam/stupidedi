@@ -11,7 +11,7 @@ module Stupidedi
           s = SegmentDefs
 
           BE834 = b.build("BE", "834", "",
-            d::TableDef.header("Table 1 - Header",
+            d::TableDef.header("1 - Header",
               b::Segment(100, s::ST, "Transaction Set Header", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("834")),
                 b::Element(e::Required,    "Transaction Set Control Number"),
@@ -40,6 +40,7 @@ module Stupidedi
                 b::Element(e::Required,    "Record Totals", b::MaxLength(15)),
                 b::Element(e::NotUsed,     "Composite Unit of Measure"),
                 b::Element(e::NotUsed,     "Free-form Information")),
+
               d::LoopDef.build("1000A - SPONSOR NAME", d::RepeatCount.bounded(1),
                 b::Segment(700, s::N1, "Sponsor Name", r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Entity Identifier Code", b::Values("P5")),
@@ -48,6 +49,7 @@ module Stupidedi
                   b::Element(e::Required,    "Sponsor Identifier", b::MaxLength(80)),
                   b::Element(e::NotUsed,     "Entity Relationship Code"),
                   b::Element(e::NotUsed,     "Entity Identifier Code"))),
+
               d::LoopDef.build("1000B - PAYER", d::RepeatCount.bounded(1),
                 b::Segment(700, s::N1, "Payer", r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Entity Identifier Code", b::Values("IN")),
@@ -56,6 +58,7 @@ module Stupidedi
                   b::Element(e::Required,    "Insurer Identification Code", b::MaxLength(80)),
                   b::Element(e::NotUsed,     "Entity Relationship Code"),
                   b::Element(e::NotUsed,     "Entity Identifier Code"))),
+
               d::LoopDef.build("1000C - TPA/BROKER NAME", d::RepeatCount.bounded(2),
                 b::Segment(700, s::N1, "TPA/Broker Name", r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Entity Identifier Code", b::Values("BO", "TV")),
@@ -64,6 +67,7 @@ module Stupidedi
                   b::Element(e::Required,    "TPA or Broker Identification Code", b::MaxLength(80)),
                   b::Element(e::NotUsed,     "Entity Relationship Code"),
                   b::Element(e::NotUsed,     "Entity Identifier Code"))),
+
               d::LoopDef.build("1100C - TPA/BROKER ACCOUNT INFORMATION", d::RepeatCount.bounded(1),
                 b::Segment(1200, s::ACT, "TPA/Broker Account Information", r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "TPA or Broker Account Number", b::MaxLength(35)),
@@ -76,7 +80,7 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Payment Method Type Code"),
                   b::Element(e::NotUsed,     "Benefit Status Code")))),
 
-            d::TableDef.detail("Table 2 - Detail",
+            d::TableDef.detail("2 - Detail",
               d::LoopDef.build("2000 - MEMBER LEVEL DETAIL", d::RepeatCount.unbounded,
                 b::Segment(100, s::INS, "Member Level Detail", r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Member Indicator", b::Values("N", "Y")),
@@ -119,6 +123,7 @@ module Stupidedi
                   b::Element(e::Required,    "Date Time Qualifier", b::Values("050", "286", "296", "297", "300", "301", "303", "336", "337", "338", "339", "340", "341", "350", "351", "356", "357", "383", "385", "386", "393", "394", "473", "474")),
                   b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8")),
                   b::Element(e::Required,    "Status Information Effective Date")),
+
                 d::LoopDef.build("2100A - MEMBER", d::RepeatCount.bounded(1),
                   b::Segment(300, s::NM1, "Member Name", r::Required, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("74", "IL")),
@@ -201,6 +206,7 @@ module Stupidedi
                     b::Element(e::Situational, "Language Description"),
                     b::Element(e::Situational, "Language Use Indicator", b::Values("5", "6", "7", "8")),
                     b::Element(e::NotUsed,     "Language Proficiency Indicator"))),
+
                 d::LoopDef.build("2100B - INCORRECT MEMBER NAME", d::RepeatCount.bounded(1),
                   b::Segment(300, s::NM1, "Incorrect Member Name", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("70")),
@@ -230,6 +236,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Quantity"),
                     b::Element(e::Situational, "Code List Qualifier Code"),
                     b::Element(e::Situational, "Race or Ethnicity Collection Code"))),
+
                 d::LoopDef.build("2100C - MEMBER MAILING ADDRESS", d::RepeatCount.bounded(1),
                   b::Segment(300, s::NM1, "Member Mailing Address", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("31")),
@@ -255,6 +262,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Qualifier"),
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code"))),
+
                 d::LoopDef.build("2100D - MEMBER EMPLOYER", d::RepeatCount.bounded(3),
                   b::Segment(300, s::NM1, "Member Employer", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("36")),
@@ -290,6 +298,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Qualifier"),
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code"))),
+
                 d::LoopDef.build("2100E - MEMBER SCHOOL", d::RepeatCount.bounded(3),
                   b::Segment(300, s::NM1, "Member School", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("M8")),
@@ -325,6 +334,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Qualifier"),
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code"))),
+
                 d::LoopDef.build("2100F - CUSTODIAL PARENT", d::RepeatCount.bounded(1),
                   b::Segment(300, s::NM1, "Custodial Parent", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("S3")),
@@ -360,6 +370,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Qualifier"),
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code"))),
+
                 d::LoopDef.build("2100G - RESPONSIBLE PERSON", d::RepeatCount.bounded(13),
                   b::Segment(300, s::NM1, "Responsible Person", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("6Y", "9K", "E1", "EI", "EXS", "GB", "GD", "J6", "LR", "QD", "S1", "TZ", "X4")),
@@ -395,6 +406,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Qualifier"),
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code"))),
+
                 d::LoopDef.build("2100H - DROP OFF LOCATION", d::RepeatCount.bounded(1),
                   b::Segment(300, s::NM1, "Drop Off Location", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Entity Identifier Code", b::Values("45")),
@@ -420,6 +432,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Qualifier"),
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code"))),
+
                 d::LoopDef.build("2200 - DISABILITY INFORMATION", d::RepeatCount.unbounded,
                   b::Segment(2000, s::DSB, "Disability Information", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Disability Type Code", b::Values("1", "2", "3", "4")),
@@ -434,6 +447,7 @@ module Stupidedi
                     b::Element(e::Required,    "Date Time Qualifier", b::Values("360", "361")),
                     b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8")),
                     b::Element(e::Required,    "Disability Eligibility Date"))),
+
                 d::LoopDef.build("2300 - HEALTH COVERAGE", d::RepeatCount.bounded(99),
                   b::Segment(2600, s::HD, "Health Coverage", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Maintenance Type Code", b::Values("001", "002", "021", "024", "025", "026", "030", "032")),
@@ -470,6 +484,7 @@ module Stupidedi
                     b::Element(e::Required,    "Identification Card Type Code", b::Values("D", "H", "P")),
                     b::Element(e::Situational, "Identification Card Count"),
                     b::Element(e::Situational, "Action Code", b::Values("1", "2", "RX"))),
+
                   d::LoopDef.build("2310 - PROVIDER INFORMATION", d::RepeatCount.bounded(30),
                     b::Segment(3100, s::LX, "Provider Information", r::Situational, d::RepeatCount.bounded(1),
                       b::Element(e::Required,    "Assigned Number")),
@@ -513,6 +528,7 @@ module Stupidedi
                       b::Element(e::Required,    "Provider Effective Date"),
                       b::Element(e::NotUsed,     "Time"),
                       b::Element(e::Required,    "Maintenance Reason Code", b::Values("14", "22", "46", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ")))),
+
                   d::LoopDef.build("2320 - COORDINATION OF BENEFITS", d::RepeatCount.bounded(5),
                     b::Segment(4000, s::COB, "Coordination of Benefits", r::Situational, d::RepeatCount.bounded(1),
                       b::Element(e::Required,    "Payer Responsibility Sequence Number Code", b::Values("P", "S", "T", "U")),
@@ -528,6 +544,7 @@ module Stupidedi
                       b::Element(e::Required,    "Date Time Qualifier", b::Values("344", "345")),
                       b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8")),
                       b::Element(e::Required,    "Coordination of Benefits Date")),
+
                     d::LoopDef.build("2330 - COORDINATION OF BENEFITS RELATED ENTITY", d::RepeatCount.bounded(3),
                       b::Segment(4100, s::NM1, "Coordination of Benefits Related Entity", r::Situational, d::RepeatCount.bounded(1),
                         b::Element(e::Required,    "Entity Identifier Code", b::Values("36", "GW", "IN")),
@@ -563,12 +580,15 @@ module Stupidedi
                         b::Element(e::NotUsed,     "Communication Number Qualifier"),
                         b::Element(e::NotUsed,     "Communication Number"),
                         b::Element(e::NotUsed,     "Contact Inquiry Reference"))))),
+
                 d::LoopDef.build("2700 - ADDITIONAL REPORTING CATEGORIES", d::RepeatCount.bounded(1),
                   b::Segment(6880, s::LS, "Additional Reporting Categories", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Loop Identifier Code", b::Values("2700"))),
+
                   d::LoopDef.build("2710 - MEMBER REPORTING CATEGORIES", d::RepeatCount.unbounded,
                     b::Segment(6881, s::LX, "Member Reporting Categories", r::Situational, d::RepeatCount.bounded(1),
                       b::Element(e::Required,    "Assigned Number")),
+
                     d::LoopDef.build("2750 - REPORTING CATEGORY", d::RepeatCount.bounded(1),
                       b::Segment(6882, s::N1, "Reporting Category", r::Situational, d::RepeatCount.bounded(1),
                         b::Element(e::Required,    "Entity Identifier Code", b::Values("75")),
@@ -586,12 +606,13 @@ module Stupidedi
                         b::Element(e::Required,    "Date Time Qualifier", b::Values("007")),
                         b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8", "RD8")),
                         b::Element(e::Required,    "Member Reporting Category Effective Date(s)", b::MaxLength(35))))),
+
                   b::Segment(6885, s::LE, "Additional Reporting Categories Loop Termination", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Loop Identifier Code", b::Values("2700")))))),
 
             # This structure doesn't match the specification, but it does ensure
             # that the first occurrence of SE terminates the transaction set.
-            d::TableDef.summary("Table 3 - Summary",
+            d::TableDef.summary("3 - Summary",
               b::Segment(6900, s::SE, "Transaction Set Trailer", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Transaction Segment Count"),
                 b::Element(e::Required,    "Transaction Set Control Number"))))

@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         FA999 = b.build("FA", "999", "Implementation Acknowledgment",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::AK1.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
 

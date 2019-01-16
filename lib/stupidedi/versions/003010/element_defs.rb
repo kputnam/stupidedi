@@ -4157,7 +4157,7 @@ module Stupidedi
             "CC" => "Shipment Complete on"))
         E369  = t::AN.new(:E369, "Free-form Description"                 , 1, 45)
         E370  = t::DT.new(:E370 , "Terms Discount Due Date"              , 6, 6)
-        E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
+        E373  = t::DT.new(:E373 , "Date"                                 , 6, 6)
         E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
           s::CodeList.build(
             "001" => "Cancel after",

@@ -366,8 +366,7 @@ module Stupidedi
           config  = mkconfig(transaction_set_def, functional_group_def,
                              "ISA11", "GS01", "GS08", "ST01")
 
-          builder = Parser::BuilderDsl.new(
-            Parser::StateMachine.build(config, Zipper::Stack), false)
+          builder = Parser::BuilderDsl.new(Parser.build(config, Zipper::Stack), false)
 
           # These lists of elements are re-used when Ambiguity needs to construct
           # an ISA, GS, or ST segment as it walks the transaction_set_def

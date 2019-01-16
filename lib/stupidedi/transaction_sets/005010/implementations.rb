@@ -53,6 +53,14 @@ module Stupidedi
           autoload :HC837I, "stupidedi/transaction_sets/005010/implementations/X223-HC837I"
         end
 
+        module X223A1
+          autoload :HC837,  "stupidedi/transaction_sets/005010/implementations/X223A1-HC837"
+        end
+
+        module X223A2
+          autoload :HC837,  "stupidedi/transaction_sets/005010/implementations/X223A2-HC837"
+        end
+
         module X231
           autoload :FA999,  "stupidedi/transaction_sets/005010/implementations/X231-FA999"
         end

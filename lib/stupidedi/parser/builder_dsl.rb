@@ -109,50 +109,50 @@ module Stupidedi
       # The `zipper` argument should be a _completed_ syntax node, meaning all
       # children have already been added. This is invariably true for segments,
       # because the {StateMachine} does not accept smaller units of syntax.
-      def critique(zipper, descriptor = "")
+      def critique(zipper, recursive = false, position = false)
         if zipper.node.simple? or zipper.node.component?
           if zipper.node.invalid?
             raise Exceptions::ParseError,
-              "invalid element #{descriptor}"
+              "invalid #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           elsif zipper.node.blank?
             if zipper.node.usage.required?
               raise Exceptions::ParseError,
-                "required element #{descriptor} is blank"
+                "required #{zipper.node.descriptor} is blank at #{zipper.node.position.inspect}"
             end
           elsif zipper.node.usage.forbidden?
             raise Exceptions::ParseError,
-              "forbidden element #{descriptor} is present"
+              "forbidden #{zipper.node.descriptor} is present at #{zipper.node.position.inspect}"
           elsif not zipper.node.allowed?
             raise Exceptions::ParseError,
-              "value #{zipper.node.to_s} not allowed in element #{descriptor}"
+              "value #{zipper.node.to_s} not allowed in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           elsif zipper.node.too_long?
             raise Exceptions::ParseError,
-              "value is too long in element #{descriptor}"
+              "value is too long in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           elsif zipper.node.too_short?
             raise Exceptions::ParseError,
-              "value is too short in element #{descriptor}"
+              "value is too short in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           end
 
         elsif zipper.node.composite?
           if zipper.node.blank?
             if zipper.node.usage.required?
               raise Exceptions::ParseError,
-                "required element #{descriptor} is blank"
+                "required element #{zipper.node.descriptor} is blank at #{zipper.node.position.inspect}"
             end
           elsif zipper.node.usage.forbidden?
             raise Exceptions::ParseError,
-              "forbidden element #{descriptor} is present"
+              "forbidden #{zipper.node.descriptor} is present at #{zipper.node.position.inspect}"
           else
             if zipper.node.present?
               zipper.children.each_with_index do |z, i|
-                critique(z, "#{descriptor}-#{"%02d" % (i + 1)}")
+                critique(z)
               end
 
               d = zipper.node.definition
               d.syntax_notes.each do |s|
                 unless s.satisfied?(zipper)
                   raise Exceptions::ParseError,
-                    "for element #{descriptor}, #{s.reason(zipper)}"
+                    "for #{zipper.node.descriptor}, #{s.reason(zipper)} at #{zipper.node.position.inspect}"
                 end
               end
             end
@@ -162,61 +162,66 @@ module Stupidedi
           zipper.children.each{|z| critique(z) }
 
         elsif zipper.node.segment?
-          descriptor = zipper.node.id
-
           if zipper.node.invalid?
             if zipper.up.node.invalid?
               raise Exceptions::ParseError,
-                zipper.first.node.reason
+                "#{zipper.first.node.reason} at #{zipper.first.node.position.inspect}"
             else
               raise Exceptions::ParseError,
-                "invalid #{descriptor} segment"
+                "invalid #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
             end
           else
             zipper.children.each_with_index do |z, i|
-              critique(z, "#{descriptor}#{"%02d" % (i + 1)}")
+              critique(z)
             end
 
             d = zipper.node.definition
             d.syntax_notes.each do |s|
               raise Exceptions::ParseError,
-                "for segment #{descriptor}, #{s.reason(zipper)}" \
+                "for #{zipper.node.descriptor}, #{s.reason(zipper)} at #{zipper.node.position.inspect}" \
                 unless s.satisfied?(zipper)
             end
           end
 
         elsif zipper.node.loop?
-          critique_occurences zipper,
-            "loop #{zipper.node.definition.id}"
+          critique_occurences zipper, recursive
 
         elsif zipper.node.table?
-          critique_occurences zipper,
-            "table #{zipper.node.definition.id}"
+          critique_occurences zipper, recursive
 
         elsif zipper.node.transaction_set?
-          # @todo
+          critique_occurences zipper, recursive
 
         elsif zipper.node.functional_group?
-          critique_occurences zipper,
-            "functional group #{zipper.node.definition.id}"
+          critique_occurences zipper, recursive
 
         elsif zipper.node.interchange?
-          critique_occurences zipper,
-            "interchange #{zipper.node.definition.id}"
+          critique_occurences zipper, recursive
 
         elsif zipper.node.transmission?
-          # @todo
+          if recursive
+            zipper.children.each_with_index do |z, i|
+              critique(z, recursive)
+            end
+          end
         end
       end
 
-      def critique_occurences(zipper, name)
+      def critique_occurences(zipper, recursive)
         occurences = Hash.new{|h,k| h[k] = 0 }
 
         zipper.children.each do |child|
           if child.node.respond_to?(:usage)
             occurences[child.node.usage] += 1
+          elsif child.node.invalid?
+            raise Exceptions::ParseError,
+              "#{child.node.descriptor} at #{child.node.position.inspect}"
           else
             occurences[child.node.definition] += 1
+          end
+
+          if recursive
+            critique(child, "", recursive)
           end
         end
 
@@ -224,23 +229,12 @@ module Stupidedi
           bound = child.repeat_count
           count = occurences.at(child)
 
-          type =
-            if child.segment?
-              "segment"
-            elsif child.loop?
-              "loop"
-            elsif child.table?
-              "table"
-            else
-              "node"
-            end
-
           if count.zero? and child.required?
             raise Exceptions::ParseError,
-              "required #{type} #{child.id} is missing from #{name}"
+              "required #{child.descriptor} is missing from #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           elsif bound < count
             raise Exceptions::ParseError,
-              "#{type} #{child.id} occurs too many times in #{name}"
+              "#{child.descriptor} occurs too many times in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           end
         end
       end

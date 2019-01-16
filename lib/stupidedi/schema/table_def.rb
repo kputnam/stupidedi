@@ -47,8 +47,25 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [String]
+      def descriptor
+        "table #{id}"
+      end
+
       def repeatable?
         @repeatable
+      end
+
+      def repeat_count
+        if @repeatable
+          RepeatCount.unbounded
+        else
+          RepeatCount.bounded(1)
+        end
+      end
+
+      def required?
+        entry_segment_uses.any?(&:required?)
       end
 
       # @return [Array<SegmentUse>]
@@ -128,6 +145,13 @@ module Stupidedi
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
         new(id, 2, false, header, loop_defs, trailer, nil)
+      end
+
+      # @return [TableDef]
+      def repeatable_detail(id, *children)
+        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
+        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
+        new(id, 2, true, header, loop_defs, trailer, nil)
       end
 
       # @return [TableDef]

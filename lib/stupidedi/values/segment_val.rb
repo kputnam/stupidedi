@@ -8,7 +8,7 @@ module Stupidedi
     #
     class SegmentVal < AbstractVal
       # @return [SegmentDef]
-      def_delegators :@usage, :definition
+      def_delegators :@usage, :definition, :descriptor, :id
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children
@@ -35,11 +35,6 @@ module Stupidedi
       # (see AbstractVal#size)
       def size
         1
-      end
-
-      # @return [Symbol]
-      def id
-        definition.id
       end
 
       # @return false

@@ -12,16 +12,22 @@ module Stupidedi
 
       def_delegators :@segment_tok, :position
 
-      def initialize(reason, segment_tok)
-        @reason, @segment_tok =
-          reason, segment_tok
+      def initialize(reason, segment_tok, separators)
+        @reason, @segment_tok, @separators =
+          reason, segment_tok, separators
       end
 
       # @return [SegmentVal]
       def copy(changes = {})
         InvalidSegmentVal.new \
           changes.fetch(:reason, @reason),
-          changes.fetch(:segment_tok, @segment_tok)
+          changes.fetch(:segment_tok, @segment_tok),
+          changes.fetch(:separators, @separators)
+      end
+
+      # @return [String]
+      def descriptor
+        "#{@segment_tok.to_s(@separators)} #{@reason}"
       end
 
       # (see AbstractVal#size)
@@ -65,7 +71,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = ansi.invalid("[#{@segment_tok.id}]")
+        id = ansi.invalid("[#{@segment_tok.to_s(@separators)}]")
         q.text(ansi.segment("InvalidSegmentVal#{id}"))
       end
 

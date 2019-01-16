@@ -50,7 +50,7 @@ describe "Generating" do
       it "loudly complains" do
         expect(lambda do
           isa(strict, "0050x")
-        end).to raise_error(%q(unknown interchange version "0050x"))
+        end).to raise_error(/^unknown interchange version "0050x"/)
 
         # The ISA segment wasn't added
         expect(relaxed).to be_empty
@@ -109,7 +109,7 @@ describe "Generating" do
           # ("required segment IEA is missing from interchange 00501")
 
           expect(lambda { isa(strict) }).to \
-            raise_error("required segment IEA is missing from interchange 00501")
+            raise_error(/^required segment IEA.*? is missing from interchange 00501/)
 
           expect(strict).to be_first
         end
@@ -142,7 +142,7 @@ describe "Generating" do
       context "when strict" do
         it "loudly complains" do
           expect(lambda { isa(strict) }).to \
-            raise_error("required element ISA06 is blank")
+            raise_error(/^required element ISA06.*? is blank/)
 
           expect(strict).to be_empty
         end
@@ -174,7 +174,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             expect(lambda { isa(strict) }).to \
-              raise_error("value XX not allowed in element ISA01")
+              raise_error(/^value XX not allowed in element ISA01/)
 
             expect(strict).to be_empty
           end
@@ -236,7 +236,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             expect(lambda { isa(strict) }).to \
-              raise_error("invalid element ISA10")
+              raise_error(/^invalid element ISA10/)
 
             expect(strict).to be_empty
           end
@@ -267,7 +267,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             expect(lambda { isa(strict) }).to \
-              raise_error("invalid element ISA13")
+              raise_error(/^invalid element ISA13/)
 
             expect(strict).to be_empty
           end
@@ -298,7 +298,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             expect(lambda { setup(strict) }).to \
-              raise_error("value is too long in element ISA13")
+              raise_error(/^value is too long in element ISA13/)
           end
         end
 
@@ -344,7 +344,7 @@ describe "Generating" do
         context "when strict" do
           it "loudly complains" do
             expect(lambda { setup(strict) }).to \
-              raise_error("value is too long in element ISA06")
+              raise_error(/^value is too long in element ISA06/)
           end
         end
 
@@ -386,7 +386,7 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             expect(lambda { setup(strict) }).to \
-              raise_error("value is too short in element ISA10")
+              raise_error(/^value is too short in element ISA10/)
           end
         end
 
@@ -423,7 +423,7 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             expect(lambda { setup(strict) }).to \
-              raise_error("value is too long in element GS04")
+              raise_error(/^value is too long in element GS04/)
           end
         end
 
@@ -457,14 +457,14 @@ describe "Generating" do
         context "when strict" do
           it "complains loudly" do
             expect(lambda { setup(strict) }).to \
-              raise_error("value is too short in element GS04")
+              raise_error(/^value is too short in element GS04/)
           end
         end
 
         context "when non-strict" do
           it "quietly proceeds" do
-            expect(lambda { setup(relaxed) }).not_to raise_error
-            # ("value is too short in element GS04")
+            expect(lambda { setup(relaxed) }).not_to \
+              raise_error #("value is too short in element GS04")
 
             expect(relaxed.element(4).select{|e| expect(e.node.year).to eq(11) }).to be_defined
           end
@@ -495,7 +495,7 @@ describe "Generating" do
             setup(relaxed, "005010X222")
 
             expect(lambda { relaxed.ST("837", relaxed.default, "005010X222") }).to \
-              raise_error("ST02 cannot be inferred")
+              raise_error(/^ST02 cannot be inferred/)
           end
         end
 
@@ -503,8 +503,8 @@ describe "Generating" do
           it "generates an empty element" do
             setup(relaxed, "005010X221")
 
-            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }).not_to raise_error
-            # ("ST02 cannot be inferred")
+            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }).not_to \
+              raise_error #("ST02 cannot be inferred")
 
             expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
             expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
@@ -515,8 +515,8 @@ describe "Generating" do
           it "generates a non-empty element value" do
             setup(relaxed, "005010X222")
 
-            expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }).not_to raise_error
-            # ("ST02 cannot be inferred")
+            expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }).not_to \
+              raise_error #("ST02 cannot be inferred")
 
             expect(relaxed.element(3).select{|e| e.node == "005010X222" }).to be_defined
           end
@@ -528,8 +528,8 @@ describe "Generating" do
           it "generates an empty element" do
             setup(relaxed, "005010X221")
 
-            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }).not_to raise_error
-            #("ST03 is not forbidden")
+            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }).not_to \
+              raise_error #("ST03 is not forbidden")
 
             expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
             expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
@@ -541,13 +541,10 @@ describe "Generating" do
             setup(relaxed, "005010X222")
 
             expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }).to \
-              raise_error("ST03 is not forbidden")
+              raise_error(/^ST03 is not forbidden/)
           end
         end
       end
     end
-  end
-
-  context "interchange 00401" do
   end
 end

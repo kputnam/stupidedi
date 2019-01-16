@@ -31,7 +31,7 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      def_delegators :definition, :id, :code_lists
+      def_delegators :definition, :descriptor, :id, :name, :code_lists
 
       def_delegators :requirement, :required?, :optional?
 

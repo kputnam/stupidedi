@@ -58,6 +58,11 @@ module Stupidedi
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
       end
 
+      # @return [String]
+      def descriptor
+        "transaction set #{id}"
+      end
+
       # @return [SegmentUse]
       def entry_segment_use
         @header_segment_uses.head

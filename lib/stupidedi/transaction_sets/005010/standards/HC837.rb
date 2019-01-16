@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         HC837 = b.build("HC", "837", "Health Care Claim",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use( 50, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BHT.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::REF.use(150, r::Optional,  d::RepeatCount.bounded(3)),
@@ -22,7 +22,7 @@ module Stupidedi
               s::REF.use(400, r::Optional,  d::RepeatCount.bounded(2)),
               s::PER.use(450, r::Optional,  d::RepeatCount.bounded(2)))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("2000", d::RepeatCount.unbounded,
               s:: HL.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
               s::PRV.use( 30, r::Optional,  d::RepeatCount.bounded(1)),
@@ -152,7 +152,7 @@ module Stupidedi
                     s:: LQ.use(5510, r::Optional,  d::RepeatCount.bounded(1)),
                     s::FRM.use(5520, r::Mandatory, d::RepeatCount.bounded(99))))))),
 
-          d::TableDef.summary("Table 3 - Summary",
+          d::TableDef.summary("3 - Summary",
             s:: SE.use(5550, r::Mandatory, d::RepeatCount.bounded(1))))
 
       end

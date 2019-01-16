@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         GF990 = b.build("GF", "990", "Response to a Load Tender",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s:: B1.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
             s:: N9.use( 30, r::Optional,  d::RepeatCount.bounded(1)),

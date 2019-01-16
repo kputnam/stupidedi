@@ -56,6 +56,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      # @return [String]
+      def descriptor
+        "loop #{id}"
+      end
+
       def repeatable?
         @repeat_count.try{|r| r.include?(2) }
       end

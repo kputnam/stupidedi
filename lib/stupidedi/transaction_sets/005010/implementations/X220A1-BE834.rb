@@ -11,7 +11,7 @@ module Stupidedi
           s = SegmentDefs
 
           BE834 = b.build("BE", "834", "",
-            d::TableDef.header("Table 1 - Header",
+            d::TableDef.header("1 - Header",
               b::Segment(100, s::ST, "Transaction Set Header", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("834")),
                 b::Element(e::Required,    "Transaction Set Control Number"),
@@ -76,7 +76,7 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Payment Method Type Code"),
                   b::Element(e::NotUsed,     "Benefit Status Code")))),
 
-            d::TableDef.detail("Table 2 - Detail",
+            d::TableDef.detail("2 - Detail",
               d::LoopDef.build("2000 - MEMBER LEVEL DETAIL", d::RepeatCount.unbounded,
                 b::Segment(100, s::INS, "Member Level Detail", r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Member Indicator", b::Values("N", "Y")),
@@ -591,7 +591,7 @@ module Stupidedi
 
             # This structure doesn't match the specification, but it does ensure
             # that the first occurrence of SE terminates the transaction set.
-            d::TableDef.summary("Table 3 - Summary",
+            d::TableDef.summary("3 - Summary",
               b::Segment(6900, s::SE, "Transaction Set Trailer", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Required,    "Transaction Segment Count"),
                 b::Element(e::Required,    "Transaction Set Control Number"))))

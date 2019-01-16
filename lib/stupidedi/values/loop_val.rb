@@ -13,6 +13,8 @@ module Stupidedi
       # @return [LoopDef]
       attr_reader :definition
 
+      def_delegators :definition, :descriptor
+
       # @return [Array<SegmentVal, LoopVal>]
       attr_reader :children
 

@@ -33,6 +33,11 @@ module Stupidedi
           changes.fetch(:table_defs, @table_defs)
       end
 
+      # @return [String]
+      def descriptor
+        "transaction set #{functional_group}#{id} #{name}"
+      end
+
       # @return [Values::TransactionSetVal]
       def empty
         Values::TransactionSetVal.new(self, [])
@@ -51,6 +56,11 @@ module Stupidedi
       # @return [SegmentUse]
       def last_segment_use
         @table_defs.last.trailer_segment_uses.last
+      end
+
+      # @return [Array<TableDef>]
+      def children
+        @table_defs
       end
 
       def transaction?
@@ -92,21 +102,20 @@ module Stupidedi
             end
           end
 
-          next unless t.repeatable?
+          # next unless t.repeatable?
 
-          [t.header_segment_uses, t.loop_defs, t.trailer_segment_uses].each do |s|
-            opt, req = s.split_until(&:optional?)
-            prefix   = opt.concat(req.take(1))
+          # [t.header_segment_uses, t.loop_defs, t.trailer_segment_uses].each do |s|
+          #   opt, req = s.split_until(&:optional?)
+          #   prefix   = opt.concat(req.take(1))
 
-            if x = prefix.find(&:repeatable?)
-              raise Exceptions::InvalidSchemaError,
-                %Q("#{x.id}" is an entry point into "#{t.id}", and both are marked
-                repeatable; "#{x.id}" should not be repeatable to avoid generating
-                an ambiguous grammar).join
-            end
+          #   if x = prefix.find(&:repeatable?)
+          #     raise Exceptions::InvalidSchemaError,
+          #       %Q("#{x.id}" is an entry point into "#{t.id}", and both are marked
+          #       repeatable).join
+          #   end
 
-            break if req.present?
-          end
+          #   break if req.present?
+          # end
         end
 
         new(functional_group, id, name, table_defs)

@@ -13,6 +13,8 @@ module Stupidedi
       # @return [InterchangeDef]
       attr_reader :definition
 
+      def_delegators :definition, :descriptor
+
       # @return [Array<SegmentVal, FunctionalGroupVal>]
       attr_reader :children
 

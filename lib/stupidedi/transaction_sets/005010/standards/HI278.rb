@@ -9,11 +9,11 @@ module Stupidedi
         s = SegmentDefs
 
         HI278 = b.build("HI", "278", "Health Care Services Review Information",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BHT.use(200, r::Mandatory, d::RepeatCount.bounded(1))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("HL", d::RepeatCount.unbounded,
               s:: HL.use( 100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::TRN.use( 200, r::Optional,  d::RepeatCount.bounded(9)),
@@ -53,7 +53,7 @@ module Stupidedi
                 s::INS.use(1700, r::Optional,  d::RepeatCount.bounded(1)),
                 s::DTP.use(1700, r::Optional,  d::RepeatCount.bounded(9))))),
 
-          d::TableDef.summary("Table 3 - Summary",
+          d::TableDef.summary("3 - Summary",
             s:: SE.use(2700, r::Mandatory, d::RepeatCount.bounded(1))))
 
       end

@@ -9,7 +9,7 @@ module Stupidedi
         s = SegmentDefs
 
         BE834 = b.build("BE", "834", "Benefit Enrollment and Maintenance",
-          d::TableDef.header("Table 1 - Header",
+          d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BGN.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
             s::REF.use(300, r::Optional,  d::RepeatCount.bounded(1)),
@@ -32,7 +32,7 @@ module Stupidedi
                 s::DTP.use(1700, r::Optional,  d::RepeatCount.bounded(1)),
                 s::AMT.use(1800, r::Optional,  d::RepeatCount.bounded(1))))),
 
-          d::TableDef.detail("Table 2 - Detail",
+          d::TableDef.detail("2 - Detail",
             d::LoopDef.build("2000", d::RepeatCount.unbounded,
               s::INS.use(100, r::Optional,  d::RepeatCount.bounded(1)),
               s::REF.use(200, r::Mandatory, d::RepeatCount.unbounded),

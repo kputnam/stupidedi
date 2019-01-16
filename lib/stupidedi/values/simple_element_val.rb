@@ -11,7 +11,7 @@ module Stupidedi
     #
     class SimpleElementVal < AbstractElementVal
       # @return [SimpleElementDef]
-      def_delegators :@usage, :definition
+      def_delegators :@usage, :definition, :descriptor
 
       abstract :valid?
 

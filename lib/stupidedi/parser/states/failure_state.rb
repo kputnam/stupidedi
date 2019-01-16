@@ -41,7 +41,7 @@ module Stupidedi
       # @return [Zipper::AbstractCursor]
       def push(zipper, parent, segment_tok, reason)
         envelope_val = Values::InvalidEnvelopeVal.new([])
-        segment_val  = Values::InvalidSegmentVal.new(reason, segment_tok)
+        segment_val  = Values::InvalidSegmentVal.new(reason, segment_tok, parent.separators)
 
         zipper.append_child new(
           parent.separators,
@@ -53,7 +53,7 @@ module Stupidedi
 
       def mksegment(segment_tok, parent)
         segment_val = Values::InvalidSegmentVal.new \
-          "unexpected segment", segment_tok
+          "cannot occur here", segment_tok, parent.separators
 
         new(parent.separators,
             parent.segment_dict,

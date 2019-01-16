@@ -9,6 +9,8 @@ module Stupidedi
       # @return [TransactionSetDef]
       attr_reader :definition
 
+      def_delegators :definition, :descriptor
+
       # @return [Array<TableVal>]
       attr_reader :children
 

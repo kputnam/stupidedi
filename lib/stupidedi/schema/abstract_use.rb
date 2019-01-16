@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 module Stupidedi
+  using Refinements
+
   module Schema
     class AbstractUse
       def usage?
@@ -9,6 +11,12 @@ module Stupidedi
       def definition?
         true
       end
+
+      # @return [Symbol]
+      abstract :id
+
+      # @return [String]
+      abstract :descriptor
 
       #
       #########################################################################

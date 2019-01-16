@@ -12,6 +12,9 @@ module Stupidedi
         true
       end
 
+      # @return [String]
+      abstract :descriptor
+
       #
       #########################################################################
 
