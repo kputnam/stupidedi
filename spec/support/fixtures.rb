@@ -1,6 +1,10 @@
+require "pathname"
+using Stupidedi::Refinements
+
 Fixtures = Class.new do
   VERSIONS =
-    { "005010" => "FiftyTen",
+    { "006020" => "SixtyTwenty",
+      "005010" => "FiftyTen",
       "004010" => "FortyTen",
       "003050" => "ThirtyFifty",
       "003040" => "ThirtyForty",
@@ -8,25 +12,22 @@ Fixtures = Class.new do
       "002001" => "TwoThousandOne" }
 
   def initialize(root)
-    @root = root
+    @root = Pathname.new(root)
   end
 
+  # @return [[path, "Stupidedi::TransactionSets::FiftyTen::Standards::HP835", Stupidedi::Config]]
   def passing
-    Dir["#{@root}/*/*/pass/**/*.edi"].sort.map do |path|
-      mkconfig(*parts(path.slice(@root.length+1..-1)))
-    end
+    Dir["#{@root}/*/*/pass/**/*.edi"].sort.flat_map{|path| all_configs(path) }
   end
 
+  # @return [[path, "Stupidedi::TransactionSets::FiftyTen::Standards::HP835", Stupidedi::Config]]
   def failing
-    Dir["#{@root}/*/*/fail/**/*.edi"].sort.map do |path|
-      mkconfig(*parts(path.slice(@root.length+1..-1)))
-    end
+    Dir["#{@root}/*/*/fail/**/*.edi"].sort.flat_map{|path| all_configs(path) }
   end
 
+  # @return [[path, "Stupidedi::TransactionSets::FiftyTen::Standards::HP835", Stupidedi::Config]]
   def skipping
-    Dir["#{@root}/*/*/skip/**/*.edi"].sort.map do |path|
-      mkconfig(*parts(path.slice(@root.length+1..-1)))
-    end
+    Dir["#{@root}/*/*/skip/**/*.edi"].sort.flat_map{|path| all_configs(path) }
   end
 
   # @return [String]
@@ -48,51 +49,49 @@ Fixtures = Class.new do
     machine, result = parse(path, config)
 
     if result.fatal?
-      result.explain{|msg| raise Stupidedi::Exceptions::ParseError, "#{msg} #{result.position.inspect}" }
+      result.explain{|msg| raise Stupidedi::Exceptions::ParseError, "#{msg} at #{result.position.inspect}" }
     end
 
     return machine, result
   end
 
-private
+# private
 
-  # @return [String, String, String, String, Array<String>, String, String]
-  def parts(path)
-    parts   = path.split("/") # @todo
-    version = parts[0]
+  # For a single file path, returns all the configs that could parse the file
+  #
+  # @return [[path, "Stupidedi::TransactionSets::FiftyTen::Standards::HP835", Stupidedi::Config]]
+  def all_configs(path)
+    # 005010/X221 HP835 Health Care Claim Payment Advice
+    path = Pathname.new(path).relative_path_from(@root)
+    name = path.each_filename.to_a[1]
 
-    case parts[1]
-    when /^(X[^-]+)-(.+)$/
-      a, b = $1, $2
-      gs01 = b[/^.{2}/]
-      gs08 = [version, a]
-      st01 = b[/.{3}$/]
+    case name
+    when /^(X\d{3})/
+      imp = parts(path)
+      std = parts(path).tap{|xs| xs[1] = "Standards" }
+      [mkconfig(*imp), mkconfig(*std)]
 
-      [VERSIONS.fetch(version), "Implementations", gs01, gs08, st01, path]
-    when /^[A-Z]/
-      gs01 = parts[1][/^.{2}/]
-      gs08 = [version]
-      st01 = parts[1][/.{3}$/]
-
-      [VERSIONS.fetch(version), "Standards", gs01, gs08, st01, path]
-    end
+    when /^[A-Z]\d{3}/
+      [mkconfig(*parts(path))]
+    else
+      []
+    end.map{|c| path.cons(c) }
   end
 
-  # @return [String, Stupidedi::Config, String]
-  def mkconfig(version, kind, gs01, gs08, st01, path)
+  # @return ["Stupidedi::TransactionSets::FiftyTen::Standards::HP835", Stupidedi::Config]
+  def mkconfig(version, kind, gs01, gs08, st01)
     # Stupidedi::TransactionSets::FiftyTen::Implementations
     v = ["Stupidedi", "TransactionSets", version, kind]
 
-    t = if gs08.length == 1
-          # Standards::HC837
-          [[gs01, st01].join]
-        else
-          # Implementation::X222::HC837
-          [gs08.last, [gs01, st01].join]
-        end
-
     # Stupidedi::TransactionSets::FiftyTen::Implementations::X222::HC837
-    m = (v + t).join("::")
+    m = case kind
+        when "Standards"
+          [v, [gs01, st01].join].join("::")
+        when "Implementations"
+          [v, gs08[1], [gs01, st01].join].join("::")
+        else
+          raise
+        end
 
     config = Stupidedi::Config.default.customize do |c|
       c.transaction_set.customize do |x|
@@ -100,6 +99,36 @@ private
       end
     end
 
-    [path, config, m]
+    [m, config]
   end
-end.new(File.expand_path("../../fixtures", __FILE__))
+
+  # For a given file path, return the most specific configuration that could
+  # parse the file
+  #
+  # @return ["FiftyTen", "Standards",       "HP", ["005010"],         "835"]
+  # @return ["FiftyTen", "Implementations", "HP", ["005010", "X221"], "835"]
+  def parts(pathname)
+    # ["005010", "X221 HP835 Health Care Claim Payment Advice"]
+    parts          = pathname.each_filename.to_a
+    version, name, = parts
+
+    case name
+    when /^(X[^ ]+) ([^ ]+)/  # (X221) (HP835) Health Care Claim Payment Advice
+      a, b = $1, $2
+      gs01 = b[/^.{2}/]
+      gs08 = [version, a]
+      st01 = b[/.{3}$/]
+
+      [VERSIONS.fetch(version, version), "Implementations", gs01, gs08, st01]
+
+    when /^([A-Z]{2})(\d{3})/ # (HP835) Health Care Claim Payment Advice
+      gs01 = $1
+      gs08 = [version]
+      st01 = $2
+
+      [VERSIONS.fetch(version, version), "Standards",       gs01, gs08, st01]
+    else
+      raise name.inspect
+    end
+  end
+end.new(File.expand_path("../../fixtures/", __FILE__))

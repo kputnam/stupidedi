@@ -417,7 +417,7 @@ describe "Generating" do
                  "SENDER ID",
                  "RECEIVER ID",
                  "222221105",
-                 Time.now.utc, "1", "X", "005010X222")
+                 Time.now.utc, "1", "X", "005010X222A1")
         end
 
         context "when strict" do
@@ -451,7 +451,7 @@ describe "Generating" do
                  "SENDER ID",
                  "RECEIVER ID",
                  "110605",
-                 Time.now.utc, "1", "X", "005010X222")
+                 Time.now.utc, "1", "X", "005010X222A1")
         end
 
         context "when strict" do
@@ -492,9 +492,9 @@ describe "Generating" do
       context "with default element placeholder" do
         context "when value cannot be inferred" do
           it "raises an error" do
-            setup(relaxed, "005010X222")
+            setup(relaxed, "005010X222A1")
 
-            expect(lambda { relaxed.ST("837", relaxed.default, "005010X222") }).to \
+            expect(lambda { relaxed.ST("837", relaxed.default, "005010X222A1") }).to \
               raise_error(/^ST02 cannot be inferred/)
           end
         end
@@ -513,12 +513,12 @@ describe "Generating" do
 
         context "when non-empty value can be inferred" do
           it "generates a non-empty element value" do
-            setup(relaxed, "005010X222")
+            setup(relaxed, "005010X222A1")
 
             expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }).not_to \
               raise_error #("ST02 cannot be inferred")
 
-            expect(relaxed.element(3).select{|e| e.node == "005010X222" }).to be_defined
+            expect(relaxed.element(3).select{|e| e.node == "005010X222A1" }).to be_defined
           end
         end
       end
@@ -538,7 +538,7 @@ describe "Generating" do
 
         context "when element is not declared forbidden" do
           it "generates a non-empty element value" do
-            setup(relaxed, "005010X222")
+            setup(relaxed, "005010X222A1")
 
             expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }).to \
               raise_error(/^ST03 is not forbidden/)

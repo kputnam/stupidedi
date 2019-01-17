@@ -1,5 +1,3 @@
-require "spec_helper"
-
 describe "Non-determinism" do
   include NavigationMatchers
   using Stupidedi::Refinements

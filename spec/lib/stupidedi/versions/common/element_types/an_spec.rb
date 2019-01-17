@@ -1,6 +1,6 @@
-using Stupidedi::Refinements
+describe "Stupidedi::Versions::Common::ElementTypes::AN", :skip do
+  using Stupidedi::Refinements
 
-describe "Stupidedi::Versions::Common::ElementTypes::AN" do
   let(:types) { Stupidedi::Versions::FiftyTen::ElementTypes }
   let(:r)     { Stupidedi::Versions::FiftyTen::ElementReqs }
   let(:d)     { Stupidedi::Schema::RepeatCount }

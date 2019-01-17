@@ -1,10 +1,9 @@
-using Stupidedi::Refinements
-
-describe "Navigating" do
+describe "Navigating", :skip do
+  using Stupidedi::Refinements
   include NavigationMatchers
 
   let(:payment) { Fixtures.parse!("005010/X221-HP835/case/1.edi").head.first  }
-  let(:claim)   { Fixtures.parse!("005010/X222-HC837/case/3b.edi").head.first }
+  let(:claim)   { Fixtures.parse!("005010/X222A1-HC837/case/3b.edi").head.first }
 
   context "unqualified segments" do
   end

@@ -1,6 +1,6 @@
 using Stupidedi::Refinements
 
-describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835" do
+describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835", :skip do
   include NavigationMatchers
 
   let(:parser) { Fixtures.parse!("004010/X091A1-HP835/case/1.edi").head }

@@ -1,56 +1,28 @@
-describe "Stupidedi::TransactionSets" do
+describe "Stupidedi::TransactionSets", :focus do
 
-  # @return [Array<(String, TransactionSetDef)>]
-  def self.transaction_set_defs
-    lambda do |root|
-      # Prevent walking in circles due to cycles in the graph
-      history = Hash.new
-      results = []
-      ansi    = Stupidedi::Color.ansi
-
-      f = lambda do |namespace, recurse|
-        history[namespace] = true
-
-        for child in namespace.constants
-          begin
-            name  = [namespace, child].join("::")
-            value = namespace.const_get(child)
-
-            if value.is_a?(Module)
-              if not history[value]
-                recurse.call(value, recurse)
-              end
-            elsif value.kind_of?(Stupidedi::Schema::TransactionSetDef)
-              results << [name, value]
-            end
-          rescue Stupidedi::Exceptions::InvalidSchemaError
-            $stderr.puts "warning: #{ansi.red("#{$!.class} #{$!.message}")}"
-            $stderr.puts " module: #{name}"
-            $stderr.puts $!.backtrace[0..-30].map{|x| "  " + x}.join("\n")
-            $stderr.puts
-          rescue LoadError, NameError
-            $stderr.puts "warning: #{ansi.red("#{$!.class} #{$!.message}")}"
-            $stderr.puts " module: #{name}"
-            $stderr.puts
-          end
-        end
+  Definitions.transaction_set_defs.each do |name, value, error|
+    describe name.split("::").slice(2..-1).join("::") do
+      it "is well-defined" do
+        expect(Object.const_get(name)).to be_a(Stupidedi::Schema::TransactionSetDef)
       end
 
-      f.call(root, f)
-      results
-    end.call(Stupidedi::TransactionSets)
-  end
+      case error
+      when Exception
+        pending "is non-ambiguous" do
+          raise "#{name} is not well-defined (see other spec results)"
+        end
+      else
+        version              = Stupidedi::Versions.const_get(name.split("::")[2])
+        functional_group_def = version.const_get(:FunctionalGroupDef)
+        transaction_set_def  = value
 
-  transaction_set_defs.each do |name, transaction_set_def|
-    names = name.split("::")
-
-    describe names.slice(2..-1).join("::") do
-      version              = Stupidedi::Versions.const_get(names[2])
-      functional_group_def = version.const_get(:FunctionalGroupDef)
-
-      it "is non-ambiguous" do
-        Stupidedi::TransactionSets::Validation::Ambiguity.build(
-          transaction_set_def, functional_group_def).audit
+        it "is non-ambiguous" do
+          expect(lambda do
+            Stupidedi::TransactionSets::Validation::Ambiguity
+              .build(transaction_set_def, functional_group_def)
+              .audit
+          end).not_to raise_error
+        end
       end
     end
   end
@@ -59,13 +31,13 @@ describe "Stupidedi::TransactionSets" do
         Fixtures.failing +
         Fixtures.skipping
 
-  all.group_by{|_, _, name| name }.sort.each do |name, group|
-    # describe name.split("::").slice(2..-1).join("::") do
+  all.group_by{|_, name, _| name }.sort.each do |name, group|
+    describe name.split("::").slice(2..-1).join("::") do
       if Object.const_defined?(name)
-        group.each do |path, config, name|
-          case path
+        group.sort.each do |path, name, config|
+          case path = path.to_s
           when %r{/pass/}
-            it path do
+            it "can parse '#{path}'" do
               expect(lambda do
                 machine, result = Fixtures.parse!(path, config)
                 builder         = Stupidedi::Parser::BuilderDsl.new(nil)
@@ -75,7 +47,7 @@ describe "Stupidedi::TransactionSets" do
               end).not_to raise_error
             end
           when %r{/skip/}
-            pending path do
+            pending "can parse '#{path}'" do
               expect(lambda do
                 machine, result = Fixtures.parse!(path, config)
                 builder         = Stupidedi::Parser::BuilderDsl.new(nil)
@@ -85,7 +57,7 @@ describe "Stupidedi::TransactionSets" do
               end).not_to raise_error
             end
           when %r{/fail/}
-            it path do
+            it "cannot parse '#{path}'" do
               expect(lambda do
                 machine, result = Fixtures.parse!(path, config)
                 builder         = Stupidedi::Parser::BuilderDsl.new(nil)
@@ -98,11 +70,13 @@ describe "Stupidedi::TransactionSets" do
         end
 
       else
-        pending name.split("::").slice(2..-1).join("::") do
-          raise NameError, "uninitialized constant #{name}"
+        group.each do |path, _, _|
+          pending "can parse '#{path.to_s}'" do
+            raise NameError, "uninitialized constant #{name}"
+          end
         end
       end
-    # end
+    end
   end
 
 end

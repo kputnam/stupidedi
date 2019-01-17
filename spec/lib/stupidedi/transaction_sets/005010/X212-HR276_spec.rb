@@ -1,6 +1,6 @@
 using Stupidedi::Refinements
 
-describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276" do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276", :skip do
   include NavigationMatchers
 
   describe "parser" do

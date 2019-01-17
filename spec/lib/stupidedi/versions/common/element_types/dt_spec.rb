@@ -1,4 +1,4 @@
-describe "Stupidedi::Versions::Common::ElementTypes::DT" do
+describe "Stupidedi::Versions::Common::ElementTypes::DT", :skip do
   let(:types) { Stupidedi::Versions::FiftyTen::ElementTypes }
   let(:r)     { Stupidedi::Versions::FiftyTen::ElementReqs }
   let(:d)     { Stupidedi::Schema::RepeatCount }

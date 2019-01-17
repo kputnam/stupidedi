@@ -1,4 +1,4 @@
-describe "Stupidedi::Either" do
+describe "Stupidedi::Either", :skip do
   def mksuccess(value)
     Stupidedi::Either.success(value)
   end
