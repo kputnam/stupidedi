@@ -8,11 +8,11 @@ module Stupidedi
         r = SegmentReqs
         s = SegmentDefs
 
-        HP835 = d::TransactionSetDef.build("HP", "835", "Health Care Claim Payment/Advice",
+        HP835 = b.build("HP", "835", "Health Care Claim Payment/Advice",
           d::TableDef.header("1 - Header",
             s:: ST.use(100, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BPR.use(200, r::Mandatory, d::RepeatCount.bounded(1)),
-            s::NTE.use(300, r::Mandatory, d::RepeatCount.unbounded),
+            s::NTE.use(300, r::Optional,  d::RepeatCount.unbounded),
             s::TRN.use(400, r::Optional,  d::RepeatCount.bounded(1)),
             s::CUR.use(500, r::Optional,  d::RepeatCount.bounded(1)),
             s::REF.use(600, r::Optional,  d::RepeatCount.unbounded),
@@ -43,8 +43,8 @@ module Stupidedi
                 s::REF.use(400, r::Optional,  d::RepeatCount.bounded(99)),
                 s::DTM.use(500, r::Optional,  d::RepeatCount.bounded(9)),
                 s::PER.use(600, r::Optional,  d::RepeatCount.bounded(3)),
-                s::AMT.use(620, r::Optional,  d::RepeatCount.bounded(3)),
-                s::QTY.use(640, r::Optional,  d::RepeatCount.bounded(20))),
+                s::AMT.use(620, r::Optional,  d::RepeatCount.bounded(20)),
+                s::QTY.use(640, r::Optional,  d::RepeatCount.bounded(20)),
 
                 d::LoopDef.build("2110", d::RepeatCount.bounded(999),
                   s::SVC.use( 700, r::Optional,  d::RepeatCount.bounded(1)),
@@ -53,7 +53,7 @@ module Stupidedi
                   s::REF.use(1000, r::Optional,  d::RepeatCount.bounded(99)),
                   s::AMT.use(1100, r::Optional,  d::RepeatCount.bounded(20)),
                   s::QTY.use(1200, r::Optional,  d::RepeatCount.bounded(20)),
-                  s:: LQ.use(1300, r::Optional,  d::RepeatCount.bounded(99))))),
+                  s:: LQ.use(1300, r::Optional,  d::RepeatCount.bounded(99)))))),
 
           d::TableDef.summary("3 - Summary",
             s::PLB.use(100, r::Optional,  d::RepeatCount.unbounded),

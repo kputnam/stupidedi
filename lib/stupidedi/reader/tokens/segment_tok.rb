@@ -49,7 +49,7 @@ module Stupidedi
           "#{id}#{separators.segment}"
         else
           es = @element_toks.map{|x| x.to_s(separators) }
-          id.cons(es).join(separators.element) + separators.segment
+          id.cons(es).join(separators.element || "*") + (separators.segment || "~")
         end
       end
     end

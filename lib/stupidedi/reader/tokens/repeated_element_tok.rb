@@ -53,7 +53,7 @@ module Stupidedi
           ""
         else
           rs = @element_toks.map{|x| x.to_s(separators) }
-          rs.join(separators.repetition)
+          rs.join(separators.repetition || "^")
         end
       end
     end

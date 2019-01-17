@@ -61,7 +61,7 @@ module Stupidedi
           ""
         else
           cs = @component_toks.map{|x| x.to_s(separators) }
-          cs.join(separators.component)
+          cs.join(separators.component || ":")
         end
       end
     end

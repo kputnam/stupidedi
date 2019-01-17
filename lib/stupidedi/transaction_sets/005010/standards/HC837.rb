@@ -81,8 +81,8 @@ module Stupidedi
 
                 d::LoopDef.build("2320", d::RepeatCount.bounded(10),
                   s::SBR.use(2900, r::Optional,  d::RepeatCount.bounded(1)),
-                  s::CAS.use(2950, r::Optional,  d::RepeatCount.bounded(1)),
-                  s::AMT.use(3000, r::Optional,  d::RepeatCount.bounded(1)),
+                  s::CAS.use(2950, r::Optional,  d::RepeatCount.bounded(99)),
+                  s::AMT.use(3000, r::Optional,  d::RepeatCount.bounded(15)),
                   s::DMG.use(3050, r::Optional,  d::RepeatCount.bounded(1)),
                   s:: OI.use(3100, r::Optional,  d::RepeatCount.bounded(1)),
                   s::MIA.use(3150, r::Optional,  d::RepeatCount.bounded(1)),
