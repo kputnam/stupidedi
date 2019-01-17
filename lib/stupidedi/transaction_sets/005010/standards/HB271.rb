@@ -63,18 +63,28 @@ module Stupidedi
                       s::PCT.use(3200, r::Optional,  d::RepeatCount.bounded(5)))),
 
                   d::LoopDef.build("2120 LS", d::RepeatCount.bounded(1),
+                    # @todo: NM1 3400 conflicts with NM1 at position 300, but
+                    # X279 states on page 328, regarding the LS segment:
+                    #
+                    #  1. Use this segment to identify the beginning of the
+                    #    Subscriber Benefit Related Entity Name loop. Because both
+                    #    the subscriber’s name loop and this loop begin with NM1
+                    #    segments, the LS and LE segments are used to
+                    #    differentiate these two loops.
+                    #
+                    # ParserError: too much non-determinism: SegmentUse(3400, NM1, O, 1), SegmentUse(300, NM1, M, 1)
+                    #
                     s:: LS.use(3300, r::Optional,  d::RepeatCount.bounded(1)),
 
-                    # @todo: NM1 3400 conflicts with NM1 at position 300
-                    # d::LoopDef.build("2120", d::RepeatCount.unbounded,
-                    #   s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
-                    #   s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
-                    #   s:: N3.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
-                    #   s:: N4.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
-                    #   s::PER.use(3800, r::Optional,  d::RepeatCount.bounded(3)),
-                    #   s::PRV.use(3900, r::Optional,  d::RepeatCount.bounded(1))),
+                    d::LoopDef.build("2120", d::RepeatCount.unbounded,
+                      s::NM1.use(3400, r::Optional,  d::RepeatCount.bounded(1)),
+                      s:: N2.use(3500, r::Optional,  d::RepeatCount.bounded(1)),
+                      s:: N3.use(3600, r::Optional,  d::RepeatCount.bounded(1)),
+                      s:: N4.use(3700, r::Optional,  d::RepeatCount.bounded(1)),
+                      s::PER.use(3800, r::Optional,  d::RepeatCount.bounded(3)),
+                      s::PRV.use(3900, r::Optional,  d::RepeatCount.bounded(1))),
 
-                    s:: LE.use(4000, r::Optional,  d::RepeatCount.bounded(1))))))),
+                    s:: LE.use(4000, r::Mandatory, d::RepeatCount.bounded(1))))))),
 
           d::TableDef.summary("3 - Summary",
             s:: SE.use(4100, r::Mandatory, d::RepeatCount.bounded(1))))
