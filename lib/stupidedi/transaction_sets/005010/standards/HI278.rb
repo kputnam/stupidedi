@@ -14,7 +14,7 @@ module Stupidedi
             s::BHT.use(200, r::Mandatory, d::RepeatCount.bounded(1))),
 
           d::TableDef.detail("2 - Detail",
-            d::LoopDef.build("HL", d::RepeatCount.unbounded,
+            d::LoopDef.build("2000", d::RepeatCount.unbounded,
               s:: HL.use( 100, r::Mandatory, d::RepeatCount.bounded(1)),
               s::TRN.use( 200, r::Optional,  d::RepeatCount.bounded(9)),
               s::AAA.use( 300, r::Optional,  d::RepeatCount.bounded(9)),
@@ -40,7 +40,7 @@ module Stupidedi
               s::PWK.use(1550, r::Optional,  d::RepeatCount.unbounded),
               s::MSG.use(1600, r::Optional,  d::RepeatCount.bounded(1)),
 
-              d::LoopDef.build("HL/NM1", d::RepeatCount.unbounded,
+              d::LoopDef.build("2010", d::RepeatCount.unbounded,
                 s::NM1.use(1700, r::Optional,  d::RepeatCount.bounded(1)),
                 s::REF.use(1700, r::Optional,  d::RepeatCount.bounded(9)),
                 s:: N2.use(1700, r::Optional,  d::RepeatCount.bounded(1)),
