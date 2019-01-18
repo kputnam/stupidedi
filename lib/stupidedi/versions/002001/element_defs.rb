@@ -6126,7 +6126,7 @@ module Stupidedi
           s::CodeList.build(
             "A" => "Actual",
             "M" => "Marked"))
-        E587  = t::ID.new(:E597 , "Acknowledgment Type Code"             , 2, 2,
+        E587  = t::ID.new(:E587 , "Acknowledgment Type Code"             , 2, 2,
           s::CodeList.build(
             "AC" => "Acknowledge - With Detail and Change",
             "AD" => "Acknowledge - With Detail, No Change",

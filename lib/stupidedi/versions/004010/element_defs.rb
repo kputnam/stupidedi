@@ -4023,14 +4023,14 @@ module Stupidedi
           s::CodeList.build(
             "D" => "Hazardous Material Code Qualifier"))
         E209  = t::ID.new(:E209 , "Hazardous Material Class Code Description", 3, 3)
-        E211  = t::ID.new(:E215 , "Packaging Form Code"                  , 3, 3)
+        E211  = t::ID.new(:E211 , "Packaging Form Code"                  , 3, 3)
         E212  = t:: R.new(:E212 , "Unit Price"                           , 1, 17)
         E213  = t::Nn.new(:E213 , "Lading Line Item Number"              , 1, 3, 0)
         E215  = t::ID.new(:E215 , "Hazardous Classification"             , 1, 30)
         E218  = t::ID.new(:E218 , "Hazardous Placard Notation Code"      , 14,40)
         E219  = t::AN.new(:E219 , "Position"                             , 1, 3)
-        E220  = t:: R.new(:E215 , "Billed/Rated-as Quantity"             , 1, 11)
-        E221  = t::ID.new(:E215 , "Billed/Rated-as Qualifier"            , 2, 2)
+        E220  = t:: R.new(:E220 , "Billed/Rated-as Quantity"             , 1, 11)
+        E221  = t::ID.new(:E221 , "Billed/Rated-as Qualifier"            , 2, 2)
         E222  = t::ID.new(:E222 , "Hazardous Endorsement Code"           , 4, 25,
           s::CodeList.external("83"))
         E224  = t::ID.new(:E224 , "Hazardous Material Shipping Name"     , 1, 25)
@@ -4768,7 +4768,7 @@ module Stupidedi
         E375  = t::ID.new(:E375 , "Tariff Service Code"                  , 2, 2)
         E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
         E382  = t:: R.new(:E382 , "Number of Units Shipped"              , 1, 10)
-        E383  = t:: R.new(:E382 , "Quantity Difference"                  , 1, 9)
+        E383  = t:: R.new(:E383 , "Quantity Difference"                  , 1, 9)
         E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
         E394  = t::AN.new(:E394 , "Warehouse Receipt Number"             , 1, 12)
         E395  = t:: R.new(:E395 , "Unit Weight"                          , 1, 8)
@@ -5368,7 +5368,7 @@ module Stupidedi
           s::CodeList.build(
             "A" => "Actual",
             "M" => "Marked"))
-        E587  = t::ID.new(:E597 , "Acknowledgment Type Code"             , 2, 2,
+        E587  = t::ID.new(:E587 , "Acknowledgment Type Code"             , 2, 2,
           s::CodeList.build(
             "AC" => "Acknowledge - With Detail and Change",
             "AD" => "Acknowledge - With Detail, No Change",

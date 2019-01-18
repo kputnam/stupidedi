@@ -2638,18 +2638,18 @@ module Stupidedi
         E1705 = t::AN.new(:E1705, "Implementation Convention Reference"  , 1, 35)
         E1715 = t::ID.new(:E1715, "Country Subdivision Code"             , 1, 3,
           s::CodeList.external("5"))
-        E1773 = t::ID.new(:E1774, "Claim Authorization Code"             , 1, 2,
-          s::CodeList.build(
-            "1" => "Immediate/Urgent Care",
-            "2" => "Services Rendered in a Retroactive Period",
-            "3" => "Emergency Care",
-            "4" => "Client Has Temporary Medicaid",
-            "5" => "Request from County for Second Opinion to Determine if Recipient Can Work",
-            "6" => "Request for Override Pending",
-            "7" => "Special Handling",
-            "Z" => "Mutually Defined"))
+        # E1773 = t::ID.new(:E1774, "Claim Authorization Code"             , 1, 2,
+        #   s::CodeList.build(
+        #     "1" => "Immediate/Urgent Care",
+        #     "2" => "Services Rendered in a Retroactive Period",
+        #     "3" => "Emergency Care",
+        #     "4" => "Client Has Temporary Medicaid",
+        #     "5" => "Request from County for Second Opinion to Determine if Recipient Can Work",
+        #     "6" => "Request for Override Pending",
+        #     "7" => "Special Handling",
+        #     "Z" => "Mutually Defined"))
         E9998 = t::AN.new(:E9998, "Context Reference"                    , 1, 35)
-        E9999 = t::AN.new(:E9998, "Context Name"                         , 1, 35)
+        E9999 = t::AN.new(:E9999, "Context Name"                         , 1, 35)
 
         C001 = Schema::CompositeElementDef.build(:C001,
           "Composite Unit of Measure",
