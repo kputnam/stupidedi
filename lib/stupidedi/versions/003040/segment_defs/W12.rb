@@ -8,7 +8,7 @@ module Stupidedi
         r = ElementReqs
 
         W12 = s::SegmentDef.build(:W12, "Warehouse Item Detail",
-          "To designate those line items that were shipped.",
+          "To designate those line items that were shipped",
           e::E368 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
           e::E380 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
           e::E382 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),

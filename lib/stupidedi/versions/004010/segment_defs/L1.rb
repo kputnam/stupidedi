@@ -9,7 +9,7 @@ module Stupidedi
 
         L1  = s::SegmentDef.build(:L1, "Rate and Charges",
           "To specify rate and charges detail relative to a line item including
-          freight charges, advances, special charges, and entitlements.",
+          freight charges, advances, special charges, and entitlements",
           e::E213 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
           e::E60  .simple_use(r::Relational, s::RepeatCount.bounded(1)),
           e::E122 .simple_use(r::Relational, s::RepeatCount.bounded(1)),

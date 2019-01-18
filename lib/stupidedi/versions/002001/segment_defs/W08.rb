@@ -8,7 +8,7 @@ module Stupidedi
         r = ElementReqs
 
         W08 = s::SegmentDef.build(:W08, "Receipt Carrier Information",
-          "To identify carrier equipment and condition.",
+          "To identify carrier equipment and condition",
           e::E91  .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
           e::E140 .simple_use(r::Relational, s::RepeatCount.bounded(1)),
           e::E387 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),

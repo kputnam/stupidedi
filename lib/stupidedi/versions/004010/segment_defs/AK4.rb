@@ -9,7 +9,7 @@ module Stupidedi
 
         AK4 = s::SegmentDef.build(:AK4, "Data Segement Note",
           "To report errors in a data segment, and identify the location of a
-          data segment.",
+          data segment",
           e::C030 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
           e::E725 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),
           e::E723 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),

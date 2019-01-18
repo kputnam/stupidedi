@@ -10,7 +10,7 @@ module Stupidedi
         AT7 = s::SegmentDef.build(:AT7, "Shipment Status Detail",
           "To specify the status of a shipment, the reason for that status, the
           date and time of the status and the date and time of any appointments
-          scheduled.",
+          scheduled",
           e::E1650.simple_use(r::Relational, s::RepeatCount.bounded(1)),
           e::E1651.simple_use(r::Relational, s::RepeatCount.bounded(1)),
           e::E1652.simple_use(r::Relational, s::RepeatCount.bounded(1)),
