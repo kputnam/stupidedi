@@ -7,6 +7,7 @@ module Stupidedi
 
         autoload :BE834, "stupidedi/transaction_sets/005010/standards/BE834"
         autoload :FA999, "stupidedi/transaction_sets/005010/standards/FA999"
+        autoload :FA997, "stupidedi/transaction_sets/005010/standards/FA997"
       # autoload :HB271, "stupidedi/transaction_sets/005010/standards/HB271"
         autoload :HC837, "stupidedi/transaction_sets/005010/standards/HC837"
         autoload :HI278, "stupidedi/transaction_sets/005010/standards/HI278"

@@ -390,6 +390,7 @@ module Stupidedi
             "834" => "Benefit Enrollment and Maintenance",
             "835" => "Health Care Claim Payment/Advice",
             "837" => "Health Care Claim",
+            "997" => "Functional Acknowledgement",
             "999" => "Implementation Acknowledgement"))
         E156  = t::ID.new(:E156 , "State or Province Code"               , 2, 2,
           s::CodeList.external("22"))
@@ -1087,12 +1088,13 @@ module Stupidedi
             "X" => "Rejected, Content After Decryption Could Not Be Analyzed"))
         E718  = t::ID.new(:E718 , "Transaction Set Syntax Error Code"    , 1, 3)
         E719  = t::Nn.new(:E719 , "Segment Position in Transaction Set"  , 1, 10, 0)
-        E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3)
-          # S77
+        E720  = t::ID.new(:E720 , "Segment Syntax Error Code"            , 1, 3)
+        E721  = t::ID.new(:E721 , "Segment ID Code"                      , 2, 3,
+          s::CodeList.external("77"))
         E722  = t::Nn.new(:E722 , "Element Position in Segment"          , 1, 2, 0)
+        E723  = t::ID.new(:E723 , "Data Element Syntax Error Code"       , 1, 3)
         E724  = t::AN.new(:E724 , "Copy of Bad Data Element"             , 1, 99)
         E725  = t::Nn.new(:E725 , "Data Element Reference Number"        , 1, 4, 0)
-          # S77
         E734  = t::AN.new(:E734 , "Hierarchical Parent ID Number"        , 1, 12)
         E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 2,
           s::CodeList.build(
