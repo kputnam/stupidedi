@@ -23,7 +23,7 @@ module Stupidedi
               s:: N4.use(1000, r::Optional,  d::RepeatCount.bounded(1)),
               s::PER.use(1100, r::Optional,  d::RepeatCount.bounded(3)),
 
-              d::LoopDef.build("1100 ACCOUNT IDENTIFICATION", d::RepeatCount.bounded(1),
+              d::LoopDef.build("1100 ACCOUNT IDENTIFICATION", d::RepeatCount.bounded(10),
                 s::ACT.use(1200, r::Optional,  d::RepeatCount.bounded(1)),
                 s::REF.use(1300, r::Optional,  d::RepeatCount.bounded(5)),
                 s:: N3.use(1400, r::Optional,  d::RepeatCount.bounded(1)),
@@ -38,7 +38,7 @@ module Stupidedi
               s::REF.use(200, r::Mandatory, d::RepeatCount.unbounded),
               s::DTP.use(250, r::Optional,  d::RepeatCount.unbounded),
 
-              d::LoopDef.build("2100 INDIVIDUAL OR ORGANIZATION NAME", d::RepeatCount.bounded(1),
+              d::LoopDef.build("2100 INDIVIDUAL OR ORGANIZATION NAME", d::RepeatCount.unbounded,
                 s::NM1.use( 300, r::Optional,  d::RepeatCount.bounded(1)),
                 s::PER.use( 400, r::Optional,  d::RepeatCount.bounded(1)),
                 s:: N3.use( 500, r::Optional,  d::RepeatCount.bounded(1)),
@@ -161,7 +161,7 @@ module Stupidedi
                     s::REF.use(6883, r::Optional, d::RepeatCount.bounded(16)),
                     s::DTP.use(6884, r::Optional, d::RepeatCount.bounded(1)))),
 
-                s:: LE.use(6885, r::Required, d::RepeatCount.bounded(1)))),
+                s:: LE.use(6885, r::Mandatory, d::RepeatCount.bounded(1)))),
 
             s::SE.use(6900, r::Mandatory, d::RepeatCount.bounded(1))))
 
