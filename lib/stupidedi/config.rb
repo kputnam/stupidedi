@@ -98,11 +98,13 @@ module Stupidedi
         c.transaction_set.customize do |x|
           x.register("004010",       "HP", "835") { Stupidedi::TransactionSets::FortyTen::Standards::HP835 }
           x.register("004010X091A1", "HP", "835") { Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835 }
+
           x.register("005010",       "HR", "276") { Stupidedi::TransactionSets::FiftyTen::Standards::HR276 }
           x.register("005010",       "HN", "277") { Stupidedi::TransactionSets::FiftyTen::Standards::HN277 }
           x.register("005010",       "BE", "834") { Stupidedi::TransactionSets::FiftyTen::Standards::BE834 }
           x.register("005010",       "HP", "835") { Stupidedi::TransactionSets::FiftyTen::Standards::HP835 }
           x.register("005010",       "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010",       "FA", "997") { Stupidedi::TransactionSets::FiftyTen::Standards::FA997 }
           x.register("005010",       "FA", "999") { Stupidedi::TransactionSets::FiftyTen::Standards::FA999 }
           x.register("005010",       "RA", "820") { Stupidedi::TransactionSets::FiftyTen::Standards::RA820 }
           x.register("005010X212",   "HR", "276") { Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276 }
@@ -121,6 +123,19 @@ module Stupidedi
           x.register("005010X231A1", "FA", "999") { Stupidedi::TransactionSets::FiftyTen::Implementations::X231A1::FA999 }
           x.register("005010X279A1", "HS", "270") { Stupidedi::TransactionSets::FiftyTen::Implementations::X279A1::HS270 }
           x.register("005010X279A1", "HB", "271") { Stupidedi::TransactionSets::FiftyTen::Implementations::X279A1::HB271 }
+          x.register("005010X223A2", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Implementations::X223A1::HC837 }
+
+          x.register("005010X217",   "HI", "278") { Stupidedi::TransactionSets::FiftyTen::Standards::HI278 }
+          x.register("005010X218",   "RA", "820") { Stupidedi::TransactionSets::FiftyTen::Standards::RA820 }
+          x.register("005010X224",   "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010X224A1", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010X224A2", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010X230",   "FA", "997") { Stupidedi::TransactionSets::FiftyTen::Standards::FA997 }
+          x.register("005010X291",   "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010X292",   "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010X298",   "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+          x.register("005010X306",   "RA", "820") { Stupidedi::TransactionSets::FiftyTen::Standards::RA820 }
+          x.register("005010X307",   "BE", "834") { Stupidedi::TransactionSets::FiftyTen::Standards::BE834 }
         end
       end
     end

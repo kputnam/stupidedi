@@ -21,6 +21,9 @@ module Stupidedi
     class FunctionalGroupConfig
       include Inspect
 
+      # @return [Hash<String, FunctionalGroupDef>]
+      attr_reader :table
+
       def_delegators :@table, :defined_at?
 
       def initialize

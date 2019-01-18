@@ -3,6 +3,10 @@ module EitherMatchers
     BeDefined.new
   end
 
+  def be_success(value)
+    BeSuccess.new(value)
+  end
+
   class BeDefined
     def matches?(either)
       @either = either
@@ -20,10 +24,6 @@ module EitherMatchers
     def description
       "be defined"
     end
-  end
-
-  def be_success(value)
-    BeSuccess.new(value)
   end
 
   class BeSuccess

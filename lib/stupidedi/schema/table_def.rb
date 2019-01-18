@@ -147,12 +147,21 @@ module Stupidedi
         new(id, 2, false, header, loop_defs, trailer, nil)
       end
 
+      # @todo This cannot work properly without changing
+      # {ConstraintTable::ValueBased#matches} to not narrow the table down first
+      # by using deepest(...); this is because, while we insert matching loops
+      # into the current table, alternating loops would be placed in alternating
+      # tables. Thus, for {Navigation#find} we need to search the current table
+      # first but then try an uncle table (cousin loop) next. These are two
+      # different instructions, but {#matches} would only provide an instruction
+      # to search the current table.
+      #
       # @return [TableDef]
-      def repeatable_detail(id, *children)
-        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
-        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 2, true, header, loop_defs, trailer, nil)
-      end
+      # def repeatable_detail(id, *children)
+      #   header, children   = children.split_when{|x| x.is_a?(LoopDef) }
+      #   loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
+      #   new(id, 2, true, header, loop_defs, trailer, nil)
+      # end
 
       # @return [TableDef]
       def summary(id, *children)

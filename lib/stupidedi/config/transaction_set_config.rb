@@ -14,6 +14,9 @@ module Stupidedi
     class TransactionSetConfig
       include Inspect
 
+      # @return [Hash<[GS08, GS01, ST01], TransactionSetDef>]
+      attr_reader :table
+
       def initialize
         @table = Hash.new
       end
@@ -25,20 +28,20 @@ module Stupidedi
       # @return [void]
       def register(gs08, gs01, st01, definition = nil, &constructor)
         if block_given?
-          @table[Array[gs08, nil, st01]] = constructor
+          @table[Array[gs08, gs01, st01]] = constructor
         else
-          @table[Array[gs08, nil, st01]] = definition
+          @table[Array[gs08, gs01, st01]] = definition
         end
       end
 
       # @return [TransactionSetDef]
       def at(gs08, gs01, st01)
-        x = @table[Array[gs08, nil, st01]]
+        x = @table[Array[gs08, gs01, st01]]
         x.is_a?(Proc) ? x.call : x
       end
 
       def defined_at?(gs08, gs01, st01)
-        @table.defined_at?([gs08, nil, st01])
+        @table.defined_at?([gs08, gs01, st01])
       end
 
       # @return [void]
