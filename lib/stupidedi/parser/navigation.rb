@@ -483,14 +483,9 @@ module Stupidedi
 
       # @return [Either<StateMachine>]
       def __find(invalid, id, elements, assert_repeatable = false)
-        reachable = false
-        matches   = []
-
-        # Note op.segment_use.nil? is true when searching for ISA,
-        # GS, and ST, because we can't know the SegmentUse until we
-        # deconstruct the token and looked up the versions numbers
-        # in the Config. Nonetheless, we know ISA, GS, and ST can repeat
-        repeatable = [:ISA, :GS, :ST].include?(id)
+        reachable   = false
+        repeatable  = false
+        matches     = []
 
         @active.each do |zipper|
           matched      = false
@@ -518,8 +513,6 @@ module Stupidedi
             state = zipper
             value = zipper.node.zipper
 
-            repeatable ||= op_.segment_use.try(:repeatable?)
-
             # 1. Move upward (possibly zero times)
             op_.pop_count.times do
               value = value.up
@@ -530,6 +523,7 @@ module Stupidedi
             #    nodes to move left, but not exactly how many. Instead, we
             #    know what the InstructionTable is when we get there.
             target = zipper.node.instructions.pop(op_.pop_count).drop(op_.drop_count)
+            repeatable ||= target.matches(filter_tok, true).present?
 
             # 3. If the segment we're searching for belongs in a new subtree,
             #    but it's not the only segment that might have "opened" that

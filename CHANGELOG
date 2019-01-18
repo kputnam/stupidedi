@@ -1,8 +1,13 @@
+v 1.3.24 (WIP)
+  - Fix repeatability test in Navigation#iterate
+  
+v 1.3.23 - Jan 10, 2019
+  - Fix decimal values for TimeVal being coerced incorrectly https://github.com/irobayna/stupidedi/pull/151
+  - Detect ambiguous grammar automatically https://github.com/irobayna/stupidedi/pull/153
+  
 v 1.3.22
-- Fix decimal values for TimeVal being coerced incorrectly https://github.com/irobayna/stupidedi/pull/151
-- Detect ambiguous grammar automatically https://github.com/irobayna/stupidedi/pull/153
-- Re-enable EC Segment on FifyTen group
-
+  - Re-enable EC Segment on FifyTen group
+  
 v 1.3.21 - Dec 9, 2018 ** Breaking Changes **
   - Throw exception from #iterate if segment is not repeatable (fix #126) https://github.com/irobayna/stupidedi/pull/146
   - Configurable limit of non-determinism (fixes #129) https://github.com/irobayna/stupidedi/pull/145
