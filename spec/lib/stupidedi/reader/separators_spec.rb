@@ -1,5 +1,3 @@
-require "spec_helper"
-
 describe Stupidedi::Reader::Separators do
   let(:empty) { Stupidedi::Reader::Separators.empty }
 

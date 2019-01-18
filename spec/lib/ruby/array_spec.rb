@@ -1,6 +1,5 @@
-using Stupidedi::Refinements
-
 describe Array do
+  using Stupidedi::Refinements
   include QuickCheck::Macro
 
   # Creates an array with length `2*n-1` containing elements

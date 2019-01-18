@@ -1,5 +1,3 @@
-require "spec_helper"
-
 describe Stupidedi::Reader::Failure do
   include QuickCheck::Macro
 

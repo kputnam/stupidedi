@@ -1,8 +1,6 @@
-require "spec_helper"
-using Stupidedi::Refinements
-
 describe Stupidedi::Reader::TokenReader do
   include QuickCheck::SerializedEdi::Macro
+  using Stupidedi::Refinements
 
   let(:ty) { Stupidedi::Versions::FiftyTen::ElementTypes }
   let(:r)  { ty::R .new("R" , "Float",          1, 1) }

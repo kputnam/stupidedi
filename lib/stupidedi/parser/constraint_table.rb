@@ -44,6 +44,10 @@ module Stupidedi
         end
       end
 
+      # @todo
+      def critique(segment_tok, segment_uses)
+      end
+
       # Performs no filtering of the {Instruction} list. This is used when there
       # already is a single {Instruction} or when a {Reader::SegmentTok} doesn't
       # provide any more information to filter the list.
@@ -55,15 +59,17 @@ module Stupidedi
 
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
-          @instructions
+          @instructions.tap do |xs|
+            critique(segment_tok, xs.map(&:segment_use)) if strict
+          end
         end
       end
 
-      # Chooses the {Instruction} that pops the greatest number of states. For
+      # Chooses the {Instruction} that pops the fewest number of states. For
       # example, in the X222 837P an HL segment signals the start of a new
       # 2000 loop, but may or may not begin a new Table 2 -- the specifications
-      # aren't actually clear. This rule will always create a new Table 2 and
-      # a new 2000 loop under it.
+      # aren't actually clear. This rule will not create a new Table 2, but
+      # just add a new 2000 loop under the current one.
       #
       class Shallowest < ConstraintTable
         def initialize(instructions)
@@ -73,15 +79,15 @@ module Stupidedi
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
           @__matches ||= begin
-            shallowest = @instructions.map(&:pop_count).max
-            @instructions.select{|i| i.pop_count == shallowest }
+            shallowest = @instructions.map(&:pop_count).min
+            @instructions.select{|i| i.pop_count == shallowest }.tap do |xs|
+              critique(segment_tok, xs.map(&:segment_use)) if strict
+            end
           end
         end
       end
 
-      # The only exception to the rule of preferring the {Instruction} which pops
-      # the greatest number of states is when the {Instruction} is for ISA. We want
-      # to reuse one root {Values::TransmissionVal} container for all children.
+      # Chooses the {Instruction} that pops the greatest number of states.
       #
       class Deepest < ConstraintTable
         def initialize(instructions)
@@ -91,8 +97,10 @@ module Stupidedi
         # @return [Array<Instruction>]
         def matches(segment_tok, strict)
           @__matches ||= begin
-            deepest = @instructions.map(&:pop_count).min
-            @instructions.select{|i| i.pop_count == deepest }
+            deepest = @instructions.map(&:pop_count).max
+            @instructions.select{|i| i.pop_count == deepest }.tap do |xs|
+              critique(segment_tok, xs.map(&:segment_use)) if strict
+            end
           end
         end
       end
@@ -202,13 +210,13 @@ module Stupidedi
 
         # Resolve conflicts between instructions that have identical SegmentUse
         # values. For each SegmentUse, this chooses the Instruction that pops
-        # the greatest number of states.
+        # the fewest number of states.
         #
         # @return [Array<Instruction>]
         def shallowest(instructions)
           grouped = instructions.group_by{|i| i.segment_use.object_id }
           grouped.flat_map do |k, is|
-            shallowest = is.map(&:pop_count).max
+            shallowest = is.map(&:pop_count).min
             is.select{|i| i.pop_count == shallowest }
           end
         end
@@ -447,9 +455,7 @@ module Stupidedi
             # all the instructions have the same SegmentUse, they also have
             # the same element constraints so we can't use them to narrow
             # down the instruction list.
-            instructions.head.segment_id == :ISA ?
-              ConstraintTable::Deepest.new(instructions) :
-              ConstraintTable::Shallowest.new(instructions)
+            ConstraintTable::Shallowest.new(instructions)
           else
             ConstraintTable::ValueBased.new(instructions)
           end

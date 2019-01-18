@@ -1,6 +1,6 @@
-using Stupidedi::Refinements
-
 describe "Stupidedi::TransactionSets::Validation::Ambiguity" do
+  using Stupidedi::Refinements
+
   let(:d) { Stupidedi::Schema }
   let(:b) { Stupidedi::TransactionSets::Builder }
   let(:s) { Stupidedi::TransactionSets::FiftyTen::SegmentDefs }

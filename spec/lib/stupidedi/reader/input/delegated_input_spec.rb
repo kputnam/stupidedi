@@ -1,8 +1,6 @@
-require "spec_helper"
-using Stupidedi::Refinements
-
 describe Stupidedi::Reader::DelegatedInput do
   include QuickCheck::Macro
+  using Stupidedi::Refinements
 
   def mkinput(*args)
     Stupidedi::Reader::Input.build(*args)

@@ -1,5 +1,3 @@
-require "spec_helper"
-
 describe Stupidedi::Reader::StreamReader do
   let(:success) { Stupidedi::Reader::Success }
   let(:stream)  { Stupidedi::Reader::StreamReader }

@@ -473,7 +473,7 @@ describe "Generating" do
     end
 
     context "placeholder elements" do
-      def setup(dsl, ts)
+      def setup(dsl, gs01, gs08)
         dsl.ISA("00", "",
                 "00", "",
                 "ZZ", "431777999",
@@ -482,17 +482,17 @@ describe "Generating" do
                 Time.now.utc,
                 "^", "00501", 123456789, "1", "T", ":")
 
-        dsl.GS("HC",
+        dsl.GS(gs01,
                "SENDER ID",
                "RECEIVER ID",
                Time.now.utc,
-               Time.now.utc, "1", "X", ts)
+               Time.now.utc, "1", "X", gs08)
       end
 
       context "with default element placeholder" do
         context "when value cannot be inferred" do
           it "raises an error" do
-            setup(relaxed, "005010X222A1")
+            setup(relaxed, "HC", "005010X222A1")
 
             expect(lambda { relaxed.ST("837", relaxed.default, "005010X222A1") }).to \
               raise_error(/^ST02 cannot be inferred/)
@@ -501,24 +501,24 @@ describe "Generating" do
 
         context "when blank value can be inferred" do
           it "generates an empty element" do
-            setup(relaxed, "005010X221")
+            setup(strict, "HP", "005010X221A1")
 
-            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.default) }).not_to \
+            expect(lambda { strict.ST("835", 3000, strict.default) }).not_to \
               raise_error #("ST02 cannot be inferred")
 
-            expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
-            expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
+            expect(strict.element(3).select{|e| e.node == "" }).to be_defined
+            expect(strict.element(3).select{|e| e.node.blank? }).to be_defined
           end
         end
 
         context "when non-empty value can be inferred" do
           it "generates a non-empty element value" do
-            setup(relaxed, "005010X222A1")
+            setup(strict, "HC", "005010X222A1")
 
-            expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.default) }).not_to \
+            expect(lambda { strict.ST("837", 3000, strict.default) }).not_to \
               raise_error #("ST02 cannot be inferred")
 
-            expect(relaxed.element(3).select{|e| e.node == "005010X222A1" }).to be_defined
+            expect(strict.element(3).select{|e| e.node == "005010X222A1" }).to be_defined
           end
         end
       end
@@ -526,21 +526,21 @@ describe "Generating" do
       context "with not_used element placeholder" do
         context "when element is declared forbidden" do
           it "generates an empty element" do
-            setup(relaxed, "005010X221")
+            setup(strict, "HP", "005010X221A1")
 
-            expect(lambda { relaxed.ST("835", "CONTROLNUM", relaxed.not_used) }).not_to \
+            expect(lambda { strict.ST("835", 3000, strict.not_used) }).not_to \
               raise_error #("ST03 is not forbidden")
 
-            expect(relaxed.element(3).select{|e| e.node == "" }).to be_defined
-            expect(relaxed.element(3).select{|e| e.node.blank? }).to be_defined
+            expect(strict.element(3).select{|e| e.node == "" }).to be_defined
+            expect(strict.element(3).select{|e| e.node.blank? }).to be_defined
           end
         end
 
         context "when element is not declared forbidden" do
           it "generates a non-empty element value" do
-            setup(relaxed, "005010X222A1")
+            setup(relaxed, "HC", "005010X222A1")
 
-            expect(lambda { relaxed.ST("837", "CONTROLNUM", relaxed.not_used) }).to \
+            expect(lambda { relaxed.ST("837", 3000, relaxed.not_used) }).to \
               raise_error(/^ST03 is not forbidden/)
           end
         end
