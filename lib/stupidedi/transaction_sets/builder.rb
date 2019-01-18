@@ -53,14 +53,15 @@ module Stupidedi
             " elements but #{elements.length} arguments were given"
         end
 
-        element_index = "00"
+        element_idx   = "00"
         element_uses  = elements.zip(segment_def.element_uses).map do |e, u|
           e_tag, e_requirement, e_name, e_arguments = e
-          element_index = element_index.succ
+          element_idx = element_idx.succ
+          descriptor  = "#{segment_def.id}#{element_idx}"
 
           unless e_tag == :Element
             raise Exceptions::InvalidSchemaError,
-              "given argument for #{segment_def.id}#{element_index} must be Element(...)"
+              "given argument for #{descriptor} must be Element(...)"
           end
 
           if u.composite?
@@ -73,30 +74,30 @@ module Stupidedi
               changes[:repeat_count] = e_repeat_count.head
             elsif e_repeat_count.length > 1
               raise Exceptions::InvalidSchemaError,
-                "more than one RepeatCount was specified"
+                "more than one RepeatCount was specified for #{descriptor}"
             end
 
             unless e_requirement.forbidden?
               unless e_arguments.length == u.definition.component_uses.length
                 raise Exceptions::InvalidSchemaError,
-                  "composite element #{u.definition.id} at #{segment_def.id}" +
-                  "#{element_index} has #{u.definition.component_uses.length}" +
-                  " component elements but #{e_arguments.length} were given"
+                  "composite element #{u.definition.id} at #{descriptor} has
+                  #{u.definition.component_uses.length} component elements but
+                  #{e_arguments.length} arguments were given".join
               end
 
               # ComponentElementUses
-              component_index = "00"
+              component_idx   = "00"
               component_uses  = e_arguments.zip(u.definition.component_uses).map do |e1, c|
                 c_tag, c_requirement, c_name, c_arguments = e1
-                component_index = component_index.succ
+                component_idx = component_idx.succ
+                descriptor    = "#{descriptor}-#{component_idx}"
 
                 unless c_tag == :Element
                   raise Exceptions::InvalidSchemaError,
-                    "given argument for #{segment_def.id}#{element_index}" +
-                    "-#{component_index} must be Element(...)"
+                    "given argument for #{descriptor} must be Element(...)"
                 end
 
-                mod_element(c, c_requirement, c_name, c_arguments)
+                mod_element(c, descriptor, c_requirement, c_name, c_arguments)
               end
 
               changes[:definition] = u.definition.copy(:name           => e_name,
@@ -107,11 +108,12 @@ module Stupidedi
 
             u.copy(changes)
           else
-            mod_element(u, e_requirement, e_name, e_arguments)
+            mod_element(u, descriptor, e_requirement, e_name, e_arguments)
           end
         end
 
-        segment_def.copy(:name => name, :element_uses => element_uses).
+        segment_def.
+          copy(:name => name, :element_uses => element_uses).
           use(position, requirement, repeat_count)
       end
 
@@ -121,15 +123,15 @@ module Stupidedi
      private
 
       # @return [Schema::SimpleElementUse]
-      def mod_element(element_use, requirement, name, arguments)
+      def mod_element(element_use, descriptor, requirement, name, arguments)
         unless requirement.is_a?(Schema::ElementReq)
           raise Exceptions::InvalidSchemaError,
-            "first argument to Element must be a Schema::ElementReq but got #{requirement.inspect}"
+            "first argument to Element must be a Schema::ElementReq but got #{requirement.inspect} for #{descriptor}"
         end
 
         unless name.is_a?(String)
           raise Exceptions::InvalidSchemaError,
-            "element name must be a String"
+            "second argument to Element must be a String for #{descriptor}"
         end
 
         changes = Hash.new # changes to SegmentUse
@@ -144,16 +146,21 @@ module Stupidedi
           changes[:repeat_count] = repeat_count.head
         elsif repeat_count.length > 1
           raise Exceptions::InvalidSchemaError,
-            "more than one RepeatCount specified for this Element"
+            "more than one RepeatCount specified for #{descriptor}"
         end
 
         allowed_values = arguments.select{|x| x.is_a?(Array) and x.head == :Values }
 
         if allowed_values.length == 1
-          changes[:allowed_values] = element_use.allowed_values.replace(allowed_values.head.last)
+          begin
+            changes[:allowed_values] = element_use.allowed_values.replace(allowed_values.head.last)
+          rescue ArgumentError => e
+            raise Exceptions::InvalidSchemaError,
+              "#{e.message} for #{descriptor}"
+          end
         elsif allowed_values.length > 1
           raise Exceptions::InvalidSchemaError,
-            "more than one Values specified for this Element"
+            "more than one Values specified for #{descriptor}"
         end
 
         max_length = arguments.select{|x| x.is_a?(Array) and x.head == :MaxLength }
@@ -162,7 +169,7 @@ module Stupidedi
           dhanges[:max_length] = max_length.head.last
         elsif max_length.length > 1
           raise Exceptions::InvalidSchemaError,
-            "more than one MaxLength specified for this Element"
+            "more than one MaxLength specified for #{descriptor}"
         end
 
         if dhanges.empty?

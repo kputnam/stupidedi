@@ -153,14 +153,14 @@ module Stupidedi
           unless s.segment?
             if s.respond_to?(:pretty_inspect)
               raise Exceptions::InvalidSchemaError,
-                "arguments after last child LoopDef (#{loop_defs.last.id}) " +
-                "must be segments, but #{k+1} arguments later is not a "  +
-                "SegmentUse: #{s.pretty_inspect}"
+                "arguments after last child LoopDef (#{loop_defs.last.id})
+                must be segments, but #{k+1} arguments later is not a
+                SegmentUse: #{s.pretty_inspect}".join
             else
               raise Exceptions::InvalidSchemaError,
-                "arguments after last child LoopDef (#{loop_defs.last.id}) " +
-                "must be segments, but #{k+1} arguments later is not a "  +
-                "SegmentUse: #{s.inspect}"
+                "arguments after last child LoopDef (#{loop_defs.last.id})
+                must be segments, but #{k+1} arguments later is not a
+                SegmentUse: #{s.inspect}".join
             end
           end
         end

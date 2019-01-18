@@ -164,11 +164,12 @@ module Stupidedi
         elsif zipper.node.segment?
           if zipper.node.invalid?
             if zipper.up.node.invalid?
+              # parent is an InvalidEnvelopeVal
               raise Exceptions::ParseError,
                 "#{zipper.first.node.reason} at #{zipper.first.node.position.inspect}"
             else
               raise Exceptions::ParseError,
-                "invalid #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
+                "#{zipper.node.descriptor} at #{zipper.node.position.inspect}"
             end
           else
             zipper.children.each_with_index do |z, i|

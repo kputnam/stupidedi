@@ -2,7 +2,7 @@ require "pathname"
 using Stupidedi::Refinements
 
 Fixtures = Class.new do
-  VERSIONS =
+  def versions
     { "006020" => "SixtyTwenty",
       "005010" => "FiftyTen",
       "004010" => "FortyTen",
@@ -10,6 +10,7 @@ Fixtures = Class.new do
       "003040" => "ThirtyForty",
       "003010" => "ThirtyTen",
       "002001" => "TwoThousandOne" }
+  end
 
   def initialize(root)
     @root = Pathname.new(root)
@@ -119,14 +120,14 @@ Fixtures = Class.new do
       gs08 = [version, a]
       st01 = b[/.{3}$/]
 
-      [VERSIONS.fetch(version, version), "Implementations", gs01, gs08, st01]
+      [versions.fetch(version, version), "Implementations", gs01, gs08, st01]
 
     when /^([A-Z]{2})(\d{3})/ # (HP835) Health Care Claim Payment Advice
       gs01 = $1
       gs08 = [version]
       st01 = $2
 
-      [VERSIONS.fetch(version, version), "Standards",       gs01, gs08, st01]
+      [versions.fetch(version, version), "Standards",       gs01, gs08, st01]
     else
       raise name.inspect
     end

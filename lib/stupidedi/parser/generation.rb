@@ -36,8 +36,9 @@ module Stupidedi
               reader_.read_segment
             else
               matches = machine.active.map do |m|
-                if segment_def = m.node.zipper.node.definition
-                  "#{segment_def.id} #{segment_def.name}"
+                if segment_use = m.node.zipper.node.usage
+                  "SegmentUse(#{segment_use.position}, #{segment_use.id},
+                  #{segment_use.requirement.inspect}, #{segment_use.repeat_count.inspect})".join
                 else
                   m.node.zipper.node.inspect
                 end

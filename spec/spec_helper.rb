@@ -62,3 +62,7 @@ RSpec.configure do |config|
   config.filter_run_excluding(:ruby => lambda{|n| RUBY_VERSION !~ /^#{n}/ })
   config.filter_run_excluding(:skip)
 end
+
+# Don't let rspec abbreviate result of #inspect (especially for exceptions)
+RSpec::Support::ObjectFormatter.
+  default_instance.max_formatted_output_length = 1.0/0.0

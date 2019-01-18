@@ -107,7 +107,7 @@ describe "Non-determinism" do
         machine, result = read("N1*6Y*NON DETERMINISM~...", nondeterminism: 1)
 
         expect(result).to be_fatal # no usable parse tree
-        expect(result.reason).to be == "too much non-determinism: N1 Party Identification, N1 Party Identification"
+        expect(result.reason).to be == "too much non-determinism: SegmentUse(40, N1, M, 1), SegmentUse(20, N1, M, 1)"
         expect(result.remainder).to be == "..."
         expect(machine).to_not be_deterministic
       end

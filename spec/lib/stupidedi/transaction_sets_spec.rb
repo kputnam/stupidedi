@@ -1,4 +1,7 @@
-describe "Stupidedi::TransactionSets", :focus do
+describe "Stupidedi::TransactionSets" do
+  FIXTURES = Hash[(Fixtures.passing +
+                   Fixtures.failing +
+                   Fixtures.skipping).group_by{|_, name, _| name }]
 
   Definitions.transaction_set_defs.each do |name, value, error|
     describe name.split("::").slice(2..-1).join("::") do
@@ -24,56 +27,59 @@ describe "Stupidedi::TransactionSets", :focus do
           end).not_to raise_error
         end
       end
-    end
-  end
 
-  all = Fixtures.passing +
-        Fixtures.failing +
-        Fixtures.skipping
-
-  all.group_by{|_, name, _| name }.sort.each do |name, group|
-    describe name.split("::").slice(2..-1).join("::") do
-      if Object.const_defined?(name)
-        group.sort.each do |path, name, config|
-          case path = path.to_s
-          when %r{/pass/}
-            it "can parse '#{path}'" do
-              expect(lambda do
-                machine, result = Fixtures.parse!(path, config)
-                builder         = Stupidedi::Parser::BuilderDsl.new(nil)
-                machine.__send__(:roots).each do |z|
-                  builder.__send__(:critique, z.node.zipper, "", true)
-                end
-              end).not_to raise_error
-            end
-          when %r{/skip/}
+      if FIXTURES.member?(name)
+        case error
+        when Exception
+          FIXTURES[name].sort.each do |path, _, _|
             pending "can parse '#{path}'" do
-              expect(lambda do
-                machine, result = Fixtures.parse!(path, config)
-                builder         = Stupidedi::Parser::BuilderDsl.new(nil)
-                machine.__send__(:roots).each do |z|
-                  builder.__send__(:critique, z.node.zipper, "", true)
-                end
-              end).not_to raise_error
+              raise "#{name} is not well-defined (see other spec results)"
             end
-          when %r{/fail/}
-            it "cannot parse '#{path}'" do
-              expect(lambda do
-                machine, result = Fixtures.parse!(path, config)
-                builder         = Stupidedi::Parser::BuilderDsl.new(nil)
-                machine.__send__(:roots).each do |z|
-                  builder.__send__(:critique, z.node.zipper, "", true)
-                end
-              end).to raise_error
+          end
+        else
+          FIXTURES[name].sort.each do |path, _, config|
+            case path = path.to_s
+            when %r{/pass/}
+              it "can parse '#{path}'" do
+                expect(lambda do
+                  machine, result = Fixtures.parse!(path, config)
+                  builder         = Stupidedi::Parser::BuilderDsl.new(nil)
+                  machine.__send__(:roots).each do |z|
+                    builder.__send__(:critique, z.node.zipper, "", true)
+                  end
+                end).not_to raise_error
+              end
+            when %r{/skip/}
+              pending "can parse '#{path}'" do
+                expect(lambda do
+                  machine, result = Fixtures.parse!(path, config)
+                  builder         = Stupidedi::Parser::BuilderDsl.new(nil)
+                  machine.__send__(:roots).each do |z|
+                    builder.__send__(:critique, z.node.zipper, "", true)
+                  end
+                end).not_to raise_error
+              end
+            when %r{/fail/}
+              it "cannot parse '#{path}'" do
+                expect(lambda do
+                  machine, result = Fixtures.parse!(path, config)
+                  builder         = Stupidedi::Parser::BuilderDsl.new(nil)
+                  machine.__send__(:roots).each do |z|
+                    builder.__send__(:critique, z.node.zipper, "", true)
+                  end
+                end).to raise_error
+              end
             end
           end
         end
 
       else
-        group.each do |path, _, _|
-          pending "can parse '#{path.to_s}'" do
-            raise NameError, "uninitialized constant #{name}"
-          end
+        pending "can parse examples" do
+          parts   = name.split("::").slice(2..-1)
+          version = Fixtures.versions.invert.fetch(parts[0], parts[0])
+          name    = parts[2..3].join(" ")
+
+          raise "No fixtures were found in 'spec/fixtures/#{version}/#{name}/{pass,fail}'"
         end
       end
     end
