@@ -12,17 +12,17 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
-require "ruby/object"
-require "ruby/module"
 require "ruby/array"
-require "ruby/hash"
-require "ruby/string"
 require "ruby/blank"
+require "ruby/exception"
+require "ruby/hash"
+require "ruby/module"
+require "ruby/object"
+require "ruby/string"
 require "ruby/to_d"
 require "ruby/to_date"
 require "ruby/to_time"
 require "ruby/try"
-require "ruby/instance_exec"
 
 module Stupidedi
   # @todo deprecated
@@ -49,20 +49,9 @@ module Stupidedi
   autoload :Versions,         "stupidedi/versions"
   autoload :VERSION,          "stupidedi/version"
 
-  # We can use a much faster implementation provided by the "called_from"
-  # gem, but this only compiles against Ruby 1.8. Use this implementation
-  # when its available, but fall back to the slow Kernel.caller method if
-  # we have to
-  if RUBY_VERSION < "1.9"
-    require "called_from"
-    def self.caller(depth = 2)
-      ::Kernel.called_from(depth)
-    end
-  else
-    def self.caller(depth = 2)
-      if k = ::Kernel.caller.at(depth - 1)
-        k.split(":")
-      end
+  def self.caller(depth = 2)
+    if k = ::Kernel.caller.at(depth - 1)
+      k.split(":")
     end
   end
 end
