@@ -82,6 +82,7 @@ module Stupidedi
             "2D"  => "Miscellaneous Health Care Facility",
             "2E"  => "Non-Health Care Miscellaneous Facility",
             "2I"  => "Church Operated Facility",
+            "2J"  => "Individial",
             "2P"  => "Public Health Service Facility",
             "2S"  => "Public Health Service Indian Service Facility",
             "2T"  => "Department of Justice Facility",
@@ -132,6 +133,7 @@ module Stupidedi
             "5S"  => "Therapeutic Radioisotope Facility",
             "5V"  => "Diagnostic Radioisotope Facility",
             "5W"  => "Magnetic Resonance Imaging (MRI) Facility",
+            "62"  => "Applicant's Employer",
             "6M"  => "Orthopedic Surgery Facility",
             "6U"  => "Cardiac Rehabilitation Program Facility",
             "6Y"  => "Case Manager",
@@ -209,6 +211,7 @@ module Stupidedi
             "SEP" => "Secondary Payer",
             "SJ"  => "Service Provider",
             "TL"  => "Testing Laboratory",
+            "TP"  => "Primary Taxpayer",
             "TT"  => "Transfer To",
             "TTP" => "Tertiary Payer",
             "TU"  => "Third Party Repricing Organization (TPO)",
@@ -222,9 +225,9 @@ module Stupidedi
             "VN"  => "Vendor",
             "VY"  => "Organization Completing Configuration Change",
             "X3"  => "Utilitazion Management Origanization",
-            "Y2"  => "Managed Care Organization",
             "X4"  => "Spouse",
             "X5"  => "Durable Medical Equipment Supplier",
+            "Y2"  => "Managed Care Organization",
             "ZD"  => "Party to Receive Reports",
             "ZZ"  => "Mutually Defined"))
         E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
@@ -536,6 +539,8 @@ module Stupidedi
             "WP" => "Work Phone Number"))
         E366  = t::ID.new(:E366 , "Contract Function Code"               , 2, 2,
           s::CodeList.build(
+            "AJ" => "Primary Contact",
+            "AL" => "Alternate Contact",
             "BL" => "Technical Department",
             "CN" => "General Contact",
             "CX" => "Payers Claim Office",
