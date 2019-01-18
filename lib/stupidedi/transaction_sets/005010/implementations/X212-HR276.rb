@@ -70,7 +70,8 @@ module Stupidedi
                   b::Element(e::NotUsed,     "Entity Identifier Code"),
                   b::Element(e::NotUsed,     "Name Last or Organization Name"))))),
 
-            d::TableDef.repeatable_detail("2 - Service Provider Detail",
+          # d::TableDef.repeatable_detail("2 - Service Provider Detail",
+            d::TableDef.detail("2 - Service Provider Detail + Subscriber Detail + Dependent Detail",
               d::LoopDef.build("2000C SERVICE PROVIDER LEVEL", d::RepeatCount.unbounded,
                 b::Segment(100, s::HL, "Billing Provider of Service Level", r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Hierarchical ID Number"),
@@ -91,9 +92,9 @@ module Stupidedi
                     b::Element(e::Required,    "Provider Identifier"),
                     b::Element(e::NotUsed,     "Entity Relationship Code"),
                     b::Element(e::NotUsed,     "Entity Identifier Code"),
-                    b::Element(e::NotUsed,     "Name Last or Organization Name"))))),
+                    b::Element(e::NotUsed,     "Name Last or Organization Name")))), #),
 
-            d::TableDef.repeatable_detail("2 - Subscriber Detail",
+          # d::TableDef.repeatable_detail("2 - Subscriber Detail",
               d::LoopDef.build("2000D SUBSCRIBER LEVEL", d::RepeatCount.unbounded,
                 b::Segment(100, s::HL, "Subscriber Level", r::Required, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Hierarchical ID Number"),
@@ -203,9 +204,9 @@ module Stupidedi
                     b::Segment(1500, s::DTP, "Service Line Date", r::Required, d::RepeatCount.bounded(1),
                       b::Element(e::Required,    "Date Time Qualifier", b::Values("472")),
                       b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8", "RD8")),
-                      b::Element(e::Required,    "Service Line Date")))))),
+                      b::Element(e::Required,    "Service Line Date"))))), #),
 
-            d::TableDef.repeatable_detail("2 - Dependent Detail",
+           #  d::TableDef.repeatable_detail("2 - Dependent Detail",
               d::LoopDef.build("2000E DEPENDENT LEVEL", d::RepeatCount.unbounded,
                 b::Segment(100, s::HL, "Dependent Level", r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Hierarchical ID Number"),
