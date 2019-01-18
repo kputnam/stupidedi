@@ -23,7 +23,7 @@ config.editor.tap do |c|
   c.register(Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837P) { Stupidedi::Editor::X222 }
 end
 
-parser = Stupidedi::Parser::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 start  = Time.now
 
 ARGV.each do |path|

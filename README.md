@@ -143,8 +143,8 @@ memory allocation. The steady increase in throughput on JRuby and Rubinus is
 probably attributable optimizations performed by the JIT compiler.
 
 Lastly, these results should approximate the performance of document generation
-with BuilderDSL, except BuilderDSL API should have less overhead, as it skips
-the tokenizer. On the other hand, BuilderDSL frequently queries the call stack
+with BuilderDsl, except BuilderdsL API should have less overhead, as it skips
+the tokenizer. On the other hand, BuilderDsl frequently queries the call stack
 to track provenance of elements in the parse tree. In common real-world use,
 custom application logic and database access are going to bottleneck performance,
 rather than Stupidedi.
@@ -241,7 +241,7 @@ require "stupidedi"
 # You can customize this to delegate to your own grammar definitions, if needed.
 config = Stupidedi::Config.hipaa
 
-b = Stupidedi::Builder::BuilderDsl.build(config)
+b = Stupidedi::Parser::BuilderDsl.build(config)
 
 # These methods perform error checking: number of elements, element types, min/max
 # length requirements, conditionally required elements, valid segments, number of
@@ -333,7 +333,7 @@ Please refer to [this readme](https://github.com/irobayna/stupidedi/blob/master/
 require "stupidedi"
 
 config = Stupidedi::Config.hipaa
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 
 input  = if RUBY_VERSION > "1.8"
            File.open("spec/fixtures/X221-HP835/1-good.txt", :encoding => "ISO-8859-1")

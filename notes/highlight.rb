@@ -1,7 +1,7 @@
 require "stupidedi"
 
 config = Stupidedi::Config.hipaa
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 
 input  = if RUBY_VERSION > "1.8"
            File.open("spec/fixtures/X221-HP835/1-good.txt", :encoding => "ISO-8859-1")

@@ -49,7 +49,7 @@ config.transaction_set.tap do |c|
   c.register("005010X231A1", "FA", "999", Stupidedi::Guides::FiftyTen::X231A1::FA999)
 end
 
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 start  = Time.now
 
 ARGV.each do |path|

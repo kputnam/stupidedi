@@ -9,7 +9,7 @@ GC.disable
 require "term/ansicolor" if ARGV.delete("-C")
 
 config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
-parser = Stupidedi::Parser::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 start  = Time.now
 nondet = ARGV.delete("-N")
 

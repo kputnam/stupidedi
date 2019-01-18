@@ -3,7 +3,7 @@ require "pp"
 
 config = Stupidedi::Config.hipaa
 reader = Stupidedi::Reader.build(File.open("notes/recover.txt"))
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 
 # This should fail because of an invalid token
 parser, result = parser.read(reader)
