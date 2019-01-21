@@ -91,7 +91,7 @@ b. GS("HC", "SENDER ID", "RECEIVER ID",
 # Otherwise, results in {NoMethodError}. It will generate a new unique value
 # that can be used in ST02 and SE.
 #
-b. ST("837", x.st, "005010X223")
+b. ST("837", x.st, "005010X223A2")
 b.BHT("0019", "00", "X"*30, "19990531", Time.now.utc, "CH")
 
   # 1000A SUBMITTER NAME
@@ -152,7 +152,7 @@ x.pop.tap{|parent| b.HL(x.hl, parent, "23", b.default) }
   # LOOP 2300 CLAIM INFORMATION
   b.CLM("CLAIM ID", 7500, nil, nil, b.composite("1", b.default, "1"), nil, "A", "Y", "I")
   b.DTP("434", "RD8", Time.now .. Time.now)
-  b.CL1(nil, nil, "21")
+  b.CL1("3", nil, "21")
   b. HI(b.composite("BK", "277.0"))
 
     # LOOP 2400 SERVICE LINE
