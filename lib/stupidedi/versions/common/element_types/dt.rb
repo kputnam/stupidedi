@@ -534,7 +534,6 @@ module Stupidedi
             else
               self::Invalid.new(object, usage, position)
             end
-
           rescue Exceptions::InvalidElementError
             self::Invalid.new(object, usage, position)
           end

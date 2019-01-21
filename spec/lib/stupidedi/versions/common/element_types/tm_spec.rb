@@ -1,3 +1,3 @@
-describe "Stupidedi::Versions::Common::ElementTypes::TM" do
-  skip
+fdescribe Stupidedi::Versions::Common::ElementTypes::TM do
+  todo
 end

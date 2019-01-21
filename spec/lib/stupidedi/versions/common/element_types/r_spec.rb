@@ -1,101 +1,171 @@
-describe "Stupidedi::Versions::Common::ElementTypes::R", :skip do
+fdescribe Stupidedi::Versions::Common::ElementTypes::R do
   using Stupidedi::Refinements
-  let(:types) { Stupidedi::Versions::FiftyTen::ElementTypes }
-  let(:r)     { Stupidedi::Versions::FiftyTen::ElementReqs }
-  let(:d)     { Stupidedi::Schema::RepeatCount }
 
-  # Dummy element definition E1: min/max length 4/6, two decimal places
-  let(:eldef) { types::R.new(:E1, "Numeric Element", 4, 6, 2) }
-  let(:eluse) { eldef.simple_use(r::Mandatory, d.bounded(1)) }
+  let(:element_use) do
+    t = Stupidedi::Versions::FiftyTen::ElementTypes
+    r = Stupidedi::Versions::FiftyTen::ElementReqs
+    d = Stupidedi::Schema::RepeatCount
+    t::R.new(:DE1, "Numeric Element", 4, 6, 2).simple_use(r::Mandatory, d.bounded(1))
+  end
 
   # Dummy file position
   let(:position) { Stupidedi::Reader::Position.new(100, 4, 19, "test.x12") }
 
+  def value(x)
+    element_use.value(x, position)
+  end
+
+
   context "Invalid" do
-    let(:el) { eluse.value("1A", position) }
-    let(:em) { eluse.value("A1", position) }
+    let(:element_val_a) { value("1A") }
+    let(:element_val_b) { value("A1") }
 
     describe "#position" do
-      specify { expect(el.position).to be == position }
-      specify { expect(em.position).to be == position }
+      specify { expect(element_val_a.position).to eql(position) }
+      specify { expect(element_val_b.position).to eql(position) }
+    end
+
+    describe "#numeric?" do
+      specify { expect(element_val_a).to be_numeric }
+      specify { expect(element_val_b).to be_numeric }
     end
 
     describe "#empty?" do
-      specify { expect(el).not_to be_empty }
-      specify { expect(em).not_to be_empty }
+      specify { expect(element_val_a).not_to be_empty }
+      specify { expect(element_val_b).not_to be_empty }
     end
 
     describe "#valid?" do
-      specify { expect(el).not_to be_valid }
-      specify { expect(em).not_to be_valid }
+      specify { expect(element_val_a).not_to be_valid }
+      specify { expect(element_val_b).not_to be_valid }
     end
 
-    describe "#too_short?"
-    describe "#map"
-    describe "#to_s"
-    describe "#to_x12"
-    describe "#=="
+    describe "#invalid?" do
+      specify { expect(element_val_a).to be_invalid }
+      specify { expect(element_val_b).to be_invalid }
+    end
+
+    todo "#too_long?"
+    todo "#too_short?"
+    todo "#map(&block)"
+    todo "#to_s"
+    todo "#to_d"
+    todo "#to_f"
+    todo "#to_i"
+    todo "#to_r"
+    todo "#to_x12(truncate)"
+    todo "#==(other)"
   end
 
   context "Empty" do
-    let(:el) { eluse.value("", position) }
+    let(:element_val) { value("") }
 
     describe "#position" do
-      specify { expect(el.position).to be == position }
+      specify { expect(element_val.position).to eql(position) }
     end
 
     describe "#empty?" do
-      specify { expect(el).to be_empty }
+      specify { expect(element_val).to be_empty }
     end
 
     describe "#valid?" do
-      specify { expect(el).to be_valid }
+      specify { expect(element_val).to be_valid }
+    end
+
+    describe "#invalid?" do
+      specify { expect(element_val).to_not be_invalid }
     end
 
     describe "#too_short?" do
-      specify { expect(el).not_to be_too_short }
+      specify { expect(element_val).not_to be_too_short }
     end
 
-    describe "#too_short?" do
-      specify { expect(el).not_to be_too_long }
+    describe "#too_long?" do
+      specify { expect(element_val).not_to be_too_long }
     end
 
-    describe "#map" do
-      specify { expect(el.map { "1.23" }).to be == "1.23" }
-      specify { expect(el.map { "1.23" }).to be_numeric }
+    describe "#map(&block)" do
+      specify { expect(element_val.map { "1.23" }).to eq("1.23") }
+      specify { expect(element_val.map { "1.23" }).to be_numeric }
     end
 
     describe "#to_s" do
-      specify { expect(el.to_s).to be == "" }
+      specify { expect(element_val.to_s).to eq("") }
     end
 
-    describe "#to_x12" do
+    todo "#to_d"
+    todo "#to_f"
+    todo "#to_i"
+    todo "#to_r"
+
+    describe "#to_x12(truncate)" do
       context "with truncation" do
-        specify { expect(el.to_x12(true)).to be == "" }
-        specify { expect(el.to_x12(true)).to be_a(String) }
+        specify { expect(element_val.to_x12(true)).to eql("") }
       end
 
       context "without truncation" do
-        specify { expect(el.to_x12(false)).to be == "" }
-        specify { expect(el.to_x12(false)).to be_a(String) }
+        specify { expect(element_val.to_x12(false)).to eql("") }
       end
     end
 
-    describe "#==" do
-      specify { expect(el).to be == el }
-      specify { expect(el).to be == nil }
-      specify { expect(el).to be == eluse.value("", position) }
+    describe "#==(other)" do
+      specify { expect(element_val).to eq(element_val) }
+      specify { expect(element_val).to eq(nil) }
+      specify { expect(element_val).to eq(value("")) }
     end
   end
 
   context "NonEmpty" do
-    # include Comparable
-    describe "relational operators" do
-      let(:a) { eluse.value("123.4", position) }
-      let(:b) { eluse.value("123.5", position) }
+    let(:element_val) { value("1.23") }
 
-      specify { expect(a).to      be == "123.4".to_d }
-      specify { expect(b).to      be == "123.5".to_d }
+    describe "#position" do
+      specify { expect(element_val.position).to eql(position) }
+    end
+
+    describe "#empty?" do
+      specify { expect(element_val).to_not be_empty }
+    end
+
+    describe "#valid?" do
+      specify { expect(element_val).to be_valid }
+    end
+
+    describe "#invalid?" do
+      specify { expect(element_val).to_not be_invalid }
+    end
+
+    describe "#too_short?" do
+      specify { expect(element_val).not_to be_too_short }
+    end
+
+    describe "#too_long?" do
+      specify { expect(element_val).not_to be_too_long }
+    end
+
+    describe "#map(&block)" do
+      specify { expect{|b| element_val.map(&b) }.to yield_with_args("1.23".to_d) }
+    end
+
+    describe "#to_s" do
+      specify { expect(element_val.to_s).to eq("1.23") }
+    end
+
+    todo "#to_d"
+    todo "#to_f"
+    todo "#to_i"
+    todo "#to_r"
+
+    describe "#to_x12(truncate)" do
+      todo "with truncation"
+      todo "without truncation"
+    end
+
+    describe "relational operators" do
+      let(:a) { value("123.4") }
+      let(:b) { value("123.5") }
+
+      specify { expect(a).to      eq("123.4".to_d) }
+      specify { expect(b).to      eq("123.5".to_d) }
 
       specify { expect(a.to_d).to be <  b.to_d }
       specify { expect(a.to_d).to be <  b }
@@ -122,10 +192,10 @@ describe "Stupidedi::Versions::Common::ElementTypes::R", :skip do
       specify { expect(a).to      be <= a.to_d }
       specify { expect(a).to      be <= a }
 
-      specify { expect(b.to_d).to be == b.to_d }
-      specify { expect(b.to_d).to be == b }
-      specify { expect(b).to      be == b.to_d }
-      specify { expect(b).to      be == b }
+      specify { expect(b.to_d).to eq(b.to_d) }
+      specify { expect(b.to_d).to eq(b) }
+      specify { expect(b).to      eq(b.to_d) }
+      specify { expect(b).to      eq(b) }
 
       specify { expect(a.to_d).to be <= a.to_d }
       specify { expect(a.to_d).to be <= a }
@@ -147,48 +217,48 @@ describe "Stupidedi::Versions::Common::ElementTypes::R", :skip do
       specify { expect(b).to      be >= b.to_d }
       specify { expect(b).to      be >= b }
 
-      specify { expect(a.to_d).not_to be == b.to_d }
-      specify { expect(a.to_d).not_to be == b }
-      specify { expect(a).not_to      be == b.to_d }
-      specify { expect(a).not_to      be == b }
+      specify { expect(a.to_d).not_to eq(b.to_d) }
+      specify { expect(a.to_d).not_to eq(b) }
+      specify { expect(a).not_to      eq(b.to_d) }
+      specify { expect(a).not_to      eq(b) }
 
-      specify { expect(b.to_d).not_to be == a.to_d }
-      specify { expect(b.to_d).not_to be == a }
-      specify { expect(b).not_to      be == a.to_d }
-      specify { expect(b).not_to      be == a }
+      specify { expect(b.to_d).not_to eq(a.to_d) }
+      specify { expect(b.to_d).not_to eq(a) }
+      specify { expect(b).not_to      eq(a.to_d) }
+      specify { expect(b).not_to      eq(a) }
     end
 
     describe "arithmetic operators" do
-      let(:a) { eluse.value("10.50", position) }
-      let(:b) { eluse.value("2", position) }
+      let(:a) { value("10.50") }
+      let(:b) { value("2") }
 
-      specify { expect(a.to_d / b.to_d).to  be == "5.25".to_d }
-      specify { expect(a / b.to_d).to       be == "5.25".to_d }
-      specify { expect(a.to_d / b).to       be == "5.25".to_d }
-      specify { expect(a / b).to            be == "5.25".to_d }
+      specify { expect(a.to_d / b.to_d).to  eq("5.25".to_d) }
+      specify { expect(a / b.to_d).to       eq("5.25".to_d) }
+      specify { expect(a.to_d / b).to       eq("5.25".to_d) }
+      specify { expect(a / b).to            eq("5.25".to_d) }
 
-      specify { expect(a.to_d * b.to_d).to  be == "21.0".to_d }
-      specify { expect(a * b.to_d).to       be == "21.0".to_d }
-      specify { expect(a.to_d * b).to       be == "21.0".to_d }
-      specify { expect(a * b).to            be == "21.0".to_d }
+      specify { expect(a.to_d * b.to_d).to  eq("21.0".to_d) }
+      specify { expect(a * b.to_d).to       eq("21.0".to_d) }
+      specify { expect(a.to_d * b).to       eq("21.0".to_d) }
+      specify { expect(a * b).to            eq("21.0".to_d) }
 
-      specify { expect(a.to_d + b.to_d).to  be == "12.5".to_d }
-      specify { expect(a + b.to_d).to       be == "12.5".to_d }
-      specify { expect(a.to_d + b).to       be == "12.5".to_d }
-      specify { expect(a + b).to            be == "12.5".to_d }
+      specify { expect(a.to_d + b.to_d).to  eq("12.5".to_d) }
+      specify { expect(a + b.to_d).to       eq("12.5".to_d) }
+      specify { expect(a.to_d + b).to       eq("12.5".to_d) }
+      specify { expect(a + b).to            eq("12.5".to_d) }
 
-      specify { expect(a.to_d - b.to_d).to  be == "8.5".to_d }
-      specify { expect(a - b.to_d).to       be == "8.5".to_d }
-      specify { expect(a - b).to            be == "8.5".to_d }
+      specify { expect(a.to_d - b.to_d).to  eq("8.5".to_d) }
+      specify { expect(a - b.to_d).to       eq("8.5".to_d) }
+      specify { expect(a - b).to            eq("8.5".to_d) }
 
-      specify { expect(a.to_d % b.to_d).to  be == "0.5".to_d }
-      specify { expect(a % b.to_d).to       be == "0.5".to_d }
-      specify { expect(a.to_d % b).to       be == "0.5".to_d }
-      specify { expect(a % b).to            be == "0.5".to_d }
+      specify { expect(a.to_d % b.to_d).to  eq("0.5".to_d) }
+      specify { expect(a % b.to_d).to       eq("0.5".to_d) }
+      specify { expect(a.to_d % b).to       eq("0.5".to_d) }
+      specify { expect(a % b).to            eq("0.5".to_d) }
 
-      specify { expect(-a).to               be == "-10.50".to_d }
-      specify { expect((-a).abs).to         be == a }
-      specify { expect(+a).to               be == a }
+      specify { expect(-a).to               eq("-10.50".to_d) }
+      specify { expect((-a).abs).to         eq(a) }
+      specify { expect(+a).to               eq(a) }
     end
   end
 end

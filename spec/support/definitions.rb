@@ -1,4 +1,102 @@
-Definitions = Class.new do
+module Definitions
+  def Header(*args)
+    Stupidedi::Schema::TableDef.header(*args)
+  end
+
+  def Detail(*args)
+    Stupidedi::Schema::TableDef.detail(*args)
+  end
+
+  def Summary(*args)
+    Stupidedi::Schema::TableDef.summary(*args)
+  end
+
+  def Loop(*args)
+    Stupidedi::Schema::LoopDef.build(*args)
+  end
+
+  def Segment(position, segment_id, *args)
+    Stupidedi::Versions::FiftyTen::SegmentDefs.const_get(segment_id).use(position, *args)
+  end
+
+  def Segment_(position, segment_id, name, requirement, repeat, *args)
+    Stupidedi::Schema::SegmentDef.build(segment_id, name, "", *args).use(position, requirement, repeat)
+  end
+
+  def Element(id, *args)
+    Stupidedi::Versions::FiftyTen::ElementDefs.const_get(id).simple_use(*args)
+  end
+
+  def P(*args)
+    Stupidedi::Versions::FiftyTen::SyntaxNotes::P.build(*args)
+  end
+
+  def R(*args)
+    Stupidedi::Versions::FiftyTen::SyntaxNotes::R.build(*args)
+  end
+
+  def E(*args)
+    Stupidedi::Versions::FiftyTen::SyntaxNotes::E.build(*args)
+  end
+
+  def C(*args)
+    Stupidedi::Versions::FiftyTen::SyntaxNotes::C.build(*args)
+  end
+
+  def L(*args)
+    Stupidedi::Versions::FiftyTen::SyntaxNotes::L.build(*args)
+  end
+
+  def bounded(n)
+    Stupidedi::Schema::RepeatCount.bounded(n)
+  end
+
+  def unbounded
+    Stupidedi::Schema::RepeatCount.unbounded
+  end
+
+  def s_mandatory
+    Stupidedi::Versions::FiftyTen::SegmentReqs::Mandatory
+  end
+
+  def s_optional
+    Stupidedi::Versions::FiftyTen::SegmentReqs::Optional
+  end
+
+  def s_required
+    Stupidedi::TransactionSets::Common::Implementations::SegmentReqs::Required
+  end
+
+  def s_situational
+    Stupidedi::TransactionSets::Common::Implementations::SegmentReqs::Situational
+  end
+
+  def e_mandatory
+    Stupidedi::Versions::FiftyTen::ElementReqs::Mandatory
+  end
+
+  def e_relational
+    Stupidedi::Versions::FiftyTen::ElementReqs::Relational
+  end
+
+  def e_optional
+    Stupidedi::Versions::FiftyTen::ElementReqs::Optional
+  end
+
+  def e_required
+    Stupidedi::TransactionSets::Common::Implementations::ElementReqs::Required
+  end
+
+  def e_situational
+    Stupidedi::TransactionSets::Common::Implementations::ElementReqs::Situational
+  end
+
+  def e_not_used
+    Stupidedi::TransactionSets::Common::Implementations::ElementReqs::NotUsed
+  end
+end
+
+class << Definitions
   using Stupidedi::Refinements
 
   def collect(namespace, visited = Set.new, &block)
@@ -82,4 +180,4 @@ Definitions = Class.new do
   def element_defs(root = Stupidedi)
     select(Stupidedi::Schema::AbstractElementDef, root)
   end
-end.new
+end

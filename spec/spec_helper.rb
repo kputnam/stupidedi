@@ -33,10 +33,9 @@ begin
   end
 end
 
-RSpec::Expectations.configuration.warn_about_potential_false_positives = false
-
 RSpec.configure do |config|
   config.include(EitherMatchers)
+  config.extend(RSpecHelpers)
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -63,6 +62,3 @@ RSpec.configure do |config|
   config.filter_run_excluding(:skip)
 end
 
-# Don't let rspec abbreviate result of #inspect (especially for exceptions)
-RSpec::Support::ObjectFormatter.
-  default_instance.max_formatted_output_length = 1.0/0.0
