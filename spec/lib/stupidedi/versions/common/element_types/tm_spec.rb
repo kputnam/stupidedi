@@ -1,3 +1,3 @@
-fdescribe Stupidedi::Versions::Common::ElementTypes::TM do
+describe Stupidedi::Versions::Common::ElementTypes::TM do
   todo
 end

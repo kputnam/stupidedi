@@ -1,4 +1,4 @@
-fdescribe Stupidedi::Versions::Common::ElementTypes::ID do
+describe Stupidedi::Versions::Common::ElementTypes::ID do
   using Stupidedi::Refinements
 
   let(:element_use) do

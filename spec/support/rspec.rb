@@ -48,14 +48,14 @@ module RSpec
 end
 
 module RSpecHelpers
-  def todo(name = "@todo", &block)
+  def todo(name = "@todo", *args, &block)
     if block_given?
-      pending name, :todo do
+      pending name, *args, :todo do
         instance_exec(&block)
         fail "@todo"
       end
     else
-      pending name, :todo do
+      pending name, *args, :todo do
         fail "@todo"
       end
     end

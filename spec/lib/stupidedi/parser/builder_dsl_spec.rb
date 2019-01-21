@@ -1,4 +1,4 @@
-describe Stupidedi::Parser::Generation, "strict validation" do
+describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   using Stupidedi::Refinements
   include NavigationMatchers
   include Definitions
@@ -112,11 +112,27 @@ describe Stupidedi::Parser::Generation, "strict validation" do
       it "raises an exception" do
         b = strict(Detail("2", Segment(10, :LX, s_mandatory, bounded(1))))
 
+        expect(lambda{ b.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
+          raise_error(/required table 2 is missing/)
+      end
+
+      todo "raises an exception immediately" do
+        b = strict(Detail("2", Segment(10, :LX, s_mandatory, bounded(1))))
+
         expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
           raise_error(/required table 2 is missing/)
       end
 
       it "raises an exception" do
+        b = strict(Detail("2",
+                     Loop("2000", bounded(2),
+                       Segment(10, :LX, s_mandatory, bounded(1)))))
+
+        expect(lambda{ b.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
+          raise_error(/required table 2 is missing/)
+      end
+
+      todo "raises an exception immediately" do
         b = strict(Detail("2",
                      Loop("2000", bounded(2),
                        Segment(10, :LX, s_mandatory, bounded(1)))))
@@ -133,13 +149,11 @@ describe Stupidedi::Parser::Generation, "strict validation" do
       end
 
       it "raises an exception" do
-        expect(lambda{ b.LQ.SE(id.count(b), id.pop_st) }).to \
+        expect(lambda{ b.LQ.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
           raise_error(/table 2a occurs too many times/)
       end
 
-      pending "raises an exception immediately" do
-        # This validation is delayed until this loop is "closed". It would be
-        # an improvement for the error to happen immediately, like this:
+      todo "raises an exception immediately" do
         expect(lambda{ b.LQ }).to \
           raise_error(/table 2a occurs too many times/)
       end
@@ -185,6 +199,17 @@ describe Stupidedi::Parser::Generation, "strict validation" do
         b.LX(1)
         b.LX(2)
 
+        expect(lambda{ b.LX(3).SE(id.count(b), id.pop_st).GS(id.count, id.pop_gs) }).to \
+          raise_error(/loop 2000 occurs too many times/)
+      end
+
+      todo "raises an exception immediately" do
+        b = strict(Detail("2",
+                     Loop("2000", bounded(2),
+                       Segment(10, :LX, s_optional, bounded(1)))))
+        b.LX(1)
+        b.LX(2)
+
         expect(lambda{ b.LX(3) }).to \
           raise_error(/loop 2000 occurs too many times/)
       end
@@ -215,7 +240,7 @@ describe Stupidedi::Parser::Generation, "strict validation" do
       it "raises an exception" do
         b = strict(Detail("2", Segment(10, :LX, s_optional, bounded(1))))
         expect(lambda{ b.N3("123 MAIN ST") }).to \
-          raise_error(/segment N3\*123 MAIN ST~ cannot occur/)
+          raise_error(/segment N3\*123 MAIN ST\*~ cannot occur/)
       end
     end
 
