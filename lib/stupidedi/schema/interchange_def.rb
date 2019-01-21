@@ -41,6 +41,10 @@ module Stupidedi
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
       end
 
+      def required?
+        false
+      end
+
       # @return [String]
       def descriptor
         "interchange #{id}"

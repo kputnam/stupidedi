@@ -63,6 +63,10 @@ module Stupidedi
         "transaction set #{id}"
       end
 
+      def required?
+        false
+      end
+
       # @return [SegmentUse]
       def entry_segment_use
         @header_segment_uses.head

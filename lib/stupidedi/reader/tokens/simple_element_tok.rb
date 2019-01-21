@@ -57,7 +57,7 @@ module Stupidedi
       end
 
       def to_s(separators)
-        @value
+        @value.to_s
       end
     end
 

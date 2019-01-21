@@ -15,8 +15,7 @@ module Stupidedi
       # @return [String]
       abstract :descriptor
 
-      #
-      #########################################################################
+      abstract :required?
 
       # Is this an {InterchangeDef}?
       def interchange?
