@@ -27,7 +27,7 @@ module Stupidedi
 
       # @return [String]
       def descriptor
-        "#{@segment_tok.to_s(@separators)} #{@reason}"
+        "segment #{@segment_tok.to_s(@separators)} #{@reason}"
       end
 
       # (see AbstractVal#size)
