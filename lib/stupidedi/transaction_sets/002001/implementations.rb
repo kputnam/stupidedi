@@ -14,7 +14,7 @@ module Stupidedi
           NotUsed     = Common::Implementations::ElementReqs::NotUsed
         end
 
-        autoload :FA997, "stupidedi/transaction_sets/002001/implementations/FA997"
+        #utoload :FA997, "stupidedi/transaction_sets/002001/implementations/FA997"
         autoload :PO830, "stupidedi/transaction_sets/002001/implementations/PO830"
         autoload :SH856, "stupidedi/transaction_sets/002001/implementations/SH856"
       end
