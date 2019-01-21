@@ -16,7 +16,7 @@ module Stupidedi
       #   [1, 2, 3].head  #=> 1
       #
       def head
-        raise IndexError, "head of empty list" if empty?
+        raise IndexError, "head of empty array" if empty?
         x, = self
         x
       end

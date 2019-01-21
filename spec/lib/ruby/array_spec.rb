@@ -19,7 +19,7 @@ describe Array do
   describe "#head" do
     context "of an empty array" do
       it "is an error" do
-        expect(lambda { [].head }).to raise_error
+        expect(lambda { [].head }).to raise_error("head of empty array")
       end
     end
 
@@ -115,7 +115,7 @@ describe Array do
       property "raises an error" do
         integer.abs
       end.check do |n|
-        expect(lambda { %w(a b).drop(-n) }).to raise_error
+        expect(lambda { %w(a b).drop(-n) }).to raise_error("n cannot be negative")
       end
     end
 
@@ -259,7 +259,7 @@ describe Array do
       property "raises an error" do
         integer.abs
       end.check do |n|
-        expect(lambda { %w(a b).take(-n) }).to raise_error
+        expect(lambda { %w(a b).take(-n) }).to raise_error("n cannot be negative")
       end
     end
 
@@ -410,7 +410,7 @@ describe Array do
         property "is an error" do
           integer.abs
         end.check do |n|
-          expect(lambda { [].split_at(-n) }).to raise_error
+          expect(lambda { [].split_at(-n) }).to raise_error("n cannot be negative")
         end
       end
 

@@ -28,7 +28,7 @@ describe "Stupidedi::TransactionSets::Validation::Ambiguity" do
           d::LoopDef.build("Loop 1", d::RepeatCount.bounded(2),
             s::HI.use(20, r::Required, d::RepeatCount.bounded(1)),
             s::LS.use(30, r::Required, d::RepeatCount.bounded(1))))))
-    end).not_to complain
+    end).not_to raise_error
   end
 
   it "no constraints, sibling" do
@@ -105,6 +105,6 @@ describe "Stupidedi::TransactionSets::Validation::Ambiguity" do
           b::Segment(20, s::NTE, "2", r::Required, d::RepeatCount.bounded(1),
             b::Element(e::Required, "NTE01", b::Values("ADD")),
             b::Element(e::Required, "NTE02")))))
-    end).not_to complain
+    end).not_to raise_error
   end
 end

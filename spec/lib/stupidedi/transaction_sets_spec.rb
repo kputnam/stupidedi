@@ -19,7 +19,7 @@ describe "Stupidedi::TransactionSets" do
         functional_group_def = version.const_get(:FunctionalGroupDef)
         transaction_set_def  = value
 
-        it "is non-ambiguous" do
+        it "is non-ambiguous", :schema do
           expect(lambda do
             Stupidedi::TransactionSets::Validation::Ambiguity
               .build(transaction_set_def, functional_group_def)
@@ -32,7 +32,7 @@ describe "Stupidedi::TransactionSets" do
         case error
         when Exception
           FIXTURES[name].sort.each do |path, _, _|
-            pending "can parse '#{path}'" do
+            pending "can parse '#{path}'", :fixtures do
               raise "#{name} is not well-defined (see other spec results)"
             end
           end
@@ -40,7 +40,7 @@ describe "Stupidedi::TransactionSets" do
           FIXTURES[name].sort.each do |path, _, config|
             case path = path.to_s
             when %r{/pass/}
-              it "can parse '#{path}'" do
+              it "can parse '#{path}'", :fixtures do
                 expect(lambda do
                   machine, result = Fixtures.parse!(path, config)
                   builder         = Stupidedi::Parser::BuilderDsl.new(nil)
@@ -50,7 +50,7 @@ describe "Stupidedi::TransactionSets" do
                 end).not_to raise_error
               end
             when %r{/skip/}
-              pending "can parse '#{path}'" do
+              pending "can parse '#{path}'", :fixtures do
                 expect(lambda do
                   machine, result = Fixtures.parse!(path, config)
                   builder         = Stupidedi::Parser::BuilderDsl.new(nil)
@@ -60,7 +60,7 @@ describe "Stupidedi::TransactionSets" do
                 end).not_to raise_error
               end
             when %r{/fail/}
-              it "cannot parse '#{path}'" do
+              it "cannot parse '#{path}'", :fixtures do
                 expect(lambda do
                   machine, result = Fixtures.parse!(path, config)
                   builder         = Stupidedi::Parser::BuilderDsl.new(nil)
@@ -74,7 +74,7 @@ describe "Stupidedi::TransactionSets" do
         end
 
       else
-        pending "can parse examples" do
+        pending "can parse examples", :fixtures do
           parts   = name.split("::").slice(2..-1)
           version = Fixtures.versions.invert.fetch(parts[0], parts[0])
           name    = parts[2..3].join(" ")

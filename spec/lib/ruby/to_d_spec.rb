@@ -6,7 +6,7 @@ describe "Float#to_d" do
   property "f.to_d raises an error" do
     float
   end.check do |f|
-    expect(lambda { f.to_d }).to raise_error
+    expect(lambda { f.to_d }).to raise_error("cannot convert Float to BigDecimal")
   end
 end
 
@@ -67,7 +67,7 @@ describe "String#to_d" do
     property "string.to_d raises an error" do
       string
     end.check do |s|
-      expect(lambda { s.to_d }).to raise_error
+      expect(lambda { s.to_d }).to raise_error(/is not a valid number/)
     end
   end
 end

@@ -93,7 +93,7 @@ describe Stupidedi::Reader::DelegatedInput do
 
     context "when n is negative" do
       it "raises an error" do
-        expect(lambda { mkinput("abc").drop(-1) }).to raise_error
+        expect(lambda { mkinput("abc").drop(-1) }).to raise_error("n must be positive")
       end
     end
 
@@ -195,7 +195,7 @@ describe Stupidedi::Reader::DelegatedInput do
 
     context "when n is negative" do
       it "raises an error" do
-        expect(lambda { mkinput("abc").take(-1) }).to raise_error
+        expect(lambda { mkinput("abc").take(-1) }).to raise_error("n must be positive")
       end
     end
 
@@ -231,7 +231,7 @@ describe Stupidedi::Reader::DelegatedInput do
   describe "#at(n)" do
     context "when n is negative" do
       it "raises an error" do
-        expect(lambda { mkinput("abc").at(-1) }).to raise_error
+        expect(lambda { mkinput("abc").at(-1) }).to raise_error("n must be positive")
       end
     end
 
