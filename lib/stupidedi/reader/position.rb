@@ -4,8 +4,6 @@ module Stupidedi
 
   module Reader
     class Position
-      include Inspect
-
       # @return [Integer]
       attr_reader :offset
 
@@ -31,13 +29,23 @@ module Stupidedi
           changes.fetch(:path, @path)
       end
 
+      def to_s
+        inspect
+      end
+
       # @return [String]
       def inspect
         if @path.present?
-          "file #{@path}, line #{@line}, column #{@column}"
+          parts = ["file #{@path}", "line #{@line}"]
         else
-          "line #{@line}, column #{@column}"
+          parts = ["line #{@line}"]
         end
+
+        if @column.present?
+          parts << "column #{@column}"
+        end
+
+        parts.join(", ")
       end
 
       # @return [void]

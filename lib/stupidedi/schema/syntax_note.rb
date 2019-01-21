@@ -42,14 +42,6 @@ module Stupidedi
           required(zipper).all?{|c| c.node.present? }
       end
 
-      # @return [Array<Zipper::AbstractCursor<Values::AbstractElementVal>>]
-      def errors(zipper)
-        f = forbidden(zipper).select{|c| c.node.present? }
-        r = required(zipper).reject{|c| c.node.present? }
-
-        f.concat(r)
-      end
-
     private
 
       def children(zipper)

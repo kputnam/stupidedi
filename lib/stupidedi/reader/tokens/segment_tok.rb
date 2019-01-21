@@ -48,7 +48,7 @@ module Stupidedi
         if blank?
           "#{id}#{separators.segment}"
         else
-          es = @element_toks.map{|x| x.to_s(separators) }
+          es = @element_toks.map{|x| x.to_s(separators) }.take_until(&:blank?)
           id.cons(es).join(separators.element || "*") + (separators.segment || "~")
         end
       end

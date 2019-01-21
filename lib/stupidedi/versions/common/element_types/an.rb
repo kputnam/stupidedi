@@ -15,6 +15,45 @@ module Stupidedi
         # @see X222.pdf B.1.1.3.1.4 String
         #
         class StringVal < Values::SimpleElementVal
+          DATE_FORMAT_SINGLE =
+           {"CC" => "%C",
+            "CM" => "%Y%m",
+            "CY" => "%Y",
+            "D6" => "%y%m%d",
+            "D8" => "%Y%m%d",
+            "DB" => "%m%d%Y",
+            "DD" => "%d",
+            "DT" => "%Y%m%d%H%M",
+            "KA" => "%y%m%d",
+            "MD" => "%m%d",
+            "MM" => "%m",
+            "TM" => "%H%M",
+            "TQ" => "%m%y",
+            "TR" => "%d%m%y%H%M",
+            "TS" => "%H%M%S",
+            "TT" => "%m%d%y",
+            "UN" => "",
+            "YM" => "%y%m",
+            "YY" => "%Y"}
+
+          DATE_FORMAT_RANGE =
+           {"DA"  => ["%d", "%d"],
+            "DDT" => ["%Y%m%d", "%Y%m%d%H%M"],
+            "DTD" => ["%Y%m%d%H%M", "%Y%m%d"],
+            "DTS" => ["%Y%m%d%H%M%S", "%Y%m%d%H%M%S"],
+            "RD"  => ["%m%d%Y", "%m%d%Y"],
+            "RD2" => ["%y", "%y"],
+            "RD4" => ["%Y", "%Y"],
+            "RD5" => ["%Y%m", "%Y%m"],
+            "RD6" => ["%y%m%d", "%y%m%d"],
+            "RD8" => ["%Y%m%d", "%Y%m%d"],
+            "RDM" => ["%y%m%d", "%m%d"],
+            "RDT" => ["%Y%m%d%H%M", "%Y%m%d%H%M"],
+            "RMD" => ["%m%d", "%m%d"],
+            "RMY" => ["%y%m", "%y%m"],
+            "RTM" => ["%H%M", "%H%M"],
+            "RTS" => ["%Y%m%d%H%M%S"]}
+
           def string?
             true
           end
@@ -260,101 +299,23 @@ module Stupidedi
             end
 
             # Parse the string into a date (Date), date time (Time), or a range
-            # of either according to the given format specifier.
-            #
-            #   D8:  CCYYMMDD
-            #   DB:  MMDDCCYY
-            #   DDT: CCYYMMDD-CCYYMMDDHHMM
-            #   DT:  CCYYMMDDHHMM
-            #   DTD: CCYYMMDDHHMM-CCYYMMDD
-            #   DTS: CCYYMMDDHHMMSS-CCYYMMDDHHMMSS
-            #   RD:  MMDDCCYY-MMDDCCYY
-            #   RD8: CCYYMMDD-CCYYMMDD
-            #   RDT: CCYYMMDDHHMM-CCYYMMDDHHMM
-            #   RTS: CCYYMMDDHHMMSS
+            # of either according to the given format specifier. See
+            # {StringVal::DATE_FORMAT_SINGLE} and {StringVal::DATE_FORMAT_RANGE}
+            # for a list of recognized format specifiers.
             #
             # @return [Date | Time | Range<Date> | Range<Time>]
             def to_date(format)
-              case format
-              when "D8"  # CCYYMMDD
-                Date.civil(@value.slice(0, 4).to_i, # year
-                           @value.slice(4, 2).to_i, # month
-                           @value.slice(6, 2).to_i) # day
-              when "DB"  # MMDDCCYY
-                Date.civil(@value.slice(4, 4).to_i,
-                           @value.slice(0, 2).to_i,
-                           @value.slice(2, 2).to_i)
-              when "DDT" # CCYYMMDD-CCYYMMDDHHMM
-                Time.utc(@value.slice(0, 4).to_i,     # year
-                         @value.slice(4, 2).to_i,     # month
-                         @value.slice(6, 2).to_i) ..  # day
-                Time.utc(@value.slice(9, 4).to_i,
-                         @value.slice(13, 2).to_i,
-                         @value.slice(15, 2).to_i,
-                         @value.slice(17, 2).to_i,    # hour
-                         @value.slice(19, 2).to_i)    # minute
-              when "DT"  # CCYYMMDDHHMM
-                Time.utc(@value.slice(0, 4).to_i,
-                         @value.slice(4, 2).to_i,
-                         @value.slice(6, 2).to_i,
-                         @value.slice(8, 2).to_i,
-                         @value.slice(10, 2).to_i)
-              when "DTD" # CCYYMMDDHHMM-CCYYMMDD
-                Time.utc(@value.slice(0, 4).to_i,
-                         @value.slice(4, 2).to_i,
-                         @value.slice(6, 2).to_i,
-                         @value.slice(8, 2).to_i,
-                         @value.slice(10, 2).to_i) ..
-                Time.utc(@value.slice(13, 4).to_i,
-                         @value.slice(15, 2).to_i,
-                         @value.slice(17, 2).to_i)
-              when "DTS" # CCYYMMDDHHMMSS-CCYYMMDDHHMMSS
-                Time.utc(@value.slice(0, 4).to_i,
-                         @value.slice(4, 2).to_i,
-                         @value.slice(6, 2).to_i,
-                         @value.slice(8, 2).to_i,
-                         @value.slice(10, 2).to_i,
-                         @value.slice(12, 2).to_i) ..
-                Time.utc(@value.slice(15, 4).to_i,
-                         @value.slice(19, 2).to_i,
-                         @value.slice(21, 2).to_i,
-                         @value.slice(23, 2).to_i,
-                         @value.slice(25, 2).to_i,
-                         @value.slice(27, 2).to_i)
-              when "RD"  # MMDDCCYY-MMDDCCYY
-                Date.civil(@value.slice(4, 4).to_i,
-                           @value.slice(0, 2).to_i,
-                           @value.slice(2, 2).to_i) ..
-                Date.civil(@value.slice(13, 4).to_i,
-                           @value.slice(9, 2).to_i,
-                           @value.slice(11, 2).to_i)
-              when "RD8" # CCYYMMDD-CCYYMMDD
-                Date.civil(@value.slice(0, 4).to_i,
-                           @value.slice(4, 2).to_i,
-                           @value.slice(6, 2).to_i) ..
-                Date.civil(@value.slice(9, 4).to_i,
-                           @value.slice(13, 2).to_i,
-                           @value.slice(15, 2).to_i)
-              when "RDT" # CCYYMMDDHHMM-CCYYMMDDHHMM
-                Time.utc(@value.slice(0, 4).to_i,
-                         @value.slice(4, 2).to_i,
-                         @value.slice(6, 2).to_i,
-                         @value.slice(8, 2).to_i,
-                         @value.slice(10, 2).to_i) ..
-                Time.utc(@value.slice(13, 4).to_i,
-                         @value.slice(15, 2).to_i,
-                         @value.slice(17, 2).to_i,
-                         @value.slice(19, 2).to_i,
-                         @value.slice(21, 2).to_i)
-              when "RTS" # CCYYMMDDHHMMSS
-                Time.utc(@value.slice(0, 4).to_i,
-                         @value.slice(4, 2).to_i,
-                         @value.slice(6, 2).to_i,
-                         @value.slice(8, 2).to_i,
-                         @value.slice(10, 2).to_i)
+              if DATE_FORMAT_RANGE.defined_at?(format)
+                a, b = @value.split("-", 2)
+                f, g = DATE_FORMAT_RANGE.at(format)
+                Date.strptime(a, f) .. Date.strptime(b, g)
+
+              elsif DATE_FORMAT_SINGLE.defined_at?(format)
+                Date.strptime(@value, DATE_FORMAT_SINGLE.at(format))
+
               else
                 raise ArgumentError,
-                  "Format code #{format} is not recognized"
+                  "unrecognized format specifier #{format.inspect}"
               end
             end
           end
@@ -373,11 +334,45 @@ module Stupidedi
           def value(object, usage, position)
             if object.blank?
               self::Empty.new(usage, position)
+            elsif object.kind_of?(Date) or object.kind_of?(Time)
+              self::Invalid.new(object, usage, position)
             else
               self::NonEmpty.new(object.to_s.rstrip, usage, position)
             end
           rescue
             self::Invalid.new(object, usage, position)
+          end
+
+          # Because this constructor is only called by a programmer (and not
+          # when the parser is reading a file), we will throw an exception
+          # rather than quietly returning an {StringVal::Invalid}.
+          #
+          # @return [StringVal]
+          def from_date(format, value, usage, position)
+            self::NonEmpty.new(strftime(format, value), usage, position)
+          end
+
+          # @return [String]
+          def strftime(format, value)
+            if StringVal::DATE_FORMAT_RANGE.defined_at?(format)
+              unless value.kind_of?(Range)              and
+                     value.end.respond_to?(:strftime)   and
+                     value.begin.respond_to?(:strftime)
+                raise ArgumentError,
+                  "expcted a Range (#strftime..#strftime) but got #{value.inspect}"
+              end
+
+              f, g = DATE_FORMAT_RANGE.at(format)
+              a, b = value.begin.strftime(f), value.end.strftime(g)
+              "#{a}-#{b}"
+
+            elsif StringVal::DATE_FORMAT_SINGLE.defined_at?(format)
+              value.strftime(DATE_FORMAT_SINGLE.at(format))
+
+            else
+              raise ArgumentError,
+                "unrecognized format specifier #{format.inspect}"
+            end
           end
 
           # @endgroup

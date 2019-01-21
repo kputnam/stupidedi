@@ -135,6 +135,11 @@ module Stupidedi
 
       # @return [TableDef]
       def header(id, *children)
+        unless id.is_a?(String)
+          raise Exceptions::InvalidSchemaError,
+            "first argument to TableDef.header must be a String but got #{id.inspect}"
+        end
+
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
         new(id, 1, false, header, loop_defs, trailer, nil)
@@ -142,6 +147,11 @@ module Stupidedi
 
       # @return [TableDef]
       def detail(id, *children)
+        unless id.is_a?(String)
+          raise Exceptions::InvalidSchemaError,
+            "first argument to TableDef.detail must be a String but got #{id.inspect}"
+        end
+
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
         new(id, 2, false, header, loop_defs, trailer, nil)
@@ -165,6 +175,11 @@ module Stupidedi
 
       # @return [TableDef]
       def summary(id, *children)
+        unless id.is_a?(String)
+          raise Exceptions::InvalidSchemaError,
+            "first argument to TableDef.summary must be a String but got #{id.inspect}"
+        end
+
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
         new(id, 3, false, header, loop_defs, trailer, nil)
