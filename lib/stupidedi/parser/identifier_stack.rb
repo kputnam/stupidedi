@@ -6,44 +6,65 @@ module Stupidedi
     # @todo: Documentation
     #
     class IdentifierStack
-      def initialize(id)
-        @state = Empty.new(id)
+      def initialize(start)
+        @state = Empty.new(Sequence.new(start))
       end
 
-      def id
-        @state.id
-      end
-
-      # Creates a new interchange control number (ISA-XX) and pushes it onto
-      # the internal identifier stack.
+      # Returns a new interchange control number (ISA13, IEA02)
       #
       # @return [String]
-      def isa
-        @state = @state.isa
+      def isa(*args)
+        @state = @state.isa(*args)
         @state.id
       end
 
-      # Creates a new functional group control number (ISA-XX) and pushes it onto
-      # the internal identifier stack.
+      # Returns a new functional Group Control Number (GS06, GE02)
       #
       # @return [String]
-      def gs
-        @state = @state.gs
+      def gs(*args)
+        @state = @state.gs(*args)
         @state.id
       end
 
-      def st
-        @state = @state.st
+      # Returns a new Transaction Set Control Number (ST02)
+      #
+      # @return [String]
+      def st(*args)
+        @state = @state.st(*args)
         @state.id
       end
 
-      def hl
-        @state = @state.hl
+      # Returns a new Hierarchical ID Number (HL01)
+      #
+      # @return [String]
+      def hl(*args)
+        @state = @state.hl(*args)
         @state.id
       end
 
+      # Returns the last identifier created
       def pop
         @state.id.tap { @state = @state.pop }
+      end
+
+      def pop_isa
+        @state.id.tap { @state = @state.pop_gs }
+      end
+
+      def pop_gs
+        @state.id.tap { @state = @state.pop_gs }
+      end
+
+      def pop_st
+        @state.id.tap { @state = @state.pop_st }
+      end
+
+      def pop_hl
+        @state.id.tap { @state = @state.pop_hl }
+      end
+
+      def respond_to?(name)
+        @state.respond_to?(name)
       end
 
       def method_missing(name, *args)
@@ -53,16 +74,32 @@ module Stupidedi
       #########################################################################
       # State Representations
 
+      class Sequence
+        def initialize(start)
+          @value = start
+        end
+
+        def succ!
+          self.tap { @value += 1 }
+        end
+
+        def value
+          @value
+        end
+      end
+
       class Empty
-        def initialize(id)
-          @count, @next, @id = 0, id, id
+        def initialize(sequence)
+          @count, @sequence = 0, sequence
         end
 
         def isa
-          ISA.new(self, @next).tap { @count += 1; @next += 1 }
+          ISA.new(self, @sequence).tap { @count += 1; @sequence.succ! }
         end
 
-        # Number of Interchanges (ISA..IEA)
+        # Returns number of interchanges (@note this is not needed by X12)
+        #
+        # @return [Integer]
         def count
           @count
         end
@@ -71,63 +108,83 @@ module Stupidedi
       class ISA
         attr_reader :id
 
-        def initialize(parent, id)
-          @count, @parent, @next, @id = 0, parent, id, id
+        def initialize(parent, sequence)
+          @count, @parent, @sequence, @id = 0, parent, sequence, sequence.value
         end
 
-        def gs
-          GS.new(self, @next).tap { @count += 1; @next += 1 }
+        def gs(start = nil)
+          sequence = start.try{|n| Sequence.new(n) } || @sequence
+          GS.new(self, sequence).tap { @count += 1; sequence.succ! }
         end
 
-        # Number of Functional Groups (GS..GE)
-        def count
-          @count
-        end
-
-        def pop
-          @parent
-        end
-      end
-
-      class GS
-        attr_reader :id
-
-        def initialize(parent, id)
-          @count, @parent, @next, @id = 0, parent, id, id
-        end
-
-        def st
-          ST.new(self, @next).tap { @count += 1; @next += 1 }
-        end
-
-        # GE01 Number of Transaction Sets (within current functional group)
+        # Number of Transaction Sets Included (IEA01)
         #
         # @return [Integer]
         def count
           @count
         end
 
-        def pop
+        def pop_isa
           @parent
+        end
+
+        def pop
+          warn "IdentifierStack#pop is deprecated, use pop_isa (when removing an ISA identifier from the stack)"
+          pop_isa
+        end
+      end
+
+      class GS
+        attr_reader :id
+
+        def initialize(parent, sequence)
+          @count, @parent, @sequence, @id = 0, parent, sequence, sequence.value
+        end
+
+        def st(start = nil)
+          sequence = start.try{|n| Sequence.new(n) } || @sequence
+          ST.new(self, sequence).tap { @count += 1; sequence.succ! }
+        end
+
+        # Number of Transaction Sets Included (GE01)
+        #
+        # @return [Integer]
+        def count
+          @count
+        end
+
+        def pop_gs
+          @parent
+        end
+
+        def pop
+          warn "IdentifierStack#pop is deprecated, use pop_gs (when removing an GS identifier from the stack)"
+          pop_gs
         end
       end
 
       class ST
-        attr_writer :sequence
-
-        def initialize(parent, id)
-          @sequence, @parent, @id = 0, parent, id
-        end
-
-        def hl
-          HL.new(self, @sequence += 1)
+        def initialize(parent, sequence)
+          @parent, @id = parent, sequence.value
+          @hl_sequence = Sequence.new(0)
+          @lx_sequence = Sequence.new(0)
         end
 
         def id
-          @id.to_s.rjust(4, "0")
+          "%04d" % @id
         end
 
-        # Number of segments (ST..SE)
+        def hl
+          HL.new(self, @hl_sequence, @lx_sequence).tap { @hl_sequence.succ! }
+        end
+
+        def lx
+          @lx_sequence.succ!.value
+        end
+
+        # Number of Included Segments (SE01)
+        #
+        # @return [Integer]
         def count(builder)
           m = Either.success(builder.machine)
 
@@ -140,37 +197,50 @@ module Stupidedi
           end
         end
 
-        def pop
+        def pop_st
           @parent
+        end
+
+        def pop
+          warn "IdentifierStack#pop is deprecated, use pop_st (when removing an ST identifier from the stack)"
+          pop
         end
       end
 
       class HL
-        attr_writer :sequence
+        attr_reader :id
 
-        def initialize(parent, id)
-          @parent, @id, @sequence = parent, id, id
+        def initialize(parent, hl_sequence, lx_sequence)
+          @parent, @id, @hl_sequence, @lx_sequence =
+            parent, hl_sequnce.id, hl_sequence, lx_sequence
         end
 
         def hl
-          HL.new(self, @sequence += 1)
+          HL.new(self, @sequence.succ!, @lx_sequence)
         end
 
-        def id
-          @id.to_s
+        def lx
+          @lx_sequence.succ!.value
         end
 
-        # Parent HL number
-        def parent
-          case @parent
-          when HL
+        # Parent HL number (HL02)
+        #
+        # @return [Integer]
+        def parent_id
+          if @parent.is_a?(HL)
             @parent.id
+          else
+            raise RuntimeError, "this HL*#{@id} does not have a parent HL"
           end
         end
 
-        def pop
-          @parent.sequence = @sequence
+        def pop_hl
           @parent
+        end
+
+        def pop
+          warn "IdentifierStack#pop is deprecated, use pop_ht (when removing an HL identifier from the stack)"
+          pop_hl
         end
       end
     end
