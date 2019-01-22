@@ -1,9 +1,9 @@
-class QuickCheck
+class Quickcheck
   class Property
     # @return [String]
     attr_reader :name
 
-    # @return [Class<QuickCheck>]
+    # @return [Class<Quickcheck>]
     attr_reader :qc
 
     # @return [Class]

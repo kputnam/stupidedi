@@ -4,8 +4,8 @@ module Stupidedi
     module FiftyTen
       module SegmentDefs
         s = Schema
-        e = ElementDefs
-        r = ElementReqs
+        # e = ElementDefs
+        # r = ElementReqs
 
         # @todo
         FA2 = s::SegmentDef.build(:FA2, "Accounting Data", "")

@@ -4,8 +4,8 @@ module Stupidedi
     module FiftyTen
       module SegmentDefs
         s = Schema
-        e = ElementDefs
-        r = ElementReqs
+        # e = ElementDefs
+        # r = ElementReqs
 
         # @todo
         CR6 = s::SegmentDef.build(:CR6, "Home Health Care Certification", "")

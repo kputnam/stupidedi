@@ -4,8 +4,8 @@ module Stupidedi
     module FiftyTen
       module SegmentDefs
         s = Schema
-        e = ElementDefs
-        r = ElementReqs
+        # e = ElementDefs
+        # r = ElementReqs
 
         # @todo
         NX1 = s::SegmentDef.build(:NX1, "Property or Entity Identification", "")

@@ -1,5 +1,4 @@
 describe Stupidedi::Reader::TokenReader do
-  include QuickCheck::SerializedEdi::Macro
   using Stupidedi::Refinements
 
   let(:ty) { Stupidedi::Versions::FiftyTen::ElementTypes }

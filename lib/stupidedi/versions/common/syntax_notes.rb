@@ -16,12 +16,12 @@ module Stupidedi
         #
         class P < Schema::SyntaxNote
           def required(zipper)
-            if zipper.node.present?
+            # if zipper.node.present?
               xs = children(zipper)
               xs.any?{|x| x.node.present? } ? xs : []
-            else
-              []
-            end
+            # else
+            #   []
+            # end
           end
 
           def forbidden(zipper)
@@ -41,12 +41,12 @@ module Stupidedi
         #
         class R < Schema::SyntaxNote
           def required(zipper)
-            if zipper.node.present?
+            # if zipper.node.present?
               xs = children(zipper)
               xs.any?{|x| x.node.present? } ? [] : xs
-            else
-              []
-            end
+            # else
+            #   []
+            # end
           end
 
           def forbidden(zipper)
@@ -56,7 +56,7 @@ module Stupidedi
           def reason(zipper)
             present = indexes.select{|n| zipper.child(n - 1).node.present? }
             missing = indexes - present
-            "at least one of elements #{missing.join(", ")} must be present when elements #{present.join(", ")} are present"
+            "at least one of elements #{missing.join(", ")} must be present"
           end
         end
 
@@ -70,12 +70,12 @@ module Stupidedi
           end
 
           def forbidden(zipper)
-            if zipper.node.present?
+            # if zipper.node.present?
               xs = children(zipper)
               xs.count{|x| x.node.present? } <= 1 ? [] : xs
-            else
-              []
-            end
+            # else
+            #   []
+            # end
           end
 
           def reason(zipper)
@@ -90,15 +90,15 @@ module Stupidedi
         #
         class C < Schema::SyntaxNote
           def required(zipper)
-            if zipper.node.present?
+            # if zipper.node.present?
               if zipper.child(indexes.head - 1).node.present?
                 children(zipper).tail
               else
                 []
               end
-            else
-              []
-            end
+            # else
+            #   []
+            # end
           end
 
           def forbidden(zipper)
@@ -116,16 +116,16 @@ module Stupidedi
         #
         class L < Schema::SyntaxNote
           def required(zipper)
-            if zipper.node.present?
+            # if zipper.node.present?
               if zipper.child(indexes.head - 1).node.present?
                 xs = children(zipper).tail
                 xs.any?{|x| x.node.present? } ? [] : xs
               else
                 []
               end
-            else
-              []
-            end
+            # else
+            #   []
+            # end
           end
 
           def forbidden(zipper)

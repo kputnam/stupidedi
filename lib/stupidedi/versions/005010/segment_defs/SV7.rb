@@ -4,8 +4,8 @@ module Stupidedi
     module FiftyTen
       module SegmentDefs
         s = Schema
-        e = ElementDefs
-        r = ElementReqs
+        # e = ElementDefs
+        # r = ElementReqs
 
         # @todo
         SV7 = s::SegmentDef.build(:SV7, "Drug Adjudication", "")

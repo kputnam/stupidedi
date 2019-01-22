@@ -4,8 +4,8 @@ module Stupidedi
     module FiftyTen
       module SegmentDefs
         s = Schema
-        e = ElementDefs
-        r = ElementReqs
+        # e = ElementDefs
+        # r = ElementReqs
 
         # @todo
         SAC = s::SegmentDef.build(:SAC, "Service, Promotion, Allowance, or Charge Information", "")

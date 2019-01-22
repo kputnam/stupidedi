@@ -1,6 +1,5 @@
 describe "Enumerable#count" do
   using Stupidedi::Refinements
-  include QuickCheck::Macro
 
   context "with no given arguments" do
     property "returns #length" do

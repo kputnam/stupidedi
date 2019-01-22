@@ -10,10 +10,14 @@ RSpec::Support::ObjectFormatter.
 # Instead of this
 #   Stupidedi::Parser::Generation loops when too many are present raises an exception
 #
+# Silence warning about redefining `description_separator`
+verbose, $VERBOSE = $VERBOSE, nil
+
 module RSpec
   module Core
     module Metadata
       class HashPopulator
+
         # https://github.com/rspec/rspec-core/blob/v3.8.0/lib/rspec/core/metadata.rb#L171
         def description_separator(parent_part, child_part)
           if is_module?(parent_part)
@@ -46,6 +50,7 @@ module RSpec
     end
   end
 end
+$VERBOSE = verbose
 
 module RSpecHelpers
   def todo(name = "@todo", *args, &block)

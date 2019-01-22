@@ -1,6 +1,4 @@
 describe Stupidedi::Reader::Failure do
-  include QuickCheck::Macro
-
   def mkfailure(reason, remainder)
     Stupidedi::Reader::Result.failure(reason, remainder, false)
   end

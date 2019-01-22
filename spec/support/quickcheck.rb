@@ -7,18 +7,19 @@ using Stupidedi::Refinements
 #
 # @see https://github.com/hayeah/rantly
 #
-class QuickCheck
+class Quickcheck
   autoload :Characters, "support/quickcheck/characters"
   autoload :Property,   "support/quickcheck/property"
 
   def initialize
-    @bindings = []
+    @bindings   = []
+    @parameters = {}
   end
 end
 
-class << QuickCheck
+class << Quickcheck
   def property(base, *args, &setup)
-    QuickCheck::Property.new(base, new, *args, &setup)
+    Quickcheck::Property.new(base, new, *args, &setup)
   end
 
   # Generate `count` values, returning nil
@@ -50,12 +51,12 @@ class << QuickCheck
   # @return [void]
   def has_parameter(name, value)
     scope = self
-    define_method(name) { instance_variable_get("@_parameter_#{name}") || scope.default.send(name) }
+    define_method(name) { @parameters[name.to_sym] || scope.default.send(name) }
     default.class.send(:define_method, name) { value }
   end
 end
 
-class QuickCheck
+class Quickcheck
   module Macro
     def self.included(base)
       base.extend(ClassMethods)
@@ -63,7 +64,7 @@ class QuickCheck
 
     module ClassMethods
       def property(*args, &setup)
-        QuickCheck.property(self, *args, &setup)
+        Quickcheck.property(self, *args, &setup)
       end
     end
   end
@@ -137,30 +138,22 @@ class QuickCheck
   # sets `parameters`
   def with(*parameters)
     parameters = Hash[*parameters]
+    parameters = Hash[parameters.map{|k,v| [k.to_sym, v]}]
 
     if block_given?
       # Copy current parameters to a safe place
-      prev = instance_variables.grep(/@_parameter/).inject({}) do |hash, name|
-        hash.update(name => instance_variable_get(name))
-      end
+      previous = @parameters
 
       # Update the given parameters
-      parameters.each{|name, value| instance_variable_set("@_parameter_#{name}", value) }
+      @parameters = @parameters.merge(parameters)
 
       begin
         yield
       ensure
-        # Remove all the parameters
-        instance_variables.each do |name|
-          next unless /^@_parameter_/ =~ name
-          remove_instance_variable(name)
-        end
-
-        # Restore previous parameters from the copy
-        prev.each{|name, value| instance_variable_set(name, value) }
+        @parameters = previous
       end
     else
-      parameters.each{|name, value| instance_variable_set("@_parameter_#{name}", value) }
+      @parameters.merge!(parameters)
     end
   end
 

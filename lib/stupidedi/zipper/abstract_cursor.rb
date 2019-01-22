@@ -122,21 +122,21 @@ module Stupidedi
 
         between << rspine.head.node
 
-        rspine.tail.each do |zipper|
-          count  = zipper.path.position
-          zipper = zipper.first
+        rspine.tail.each do |zipper_|
+          count  = zipper_.path.position
+          zipper_ = zipper_.first
 
           # We have to do a bit more work to traverse the siblings in left-to-
-          # right order, because `zipper` is now the left spine. We start on
+          # right order, because `zipper_` is now the left spine. We start on
           # the first sibling and move left a fixed number of times
           count.times do
-            between.concat(zipper.flatten)
-            zipper = zipper.next
+            between.concat(zipper_.flatten)
+            zipper_ = zipper_.next
           end
 
-          # Now zipper is along the left spine. We don't expand it here, but the
+          # Now zipper_ is along the left spine. We don't expand it here, but the
           # next item in rspine is the next child along the left spine
-          between << zipper.node
+          between << zipper_.node
         end
 
         between
@@ -237,8 +237,8 @@ module Stupidedi
       def descendant(n, *ns)
         cursor = self
 
-        n.cons(ns).each do |n|
-          cursor = cursor.child(n)
+        n.cons(ns).each do |n_|
+          cursor = cursor.child(n_)
         end
 
         cursor

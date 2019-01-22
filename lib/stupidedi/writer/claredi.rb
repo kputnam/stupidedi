@@ -103,8 +103,8 @@ module Stupidedi
           out << "#{tmp}~</div></div>\n"
 
         elsif node.loop?
-          m = /^(\w+) (.+)$/.match(node.definition.id)
-          id, name = m.captures
+          m = /^\w+ (.+)$/.match(node.definition.id)
+          name = m.captures
           name = name.split(/\s+/).map(&:capitalize).join(" ")
 
           out << %q(<div class="loop"><div class="label">#{name} (#{id})</div>\n)

@@ -28,12 +28,12 @@ module Stupidedi
         reader_e = reader.read_segment
 
         while reader_e.defined?
-          reader_e = reader_e.flatmap do |segment_tok, reader|
-            machine, reader_ =
-              machine.insert(segment_tok, reader)
+          reader_e = reader_e.flatmap do |segment_tok, reader_|
+            machine, reader__ =
+              machine.insert(segment_tok, reader_)
 
             if machine.active.length <= limit
-              reader_.read_segment
+              reader__.read_segment
             else
               matches = machine.active.map do |m|
                 if segment_use = m.node.zipper.node.usage
@@ -45,7 +45,7 @@ module Stupidedi
               end.join(", ")
 
               return machine,
-                Reader::Result.failure("too much non-determinism: #{matches}", reader_.input, true)
+                Reader::Result.failure("too much non-determinism: #{matches}", reader__.input, true)
             end
           end
         end

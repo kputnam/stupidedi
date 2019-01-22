@@ -92,11 +92,11 @@ module Stupidedi
                 # segment terminator. The {read_character} method here, defined
                 # by StreamReader, does not skip past control character, so the
                 # separator could be a control character.
-                cR.stream.read_character.flatmap do |char, dR|
-                  if char == separators.element
+                cR.stream.read_character.flatmap do |char_, dR|
+                  if char_ == separators.element
                     failure("element separator and segment terminator must be distinct", dR.input)
                   else
-                    separators.segment = char
+                    separators.segment = char_
 
                     token = SegmentTok.build(:ISA, elements,
                       rest.input.position, dR.input.position)

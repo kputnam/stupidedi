@@ -35,6 +35,7 @@ end
 
 RSpec.configure do |config|
   config.include(EitherMatchers)
+  config.include(Quickcheck::Macro)
   config.extend(RSpecHelpers)
 
   config.expect_with :rspec do |c|

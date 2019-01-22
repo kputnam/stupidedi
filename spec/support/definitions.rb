@@ -122,13 +122,13 @@ class << Definitions
 
   # @return [Array<String, type>]
   def select(type, namespace, visited = Set.new, &block)
-    collect(namespace, visited) do |name, value, error, visited, recurse|
+    collect(namespace, visited) do |name, value, error, visited_, recurse|
       case error
       when Exception
         []
       else
         if value.is_a?(Module)
-          select(type, value, visited, &recurse)
+          select(type, value, visited_, &recurse)
         elsif value.is_a?(type)
           [[name, value]]
         else

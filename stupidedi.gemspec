@@ -8,15 +8,13 @@ Gem::Specification.new do |s|
 
   s.version = Stupidedi::VERSION
   s.date    = "2018-05-27"
-  s.author  = "Kyle Putnam/Isi Robayna"
+  s.authors = ["Kyle Putnam", "Isi Robayna"]
   s.email   = "irobayna@gmail.com"
 
   s.files             = ["README.md", "Rakefile",
                          "bin/*",
                          "lib/**/*",
-                         "doc/**/*.md",
-                         "spec/**/*"].map { |glob| Dir[glob] }.flatten
-  s.test_files        = Dir["spec/examples/**/*.example"].to_a
+                         "doc/**/*.md"].map {|glob| Dir[glob] }.flatten
   s.has_rdoc          = false
   s.bindir            = "bin"
   s.executables       = ["edi-pp", "edi-ed"]

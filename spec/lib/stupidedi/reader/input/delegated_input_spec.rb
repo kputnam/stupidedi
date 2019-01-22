@@ -1,5 +1,4 @@
 describe Stupidedi::Reader::DelegatedInput do
-  include QuickCheck::Macro
   using Stupidedi::Refinements
 
   def mkinput(*args)

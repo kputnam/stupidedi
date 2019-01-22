@@ -88,7 +88,7 @@ module Stupidedi
 
         @io.seek(@offset)
         prefix = @io.read(n)
-        suffix = @io
+        # suffix = @io
 
         length = prefix.length
         count  = prefix.count("\n")

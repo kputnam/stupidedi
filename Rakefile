@@ -7,7 +7,7 @@ task :default => :spec
 require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new do |t|
   t.verbose    = false
-  t.rspec_opts = %w(--format doc -rspec_helper)
+  t.rspec_opts = %w(-w --format doc -rspec_helper)
 end
 
 # Note options are loaded from .yardopts

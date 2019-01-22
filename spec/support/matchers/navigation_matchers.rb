@@ -103,7 +103,7 @@ module NavigationMatchers
     def failure_message
       @expected.each_with_index do |e, k|
         forward  = @forwards[k]
-        backward = @backwards[@expected.length - k]
+        #ackward = @backwards[@expected.length - k]
 
         if e != forward
           return "segment #{k+1} was #{forward}, not #{e}"

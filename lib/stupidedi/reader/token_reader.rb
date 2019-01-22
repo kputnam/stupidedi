@@ -127,7 +127,6 @@ module Stupidedi
       # @return [Either<Result<String>>]
       def read_character
         position = 0
-        buffer   = ""
 
         while @input.defined_at?(position)
           character = @input.at(position)

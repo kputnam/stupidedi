@@ -12,7 +12,7 @@ module Stupidedi
       def initialize
         @results = []
 
-        default  = lambda{|h,z| h[z] = [] }
+        #efault  = lambda{|h,z| h[z] = [] }
         @ta105s  = [] # Hash.new(&default)
         @ak905s  = [] # Hash.new(&default)
         @ik304s  = [] # Hash.new(&default)

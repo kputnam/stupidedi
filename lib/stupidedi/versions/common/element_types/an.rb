@@ -141,12 +141,11 @@ module Stupidedi
             include Comparable
 
             # (string any* -> any)
-            def_delegators :value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
-              :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
-              :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
-              :=~, :match, :partition, :rpatition, :each, :split, :scan,
-              :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-              :at, :empty?, :blank?
+            def_delegators :value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym,
+              :to_str, :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+              :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack, :=~,
+              :match, :partition, :rpatition, :encoding, :valid_enocding?, :at,
+              :empty?, :blank?
 
             # (string any* -> StringVal)
             extend Operators::Wrappers
@@ -202,11 +201,6 @@ module Stupidedi
             end
 
             # @return [String]
-            def to_s
-              ""
-            end
-
-            # @return [String]
             def to_x12(truncate = true)
               ""
             end
@@ -223,12 +217,11 @@ module Stupidedi
             attr_reader :value
 
             # (string any* -> any)
-            def_delegators :@value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym, :to_str,
-              :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
-              :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack,
-              :=~, :match, :partition, :rpatition, :each, :split, :scan,
-              :unpack, :encoding, :count, :casecmp, :sum, :valid_enocding?,
-              :at, :empty?, :blank?
+            def_delegators :@value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym,
+              :to_str, :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
+              :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack, :=~,
+              :match, :partition, :rpatition, :encoding, :valid_enocding?, :at,
+              :empty?, :blank?
 
             # (string any* -> StringVal)
             extend Operators::Wrappers

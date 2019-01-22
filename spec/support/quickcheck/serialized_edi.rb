@@ -1,8 +1,8 @@
 require "support/quickcheck"
 using Stupidedi::Refinements
 
-class QuickCheck
-  class SerializedEdi < ::QuickCheck
+class Quickcheck
+  class SerializedEdi < ::Quickcheck
     module Macro
       def self.included(base)
         base.extend(ClassMethods)
@@ -10,7 +10,7 @@ class QuickCheck
 
       module ClassMethods
         def property(*args, &setup)
-          QuickCheck.property(self, *args, &setup)
+          Quickcheck.property(self, *args, &setup)
         end
       end
     end
@@ -328,7 +328,7 @@ class QuickCheck
     #     def delimiters
     #       possible  = Stupidedi::Reader.basic_characters
     #       possible << Stupidedi::Reader.extended_characters
-    #       possible -= QuickCheck::Characters.of(/[ \t0-9a-z_.+-]/i)
+    #       possible -= Quickcheck::Characters.of(/[ \t0-9a-z_.+-]/i)
 
     #       delimiters = []
 

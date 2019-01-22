@@ -179,8 +179,8 @@ module Stupidedi
                     choose between ".join + table.pretty_inspect
                 end
 
-                mksegments(table).each do |op, segment_tok|
-                  enqueue(machine.execute(op, machine.active.head, @reader, segment_tok))
+                mksegments(table).each do |op_, segment_tok_|
+                  enqueue(machine.execute(op_, machine.active.head, @reader, segment_tok_))
                 end
               end
             else

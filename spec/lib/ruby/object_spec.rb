@@ -1,8 +1,6 @@
 using Stupidedi::Refinements
 
 describe "Object#cons" do
-  include QuickCheck::Macro
-
   context "with no argument" do
     it "creates a singleton list" do
       expect(0.cons).to be == [0]

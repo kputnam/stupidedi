@@ -532,7 +532,7 @@ module Stupidedi
             #    first segment in this subtree.
             #
             #    This is computed lazily below: non_leaders ||= ...
-            non_leaders = nil
+            # non_leaders = nil
 
             until state.last?
               state = state.next

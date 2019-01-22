@@ -1,6 +1,4 @@
 describe Stupidedi::Reader::Success do
-  include QuickCheck::Macro
-
   def mksuccess(value, remainder)
     Stupidedi::Reader::Result.success(value, remainder)
   end

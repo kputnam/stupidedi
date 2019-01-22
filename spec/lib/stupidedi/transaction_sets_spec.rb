@@ -42,8 +42,8 @@ describe "Stupidedi::TransactionSets" do
             when %r{/pass/}
               it "can parse '#{path}'", :fixtures do
                 expect(lambda do
-                  machine, result = Fixtures.parse!(path, config)
-                  builder         = Stupidedi::Parser::BuilderDsl.new(nil)
+                  machine, = Fixtures.parse!(path, config)
+                  builder  = Stupidedi::Parser::BuilderDsl.new(nil)
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
                   end
@@ -52,8 +52,8 @@ describe "Stupidedi::TransactionSets" do
             when %r{/skip/}
               pending "can parse '#{path}'", :fixtures do
                 expect(lambda do
-                  machine, result = Fixtures.parse!(path, config)
-                  builder         = Stupidedi::Parser::BuilderDsl.new(nil)
+                  machine, = Fixtures.parse!(path, config)
+                  builder  = Stupidedi::Parser::BuilderDsl.new(nil)
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
                   end
@@ -62,8 +62,8 @@ describe "Stupidedi::TransactionSets" do
             when %r{/fail/}
               it "cannot parse '#{path}'", :fixtures do
                 expect(lambda do
-                  machine, result = Fixtures.parse!(path, config)
-                  builder         = Stupidedi::Parser::BuilderDsl.new(nil)
+                  machine, = Fixtures.parse!(path, config)
+                  builder  = Stupidedi::Parser::BuilderDsl.new(nil)
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
                   end
