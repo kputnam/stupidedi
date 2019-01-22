@@ -129,7 +129,7 @@ module Stupidedi
         end
 
         def pop
-          warn "IdentifierStack#pop is deprecated, use pop_isa (when removing an ISA identifier from the stack)"
+          warn "DEPRECATION WARNING: IdentifierStack#pop is deprecated, use pop_isa (when removing an ISA identifier from the stack)"
           pop_isa
         end
       end
@@ -158,7 +158,7 @@ module Stupidedi
         end
 
         def pop
-          warn "IdentifierStack#pop is deprecated, use pop_gs (when removing an GS identifier from the stack)"
+          warn "DEPRECATION WARNING: IdentifierStack#pop is deprecated, use pop_gs (when removing an GS identifier from the stack)"
           pop_gs
         end
       end
@@ -202,7 +202,7 @@ module Stupidedi
         end
 
         def pop
-          warn "IdentifierStack#pop is deprecated, use pop_st (when removing an ST identifier from the stack)"
+          warn "DEPRECATION WARNING: IdentifierStack#pop is deprecated, use pop_st (when removing an ST identifier from the stack)"
           pop
         end
       end
@@ -239,7 +239,7 @@ module Stupidedi
         end
 
         def pop
-          warn "IdentifierStack#pop is deprecated, use pop_ht (when removing an HL identifier from the stack)"
+          warn "DEPRECATION WARNING: IdentifierStack#pop is deprecated, use pop_ht (when removing an HL identifier from the stack)"
           pop_hl
         end
       end

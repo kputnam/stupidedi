@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Stupidedi
   module Contrib
-    warn "#{self} is deprecated, use Stupidedi::TransactionSets"
+    warn "DEPRECATION WARNING: #{self} is deprecated, use Stupidedi::TransactionSets"
 
     module TwoThousandOne
       # @deprecated Use Stupidedi::TransactionSets::TwoThousandOne::Standards

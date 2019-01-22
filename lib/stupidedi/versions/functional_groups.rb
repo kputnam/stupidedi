@@ -2,7 +2,7 @@
 module Stupidedi
   module Versions
     module FunctionalGroups
-      warn "#{self} is deprecated, use Stupidedi::TransactionSets::*::Standards instead"
+      warn "DEPRECATION WARNING: #{self} is deprecated, use Stupidedi::TransactionSets::*::Standards instead"
 
       module TwoThousandOne
       end
