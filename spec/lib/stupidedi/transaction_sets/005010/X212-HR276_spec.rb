@@ -1,10 +1,10 @@
-using Stupidedi::Refinements
-
-describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276", :skip do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276" do
+  using Stupidedi::Refinements
   include NavigationMatchers
 
   describe "parser" do
-    let(:parser) { Fixtures.parse!("005010/X212-HR276/case/1.edi").head }
+    let(:fixdir) { "005010/X212 HR276 Health Care Claim Status Request and Response/case" }
+    let(:parser) { Fixtures.parse!("#{fixdir}/1.edi").head }
 
     describe "parser" do
       let(:iea) { parser.segment.fetch }

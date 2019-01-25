@@ -1,9 +1,9 @@
-using Stupidedi::Refinements
-
-describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835", :skip do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835" do
+  using Stupidedi::Refinements
   include NavigationMatchers
 
-  let(:parser) { Fixtures.parse!("005010/X221A1-HP835/case/1.edi").head }
+  let(:fixdir) { "005010/X221 HP835 Health Care Claim Payment Advice/case" }
+  let(:parser) { Fixtures.parse!("#{fixdir}/1.edi").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }
@@ -14,7 +14,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835",
     end
 
     it "knows iea position" do
-      expect(iea.node.position.line).to eq(47)
+      expect(iea.node.position.line).to eq(40)
       expect(iea.node.position.column).to eq(1)
     end
 
@@ -23,7 +23,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835",
         :element    => "+",
         :component  => ">",
         :repetition => "~",
-        :segment    => "\n")
+        :segment    => "\r")
     end
   end
 
@@ -159,7 +159,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835",
 
     context "with issues in Table 3 (Summary)" do
       context "with missing PLB" do
-        let(:parser) { Fixtures.parse!("005010/X221A1-HP835/case/2.edi").head }
+        let(:parser) { Fixtures.parse!("#{fixdir}/2.edi").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -184,7 +184,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835",
       end
 
       context "with single PLB" do
-        let(:parser) { Fixtures.parse!("005010/X221A1-HP835/case/1.edi").head }
+        let(:parser) { Fixtures.parse!("#{fixdir}/1.edi").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -216,7 +216,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835",
       end
 
       context "with multiple PLBs" do
-        let(:parser) { Fixtures.parse!("005010/X221A1-HP835/case/3a.edi").head }
+        let(:parser) { Fixtures.parse!("#{fixdir}/3a.edi").head }
 
         it "is handled" do
           expect(parser).to be_deterministic
@@ -255,104 +255,6 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835",
                                 S(:PLB, "0123456789"),
                                 S(:SE))))))
           end
-        end
-      end
-
-      context "with table level permutations" do
-        # 837
-        #   Table 2A
-        #     2000A HL*..*..*20
-        #   Table 2B
-        #     2000B HL*..*..*22
-        #   Table 2C
-        #     2000C HL*..*..*23
-        let(:dsl) do
-          b = Stupidedi::Parser::BuilderDsl.build(Stupidedi::Config.hipaa, false)
-          b.ISA("00", nil, "01", "SECRET", "ZZ", "SUBMITTER", "ZZ", "RECEIVER", Time.now.utc, Time.now.utc, nil, "00501", 123456789, "1", "T", nil)
-          b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
-          b. ST("837", "0001", b.default)
-          b.BHT("0019", "00", "46X2A6", Time.now.utc, Time.now.utc, "CH")
-          b.NM1("41", "2", "TERRIBLE BILLING", nil, nil, nil, nil, "46", "X82BJJ")
-          b.PER("IC", nil, "TE", "5551212")
-          b.NM1("40", "2", "TERRIBLE INSURAN", nil, nil, nil, nil, "46", "3057XK")
-        end
-
-        it "in HL*..*..20, HL*..*..*22, HL*..*..*23 are handled" do
-          ss = [["1", nil, "20", "1"],
-                ["2", nil, "20", "1"],
-                ["3", "1", "22", "1"],
-                ["4", "2", "22", "1"],
-                ["5", "3", "23", "0"],
-                ["6", "4", "23", "0"]]
-
-          ss.permutation do |p|
-            b = dsl.dup
-            p.each{|es| b.send(:HL, *es) }
-
-            m = b.machine.first.flatmap{|x| x.sequence(:GS, :ST) }
-
-            expect(m.map{|x| x.count(:HL, nil, nil, "20") }).to be_success(2)
-            expect(m.map{|x| x.count(:HL, nil, nil, "22") }).to be_success(2)
-            expect(m.map{|x| x.count(:HL, nil, nil, "23") }).to be_success(2)
-
-            expect(m.map{|x| x.count(:HL) }).to be_success(6)
-
-            expect(m.flatmap{|x| x.sequence(:HL) }.
-              map{|x| x.count(:HL) }).to be_success(5)
-
-            expect(m.flatmap{|x| x.sequence(:HL, :HL) }.
-              map{|x| x.count(:HL) }).to be_success(4)
-
-            expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL) }.
-              map{|x| x.count(:HL) }).to be_success(3)
-
-            expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL) }.
-              map{|x| x.count(:HL) }).to be_success(2)
-
-            expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL, :HL) }.
-              map{|x| x.count(:HL) }).to be_success(1)
-
-            expect(m.flatmap{|x| x.sequence(:HL, :HL, :HL, :HL, :HL, :HL) }.
-              map{|x| x.count(:HL) }).to be_success(0)
-          end if ss.respond_to?(:permutation)
-        end
-      end
-
-      context "with loop-level permutations" do
-        # 837
-        #   Table 1
-        #     1000A NM1*41
-        #     1000B NM1*40
-        let(:dsl) do
-          b = Stupidedi::Parser::BuilderDsl.build(Stupidedi::Config.hipaa, false)
-          b.ISA("00", nil,
-                "01", "SECRET",
-                "ZZ", "SUBMITTER",
-                "ZZ", "RECEIVER",
-                Time.now.utc, Time.now.utc, nil,
-                "00501", 123456789, "1", "T", nil)
-          b. GS("HP", "SENDER", "RECEIVER", Time.now.utc, Time.now.utc, 1, "X", "005010X222")
-          b. ST("837", "0001", b.default)
-          b.BHT("0019", "00", "46X2A6", Time.now.utc, Time.now.utc, "CH")
-        end
-
-        specify "in NM1*41, NM1*40 is handled" do
-          ss = [["41", "2", "TERRIBLE BILLING", nil, nil, nil, nil, "46", "X82BJJ"],
-                ["40", "2", "TERRIBLE INSURAN", nil, nil, nil, nil, "46", "3057XK"]]
-
-          ss.permutation do |p|
-            b = dsl.dup
-            p.each{|es| b.send(:NM1, *es) }
-
-            m = b.machine.parent
-            expect(m.map{|x| x.count(:NM1) }).to be_success(2)
-
-            expect(m.flatmap{|x| x.sequence(:NM1) }.
-              map{|x| x.count(:NM1) }).to be_success(1)
-
-            expect(m.flatmap{|x| x.sequence(:NM1, :NM1) }.
-              map{|x| x.count(:NM1) }).to be_success(0)
-          end if ss.respond_to?(:permutation)
         end
       end
 

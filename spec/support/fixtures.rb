@@ -9,7 +9,12 @@ Fixtures = Class.new do
       "003050" => "ThirtyFifty",
       "003040" => "ThirtyForty",
       "003010" => "ThirtyTen",
-      "002001" => "TwoThousandOne" }
+      "002001" => "TwoThousandOne",
+      "00501"  => "FiveOhOne",
+      "00401"  => "FourOhOne",
+      "00400"  => "FourHundred",
+      "00300"  => "ThreeHundred",
+      "00200"  => "TwoHundred" }
   end
 
   def initialize(root)
@@ -38,6 +43,10 @@ Fixtures = Class.new do
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
   def parse(path, config = nil)
+    if path.is_a?(String)
+      path = Pathname.new(path)
+    end
+
     if config.nil?
       _, config, _ = mkconfig(*parts(path))
     end

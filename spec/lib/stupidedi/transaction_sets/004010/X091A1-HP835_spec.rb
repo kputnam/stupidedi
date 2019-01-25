@@ -1,9 +1,9 @@
-using Stupidedi::Refinements
-
-describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835", :skip do
+describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835" do
+  using Stupidedi::Refinements
   include NavigationMatchers
 
-  let(:parser) { Fixtures.parse!("004010/X091A1-HP835/case/1.edi").head }
+  let(:fixdir) { "004010/X091A1 HP835 Health Care Claim Payment Advice/case" }
+  let(:parser) { Fixtures.parse!("#{fixdir}/1.edi").head }
 
   context "parser" do
     let(:iea) { parser.segment.fetch }
@@ -23,7 +23,7 @@ describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835",
 
     it "knows iea position" do
       expect(iea.node.position.line).to eq(1)
-      expect(iea.node.position.column).to eq(583)
+      expect(iea.node.position.column).to eq(606)
     end
   end
 
@@ -41,7 +41,7 @@ describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835",
       expect(isa).to have_structure(
         Ss(X(:ST),
           R(:ISA), # No more ISAs
-          S(:GS, "HP", "MADE UP CLEARIN", "611358935", "20130508", nil, "3063") =>
+          S(:GS, "HP", "MADE UP CLEARING HOUSE", "611358935", "20130508", nil, "3063") =>
           Ss(R(:GS), # No more GSs
                 S(:ST) =>
                   Ss(R(:ST), # No more STs
