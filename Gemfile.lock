@@ -27,6 +27,10 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
+    simplecov-inline-html (0.0.1)
+    term-ansicolor (1.7.1)
+      tins (~> 1.0)
+    tins (1.20.2)
     yard (0.9.16)
 
 PLATFORMS
@@ -40,6 +44,8 @@ DEPENDENCIES
   rspec (= 3.8.0)
   rspec-collection_matchers
   simplecov
+  simplecov-inline-html
+  term-ansicolor
   yard (~> 0.9.12)
 
 BUNDLED WITH
