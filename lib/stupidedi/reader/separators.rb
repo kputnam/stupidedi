@@ -78,6 +78,11 @@ module Stupidedi
           hash[:segment]
       end
 
+      # @return [Separators]
+      def default
+        Separators.new(":", "^", "*", "~")
+      end
+
       # @endgroup
       #########################################################################
     end

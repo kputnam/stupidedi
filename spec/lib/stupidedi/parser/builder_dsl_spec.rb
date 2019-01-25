@@ -1,20 +1,8 @@
 describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   using Stupidedi::Refinements
-  include NavigationMatchers
   include Definitions
 
   let(:id) { Stupidedi::Parser::IdentifierStack.new(1)  }
-
-  def config(details)
-    Stupidedi::Config.default.customize do |x|
-      x.transaction_set.register("005010", "FA", "999") do
-        Stupidedi::Schema::TransactionSetDef.build("FA", "999", "Example",
-          Header("1", Segment(10, :ST, s_mandatory, bounded(1))),
-          *details,
-          Summary("3", Segment(10, :SE, s_mandatory, bounded(1))))
-      end
-    end
-  end
 
   def strict(*details)
     start_transaction_set(details, true)
@@ -29,6 +17,17 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
     b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
     b. ST("999", id.st)
+  end
+
+  def config(details)
+    Stupidedi::Config.default.customize do |x|
+      x.transaction_set.register("005010", "FA", "999") do
+        Stupidedi::Schema::TransactionSetDef.build("FA", "999", "Example",
+          Header("1", Segment(10, :ST, s_mandatory, bounded(1))),
+          *details,
+          Summary("3", Segment(10, :SE, s_mandatory, bounded(1))))
+      end
+    end
   end
 
   describe "on interchanges" do
@@ -98,6 +97,10 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   end
 
   describe "on tables" do
+    context "alternating between siblings (#172)" do
+      todo "constructs sibling tables"
+    end
+
     context "when not required" do
       todo "but present"
       todo "and missing"
@@ -110,32 +113,38 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
     context "when too few are present" do
       it "raises an exception" do
-        b = strict(Detail("2", Segment(10, :LX, s_mandatory, bounded(1))))
+        b = strict(
+          Detail("2",
+            Segment(10, NNA(), s_mandatory, bounded(1))))
 
         expect(lambda{ b.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
           raise_error(/required table 2 is missing/)
       end
 
       todo "raises an exception immediately" do
-        b = strict(Detail("2", Segment(10, :LX, s_mandatory, bounded(1))))
+        b = strict(
+          Detail("2",
+            Segment(10, NNA(), s_mandatory, bounded(1))))
 
         expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
           raise_error(/required table 2 is missing/)
       end
 
       it "raises an exception" do
-        b = strict(Detail("2",
-                     Loop("2000", bounded(2),
-                       Segment(10, :LX, s_mandatory, bounded(1)))))
+        b = strict(
+          Detail("2",
+            Loop("2000", bounded(2),
+              Segment(10, NNA(), s_mandatory, bounded(1)))))
 
         expect(lambda{ b.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
           raise_error(/required table 2 is missing/)
       end
 
       todo "raises an exception immediately" do
-        b = strict(Detail("2",
-                     Loop("2000", bounded(2),
-                       Segment(10, :LX, s_mandatory, bounded(1)))))
+        b = strict(
+          Detail("2",
+            Loop("2000", bounded(2),
+              Segment(10, NNA(), s_mandatory, bounded(1)))))
 
         expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
           raise_error(/required table 2 is missing/)
@@ -144,84 +153,113 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
     context "when too many are present" do
       let(:b) do
-        strict(Detail("2a", Segment(10, :LQ, s_optional, unbounded)),
-               Detail("2b", Segment(20, :LX, s_optional, unbounded))).LQ.LX(1)
+        strict(
+          Detail("2a", Segment(10, NNB(), s_optional, unbounded)),
+          Detail("2b", Segment(20, NNA(), s_optional, unbounded))).NNB(0).NNA(1)
       end
 
       it "raises an exception" do
-        expect(lambda{ b.LQ.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
+        expect(lambda{ b.NNB(0).SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
           raise_error(/table 2a occurs too many times/)
       end
 
       todo "raises an exception immediately" do
-        expect(lambda{ b.LQ }).to \
+        expect(lambda{ b.NNB(0) }).to \
           raise_error(/table 2a occurs too many times/)
       end
     end
   end
 
   describe "on loops" do
+    todo
+    # NM1*A
+    # NM1*A
+    # NM1*B
+    # NM1*B
+    # NM1*A
+    #
+    # Table 2A
+    #   Loop 2000A
+    #   Loop 2000A  -- should not go in a separate Table 2A
+    # Table 2B
+    #   Loop 2000B
+    #   Loop 2000B
+    # Table 2A
+    #   Loop 2000A
+
     context "when correct number are present" do
       todo "are constructed when start segment repeats" do
-        b = strict(Detail("2",
-                     Loop("2000", unbounded,
-                       Segment(10, :LX, s_optional, bounded(1)))))
-        b.LX(1)
-        b.LX(2)
+        b = strict(
+          Detail("2",
+            Loop("2000", unbounded,
+              Segment(10, NNA(), s_optional, bounded(1)))))
+
+        b.NNA(1)
+        b.NNA(2)
       end
 
       todo "are constructed when start segment occurs" do
-        b = strict(Detail("2",
-                     Loop("2000", unbounded,
-                       Segment(10, :LX, s_optional, bounded(1)))))
-        b.LX(1)
+        b = strict(
+          Detail("2",
+            Loop("2000", unbounded,
+              Segment(10, NNA(), s_optional, bounded(1)))))
+
+        b.NNA(1)
       end
     end
 
     context "when too many are present" do
       it "raises an exception" do
-        b = strict(Detail("2",
-                     Loop("2000", bounded(1),
-                       Segment(10, :LX, s_optional, bounded(1)))))
-        b.LX(1)
+        b = strict(
+          Detail("2",
+            Loop("2000", bounded(1),
+              Segment(10, NNA(), s_optional, bounded(1)))))
 
-        # The parser throws away the {Instruction} for LX once it's executed, so
+        b.NNA(1)
+
+        # The parser throws away the {Instruction} for NNA once it's executed, so
         # it doesn't even allow an extra one to occur. This error occurs before
         # the "loop 2000 occurs too many times" error
-        expect(lambda{ b.LX(2) }).to \
-          raise_error(/LX.+? cannot occur here/)
+        expect(lambda{ b.NNA(2) }).to \
+          raise_error(/NNA.+? cannot occur here/)
       end
 
       it "raises an exception" do
-        b = strict(Detail("2",
-                     Loop("2000", bounded(2),
-                       Segment(10, :LX, s_optional, bounded(1)))))
-        b.LX(1)
-        b.LX(2)
+        b = strict(
+          Detail("2",
+            Loop("2000", bounded(2),
+              Segment(10, NNA(), s_optional, bounded(1)))))
 
-        expect(lambda{ b.LX(3).SE(id.count(b), id.pop_st).GS(id.count, id.pop_gs) }).to \
+        b.NNA(1)
+        b.NNA(2)
+
+        expect(lambda{ b.NNA(3).SE(id.count(b), id.pop_st).GS(id.count, id.pop_gs) }).to \
           raise_error(/loop 2000 occurs too many times/)
       end
 
       todo "raises an exception immediately" do
-        b = strict(Detail("2",
-                     Loop("2000", bounded(2),
-                       Segment(10, :LX, s_optional, bounded(1)))))
-        b.LX(1)
-        b.LX(2)
+        b = strict(
+          Detail("2",
+            Loop("2000", bounded(2),
+              Segment(10, NNA(), s_optional, bounded(1)))))
 
-        expect(lambda{ b.LX(3) }).to \
+        b.NNA(1)
+        b.NNA(2)
+
+        expect(lambda{ b.NNA(3) }).to \
           raise_error(/loop 2000 occurs too many times/)
       end
     end
 
     context "too few are present" do
       it "raises an exception" do
-        b = strict(Detail("2",
-                     Segment(10, :LQ, s_optional, bounded(1)),
-                     Loop("2000", bounded(2),
-                       Segment(20, :LX, s_mandatory, bounded(1)))))
-        b.LQ
+        b = strict(
+          Detail("2",
+            Segment(10, NNB(), s_optional, bounded(1)),
+            Loop("2000", bounded(2),
+              Segment(20, NNA(), s_mandatory, bounded(1)))))
+
+        b.NNB(0)
 
         expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
           raise_error(/required loop 2000 is missing/)
@@ -232,50 +270,59 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   describe "on segments" do
     context "when shouldn't occur but is present" do
       it "raises an exception" do
-        b = strict(Detail("2", Segment(10, :LX, s_optional, bounded(1))))
-        expect(lambda{ b.LQ }).to \
-          raise_error(/segment LQ.*? cannot occur/)
+        b = strict(
+          Detail("2",
+            Segment(10, NNA(), s_optional, bounded(1))))
+
+        expect(lambda{ b.NNB(0) }).to \
+          raise_error(/segment NNB.*? cannot occur/)
       end
 
       it "raises an exception" do
-        b = strict(Detail("2", Segment(10, :LX, s_optional, bounded(1))))
-        expect(lambda{ b.N3("123 MAIN ST") }).to \
-          raise_error(/segment N3\*123 MAIN ST\*~ cannot occur/)
+        b = strict(
+          Detail("2",
+            Segment(10, NNA(), s_optional, bounded(1))))
+
+        expect(lambda{ b.ANA("123 MAIN") }).to \
+          raise_error(/segment ANA\*123 MAIN~ cannot occur/)
       end
     end
 
     context "when too few are present" do
       let(:b) do
-        strict(Detail("2",
-                     Segment(10, :LQ, s_mandatory, bounded(1)),
-                     Segment(20, :LX, s_mandatory, bounded(1)),
-                     Segment(30, :N3, s_optional,  bounded(1)))).LQ
+        strict(
+          Detail("2",
+           Segment(10, NNB(), s_mandatory, bounded(1)),
+           Segment(20, NNA(), s_mandatory, bounded(1)),
+           Segment(30, ANA(), s_optional,  bounded(1)))).NNB(0)
       end
 
       it "raises an exception" do
         expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
-          raise_error(/segment LX .+? is missing/)
+          raise_error(/segment NNA .+? is missing/)
       end
 
       pending "raises an exception immediately" do
         # This validation is delayed until this loop is "closed". It would be
         # an improvement for the error to happen immediately, like this:
-        expect(lambda{ b.N3("123 MAIN ST") }).to \
-          raise_error(/segment LX .+? is missing/)
+        expect(lambda{ b.ANA("123 MAIN") }).to \
+          raise_error(/segment NNA .+? is missing/)
       end
     end
 
     context "when too many are present" do
       it "raises an exception" do
-        b = strict(Detail("2a",
-                     Segment(10, :LQ, s_optional, bounded(1)),
-                     Segment(10, :LX, s_optional, bounded(2))))
-        b.LQ
-        b.LX(1)
-        b.LX(2)
+        b = strict(
+          Detail("2a",
+           Segment(10, NNB(), s_optional, bounded(1)),
+           Segment(10, NNA(), s_optional, bounded(2))))
 
-        expect(lambda{ b.LX(3).SE(id.count(b), id.pop_st) }).to \
-          raise_error(/segment LX .+? occurs too many times/)
+        b.NNB(0)
+        b.NNA(1)
+        b.NNA(2)
+
+        expect(lambda{ b.NNA(3).SE(id.count(b), id.pop_st) }).to \
+          raise_error(/segment NNA .+? occurs too many times/)
       end
     end
   end
@@ -283,9 +330,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   describe "on elements" do
     context "when Optional (or Situational)" do
       let(:b) do
-        strict(Detail("2",
-          Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(:E554, e_optional, bounded(1)))))
+        strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+          Element(de_N0, e_optional, bounded(1)))))
       end
 
       context "and present" do
@@ -319,9 +365,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
     context "when Mandatory (or Required)" do
       let(:b) do
-        strict(Detail("2",
-          Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(:E554, e_mandatory, bounded(1)))))
+        strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+          Element(de_N0, e_mandatory, bounded(1)))))
       end
 
       context "and present" do
@@ -355,9 +400,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
     context "when NotUsed" do
       let(:b) do
-        strict(Detail("2",
-          Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(:E554, e_not_used, bounded(1)))))
+        strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+          Element(de_N0, e_not_used, bounded(1)))))
       end
 
       context "and present" do
@@ -395,9 +439,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         let(:b) do
           strict(Detail("2",
             Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-              Element(:E554, e_mandatory,  bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
+              Element(de_N0, e_mandatory,  bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
               P(2, 3))))
         end
 
@@ -433,9 +477,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         let(:b) do
           strict(Detail("2",
             Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-              Element(:E554, e_mandatory,  bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
+              Element(de_N0, e_mandatory,  bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
               R(2, 3))))
         end
 
@@ -465,9 +509,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         let(:b) do
           strict(Detail("2",
             Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-              Element(:E554, e_mandatory,  bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
+              Element(de_N0, e_mandatory,  bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
               C(2, 3))))
         end
 
@@ -505,9 +549,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         let(:b) do
           strict(Detail("2",
             Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-              Element(:E554, e_optional,   bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
-              Element(:E554, e_relational, bounded(1)),
+              Element(de_N0, e_optional,   bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
+              Element(de_N0, e_relational, bounded(1)),
               L(1, 2, 3))))
         end
 
@@ -565,25 +609,180 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     end
 
     context "when too short" do
-      todo "raises an exception"
+      it "raises an exception" do
+        b = strict(Detail("2",
+          Segment(10, ANA(:min_length => 4), s_mandatory, bounded(1))))
+
+        expect(lambda { b.ANA("X") }).to raise_error(/value is too short in element ANA01/)
+      end
     end
 
     context "when too long" do
-      todo "raises an exception"
+      it "raises an exception" do
+        b = strict(Detail("2",
+          Segment(10, ANA(:max_length => 2), s_mandatory, bounded(1))))
+
+        expect(lambda { b.ANA("WXYZ") }).to raise_error(/value is too long in element ANA01/)
+      end
     end
 
     context "simple" do
-      todo "AN (string)"
+      context "AN (string)" do
+        let(:b) do
+          strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+            Element(de_AN.copy(:min_length => 2, :max_length => 4), e_mandatory, bounded(1)))))
+        end
 
-      todo "DT (date)"
+        context "when given a Date" do
+          it "raises an exception" do
+            expect(lambda { b.XX(Date.today) }).to raise_error(/invalid element XX01/)
+          end
+        end
 
-      todo "ID (identifier)"
+        context "when given a Time" do
+          it "raises an exception" do
+            expect(lambda { b.XX(Date.today) }).to raise_error(/invalid element XX01/)
+          end
+        end
 
-      todo "Nn (fixed precision number)"
+        context ".strftime(format, value)" do
+          context "with unrecognized format" do
+            it "raises an exception" do
+              expect(lambda { de_AN.strftime("XX", Time.now) }).to \
+                raise_error(/unrecognized format specifier "XX"/)
+            end
+          end
 
-      todo "TM (time)"
+          context "with wrong value type" do
+            it "raises an exception" do
+              expect(lambda { de_AN.strftime("D8", Time.now .. Time.now) }).to \
+                raise_error(TypeError, //)
+            end
+          end
+        end
+      end
 
-      todo "R (floating precision number)"
+      context "DT (date)" do
+        shared_examples "2345" do
+          context "given a Time" do
+            it "is a-ok" do
+              expect(lambda { b.XX(Time.now) }).not_to raise_error
+            end
+          end
+
+          context "given a Date" do
+            it "is a-ok" do
+              expect(lambda { b.XX(Date.today) }).not_to raise_error
+            end
+          end
+
+          context "given a String with a 3-digit year" do
+            it "raises an exception" do
+              expect(lambda { b.XX("9990130") }).to raise_error(/invalid element XX01/)
+            end
+          end
+
+          context "given a String with a 4-digit year" do
+            it "raises an exception" do
+              expect(lambda { b.XX("19990130") }).to_not raise_error
+            end
+          end
+
+          context "given a String with a 5-digit year" do
+            it "raises an exception" do
+              expect(lambda { b.XX("019990130") }).to_not raise_error
+            end
+          end
+
+          context "given a value that responds to #year, #month, and #day" do
+            context "with a valid date" do
+              it "is a-ok" do
+                value = OpenStruct.new(:year => 2000, :month => 12, :day => 30)
+                expect(lambda { b.XX(value) }).to_not raise_error
+              end
+            end
+
+            context "with an invalid date" do
+              it "raises an exception" do
+                value = OpenStruct.new(:year => 2000, :month => 13, :day => 33)
+                expect(lambda { b.XX(value) }).to raise_error(/invalid element XX01/)
+              end
+            end
+          end
+
+          context "given some other type of value" do
+            it "raises an exception" do
+              expect(lambda { b.XX(20001231) }).to raise_error(/invalid element XX01/)
+            end
+          end
+        end
+
+        context "of length 6" do
+          let(:b) do
+            strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+              Element(de_DT6, e_mandatory, bounded(1)))))
+          end
+
+          include_examples "2345"
+
+          context "given a String with a 2-digit year" do
+            it "raises an exception" do
+              expect(lambda { b.XX("990130") }).not_to raise_error
+            end
+          end
+        end
+
+        context "of length 8" do
+          let(:b) do
+            strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+              Element(de_DT8, e_mandatory, bounded(1)))))
+          end
+
+          include_examples "2345"
+
+          context "given a String with a 2-digit year" do
+            it "raises an exception" do
+              expect(lambda { b.XX("990130") }).to raise_error(/value is too short in element XX01/)
+            end
+          end
+        end
+      end
+
+      context "ID (identifier)" do
+        let(:b) do
+          strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+            Element(dE_ID, e_mandatory, bounded(1)))))
+        end
+
+        todo
+      end
+
+      context "Nn (fixed precision number)" do
+        let(:b) do
+          strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+            Element(dE_N0, e_mandatory, bounded(1)))))
+        end
+
+        todo
+      end
+
+      context "TM (time)" do
+        let(:b) do
+          strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+            Element(dE_TM, e_mandatory, bounded(1)))))
+        end
+
+        todo
+      end
+
+      context "R (floating precision number)" do
+        let(:b) do
+          strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
+            Element(dE_R, e_mandatory, bounded(1)))))
+        end
+
+        todo
+      end
     end
 
     todo "composite"
