@@ -6,15 +6,6 @@ module Stupidedi
     module Common
       module ElementTypes
         class AN < SimpleElementDef
-          def companion
-            StringVal
-          end
-        end
-
-        #
-        # @see X222.pdf B.1.1.3.1.4 String
-        #
-        class StringVal < Values::SimpleElementVal
           DATE_FORMAT_SINGLE =
            {"CC" => "%C",
             "CM" => "%Y%m",
@@ -54,6 +45,89 @@ module Stupidedi
             "RTM" => ["%H%M", "%H%M"],
             "RTS" => ["%Y%m%d%H%M%S"]}
 
+          def companion
+            StringVal
+          end
+
+          # (see AN.strftime)
+          def strftime(format, value)
+            AN.strftime(format, value)
+          end
+
+          # (see AN.stpftime)
+          def strptime(format, value)
+            AN.strptime(format, value)
+          end
+        end
+
+        class << AN
+          # Format date (Date), date time (Time), or a range of either into a
+          # String, according to the given format specifier.
+          #
+          # See {AN::DATE_FORMAT_SINGLE} and {AN::DATE_FORMAT_RANGE} for a list
+          # of recognized format specifiers.
+          #
+          # @return [String]
+          def strftime(format, value)
+            if AN::DATE_FORMAT_RANGE.defined_at?(format)
+              unless value.kind_of?(Range)              and
+                     value.end.respond_to?(:strftime)   and
+                     value.begin.respond_to?(:strftime)
+                raise TypeError,
+                  "expcted a Range (#strftime..#strftime) but got #{value.inspect}"
+              end
+
+              f, g = AN::DATE_FORMAT_RANGE.at(format)
+              a, b = value.begin.strftime(f), value.end.strftime(g)
+              "#{a}-#{b}"
+
+            elsif AN::DATE_FORMAT_SINGLE.defined_at?(format)
+              unless value.respond_to?(:strftime)
+                raise TypeError,
+                  "expected value to respond to #strftime, but got #{value.inspect}"
+              end
+
+              value.strftime(AN::DATE_FORMAT_SINGLE.at(format))
+
+            else
+              raise ArgumentError,
+                "unrecognized format specifier #{format.inspect}"
+            end
+          end
+
+          # Parse the string into a date (Date), date time (Time), or a range
+          # of either according to the given format specifier.
+          #
+          # See {StringVal::DATE_FORMAT_SINGLE} and {StringVal::DATE_FORMAT_RANGE}
+          # for a list of recognized format specifiers.
+          #
+          # @return [Date | Time | Range<Date> | Range<Time>]
+          def strptime(format, value)
+            if AN::DATE_FORMAT_RANGE.defined_at?(format)
+              unless value.kind_of?(Range)              and
+                     value.end.respond_to?(:strftime)   and
+                     value.begin.respond_to?(:strftime)
+                raise TypeError,
+                  "expcted a Range (#strftime..#strftime) but got #{value.inspect}"
+              end
+
+              a, b = value.split("-", 2)
+              f, g = AN::DATE_FORMAT_RANGE.at(format)
+              Date.strptime(a, f) .. Date.strptime(b, g)
+
+            elsif AN::DATE_FORMAT_SINGLE.defined_at?(format)
+              Date.strptime(value, AN::DATE_FORMAT_SINGLE.at(format))
+            else
+              raise ArgumentError,
+                "unrecognized format specifier #{format.inspect}"
+            end
+          end
+        end
+
+        #
+        # @see X222.pdf B.1.1.3.1.4 String
+        #
+        class StringVal < Values::SimpleElementVal
           def string?
             true
           end
@@ -291,25 +365,9 @@ module Stupidedi
               true
             end
 
-            # Parse the string into a date (Date), date time (Time), or a range
-            # of either according to the given format specifier. See
-            # {StringVal::DATE_FORMAT_SINGLE} and {StringVal::DATE_FORMAT_RANGE}
-            # for a list of recognized format specifiers.
-            #
-            # @return [Date | Time | Range<Date> | Range<Time>]
+            # (see AN.stpftime)
             def to_date(format)
-              if DATE_FORMAT_RANGE.defined_at?(format)
-                a, b = @value.split("-", 2)
-                f, g = DATE_FORMAT_RANGE.at(format)
-                Date.strptime(a, f) .. Date.strptime(b, g)
-
-              elsif DATE_FORMAT_SINGLE.defined_at?(format)
-                Date.strptime(@value, DATE_FORMAT_SINGLE.at(format))
-
-              else
-                raise ArgumentError,
-                  "unrecognized format specifier #{format.inspect}"
-              end
+              AN.strptime(format, @value)
             end
           end
         end
@@ -342,30 +400,7 @@ module Stupidedi
           #
           # @return [StringVal]
           def from_date(format, value, usage, position)
-            self::NonEmpty.new(strftime(format, value), usage, position)
-          end
-
-          # @return [String]
-          def strftime(format, value)
-            if StringVal::DATE_FORMAT_RANGE.defined_at?(format)
-              unless value.kind_of?(Range)              and
-                     value.end.respond_to?(:strftime)   and
-                     value.begin.respond_to?(:strftime)
-                raise ArgumentError,
-                  "expcted a Range (#strftime..#strftime) but got #{value.inspect}"
-              end
-
-              f, g = DATE_FORMAT_RANGE.at(format)
-              a, b = value.begin.strftime(f), value.end.strftime(g)
-              "#{a}-#{b}"
-
-            elsif StringVal::DATE_FORMAT_SINGLE.defined_at?(format)
-              value.strftime(DATE_FORMAT_SINGLE.at(format))
-
-            else
-              raise ArgumentError,
-                "unrecognized format specifier #{format.inspect}"
-            end
+            self::NonEmpty.new(AN.strftime(format, value), usage, position)
           end
 
           # @endgroup

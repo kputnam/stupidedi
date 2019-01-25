@@ -16,12 +16,12 @@ module Stupidedi
             super(id, name, min_length, max_length, description, parent)
 
             unless min_length == 6 or min_length == 8
-              raise ArgumentError,
+              raise Exceptions::InvalidSchemaError,
                 "min_length must be either 6 or 8"
             end
 
             unless max_length == 6 or max_length == 8
-              raise ArgumentError,
+              raise Exceptions::InvalidSchemaError,
                 "max_length must be either 6 or 8"
             end
           end

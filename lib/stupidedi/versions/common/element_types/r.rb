@@ -13,7 +13,7 @@ module Stupidedi
             super(id, name, min_length, max_length, description, parent)
 
             if max_precision.try(:>, max_length)
-              raise ArgumentError,
+              raise Exceptions::InvalidSchemaError,
                 "max_precision cannot be greater than max_length"
             end
 
