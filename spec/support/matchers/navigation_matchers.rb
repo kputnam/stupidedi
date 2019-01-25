@@ -16,49 +16,140 @@ module NavigationMatchers
     end
   end
 
-  matcher :have_separators do |expected|
-    match do |machine|
-      machine.separators.segment == expected[:segment] and
-      machine.separators.element == expected[:element] and
-      machine.separators.component == expected[:component] and
-      machine.separators.repetition == expected[:repetition]
+  def have_separators(expected)
+    HaveSeparators.new(expected)
+  end
+
+  class HaveSeparators
+    def initialize(expected)
+      @expected = Stupidedi::Reader::Separators.build(expected)
+    end
+
+    def matches?(machine)
+      @given = machine.separators
+
+      return false if @expected.segment     and @given.segment     != @expected.segment
+      return false if @expected.element     and @given.element     != @expected.element
+      return false if @expected.component   and @given.component   != @expected.component
+      return false if @expected.repetition  and @given.repetition  != @expected.repetition
+
+      true
+    end
+
+    def description
+      "have separators #{@expected.inspect}"
+    end
+
+    def failure_message
+      "\nexpected: #{@expected.inspect}\n     got: #{@given.inspect}\n"
+    end
+  end
+
+  def be_able_to_find(*arguments)
+    BeAbleToFind.new(arguments)
+  end
+
+  class BeAbleToFind
+    def initialize(arguments)
+      @arguments  = arguments
+      @elements   = nil
+      @machine    = nil
+      @filter_tok = nil
+    end
+
+    def with_result_matching(*elements)
+      @elements = elements
+      self
+    end
+
+    def matches?(machine)
+      @machine = machine
+
+      begin
+        @result = machine.find(*@arguments)
+
+        if @result.defined?
+          zipper       = @result.fetch.zipper.fetch
+          @segment_val = zipper.node
+
+          if @elements
+            @filter_tok = machine.__send__(:mksegment_tok,
+              machine.active.head.node.segment_dict, @segment_val.id, @elements, nil)
+
+            not machine.__send__(:filter?, @filter_tok, @segment_val)
+          else
+            true
+          end
+        else
+          false
+        end
+      rescue Stupidedi::Exceptions::ParseError => error
+        @error = error
+        false
+      end
+    end
+
+    def does_not_match?(machine)
+      if @elements
+        raise "don't use with_result_matching(..) along with expect(..).to_not"
+      end
+
+      not matches?(machine)
+    end
+
+    def description
+      "be able to find(#{@arguments.map(&:inspect).join(", ")})"
+    end
+
+    def failure_message
+      if @error.nil?
+        if @result.defined?
+          separators  = Stupidedi::Reader::Separators.new(":", "^", "*", "~")
+          segment_val = @segment_val.pretty_inspect
+          filter_tok  = @filter_tok.to_s(separators)
+          "#{segment_val} result does not match #{filter_tok}"
+        else
+          @result.reason
+        end
+      else
+        @error.to_s
+      end
+    end
+
+    def failure_message_when_negated
+      found = @segment_val.pretty_inspect
+      "expected find nothing, but found #{found}"
     end
   end
 
   def have_distance(expected)
-    Class.new do
-      def initialize(distance)
-        @distance = distance
-      end
-
-      def from(machine)
-        HaveDistance.new(@distance, machine)
-      end
-
-      def to(machine)
-        HaveDistance.new(@distance, machine)
-      end
-    end.new(expected)
+    HaveDistance.new(expected)
   end
 
   class HaveDistance
-    def initialize(expected, start)
-      @expected, @start =
-        expected, start
+    def initialize(expected)
+      @expected = expected
+    end
+
+    def from(machine)
+      @start = machine
+      self
+    end
+
+    def to(machine)
+      @start = machine
+      self
     end
 
     def matches?(machine)
       @stop   = machine
       @actual = @start.distance(machine)
-
       @actual.select{|d| d == @expected }.defined?
     end
 
     def failure_message
       if @actual.defined?
-        actual = nil
-        @actual.tap{|d| actual = d }
-        "expected #{@expected} but was #{actual} segments apart"
+        "expected #{@expected} but was #{@actual.fetch} segments apart"
       else
         "not in the same tree: #{@start} and #{@stop}"
       end
@@ -111,7 +202,7 @@ module NavigationMatchers
       end
 
       extra = @forwards.drop(@expected.length)
-      return "extra segments #{extra.map(&:inspect).join(", ")}"
+      "extra segments #{extra.map(&:inspect).join(", ")}"
     end
   end
 
@@ -119,6 +210,7 @@ module NavigationMatchers
     HaveStructure.new(expected)
   end
 
+  # list of branches to take
   def Ss(*segments)
     if segments.first.is_a?(Hash)
       segments
@@ -181,7 +273,7 @@ module NavigationMatchers
           begin
             interpret(tag, result, selector)
           rescue Exception
-            raise "#{$!.message} from #{PP.pp(machine, "")}"
+            raise "#{$!.message} from #{machine.pretty_inspect}"
           end
         end
       elsif selectors.is_a?(Array)
@@ -200,7 +292,7 @@ module NavigationMatchers
           begin
             interpret(tag, result, selector)
           rescue Exception
-            raise "#{$!.message} from #{PP.pp(machine, "")}"
+            raise "#{$!.message} from #{machine.pretty_inspect}"
           end
         end
       end
@@ -218,7 +310,7 @@ module NavigationMatchers
           end
         end.tap do |m|
           # Found a match
-          raise "#{selector.first} exists #{PP.pp(m, "")}"
+          raise "#{selector.first} exists #{m.pretty_inspect}"
         end
       when :R # Should be reachable, but shouldn't occur
         result.explain do |e|
@@ -228,7 +320,7 @@ module NavigationMatchers
           end
         end.tap do |m|
           # Found
-          raise "#{selector.first} exists #{PP.pp(m, "")}"
+          raise "#{selector.first} exists #{m.pretty_inspect}"
         end
       when :S # Should be reachable, and should occur
         result.explain do |e|

@@ -86,7 +86,6 @@ module Stupidedi
       def instructions(functional_group_def)
         @__instructions ||= Hash.new
         @__instructions[functional_group_def] ||= begin
-        # puts "FunctionalGroupState.instructions(#{functional_group_def.object_id})"
           is = sequence(functional_group_def.header_segment_uses.tail)
           is << Instruction.new(:ST, nil, 0, is.length, TransactionSetState)
           is.concat(sequence(functional_group_def.trailer_segment_uses, is.length))

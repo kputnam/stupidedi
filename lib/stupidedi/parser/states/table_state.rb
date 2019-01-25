@@ -84,7 +84,6 @@ module Stupidedi
       def instructions(table_def)
         @__instructions ||= Hash.new
         @__instructions[table_def] ||= begin
-        # puts "TableState.instructions(#{table_def.object_id})"
           is = sequence(table_def.header_segment_uses)
           is.concat(lsequence(table_def.loop_defs, is.length))
           is.concat(sequence(table_def.trailer_segment_uses, is.length))

@@ -491,7 +491,7 @@ module Stupidedi
           matched      = false
           filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements, nil)
 
-          instructions = zipper.node.instructions.matches(filter_tok, true)
+          instructions = zipper.node.instructions.matches(filter_tok, true, :find)
           reachable  ||= !instructions.empty?
 
           grouped = instructions.runs do |a,b|
@@ -523,7 +523,7 @@ module Stupidedi
             #    nodes to move left, but not exactly how many. Instead, we
             #    know what the InstructionTable is when we get there.
             target = zipper.node.instructions.pop(op_.pop_count).drop(op_.drop_count)
-            repeatable ||= target.matches(filter_tok, true).present?
+            repeatable ||= target.matches(filter_tok, true, :find).present?
 
             # 3. If the segment we're searching for belongs in a new subtree,
             #    but it's not the only segment that might have "opened" that

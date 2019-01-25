@@ -83,7 +83,7 @@ module Stupidedi
               segment_tok =
                 mksegment_tok(@reader.segment_dict, segment_id, @elements[segment_id], nil)
 
-              instructions = table.matches(segment_tok, false)
+              instructions = table.matches(segment_tok, false, :insert)
               if instructions.length > 1
                 raise Exceptions::InvalidSchemaError,
                   "deepest proceeding from #{pp_machine(machine)}, there are no
@@ -100,7 +100,7 @@ module Stupidedi
                 segment_tok =
                   mksegment_tok(@reader.segment_dict, segment_id, @elements[segment_id], nil)
 
-                op = table.matches(nil, false).head
+                op = table.matches(nil, false, :insert).head
                 as = machine.execute(op, machine.active.head, @reader, segment_tok)
                 enqueue(as)
               else
@@ -111,7 +111,7 @@ module Stupidedi
               end
 
             when Stupidedi::Parser::ConstraintTable::ValueBased
-              disjoint, distinct = table.basis(table.instructions)
+              disjoint, distinct = table.basis(table.instructions, :insert)
 
               if disjoint.empty?
                 # We're definitely going to throw an error now, but we need to
@@ -194,7 +194,7 @@ module Stupidedi
         #
         # @return [Array<(Instruction, SegmentTok)>]
         def mksegments(table)
-          disjoint,   = table.basis(table.instructions)
+          disjoint,   = table.basis(table.instructions, :insert)
           remaining   = Set.new(table.instructions)
           segment_id  = table.instructions.head.segment_use.id
           segments    = []

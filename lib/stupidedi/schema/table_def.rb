@@ -22,9 +22,9 @@ module Stupidedi
       # @return [Integer]
       attr_reader :position
 
-      def initialize(id, position, repeatable, header_segment_uses, loop_defs, trailer_segment_uses, parent)
-        @id, @position, @repeatable, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
-          id, position, repeatable, header_segment_uses, loop_defs, trailer_segment_uses, parent
+      def initialize(id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent)
+        @id, @position, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
+          id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -40,7 +40,6 @@ module Stupidedi
         TableDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:position, @position),
-          changes.fetch(:repeatable, @repeatable),
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:loop_defs, @loop_defs),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
@@ -53,11 +52,13 @@ module Stupidedi
       end
 
       def repeatable?
-        @repeatable
+        @header_segment_uses.empty? and
+          @loop_defs.present?       and
+          @loop_defs.head.repeatable?
       end
 
       def repeat_count
-        if @repeatable
+        if repeatable?
           RepeatCount.unbounded
         else
           RepeatCount.bounded(1)
@@ -76,8 +77,16 @@ module Stupidedi
         uses.concat(@trailer_segment_uses)
 
         # Up to and including the first required segment
-        opt, req = uses.split_until(&:optional?)
-        opt.concat(req.take(1))
+        suffix = uses.drop_while(&:optional?)
+
+        if suffix.present?
+          # Some segment(s) is required, so table can't start without it
+          position = suffix.map(&:position).min
+          uses.take_while{|u| u.position <= position }
+        else
+          # Nothing is required, table can begin at any of these
+          uses
+        end
       end
 
       # @return [Array<SegmentUse, LoopDef>]
@@ -142,7 +151,7 @@ module Stupidedi
 
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 1, false, header, loop_defs, trailer, nil)
+        new(id, 1, header, loop_defs, trailer, nil)
       end
 
       # @return [TableDef]
@@ -154,24 +163,8 @@ module Stupidedi
 
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 2, false, header, loop_defs, trailer, nil)
+        new(id, 2, header, loop_defs, trailer, nil)
       end
-
-      # @todo This cannot work properly without changing
-      # {ConstraintTable::ValueBased#matches} to not narrow the table down first
-      # by using deepest(...); this is because, while we insert matching loops
-      # into the current table, alternating loops would be placed in alternating
-      # tables. Thus, for {Navigation#find} we need to search the current table
-      # first but then try an uncle table (cousin loop) next. These are two
-      # different instructions, but {#matches} would only provide an instruction
-      # to search the current table.
-      #
-      # @return [TableDef]
-      # def repeatable_detail(id, *children)
-      #   header, children   = children.split_when{|x| x.is_a?(LoopDef) }
-      #   loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-      #   new(id, 2, true, header, loop_defs, trailer, nil)
-      # end
 
       # @return [TableDef]
       def summary(id, *children)
@@ -182,7 +175,7 @@ module Stupidedi
 
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 3, false, header, loop_defs, trailer, nil)
+        new(id, 3, header, loop_defs, trailer, nil)
       end
 
       # @endgroup

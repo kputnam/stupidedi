@@ -98,8 +98,9 @@ module Stupidedi
       def instructions(transaction_set_def)
         @__instructions ||= Hash.new
         @__instructions[transaction_set_def] ||= begin
-        # puts "TransactionSetState.instructions(#{transaction_set_def.object_id})"
-          # @todo: Explain this optimization
+          # When first segment is repeatable, then `successors` should include
+          # an {Instruction} for it; but when it's non-repeatable, there should
+          # be no successor instruction for that segment.
           if transaction_set_def.table_defs.head.repeatable?
             tsequence(transaction_set_def.table_defs)
           else

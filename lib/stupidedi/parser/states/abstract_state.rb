@@ -287,11 +287,6 @@ module Stupidedi
               end
 
             buffer.each do |b|
-              if b.repeatable? and b.entry_segment_uses.length > 1
-                raise Exceptions::InvalidSchemaError,
-                  "@todo"
-              end
-
               b.entry_segment_uses.each do |u|
                 instructions << Instruction.new(nil, u, 0, drop_count, TableState)
               end

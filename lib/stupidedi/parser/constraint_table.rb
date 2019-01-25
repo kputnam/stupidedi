@@ -18,7 +18,7 @@ module Stupidedi
     #
     class ConstraintTable
       # @return [Array<Instruction>]
-      abstract :matches, :args => %w(segment_tok)
+      abstract :matches, :args => %w(segment_tok mode)
 
       # @return [Array<Instruction>]
       attr_reader :instructions
@@ -58,7 +58,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict)
+        def matches(segment_tok, strict, mode)
           @instructions.tap do |xs|
             critique(segment_tok, xs.map(&:segment_use)) if strict
           end
@@ -77,7 +77,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict)
+        def matches(segment_tok, strict, mode)
           @__matches ||= begin
             shallowest = @instructions.map(&:pop_count).min
             @instructions.select{|i| i.pop_count == shallowest }.tap do |xs|
@@ -95,7 +95,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict)
+        def matches(segment_tok, strict, mode)
           @__matches ||= begin
             deepest = @instructions.map(&:pop_count).max
             @instructions.select{|i| i.pop_count == deepest }.tap do |xs|
@@ -113,14 +113,15 @@ module Stupidedi
       class ValueBased < ConstraintTable
         def initialize(instructions)
           @instructions = instructions
+          @__basis      = {}
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict)
+        def matches(segment_tok, strict, mode)
           invalid = true  # Were all present possibly distinguishing elements invalid?
           present = false # Were any possibly distinguishing elements present?
 
-          disjoint, distinct = basis(@instructions)
+          disjoint, distinct = basis(@instructions, mode)
 
           # First check single elements that can narrow the search space to
           # a single matching Instruction.
@@ -222,9 +223,25 @@ module Stupidedi
         end
 
         # @return [Array(Array<(Integer, Integer, Map)>, Array<(Integer, Integer, Map)>)]
-        def basis(instructions)
-          @__basis ||= begin
-            instructions      = shallowest(instructions)
+        def basis(instructions, mode)
+          @__basis[mode] ||= begin
+            # When inserting segments, given a choice between two otherwise
+            # equivalent instructions, prefer the one with smallest `pop_count`.
+            # For example, when inserting an HL*20 in X221 835, the new 2000A
+            # loop could potentially go in the current "Table 2 - Billing
+            # Provider Detail" (smaller pop_count), or the parser could create
+            # a whole new table (larger pop_count).
+            #
+            # When searching for segments in a parse tree (mode == :read), we
+            # need to try both choices. That's because this "Table 2 - Billing
+            # Provider Detail" could be followed by a different "Table 2 -
+            # Subscriber Detail", which is then followed by another "Table 2 -
+            # Billing Provider Detail". Then the next HL*20 would belong to the
+            # uncle table, not the current table.
+            if mode == :insert
+              instructions = shallowest(instructions)
+            end
+
             disjoint_elements = []
             distinct_elements = []
 

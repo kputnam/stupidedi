@@ -62,8 +62,9 @@ module Stupidedi
       def instructions(loop_def)
         @__instructions ||= Hash.new
         @__instructions[loop_def] ||= begin
-        # puts "LoopDef.instructions(#{loop_def.object_id})"
-          # @todo: Explain this optimization
+          # When first segment is repeatable, then `successors` should include
+          # an {Instruction} for it; but when it's non-repeatable, there should
+          # be no successor instruction for that segment.
           is = if loop_def.header_segment_uses.head.repeatable?
                 sequence(loop_def.header_segment_uses)
                else

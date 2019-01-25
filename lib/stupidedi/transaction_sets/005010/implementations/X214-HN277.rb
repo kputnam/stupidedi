@@ -135,7 +135,6 @@ module Stupidedi
                     b::Element(e::Required,    "Total Accepted Amount"),
                     b::Element(e::NotUsed,     "Credit/Debit Flag Code"))))),
 
-          # d::TableDef.repeatable_detail("2 - Billing Provider of Service Detail",
             d::TableDef.detail("2 - Billing Provider of Service Detail + Patient Detail",
               d::LoopDef.build("2000C BILLING PROVIDER OF SERVICE LEVEL", d::RepeatCount.unbounded,
                 b::Segment(100, s::HL, "Billing Provider of Service Level", r::Situational, d::RepeatCount.bounded(1),
@@ -212,9 +211,9 @@ module Stupidedi
                   b::Segment(1220, s::AMT, "Total Accepted Amount", r::Situational, d::RepeatCount.bounded(1),
                     b::Element(e::Required,    "Amount Qualifier Code", b::Values("YY")),
                     b::Element(e::Required,    "Total Accepted Amount"),
-                    b::Element(e::NotUsed,     "Credit/Debit Flag Code")))), #),
+                    b::Element(e::NotUsed,     "Credit/Debit Flag Code"))))),
 
-             #d::TableDef.repeatable_detail("2 - Patient Detail",
+            d::TableDef.detail("2 - Patient Detail",
               d::LoopDef.build("2000D PATIENT LEVEL", d::RepeatCount.unbounded,
                 b::Segment(100, s::HL, "Patient Level", r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Hierarchical ID Number"),
