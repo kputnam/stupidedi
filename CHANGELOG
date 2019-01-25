@@ -1,5 +1,7 @@
-v 1.3.24 (WIP)
+v 1.3.24 (WIP) [Unreleased]
   - Fix repeatability test in Navigation#iterate
+  - Adds implementation of June 2014 005010X223A3 (837I)
+  - Fixes misplaced 2330H and 2330I loops. Fixes names for 2310 Occurrenc…
   
 v 1.3.23 - Jan 10, 2019
   - Fix decimal values for TimeVal being coerced incorrectly https://github.com/irobayna/stupidedi/pull/151

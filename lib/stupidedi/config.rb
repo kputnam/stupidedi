@@ -124,6 +124,7 @@ module Stupidedi
           x.register("005010X279A1", "HS", "270") { Stupidedi::TransactionSets::FiftyTen::Implementations::X279A1::HS270 }
           x.register("005010X279A1", "HB", "271") { Stupidedi::TransactionSets::FiftyTen::Implementations::X279A1::HB271 }
           x.register("005010X223A2", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Implementations::X223A2::HC837 }
+          x.register("005010X223A3", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Implementations::X223A3::HC837 }
 
           x.register("005010X217",   "HI", "278") { Stupidedi::TransactionSets::FiftyTen::Standards::HI278 }
           x.register("005010X218",   "RA", "820") { Stupidedi::TransactionSets::FiftyTen::Standards::RA820 }
