@@ -1,4 +1,4 @@
-describe "Stupidedi::Zipper", :skip do
+describe "Stupidedi::Zipper" do
   describe ".build" do
     it "returns a RootCursor" do
       expect(Stupidedi::Zipper.build(Node.new("x"))).to be_root

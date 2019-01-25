@@ -1,4 +1,4 @@
-describe "Stupidedi::Reader", :skip do
+describe "Stupidedi::Reader" do
   describe ".is_basic_character?(c)" do
     def is_basic?(c)
       Stupidedi::Reader.is_basic_character?(c)

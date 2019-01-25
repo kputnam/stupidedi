@@ -5,7 +5,7 @@ describe "Stupidedi::TransactionSets" do
 
   Definitions.transaction_set_defs.each do |name, value, error|
     describe name.split("::").slice(2..-1).join("::") do
-      it "is well-defined" do
+      it "is well-defined", :schema do
         expect(Object.const_get(name)).to be_a(Stupidedi::Schema::TransactionSetDef)
       end
 
