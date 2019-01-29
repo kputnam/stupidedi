@@ -11,5 +11,10 @@ Definitions.segment_defs
           end
         end
       end
+
+      context "syntax notes" do
+        todo "reference existing elements"
+        todo "correspond to R(elational) elements"
+      end
     end
   end

@@ -1,7 +1,9 @@
 describe "Stupidedi::TransactionSets" do
-  FIXTURES = Hash[(Fixtures.passing +
+  fixtures = Hash[(Fixtures.passing +
                    Fixtures.failing +
                    Fixtures.skipping).group_by{|_, name, _| name }]
+
+  checked = Set.new
 
   Definitions.transaction_set_defs.each do |name, value, error|
     describe name.split("::").slice(2..-1).join("::") do
@@ -20,24 +22,28 @@ describe "Stupidedi::TransactionSets" do
         transaction_set_def  = value
 
         it "is non-ambiguous", :schema do
-          expect(lambda do
-            Stupidedi::TransactionSets::Validation::Ambiguity
-              .build(transaction_set_def, functional_group_def)
-              .audit
-          end).not_to raise_error
+          unless checked.include?(transaction_set_def.object_id)
+            checked.add(transaction_set_def.object_id)
+
+            expect(lambda do
+              Stupidedi::TransactionSets::Validation::Ambiguity
+                .build(transaction_set_def, functional_group_def)
+                .audit
+            end).not_to raise_error
+          end
         end
       end
 
-      if FIXTURES.member?(name)
+      if fixtures.member?(name)
         case error
         when Exception
-          FIXTURES[name].sort.each do |path, _, _|
+          fixtures[name].sort.each do |path, _, _|
             pending "can parse '#{path}'", :fixtures do
               raise "#{name} is not well-defined (see other spec results)"
             end
           end
         else
-          FIXTURES[name].sort.each do |path, _, config|
+          fixtures[name].sort.each do |path, _, config|
             case path = path.to_s
             when %r{/pass/}
               it "can parse '#{path}'", :fixtures do

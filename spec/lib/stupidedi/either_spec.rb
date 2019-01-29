@@ -15,6 +15,52 @@ describe "Stupidedi::Either" do
     end
   end
 
+  describe "#pretty_print" do
+    context "on success" do
+      it "returns a String" do
+        expect(mksuccess("xyz").pretty_inspect).to be_a(String)
+        expect(mksuccess("xyz").pretty_inspect).to match(/xyz/)
+      end
+    end
+
+    context "on failure" do
+      it "returns a String" do
+        expect(mkfailure("xyz").pretty_inspect).to  be_a(String)
+        expect(mkfailure("xyz").pretty_inspect).to  match(/xyz/)
+      end
+    end
+  end
+
+  describe "#inspect" do
+    context "on success" do
+      it "returns a String" do
+        expect(mksuccess("xyz").inspect).to be_a(String)
+        expect(mksuccess("xyz").inspect).to match(/xyz/)
+      end
+    end
+
+    context "on failure" do
+      it "returns a String" do
+        expect(mkfailure("xyz").inspect).to  be_a(String)
+        expect(mkfailure("xyz").inspect).to  match(/xyz/)
+      end
+    end
+  end
+
+  describe "#fetch(default)" do
+    context "on success" do
+      it "returns a the value" do
+        expect(mksuccess("xyz").fetch(:default)).to eq("xyz")
+      end
+    end
+
+    context "on failure" do
+      it "returns a default" do
+        expect(mkfailure("xyz").fetch(:default)).to eq(:default)
+      end
+    end
+  end
+
   describe "#==(failure)" do
     let(:failure) { mkfailure("a") }
 

@@ -148,89 +148,126 @@ module Definitions
     ElementReqs_::NotUsed
   end
 
-  DE_ID   = Stupidedi::Versions::Common::ElementTypes::ID.new(:DE1, "DE1 (ID)",   1,  1, Stupidedi::Schema::CodeList.external(Hash[("A".."Z").map{|x| [x, "Meaning of #{x}"]}]))
-  DE_AN   = Stupidedi::Versions::Common::ElementTypes::AN.new(:DE2, "DE2 (AN)",   1, 10)
-  DE_DT6  = Stupidedi::Versions::Common::ElementTypes::DT.new(:DE3, "DE3 (DT/6)", 6,  6)
-  DE_DT8  = Stupidedi::Versions::Common::ElementTypes::DT.new(:DE4, "DE4 (DT/8)", 8,  8)
-  DE_TM   = Stupidedi::Versions::Common::ElementTypes::TM.new(:DE5, "DE5 (TM)",   4,  8)
-  DE_R    = Stupidedi::Versions::Common::ElementTypes:: R.new(:DE6, "DE6 (R)",    1,  6)
-  DE_N0   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE7, "DE7 (N0)",   1,  6, 0)
-  DE_N1   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE8, "DE8 (N1)",   1,  6, 1)
-  DE_N2   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE9, "DE9 (N2)",   1,  6, 2)
+  module ElementDefs
+    DE_ID   = Stupidedi::Versions::Common::ElementTypes::ID.new(:DE1, "DE1 (ID)",   1,  1,
+      Stupidedi::Schema::CodeList.external(Hash[("A".."Z").map{|x| [x, "Meaning of #{x}"]}]))
+    DE_AN   = Stupidedi::Versions::Common::ElementTypes::AN.new(:DE2, "DE2 (AN)",   1, 10)
+    DE_DT6  = Stupidedi::Versions::Common::ElementTypes::DT.new(:DE3, "DE3 (DT/6)", 6,  6)
+    DE_DT8  = Stupidedi::Versions::Common::ElementTypes::DT.new(:DE4, "DE4 (DT/8)", 8,  8)
+    DE_TM   = Stupidedi::Versions::Common::ElementTypes::TM.new(:DE5, "DE5 (TM)",   4,  8)
+    DE_R    = Stupidedi::Versions::Common::ElementTypes:: R.new(:DE6, "DE6 (R)",    1,  6)
+    DE_N0   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE7, "DE7 (N0)",   1,  6, 0)
+    DE_N1   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE8, "DE8 (N1)",   1,  6, 1)
+    DE_N2   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE9, "DE9 (N2)",   1,  6, 2)
+    DE_COM  = Stupidedi::Schema::CompositeElementDef.build(:DE_COM,
+      "Composite Element", "",
+      DE_N0.component_use(ElementReqs::Mandatory),
+      DE_N0.component_use(ElementReqs::Mandatory),
+      DE_N0.component_use(ElementReqs::Optional))
+  end
 
-  def de_ID ; DE_ID  end
-  def de_AN ; DE_AN  end
-  def de_DT6; DE_DT6 end
-  def de_DT8; DE_DT8 end
-  def de_TM ; DE_TM  end
-  def de_R  ; DE_R   end
-  def de_N0 ; DE_N0  end
-  def de_N1 ; DE_N1  end
-  def de_N2 ; DE_N2  end
+  def de_ID ; ElementDefs::DE_ID  end
+  def de_AN ; ElementDefs::DE_AN  end
+  def de_DT6; ElementDefs::DE_DT6 end
+  def de_DT8; ElementDefs::DE_DT8 end
+  def de_TM ; ElementDefs::DE_TM  end
+  def de_R  ; ElementDefs::DE_R   end
+  def de_N0 ; ElementDefs::DE_N0  end
+  def de_N1 ; ElementDefs::DE_N1  end
+  def de_N2 ; ElementDefs::DE_N2  end
 
-  ANA =
-    Stupidedi::Schema::SegmentDef.build(:ANA, "Example Segment", "",
-      DE_AN.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+  module SegmentDefs
+    ANA =
+      Stupidedi::Schema::SegmentDef.build(:ANA, "Example Segment", "",
+        ElementDefs::DE_AN.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    ANB =
+      Stupidedi::Schema::SegmentDef.build(:ANB, "Example Segment", "",
+        ElementDefs::DE_AN.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    IDA =
+      Stupidedi::Schema::SegmentDef.build(:IDA, "Example Segment", "",
+        ElementDefs::DE_ID.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)),
+        ElementDefs::DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    IDB =
+      Stupidedi::Schema::SegmentDef.build(:IDB, "Example Segment", "",
+        ElementDefs::DE_ID.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)),
+        ElementDefs::DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    IDC =
+      Stupidedi::Schema::SegmentDef.build(:IDC, "Example Segment", "",
+        ElementDefs::DE_ID.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)),
+        ElementDefs::DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    NNA =
+      Stupidedi::Schema::SegmentDef.build(:NNA, "Example Segment", "",
+        ElementDefs::DE_N0.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    NNB =
+      Stupidedi::Schema::SegmentDef.build(:NNB, "Example Segment", "",
+        ElementDefs::DE_N0.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
+        ElementDefs::DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    COM =
+      Stupidedi::Schema::SegmentDef.build(:COM, "Example Segment", "",
+        ElementDefs::DE_COM.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+
+    REP =
+      Stupidedi::Schema::SegmentDef.build(:REP, "Example Segment", "",
+        ElementDefs::DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(3)))
+  end
+
+  def NNA; SegmentDefs::NNA end
+  def NNB; SegmentDefs::NNB end
+  def COM; SegmentDefs::COM end
+  def REP; SegmentDefs::REP end
 
   def ANA(changes = {})
-    if changes.empty?
-      ANA
-    else
-      ANA.copy(:element_uses => ANB.element_uses.map do |u|
-        u.copy(:definition => u.definition.copy(changes))
-      end)
+    SegmentDefs::ANA.bind do |s|
+      return s if changes.empty?
+      s.copy(:element_uses => s.element_uses.map{|u| u.copy(:definition => u.definition.copy(changes))})
     end
   end
-
-  ANB =
-    Stupidedi::Schema::SegmentDef.build(:ANB, "Example Segment", "",
-      DE_AN.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
 
   def ANB(changes = {})
-    if changes.empty?
-      ANB
-    else
-      ANB.copy(:element_uses => ANB.element_uses.map do |u|
-        u.copy(:definition => u.definition.copy(changes))
-      end)
+    SegmentDefs::ANB.bind do |s|
+      return s if changes.empty?
+      s.copy(:element_uses => s.element_uses.map{|u| u.copy(:definition => u.definition.copy(changes))})
     end
   end
 
-  NNA =
-    Stupidedi::Schema::SegmentDef.build(:NNA, "Example Segment", "",
-      DE_N0.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
-
-  def NNA; NNA; end
-
-  NNB =
-    Stupidedi::Schema::SegmentDef.build(:NNB, "Example Segment", "",
-      DE_N0.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)),
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
-
-  def NNB; NNB; end
-
   def IDA(qualifiers = [])
-    Stupidedi::Schema::SegmentDef.build(:IDA, "Example Segment", "",
-      DE_ID.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)).bind{|u| if qualifiers.empty? then u else u.copy(:allowed_values => u.allowed_values.replace(qualifiers)) end },
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)),
-      DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+    SegmentDefs::IDA.bind do |s|
+      return s if qualifiers.empty?
+      s.copy(:element_uses => s.element_uses.head.bind do |u|
+        u.copy(:allowed_values => u.allowed_values.replace(qualifiers))
+      end.cons(s.element_uses.tail))
+    end
   end
 
   def IDB(qualifiers = [])
-    Stupidedi::Schema::SegmentDef.build(:IDB, "Example Segment", "",
-      DE_ID.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)).bind{|u| if qualifiers.empty? then u else u.copy(:allowed_values => u.allowed_values.replace(qualifiers)) end },
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)),
-      DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+    SegmentDefs::IDB.bind do |s|
+      return s if qualifiers.empty?
+      s.copy(:element_uses => s.element_uses.head.bind do |u|
+        u.copy(:allowed_values => u.allowed_values.replace(qualifiers))
+      end.cons(s.element_uses.tail))
+    end
   end
 
   def IDC(qualifiers = [])
-    Stupidedi::Schema::SegmentDef.build(:IDC, "Example Segment", "",
-      DE_ID.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)).bind{|u| if qualifiers.empty? then u else u.copy(:allowed_values => u.allowed_values.replace(qualifiers)) end },
-      DE_AN.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)),
-      DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+    SegmentDefs::IDC.bind do |s|
+      return s if qualifiers.empty?
+      s.copy(:element_uses => s.element_uses.head.bind do |u|
+        u.copy(:allowed_values => u.allowed_values.replace(qualifiers))
+      end.cons(s.element_uses.tail))
+    end
   end
 end
 

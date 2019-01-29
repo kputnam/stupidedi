@@ -57,14 +57,19 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837" 
       end
 
       it "in HL*..*..20, HL*..*..*22, HL*..*..*23 are handled" do
+        return unless [].respond_to?(:permutation)
+
+        # These assertions are a bit too slow to exhaustively test all 720
+        m  = rand(0..10)
         ss = [["1", nil, "20", "1"],
               ["2", nil, "20", "1"],
               ["3", "1", "22", "1"],
               ["4", "2", "22", "1"],
               ["5", "3", "23", "0"],
               ["6", "4", "23", "0"]]
+        ss = ss.permutation.select.with_index{|_,n| (n + m) % 11 == 0 }
 
-        ss.permutation do |p|
+        ss.each do |p|
           b = dsl.dup.tap{|b_| p.each{|es| b_.send(:HL, *es) }}
           m = b.machine.first.flatmap{|x| x.sequence(:GS, :ST) }
 

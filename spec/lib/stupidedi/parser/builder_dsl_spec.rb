@@ -644,22 +644,6 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
             expect(lambda { b.XX(Date.today) }).to raise_error(/invalid element XX01/)
           end
         end
-
-        context ".strftime(format, value)" do
-          context "with unrecognized format" do
-            it "raises an exception" do
-              expect(lambda { de_AN.strftime("XX", Time.now) }).to \
-                raise_error(/unrecognized format specifier "XX"/)
-            end
-          end
-
-          context "with wrong value type" do
-            it "raises an exception" do
-              expect(lambda { de_AN.strftime("D8", Time.now .. Time.now) }).to \
-                raise_error(TypeError, //)
-            end
-          end
-        end
       end
 
       context "DT (date)" do

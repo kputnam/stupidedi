@@ -7,6 +7,48 @@ describe Array do
     (1..n).to_a.bind{|as| as.concat(as.init.reverse) }
   end
 
+  describe "#sum" do
+    context "on empty array" do
+      it "throws an exception" do
+        expect(lambda { [].sum(&:to_s) }).to raise_error(/of empty array/)
+      end
+    end
+
+    context "on one-element array" do
+      context "without a block" do
+        it "returns the element" do
+          element = Object.new
+          expect([element].sum).to eql(element)
+        end
+      end
+
+      context "with a block" do
+        it "is same as element.bind" do
+          expect{|b| [-10].sum(&b) }.to yield_with_args(-10)
+          expect([-10].sum(&:abs)).to eq(10)
+        end
+      end
+    end
+
+    context "on two-element array" do
+      context "without a block" do
+        it "adds two items" do
+          expect([10, 10].sum).to eq(20)
+          expect([10, -10].sum).to eq(0)
+          expect(%w(a b).sum).to eq("ab")
+        end
+      end
+
+      context "with a block" do
+        it "adds transformed items" do
+          expect([10, 10].sum(&:abs)).to eq(20)
+          expect([10, -10].sum(&:abs)).to eq(20)
+          expect(%w(a b).sum(&:length)).to eq(2)
+        end
+      end
+    end
+  end
+
   describe "#defined_at?(n)" do
     context "on an empty array" do
       property "is false" do
@@ -17,7 +59,7 @@ describe Array do
 
   describe "#head" do
     context "of an empty array" do
-      it "is an error" do
+      it "throws an exception" do
         expect(lambda { [].head }).to raise_error("head of empty array")
       end
     end
@@ -111,7 +153,7 @@ describe Array do
     end
 
     context "a negative number of elements" do
-      property "raises an error" do
+      property "throws an exception" do
         integer.abs
       end.check do |n|
         expect(lambda { %w(a b).drop(-n) }).to raise_error("n cannot be negative")
@@ -255,7 +297,7 @@ describe Array do
     end
 
     context "a negative number of elements" do
-      property "raises an error" do
+      property "throws an exception" do
         integer.abs
       end.check do |n|
         expect(lambda { %w(a b).take(-n) }).to raise_error("n cannot be negative")
@@ -406,7 +448,7 @@ describe Array do
 
     context "index one" do
       context "at a negative index" do
-        property "is an error" do
+        property "throws an exception" do
           integer.abs
         end.check do |n|
           expect(lambda { [].split_at(-n) }).to raise_error("n cannot be negative")

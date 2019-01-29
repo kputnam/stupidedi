@@ -1,11 +1,88 @@
 Definitions.interchange_defs.each do |constant_name, interchange_def|
   describe constant_name, :schema do
+    version_id = Fixtures.versions.invert.fetch(
+      constant_name.split("::").at(-2))
+
+    let(:version_id) { version_id }
     let(:separators) { Stupidedi::Reader::Separators.default }
+
+    def mksegment_tok(id, *elements)
+      Stupidedi::Reader::SegmentTok.build(id,
+        elements.map{|e| Stupidedi::Reader::SimpleElementTok.build(e, nil, "")}, nil, "")
+    end
+
+    let(:segment_val) do
+      segment_use = interchange_def.header_segment_uses.first
+      segment_tok = mksegment_tok(:ISA,
+        "00", "..........",
+        "00", "..........",
+        "ZZ", "SUBMITTERS.ID..",
+        "ZZ", "RECEIVERS.ID...",
+        "010101", "0101",
+        "P", # separators.repetition,
+        version_id,
+        "000000001", "1", "T",
+        "Q") #separators.component)
+
+      Stupidedi::Parser::AbstractState.mksegment(segment_tok, segment_use)
+    end
+
+    describe "#separators" do
+      it "returns Separators" do
+        expect(interchange_def.separators(segment_val)).to be_a(Stupidedi::Reader::Separators)
+      end
+
+      it "sets component separator" do
+        expect(interchange_def.separators(segment_val).component).to eq("Q")
+      end
+
+      if version_id < "00500"
+        it "does not set repetition separator" do
+          expect(interchange_def.separators(segment_val).repetition).to eq(nil)
+        end
+      else
+        it "sets repetition separator" do
+          expect(interchange_def.separators(segment_val).repetition).to eq("P")
+        end
+      end
+    end
+
+    describe "#replace_separators" do
+      let(:before) { segment_val }
+      let(:after)  { interchange_def.replace_separators(segment_val, separators) }
+
+      it "returns a segment" do
+        expect(after).to be_segment
+      end
+
+      it "sets component separator" do
+        expect(interchange_def.separators(after).component).to eq(separators.component)
+      end
+
+      it "sets component separator" do
+        expect(after.element(16)).to eq(separators.component)
+      end
+
+      if version_id < "00500"
+        it "does not set repetition separator" do
+          expect(after.element(11)).to eq("P")
+        end
+      else
+        it "sets repetition separator" do
+          expect(after.element(11)).to eq(separators.repetition)
+        end
+      end
+
+      it "does not change other elements" do
+        ns = [1,2,3,4,5,6,7,8,9,10,  12,13,14,15]
+        b  = ns.map{|n| before.element(n) }
+        a  = ns.map{|n|  after.element(n) }
+        expect(a).to eq(b)
+      end
+    end
 
     describe "#id" do
       it "matches module name" do
-        version_name = constant_name.split("::").at(-2)
-        version_id   = Fixtures.versions.invert.fetch(version_name)
         expect(interchange_def.id).to eq(version_id)
       end
     end
