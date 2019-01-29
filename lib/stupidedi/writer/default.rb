@@ -23,7 +23,7 @@ module Stupidedi
           end
         end
 
-        recurse(@zipper.node, @separators, out)
+        out.tap { recurse(@zipper.node, @separators, out) }
       end
 
     private

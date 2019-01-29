@@ -5,7 +5,7 @@ describe Stupidedi::Writer::Claredi do
   let(:id) { Stupidedi::Parser::IdentifierStack.new(1)  }
 
   def output(*details, &block)
-    Stupidedi::Writer::Claredi.new(zipper(*details, &block).node).write
+    Stupidedi::Writer::Claredi.new(zipper(*details, &block).node).write.string
   end
 
   def zipper(*details, &block)
@@ -44,7 +44,7 @@ describe Stupidedi::Writer::Claredi do
     it "returns a String" do
       buildr = generate
       zipper = buildr.machine.first.flatmap{|m| m.sequence(:GS, :ST) }.fetch.zipper.fetch
-      result = Stupidedi::Writer::Claredi.new(zipper.node).write
+      result = Stupidedi::Writer::Claredi.new(zipper.node).write.string
 
       expect(result).to be_a(String)
     end
