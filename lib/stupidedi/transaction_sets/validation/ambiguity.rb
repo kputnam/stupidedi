@@ -86,7 +86,7 @@ module Stupidedi
               instructions = table.matches(segment_tok, false, :insert)
               if instructions.length > 1
                 raise Exceptions::InvalidSchemaError,
-                  "deepest proceeding from #{pp_machine(machine)}, there are no
+                  "proceeding from #{pp_machine(machine)}, there are no
                   constraints on segment #{segment_id} to choose between ".join +
                   table.pretty_inspect
               end
@@ -327,36 +327,6 @@ module Stupidedi
           else
             segment.pretty_inspect
           end
-        end
-
-        # @return [String]
-        def pp_instruction(op)
-          id = "% 3s" % op.segment_id.to_s
-
-          if op.segment_use.nil?
-            args = "pop:%d" % op.pop_count
-          else
-            width = 30
-            name  = op.segment_use.definition.name
-
-            # Truncate the segment name to `width` characters
-            if name.length > width - 2
-              id = id + ": #{name.slice(0, width - 2)}.."
-            else
-              id = id + ": #{name.ljust(width)}"
-            end
-
-            args = "position:%d, repeat:%s, pop:%d" %
-              [op.segment_use.position,
-               op.segment_use.repeat_count.inspect,
-               op.pop_count]
-          end
-
-          unless op.push.nil?
-            args += ", push:#{op.push.try{|c| c.name.split("::").last}}"
-          end
-
-          "\n  Instruction[#{id}](#{args})"
         end
       end
 

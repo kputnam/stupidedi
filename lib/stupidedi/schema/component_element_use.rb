@@ -43,11 +43,6 @@ module Stupidedi
         "element #{parent.parent.parent.id}#{"%02d-%02d" % [n, m]} #{definition.name}".strip
       end
 
-      # @return [SimpleElementVal]
-      def parse(string)
-        definition.parse(string, self)
-      end
-
       # @return false
       def repeatable?
         false

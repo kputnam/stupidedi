@@ -47,14 +47,6 @@ module Stupidedi
               Schema::ComponentElementUse.new(self, requirement, Sets.universal, parent)
             end
           end
-
-          def code_lists(subset = Sets.universal)
-            if @code_list.present?
-              @code_list.code_lists(subset)
-            else
-              Sets.empty
-            end
-          end
         end
 
         #
@@ -71,11 +63,6 @@ module Stupidedi
 
           def too_short?
             false
-          end
-
-          # @return [IdentifierVal]
-          def map
-            IdentifierVal.value(yield(value), usage, position)
           end
 
           class Invalid < IdentifierVal
@@ -129,7 +116,12 @@ module Stupidedi
 
             # @return [Boolean]
             def ==(other)
-              eql?(other) or other.nil?
+              eql?(other)
+            end
+
+            # @return [Invalid]
+            def copy(changes = {})
+              self
             end
           end
 
@@ -173,16 +165,17 @@ module Stupidedi
                 changes.fetch(:position, position)
             end
 
-            def coerce(other)
-              return copy(:value => other.to_str), self
-            end
-
             def value
               ""
             end
 
             def valid?
               true
+            end
+
+            # @return [IdentifierVal]
+            def map
+              IdentifierVal.value(yield(nil), usage, position)
             end
 
             # @return [String]
@@ -254,10 +247,6 @@ module Stupidedi
                 changes.fetch(:position, position)
             end
 
-            def coerce(other)
-              return copy(:value => other.to_str), self
-            end
-
             def valid?
               true
             end
@@ -268,6 +257,11 @@ module Stupidedi
 
             def too_short?
               @value.length < definition.min_length
+            end
+
+            # @return [IdentifierVal]
+            def map
+              IdentifierVal.value(yield(@value), usage, position)
             end
 
             # @return [String]
@@ -290,11 +284,11 @@ module Stupidedi
                 end
               end
 
-              codes = definition.code_list
-
-              if codes.try(&:internal?)
-                if codes.defined_at?(@value)
-                  value = "#{@value}: " + ansi.dark(codes.at(@value))
+              if definition.code_list.try(&:internal?)
+                if usage.allowed_values.include?(@value)
+                  value = "#{@value}: " + ansi.dark(definition.code_list.at(@value))
+                elsif definition.code_list.defined_at?(@value)
+                  value = ansi.red("#{@value}: " + definition.code_list.at(@value))
                 else
                   value = ansi.red(@value)
                 end

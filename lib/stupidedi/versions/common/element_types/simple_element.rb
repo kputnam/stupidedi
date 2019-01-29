@@ -53,13 +53,6 @@ module Stupidedi
               changes.fetch(:parent, @parent)
           end
 
-          # Constructs a SimpleElementVal from the given `String`
-          #
-          # @return [Values::SimpleElementVal]
-          def parse(string, usage)
-            companion.parse(string, usage)
-          end
-
           # Constructs a SimpleElementVal from the given `value`
           #
           # @return [Values::SimpleElementVal]
@@ -72,17 +65,6 @@ module Stupidedi
           # @return [Values::SimpleElementVal]
           def empty(usage, position)
             companion.empty(usage, position)
-          end
-
-          # @return [void]
-          def pretty_print(q)
-            type = self.class.name.try{|n| n.split("::").last }
-
-            if type.blank?
-              q.text @id.to_s
-            else
-              q.text "#{type}[#{@id}]"
-            end
           end
         end
       end

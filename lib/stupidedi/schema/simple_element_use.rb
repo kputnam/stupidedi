@@ -46,11 +46,6 @@ module Stupidedi
         "element #{parent.id}#{"%02d" % idx} #{definition.name}".strip
       end
 
-      # @return [SimpleElementVal]
-      def parse(string)
-        definition.parse(string, self)
-      end
-
       def repeatable?
         @repeat_count.try{|r| r.include?(2) }
       end
@@ -63,15 +58,6 @@ module Stupidedi
       # @return false
       def component?
         false
-      end
-
-      # @return [AbstractSet<CodeList>]
-      def code_lists
-        if forbidden?
-          Sets.empty
-        else
-          @definition.code_lists(@allowed_values)
-        end
       end
 
       # @return [void]
