@@ -18,11 +18,11 @@ module Stupidedi
 
     # @private
     module Stub
-      stubs = %w(bold clear reset dark underscore blink negative concealed
-                 black red green yellow blue magenta cyan white on_black
-                 on_red on_green on_yellow on_blue on_magenta on_cyan on_white)
+      METHODS = %w(bold clear reset dark underscore blink negative concealed
+                   black red green yellow blue magenta cyan white on_black
+                   on_red on_green on_yellow on_blue on_magenta on_cyan on_white)
 
-      stubs.each do |name|
+      METHODS.each do |name|
         instance_eval(<<-RUBY, __FILE__, __LINE__)
           def #{name}(string)
             string

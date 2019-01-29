@@ -58,6 +58,11 @@ module Stupidedi
               false
             end
 
+            # @return [TimeVal]
+            def map
+              TimeVal.value(yield(nil, nil, nil), usage, position)
+            end
+
             # @return [String]
             def inspect
               id = definition.bind do |d|
@@ -88,6 +93,10 @@ module Stupidedi
             # @return [Boolean]
             def ==(other)
               eql?(other)
+            end
+
+            def copy(changes = {})
+              self
             end
           end
 
@@ -121,6 +130,11 @@ module Stupidedi
               ansi.element("TM.empty#{id}")
             end
 
+            # @return [TimeVal]
+            def map
+              TimeVal.value(yield(nil, nil, nil), usage, position)
+            end
+
             # @return [String]
             def to_s
               ""
@@ -134,6 +148,10 @@ module Stupidedi
             # @return [Boolean]
             def ==(other)
               other.is_a?(Empty) or other.nil?
+            end
+
+            def copy(changes = {})
+              self
             end
           end
 
@@ -188,6 +206,11 @@ module Stupidedi
               false
             end
 
+            # @return [TimeVal]
+            def map
+              TimeVal.value(yield(@hour, @minute, @second), usage, position)
+            end
+
             # @return [Time]
             def to_time(date, minute = nil, second = nil)
               minute = @minute || minute
@@ -219,6 +242,7 @@ module Stupidedi
               hh =   @hour.try{|h| "%02d" % h }  || "hh"
               mm = @minute.try{|m| "%02d" % m }  || "mm"
               ss = @second.try{|s| s.to_s("F") } || "ss"
+              ss = ss.gsub(/^0*\.|0+$/, "")
 
               ansi.element("TM.value#{id}") + "(#{hh}:#{mm}:#{ss})"
             end
@@ -236,11 +260,7 @@ module Stupidedi
               hh =   @hour.try{|h| "%02d" % h }
               mm = @minute.try{|m| "%02d" % m }
               ss = @second.try{|s| "%02d" % s }
-              ff = @second.try do |s|
-                s.frac.to_s("F").
-                  gsub(/^0*\./, "").
-                  gsub(/0+$/, "")
-              end
+              ff = @second.try{|s| s.frac.to_s("F").gsub(/^0*\.|0+$/, "") }
 
               x12 = "#{hh}#{mm}#{ss}#{ff}"
 
@@ -248,14 +268,15 @@ module Stupidedi
             end
 
             def too_short?
-              to_s(nil, nil, nil).length < definition.min_length
+              to_x12(false).length < definition.min_length
             end
 
             # @return [Boolean]
             def ==(other)
               eql?(other) or
-               (other.hour   == @hour   and
-                other.minute == @minute and
+               (other.is_a?(TimeVal::NonEmpty) and
+                other.hour   == @hour          and
+                other.minute == @minute        and
                 other.second == @second)
             end
           end
@@ -274,10 +295,9 @@ module Stupidedi
           def value(object, usage, position)
             if object.blank?
               self::Empty.new(usage, position)
-
             elsif object.is_a?(String) or object.is_a?(StringVal)
               return self::Invalid.new(object, usage, position) \
-                unless object =~ /^\d+$/
+                unless object =~ /^\d{4,}$/
 
               hour   = object.to_s.slice(0, 2).to_i
               minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
@@ -289,18 +309,22 @@ module Stupidedi
               end
 
               self::NonEmpty.new(hour, minute, second, usage, position)
+            elsif object.respond_to?(:hour) and
+                  object.respond_to?(:min)  and
+                  object.respond_to?(:sec)
+              sec = object.sec.to_d
 
-            elsif object.is_a?(Time)
-              self::NonEmpty.new(object.hour, object.min,
-                                    object.sec.to_d \
-                                    + (object.usec.to_d / 1000000),
-                                    usage, position)
+              if object.respond_to?(:usec)
+                sec += object.usec.to_d / 1000000
+              elsif object.respond_to?(:sec_fraction)
+                sec += object.sec_fraction.to_d
+              end
 
-            elsif object.is_a?(DateTime)
-              self::NonEmpty.new(object.hour, object.min,
-                                    object.sec.to_d \
-                                    + object.sec_fraction.to_d,
-                                    usage, position)
+              self::NonEmpty.new(object.hour, object.min, sec, usage, position)
+            elsif object.respond_to?(:hour)    and
+                  object.respond_to?(:minute)  and
+                  object.respond_to?(:second)
+              self::NonEmpty.new(object.hour, object.minute, object.second.to_d, usage, position)
             else
               self::Invalid.new(object, usage, position)
             end

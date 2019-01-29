@@ -16,7 +16,7 @@ module Stupidedi
   module Inspect
     # @return [String]
     def inspect
-      if self.class.name.empty?
+      if self.class.name.nil? or self.class.name !~ /\S/
         "#<\#<Class:0x#{self.class.object_id.abs.to_s(16)}>"
       else
         "#<#{self.class.name}"

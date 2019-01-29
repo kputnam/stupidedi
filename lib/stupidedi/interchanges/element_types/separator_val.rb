@@ -11,7 +11,7 @@ module Stupidedi
       end
 
       class SeparatorVal < Values::SimpleElementVal
-        def_delegators :@value, :to_s, :length
+        def_delegators :@value, :to_s, :length, :==
 
         def initialize(value, usage, position)
           @value = value
@@ -47,7 +47,7 @@ module Stupidedi
         end
 
         # @return [String]
-        def to_x12
+        def to_x12(truncate = true)
           @value.to_s
         end
 
@@ -68,11 +68,6 @@ module Stupidedi
 
         # @return [SeparatorVal]
         def value(character, usage, position)
-          SeparatorVal.new(character, usage, position)
-        end
-
-        # @return [SeparatorVal]
-        def parse(character, usage, position)
           SeparatorVal.new(character, usage, position)
         end
 

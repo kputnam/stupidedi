@@ -27,7 +27,7 @@ module Stupidedi
 
       # @return [String]
       def descriptor
-        "segment #{@segment_tok.to_s(@separators)} #{@reason}"
+        "segment #{@segment_tok.to_x12(@separators)} #{@reason}"
       end
 
       # (see AbstractVal#size)
@@ -71,7 +71,7 @@ module Stupidedi
 
       # @return [void]
       def pretty_print(q)
-        id = ansi.invalid("[#{@segment_tok.to_s(@separators)}]")
+        id = ansi.invalid("[#{@segment_tok.to_x12(@separators)}]")
         q.text(ansi.segment("InvalidSegmentVal#{id}"))
       end
 

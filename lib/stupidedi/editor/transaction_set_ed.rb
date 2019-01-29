@@ -145,7 +145,7 @@ module Stupidedi
 
               d = zipper.node.definition
               d.syntax_notes.each do |s|
-                zs = s.errors(zipper)
+                zs = syntax_note_errors(s, zipper)
                 ex = s.reason(zipper) if zs.present?
                 zs.each{|c| acc.ik403(c, "R", "2", ex) }
               end
@@ -163,7 +163,7 @@ module Stupidedi
 
             zipper.node.definition.tap do |d_|
               d_.syntax_notes.each do |s|
-                es = s.errors(zipper)
+                es = syntax_note_errors(s, zipper)
                 ex = s.reason(zipper) if es.present?
                 es.each{|c| acc.ik403(c, "R", "2", ex) }
               end
@@ -270,6 +270,11 @@ module Stupidedi
             end
           end
         end
+      end
+
+      def syntax_note_errors(syntax_note, zipper)
+        syntax_note.forbidden(zipper).select{|c| c.node.present? } +
+          syntax_note.required(zipper).reject{|c| c.node.present? }
       end
     end
   end

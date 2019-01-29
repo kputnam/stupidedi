@@ -20,6 +20,18 @@ module Stupidedi
             @max_precision = max_precision
           end
 
+          # @return [R]
+          def copy(changes = {})
+            R.new \
+              changes.fetch(:id, @id),
+              changes.fetch(:name, @name),
+              changes.fetch(:min_length, @min_length),
+              changes.fetch(:max_length, @max_length),
+              changes.fetch(:max_precision, @max_precision),
+              changes.fetch(:description, @description),
+              changes.fetch(:parent, @parent)
+          end
+
           def companion
             FloatVal
           end
@@ -94,6 +106,11 @@ module Stupidedi
             def ==(other)
               eql?(other)
             end
+
+            # @return [Invalid]
+            def copy(changes = {})
+              self
+            end
           end
 
           #
@@ -144,6 +161,14 @@ module Stupidedi
             # @return [Boolean]
             def ==(other)
               other.is_a?(Empty) or other.nil?
+            end
+
+            # @return [Empty]
+            def copy(changes = {})
+              FloatVal.value \
+                changes.fetch(:value, @value),
+                changes.fetch(:usage, @usage),
+                changes.fetch(:position, @position)
             end
           end
 

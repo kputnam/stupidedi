@@ -48,7 +48,7 @@ module Stupidedi
       end
 
       def pop_isa
-        @state.id.tap { @state = @state.pop_gs }
+        @state.id.tap { @state = @state.pop_isa }
       end
 
       def pop_gs
@@ -203,7 +203,7 @@ module Stupidedi
 
         def pop
           warn "DEPRECATION WARNING: IdentifierStack#pop is deprecated, use pop_st (when removing an ST identifier from the stack)"
-          pop
+          pop_st
         end
       end
 
@@ -212,7 +212,7 @@ module Stupidedi
 
         def initialize(parent, hl_sequence, lx_sequence)
           @parent, @id, @hl_sequence, @lx_sequence =
-            parent, hl_sequnce.id, hl_sequence, lx_sequence
+            parent, hl_sequence.value, hl_sequence, lx_sequence
         end
 
         def hl

@@ -14,7 +14,7 @@ module Stupidedi
           of funds and/or information from payor to payee to occur while
           utilizing an automated clearing house (ACH) or other banking
           network",
-          e::E591 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)), 
+          e::E591 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
           e::E782 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
           e::E305 .simple_use(r::Mandatory,  s::RepeatCount.bounded(1)), #E373 ?
           e::E508 .simple_use(r::Optional,   s::RepeatCount.bounded(1)),

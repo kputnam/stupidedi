@@ -39,6 +39,10 @@ module Stupidedi
             true
           end
 
+          def proper?
+            false
+          end
+
           def too_long?
             false
           end
@@ -99,8 +103,14 @@ module Stupidedi
               ""
             end
 
+            # @return [Boolean]
             def ==(other)
               eql?(other)
+            end
+
+            # @return [Invalid]
+            def copy(changes = {})
+              self
             end
           end
 
@@ -153,6 +163,11 @@ module Stupidedi
             def ==(other)
               other.is_a?(Empty) or other.nil?
             end
+
+            # @return [Empty]
+            def copy(changes = {})
+              self
+            end
           end
 
           #
@@ -186,6 +201,13 @@ module Stupidedi
 
             def initialize(value, usage, position)
               @value = value
+
+              # Check that date is reasonably valid
+              unless @value.year.between?(0, 9999) and @value.month.between?(1, 12) and @value.day.between?(1, 31)
+                raise Exceptions::InvalidElementError,
+                  "invalid date: year(#{year}) month(#{month}) day(#{day})"
+              end
+
               super(usage, position)
             end
 
@@ -220,8 +242,12 @@ module Stupidedi
 
             # @return [Time]
             def to_time(hour = nil, minute = nil, second = nil)
-              if hour.is_a?(TimeVal) and not hour.empty?
-                hour, minute, second = hour.hour, hour.minute, hour.second
+              if minute.nil? and second.nil? and hour.respond_to?(:hour)
+                if hour.respond_to?(:minute) and hour.respond_to?(:second)
+                  hour, minute, second = hour.hour, hour.minute, hour.second
+                elsif hour.respond_to?(:min) and hour.respond_to?(:sec)
+                  hour, minute, second = hour.hour, hour.min, hour.sec
+                end
               end
 
               if not second.nil?
@@ -283,13 +309,11 @@ module Stupidedi
                 if definition.max_length < 8
                   "%02d%02d%02d" % [year % 100, month, day]
                 else
-                  "%04d%02d%02d" % [year, month, day]
+                  "%04d%02d%02d" % [year % 10000, month, day]
                 end
 
               if truncate
-                # Drop the most significant digits... they are probably bogus?
-                overage = x12.length - definition.max_length
-                x12.drop(overage > 0 ? overage : 0)
+                x12.slice(-definition.max_length..-1)
               else
                 x12
               end
@@ -325,7 +349,7 @@ module Stupidedi
               # Check that date is reasonably valid
               unless @year.between?(0, 99) and @month.between?(1, 12) and @day.between?(1, 31)
                 raise Exceptions::InvalidElementError,
-                  "invalid date year: #{year}, month: #{month}, day: #{day}"
+                  "invalid date: year(#{year}) month(#{month}) day(#{day})"
               end
 
               super(usage, position)
@@ -464,8 +488,7 @@ module Stupidedi
 
             # @return [String]
             def to_x12(truncate = true)
-              x12 = "%02d%02d%02d" % [@year, @month, @day]
-              truncate ? x12.slice(0, definition.max_length) : x12
+              "%02d%02d%02d" % [@year, @month, @day]
             end
 
             def too_short?
@@ -505,7 +528,6 @@ module Stupidedi
           def value(object, usage, position)
             if object.blank?
               self::Empty.new(usage, position)
-
             elsif object.is_a?(String) or object.is_a?(StringVal)
               string = object.to_s
 
@@ -519,18 +541,13 @@ module Stupidedi
                 if year.length < 4
                   self::Improper.new(year.to_i, month, day, usage, position)
                 else
-                  date = date(year, month, day)
-                  self::Proper.new(date, usage, position)
+                  self::Proper.new(date(year, month, day), usage, position)
                 end
               end
-
-            elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
-              date = date(object.year, object.month, object.day)
-              self::Proper.new(date, usage, position)
-
             elsif object.is_a?(DateVal::Improper)
               self::Improper.new(object.year, object.month, object.day, usage, position)
-
+            elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
+              self::Proper.new(date(object.year, object.month, object.day), usage, position)
             else
               self::Invalid.new(object, usage, position)
             end

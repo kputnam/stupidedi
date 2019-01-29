@@ -71,7 +71,7 @@ module Stupidedi
         autoload :ICM, "stupidedi/versions/005010/segment_defs/ICM"
         autoload :IDC, "stupidedi/versions/005010/segment_defs/IDC"
         autoload :III, "stupidedi/versions/005010/segment_defs/III"
-        autoload :III, "stupidedi/versions/005010/segment_defs/III"  
+        autoload :III, "stupidedi/versions/005010/segment_defs/III"
         autoload :IK3, "stupidedi/versions/005010/segment_defs/IK3"
         autoload :IK4, "stupidedi/versions/005010/segment_defs/IK4"
         autoload :IK5, "stupidedi/versions/005010/segment_defs/IK5"

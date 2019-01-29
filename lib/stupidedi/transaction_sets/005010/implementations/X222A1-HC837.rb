@@ -1872,7 +1872,7 @@ module Stupidedi
                     b::Element(e::NotUsed,     "Location Identifier"),
                     b::Element(e::Situational, "Country Subdivision Code")),
                   b::Segment(320, s::DMG, "Subscriber Demographic Information", r::Situational, d::RepeatCount.bounded(1),
-                    b::Element(e::Required,    "Date Time Period Format Qualifier"),
+                    b::Element(e::Required,    "Date Time Period Format Qualifier", b::Values("D8")),
                     b::Element(e::Required,    "Subscriber Birth Date"),
                     b::Element(e::Required,    "Subscriber Gender Code", b::Values("F", "M", "U")),
                     b::Element(e::NotUsed,     "Marital Status Code"),

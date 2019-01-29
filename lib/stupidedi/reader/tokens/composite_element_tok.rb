@@ -56,11 +56,11 @@ module Stupidedi
         true
       end
 
-      def to_s(separators)
+      def to_x12(separators)
         if blank?
           ""
         else
-          cs = @component_toks.map{|x| x.to_s(separators) }
+          cs = @component_toks.map{|x| x.to_x12(separators) }
           cs.join(separators.component || ":")
         end
       end

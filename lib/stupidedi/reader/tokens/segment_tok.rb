@@ -44,12 +44,12 @@ module Stupidedi
         not blank?
       end
 
-      def to_s(separators)
+      def to_x12(separators)
         if blank?
           "#{id}#{separators.segment}"
         else
-          es = @element_toks.map{|x| x.to_s(separators) }
-          id.cons(es).join(separators.element || "*") + (separators.segment || "~")
+          es = @element_toks.map{|x| x.to_x12(separators) }
+          id.cons(es).join(separators.element || "*") + (separators.segment || "~").strip
         end
       end
     end

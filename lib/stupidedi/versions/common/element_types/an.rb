@@ -7,25 +7,31 @@ module Stupidedi
       module ElementTypes
         class AN < SimpleElementDef
           DATE_FORMAT_SINGLE =
-           {"CC" => "%C",
-            "CM" => "%Y%m",
-            "CY" => "%Y",
-            "D6" => "%y%m%d",
-            "D8" => "%Y%m%d",
-            "DB" => "%m%d%Y",
-            "DD" => "%d",
-            "DT" => "%Y%m%d%H%M",
-            "KA" => "%y%m%d",
-            "MD" => "%m%d",
-            "MM" => "%m",
-            "TM" => "%H%M",
-            "TQ" => "%m%y",
-            "TR" => "%d%m%y%H%M",
-            "TS" => "%H%M%S",
-            "TT" => "%m%d%y",
-            "UN" => "",
-            "YM" => "%y%m",
-            "YY" => "%Y"}
+           {"CC"  => "%C",
+           #"CD"  => "MMMYYYY",     # Month and Year Expressed in Format MMMYYYY
+            "CM"  => "%Y%m",
+           #"CQ"  => "CCYYQ",       # Date in Format CCYYQ
+            "CY"  => "%Y",
+            "D6"  => "%y%m%d",
+            "D8"  => "%Y%m%d",
+            "DB"  => "%m%d%Y",
+            "DD"  => "%d",
+            "DT"  => "%Y%m%d%H%M",
+           #"EH"  => "YDDD",        # Last Digit of Year and Julian Date Expressed in Format YDDD
+            "KA"  => "%y%m%d",
+            "MD"  => "%m%d",
+            "MM"  => "%m",
+           #"TC"  => "DDD",         # Julian Date Expressed in Format DDD
+            "TM"  => "%H%M",
+            "TQ"  => "%m%y",
+            "TR"  => "%d%m%y%H%M",
+            "TS"  => "%H%M%S",
+            "TT"  => "%m%d%y",
+           #"TU"  => "YYDDD",
+           #"UN"  => "",            # Unstructured
+            "YM"  => "%y%m",
+            "YY"  => "%Y",
+            "RTS" => "%Y%m%d%H%M%S"}
 
           DATE_FORMAT_RANGE =
            {"DA"  => ["%d", "%d"],
@@ -42,22 +48,22 @@ module Stupidedi
             "RDT" => ["%Y%m%d%H%M", "%Y%m%d%H%M"],
             "RMD" => ["%m%d", "%m%d"],
             "RMY" => ["%y%m", "%y%m"],
-            "RTM" => ["%H%M", "%H%M"],
-            "RTS" => ["%Y%m%d%H%M%S"]}
+            "RTM" => ["%H%M", "%H%M"]}
+           #"YMM" => ["CCYYMMM", "MMM"]
 
           def companion
             StringVal
           end
 
           # (see AN.strftime)
-          def strftime(format, value)
-            AN.strftime(format, value)
-          end
+          # def strftime(format, value)
+          #   AN.strftime(format, value)
+          # end
 
           # (see AN.stpftime)
-          def strptime(format, value)
-            AN.strptime(format, value)
-          end
+          # def strptime(format, value)
+          #   AN.strptime(format, value)
+          # end
         end
 
         class << AN
@@ -74,13 +80,12 @@ module Stupidedi
                      value.end.respond_to?(:strftime)   and
                      value.begin.respond_to?(:strftime)
                 raise TypeError,
-                  "expcted a Range (#strftime..#strftime) but got #{value.inspect}"
+                  "expected a Range (#strftime..#strftime) but got #{value.inspect}"
               end
 
               f, g = AN::DATE_FORMAT_RANGE.at(format)
               a, b = value.begin.strftime(f), value.end.strftime(g)
               "#{a}-#{b}"
-
             elsif AN::DATE_FORMAT_SINGLE.defined_at?(format)
               unless value.respond_to?(:strftime)
                 raise TypeError,
@@ -101,22 +106,20 @@ module Stupidedi
           # See {StringVal::DATE_FORMAT_SINGLE} and {StringVal::DATE_FORMAT_RANGE}
           # for a list of recognized format specifiers.
           #
-          # @return [Date | Time | Range<Date> | Range<Time>]
+          # @return [Time | Range<Time>]
           def strptime(format, value)
             if AN::DATE_FORMAT_RANGE.defined_at?(format)
-              unless value.kind_of?(Range)              and
-                     value.end.respond_to?(:strftime)   and
-                     value.begin.respond_to?(:strftime)
+              f, g = AN::DATE_FORMAT_RANGE.at(format)
+              a, b = value.split("-", 2)
+
+              unless value =~ /^[^-]+-[^-]+$/
                 raise TypeError,
-                  "expcted a Range (#strftime..#strftime) but got #{value.inspect}"
+                  "expected a String with format #{f}-#{g}, but got #{value.inspect}"
               end
 
-              a, b = value.split("-", 2)
-              f, g = AN::DATE_FORMAT_RANGE.at(format)
-              Date.strptime(a, f) .. Date.strptime(b, g)
-
+              Time.strptime("#{a} Z", "#{f} %z") .. Time.strptime("#{b} Z", "#{g} %z")
             elsif AN::DATE_FORMAT_SINGLE.defined_at?(format)
-              Date.strptime(value, AN::DATE_FORMAT_SINGLE.at(format))
+              Time.strptime("#{value} Z", "#{AN::DATE_FORMAT_SINGLE.at(format)} %z")
             else
               raise ArgumentError,
                 "unrecognized format specifier #{format.inspect}"
@@ -138,11 +141,6 @@ module Stupidedi
 
           def too_short?
             false
-          end
-
-          # @return [StringVal]
-          def map
-            StringVal.value(yield(value), usage, position)
           end
 
           #
@@ -205,6 +203,11 @@ module Stupidedi
             def ==(other)
               eql?(other) or other.nil?
             end
+
+            # @return [Invalid]
+            def copy(changes = {})
+              self
+            end
           end
 
           #
@@ -237,16 +240,9 @@ module Stupidedi
             relational_operators :==, :<=>, :start_with?, :end_with?,
               :include?, :casecmp, :coerce => :to_s
 
-            # @return [IdentifierVal]
+            # @return [Empty]
             def copy(changes = {})
-              StringVal.value \
-                changes.fetch(:value, value),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
-            end
-
-            def coerce(other)
-              return copy(:value => other.to_str), self
+              self
             end
 
             def value
@@ -255,6 +251,11 @@ module Stupidedi
 
             def valid?
               true
+            end
+
+            # @return [StringVal]
+            def map
+              StringVal.value(yield(nil), usage, position)
             end
 
             # @return [String]
@@ -326,16 +327,17 @@ module Stupidedi
                 changes.fetch(:position, position)
             end
 
-            def coerce(other)
-              return copy(:value => other.to_str), self
-            end
-
             def too_long?
               @value.lstrip.length > definition.max_length
             end
 
             def too_short?
               @value.lstrip.length < definition.min_length
+            end
+
+            # @return [StringVal]
+            def map
+              StringVal.value(yield(@value), usage, position)
             end
 
             # @return [String]
@@ -399,9 +401,9 @@ module Stupidedi
           # rather than quietly returning an {StringVal::Invalid}.
           #
           # @return [StringVal]
-          def from_date(format, value, usage, position)
-            self::NonEmpty.new(AN.strftime(format, value), usage, position)
-          end
+          # def from_date(format, value, usage, position)
+          #   self::NonEmpty.new(AN.strftime(format, value), usage, position)
+          # end
 
           # @endgroup
           ###################################################################

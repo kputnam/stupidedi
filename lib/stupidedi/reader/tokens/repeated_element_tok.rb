@@ -48,11 +48,11 @@ module Stupidedi
         false
       end
 
-      def to_s(separators)
+      def to_x12(separators)
         if blank?
           ""
         else
-          rs = @element_toks.map{|x| x.to_s(separators) }
+          rs = @element_toks.map{|x| x.to_x12(separators) }
           rs.join(separators.repetition || "^")
         end
       end

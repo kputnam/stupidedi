@@ -32,11 +32,6 @@ module Stupidedi
               changes.fetch(:parent, @parent)
           end
 
-          # @return [void]
-          def pretty_print(q)
-            q.text "N#{@precision}[#{@id}]"
-          end
-
           def companion
             FixnumVal
           end
@@ -111,6 +106,11 @@ module Stupidedi
             def ==(other)
               eql?(other)
             end
+
+            # @return [Invalid]
+            def copy(changes = {})
+              self
+            end
           end
 
           #
@@ -161,6 +161,14 @@ module Stupidedi
             # @return [Boolean]
             def ==(other)
               other.is_a?(Empty) or other.nil?
+            end
+
+            # @return [Empty]
+            def copy(changes = {})
+              FixnumVal.value \
+                changes.fetch(:value, @value),
+                changes.fetch(:usage, @usage),
+                changes.fetch(:position, @position)
             end
           end
 

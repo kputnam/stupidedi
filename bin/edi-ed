@@ -16,8 +16,7 @@ config.editor.tap do |c|
   c.register(Stupidedi::Versions::FortyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
   c.register(Stupidedi::Versions::FiftyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
 
-  c.register(Stupidedi::TransactionSets::FiftyTen::Implementations::X222::HC837P) { Stupidedi::Editor::X222 }
-  c.register(Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837P) { Stupidedi::Editor::X222 }
+  c.register(Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837) { Stupidedi::Editor::X222 }
 end
 
 parser = Stupidedi::Parser.build(config)

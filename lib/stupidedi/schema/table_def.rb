@@ -71,10 +71,9 @@ module Stupidedi
 
       # @return [Array<SegmentUse>]
       def entry_segment_uses
-        uses = []
-        uses.concat(@header_segment_uses)
-        uses.concat(@loop_defs.map{|l| l.entry_segment_use })
-        uses.concat(@trailer_segment_uses)
+        uses = @header_segment_uses \
+             + @loop_defs.map{|l| l.entry_segment_use } \
+             + @trailer_segment_uses
 
         # Up to and including the first required segment
         suffix = uses.drop_while(&:optional?)
