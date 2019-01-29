@@ -253,7 +253,7 @@ fdescribe Stupidedi::Versions::Common::ElementTypes::Nn do
 
     describe "#too_long?" do
       specify { expect(value("1234")).to_not be_too_long }
-      specify { expect(value("12345678").tap{|x| pp x }).to be_too_long }
+      specify { expect(value("12345678")).to be_too_long }
     end
 
     describe "#too_short?" do

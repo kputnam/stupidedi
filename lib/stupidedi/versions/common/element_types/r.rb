@@ -166,7 +166,7 @@ module Stupidedi
             # @return [Empty]
             def copy(changes = {})
               FloatVal.value \
-                changes.fetch(:value, @value),
+                changes.fetch(:value, nil),
                 changes.fetch(:usage, @usage),
                 changes.fetch(:position, @position)
             end
