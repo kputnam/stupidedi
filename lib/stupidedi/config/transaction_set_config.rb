@@ -4,7 +4,7 @@ module Stupidedi
 
   class Config
     #
-    # The implementation version specified in GS08 and ST03 indicates which
+    # The implementation version specified in GS08 (or ST03) indicates which
     # implementation guide governs the transaction.
     #
     # Note we can't look only at ST01 to link "837" to our definition of
@@ -14,7 +14,7 @@ module Stupidedi
     class TransactionSetConfig
       include Inspect
 
-      # @return [Hash<[GS08, GS01, ST01], TransactionSetDef>]
+      # @return [Hash<[GS08/ST03, GS01, ST01], TransactionSetDef>]
       attr_reader :table
 
       def initialize
@@ -45,6 +45,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text "TransactionSetConfig"
         q.group(2, "(", ")") do
@@ -58,6 +59,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
     end
   end
 end

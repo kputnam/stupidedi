@@ -19,9 +19,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     b. ST("999", id.st)
   end
 
-  def config(details)
+  def config(details, version = "005010")
     Stupidedi::Config.default.customize do |x|
-      x.transaction_set.register("005010", "FA", "999") do
+      x.transaction_set.register(version, "FA", "999") do
         Stupidedi::Schema::TransactionSetDef.build("FA", "999", "Example",
           Header("1", Segment(10, :ST, s_mandatory, bounded(1))),
           *details,
@@ -32,40 +32,120 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
   describe "on interchanges" do
     context "with unregistered version (ISA12)" do
-      todo "raises an exception"
+      it "raises an exception" do
+        expect(lambda do
+          b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00001", id.isa, "0", "T", ":")
+        end).to raise_error(/version "00001"/)
+      end
     end
 
     context "with registered version (ISA12)" do
-      todo "is a-ok"
+      it "is a-ok" do
+        b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+        b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+
+        expect(b.machine.first.fetch.zipper.tap do |z|
+          expect(z.node).to be_segment
+          expect(z.parent.node).to be_interchange
+        end).to be_defined
+      end
     end
 
     context "when repeated" do
       context "at the end of an interchange" do
-        todo "is a-ok"
+        it "is a-ok" do
+          b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b.IEA(id.count, id.pop_isa)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+
+          expect(b.machine.first.fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_interchange
+            expect(z.parent.children.length).to eq(2)
+
+            expect(z.parent.next.node).to be_interchange
+            expect(z.parent.next.children.length).to eq(1)
+          end).to be_defined
+        end
       end
 
       context "in the middle of an interchange" do
-        todo "raises an exception"
+        it "raises an exception" do
+          expect(lambda do
+            b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", 1, "0", "T", ":")
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", 2, "0", "T", ":")
+          end).to raise_error(/segment IEA .+? missing/)
+        end
       end
     end
   end
 
   describe "on functional groups" do
     context "with unregistered version (GS08)" do
-      todo "raises an exception"
+      it "raises an exception" do
+        expect(lambda do
+          b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "000010")
+        end).to raise_error(/version "000010"/)
+      end
     end
 
     context "with registered version (GS08)" do
-      todo "constructions a functional group"
+      it "constructions a functional group" do
+        b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+        b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+        b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+
+        expect(b.machine.first.fetch.find(:GS).fetch.zipper.tap do |z|
+          expect(z.node).to be_segment
+
+          expect(z.parent.node).to be_functional_group
+          expect(z.parent.children.length).to eq(1)
+
+          expect(z.parent.parent.node).to be_interchange
+          expect(z.parent.parent.children.length).to eq(2) # ISA + FunctionalGroupVal
+        end).to be_defined
+      end
     end
 
     context "when repeated" do
       context "at the end of a functional group" do
-        todo "is a-ok"
+        it "is a-ok" do
+          b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+          b. GE(id.count, id.pop_gs)
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+
+          expect(b.machine.first.fetch.sequence(:GS, :GS).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_functional_group
+            expect(z.parent.children.length).to eq(1) # GS
+
+            expect(z.parent.prev.node).to be_functional_group
+            expect(z.parent.prev.children.length).to eq(2) # GS + GE
+
+            expect(z.parent.parent.node).to be_interchange
+            expect(z.parent.parent.children.length).to eq(3) # ISA + FunctionalGroupVal + FunctionalGroupVal
+          end).to be_defined
+        end
       end
 
       context "in the middle of a functional group" do
-        todo "raises an exception"
+        it "raises an exception" do
+          expect(lambda do
+            b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, 1, b.default, "005010")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, 2, b.default, "005010")
+          end).to raise_error(/segment GE .+? missing/)
+        end
       end
     end
   end
@@ -73,26 +153,142 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   describe "on transaction sets" do
     context "given GS01 + GS08 + ST01" do
       context "when unregistered" do
-        todo "raises an exception"
+        it "raises an exception" do
+          expect(lambda do
+            b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+            b. ST("000", id.st)
+          end).to raise_error(/unknown transaction set "005010" "FA" "000"/)
+        end
       end
 
       context "when registered" do
-        todo "constructions a transaction set"
+        it "constructions a transaction set" do
+          b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+          b. ST("999", id.st)
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_table
+            expect(z.parent.children.length).to eq(1) # ST
+
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(1) # Table 1
+
+            expect(z.parent.parent.parent.node).to be_functional_group
+            expect(z.parent.parent.parent.children.length).to eq(2) # GS + TransactionSetVal
+          end).to be_defined
+        end
       end
     end
 
-    context "given GS01 + ST01 + ST03" do
+    context "given GS01 + GS08 with industry code + ST01" do
       context "when unregistered" do
-        todo "raises an exception"
+        it "raises an exception" do
+          expect(lambda do
+            b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X000")
+            b. ST("000", id.st)
+          end).to raise_error(/unknown transaction set "005010X000" "FA" "000"/)
+        end
       end
 
       context "when registered" do
-        todo "constructions a transaction set"
+        it "constructions a transaction set" do
+          b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X999")
+          b. ST("999", id.st)
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_table
+            expect(z.parent.children.length).to eq(1) # ST
+
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(1) # Table 1
+
+            expect(z.parent.parent.parent.node).to be_functional_group
+            expect(z.parent.parent.parent.children.length).to eq(2) # GS + TransactionSetVal
+          end).to be_defined
+        end
       end
     end
 
     context "given GS01 + GS08 + ST01 + ST03" do
-      todo "GS08 is ignored in favor of ST03"
+      context "when unregistered" do
+        it "raises an exception" do
+          expect(lambda do
+            b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+            b. ST("999", id.st, "005010X000")
+          end).to raise_error(/unknown transaction set "005010X000" "FA" "999"/)
+        end
+      end
+
+      context "when registered" do
+        it "constructions a transaction set" do
+          b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+          b. ST("999", id.st, "005010X999")
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_table
+            expect(z.parent.children.length).to eq(1) # ST
+
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(1) # Table 1
+
+            expect(z.parent.parent.parent.node).to be_functional_group
+            expect(z.parent.parent.parent.children.length).to eq(2) # GS + TransactionSetVal
+          end).to be_defined
+        end
+      end
+    end
+
+    context "given GS01 + GS08 + ST01 + ST03" do
+      context "when unregistered" do
+        it "ST03 takes precedence over GS08" do
+          expect(lambda do
+            b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X999")
+            b. ST("999", id.st, "005010X000")
+          end).to raise_error(/unknown transaction set "005010X000" "FA" "999"/)
+        end
+      end
+
+      context "when registered" do
+        it "ST03 takes precedence over GS08" do
+          b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X000")
+          b. ST("999", id.st, "005010X999")
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_table
+            expect(z.parent.children.length).to eq(1) # ST
+
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(1) # Table 1
+
+            expect(z.parent.parent.parent.node).to be_functional_group
+            expect(z.parent.parent.parent.children.length).to eq(2) # GS + TransactionSetVal
+          end).to be_defined
+        end
+      end
     end
   end
 
@@ -188,7 +384,27 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     #   Loop 2000A
 
     context "when correct number are present" do
-      todo "are constructed when start segment repeats" do
+      it "are constructed when start segment occurs" do
+        b = strict(
+          Detail("2",
+            Loop("2000", unbounded,
+              Segment(10, NNA(), s_optional, bounded(1)))))
+
+        b.NNA(1)
+        b.machine.first
+         .flatmap{|m| m.sequence(:GS, :ST, :NNA) }
+         .flatmap{|m| m.zipper }
+         .tap do |z|
+           expect(z.node).to be_segment
+           expect(z.parent.node).to be_loop
+           expect(z.parent.parent.node).to be_table
+
+           expect(z.parent.node.children.length).to eq(1)         # Loop 2000 > ...
+           expect(z.parent.parent.node.children.length).to eq(1)  # Table 2   > ...
+        end
+      end
+
+      it "are constructed when start segment repeats" do
         b = strict(
           Detail("2",
             Loop("2000", unbounded,
@@ -196,15 +412,17 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
         b.NNA(1)
         b.NNA(2)
-      end
+        b.machine.first
+         .flatmap{|m| m.sequence(:GS, :ST, :NNA) }
+         .flatmap{|m| m.zipper }
+         .tap do |z|
+           expect(z.node).to be_segment
+           expect(z.parent.node).to be_loop
+           expect(z.parent.parent.node).to be_table
 
-      todo "are constructed when start segment occurs" do
-        b = strict(
-          Detail("2",
-            Loop("2000", unbounded,
-              Segment(10, NNA(), s_optional, bounded(1)))))
-
-        b.NNA(1)
+           expect(z.parent.node.children.length).to eq(1)         # Loop 2000 > ...
+           expect(z.parent.parent.node.children.length).to eq(2)  # Table 2   > ...
+        end
       end
     end
 

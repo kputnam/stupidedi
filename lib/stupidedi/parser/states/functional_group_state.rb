@@ -19,15 +19,17 @@ module Stupidedi
       # @return [Array<AbstractState>]
       attr_reader :children
 
+      # GS01: Functional Identifier Code
       # @return [String]
-      attr_reader :fgcode
+      attr_reader :gs01
 
+      # GS08: Version / Release / Industry Identifier Code
       # @return [String]
-      attr_reader :version
+      attr_reader :gs08
 
-      def initialize(separators, segment_dict, instructions, zipper, children, fgcode, version)
-        @separators, @segment_dict, @instructions, @zipper, @children, @fgcode, @version =
-          separators, segment_dict, instructions, zipper, children, fgcode, version
+      def initialize(separators, segment_dict, instructions, zipper, children, gs01, gs08)
+        @separators, @segment_dict, @instructions, @zipper, @children, @gs01, @gs08 =
+          separators, segment_dict, instructions, zipper, children, gs01, gs08
       end
 
       # @return [FunctionalGroupState]
@@ -38,8 +40,8 @@ module Stupidedi
           changes.fetch(:instructions, @instructions),
           changes.fetch(:zipper, @zipper),
           changes.fetch(:children, @children),
-          changes.fetch(:fgcode, @fgcode),
-          changes.fetch(:version, @version)
+          changes.fetch(:gs01, @gs01),
+          changes.fetch(:gs08, @gs08)
       end
     end
 
@@ -50,21 +52,21 @@ module Stupidedi
       # @return [Zipper::AbstractCursor]
       def push(zipper, parent, segment_tok, segment_use, config)
         # GS08: Version / Release / Industry Identifier Code
-        version = segment_tok.element_toks.at(7).try(:value)
-        gscode  = version.try(:slice, 0, 6)
+        gs08         = segment_tok.element_toks.at(7).try(:value)
+        gs08_version = gs08.try(:slice, 0, 6)
 
         # GS01: Functional Identifier Code
-        fgcode = segment_tok.element_toks.at(0).try(:value)
+        gs01 = segment_tok.element_toks.at(0).try(:value)
 
-        unless config.functional_group.defined_at?(gscode)
+        unless config.functional_group.defined_at?(gs08_version)
           return FailureState.push(
             zipper,
             parent,
             segment_tok,
-            "unknown functional group version #{gscode.inspect}")
+            "unknown functional group version #{gs08_version.inspect}")
         end
 
-        envelope_def = config.functional_group.at(gscode)
+        envelope_def = config.functional_group.at(gs08_version)
         envelope_val = envelope_def.empty
         segment_use  = envelope_def.entry_segment_use
         segment_val  = mksegment(segment_tok, segment_use)
@@ -74,7 +76,7 @@ module Stupidedi
           parent.segment_dict.push(envelope_val.segment_dict),
           parent.instructions.push(instructions(envelope_def)),
           parent.zipper.append(envelope_val).append_child(segment_val),
-          [], fgcode, version)
+          [], gs01, gs08)
       end
 
       # @endgroup
