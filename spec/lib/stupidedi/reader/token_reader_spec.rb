@@ -98,7 +98,7 @@ describe Stupidedi::Reader::TokenReader do
       end.check do |a, b|
         reader = mkreader(a)
         result = reader.consume_prefix(b)
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == a
       end
     end
@@ -159,7 +159,7 @@ describe Stupidedi::Reader::TokenReader do
       end.check do |a, b|
         reader = mkreader(a)
         result = reader.consume(b)
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == a
       end
     end
@@ -185,7 +185,7 @@ describe Stupidedi::Reader::TokenReader do
       it "returns a failure" do
         reader = mkreader("")
         result = reader.read_character
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == ""
         expect(result.reason).to be =~ /less than one character available/
       end
@@ -213,7 +213,7 @@ describe Stupidedi::Reader::TokenReader do
       it "returns a failure" do
         reader = mkreader("")
         result = reader.read_segment
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result).not_to be_fatal
         expect(result.remainder).to be == ""
         expect(result.reason).to be =~ /reached end of input/
@@ -226,7 +226,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("*ABC")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "*ABC"
         expect(result.reason).to be =~ /found "\*" instead of segment identifier/
       end
@@ -236,7 +236,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("~ABC")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "~ABC"
         expect(result.reason).to be =~ /found "~" instead of segment identifier/
       end
@@ -246,7 +246,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("0ABC")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "0ABC"
         expect(result.reason).to be =~ /found "0ABC" instead of segment identifier/
       end
@@ -256,7 +256,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("ABC:")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "ABC:"
         expect(result.reason).to be =~ /found ":" following segment identifier/
       end
@@ -266,7 +266,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("ABC^")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "ABC^"
         expect(result.reason).to be =~ /found "\^" following segment identifier/
       end
@@ -276,7 +276,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("ABCD")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "ABCD"
         expect(result.reason).to be =~ /found "D" following segment identifier/
       end
@@ -287,7 +287,7 @@ describe Stupidedi::Reader::TokenReader do
         reader = mkreader("XYZ*A*B")
         result = reader.read_segment
         expect(result).to be_fatal
-        expect(result).not_to be_defined
+        expect(result).to be_failure
         expect(result.remainder).to be == "B"
         expect(result.reason).to be =~ /reached end of input/
       end

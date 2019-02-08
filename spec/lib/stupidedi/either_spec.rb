@@ -170,7 +170,7 @@ describe "Stupidedi::Either" do
 
       context "when predicate is not satisfied" do
         it "returns a failure" do
-          expect(mksuccess("a").select { false }).not_to be_defined
+          expect(mksuccess("a").select { false }).to be_failure("select")
         end
 
         context "when reason is given" do
@@ -216,7 +216,7 @@ describe "Stupidedi::Either" do
 
       context "when the predicate is satisfied" do
         it "returns a failure" do
-          expect(mksuccess("a").reject { true }).to_not be_defined
+          expect(mksuccess("a").reject { true }).to be_failure("reject")
         end
 
         context "when reason is given" do
@@ -318,7 +318,7 @@ describe "Stupidedi::Either" do
 
     context "on failure" do
       it "returns a failure" do
-        expect(mkfailure("a").explain { "b" }).to_not be_defined
+        expect(mkfailure("a").explain { "b" }).to be_failure("b")
       end
 
       it "yields the wrapped reason" do
