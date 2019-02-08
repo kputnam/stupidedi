@@ -28,9 +28,11 @@ module Stupidedi
           changes.fetch(:remainder, @remainder)
       end
 
+      # :nocov:
       def pretty_print(q)
         q.pp(:composite.cons(@component_toks))
       end
+      # :nocov:
 
       def repeated
         RepeatedElementTok.new(self.cons, @position)
@@ -60,8 +62,9 @@ module Stupidedi
         if blank?
           ""
         else
-          cs = @component_toks.map{|x| x.to_x12(separators) }
-          cs.join(separators.component || ":")
+          cs  = @component_toks.map{|x| x.to_x12(separators) }
+          sep = separators.component || ":"
+          cs.join(sep).gsub(/#{Regexp.escape(sep)}+$/, "")
         end
       end
     end

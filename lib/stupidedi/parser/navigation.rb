@@ -486,10 +486,11 @@ module Stupidedi
         reachable   = false
         repeatable  = false
         matches     = []
+        filter_tok  = nil
 
         @active.each do |zipper|
           matched      = false
-          filter_tok   = mksegment_tok(zipper.node.segment_dict, id, elements, nil)
+          filter_tok ||= mksegment_tok(zipper.node.segment_dict, id, elements, nil)
 
           instructions = zipper.node.instructions.matches(filter_tok, true, :find)
           reachable  ||= !instructions.empty?
@@ -630,9 +631,9 @@ module Stupidedi
 
         if not reachable
           raise Exceptions::ParseError,
-            "#{id} segment cannot be reached from the current state"
+            "segment #{filter_tok.to_x12(Reader::Separators.default)} cannot be reached from the current state"
         elsif matches.empty?
-          Either.failure("#{id}(#{elements.map(&:inspect).join(", ")}) segment does not occur")
+          Either.failure("segment #{filter_tok.to_x12(Reader::Separators.default)} does not occur")
         else
           Either.success(StateMachine.new(@config, matches))
         end

@@ -28,9 +28,11 @@ module Stupidedi
           changes.fetch(:remainder, @remainder)
       end
 
+      # :nocov:
       def pretty_print(q)
         q.pp(:component.cons(@value.cons))
       end
+      # :nocov:
 
       def blank?
         @value.blank?
@@ -49,7 +51,7 @@ module Stupidedi
       end
 
       def to_x12(separators)
-        @value.to_x12
+        @value.to_s
       end
     end
 

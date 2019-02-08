@@ -32,9 +32,11 @@ module Stupidedi
           changes.fetch(:remainder, @remainder)
       end
 
+      # :nocov:
       def pretty_print(q)
         q.pp(:segment.cons(@id.cons(@element_toks)))
       end
+      # :nocov:
 
       def blank?
         @element_toks.all?(&:blank?)
@@ -48,8 +50,10 @@ module Stupidedi
         if blank?
           "#{id}#{separators.segment}"
         else
-          es = @element_toks.map{|x| x.to_x12(separators) }
-          id.cons(es).join(separators.element || "*") + (separators.segment || "~").strip
+          es  = @element_toks.map{|x| x.to_x12(separators) }
+          sep = separators.element || "*"
+          eos = separators.segment || "~"
+          id.cons(es).join(sep).gsub(/#{Regexp.escape(sep)}+$/, "") + eos.strip
         end
       end
     end
