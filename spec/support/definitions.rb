@@ -1,5 +1,19 @@
+unless defined? SimpleDelegator
+  require "delegator"
+end
+
 module Definitions
   using Stupidedi::Refinements
+
+  class FunctionalGroupDelegator < SimpleDelegator
+    def empty
+      Stupidedi::Values::FunctionalGroupVal.new(self, [])
+    end
+
+    def segment_dict
+      SegmentDefs
+    end
+  end
 
   # Define a new header Table
   def Header(*args)

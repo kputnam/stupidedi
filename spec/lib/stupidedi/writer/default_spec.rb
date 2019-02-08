@@ -19,10 +19,6 @@ describe Stupidedi::Writer::Default do
     b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
     b. ST("999", id.st)
 
-    # This is needed for b.composite and b.repeated to work
-    b.reader.instance_variable_set(:@segment_dict,
-      Stupidedi::Reader::SegmentDict.build(Definitions::SegmentDefs))
-
     yield b if block_given?
 
     b. SE(id.count(b), id.pop_st)
@@ -32,6 +28,9 @@ describe Stupidedi::Writer::Default do
 
   def config(details)
     Stupidedi::Config.default.customize do |x|
+      x.functional_group.register("005010",
+        Definitions::FunctionalGroupDelegator.new(x.functional_group.at("005010")))
+
       x.transaction_set.register("005010", "FA", "999") do
         Stupidedi::Schema::TransactionSetDef.build("FA", "999", "Example",
           Header("1", Segment(10, :ST, s_mandatory, bounded(1))),

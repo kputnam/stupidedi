@@ -1,4 +1,4 @@
-describe Stupidedi::Parser::Navigation do
+fdescribe Stupidedi::Parser::Navigation do
   using Stupidedi::Refinements
   include NavigationMatchers
   include Definitions
@@ -18,12 +18,107 @@ describe Stupidedi::Parser::Navigation do
 
   def config(details)
     Stupidedi::Config.default.customize do |x|
+      x.functional_group.register("005010",
+        Definitions::FunctionalGroupDelegator.new(x.functional_group.at("005010")))
+
       x.transaction_set.register("005010", "FA", "999") do
         Stupidedi::Schema::TransactionSetDef.build("FA", "999", "Example",
           Header("1", Segment(10, :ST, s_mandatory, bounded(1))),
           *details,
           Summary("3", Segment(10, :SE, s_mandatory, bounded(1))))
       end
+    end
+  end
+
+  context "with an empty tree" do
+    let(:m) { Stupidedi::Parser::BuilderDsl.build(config([]), true).machine }
+
+    describe "#empty?" do
+      specify { expect(m).to be_empty }
+    end
+
+    describe "#first?" do
+      specify { expect(m).to be_first }
+    end
+
+    describe "#last?" do
+      specify { expect(m).to be_last }
+    end
+
+    describe "#first" do
+      specify { expect(m.first).to be_failure }
+    end
+
+    describe "#last" do
+      specify { expect(m.last).to be_failure }
+    end
+
+    describe "#successors" do
+      specify { expect(m.successors.head).to be_a(Stupidedi::Parser::InstructionTable) }
+    end
+
+    describe "#parent" do
+      specify { expect(m.parent).to be_failure }
+    end
+
+    describe "#next" do
+      specify { expect(m.next).to be_failure }
+    end
+
+    describe "#prev" do
+      specify { expect(m.prev).to be_failure }
+    end
+  end
+
+  context "with a non-empty tree" do
+    let(:m) { strict.machine }
+
+    describe "#empty?" do
+      specify { expect(m).to_not be_empty }
+    end
+
+    describe "#first?" do
+      specify { expect(m).to_not be_first }
+    end
+
+    describe "#last?" do
+      specify { expect(m).to be_last }
+    end
+
+    describe "#first" do
+      specify { expect(m.first.fetch).to be_first }
+      specify { expect(m.first.fetch).to_not be_last }
+    end
+
+    describe "#last" do
+      specify { expect(m.last.fetch).to_not be_first }
+      specify { expect(m.last.fetch).to be_last }
+    end
+
+    describe "#successors" do
+      specify { expect(m.successors.head).to be_a(Stupidedi::Parser::InstructionTable) }
+    end
+
+    describe "#parent" do
+      specify { expect(m.parent).to be_success }
+      specify { expect(m.parent.fetch).to_not be_first }
+      specify { expect(m.parent.flatmap(&:parent).fetch).to be_first }
+      specify { expect(m.parent.flatmap(&:parent).flatmap(&:parent)).to be_failure }
+    end
+
+    describe "#next" do
+      specify { expect(m.next).to be_failure }
+      specify { expect(m.first.flatmap{|x| x.next    }).to be_success } # GS
+      specify { expect(m.first.flatmap{|x| x.next(1) }).to be_success } # GS
+      specify { expect(m.first.flatmap{|x| x.next(2) }).to be_success } # ST
+      specify { expect(m.first.flatmap{|x| x.next(3) }).to be_failure }
+    end
+
+    describe "#prev" do
+      specify { expect(m.prev).to be_success } # GS
+      specify { expect(m.prev(1)).to be_success } # GS
+      specify { expect(m.prev(2)).to be_success } # ISA
+      specify { expect(m.prev(3)).to be_failure }
     end
   end
 
@@ -522,17 +617,157 @@ describe Stupidedi::Parser::Navigation do
       end
     end
 
+    context "when matching a simple element" do
+      let(:b) do
+        strict(
+          Detail("2",
+            Segment(50, NNA(), s_mandatory, unbounded)))
+      end
+
+      let(:m) do
+        b.NNA(0)
+        b.NNA(1)
+        b.machine.first.flatmap{|m| m.sequence(:GS, :ST) }.fetch
+      end
+
+      context "and element does match" do
+        it "returns success" do
+          expect(m.find(:NNA, nil)).to be_success
+          expect(m.find(:NNA, 0)).to be_success
+          expect(m.find(:NNA, 1)).to be_success
+        end
+      end
+
+      context "and element doesn't match" do
+        it "returns failure" do
+          expect(m.find(:NNA, 2)).to be_failure
+        end
+      end
+    end
+
+    context "when matching a composite element" do
+      let(:b) do
+        strict(
+          Detail("2",
+            Segment(50, COM(), s_mandatory, unbounded)))
+      end
+
+      let(:m) do
+        b.COM(b.composite(0, 1, 2))
+        b.COM(b.composite(3, 4, 5))
+        b.machine.first.flatmap{|m| m.sequence(:GS, :ST) }.fetch
+      end
+
+      context "and element does match" do
+        it "returns success" do
+          expect(m.find(:COM)).to be_success
+
+          expect(m.find(:COM, m.composite(0))).to be_success
+          expect(m.find(:COM, m.composite(3))).to be_success
+
+          expect(m.find(:COM, m.composite(nil, 1))).to be_success
+          expect(m.find(:COM, m.composite(nil, 4))).to be_success
+
+          expect(m.find(:COM, m.composite(nil, nil, 2))).to be_success
+          expect(m.find(:COM, m.composite(nil, nil, 5))).to be_success
+        end
+      end
+
+      context "and element doesn't match" do
+        it "returns failure" do
+          expect(m.find(:COM, m.composite(9))).to be_failure(/COM\*9~ does not occur/)
+          expect(m.find(:COM, m.composite(1, 9))).to be_failure(/COM\*1:9~ does not occur/)
+          expect(m.find(:COM, m.composite(1, 2, 9))).to be_failure(/COM\*1:2:9~ does not occur/)
+        end
+      end
+    end
+
+    context "when matching a repeating element" do
+    end
   end
 
   todo "#find!"
 
-  todo "#iterate"
+  context "#iterate" do
+    todo "on repeatable segment"
+    todo "on non-repeatable segment"
+    todo "on repeatable loop first segment"
+    todo "on non-repeatable loop first segment"
+    todo "on repeatble table entry segment"
+    todo "on non-repeatable table entry segment"
+  end
+
+  context "#segmentn" do
+    todo
+  end
+
+  context "#elementn" do
+    let(:b) do
+      strict(
+        Detail("2",
+          Segment(50, NNA(), s_optional, unbounded),
+          Segment(60, COM(), s_optional, unbounded),
+          Segment(70, REP(), s_optional, unbounded)))
+    end
+
+    context "(m)" do
+      context "when m is not positive" do
+      end
+
+      context "when segement does not occur" do
+      end
+
+      context "when mth element does not occur" do
+      end
+
+      context "when mth element cannot occur" do
+      end
+
+      context "when mth element is simple" do
+      end
+
+      context "when mth element is composite" do
+      end
+
+      context "when mth element is repeating" do
+      end
+    end
+
+    context "(m, n)" do
+      context "when n is not positive" do
+      end
+
+      context "when mth element is simple" do
+      end
+
+      context "when mth element is composite" do
+        context "when nth element does not occur" do
+        end
+
+        context "when nth element cannot occur" do
+        end
+
+        context "when nth element occurs" do
+        end
+      end
+
+      context "when mth element is repeating" do
+        context "when nth element does not occur" do
+        end
+
+        context "when nth element cannot occur" do
+        end
+
+        context "when nth element occurs" do
+        end
+      end
+    end
+
+    context "(m, n, o)" do
+    end
+  end
 
   todo "#sequence"
-
-  todo "#segmentn"
-
-  todo "#elementn"
 
   todo "#successors"
 
