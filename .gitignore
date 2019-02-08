@@ -1,5 +1,5 @@
 .yardoc
 doc/generated
-coverage
+build/coverage
 .bundle
 .ruby-version
