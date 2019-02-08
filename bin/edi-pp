@@ -56,4 +56,4 @@ begin
     tap{|d| $stderr.puts "#{d + 1} segments" }
 end
 
-puts "%0.3f seconds" % (stop - start)
+$stderr.puts "%0.3f seconds" % (stop - start)
