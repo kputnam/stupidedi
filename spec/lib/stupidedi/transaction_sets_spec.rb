@@ -38,8 +38,9 @@ describe "Stupidedi::TransactionSets" do
         case error
         when Exception
           fixtures[name].sort.each do |path, _, _|
-            pending "can parse '#{path}'", :fixtures do
-              raise "#{name} is not well-defined (see other spec results)"
+            it "can parse '#{path}'", :fixtures do
+              pending "#{name} is not well-defined (see other spec results)"
+              fail
             end
           end
         else
@@ -80,12 +81,13 @@ describe "Stupidedi::TransactionSets" do
         end
 
       else
-        pending "can parse examples", :fixtures do
+        it "can parse examples", :fixtures do
           parts   = name.split("::").slice(2..-1)
           version = Fixtures.versions.invert.fetch(parts[0], parts[0])
           name    = parts[2..3].join(" ")
 
-          raise "No fixtures were found in 'spec/fixtures/#{version}/#{name}/{pass,fail}'"
+          pending "No fixtures were found in 'spec/fixtures/#{version}/#{name}/{pass,fail}'"
+          fail
         end
       end
     end

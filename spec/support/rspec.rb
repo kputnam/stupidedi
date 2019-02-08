@@ -57,11 +57,13 @@ module RSpecHelpers
     if block_given?
       pending name, *args, :todo do
         instance_exec(&block)
-        fail "@todo"
       end
     else
-      pending name, *args, :todo do
-        fail "@todo"
+      backtrace = caller.slice(0..1)
+
+      it name, *args, :todo do
+        pending "@todo"
+        raise RuntimeError.new("").tap{|e| e.set_backtrace(backtrace) }
       end
     end
   end
