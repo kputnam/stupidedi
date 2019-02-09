@@ -20,8 +20,8 @@ end
 require "yard"
 YARD::Rake::YardocTask.new(:yard => :clobber_yard)
 task :clobber_yard do
-  rm_rf "#{relpath}/doc/generated"
-  mkdir_p "#{relpath}/doc/generated/images"
+  rm_rf "#{relpath}/build/generated/doc"
+  mkdir_p "#{relpath}/build/generated/doc/images"
 end
 
 task :console do

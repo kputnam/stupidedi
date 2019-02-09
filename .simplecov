@@ -3,7 +3,7 @@ require "simplecov-inline-html"
 require "term/ansicolor"
 
 SimpleCov.start do
-  coverage_dir "build/coverage"
+  coverage_dir "build/generated/coverage"
 
   add_filter %r{/segment_defs}
   add_filter %r{/element_defs}

@@ -1,4 +1,4 @@
-fdescribe Stupidedi::Versions::Common::ElementTypes::Nn do
+describe Stupidedi::Versions::Common::ElementTypes::Nn do
   using Stupidedi::Refinements
   include Definitions
 

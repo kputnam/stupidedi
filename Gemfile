@@ -10,7 +10,7 @@ group :development do
   gem "rspec-collection_matchers"
 
   gem "yard","~> 0.9.12"
-  gem "redcarpet","~> 3.4.0", :platforms => [:mri]
+# gem "redcarpet","~> 3.4.0", :platforms => [:mri]
 
   # https://github.com/colszowka/simplecov#ruby-version-compatibility
   gem "simplecov",              :platforms => [:ruby_24, :ruby_25]
