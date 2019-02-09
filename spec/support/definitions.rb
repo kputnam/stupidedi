@@ -1,5 +1,5 @@
 unless defined? SimpleDelegator
-  require "delegator"
+  require "delegate"
 end
 
 module Definitions
