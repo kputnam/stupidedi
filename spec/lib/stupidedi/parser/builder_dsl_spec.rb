@@ -21,6 +21,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
   def config(details, version = "005010")
     Stupidedi::Config.default.customize do |x|
+      x.functional_group.register("005010",
+        Definitions::FunctionalGroupDelegator.new(x.functional_group.at("005010")))
+
       x.transaction_set.register(version, "FA", "999") do
         Stupidedi::Schema::TransactionSetDef.build("FA", "999", "Example",
           Header("1", Segment(10, :ST, s_mandatory, bounded(1))),
@@ -951,12 +954,123 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       end
 
       context "ID (identifier)" do
-        let(:b) do
-          strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(dE_ID, e_mandatory, bounded(1)))))
+        context "when a simple element" do
+          let(:b) do
+            strict(Detail("2",
+              # No additional restrictions on IDA01, all A-Z allowed
+              Segment(10, IDA(), s_optional, bounded(1)),
+
+              # Two instances are disjoint, IDB01 determins which of these is used
+              Segment(20, IDB(%w(X), "Example X"), s_optional, bounded(1)),
+              Segment(20, IDB(%w(Y), "Example Y"), s_optional, bounded(1)),
+
+              # Two instances have some shared values (A), so ambiguity is possible
+              Segment(30, IDC(%w(A X), "Example X"), s_optional, bounded(1)),
+              Segment(30, IDC(%w(A Y), "Example Y"), s_optional, bounded(1))))
+          end
+
+          context "when given a non-allowed value" do
+            context "and no choice is involved" do
+              it "raises an exception" do
+                expect { b.IDA("0") }.to \
+                  raise_error(/value 0 is not allowed in element IDA01/)
+              end
+            end
+
+            context "and choice is involved" do
+              it "raises an exception" do
+                expect { b.IDB("0") }.to \
+                  raise_error(/value 0 is not allowed in element IDB01/)
+              end
+
+              it "raises an exception" do
+                expect { b.IDC("0") }.to \
+                  raise_error(/value 0 is not allowed in element IDC01/)
+              end
+            end
+          end
+
+          context "when given an ambiguous value" do
+            it "raises an exception" do
+              expect { b.IDB(nil) }.to \
+                raise_error(/non-deterministic machine state: IDB Example X, IDB Example Y/)
+            end
+
+            it "raises an exception" do
+              expect { b.IDC("A") }.to \
+                raise_error(/non-deterministic machine state: IDC Example X, IDC Example Y/)
+            end
+          end
+
+          context "when given an allowed value" do
+            it "is a-ok" do
+              b.IDA("X")
+              b.IDB("X")
+              b.IDB("Y")
+              b.IDC("X")
+              b.IDC("Y")
+            end
+          end
         end
 
-        todo
+        context "when a component element" do
+          let(:b) do
+            strict(Detail("2",
+              # No additional restrictions on XX01, all A-Z allowed
+              Segment(20, COI(), s_optional, bounded(1)),
+
+              # Two instances are disjoint, XX01 determins which of these is used
+              Segment(20, COJ(%w(X), "Example X"), s_optional, bounded(1)),
+              Segment(20, COJ(%w(Y), "Example Y"), s_optional, bounded(1)),
+
+              # Two instances have some shared values (A), so ambiguity is possible
+              Segment(30, COK(%w(A X), "Example X"), s_optional, bounded(1)),
+              Segment(30, COK(%w(A Y), "Example Y"), s_optional, bounded(1))))
+          end
+
+          context "when given a non-allowed value" do
+            context "and no choice is involved" do
+              it "raises an exception" do
+                expect { b.COI(b.composite("0")) }.to \
+                  raise_error(/value 0 is not allowed in element COI01-01/)
+              end
+            end
+
+            context "and choice is involved" do
+              it "raises an exception" do
+                expect { b.COJ(b.composite("0")) }.to \
+                  raise_error(/value 0 is not allowed in element COJ01-01/)
+              end
+
+              it "raises an exception" do
+                expect { b.COK(b.composite("0")) }.to \
+                  raise_error(/value 0 is not allowed in element COK01-01/)
+              end
+            end
+          end
+
+          context "when given an ambiguous value" do
+            it "raises an exception" do
+              expect { b.COJ(b.composite(nil)) }.to \
+                raise_error(/non-deterministic machine state: COJ Example X, COJ Example Y/)
+            end
+
+            it "raises an exception" do
+              expect { b.COK(b.composite("A")) }.to \
+                raise_error(/non-deterministic machine state: COK Example X, COK Example Y/)
+            end
+          end
+
+          context "when given an allowed value" do
+            it "is a-ok" do
+              b.COI(b.composite("X"))
+              b.COJ(b.composite("X"))
+              b.COJ(b.composite("Y"))
+              b.COK(b.composite("X"))
+              b.COK(b.composite("Y"))
+            end
+          end
+        end
       end
 
       context "Nn (fixed precision number)" do

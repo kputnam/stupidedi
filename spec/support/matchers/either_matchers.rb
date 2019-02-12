@@ -1,10 +1,10 @@
 module EitherMatchers
-  def be_success(value = nil)
-    BeSuccess.new(value)
+  def be_success(value = nil, &block)
+    BeSuccess.new(value || block)
   end
 
-  def be_failure(value = nil)
-    BeFailure.new(value)
+  def be_failure(value = nil, &block)
+    BeFailure.new(value || block)
   end
 
   class BeSuccess

@@ -30,7 +30,7 @@ module Stupidedi
         while reader_e.defined?
           reader_e = reader_e.flatmap do |segment_tok, reader_|
             machine, reader__ =
-              machine.insert(segment_tok, reader_)
+              machine.insert(segment_tok, false, reader_)
 
             if machine.active.length <= limit
               reader__.read_segment
@@ -54,10 +54,10 @@ module Stupidedi
       end
 
       # @return [(StateMachine, Reader::TokenReader)]
-      def insert(segment_tok, reader)
+      def insert(segment_tok, strict, reader)
         active = @active.flat_map do |zipper|
           state        = zipper.node
-          instructions = state.instructions.matches(segment_tok)
+          instructions = state.instructions.matches(segment_tok, strict, :insert)
 
           if instructions.empty?
             zipper.append(FailureState.mksegment(segment_tok, state)).cons
@@ -116,8 +116,8 @@ module Stupidedi
           parent = state.node.copy \
             :zipper       => value,
             :children     => [],
-            :separators   => reader.separators,
-            :segment_dict => reader.segment_dict,
+            :separators   => reader.try(&:separators),
+            :segment_dict => reader.try(&:segment_dict),
             :instructions => table.pop(op.pop_count).drop(op.drop_count)
 
           # Note, `state` is a cursor pointing at a state, while `parent`

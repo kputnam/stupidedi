@@ -39,7 +39,7 @@ module Stupidedi
       # @return [BuilderDsl]
       def segment!(name, position, *elements)
         segment_tok     = mksegment_tok(@reader.segment_dict, name, elements, position)
-        machine, reader = @machine.insert(segment_tok, @reader)
+        machine, reader = @machine.insert(segment_tok, @strict, @reader)
 
         if @strict
           unless machine.deterministic?
@@ -124,7 +124,7 @@ module Stupidedi
               "forbidden #{zipper.node.descriptor} is present at #{zipper.node.position.inspect}"
           elsif not zipper.node.allowed?
             raise Exceptions::ParseError,
-              "value #{zipper.node.to_s} not allowed in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
+              "value #{zipper.node.to_s} is not allowed in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"
           elsif zipper.node.too_long?
             raise Exceptions::ParseError,
               "value is too long in #{zipper.node.descriptor} at #{zipper.node.position.inspect}"

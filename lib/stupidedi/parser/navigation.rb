@@ -117,12 +117,17 @@ module Stupidedi
       #
       # @return [Either<Zipper::AbstractCursor<Values::AbstractElementVal>>]
       def element(m, n = nil, o = nil)
-        segment.flatmap do |s|
-          unless m >= 1
-            raise ArgumentError,
-              "argument must be positive"
-          end
+        if m <= 0 or (n || 1) <= 0 or (o || 1) <= 0
+          raise ArgumentError,
+            "all arguments must be positive"
+        end
 
+        if n.nil? and not o.nil?
+          raise ArgumentError,
+            "third argument cannot be present unless second argument is present"
+        end
+
+        segment.flatmap do |s|
           if s.node.invalid?
             # InvalidSegmentVal doesn't have child AbstractElementVals, its
             # children are SimpleElementTok, CompositeElementTok, etc, which
@@ -130,67 +135,113 @@ module Stupidedi
             return Either.failure("invalid segment")
           end
 
-          designator = s.node.id.to_s
-          definition = s.node.definition
-          length     = definition.element_uses.length
+          segment_id  = s.node.id.to_s
+          segment_def = s.node.definition
+          descriptor  = segment_id
 
-          unless m <= length
+          unless m <= segment_def.element_uses.length
             raise ArgumentError,
-              "#{designator} segment has only #{length} elements"
+              "segment #{descriptor} has only #{segment_def.element_uses.length} elements"
           end
 
-          designator  = designator + "%02d" % m
-          value       = s.child(m - 1)
+          element_use = segment_def.element_uses.at(m - 1)
+          element_def = element_use.definition
+          element_zip = s.child(m - 1)
 
           if n.nil?
-            return Either.success(value)
-          elsif value.node.repeated?
-            unless n >= 1
+            return Either.success(element_zip)
+
+          elsif element_use.composite? and not element_use.repeatable?
+            # m: element   of segment
+            # n: component of composite element
+            # o: occurence of repeated component
+            descriptor = "%s%02d" % [segment_id, m]
+            components = element_def.component_uses.length
+            unless n <= components
               raise ArgumentError,
-                "argument must be positive"
+                "composite element #{descriptor} only has #{components} components"
             end
 
-            limit = value.node.usage.repeat_count
-            unless limit.include?(n)
+            component_use = element_def.component_uses.at(n - 1)
+
+            if o.nil?
+              # This is a component of a composite element
+              return Either.success(element_zip.child(n - 1))
+
+            # @todo: There currently doesn't seem to be any instances of this in
+            # the real world (a composite element that has a component that can
+            # repeat), but perhaps this will happen in the future.
+            #
+            # elsif component_use.repeatable?
+            #   repeat_count = component_use.repeat_count
+            #   occurs_count = component_val.children.length
+            #   descriptor   = "%s%02d-%02d" % [segment_id, m, n]
+            #   unless repeat_count.include?(o)
+            #     raise ArgumentError,
+            #       "repeatable component element #{descriptor} can only occur #{repeat_count.max} times"
+            #   end
+            #   component_zip = element_zip.child(n - 1)
+            #   if component_zip.node.blank?
+            #     return Either.failure("repeating component element #{descriptor} is blank")
+            #   elsif occurs_count < n
+            #     return Either.failure("repeating component element #{descriptor} only occurs #{occurs_count} times")
+            #   else
+            #     return Either.success(component_zip.child(o - 1))
+            #   end
+
+            else
+              descriptor = "%s%02d-%02d" % [segment_id, m, n]
               raise ArgumentError,
-                "#{designator} can only occur #{limit.max} times"
+                "component element #{descriptor} cannot be further deconstructed"
             end
 
-            unless value.node.children.defined_at?(n - 1)
-              return Either.failure("#{designator} occurs only #{value.node.children.length} times")
+          elsif element_use.repeatable?
+            # m: element   of segment
+            # n: occurence of repeated element
+            # o: component of composite element
+            descriptor   = "%s%02d" % [segment_id, m]
+            occurs_count = element_zip.children.count
+            unless element_use.repeat_count.include?(n)
+              raise ArgumentError,
+                "repeatable element #{descriptor} can only occur #{element_use.repeat_count.max} times"
             end
 
-            value = value.child(n - 1)
-            n, o  = o, nil
+            if o.nil?
+              description = (element_use.composite?) ? "repeatable composite" : "repeatable"
+              if element_zip.node.blank?
+                return Either.failure("#{description} element #{descriptor} does not occur")
+              elsif occurs_count < n
+                return Either.failure("#{description} element #{descriptor} only occurs #{occurs_count} times")
+              else
+                return Either.success(element_zip.child(n - 1))
+              end
 
-            return Either.success(value) if n.nil?
-          end
+            elsif element_use.composite?
+              components = element_def.component_uses.length
+              unless o <= components
+                raise ArgumentError,
+                  "repeatable composite element #{descriptor} only has #{components} components"
+              end
 
-          unless value.node.composite?
-            raise ArgumentError,
-              "#{designator} is a simple element"
-          end
+              descriptor = "%s%02d" % [segment_id, m]
 
-          unless o.nil?
-            raise ArgumentError,
-              "#{designator} is a non-repeatable composite element"
-          end
+              if element_zip.node.blank?
+                return Either.failure("repeatable composite element #{descriptor} does not occur")
+              elsif occurs_count < n
+                return Either.failure("repeatable composite element #{descriptor} only occurs #{occurs_count} times")
+              else
+                component_zip = element_zip.children.at(n - 1)
+                return Either.success(component_zip.child(o - 1))
+              end
 
-          unless n >= 1
-            raise ArgumentError,
-              "argument must be positive"
-          end
+            else
+              raise ArgumentError,
+                "repeatable element #{descriptor} cannot be further deconstructed"
+            end
 
-          length = definition.element_uses.at(m - 1).definition.component_uses.length
-          unless n <= length
-            raise ArgumentError,
-              "#{designator} has only #{length} components"
-          end
-
-          if value.node.empty?
-            Either.failure("#{designator} is empty")
           else
-            Either.success(value.child(n - 1))
+            raise ArgumentError,
+              "#{segment_id}#{"%02d" % m} is not a composite or repeated element"
           end
         end
       end
@@ -514,6 +565,17 @@ module Stupidedi
             state = zipper
             value = zipper.node.zipper
 
+            if assert_repeatable
+              # We have to do some extra work here, because `target` below won't
+              # have the additional instructions that could be added by calling
+              # `.push` on the new state class
+              repeatable ||= begin
+                suppose  = StateMachine.new(@config, [state])
+                suppose, = suppose.execute(op_, state, nil, filter_tok)
+                suppose.node.instructions.matches(filter_tok, true, :find).present?
+              end
+            end
+
             # 1. Move upward (possibly zero times)
             op_.pop_count.times do
               value = value.up
@@ -524,7 +586,6 @@ module Stupidedi
             #    nodes to move left, but not exactly how many. Instead, we
             #    know what the InstructionTable is when we get there.
             target = zipper.node.instructions.pop(op_.pop_count).drop(op_.drop_count)
-            repeatable ||= target.matches(filter_tok, true, :find).present?
 
             # 3. If the segment we're searching for belongs in a new subtree,
             #    but it's not the only segment that might have "opened" that
@@ -626,12 +687,10 @@ module Stupidedi
 
         if assert_repeatable and not repeatable
           raise Exceptions::ParseError,
-            "#{id} segment is not repeatable"
-        end
-
-        if not reachable
+            "segment #{filter_tok.to_x12(Reader::Separators.default)} is not repeatable"
+        elsif not reachable
           raise Exceptions::ParseError,
-            "segment #{filter_tok.to_x12(Reader::Separators.default)} cannot be reached from the current state"
+            "segment #{filter_tok.to_x12(Reader::Separators.default)} cannot be reached"
         elsif matches.empty?
           Either.failure("segment #{filter_tok.to_x12(Reader::Separators.default)} does not occur")
         else

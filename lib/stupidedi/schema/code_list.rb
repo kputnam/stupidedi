@@ -78,6 +78,12 @@ module Stupidedi
 
       # @return [CodeList::Internal]
       def build(hash)
+        # @todo: deprecate
+        CodeList::Internal.new(hash)
+      end
+
+      # @return [CodeList::Internal]
+      def internal(hash)
         CodeList::Internal.new(hash)
       end
 

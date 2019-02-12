@@ -18,7 +18,7 @@ module Stupidedi
     #
     class ConstraintTable
       # @return [Array<Instruction>]
-      abstract :matches, :args => %w(segment_tok mode)
+      abstract :matches, :args => %w(segment_tok strict mode)
 
       # @return [Array<Instruction>]
       attr_reader :instructions
@@ -29,6 +29,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         name = self.class.name.split("::").last
         q.text "#{name}.build"
@@ -43,6 +44,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @todo
       def critique(segment_tok, segment_uses)
@@ -90,19 +92,19 @@ module Stupidedi
       # Chooses the {Instruction} that pops the greatest number of states.
       #
       class Deepest < ConstraintTable
-        def initialize(instructions)
-          @instructions = instructions
-        end
+      #   def initialize(instructions)
+      #     @instructions = instructions
+      #   end
 
-        # @return [Array<Instruction>]
-        def matches(segment_tok, strict, mode)
-          @__matches ||= begin
-            deepest = @instructions.map(&:pop_count).max
-            @instructions.select{|i| i.pop_count == deepest }.tap do |xs|
-              critique(segment_tok, xs.map(&:segment_use)) if strict
-            end
-          end
-        end
+      #   # @return [Array<Instruction>]
+      #   def matches(segment_tok, strict, mode)
+      #     @__matches ||= begin
+      #       deepest = @instructions.map(&:pop_count).max
+      #       @instructions.select{|i| i.pop_count == deepest }.tap do |xs|
+      #         critique(segment_tok, xs.map(&:segment_use)) if strict
+      #       end
+      #     end
+      #   end
       end
 
       # Chooses the subset of {Instruction} values based on the distinguishing
@@ -141,10 +143,10 @@ module Stupidedi
               else
                 if strict
                   designator = "#{segment_tok.id}#{"%02d" % (n + 1)}"
-                  designator = designator + "-%02d" % m unless m.nil?
+                  designator = designator + "-%02d" % (m + 1) unless m.nil?
 
                   raise ArgumentError,
-                    "#{value.inspect} is not allowed in #{designator}"
+                    "value #{value.to_s} is not allowed in element #{designator}"
                 end
               end
             end
@@ -177,11 +179,11 @@ module Stupidedi
               else
                 # This value isn't compatible with any instruction
                 if strict
-                  designator = "#{segment_tok.id}#{"%02d" % n}"
-                  designator = designator + "-%02d" % m unless m.nil?
+                  designator = "#{segment_tok.id}#{"%02d" % (n + 1)}"
+                  designator = designator + "-%02d" % (m + 1) unless m.nil?
 
                   raise ArgumentError,
-                    "#{value.inspect} is not allowed in #{designator}"
+                    "value #{value.to_s} is not allowed in element #{designator}"
                 end
               end
             end

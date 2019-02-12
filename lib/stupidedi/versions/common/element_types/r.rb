@@ -269,7 +269,7 @@ module Stupidedi
 
               if remaining <= 0
                 if truncate
-                  int   = @value.to_i.to_s
+                  int   = @value.to_i
                   sign  = (int < 0) ? "-" : ""
                   sign  = sign + int.abs.to_s.take(definition.max_length)
                   return sign

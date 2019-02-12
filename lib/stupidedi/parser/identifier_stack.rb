@@ -175,7 +175,7 @@ module Stupidedi
         end
 
         def hl
-          HL.new(self, @hl_sequence, @lx_sequence).tap { @hl_sequence.succ! }
+          HL.new(self, @hl_sequence.succ!, @lx_sequence)
         end
 
         def lx
@@ -216,7 +216,7 @@ module Stupidedi
         end
 
         def hl
-          HL.new(self, @sequence.succ!, @lx_sequence)
+          HL.new(self, @hl_sequence.succ!, @lx_sequence)
         end
 
         def lx
@@ -226,7 +226,7 @@ module Stupidedi
         # Parent HL number (HL02)
         #
         # @return [Integer]
-        def parent_id
+        def parent_hl
           if @parent.is_a?(HL)
             @parent.id
           else

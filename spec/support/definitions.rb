@@ -62,7 +62,7 @@ module Definitions
   end
 
   def CodeList(*args)
-    Stupidedi::Schema::CodeList.external(*args)
+    Stupidedi::Schema::CodeList.internal(*args)
   end
 
   RepeatCount   = Stupidedi::Schema::RepeatCount
@@ -164,7 +164,7 @@ module Definitions
 
   module ElementDefs
     DE_ID   = Stupidedi::Versions::Common::ElementTypes::ID.new(:DE1, "DE1 (ID)",   1,  1,
-      Stupidedi::Schema::CodeList.external(Hash[("A".."Z").map{|x| [x, "Meaning of #{x}"]}]))
+      Stupidedi::Schema::CodeList.internal(Hash[("A".."Z").map{|x| [x, "Meaning of #{x}"]}]))
     DE_AN   = Stupidedi::Versions::Common::ElementTypes::AN.new(:DE2, "DE2 (AN)",   1, 10)
     DE_DT6  = Stupidedi::Versions::Common::ElementTypes::DT.new(:DE3, "DE3 (DT/6)", 6,  6)
     DE_DT8  = Stupidedi::Versions::Common::ElementTypes::DT.new(:DE4, "DE4 (DT/8)", 8,  8)
@@ -173,11 +173,12 @@ module Definitions
     DE_N0   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE7, "DE7 (N0)",   1,  6, 0)
     DE_N1   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE8, "DE8 (N1)",   1,  6, 1)
     DE_N2   = Stupidedi::Versions::Common::ElementTypes::Nn.new(:DE9, "DE9 (N2)",   1,  6, 2)
-    DE_COM  = Stupidedi::Schema::CompositeElementDef.build(:DE_COM,
-      "Composite Element", "",
+    DE_CON  = Stupidedi::Schema::CompositeElementDef.build(:DE_CON, "CE NNN", "",
       DE_N0.component_use(ElementReqs::Mandatory),
       DE_N0.component_use(ElementReqs::Mandatory),
       DE_N0.component_use(ElementReqs::Optional))
+    DE_COI  = Stupidedi::Schema::CompositeElementDef.build(:DE_COI, "CE COI", "",
+      DE_ID.component_use(ElementReqs::Optional))
   end
 
   def de_ID ; ElementDefs::DE_ID  end
@@ -189,6 +190,8 @@ module Definitions
   def de_N0 ; ElementDefs::DE_N0  end
   def de_N1 ; ElementDefs::DE_N1  end
   def de_N2 ; ElementDefs::DE_N2  end
+  def de_CON; ElementDefs::DE_CON end
+  def de_COI; ElementDefs::DE_COI end
 
   module SegmentDefs
     ANA =
@@ -231,56 +234,73 @@ module Definitions
 
     COM =
       Stupidedi::Schema::SegmentDef.build(:COM, "Example Segment", "",
-        ElementDefs::DE_COM.simple_use(ElementReqs::Optional,  RepeatCount.bounded(1)))
+        ElementDefs::DE_CON.simple_use(ElementReqs::Optional, RepeatCount.bounded(1)))
+
+    COI =
+      Stupidedi::Schema::SegmentDef.build(:COI, "Example Segment", "",
+        ElementDefs::DE_COI.simple_use(ElementReqs::Optional, RepeatCount.bounded(1)))
+
+    COJ =
+      Stupidedi::Schema::SegmentDef.build(:COJ, "Example Segment", "",
+        ElementDefs::DE_COI.simple_use(ElementReqs::Optional, RepeatCount.bounded(1)))
+
+    COK =
+      Stupidedi::Schema::SegmentDef.build(:COK, "Example Segment", "",
+        ElementDefs::DE_COI.simple_use(ElementReqs::Optional, RepeatCount.bounded(1)))
+
+    COR =
+      Stupidedi::Schema::SegmentDef.build(:COR, "Example Segment", "",
+        ElementDefs::DE_CON.simple_use(ElementReqs::Optional, RepeatCount.bounded(3)))
 
     REP =
       Stupidedi::Schema::SegmentDef.build(:REP, "Example Segment", "",
-        ElementDefs::DE_N0.simple_use(ElementReqs::Optional,  RepeatCount.bounded(3)))
+        ElementDefs::DE_N0.simple_use(ElementReqs::Optional, RepeatCount.bounded(3)))
   end
 
   def NNA; SegmentDefs::NNA end
   def NNB; SegmentDefs::NNB end
   def COM; SegmentDefs::COM end
+  def COR; SegmentDefs::COR end
   def REP; SegmentDefs::REP end
 
-  def ANA(changes = {})
-    SegmentDefs::ANA.bind do |s|
+  def ANA(*args) AN_(SegmentDefs::ANA, *args) end
+  def ANB(*args) AN_(SegmentDefs::ANB, *args) end
+  def AN_(segment_def, changes = {})
+    segment_def.bind do |s|
       return s if changes.empty?
       s.copy(:element_uses => s.element_uses.map{|u| u.copy(:definition => u.definition.copy(changes))})
     end
   end
 
-  def ANB(changes = {})
-    SegmentDefs::ANB.bind do |s|
-      return s if changes.empty?
-      s.copy(:element_uses => s.element_uses.map{|u| u.copy(:definition => u.definition.copy(changes))})
+  def IDA(*args) ID_(SegmentDefs::IDA, *args) end
+  def IDB(*args) ID_(SegmentDefs::IDB, *args) end
+  def IDC(*args) ID_(SegmentDefs::IDC, *args) end
+  def ID_(segment_def, allowed_values = [], name = nil)
+    segment_def.bind do |s|
+      return s if allowed_values.empty? and name.nil?
+      s.copy(
+        :name         => name || s.name,
+        :element_uses => s.element_uses.head.bind do |u|
+          u.copy(:allowed_values => u.allowed_values.replace(allowed_values))
+        end.cons(s.element_uses.tail))
     end
   end
 
-  def IDA(qualifiers = [])
-    SegmentDefs::IDA.bind do |s|
-      return s if qualifiers.empty?
-      s.copy(:element_uses => s.element_uses.head.bind do |u|
-        u.copy(:allowed_values => u.allowed_values.replace(qualifiers))
-      end.cons(s.element_uses.tail))
-    end
-  end
-
-  def IDB(qualifiers = [])
-    SegmentDefs::IDB.bind do |s|
-      return s if qualifiers.empty?
-      s.copy(:element_uses => s.element_uses.head.bind do |u|
-        u.copy(:allowed_values => u.allowed_values.replace(qualifiers))
-      end.cons(s.element_uses.tail))
-    end
-  end
-
-  def IDC(qualifiers = [])
-    SegmentDefs::IDC.bind do |s|
-      return s if qualifiers.empty?
-      s.copy(:element_uses => s.element_uses.head.bind do |u|
-        u.copy(:allowed_values => u.allowed_values.replace(qualifiers))
-      end.cons(s.element_uses.tail))
+  def COI(*args) CO_(SegmentDefs::COI, *args) end
+  def COJ(*args) CO_(SegmentDefs::COJ, *args) end
+  def COK(*args) CO_(SegmentDefs::COK, *args) end
+  def CO_(segment_def, allowed_values = [], name = nil)
+    segment_def.bind do |s|
+      return s if allowed_values.empty? and name.nil?
+      s.copy(
+        :name         => name || s.name,
+        :element_uses => s.element_uses.head.bind do |u|
+          u.copy(:definition => u.definition.bind do |c|
+            c.copy(:component_uses => c.component_uses.head.bind do |x|
+              x.copy(:allowed_values => x.allowed_values.replace(allowed_values))
+            end.cons(c.component_uses.tail))
+          end)
+        end.cons(s.element_uses.tail))
     end
   end
 end

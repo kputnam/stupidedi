@@ -324,8 +324,40 @@ describe Stupidedi::Versions::Common::ElementTypes::R do
     todo "#to_r"
 
     describe "#to_x12(truncate)" do
-      todo "with truncation"
-      todo "without truncation"
+      # Remember the element definition has length 4-6, with precision 2
+
+      context "with truncation" do
+        specify { expect(value("0").to_x12).to        eq("0000") }
+        specify { expect(value("1").to_x12).to        eq("0001") }
+        specify { expect(value("20").to_x12).to       eq("0020") }
+        specify { expect(value("300").to_x12).to      eq("0300") }
+        specify { expect(value("4000").to_x12).to     eq("4000") }
+        specify { expect(value("50000").to_x12).to    eq("50000") }
+        specify { expect(value("600000").to_x12).to   eq("600000") }
+        specify { expect(value("7000000").to_x12).to  eq("700000") }
+
+        specify { expect(value("-0").to_x12).to        eq("0000") }
+        specify { expect(value("-1").to_x12).to        eq("-0001") }
+        specify { expect(value("-20").to_x12).to       eq("-0020") }
+        specify { expect(value("-300").to_x12).to      eq("-0300") }
+        specify { expect(value("-4000").to_x12).to     eq("-4000") }
+        specify { expect(value("-50000").to_x12).to    eq("-50000") }
+        specify { expect(value("-600000").to_x12).to   eq("-600000") }
+        specify { expect(value("-7000000").to_x12).to  eq("-700000") }
+
+        specify { expect(value("0.0").to_x12).to        eq("0000") }
+        specify { expect(value("0.1").to_x12).to        eq("00.1") }
+        specify { expect(value("0.02").to_x12).to       eq("0.02") }
+        specify { expect(value("0.003").to_x12).to      eq("0000") } # precision is only 2
+
+        specify { expect(value("-15.0").to_x12).to        eq("-0015") }
+        specify { expect(value("-15.1").to_x12).to        eq("-15.1") }
+        specify { expect(value("-15.02").to_x12).to       eq("-15.02") }
+        specify { expect(value("-15.003").to_x12).to      eq("-0015") }
+      end
+
+      context "without truncation" do
+      end
     end
 
     describe "relational operators" do

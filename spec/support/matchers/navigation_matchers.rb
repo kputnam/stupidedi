@@ -16,6 +16,98 @@ module NavigationMatchers
     end
   end
 
+  def be_segment(segment_id, *elements)
+    BeSegment.new(segment_id, elements)
+  end
+
+  class BeSegment
+    include Stupidedi::Parser::Navigation
+    include Stupidedi::Parser::Tokenization
+
+    def initialize(segment_id, elements)
+      @segment_id, @elements = segment_id, elements
+    end
+
+    def description
+      if @elements.empty?
+        "be segmenu #{@segment_id}~"
+      else
+        "be segment #{@segment_id}*#{@elements.map(&:inspect).join("*")})"
+      end
+    end
+
+    def matches?(value)
+      @filter_tok, @syntax_val = extract_arguments(value)
+      not @filter_tok.nil? and @syntax_val.segment? and not filter?(@filter_tok, @syntax_val)
+    end
+
+    def failure_message
+      if @filter_tok.nil?
+        "#{@syntax_val} doesn't belong to a functional group"
+      elsif @syntax_val.segment?
+        separators  = Stupidedi::Reader::Separators.default
+        "#{@syntax_val.pretty_inspect} does not match #{@filter_tok.to_x12(separators)}"
+      else
+        "#{@syntax_val.pretty_inspect} is not a segment"
+      end
+    end
+
+    def does_not_match?(machine)
+      @filter_tok, @syntax_val = extract_arguments(value)
+      not @filter_tok.nil? and @syntax_val.segment? and filter?(@filter_tok, @syntax_val)
+    end
+
+    def failure_message_when_negated
+      if @filter_tok.nil?
+        "#{@syntax_val} doesn't belong to a functional group"
+      elsif @syntax_val.segment?
+        separators  = Stupidedi::Reader::Separators.default
+        "#{@syntax_val.pretty_inspect} matches #{@filter_tok.to_x12(separators)}"
+      else
+        "#{@syntax_val.pretty_inspect} is not a segment"
+      end
+    end
+
+  private
+
+    def extract_arguments(value)
+      case value
+      when Stupidedi::Parser::StateMachine
+        filter_tok = filter_tok(value.active.head.node.zipper)
+        syntax_val = value.zipper.fetch.node
+      when Stupidedi::Zipper::AbstractCursor
+        filter_tok = filter_tok(value)
+        syntax_val = value.node
+      when Stupidedi::Values::AbstractVal
+        filter_tok = filter_tok(nil, Stupidedi::Reader::SegmentDict.build(Definitions::SegmentDefs))
+        syntax_val = value
+      else
+        raise TypeError, "value must be a StateMachine, AbstractCursor, or AbstractVal"
+      end
+      return filter_tok, syntax_val
+    end
+
+    def filter_tok(zipper, segment_dict = nil)
+      unless segment_dict.nil?
+        return mksegment_tok(segment_dict, @segment_id, @elements, nil)
+      end
+
+      until zipper.root?
+        syntax_val = zipper.node
+
+        unless syntax_val.functional_group?
+          zipper = zipper.up
+        else
+          # Make sure composite and repeated elements are understood
+          segment_dict = Stupidedi::Reader::SegmentDict.empty
+          segment_dict = segment_dict.push(syntax_val.segment_dict)
+          segment_dict = segment_dict.push(Definitions::SegmentDefs)
+          return mksegment_tok(segment_dict, @segment_id, @elements, nil)
+        end
+      end
+    end
+  end
+
   def have_separators(expected)
     HaveSeparators.new(expected)
   end
