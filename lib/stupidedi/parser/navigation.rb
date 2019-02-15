@@ -162,7 +162,7 @@ module Stupidedi
                 "composite element #{descriptor} only has #{components} components"
             end
 
-            component_use = element_def.component_uses.at(n - 1)
+            # component_use = element_def.component_uses.at(n - 1)
 
             if o.nil?
               # This is a component of a composite element

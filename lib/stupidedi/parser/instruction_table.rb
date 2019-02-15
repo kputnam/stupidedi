@@ -10,6 +10,8 @@ module Stupidedi
         # @return [Array<Instruction>]
         attr_reader :instructions
 
+        def_delegators :@instructions, :length, :empty?
+
         def initialize(instructions, pop)
           @instructions, @pop = instructions.freeze, pop
 
@@ -26,11 +28,6 @@ module Stupidedi
           NonEmpty.new \
             changes.fetch(:instructions, @instructions),
             changes.fetch(:pop, @pop)
-        end
-
-        # @return [Integer]
-        def length
-          @instructions.length
         end
 
         # @return [Instruction]
@@ -123,6 +120,7 @@ module Stupidedi
         end
 
         # @return [void]
+        # :nocov:
         def pretty_print(q)
           q.text("InstructionTable")
           q.group(2, "(", ")") do
@@ -141,6 +139,7 @@ module Stupidedi
             end
           end
         end
+        # :nocov:
 
       private
 
@@ -158,6 +157,10 @@ module Stupidedi
         # @return [Integer]
         def length
           0
+        end
+
+        def empty?
+          true
         end
 
         # @return nil
@@ -190,9 +193,11 @@ module Stupidedi
         end
 
         # @return [void]
+        # :nocov:
         def pretty_print(q)
           q.text "InstructionTable.empty"
         end
+        # :nocov:
       end.new
     end
 

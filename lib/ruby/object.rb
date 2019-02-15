@@ -42,17 +42,6 @@ module Stupidedi
         yield self
       end
 
-      # Yields `self` to a side-effect block argument and return `self`
-      #
-      # @example:
-      #   100.tap{|a| puts "debug: #{a}" }   #=> 100
-      #
-      # @return self
-      def tap
-        yield self
-        self
-      end unless nil.respond_to?(:tap)
-
       # @endgroup
       #############################################################################
 

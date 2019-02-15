@@ -5,9 +5,9 @@ require "term/ansicolor"
 SimpleCov.start do
   coverage_dir "build/generated/coverage"
 
+  add_filter %r{/spec}
   add_filter %r{/segment_defs}
   add_filter %r{/element_defs}
-  add_filter %r{/spec}
   add_filter %r{/transaction_sets/[0-9]+/[A-Z0-9-]+\.rb}
   add_filter %r{/stupidedi/editor}
 
