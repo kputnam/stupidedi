@@ -1,5 +1,6 @@
 describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276" do
   using Stupidedi::Refinements
+  include TreeMatchers
   include NavigationMatchers
 
   describe "parser" do

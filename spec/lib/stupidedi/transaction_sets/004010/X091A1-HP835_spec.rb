@@ -1,5 +1,6 @@
 describe "Stupidedi::TransactionSets::FortyTen::Implementations::X091A1::HP835" do
   using Stupidedi::Refinements
+  include TreeMatchers
   include NavigationMatchers
 
   let(:fixdir) { "004010/X091A1 HP835 Health Care Claim Payment Advice/case" }

@@ -1,8 +1,9 @@
 describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   using Stupidedi::Refinements
   include Definitions
+  include NavigationMatchers
 
-  let(:id) { Stupidedi::Parser::IdentifierStack.new(1)  }
+  let(:stack) { Stupidedi::Parser::IdentifierStack.new(1)  }
 
   def strict(*details)
     start_transaction_set(details, true)
@@ -14,9 +15,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
   def start_transaction_set(details, strict)
     b = Stupidedi::Parser::BuilderDsl.build(config(details), strict)
-    b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-    b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
-    b. ST("999", id.st)
+    b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+    b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
+    b. ST("999", stack.st)
   end
 
   def config(details, version = "005010")
@@ -36,17 +37,17 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   describe "on interchanges" do
     context "with unregistered version (ISA12)" do
       it "raises an exception" do
-        expect(lambda do
+        expect do
           b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00001", id.isa, "0", "T", ":")
-        end).to raise_error(/version "00001"/)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00001", stack.isa, "0", "T", ":")
+        end.to raise_error(/version "00001"/)
       end
     end
 
     context "with registered version (ISA12)" do
       it "is a-ok" do
         b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-        b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+        b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
 
         expect(b.machine.first.fetch.zipper.tap do |z|
           expect(z.node).to be_segment
@@ -59,9 +60,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       context "at the end of an interchange" do
         it "is a-ok" do
           b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b.IEA(id.count, id.pop_isa)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b.IEA(stack.count, stack.pop_isa)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
 
           expect(b.machine.first.fetch.zipper.tap do |z|
             expect(z.node).to be_segment
@@ -77,11 +78,11 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
       context "in the middle of an interchange" do
         it "raises an exception" do
-          expect(lambda do
+          expect do
             b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
             b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", 1, "0", "T", ":")
             b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", 2, "0", "T", ":")
-          end).to raise_error(/segment IEA .+? missing/)
+          end.to raise_error(/segment IEA .+? missing/)
         end
       end
     end
@@ -90,19 +91,19 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   describe "on functional groups" do
     context "with unregistered version (GS08)" do
       it "raises an exception" do
-        expect(lambda do
+        expect do
           b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "000010")
-        end).to raise_error(/version "000010"/)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "000010")
+        end.to raise_error(/version "000010"/)
       end
     end
 
     context "with registered version (GS08)" do
       it "constructions a functional group" do
         b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-        b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-        b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+        b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+        b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
 
         expect(b.machine.first.fetch.find(:GS).fetch.zipper.tap do |z|
           expect(z.node).to be_segment
@@ -120,10 +121,10 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       context "at the end of a functional group" do
         it "is a-ok" do
           b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
-          b. GE(id.count, id.pop_gs)
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
+          b. GE(stack.count, stack.pop_gs)
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
 
           expect(b.machine.first.fetch.sequence(:GS, :GS).fetch.zipper.tap do |z|
             expect(z.node).to be_segment
@@ -142,12 +143,12 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
       context "in the middle of a functional group" do
         it "raises an exception" do
-          expect(lambda do
+          expect do
             b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
             b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, 1, b.default, "005010")
             b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, 2, b.default, "005010")
-          end).to raise_error(/segment GE .+? missing/)
+          end.to raise_error(/segment GE .+? missing/)
         end
       end
     end
@@ -157,21 +158,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     context "given GS01 + GS08 + ST01" do
       context "when unregistered" do
         it "raises an exception" do
-          expect(lambda do
+          expect do
             b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
-            b. ST("000", id.st)
-          end).to raise_error(/unknown transaction set "005010" "FA" "000"/)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
+            b. ST("000", stack.st)
+          end.to raise_error(/unknown transaction set "005010" "FA" "000"/)
         end
       end
 
       context "when registered" do
         it "constructions a transaction set" do
           b = Stupidedi::Parser::BuilderDsl.build(config([]), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
-          b. ST("999", id.st)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
+          b. ST("999", stack.st)
 
           expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
             expect(z.node).to be_segment
@@ -192,21 +193,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     context "given GS01 + GS08 with industry code + ST01" do
       context "when unregistered" do
         it "raises an exception" do
-          expect(lambda do
+          expect do
             b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
-            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X000")
-            b. ST("000", id.st)
-          end).to raise_error(/unknown transaction set "005010X000" "FA" "000"/)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010X000")
+            b. ST("000", stack.st)
+          end.to raise_error(/unknown transaction set "005010X000" "FA" "000"/)
         end
       end
 
       context "when registered" do
         it "constructions a transaction set" do
           b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X999")
-          b. ST("999", id.st)
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010X999")
+          b. ST("999", stack.st)
 
           expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
             expect(z.node).to be_segment
@@ -227,21 +228,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     context "given GS01 + GS08 + ST01 + ST03" do
       context "when unregistered" do
         it "raises an exception" do
-          expect(lambda do
+          expect do
             b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
-            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
-            b. ST("999", id.st, "005010X000")
-          end).to raise_error(/unknown transaction set "005010X000" "FA" "999"/)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
+            b. ST("999", stack.st, "005010X000")
+          end.to raise_error(/unknown transaction set "005010X000" "FA" "999"/)
         end
       end
 
       context "when registered" do
         it "constructions a transaction set" do
           b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010")
-          b. ST("999", id.st, "005010X999")
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010")
+          b. ST("999", stack.st, "005010X999")
 
           expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
             expect(z.node).to be_segment
@@ -262,21 +263,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     context "given GS01 + GS08 + ST01 + ST03" do
       context "when unregistered" do
         it "ST03 takes precedence over GS08" do
-          expect(lambda do
+          expect do
             b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
-            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X999")
-            b. ST("999", id.st, "005010X000")
-          end).to raise_error(/unknown transaction set "005010X000" "FA" "999"/)
+            b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+            b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010X999")
+            b. ST("999", stack.st, "005010X000")
+          end.to raise_error(/unknown transaction set "005010X000" "FA" "999"/)
         end
       end
 
       context "when registered" do
         it "ST03 takes precedence over GS08" do
           b = Stupidedi::Parser::BuilderDsl.build(config([], "005010X999"), true)
-          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", id.isa, "0", "T", ":")
-          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, id.gs, b.default, "005010X000")
-          b. ST("999", id.st, "005010X999")
+          b.ISA("00", "", "00", "", "ZZ", "SUBMITTER ID", "ZZ", "RECEIVER ID", Time.now, Time.now, "^", "00501", stack.isa, "0", "T", ":")
+          b. GS("FA", "SENDER ID", "RECEIVER ID", Time.now, Time.now, stack.gs, b.default, "005010X000")
+          b. ST("999", stack.st, "005010X999")
 
           expect(b.machine.first.fetch.sequence(:GS, :ST).fetch.zipper.tap do |z|
             expect(z.node).to be_segment
@@ -296,18 +297,172 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
   end
 
   describe "on tables" do
-    context "alternating between siblings (#172)" do
-      todo "constructs sibling tables"
+    context "when start segment repeats" do
+      context "but is not repeatable" do
+        it "raises an exception" do
+          b = strict(
+            Detail("2",
+              Segment(10, NNA(), s_mandatory, bounded(1))))
+
+          b.NNA(0)
+          expect { b.NNA(1) }.to raise_error(/NNA\*1~ cannot occur here/)
+        end
+
+        it "raises an exception" do
+          b = strict(
+            Detail("2",
+              Loop("2000A", bounded(1),
+                Segment(10, NNA(), s_mandatory, bounded(1)))))
+
+          b.NNA(0)
+          expect { b.NNA(1) }.to raise_error(/NNA\*1~ cannot occur here/)
+        end
+      end
+
+      context "when table starts with a repeatable loop" do
+        it "is a-ok" do
+          b = strict(
+            Detail("2",
+              Loop("2000A", unbounded,
+                Segment(10, NNA(), s_mandatory, bounded(1)))))
+
+          b.NNA(0)
+          b.NNA(1)
+
+          # Ensure only one table is constructed, with two children loops
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :NNA).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment
+
+            expect(z.parent.node).to be_loop
+            expect(z.parent.children.length).to eq(1)
+
+            expect(z.parent.parent.node).to be_table
+            expect(z.parent.parent.children.length).to eq(2) # 2000A, 2000A
+
+            expect(z.parent.next.node).to be_loop
+            expect(z.parent.next.children.length).to eq(1)
+          end).to be_defined
+        end
+      end
+
+      context "when table is repeatable (#172)" do
+        it "is a-ok" do
+          b = strict(
+            Detail("2A",
+              Loop("2000A", unbounded,
+                Segment(10, IDA(%w(A)), s_mandatory, bounded(1)))),
+            Detail("2B",
+              Loop("2000B", unbounded,
+                Segment(10, IDA(%w(B)), s_mandatory, bounded(1)))))
+
+          b.IDA("A")
+          b.IDA("B")
+          b.IDA("A")
+          b.IDA("B")
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :IDA).fetch.zipper.tap do |z|
+            expect(z.parent.node).to be_loop
+            expect(z.parent.parent.node).to be_table
+            expect(z.parent.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.parent.children.length).to eq(5) # 1, 2A, 2B, 2A, 2B
+          end).to be_defined
+        end
+      end
+    end
+
+    context "in sequence" do
+      context "when detail tables have same start position" do
+        let(:b) do
+          strict(
+            Detail("2A",
+              Segment(10, IDA(%w(A)), s_optional, bounded(1))),
+            Detail("2B",
+              Segment(10, IDA(%w(B)), s_optional, bounded(1))))
+        end
+
+        it "can start in either order" do
+          b.IDA("A")
+          b.IDA("B")
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :IDA).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment #(:IDA, "A")
+
+            expect(z.parent.node).to be_table
+            expect(z.parent.children.length).to eq(1)
+
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(3) # 1, 2A, 2B
+          end).to be_defined
+        end
+
+        it "can start in either order" do
+          b.IDA("B")
+          b.IDA("A")
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :IDA).fetch.zipper.tap do |z|
+            expect(z.node).to be_segment #(:IDA, "A")
+
+            expect(z.parent.node).to be_table
+            expect(z.parent.children.length).to eq(1)
+
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(3) # 1, 2A, 2B
+          end).to be_defined
+        end
+      end
+
+      context "when detail tables have increasing start positions" do
+        let(:b) do
+          strict(
+            Detail("2A",
+              Segment(10, NNA(), s_optional, bounded(1))),
+            Detail("2B",
+              Segment(20, NNB(), s_optional, bounded(1))))
+        end
+
+        # Currently only the ordering of the *type* of table (header, detail,
+        # or summary) is enforced. It's unknown if details can or do have a
+        # particular ordering.
+        #
+        # It's possible that X12 standards and implementation guides are
+        # designed to sidestep this question, by making all detail tables begin
+        # at the same position.
+        todo "enforces order of tables" do
+          b.NNB(3)
+          expect { b.NNA(2) }.to raise_error(/todo/)
+        end
+      end
+
+      context "when detail table occurs after summary table" do
+        it "raises an exception" do
+          b = strict(
+            Detail("2",
+              Segment(20, NNA(), s_optional, bounded(1))))
+
+          b.SE(stack.count(b), stack.pop_st)
+          expect { b.NNA(0) }.to raise_error(/segment NNA\*0~ cannot occur here/)
+        end
+      end
     end
 
     context "when not required" do
-      todo "but present"
-      todo "and missing"
+      context "but present" do
+        todo "is a-ok"
+      end
+
+      context "and missing" do
+        todo "is a-ok"
+      end
     end
 
     context "when required" do
-      todo "and present"
-      todo "but missing"
+      context "and present" do
+        todo "is a-ok"
+      end
+
+      context "but missing" do
+        todo "raises an exception"
+      end
     end
 
     context "when too few are present" do
@@ -316,8 +471,10 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           Detail("2",
             Segment(10, NNA(), s_mandatory, bounded(1))))
 
-        expect(lambda{ b.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
-          raise_error(/required table 2 is missing/)
+        expect do
+          b.SE(stack.count(b), stack.pop_st)
+          b.GE(stack.count, stack.pop_gs)
+        end.to raise_error(/required table 2 is missing/)
       end
 
       todo "raises an exception immediately" do
@@ -325,8 +482,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           Detail("2",
             Segment(10, NNA(), s_mandatory, bounded(1))))
 
-        expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
-          raise_error(/required table 2 is missing/)
+        expect do
+          b.SE(stack.count(b), stack.pop_st)
+        end.to raise_error(/required table 2 is missing/)
       end
 
       it "raises an exception" do
@@ -335,8 +493,10 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
             Loop("2000", bounded(2),
               Segment(10, NNA(), s_mandatory, bounded(1)))))
 
-        expect(lambda{ b.SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
-          raise_error(/required table 2 is missing/)
+        expect do
+          b.SE(stack.count(b), stack.pop_st)
+          b.GE(stack.count, stack.pop_gs)
+        end.to raise_error(/required table 2 is missing/)
       end
 
       todo "raises an exception immediately" do
@@ -345,8 +505,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
             Loop("2000", bounded(2),
               Segment(10, NNA(), s_mandatory, bounded(1)))))
 
-        expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
-          raise_error(/required table 2 is missing/)
+        expect do
+          b.SE(stack.count(b), stack.pop_st)
+        end.to raise_error(/required table 2 is missing/)
       end
     end
 
@@ -358,13 +519,14 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       end
 
       it "raises an exception" do
-        expect(lambda{ b.NNB(0).SE(id.count(b), id.pop_st).GE(id.count, id.pop_gs) }).to \
-          raise_error(/table 2a occurs too many times/)
+        expect do
+          b.NNB(0).SE(stack.count(b), stack.pop_st)
+          b.GE(stack.count, stack.pop_gs)
+        end.to raise_error(/table 2a occurs too many times/)
       end
 
       todo "raises an exception immediately" do
-        expect(lambda{ b.NNB(0) }).to \
-          raise_error(/table 2a occurs too many times/)
+        expect { b.NNB(0) }.to raise_error(/table 2a occurs too many times/)
       end
     end
   end
@@ -441,8 +603,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         # The parser throws away the {Instruction} for NNA once it's executed, so
         # it doesn't even allow an extra one to occur. This error occurs before
         # the "loop 2000 occurs too many times" error
-        expect(lambda{ b.NNA(2) }).to \
-          raise_error(/NNA.+? cannot occur here/)
+        expect { b.NNA(2) }.to raise_error(/NNA.+? cannot occur here/)
       end
 
       it "raises an exception" do
@@ -454,8 +615,11 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         b.NNA(1)
         b.NNA(2)
 
-        expect(lambda{ b.NNA(3).SE(id.count(b), id.pop_st).GS(id.count, id.pop_gs) }).to \
-          raise_error(/loop 2000 occurs too many times/)
+        expect do
+          b.NNA(3)
+          b.SE(stack.count(b), stack.pop_st)
+          b.GS(stack.count, stack.pop_gs)
+        end.to raise_error(/loop 2000 occurs too many times/)
       end
 
       todo "raises an exception immediately" do
@@ -467,8 +631,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         b.NNA(1)
         b.NNA(2)
 
-        expect(lambda{ b.NNA(3) }).to \
-          raise_error(/loop 2000 occurs too many times/)
+        expect { b.NNA(3) }.to raise_error(/loop 2000 occurs too many times/)
       end
     end
 
@@ -482,8 +645,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
         b.NNB(0)
 
-        expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
-          raise_error(/required loop 2000 is missing/)
+        expect do
+          b.SE(stack.count(b), stack.pop_st)
+        end.to raise_error(/required loop 2000 is missing/)
       end
     end
   end
@@ -495,8 +659,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           Detail("2",
             Segment(10, NNA(), s_optional, bounded(1))))
 
-        expect(lambda{ b.NNB(0) }).to \
-          raise_error(/segment NNB.*? cannot occur/)
+        expect { b.NNB(0) }.to raise_error(/segment NNB.*? cannot occur/)
       end
 
       it "raises an exception" do
@@ -504,8 +667,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           Detail("2",
             Segment(10, NNA(), s_optional, bounded(1))))
 
-        expect(lambda{ b.ANA("123 MAIN") }).to \
-          raise_error(/segment ANA\*123 MAIN~ cannot occur/)
+        expect do
+          b.ANA("123 MAIN")
+        end.to raise_error(/segment ANA\*123 MAIN~ cannot occur/)
       end
     end
 
@@ -519,15 +683,17 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       end
 
       it "raises an exception" do
-        expect(lambda{ b.SE(id.count(b), id.pop_st) }).to \
-          raise_error(/segment NNA .+? is missing/)
+        expect do
+          b.SE(stack.count(b), stack.pop_st)
+        end.to raise_error(/segment NNA .+? is missing/)
       end
 
       pending "raises an exception immediately" do
         # This validation is delayed until this loop is "closed". It would be
         # an improvement for the error to happen immediately, like this:
-        expect(lambda{ b.ANA("123 MAIN") }).to \
-          raise_error(/segment NNA .+? is missing/)
+        expect do
+          b.ANA("123 MAIN")
+        end.raise_error(/segment NNA .+? is missing/)
       end
     end
 
@@ -542,8 +708,10 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         b.NNA(1)
         b.NNA(2)
 
-        expect(lambda{ b.NNA(3).SE(id.count(b), id.pop_st) }).to \
-          raise_error(/segment NNA .+? occurs too many times/)
+        expect do
+          b.NNA(3)
+          b.SE(stack.count(b), stack.pop_st)
+        end.to raise_error(/segment NNA .+? occurs too many times/)
       end
     end
   end
@@ -557,29 +725,29 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
       context "and present" do
         it "is a-ok" do
-          expect(lambda{ b.XX(1) }).not_to raise_error
+          expect { b.XX(1) }.not_to raise_error
         end
       end
 
       context "and missing" do
         it "not given is a-ok" do
-          expect(lambda{ b.XX }).not_to raise_error
+          expect { b.XX }.not_to raise_error
         end
 
         it "b.blank is a-ok" do
-          expect(lambda{ b.XX(b.blank) }).not_to raise_error
+          expect { b.XX(b.blank) }.not_to raise_error
         end
 
         it "b.not_used raises exception" do
-          expect(lambda{ b.XX(b.not_used) }).to raise_error(/XX01 is not forbidden/)
+          expect { b.XX(b.not_used) }.to raise_error(/XX01 is not forbidden/)
         end
 
         it "nil is a-ok" do
-          expect(lambda{ b.XX(nil) }).not_to raise_error
+          expect { b.XX(nil) }.not_to raise_error
         end
 
         it "'' is a-ok" do
-          expect(lambda{ b.XX('') }).not_to raise_error
+          expect { b.XX("") }.not_to raise_error
         end
       end
     end
@@ -592,29 +760,29 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
       context "and present" do
         it "is a-ok" do
-          expect(lambda{ b.XX(1) }).not_to raise_error
+          expect { b.XX(1) }.not_to raise_error
         end
       end
 
       context "and missing" do
         it "not given raises an exception" do
-          expect(lambda{ b.XX }).to raise_error(/required element XX01 .+? is blank/)
+          expect { b.XX }.to raise_error(/required element XX01 .+? is blank/)
         end
 
         it "b.not_used raises an exception" do
-          expect(lambda{ b.XX(b.not_used) }).to raise_error(/XX01 is not forbidden/)
+          expect { b.XX(b.not_used) }.to raise_error(/XX01 is not forbidden/)
         end
 
         it "b.blank raises an exception" do
-          expect(lambda{ b.XX(b.blank) }).to raise_error(/required element XX01 .+? is blank/)
+          expect { b.XX(b.blank) }.to raise_error(/required element XX01 .+? is blank/)
         end
 
         it "nil raises an exception" do
-          expect(lambda{ b.XX(nil) }).to raise_error(/required element XX01 .+? is blank/)
+          expect { b.XX(nil) }.to raise_error(/required element XX01 .+? is blank/)
         end
 
         it "'' raises an exception" do
-          expect(lambda{ b.XX('') }).to raise_error(/required element XX01 .+? is blank/)
+          expect { b.XX('') }.to raise_error(/required element XX01 .+? is blank/)
         end
       end
     end
@@ -627,29 +795,29 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
       context "and present" do
         it "raises an exception" do
-          expect(lambda{ b.XX(1) }).to raise_error(/forbidden element XX01 .+? is present/)
+          expect { b.XX(1) }.to raise_error(/forbidden element XX01 .+? is present/)
         end
       end
 
       context "and missing" do
         it "not given is a-ok" do
-          expect(lambda{ b.XX }).not_to raise_error
+          expect { b.XX }.not_to raise_error
         end
 
         it "b.not_used is a-ok" do
-          expect(lambda{ b.XX(b.not_used) }).not_to raise_error
+          expect { b.XX(b.not_used) }.not_to raise_error
         end
 
         it "b.blank is a-ok" do
-          expect(lambda{ b.XX(b.blank) }).not_to raise_error
+          expect { b.XX(b.blank) }.not_to raise_error
         end
 
         it "nil is a-ok" do
-          expect(lambda{ b.XX(nil) }).not_to raise_error
+          expect { b.XX(nil) }.not_to raise_error
         end
 
         it "'' is a-ok" do
-          expect(lambda{ b.XX("") }).not_to raise_error
+          expect { b.XX("") }.not_to raise_error
         end
       end
     end
@@ -669,17 +837,17 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "and required" do
           context "and present" do
             it "is a-ok" do
-              expect(lambda{ b.XX(5, 5, 5) }).not_to raise_error
+              expect { b.XX(5, 5, 5) }.not_to raise_error
             end
           end
 
           context "but missing" do
             it "raises an exception" do
-              expect(lambda{ b.XX(5, nil, 5) }).to raise_error(/, elements? 2 must be present/)
+              expect { b.XX(5, nil, 5) }.to raise_error(/, elements? 2 must be present/)
             end
 
             it "raises an exception" do
-              expect(lambda{ b.XX(5, 5, nil) }).to raise_error(/, elements? 3 must be present/)
+              expect { b.XX(5, 5, nil) }.to raise_error(/, elements? 3 must be present/)
             end
           end
         end
@@ -687,7 +855,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "not required" do
           context "and missing" do
             it "is a-ok" do
-              expect(lambda{ b.XX(5) }).not_to raise_error
+              expect { b.XX(5) }.not_to raise_error
             end
           end
         end
@@ -706,21 +874,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
         context "and present" do
           it "is a-ok" do
-            expect(lambda{ b.XX(5, 5, 5) }).not_to raise_error
+            expect { b.XX(5, 5, 5) }.not_to raise_error
           end
 
           it "is a-ok" do
-            expect(lambda{ b.XX(5, nil, 5) }).not_to raise_error
+            expect { b.XX(5, nil, 5) }.not_to raise_error
           end
 
           it "is a-ok" do
-            expect(lambda{ b.XX(5, 5, nil) }).not_to raise_error
+            expect { b.XX(5, 5, nil) }.not_to raise_error
           end
         end
 
         context "but missing" do
           it "raises an exception" do
-            expect(lambda{ b.XX(5) }).to raise_error(/, at least one of elements 2, 3 must be present/)
+            expect { b.XX(5) }.to raise_error(/, at least one of elements 2, 3 must be present/)
           end
         end
       end
@@ -739,13 +907,13 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "and required" do
           context "and present" do
             it "is a-ok" do
-              expect(lambda{ b.XX(5, 5, 5) }).not_to raise_error
+              expect { b.XX(5, 5, 5) }.not_to raise_error
             end
           end
 
           context "but missing" do
             it "raises an exception" do
-              expect(lambda{ b.XX(5, 5, nil) }).to raise_error(/, elements 3 must be present/)
+              expect { b.XX(5, 5, nil) }.to raise_error(/, elements 3 must be present/)
             end
           end
         end
@@ -753,13 +921,13 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "not required" do
           context "but present" do
             it "is a-ok" do
-              expect(lambda{ b.XX(5, nil, 5) }).not_to raise_error
+              expect { b.XX(5, nil, 5) }.not_to raise_error
             end
           end
 
           context "and missing" do
             it "is a-ok" do
-              expect(lambda{ b.XX(5, nil, nil) }).not_to raise_error
+              expect { b.XX(5, nil, nil) }.not_to raise_error
             end
           end
         end
@@ -779,21 +947,22 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "and required" do
           context "and present" do
             it "is a-ok" do
-              expect(lambda{ b.XX(5, 5, 5) }).not_to raise_error
+              expect { b.XX(5, 5, 5) }.not_to raise_error
             end
 
             it "is a-ok" do
-              expect(lambda{ b.XX(5, nil, 5) }).not_to raise_error
+              expect { b.XX(5, nil, 5) }.not_to raise_error
             end
 
             it "is a-ok" do
-              expect(lambda{ b.XX(5, 5, nil) }).not_to raise_error
+              expect { b.XX(5, 5, nil) }.not_to raise_error
             end
           end
 
           context "but missing" do
             it "raises an exception" do
-              expect(lambda{ b.XX(5, nil, nil) }).to raise_error(/at least one of elements 2, 3 must be present/)
+              expect { b.XX(5, nil, nil) }.to \
+                raise_error(/at least one of elements 2, 3 must be present/)
             end
           end
         end
@@ -801,21 +970,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "and not required" do
           context "but present" do
             it "is a-ok" do
-              expect(lambda{ b.XX(nil, nil, 5) }).not_to raise_error
+              expect { b.XX(nil, nil, 5) }.not_to raise_error
             end
 
             it "is a-ok" do
-              expect(lambda{ b.XX(nil, 5, nil) }).not_to raise_error
+              expect { b.XX(nil, 5, nil) }.not_to raise_error
             end
 
             it "is a-ok" do
-              expect(lambda{ b.XX(nil, 5, 5) }).not_to raise_error
+              expect { b.XX(nil, 5, 5) }.not_to raise_error
             end
           end
 
           context "and missing" do
             it "is a-ok" do
-              expect(lambda{ b.XX }).not_to raise_error
+              expect { b.XX }.not_to raise_error
             end
           end
         end
@@ -834,7 +1003,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         b = strict(Detail("2",
           Segment(10, ANA(:min_length => 4), s_mandatory, bounded(1))))
 
-        expect(lambda { b.ANA("X") }).to raise_error(/value is too short in element ANA01/)
+        expect { b.ANA("X") }.to raise_error(/value is too short in element ANA01/)
       end
     end
 
@@ -843,7 +1012,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         b = strict(Detail("2",
           Segment(10, ANA(:max_length => 2), s_mandatory, bounded(1))))
 
-        expect(lambda { b.ANA("WXYZ") }).to raise_error(/value is too long in element ANA01/)
+        expect { b.ANA("WXYZ") }.to raise_error(/value is too long in element ANA01/)
       end
     end
 
@@ -856,13 +1025,13 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
         context "when given a Date" do
           it "raises an exception" do
-            expect(lambda { b.XX(Date.today) }).to raise_error(/invalid element XX01/)
+            expect { b.XX(Date.today) }.to raise_error(/invalid element XX01/)
           end
         end
 
         context "when given a Time" do
           it "raises an exception" do
-            expect(lambda { b.XX(Date.today) }).to raise_error(/invalid element XX01/)
+            expect { b.XX(Date.today) }.to raise_error(/invalid element XX01/)
           end
         end
       end
@@ -871,31 +1040,31 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         shared_examples "2345" do
           context "given a Time" do
             it "is a-ok" do
-              expect(lambda { b.XX(Time.now) }).not_to raise_error
+              expect { b.XX(Time.now) }.not_to raise_error
             end
           end
 
           context "given a Date" do
             it "is a-ok" do
-              expect(lambda { b.XX(Date.today) }).not_to raise_error
+              expect { b.XX(Date.today) }.not_to raise_error
             end
           end
 
           context "given a String with a 3-digit year" do
             it "raises an exception" do
-              expect(lambda { b.XX("9990130") }).to raise_error(/invalid element XX01/)
+              expect { b.XX("9990130") }.to raise_error(/invalid element XX01/)
             end
           end
 
           context "given a String with a 4-digit year" do
             it "raises an exception" do
-              expect(lambda { b.XX("19990130") }).to_not raise_error
+              expect { b.XX("19990130") }.to_not raise_error
             end
           end
 
           context "given a String with a 5-digit year" do
             it "raises an exception" do
-              expect(lambda { b.XX("019990130") }).to_not raise_error
+              expect { b.XX("019990130") }.to_not raise_error
             end
           end
 
@@ -903,21 +1072,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
             context "with a valid date" do
               it "is a-ok" do
                 value = OpenStruct.new(:year => 2000, :month => 12, :day => 30)
-                expect(lambda { b.XX(value) }).to_not raise_error
+                expect { b.XX(value) }.to_not raise_error
               end
             end
 
             context "with an invalid date" do
               it "raises an exception" do
                 value = OpenStruct.new(:year => 2000, :month => 13, :day => 33)
-                expect(lambda { b.XX(value) }).to raise_error(/invalid element XX01/)
+                expect { b.XX(value) }.to raise_error(/invalid element XX01/)
               end
             end
           end
 
           context "given some other type of value" do
             it "raises an exception" do
-              expect(lambda { b.XX(20001231) }).to raise_error(/invalid element XX01/)
+              expect { b.XX(20001231) }.to raise_error(/invalid element XX01/)
             end
           end
         end
@@ -932,7 +1101,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
           context "given a String with a 2-digit year" do
             it "raises an exception" do
-              expect(lambda { b.XX("990130") }).not_to raise_error
+              expect { b.XX("990130") }.not_to raise_error
             end
           end
         end
@@ -947,7 +1116,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
           context "given a String with a 2-digit year" do
             it "raises an exception" do
-              expect(lambda { b.XX("990130") }).to raise_error(/value is too short in element XX01/)
+              expect { b.XX("990130") }.to raise_error(/value is too short in element XX01/)
             end
           end
         end
