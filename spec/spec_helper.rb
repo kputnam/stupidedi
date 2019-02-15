@@ -8,10 +8,8 @@ require File.expand_path("../../lib/stupidedi", __FILE__)
 require "pp"
 require "ostruct"
 
-begin
-  Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|
-    require file
-  end
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|
+  require file
 end
 
 RSpec.configure do |config|

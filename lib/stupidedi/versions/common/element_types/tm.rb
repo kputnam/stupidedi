@@ -60,10 +60,11 @@ module Stupidedi
 
             # @return [TimeVal]
             def map
-              TimeVal.value(yield(nil, nil, nil), usage, position)
+              self
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -79,6 +80,7 @@ module Stupidedi
 
               ansi.element("TM.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -100,13 +102,37 @@ module Stupidedi
             end
           end
 
-          #
-          # Empty time value. Shouldn't be directly instantiated -- instead,
-          # use the {TimeVal.empty} constructor.
-          #
-          class Empty < TimeVal
+          class Valid < TimeVal
             def valid?
               true
+            end
+
+            # @return [TimeVal]
+            def map
+              TimeVal.value(yield(value), usage, position)
+            end
+
+            def copy(changes = {})
+              TimeVal.value \
+                changes.fetch(:value, value),
+                changes.fetch(:usage, usage),
+                changes.fetch(:position, position)
+            end
+
+            def coerce(other)
+              return TimeVal.value(other, usage, position), self
+            end
+
+            # @return [Boolean]
+            def ==(other)
+              other = TimeVal.value(other, usage, position)
+              other.valid? and other.value == value
+            end
+          end
+
+          class Empty < Valid
+            def value
+              nil
             end
 
             def empty?
@@ -114,6 +140,7 @@ module Stupidedi
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -129,11 +156,7 @@ module Stupidedi
 
               ansi.element("TM.empty#{id}")
             end
-
-            # @return [TimeVal]
-            def map
-              TimeVal.value(yield(nil, nil, nil), usage, position)
-            end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -144,24 +167,9 @@ module Stupidedi
             def to_x12(truncate = true)
               ""
             end
-
-            # @return [Boolean]
-            def ==(other)
-              other.is_a?(Empty) or other.nil?
-            end
-
-            def copy(changes = {})
-              self
-            end
           end
 
-          #
-          # Non-empty time value. Unlike common models of time, this
-          # encapsulates only an hour, minute, and second (with fractional
-          # seconds) but not a date. Shouldn't be directly instantiated --
-          # instead, use the {TimeVal.value} constructor.
-          #
-          class NonEmpty < TimeVal
+          class NonEmpty < Valid
             # @return [Integer]
             attr_reader :hour
 
@@ -188,27 +196,26 @@ module Stupidedi
               end
             end
 
-            # @return [NonEmpty]
             def copy(changes = {})
-              NonEmpty.new \
-                changes.fetch(:hour, @hour),
-                changes.fetch(:minute, @minute),
-                changes.fetch(:second, @second),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
+              if [:hour, :minute, :second].any?{|x| changes.include?(x) }
+                changes[:value] = [changes.fetch(:hour, @hour),
+                                   changes.fetch(:minute, @minute),
+                                   changes.fetch(:second, @second)]
+              end
+
+              super(changes)
             end
 
-            def valid?
-              true
+            def value
+              [@hour, @minute, @second]
             end
 
             def empty?
               false
             end
 
-            # @return [TimeVal]
-            def map
-              TimeVal.value(yield(@hour, @minute, @second), usage, position)
+            def too_short?
+              to_x12(false).length < definition.min_length
             end
 
             # @return [Time]
@@ -226,6 +233,7 @@ module Stupidedi
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -242,17 +250,18 @@ module Stupidedi
               hh =   @hour.try{|h| "%02d" % h }  || "hh"
               mm = @minute.try{|m| "%02d" % m }  || "mm"
               ss = @second.try{|s| s.to_s("F") } || "ss"
-              ss = ss.gsub(/^0*\.|0+$/, "")
+              ss = ss.gsub(/^0*\.|\.0*$/, "")
 
               ansi.element("TM.value#{id}") + "(#{hh}:#{mm}:#{ss})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s(hh = "hh", mm = "mm", ss = "ss")
               hh =   @hour.try{|h| "%02d" % h } || hh
               mm = @minute.try{|m| "%02d" % m } || mm
               ss = @second.try{|s| "%02f" % s } || ss
-              "#{hh}#{mm}#{ss}"
+              "#{hh}:#{mm}:#{ss}".gsub(/\.?0*$|:$/, "")
             end
 
             # @return [String]
@@ -265,19 +274,6 @@ module Stupidedi
               x12 = "#{hh}#{mm}#{ss}#{ff}"
 
               truncate ? x12.take(definition.max_length) : x12
-            end
-
-            def too_short?
-              to_x12(false).length < definition.min_length
-            end
-
-            # @return [Boolean]
-            def ==(other)
-              eql?(other) or
-               (other.is_a?(TimeVal::NonEmpty) and
-                other.hour   == @hour          and
-                other.minute == @minute        and
-                other.second == @second)
             end
           end
         end
@@ -293,7 +289,9 @@ module Stupidedi
 
           # @return [TimeVal]
           def value(object, usage, position)
-            if object.blank?
+            if object.is_a?(TimeVal)
+              object#.copy(:usage => usage, :position => position)
+            elsif object.blank?
               self::Empty.new(usage, position)
             elsif object.is_a?(String) or object.is_a?(StringVal)
               return self::Invalid.new(object, usage, position) \
@@ -325,6 +323,8 @@ module Stupidedi
                   object.respond_to?(:minute)  and
                   object.respond_to?(:second)
               self::NonEmpty.new(object.hour, object.minute, object.second.to_d, usage, position)
+            elsif object.is_a?(Array) and object.length == 3
+              self::NonEmpty.new(*object, usage, position)
             else
               self::Invalid.new(object, usage, position)
             end

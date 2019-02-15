@@ -72,10 +72,11 @@ module Stupidedi
 
             # @return [FixnumVal]
             def map
-              FixnumVal.value(yield(nil), usage, position)
+              self
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -91,6 +92,7 @@ module Stupidedi
 
               ansi.element("Nn.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -113,25 +115,49 @@ module Stupidedi
             end
           end
 
+          class Valid < FixnumVal
+            def valid?
+              true
+            end
+
+            # @return [FixnumVal]
+            def map
+              FixnumVal.value(yield(value), usage, position)
+            end
+
+            # @return [Empty]
+            def copy(changes = {})
+              FixnumVal.value \
+                changes.fetch(:value, value),
+                changes.fetch(:usage, usage),
+                changes.fetch(:position, position)
+            end
+
+            def coerce(other)
+              return FixnumVal.value(other, usage, position), self
+            end
+
+            def ==(other)
+              other = FixnumVal.value(other, usage, position)
+              other.valid? and other.value == value
+            end
+          end
+
           #
           # Empty numeric value. Shouldn't be directly instantiated -- instead
           # use the {FixnumVal.value} and {FixnumVal.empty} constructors.
           #
-          class Empty < FixnumVal
-            def valid?
-              true
+          class Empty < Valid
+            def value
+              nil
             end
 
             def empty?
               true
             end
 
-            # @return [FixnumVal]
-            def map
-              FixnumVal.value(yield(nil), usage, position)
-            end
-
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -147,6 +173,7 @@ module Stupidedi
 
               ansi.element("Nn.empty#{id}")
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -157,39 +184,24 @@ module Stupidedi
             def to_x12(truncate = true)
               ""
             end
-
-            # @return [Boolean]
-            def ==(other)
-              other.is_a?(Empty) or other.nil?
-            end
-
-            # @return [Empty]
-            def copy(changes = {})
-              FixnumVal.value \
-                changes.fetch(:value, nil),
-                changes.fetch(:usage, @usage),
-                changes.fetch(:position, @position)
-            end
           end
 
           #
           # Non-empty numeric value. Shouldn't be directly instantiated --
           # instead, use the {FixnumVal.value} constructors.
           #
-          class NonEmpty < FixnumVal
-            include Comparable
-
+          class NonEmpty < Valid
             # @group Mathematical Operators
             #################################################################
 
             extend Operators::Binary
             binary_operators :+, :-, :*, :/, :%, :coerce => :to_d
 
-            extend Operators::Relational
-            relational_operators :==, :<=>, :coerce => :to_d
-
             extend Operators::Unary
             unary_operators :abs, :-@, :+@
+
+            extend Operators::Relational
+            relational_operators :<, :>, :<=, :>=, :<=>, :coerce => :to_d
 
             # @endgroup
             #################################################################
@@ -197,34 +209,26 @@ module Stupidedi
             # @return [BigDecimal]
             attr_reader :value
 
-            def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
+            def_delegators :value, :to_i, :to_d, :to_f, :to_r, :to_c
 
             def initialize(value, usage, position)
               @value = value
               super(usage, position)
             end
 
-            # @return [NonEmpty]
-            def copy(changes = {})
-              NonEmpty.new \
-                changes.fetch(:value, @value),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
-            end
-
-            def coerce(other)
-              return copy(:value => other.to_d), self
-            end
-
-            def valid?
-              true
-            end
-
             def empty?
               false
             end
 
+            def too_long?
+              nn = (@value * (10 ** definition.precision)).to_i
+
+              # The length of a numeric type does not include an optional sign
+              definition.max_length < nn.abs.to_s.length
+            end
+
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -238,8 +242,9 @@ module Stupidedi
                 end
               end
 
-              ansi.element("Nn.value#{id}") + "(#{to_s})"
+              ansi.element("Nn.value#{id}") + "(#{value.to_s("F")})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -261,18 +266,6 @@ module Stupidedi
                 sign = sign + nn.abs.to_s.rjust(definition.min_length, "0")
               end
             end
-
-            def too_long?
-              nn = (@value * (10 ** definition.precision)).to_i
-
-              # The length of a numeric type does not include an optional sign
-              definition.max_length < nn.abs.to_s.length
-            end
-
-            # @return [FixnumVal]
-            def map
-              FixnumVal.value(yield(@value), usage, position)
-            end
           end
         end
 
@@ -287,13 +280,16 @@ module Stupidedi
 
           # @return [FixnumVal]
           def value(object, usage, position)
-            if object.blank?
+            if object.is_a?(FixnumVal)
+              object#.copy(:usage => usage, :position => position)
+            elsif object.blank?
               self::Empty.new(usage, position)
-            else
+            elsif object.is_a?(String)
               # The number of fractional digits is implied by usage.precision
               factor = 10 ** usage.definition.precision
-
               self::NonEmpty.new(object.to_d / factor, usage, position)
+            else
+              self::NonEmpty.new(object.to_d, usage, position)
             end
           rescue ArgumentError
             self::Invalid.new(object, usage, position)

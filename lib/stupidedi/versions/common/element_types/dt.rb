@@ -74,9 +74,11 @@ module Stupidedi
 
             # @return [DateVal]
             def map
-              DateVal.value(yield(nil), usage, position)
+              self
             end
 
+            # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -92,6 +94,7 @@ module Stupidedi
 
               ansi.element("DT.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -114,25 +117,49 @@ module Stupidedi
             end
           end
 
+          class Valid < DateVal
+            def valid?
+              true
+            end
+
+            # @return [DateVal]
+            def map
+              DateVal.value(yield(value), usage, position)
+            end
+
+            # @return [DateVal]
+            def copy(changes = {})
+              DateVal.value \
+                changes.fetch(:value, value),
+                changes.fetch(:usage, usage),
+                changes.fetch(:position, position)
+            end
+
+            def coerce(other)
+              return DateVal.value(other, usage, position), self
+            end
+
+            def ==(other)
+              other = DateVal.value(other, usage, position)
+              other.valid? and other.value == value
+            end
+          end
+
           #
           # Empty date value. Shouldn't be directly instantiated -- instead,
           # use the {DateVal.empty} constructor.
           #
-          class Empty < DateVal
-            def valid?
-              true
+          class Empty < Valid
+            def value
+              nil
             end
 
             def empty?
               true
             end
 
-            # @return [DateVal]
-            def map
-              DateVal.value(yield(nil), usage, position)
-            end
-
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -148,6 +175,7 @@ module Stupidedi
 
               ansi.element("DT.empty#{id}")
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -158,44 +186,28 @@ module Stupidedi
             def to_x12(truncate = true)
               ""
             end
-
-            # @return [Boolean]
-            def ==(other)
-              other.is_a?(Empty) or other.nil?
-            end
-
-            # @return [Empty]
-            def copy(changes = {})
-              self
-            end
           end
 
           #
           # Date with a fully-specified year (with century). Shouldn't be
           # directly instantiated -- instead use the {DateVal.value} constructor
           #
-          class Proper < DateVal
-            include Comparable
+          class Proper < Valid
+            def_delegators :@value, :year, :month, :day, :cwday, :cweek,
+              :downto, :upto, :step, :httpdate, :to_s, :to_i, :strftime,
+              :iso8601, :rfc2822, :rfc3339, :rfc822, :leap?, :julian?,
+              :gregorian?, :mday, :mon, :to_datetime, :to_int, :to_r, :to_c,
+              :wday, :xmlschema, :yday, :start
 
-            # (date any* -> any)
-            def_delegators :@value, :year, :month, :day, :cwday, :cweek, :downto, :upto,
-              :step, :httpdate, :to_s, :to_i, :strftime, :iso8601, :rfc2822,
-              :rfc3339, :rfc822, :leap?, :julian?, :gregorian?, :mday, :mon,
-              :to_datetime, :to_int, :to_r, :to_c, :wday, :xmlschema, :yday,
-              :start
-
-            # (date any* -> DateVal::Proper)
             extend Operators::Wrappers
             wrappers :+, :<<, :>>, :next_day, :next_month, :next_year,
               :prev_day, :prev_month, :prev_year
 
-            # (date -> DateVal::Proper)
             extend Operators::Unary
             unary_operators :next, :succ, :prev
 
-            # (date date -> any)
             extend Operators::Relational
-            relational_operators :==, :<=>, :-, :coerce => :to_date
+            relational_operators :<, :>, :<=, :>=, :<=>, :-, :coerce => :to_date
 
             attr_reader :value
 
@@ -209,22 +221,6 @@ module Stupidedi
               end
 
               super(usage, position)
-            end
-
-            # @return [Proper]
-            def copy(changes = {})
-              Proper.new \
-                changes.fetch(:value, @value),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
-            end
-
-            def coerce(other)
-              return DateVal.value(other, usage, position), self
-            end
-
-            def valid?
-              true
             end
 
             def empty?
@@ -281,12 +277,8 @@ module Stupidedi
               self
             end
 
-            # @return [DateVal]
-            def map
-              DateVal.value(yield(@value), usage, position)
-            end
-
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -302,6 +294,7 @@ module Stupidedi
 
               ansi.element("DT.value#{id}") + "(#{"%04d-%02d-%02d" % [year, month, day]})"
             end
+            # :nocov:
 
             # @return [String]
             def to_x12(truncate = true)
@@ -333,7 +326,7 @@ module Stupidedi
           # Shouldn't be directly instantiated -- instead, use the constuctor
           # method {DateVal.value}
           #
-          class Improper < DateVal
+          class Improper < Valid
             # @return [Integer]
             attr_reader :year
 
@@ -355,18 +348,18 @@ module Stupidedi
               super(usage, position)
             end
 
-            # @return [Improper]
-            def copy(changes = {})
-              Improper.new \
-                changes.fetch(:year, @year),
-                changes.fetch(:month, @month),
-                changes.fetch(:day, @day),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
+            def value
+              [@year, @month, @day]
             end
 
-            def valid?
-              true
+            def copy(changes = {})
+              if [:year, :month, :day].any?{|k| changes.include?(k) }
+                changes[:value] = [changes.fetch(:year, @year),
+                                   changes.fetch(:month, @month),
+                                   changes.fetch(:day, @day)]
+              end
+
+              super(changes)
             end
 
             def empty?
@@ -375,6 +368,19 @@ module Stupidedi
 
             def proper?
               false
+            end
+
+            def too_short?
+              # Less than a 4-digit year means our max length is 7, but in
+              # practice the definition min/max lengths are either 6 or 8
+              definition.min_length > 6
+            end
+
+            def too_long?
+              # We know month and day occupy four characters, but year *could*
+              # occupy either three or two characters. If the max_length can't
+              # accomodate a three-digit year, make sure we don't have one
+              definition.max_length < 7 and @year > 99
             end
 
             # Create a proper date using the given century `cc`
@@ -465,6 +471,7 @@ module Stupidedi
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -480,6 +487,7 @@ module Stupidedi
 
               ansi.element("DT.value#{id}") + "(XX#{"%02d-%02d-%02d" % [@year, @month, @day]})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -489,28 +497,6 @@ module Stupidedi
             # @return [String]
             def to_x12(truncate = true)
               "%02d%02d%02d" % [@year, @month, @day]
-            end
-
-            def too_short?
-              # Less than a 4-digit year means our max length is 7, but in
-              # practice the definition min/max lengths are either 6 or 8
-              definition.min_length > 6
-            end
-
-            def too_long?
-              # We know month and day occupy four characters, but year *could*
-              # occupy either three or two characters. If the max_length can't
-              # accomodate a three-digit year, make sure we don't have one
-              definition.max_length < 7 and @year > 99
-            end
-
-            # @note Not commutative
-            # @return [Boolean]
-            def ==(other)
-              eql?(other) or
-               (@day   == other.day  and
-                @year  == other.year and
-                @month == other.month)
             end
           end
         end
@@ -526,7 +512,9 @@ module Stupidedi
 
           # @return [DateVal]
           def value(object, usage, position)
-            if object.blank?
+            if object.is_a?(DateVal)
+              object#.copy(:usage => usage, :position => position)
+            elsif object.blank?
               self::Empty.new(usage, position)
             elsif object.is_a?(String) or object.is_a?(StringVal)
               string = object.to_s
@@ -544,10 +532,14 @@ module Stupidedi
                   self::Proper.new(date(year, month, day), usage, position)
                 end
               end
-            elsif object.is_a?(DateVal::Improper)
-              self::Improper.new(object.year, object.month, object.day, usage, position)
             elsif object.respond_to?(:year) and object.respond_to?(:month) and object.respond_to?(:day)
               self::Proper.new(date(object.year, object.month, object.day), usage, position)
+            elsif object.is_a?(Array) and object.length == 3
+              if object[0] <= 99
+                self::Improper.new(*object, usage, position)
+              else
+                self::Proper.new(date(*object), usage, position)
+              end
             else
               self::Invalid.new(object, usage, position)
             end

@@ -59,7 +59,34 @@ describe Stupidedi::Versions::Common::ElementTypes::TM do
     end
 
     context "when given an invalid String" do
-      specify { expect(value_4("99")).to be_invalid }
+      specify { expect(value_4("12")).to be_invalid }
+      specify { expect(value_4("12:30")).to be_invalid }
+      specify { expect(value_4("2530")).to be_invalid }
+    end
+
+    context "when given a valid numeric String (hhmm)" do
+      let(:element_val) { value_4("1230") }
+      specify { expect(element_val).to be_valid }
+      specify { expect(element_val).to be_valid }
+      specify { expect(element_val.hour).to eq(12) }
+      specify { expect(element_val.minute).to eq(30) }
+      specify { expect(element_val.second).to be_nil }
+    end
+
+    context "when given a valid numeric String (hhmmss)" do
+      let(:element_val) { value_4("123059") }
+      specify { expect(element_val).to be_valid }
+      specify { expect(element_val.hour).to eq(12) }
+      specify { expect(element_val.minute).to eq(30) }
+      specify { expect(element_val.second).to eq(59) }
+    end
+
+    context "when given a numeric String (hhmmss.dd)" do
+      let(:element_val) { value_4("123059999") }
+      specify { expect(element_val).to be_valid }
+      specify { expect(element_val.hour).to eq(12) }
+      specify { expect(element_val.minute).to eq(30) }
+      specify { expect(element_val.second).to eq("59.999".to_d) }
     end
 
     context "when given a wrong type of value" do
@@ -97,174 +124,33 @@ describe Stupidedi::Versions::Common::ElementTypes::TM do
 
   context "::Invalid" do
     let(:invalid_val) { value_4("99") }
+    let(:element_use) { element_use_4 }
+    include_examples "global_element_types_invalid"
 
     describe "#time?" do
       specify { expect(invalid_val).to be_time }
     end
-
-    describe "#too_short?" do
-      specify { expect(invalid_val).to_not be_too_short }
-    end
-
-    describe "#too_long?" do
-      specify { expect(invalid_val).to_not be_too_long }
-    end
-
-    describe "#empty?" do
-      specify { expect(invalid_val).to_not be_empty }
-    end
-
-    describe "#valid?" do
-      specify { expect(invalid_val).to_not be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(invalid_val).to be_invalid }
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(invalid_val.inspect).to be_a(String)
-        end
-
-        it "indicates invalid " do
-          expect(invalid_val.inspect).to match(/invalid/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:invalid_val) do
-          element_use_6.copy(:requirement => e_not_used).value("99", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:invalid_val) do
-          element_use_6.copy(:requirement => e_mandatory).value("99", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:invalid_val) do
-          element_use_6.copy(:requirement => e_optional).value("99", position)
-        end
-
-        include_examples "inspect"
-      end
-    end
-
-    describe "#to_s" do
-      specify { expect(invalid_val.to_s).to eq("") }
-    end
-
-    describe "#to_x12" do
-      context "with truncation" do
-        specify { expect(invalid_val.to_x12(true)).to eq("") }
-      end
-
-      context "without truncation" do
-        specify { expect(invalid_val.to_x12(false)).to eq("") }
-      end
-    end
-
-    todo "#==(other)"
-
-    todo "#copy(changes)"
   end
 
   context "::Empty" do
-    let(:empty_val) { value_6("") }
+    let(:empty_val)   { value_6("") }
+    let(:valid_str)   { "123059" }
+    let(:invalid_str) { "ABC" }
+    let(:element_use) { element_use_6 }
+    include_examples "global_element_types_empty"
 
     describe "#time?" do
       specify { expect(empty_val).to be_time }
     end
-
-    describe "#too_short?" do
-      specify { expect(empty_val).to_not be_too_short }
-    end
-
-    describe "#too_long?" do
-      specify { expect(empty_val).to_not be_too_long }
-    end
-
-    describe "#empty?" do
-      specify { expect(empty_val).to be_empty }
-    end
-
-    describe "#valid?" do
-      specify { expect(empty_val).to be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(empty_val).to_not be_invalid }
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(empty_val.inspect).to be_a(String)
-        end
-
-        it "indicates empty " do
-          expect(empty_val.inspect).to match(/empty/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:empty_val) do
-          element_use_6.copy(:requirement => e_not_used).empty(position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:empty_val) do
-          element_use_6.copy(:requirement => e_mandatory).empty(position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:empty_val) do
-          element_use_6.copy(:requirement => e_optional).empty(position)
-        end
-
-        include_examples "inspect"
-      end
-    end
-
-    describe "#to_s" do
-      specify { expect(empty_val.to_s).to eq("") }
-    end
-
-    describe "#to_x12" do
-      context "with truncation" do
-        specify { expect(empty_val.to_x12(true)).to eq("") }
-      end
-
-      context "without truncation" do
-        specify { expect(empty_val.to_x12(false)).to eq("") }
-      end
-    end
-
-    describe "#==(other)" do
-      todo    { expect(empty_val).to eq("")  }
-      specify { expect(empty_val).to eq(nil) }
-    end
-
-    todo "#map(&block)"
-
-    todo "#copy(changes)"
   end
 
   context "::NonEmpty" do
+    let(:element_val) { value_6("124559") }
+    let(:element_use) { element_use_6 }
+    let(:invalid_str) { "wrong" }
+    let(:valid_str)   { "123000" }
+    include_examples "global_element_types_non_empty"
+
     describe "#time?" do
       specify { expect(value_4("1230")).to     be_time }
       specify { expect(value_6("123000")).to   be_time }
@@ -349,12 +235,13 @@ describe Stupidedi::Versions::Common::ElementTypes::TM do
     end
 
     describe "#to_s" do
-      context "when minutes are missing" do
-        todo { expect(value_6("12").to_s).to eq("12mmss") }
+      context "when seconds are missing" do
+        specify { expect(value_6("1230").to_s).to eq("12:30:ss") }
       end
 
-      context "when seconds are missing" do
-        specify { expect(value_6("1230").to_s).to eq("1230ss") }
+      context "when seconds are present" do
+        specify { expect(value_6("123045").to_s).to eq("12:30:45") }
+        specify { expect(value_6("12304599").to_s).to eq("12:30:45.99") }
       end
     end
 
@@ -420,8 +307,6 @@ describe Stupidedi::Versions::Common::ElementTypes::TM do
           specify { expect(value_4("115959").to_time(date, 30, 30).sec).to  eq(59) }
         end
       end
-
-      todo "when second and minute are nil"
     end
 
     describe "#==(other)" do
@@ -457,7 +342,8 @@ describe Stupidedi::Versions::Common::ElementTypes::TM do
       end
 
       context "when given a Time" do
-        specify { expect(value_6("115959")).to_not eq(Time.utc(2020, 12, 31, 11, 59, 59)) }
+        specify { expect(value_6("115959")).to eq(Time.utc(2020, 12, 31, 11, 59, 59)) }
+        specify { expect(value_6("115959")).to_not eq(Time.utc(2020, 12, 31, 12, 59, 59)) }
       end
     end
 

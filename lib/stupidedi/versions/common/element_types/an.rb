@@ -143,13 +143,6 @@ module Stupidedi
             false
           end
 
-          #
-          # Objects passed to StringVal.value that don't respond to #to_s are
-          # modeled by this class. Note most everything in Ruby responds to
-          # that method, including things that really shouldn't be considered
-          # StringVals (like Array or Class), so other validation should be
-          # performed on StringVal::NonEmpty values.
-          #
           class Invalid < StringVal
             # @return [Object]
             attr_reader :value
@@ -167,12 +160,13 @@ module Stupidedi
               false
             end
 
-            # @return [StringVal]
+            # @return [Invalid]
             def map
-              StringVal.value(yield(nil), usage, position)
+              self
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -188,6 +182,7 @@ module Stupidedi
 
               ansi.element("AN.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -201,7 +196,7 @@ module Stupidedi
 
             # @return [Boolean]
             def ==(other)
-              eql?(other) or other.nil?
+              eql?(other)
             end
 
             # @return [Invalid]
@@ -210,43 +205,43 @@ module Stupidedi
             end
           end
 
-          #
-          # Empty string value. Shouldn't be directly instantiated -- instead,
-          # use the {StringVal.empty} constructor.
-          #
-          class Empty < StringVal
+          class Valid < StringVal
             include Comparable
 
-            # (string any* -> any)
             def_delegators :value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym,
               :to_str, :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
               :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack, :=~,
               :match, :partition, :rpatition, :encoding, :valid_enocding?, :at,
               :empty?, :blank?
 
-            # (string any* -> StringVal)
             extend Operators::Wrappers
             wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
               :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
               :sub, :gsub, :encode, :force_encoding, :squeeze
 
-            # (string -> StringVal)
             extend Operators::Unary
             unary_operators :chr, :chop, :upcase, :downcase, :strip,
               :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
 
-            # (string string -> any)
             extend Operators::Relational
-            relational_operators :==, :<=>, :start_with?, :end_with?,
-              :include?, :casecmp, :coerce => :to_s
+            relational_operators :<=>, :start_with?, :end_with?,
+              :include?, :casecmp, :coerce => :to_str
 
-            # @return [Empty]
-            def copy(changes = {})
-              self
+            def ==(other)
+              other = StringVal.value(other, usage, position)
+              other.valid? and other.value == value
             end
 
-            def value
-              ""
+            # @return [StringVal]
+            def copy(changes = {})
+              StringVal.value \
+                changes.fetch(:value, value),
+                changes.fetch(:usage, usage),
+                changes.fetch(:position, position)
+            end
+
+            def coerce(other)
+              return StringVal.value(other, usage, position), self
             end
 
             def valid?
@@ -255,10 +250,18 @@ module Stupidedi
 
             # @return [StringVal]
             def map
-              StringVal.value(yield(nil), usage, position)
+              StringVal.value(yield(value), usage, position)
+            end
+          end
+
+          class Empty < Valid
+            # @return [String]
+            def value
+              ""
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -274,57 +277,25 @@ module Stupidedi
 
               ansi.element("AN.empty#{id}")
             end
+            # :nocov:
 
             # @return [String]
             def to_x12(truncate = true)
               ""
             end
+
+            def to_date(format)
+              nil
+            end
           end
 
-          #
-          # Non-empty string value. Shouldn't be directly instantiated --
-          # instead, use the {StringVal.value} constructor.
-          #
-          class NonEmpty < StringVal
-            include Comparable
-
+          class NonEmpty < Valid
             # @return [String]
             attr_reader :value
-
-            # (string any* -> any)
-            def_delegators :@value, :to_d, :to_s, :to_f, :to_c, :to_r, :to_sym,
-              :to_str, :hex, :oct, :ord, :sum, :length, :count, :index, :rindex,
-              :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack, :=~,
-              :match, :partition, :rpatition, :encoding, :valid_enocding?, :at,
-              :empty?, :blank?
-
-            # (string any* -> StringVal)
-            extend Operators::Wrappers
-            wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
-              :center, :ljust, :rjust, :chomp, :delete, :tr, :tr_s,
-              :sub, :gsub, :encode, :force_encoding, :squeeze
-
-            # (string -> StringVal)
-            extend Operators::Unary
-            unary_operators :chr, :chop, :upcase, :downcase, :strip,
-              :lstrip, :rstrip, :dump, :succ, :next, :reverse, :swapcase
-
-            # (string string -> any)
-            extend Operators::Relational
-            relational_operators :==, :<=>, :start_with?, :end_with?,
-              :include?, :casecmp, :coerce => :to_s
 
             def initialize(string, usage, position)
               @value = string
               super(usage, position)
-            end
-
-            # @return [StringVal]
-            def copy(changes = {})
-              StringVal.value \
-                changes.fetch(:value, @value),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
             end
 
             def too_long?
@@ -335,11 +306,6 @@ module Stupidedi
               @value.lstrip.length < definition.min_length
             end
 
-            # @return [StringVal]
-            def map
-              StringVal.value(yield(@value), usage, position)
-            end
-
             # @return [String]
             def to_x12(truncate = true)
               x12 = @value.ljust(definition.min_length, " ")
@@ -347,6 +313,7 @@ module Stupidedi
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.bind do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -362,10 +329,7 @@ module Stupidedi
 
               ansi.element("AN.value#{id}") + "(#{@value})"
             end
-
-            def valid?
-              true
-            end
+            # :nocov:
 
             # (see AN.stpftime)
             def to_date(format)
@@ -385,7 +349,9 @@ module Stupidedi
 
           # @return [StringVal]
           def value(object, usage, position)
-            if object.blank?
+            if object.is_a?(StringVal)
+              object#.copy(:usage => usage, :position => position)
+            elsif object.blank?
               self::Empty.new(usage, position)
             elsif object.kind_of?(Date) or object.kind_of?(Time)
               self::Invalid.new(object, usage, position)

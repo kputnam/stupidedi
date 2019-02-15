@@ -24,231 +24,66 @@ describe Stupidedi::Versions::Common::ElementTypes::Nn do
   end
 
   describe "::Invalid" do
-    let(:invalid_val_a) { value("1A") }
-    let(:invalid_val_b) { value("A1") }
+    let(:invalid_val) { value("1A") }
+    include_examples "global_element_types_invalid"
 
     describe "#numeric?" do
-      specify { expect(invalid_val_a).to be_numeric }
-      specify { expect(invalid_val_b).to be_numeric }
+      specify { expect(invalid_val).to be_numeric }
     end
 
-    describe "#position" do
-      specify { expect(invalid_val_a.position).to eql(position) }
-      specify { expect(invalid_val_b.position).to eql(position) }
+    describe "#to_d" do
+      specify { expect(invalid_val).to_not respond_to(:to_d) }
     end
 
-    describe "#empty?" do
-      specify { expect(invalid_val_a).not_to be_empty }
-      specify { expect(invalid_val_b).not_to be_empty }
+    describe "#to_f" do
+      specify { expect(invalid_val).to_not respond_to(:to_f) }
     end
 
-    describe "#valid?" do
-      specify { expect(invalid_val_a).not_to be_valid }
-      specify { expect(invalid_val_b).not_to be_valid }
+    describe "#to_i" do
+      specify { expect(invalid_val).to_not respond_to(:to_i) }
     end
 
-    describe "#invalid?" do
-      specify { expect(invalid_val_a).to be_invalid }
-      specify { expect(invalid_val_b).to be_invalid }
-    end
-
-    todo "#too_long?"
-    todo "#too_short?"
-
-    describe "#map(&block)" do
-      specify { expect{|b| invalid_val_a.map(&b) }.to yield_with_args(nil) }
-      specify { expect(invalid_val_a.map{|x| "1"}).to eq(value("1")) }
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(invalid_val.inspect).to be_a(String)
-        end
-
-        it "indicates invalid" do
-          expect(invalid_val.inspect).to match(/invalid/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:invalid_val) do
-          element_use.copy(:requirement => e_not_used).value("A1", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:invalid_val) do
-          element_use.copy(:requirement => e_mandatory).value("A1", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:invalid_val) do
-          element_use.copy(:requirement => e_optional).value("A1", position)
-        end
-
-        include_examples "inspect"
-      end
-    end
-
-    describe "#to_s" do
-      specify { expect(invalid_val_a.to_s).to eq("") }
-    end
-
-    todo "#to_d"
-    todo "#to_f"
-    todo "#to_i"
-    todo "#to_r"
-
-    context "#to_x12(truncate)" do
-      context "with truncation" do
-        specify { expect(invalid_val_a.to_x12(true)).to eq("") }
-      end
-
-      context "without truncation" do
-        specify { expect(invalid_val_a.to_x12(false)).to eq("") }
-      end
-    end
-
-    describe "#==(other)" do
-      specify { expect(invalid_val_a).to     eq(invalid_val_a) }
-      specify { expect(invalid_val_a).to_not eq(invalid_val_b) }
-    end
-
-    describe "#copy(changes)" do
-      specify { expect(invalid_val_a.copy).to eql(invalid_val_a) }
+    describe "#to_r" do
+      specify { expect(invalid_val).to_not respond_to(:to_r) }
     end
   end
 
   describe "::Empty" do
-    let(:empty_val) { value("") }
+    let(:empty_val)   { value("") }
+    let(:valid_str)   { "900" }
+    let(:invalid_str) { "::" }
+    include_examples "global_element_types_empty"
 
     describe "#numeric?" do
       specify { expect(empty_val).to be_numeric }
     end
 
-    describe "#position" do
-      specify { expect(empty_val.position).to eql(position) }
+    describe "#to_d" do
+      specify { expect(empty_val).to_not respond_to(:to_d) }
     end
 
-    describe "#empty?" do
-      specify { expect(empty_val).to be_empty }
+    describe "#to_f" do
+      specify { expect(empty_val).to_not respond_to(:to_f) }
     end
 
-    describe "#valid?" do
-      specify { expect(empty_val).to be_valid }
+    describe "#to_i" do
+      specify { expect(empty_val).to_not respond_to(:to_i) }
     end
 
-    describe "#invalid?" do
-      specify { expect(empty_val).to_not be_invalid }
-    end
-
-    describe "#too_short?" do
-      specify { expect(empty_val).to_not be_too_short }
-    end
-
-    describe "#too_short?" do
-      specify { expect(empty_val).to_not be_too_long }
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(empty_val.inspect).to be_a(String)
-        end
-
-        it "indicates empty" do
-          expect(empty_val.inspect).to match(/empty/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:empty_val) do
-          element_use.copy(:requirement => e_not_used).empty(position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:empty_val) do
-          element_use.copy(:requirement => e_mandatory).empty(position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:empty_val) do
-          element_use.copy(:requirement => e_optional).empty(position)
-        end
-
-        include_examples "inspect"
-      end
-    end
-
-    describe "#map(&block)" do
-      specify { expect{|b| empty_val.map(&b) }.to  yield_with_args(nil) }
-      specify { expect(empty_val.map { "123" }).to eq("1.23") }
-      specify { expect(empty_val.map { "123" }).to be_numeric }
-    end
-
-    describe "#to_s" do
-      specify { expect(empty_val.to_s).to eql("") }
-    end
-
-    todo "#to_d"
-    todo "#to_f"
-    todo "#to_i"
-    todo "#to_r"
-
-    describe "#to_x12(truncate)" do
-      context "with truncation" do
-        specify { expect(empty_val.to_x12(true)).to eql("") }
-      end
-
-      context "without truncation" do
-        specify { expect(empty_val.to_x12(false)).to eql("") }
-      end
-    end
-
-    describe "#==(other)" do
-      specify { expect(empty_val).to eq(empty_val) }
-      specify { expect(empty_val).to eq(nil) }
-      specify { expect(empty_val).to eq(value("")) }
-    end
-
-    describe "#copy(changes)" do
-      specify { expect(empty_val.copy).to eq(empty_val) }
-      specify { expect(empty_val.copy(:value => "1234")).to eq("12.34") }
-      specify { expect(empty_val.copy(:value => "1234").position).to eql(position) }
+    describe "#to_r" do
+      specify { expect(empty_val).to_not respond_to(:to_r) }
     end
   end
 
   context "::NonEmpty" do
+    let(:element_val) { value("1234") }
+    let(:inspect_str) { "12.34" }
+    let(:valid_str)   { "987" }
+    let(:invalid_str) { "wrong" }
+    include_examples "global_element_types_non_empty"
+
     describe "#numeric?" do
       specify { expect(value("1234")).to be_numeric }
-    end
-
-    describe "#position" do
-      specify { expect(value("1234").position).to eql(position) }
-    end
-
-    describe "#valid?" do
-      specify { expect(value("1234")).to be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(value("1234")).to_not be_invalid }
-    end
-
-    describe "#empty?" do
-      specify { expect(value("1234")).to_not be_empty }
     end
 
     describe "#too_long?" do
@@ -262,7 +97,7 @@ describe Stupidedi::Versions::Common::ElementTypes::Nn do
 
     describe "#map(&block)" do
       specify { expect{|b| value("123").map(&b) }.to yield_with_args("1.23".to_d) }
-      specify { expect(value("123").map{|x| "100" }).to eq("1.0") }
+      specify { expect(value("123").map{|x| "100" }).to eq("1.0".to_d) }
       specify { expect(value("123").map{|x| "A"}).to be_invalid }
       specify { expect(value("123").map{|x| nil}).to be_empty }
     end
@@ -276,48 +111,6 @@ describe Stupidedi::Versions::Common::ElementTypes::Nn do
     context "#to_x12(truncate)" do
       todo "with truncation"
       todo "without truncation"
-    end
-
-    todo "#==(other)"
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(element_val.inspect).to be_a(String)
-        end
-
-        it "indicates valid" do
-          expect(element_val.inspect).to match(/value/)
-        end
-
-        it "indicates value" do
-          expect(element_val.inspect).to match(/#{element_val.to_s}/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:element_val) do
-          element_use.copy(:requirement => e_not_used).value("100", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:element_val) do
-          element_use.copy(:requirement => e_mandatory).value("100", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:element_val) do
-          element_use.copy(:requirement => e_optional).value("100", position)
-        end
-
-        include_examples "inspect"
-      end
     end
 
     describe "relational operators" do

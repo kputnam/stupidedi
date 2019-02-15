@@ -65,6 +65,8 @@ describe Stupidedi::Versions::Common::ElementTypes::DT do
 
   context "::Invalid" do
     let(:invalid_val) { value_8("20090230") }
+    let(:element_use) { element_use_8 }
+    include_examples "global_element_types_invalid"
 
     describe "#date?" do
       specify { expect(invalid_val).to be_date }
@@ -73,103 +75,14 @@ describe Stupidedi::Versions::Common::ElementTypes::DT do
     describe "#proper?" do
       specify { expect(invalid_val).to_not be_proper }
     end
-
-    describe "#position" do
-      specify { expect(invalid_val.position).to eql(position) }
-    end
-
-    describe "#empty?" do
-      specify { expect(invalid_val).to_not be_empty }
-    end
-
-    describe "#valid?" do
-      specify { expect(invalid_val).to_not be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(invalid_val).to be_invalid }
-    end
-
-    describe "#too_short?" do
-      specify { expect(invalid_val).to_not be_too_short }
-    end
-
-    describe "#too_long?" do
-      specify { expect(invalid_val).to_not be_too_long }
-    end
-
-    describe "#map(&block)" do
-      specify { expect{|b| invalid_val.map(&b) }.to       yield_with_args(nil)        }
-      specify { expect(invalid_val.map { "70130" }).to    be_invalid                  }
-      specify { expect(invalid_val.map {|x| x }).to       eq(value_8(""))             }
-      specify { expect(invalid_val.map { "20200130" }).to eq(Date.civil(2020, 1, 30)) }
-    end
-
-    todo "#==(other)"
-
-    describe "#to_s" do
-      it "is an empty string" do
-        expect(invalid_val.to_s).to eq("")
-      end
-    end
-
-    describe "#to_x12" do
-      context "with truncation" do
-        it "is an empty string" do
-          expect(invalid_val.to_x12(true)).to eq("")
-        end
-      end
-
-      context "without truncation" do
-        it "is an empty string" do
-          expect(invalid_val.to_x12(false)).to eq("")
-        end
-      end
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(invalid_val.inspect).to be_a(String)
-        end
-
-        it "indicates invalid" do
-          expect(invalid_val.inspect).to match(/invalid/)
-        end
-
-        it "includes element value" do
-          expect(invalid_val.inspect).to match(/#{invalid_val.value.inspect}/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:invalid_val) do
-          element_use_8.copy(:requirement => e_not_used).value("boo", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:invalid_val) do
-          element_use_8.copy(:requirement => e_mandatory).value("boo", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:invalid_val) do
-          element_use_8.copy(:requirement => e_optional).value("boo", position)
-        end
-
-        include_examples "inspect"
-      end
-    end
   end
 
   context "::Empty" do
-    let(:empty_val) { value_8("") }
+    let(:empty_val)   { value_8("") }
+    let(:valid_str)   { Date.civil(2020, 12, 31) }
+    let(:invalid_str) { "20201300" }
+    let(:element_use) { element_use_8 }
+    include_examples "global_element_types_empty"
 
     describe "#date?" do
       specify { expect(empty_val).to be_date }
@@ -178,115 +91,18 @@ describe Stupidedi::Versions::Common::ElementTypes::DT do
     describe "#proper?" do
       specify { expect(empty_val).to_not be_proper }
     end
-
-    describe "#position" do
-      specify { expect(empty_val.position).to eql(position) }
-    end
-
-    describe "#empty?" do
-      specify { expect(empty_val).to be_empty }
-    end
-
-    describe "#valid?" do
-      specify { expect(empty_val).to be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(empty_val).not_to be_invalid }
-    end
-
-    describe "#too_short?" do
-      specify { expect(empty_val).to_not be_too_short }
-    end
-
-    describe "#too_long?" do
-      specify { expect(empty_val).to_not be_too_long }
-    end
-
-    describe "#map(&block)" do
-      specify { expect{|b| empty_val.map(&b) }.to       yield_with_args(nil)        }
-      specify { expect(empty_val.map { "70130" }).to    be_invalid                  }
-      specify { expect(empty_val.map { "20110713" }).to eq(Date.civil(2011, 7, 13)) }
-      specify { expect(empty_val.map {|x| x }).to       eq(empty_val)             }
-    end
-
-    describe "#to_s" do
-      specify { expect(empty_val.to_s).to eql("") }
-    end
-
-    describe "#to_x12(truncate)" do
-      context "with truncation" do
-        specify { expect(empty_val.to_x12(true)).to eql("") }
-      end
-
-      context "without truncation" do
-        specify { expect(empty_val.to_x12(false)).to eql("") }
-      end
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(empty_val.inspect).to be_a(String)
-        end
-
-        it "indicates empty " do
-          expect(empty_val.inspect).to match(/empty/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:empty_val) do
-          element_use_8.copy(:requirement => e_not_used).value("", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:empty_val) do
-          element_use_8.copy(:requirement => e_mandatory).value("", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:empty_val) do
-          element_use_8.copy(:requirement => e_optional).value("", position)
-        end
-
-        include_examples "inspect"
-      end
-    end
-
-    describe "#==(other)" do
-      specify { expect(empty_val).to eq(nil)                     }
-      specify { expect(empty_val).to eq(empty_val)               }
-      specify { expect(empty_val).to eq(value_8(""))             }
-      specify { expect(empty_val).not_to eq(value_8(Date.today)) }
-    end
   end
 
   context "::Proper" do
-    describe "#position" do
-      specify { expect(value_8(Date.today).position).to eql(position) }
-    end
+    let(:element_val) { value_8("20180630") }
+    let(:element_use) { element_use_8 }
+    let(:valid_str)   { Date.civil(2020, 12, 31) }
+    let(:invalid_str) { "wrong" }
+    let(:inspect_str) { "2018-06-30" }
+    include_examples "global_element_types_non_empty"
 
     describe "#proper?" do
-      specify { expect(value_8(Date.today)).to be_proper }
-    end
-
-    describe "#empty?" do
-      specify { expect(value_8(Date.today)).to_not be_empty }
-    end
-
-    describe "#valid?" do
-      specify { expect(value_8(Date.today)).to be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(value_8(Date.today)).not_to be_invalid }
+      specify { expect(element_val).to be_proper }
     end
 
     describe "#too_short?" do
@@ -498,22 +314,17 @@ describe Stupidedi::Versions::Common::ElementTypes::DT do
   end
 
   context "::Improper" do
-    let(:improper_val) { value_8("200411") }
+    let(:element_val)  { value_6("200311") }
+    let(:element_use)  { element_use_6 }
+    let(:invalid_str)  { "wrong" }
+    let(:valid_str)    { "201231" }
+    let(:inspect_str)  { "XX20-03-11" }
+    include_examples "global_element_types_non_empty"
 
-    describe "#valid?" do
-      specify { expect(improper_val).to be_valid }
-    end
-
-    describe "#invalid?" do
-      specify { expect(improper_val).to_not be_invalid }
-    end
+    let(:improper_val) { value_6("200411") }
 
     describe "#proper?" do
       specify { expect(improper_val).to_not be_proper }
-    end
-
-    describe "#empty?" do
-      specify { expect(improper_val).to_not be_empty }
     end
 
     describe "#copy(changes)" do
@@ -562,46 +373,6 @@ describe Stupidedi::Versions::Common::ElementTypes::DT do
         specify { expect(improper_val.future).to eq(value_8(Date.civil(2020, 4, 11))) }
       else
         specify { expect(improper_val.future).to eq(value_8(Date.civil(2120, 4, 11))) }
-      end
-    end
-
-    describe "#inspect" do
-      shared_examples "inspect" do
-        it "returns a String" do
-          expect(improper_val.inspect).to be_a(String)
-        end
-
-        it "indicates valid" do
-          expect(improper_val.inspect).to match(/value/)
-        end
-
-        it "includes element value" do
-          expect(improper_val.inspect).to match(/\d{2}-\d{2}-\d{2}/)
-        end
-      end
-
-      context "when forbidden" do
-        let(:improper_val) do
-          element_use_8.copy(:requirement => e_not_used).value("190131", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when required" do
-        let(:improper_val) do
-          element_use_8.copy(:requirement => e_mandatory).value("190131", position)
-        end
-
-        include_examples "inspect"
-      end
-
-      context "when optional" do
-        let(:improper_val) do
-          element_use_8.copy(:requirement => e_optional).value("190131", position)
-        end
-
-        include_examples "inspect"
       end
     end
 

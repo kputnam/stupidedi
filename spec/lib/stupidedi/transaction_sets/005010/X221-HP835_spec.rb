@@ -1,5 +1,6 @@
 describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835" do
   using Stupidedi::Refinements
+  include TreeMatchers
   include NavigationMatchers
 
   let(:fixdir) { "005010/X221 HP835 Health Care Claim Payment Advice/case" }
@@ -130,7 +131,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835" 
                      # 2000 HEADER NUMBER
                      S(:LX, "130212") =>
                        Ss(R(:LX, "110212"),
-                          S(:TS3, "6543210909", "13", "1996/12/31", 1, 15000),
+                          S(:TS3, "6543210909", "13", "19961231", 1, 15000),
                           S(:CLP, "777777") =>
                             Ss(S(:CAS, "CO", "45", "3019.67"),
                                S(:NM1, "QC"),

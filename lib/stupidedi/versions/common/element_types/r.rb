@@ -72,10 +72,11 @@ module Stupidedi
 
             # @return [FloatVal]
             def map
-              FloatVal.value(yield(nil), usage, position)
+              self
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.try do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -91,6 +92,7 @@ module Stupidedi
 
               ansi.element(" R.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -113,25 +115,46 @@ module Stupidedi
             end
           end
 
-          #
-          # Empty numeric value. Shouldn't be directly instantiated -- instead
-          # use the {FloatVal.value} and {FloatVal.empty} constructors.
-          #
-          class Empty < FloatVal
+          class Valid < FloatVal
             def valid?
               true
+            end
+
+            def coerce(other)
+              return FloatVal.value(other, usage, position), self
+            end
+
+            # @return [Empty]
+            def copy(changes = {})
+              FloatVal.value \
+                changes.fetch(:value, value),
+                changes.fetch(:usage, usage),
+                changes.fetch(:position, position)
+            end
+
+            # @return [FloatVal]
+            def map
+              FloatVal.value(yield(value), usage, position)
+            end
+
+            # @return [Boolean]
+            def ==(other)
+              other = FloatVal.value(other, usage, position)
+              other.valid? and other.value == value
+            end
+          end
+
+          class Empty < Valid
+            def value
+              nil
             end
 
             def empty?
               true
             end
 
-            # @return [FloatVal]
-            def map
-              FloatVal.value(yield(nil), usage, position)
-            end
-
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.try do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -147,6 +170,7 @@ module Stupidedi
 
               ansi.element(" R.empty#{id}")
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -157,39 +181,20 @@ module Stupidedi
             def to_x12(truncate = true)
               ""
             end
-
-            # @return [Boolean]
-            def ==(other)
-              other.is_a?(Empty) or other.nil?
-            end
-
-            # @return [Empty]
-            def copy(changes = {})
-              FloatVal.value \
-                changes.fetch(:value, nil),
-                changes.fetch(:usage, @usage),
-                changes.fetch(:position, @position)
-            end
           end
 
-          #
-          # Non-empty numeric value. Shouldn't be directly instantiated --
-          # instead, use the {FloatVal.value} constructors.
-          #
-          class NonEmpty < FloatVal
-            include Comparable
-
+          class NonEmpty < Valid
             # @group Mathematical Operators
             #################################################################
 
             extend Operators::Binary
-            binary_operators(:+, :-, :*, :/, :%, :coerce => :to_d)
-
-            extend Operators::Relational
-            relational_operators(:==, :<=>, :coerce => :to_d)
+            binary_operators :+, :-, :*, :/, :%, :coerce => :to_d
 
             extend Operators::Unary
-            unary_operators(:abs, :-@, :+@)
+            unary_operators :abs, :-@, :+@
+
+            extend Operators::Relational
+            relational_operators :<, :>, :<=, :>=, :<=>, :coerce => :to_d
 
             # @endgroup
             #################################################################
@@ -197,28 +202,11 @@ module Stupidedi
             # @return [BigDecimal]
             attr_reader :value
 
-            def_delegators :@value, :to_i, :to_d, :to_f, :to_r, :to_c
+            def_delegators :value, :to_i, :to_d, :to_f, :to_r, :to_c
 
             def initialize(value, usage, position)
               @value = value
               super(usage, position)
-            end
-
-            # @return [NonEmpty]
-            def copy(changes = {})
-              NonEmpty.new \
-                changes.fetch(:value, @value),
-                changes.fetch(:usage, usage),
-                changes.fetch(:position, position)
-            end
-
-            def coerce(other)
-              return copy(:value => other.to_d), self
-            end
-
-            def valid?
-              # False for NaN and +/- Infinity
-              @value.finite?
             end
 
             def empty?
@@ -226,6 +214,7 @@ module Stupidedi
             end
 
             # @return [String]
+            # :nocov:
             def inspect
               id = definition.try do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
@@ -241,6 +230,7 @@ module Stupidedi
 
               ansi.element(" R.value#{id}") + "(#{to_s})"
             end
+            # :nocov:
 
             # @return [String]
             def to_s
@@ -267,15 +257,12 @@ module Stupidedi
                   definition.max_length - @value.to_i.abs.to_s.length
                 end
 
-              if remaining <= 0
-                if truncate
-                  int   = @value.to_i
-                  sign  = (int < 0) ? "-" : ""
-                  sign  = sign + int.abs.to_s.take(definition.max_length)
-                  return sign
-                else
-                  return @value.to_i.abs
-                end
+              # The integer part consumes all the space, so there is no room
+              # for a fractional amount
+              if remaining <= 0 and truncate
+                int   = @value.to_i
+                sign  = (int < 0) ? "-" : ""
+                return sign + int.abs.to_s.take(definition.max_length)
               end
 
               # Don't exceed the definition's max_precision
@@ -313,11 +300,6 @@ module Stupidedi
               # The length of a decimal type does not include an optional sign
               definition.max_length < @value.to_i.abs.to_s.length
             end
-
-            # @return [FloatVal]
-            def map
-              FloatVal.value(yield(@value), usage, position)
-            end
           end
         end
 
@@ -332,7 +314,9 @@ module Stupidedi
 
           # @return [FloatVal]
           def value(object, usage, position)
-            if object.blank?
+            if object.is_a?(FloatVal)
+              object#.copy(:usage => usage, :position => position)
+            elsif object.blank?
               self::Empty.new(usage, position)
             else
               self::NonEmpty.new(object.to_d, usage, position)
