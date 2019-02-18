@@ -242,14 +242,14 @@ module Stupidedi
                 end
               end
 
-              ansi.element("Nn.value#{id}") + "(#{@value.to_s("F")})"
+              ansi.element("Nn.value#{id}") + "(#{@value.to_s("F").gsub(/\.0+$/, "")})"
             end
             # :nocov:
 
             # @return [String]
             def to_s
               # The number of fractional digits is implied by usage.precision
-              @value.to_s("F")
+              @value.to_s("F").gsub(/\.0+$/, "")
             end
 
             # @return [String]
