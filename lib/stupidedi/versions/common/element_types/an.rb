@@ -103,8 +103,8 @@ module Stupidedi
           # Parse the string into a date (Date), date time (Time), or a range
           # of either according to the given format specifier.
           #
-          # See {StringVal::DATE_FORMAT_SINGLE} and {StringVal::DATE_FORMAT_RANGE}
-          # for a list of recognized format specifiers.
+          # See {AN::DATE_FORMAT_SINGLE} and {AN::DATE_FORMAT_RANGE} for a list
+          # of recognized format specifiers.
           #
           # @return [Time | Range<Time>]
           def strptime(format, value)

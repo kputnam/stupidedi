@@ -9,7 +9,7 @@ module Stupidedi
     # {#take} and {#drop} methods.
     #
     # The {DelegatedInput} subclass wraps values that already implement the
-    # interface, like {String} and {Array}. The {FileInput} subclass wraps
+    # interface, like `String` and `Array`. The {FileInput} subclass wraps
     # opened `IO` streams like `File`, and possibly others.
     #
     # @example Reading the input
@@ -43,10 +43,10 @@ module Stupidedi
     #     in.column   #=> 1
     #   end
     #
-    # @note The monkey-patched classes {String} and {Array} provide compatible
+    # @note The `String` and `Array` refinements in `lib/ruby` provide compatible
     #   implementations of the abstract methods, so code written to target
-    #   this interface is backward-compatable with plain unwrapped {String}
-    #   and {Array} values.
+    #   this interface is backward-compatable with plain unwrapped `String`
+    #   and `Array` values.
     #
     class AbstractInput
       include Inspect

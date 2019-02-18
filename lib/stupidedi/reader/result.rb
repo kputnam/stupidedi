@@ -81,6 +81,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text "Result.success"
         q.group(2, "(", ")") do
@@ -91,8 +92,9 @@ module Stupidedi
           q.pp @remainder
         end
       end
+      # :nocov:
 
-      # Override {Enumerable#blank?} since we're not really {Enumerable}
+      # Override `Enumerable#blank?` since we're not really `Enumerable`
       def blank?
         false
       end
@@ -144,6 +146,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text "Result.failure"
         q.group(2, "(", ")") do
@@ -157,6 +160,7 @@ module Stupidedi
           q.text "#{@fatal ? "" : "non-"}fatal"
         end
       end
+      # :nocov:
 
     private
 

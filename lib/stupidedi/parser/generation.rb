@@ -11,7 +11,7 @@ module Stupidedi
       # The `nondeterminism` argument specifies a limit on how many
       # parse trees can be built simultaneously due to ambiguity in
       # the input and/or specification. This prevents runaway memory
-      # CPU consumption (see GH-129), and will return a {Result.failure}
+      # CPU consumption (see GH-129), and will return a {Reader::Result.failure}
       # once exceeded.
       #
       # The default value is 1, resulting in an error if any input

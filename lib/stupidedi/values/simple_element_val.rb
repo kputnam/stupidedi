@@ -11,7 +11,7 @@ module Stupidedi
     #
     class SimpleElementVal < AbstractElementVal
       # @return [SimpleElementDef]
-      def_delegators :@usage, :definition, :descriptor
+      def_delegators :usage, :definition, :descriptor
 
       abstract :valid?
 
@@ -38,7 +38,7 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :copy, "changes={}"
 
-      # True unless this value isn't included in {AbstractElementUse#allowed_values}
+      # True unless this value isn't included in {Schema::SimpleElementUse#allowed_values}
       def allowed?
         empty? or invalid? or usage.allowed_values.include?(to_s)
       end

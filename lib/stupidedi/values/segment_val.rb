@@ -8,7 +8,7 @@ module Stupidedi
     #
     class SegmentVal < AbstractVal
       # @return [SegmentDef]
-      def_delegators :@usage, :definition, :descriptor, :id
+      def_delegators :usage, :definition, :descriptor, :id
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children
@@ -67,6 +67,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         id = definition.try do |d|
           ansi.bold("[#{d.id}: #{d.name}]")
@@ -84,11 +85,14 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
+      # :nocov:
       def inspect
         ansi.segment(ansi.bold(definition.id.to_s))
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)
