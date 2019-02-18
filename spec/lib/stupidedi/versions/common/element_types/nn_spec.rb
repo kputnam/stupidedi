@@ -102,15 +102,50 @@ describe Stupidedi::Versions::Common::ElementTypes::Nn do
       specify { expect(value("123").map{|x| nil}).to be_empty }
     end
 
-    todo "#to_s"
-    todo "#to_d"
-    todo "#to_f"
-    todo "#to_i"
-    todo "#to_r"
+    describe "#to_s" do
+      specify { expect(value("1234").to_s).to eq("12.34") }
+    end
+
+    describe "#to_d" do
+      specify { expect(value("1234").to_d).to eq("12.34".to_d) }
+    end
+
+    describe "#to_f" do
+      specify { expect(value("1234").to_f).to eq("12.34".to_f) }
+    end
+
+    describe "#to_i" do
+      specify { expect(value("1234").to_i).to eq("12.34".to_i) }
+    end
+
+    describe "#to_r" do
+      specify { expect(value("1234").to_r).to eq("12.34".to_r) }
+    end
 
     context "#to_x12(truncate)" do
-      todo "with truncation"
-      todo "without truncation"
+      context "with truncation" do
+        specify { expect(value("0").to_x12(true)).to eq("0000") }
+        specify { expect(value("1").to_x12(true)).to eq("0001") }
+        specify { expect(value("12").to_x12(true)).to eq("0012") }
+        specify { expect(value("123").to_x12(true)).to eq("0123") }
+        specify { expect(value("1234").to_x12(true)).to eq("1234") }
+        specify { expect(value("12345").to_x12(true)).to eq("12345") }
+        specify { expect(value("123456").to_x12(true)).to eq("123456") }
+        specify { expect(value("1234567").to_x12(true)).to eq("123456") }
+        specify { expect(value("12345678").to_x12(true)).to eq("123456") }
+      end
+
+      context "without truncation" do
+        specify { expect(value("0").to_x12(false)).to eq("0000") }
+        specify { expect(value("1").to_x12(false)).to eq("0001") }
+        specify { expect(value("12").to_x12(false)).to eq("0012") }
+        specify { expect(value("123").to_x12(false)).to eq("0123") }
+        specify { expect(value("1234").to_x12(false)).to eq("1234") }
+        specify { expect(value("12345").to_x12(false)).to eq("12345") }
+        specify { expect(value("123456").to_x12(false)).to eq("123456") }
+        specify { expect(value("1234567").to_x12(false)).to eq("1234567") }
+        specify { expect(value("12345678").to_x12(false)).to eq("12345678") }
+      end
     end
 
     describe "relational operators" do

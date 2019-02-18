@@ -223,7 +223,7 @@ describe Stupidedi::Parser::Navigation do
       end
     end
 
-    context "when match is a nephew " do
+    context "when match is a nephew" do
       context "one level down" do
         context "in an immediately adjacent unqualified loop" do
           let(:b) do
@@ -844,7 +844,7 @@ describe Stupidedi::Parser::Navigation do
 
       context "when mth element is repeating" do
         it "returns the value" do
-          result = b.REP(b.repeated(1, 2, 3, 4)).machine.elementn(1)
+          result = b.REP(b.repeated(1, 2, 3)).machine.elementn(1)
           expect(result).to be_success(&:element?)
           expect(result).to be_success(&:repeated?)
         end

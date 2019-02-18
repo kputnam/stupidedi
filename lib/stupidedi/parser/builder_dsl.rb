@@ -159,6 +159,11 @@ module Stupidedi
           end
 
         elsif zipper.node.repeated?
+          unless zipper.node.usage.repeat_count.include?(zipper.node.children.length)
+            raise Exceptions::ParseError,
+              "repeating #{zipper.node.descriptor} occurs too many times at #{zipper.node.position.inspect}"
+          end
+
           zipper.children.each{|z| critique(z) }
 
         elsif zipper.node.segment?

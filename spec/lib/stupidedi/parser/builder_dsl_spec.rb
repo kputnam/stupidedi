@@ -446,22 +446,77 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
     end
 
     context "when not required" do
+      let(:b) do
+        strict(
+          Detail("2A",
+            Segment(10, NNA(), s_optional, bounded(1))),
+          Detail("2B",
+            Segment(20, NNB(), s_optional, bounded(1))))
+      end
+
       context "but present" do
-        todo "is a-ok"
+        it "is a-ok" do
+          b.NNA(1)
+          b.NNB(0)
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :NNB).fetch.zipper.tap do |z|
+            expect(z.parent.node).to be_table
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(3) # 1, 2A, 2B
+          end).to be_defined
+        end
       end
 
       context "and missing" do
-        todo "is a-ok"
+        it "is a-ok" do
+          b.NNB(0)
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :NNB).fetch.zipper.tap do |z|
+            expect(z.parent.node).to be_table
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(2) # 1, 2B
+          end).to be_defined
+        end
       end
     end
 
     context "when required" do
+      let(:b) do
+        strict(
+          Detail("2A",
+            Segment(10, NNA(), s_mandatory, bounded(1))),
+          Detail("2B",
+            Segment(20, NNB(), s_optional, bounded(1))))
+      end
+
       context "and present" do
-        todo "is a-ok"
+        it "is a-ok" do
+          b.NNA(1)
+          b.NNB(0)
+
+          expect(b.machine.first.fetch.sequence(:GS, :ST, :NNB).fetch.zipper.tap do |z|
+            expect(z.parent.node).to be_table
+            expect(z.parent.parent.node).to be_transaction_set
+            expect(z.parent.parent.children.length).to eq(3) # 1, 2A, 2B
+          end).to be_defined
+        end
       end
 
       context "but missing" do
-        todo "raises an exception"
+        it "raises an exception" do
+          b.NNB(0)
+          b.SE(stack.count(b), stack.pop_st)
+
+          expect do
+            b.GE(stack.count, stack.pop_gs)
+          end.to raise_error(/required table 2A is missing/)
+        end
+
+        todo "raises an exception, immediately" do
+          expect do
+            b.NNB(0)
+          end.to raise_error(/required table 2A is missing/)
+        end
       end
     end
 
@@ -1004,6 +1059,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           Segment(10, ANA(:min_length => 4), s_mandatory, bounded(1))))
 
         expect { b.ANA("X") }.to raise_error(/value is too short in element ANA01/)
+        expect(b.machine).to be_segment(:ST)
       end
     end
 
@@ -1013,10 +1069,33 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           Segment(10, ANA(:max_length => 2), s_mandatory, bounded(1))))
 
         expect { b.ANA("WXYZ") }.to raise_error(/value is too long in element ANA01/)
+        expect(b.machine).to be_segment(:ST)
       end
     end
 
     context "simple" do
+      context "when element should be repeating" do
+        let(:b) do
+          strict(Detail("2", Segment(10, REP(), s_mandatory, bounded(1))))
+        end
+
+        it "raises an exception" do
+          expect { b.REP("A") }.to raise_error(/REP01 is a repeatable element/)
+          expect(b.machine).to be_segment(:ST)
+        end
+      end
+
+      context "when element should be composite" do
+        let(:b) do
+          strict(Detail("2", Segment(10, COM(), s_mandatory, bounded(1))))
+        end
+
+        it "raises an exception" do
+          expect { b.COM(1) }.to raise_error(/COM01 is a non-repeatable composite element/)
+          expect(b.machine).to be_segment(:ST)
+        end
+      end
+
       context "AN (string)" do
         let(:b) do
           strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
@@ -1026,12 +1105,21 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         context "when given a Date" do
           it "raises an exception" do
             expect { b.XX(Date.today) }.to raise_error(/invalid element XX01/)
+            expect(b.machine).to be_segment(:ST)
           end
         end
 
         context "when given a Time" do
           it "raises an exception" do
             expect { b.XX(Date.today) }.to raise_error(/invalid element XX01/)
+            expect(b.machine).to be_segment(:ST)
+          end
+        end
+
+        context "when given a valid string" do
+          it "is a-ok" do
+            expect { b.XX("AB") }.to_not raise_error
+            expect(b.machine).to be_segment(:XX)
           end
         end
       end
@@ -1041,30 +1129,35 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           context "given a Time" do
             it "is a-ok" do
               expect { b.XX(Time.now) }.not_to raise_error
+              expect(b.machine).to be_segment(:XX)
             end
           end
 
           context "given a Date" do
             it "is a-ok" do
               expect { b.XX(Date.today) }.not_to raise_error
+              expect(b.machine).to be_segment(:XX)
             end
           end
 
           context "given a String with a 3-digit year" do
             it "raises an exception" do
               expect { b.XX("9990130") }.to raise_error(/invalid element XX01/)
+              expect(b.machine).to be_segment(:ST)
             end
           end
 
           context "given a String with a 4-digit year" do
-            it "raises an exception" do
+            it "is a-ok" do
               expect { b.XX("19990130") }.to_not raise_error
+              expect(b.machine).to be_segment(:XX)
             end
           end
 
           context "given a String with a 5-digit year" do
             it "raises an exception" do
               expect { b.XX("019990130") }.to_not raise_error
+              expect(b.machine).to be_segment(:XX)
             end
           end
 
@@ -1073,6 +1166,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
               it "is a-ok" do
                 value = OpenStruct.new(:year => 2000, :month => 12, :day => 30)
                 expect { b.XX(value) }.to_not raise_error
+                expect(b.machine).to be_segment(:XX)
               end
             end
 
@@ -1080,6 +1174,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
               it "raises an exception" do
                 value = OpenStruct.new(:year => 2000, :month => 13, :day => 33)
                 expect { b.XX(value) }.to raise_error(/invalid element XX01/)
+                expect(b.machine).to be_segment(:ST)
               end
             end
           end
@@ -1087,6 +1182,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           context "given some other type of value" do
             it "raises an exception" do
               expect { b.XX(20001231) }.to raise_error(/invalid element XX01/)
+              expect(b.machine).to be_segment(:ST)
             end
           end
         end
@@ -1100,8 +1196,9 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           include_examples "2345"
 
           context "given a String with a 2-digit year" do
-            it "raises an exception" do
+            it "is a-ok" do
               expect { b.XX("990130") }.not_to raise_error
+              expect(b.machine).to be_segment(:XX)
             end
           end
         end
@@ -1117,6 +1214,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           context "given a String with a 2-digit year" do
             it "raises an exception" do
               expect { b.XX("990130") }.to raise_error(/value is too short in element XX01/)
+              expect(b.machine).to be_segment(:ST)
             end
           end
         end
@@ -1141,43 +1239,47 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           context "when given a non-allowed value" do
             context "and no choice is involved" do
               it "raises an exception" do
-                expect { b.IDA("0") }.to \
-                  raise_error(/value 0 is not allowed in element IDA01/)
+                expect { b.IDA("0") }.to  raise_error(/value 0 is not allowed in element IDA01/)
+                expect(b.machine).to be_segment(:ST)
               end
             end
 
             context "and choice is involved" do
               it "raises an exception" do
-                expect { b.IDB("0") }.to \
-                  raise_error(/value 0 is not allowed in element IDB01/)
+                expect { b.IDB("0") }.to raise_error(/value 0 is not allowed in element IDB01/)
+                expect(b.machine).to be_segment(:ST)
               end
 
               it "raises an exception" do
-                expect { b.IDC("0") }.to \
-                  raise_error(/value 0 is not allowed in element IDC01/)
+                expect { b.IDC("0") }.to raise_error(/value 0 is not allowed in element IDC01/)
+                expect(b.machine).to be_segment(:ST)
               end
             end
           end
 
           context "when given an ambiguous value" do
             it "raises an exception" do
-              expect { b.IDB(nil) }.to \
-                raise_error(/non-deterministic machine state: IDB Example X, IDB Example Y/)
+              expect { b.IDB(nil) }.to raise_error(/non-deterministic machine state: IDB Example X, IDB Example Y/)
+              expect(b.machine).to be_segment(:ST)
             end
 
             it "raises an exception" do
               expect { b.IDC("A") }.to \
                 raise_error(/non-deterministic machine state: IDC Example X, IDC Example Y/)
+              expect(b.machine).to be_segment(:ST)
             end
           end
 
           context "when given an allowed value" do
             it "is a-ok" do
-              b.IDA("X")
-              b.IDB("X")
-              b.IDB("Y")
-              b.IDC("X")
-              b.IDC("Y")
+              expect do
+                b.IDA("X")
+                b.IDB("X")
+                b.IDB("Y")
+                b.IDC("X")
+                b.IDC("Y")
+              end.to_not raise_error
+              expect(b.machine).to be_segment(:IDC)
             end
           end
         end
@@ -1202,6 +1304,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
               it "raises an exception" do
                 expect { b.COI(b.composite("0")) }.to \
                   raise_error(/value 0 is not allowed in element COI01-01/)
+                expect(b.machine).to be_segment(:ST)
               end
             end
 
@@ -1209,11 +1312,13 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
               it "raises an exception" do
                 expect { b.COJ(b.composite("0")) }.to \
                   raise_error(/value 0 is not allowed in element COJ01-01/)
+                expect(b.machine).to be_segment(:ST)
               end
 
               it "raises an exception" do
                 expect { b.COK(b.composite("0")) }.to \
                   raise_error(/value 0 is not allowed in element COK01-01/)
+                expect(b.machine).to be_segment(:ST)
               end
             end
           end
@@ -1222,21 +1327,26 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
             it "raises an exception" do
               expect { b.COJ(b.composite(nil)) }.to \
                 raise_error(/non-deterministic machine state: COJ Example X, COJ Example Y/)
+              expect(b.machine).to be_segment(:ST)
             end
 
             it "raises an exception" do
               expect { b.COK(b.composite("A")) }.to \
                 raise_error(/non-deterministic machine state: COK Example X, COK Example Y/)
+              expect(b.machine).to be_segment(:ST)
             end
           end
 
           context "when given an allowed value" do
             it "is a-ok" do
-              b.COI(b.composite("X"))
-              b.COJ(b.composite("X"))
-              b.COJ(b.composite("Y"))
-              b.COK(b.composite("X"))
-              b.COK(b.composite("Y"))
+              expect do
+                b.COI(b.composite("X"))
+                b.COJ(b.composite("X"))
+                b.COJ(b.composite("Y"))
+                b.COK(b.composite("X"))
+                b.COK(b.composite("Y"))
+              end.to_not raise_error
+              expect(b.machine).to be_segment(:COK)
             end
           end
         end
@@ -1245,37 +1355,134 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       context "Nn (fixed precision number)" do
         let(:b) do
           strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(dE_N0, e_mandatory, bounded(1)))))
+            Element(de_N0, e_mandatory, bounded(1)))))
         end
 
-        todo
+        context "when given a non-numeric value" do
+          it "throws an exception" do
+            expect { b.XX("A") }.to raise_error(/invalid element XX01/)
+          end
+        end
+
+        context "when given a valid number" do
+          it "is a-ok" do
+            expect { b.XX(1) }.to_not raise_error
+            expect(b.machine).to be_segment(:XX, 1)
+          end
+        end
       end
 
       context "TM (time)" do
         let(:b) do
           strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(dE_TM, e_mandatory, bounded(1)))))
+            Element(de_TM, e_mandatory, bounded(1)))))
         end
 
-        todo
+        context "when given a non-numeric string" do
+          it "raises an exception" do
+            expect { b.XX("A") }.to raise_error(/invalid element XX01/)
+            expect(b.machine).to be_segment(:ST)
+          end
+        end
+
+        context "when given an invalid time" do
+          it "raises an exception" do
+            value = OpenStruct.new(:hour => 30, :minute => 10, :second => 45)
+            expect { b.XX(value) }.to raise_error(/invalid element XX01/)
+            expect(b.machine).to be_segment(:ST)
+          end
+        end
       end
 
       context "R (floating precision number)" do
         let(:b) do
           strict(Detail("2", Segment_(10, :XX, "Example", s_mandatory, bounded(1),
-            Element(dE_R, e_mandatory, bounded(1)))))
+            Element(de_R, e_mandatory, bounded(1)))))
         end
 
-        todo
+        context "when given a non-numeric value" do
+          it "raises an exception" do
+            expect { b.XX("A") }.to raise_error(/invalid element XX01/)
+            expect(b.machine).to be_segment(:ST)
+          end
+        end
+
+        context "when given a valid number" do
+          it "is a-ok" do
+            expect { b.XX(1) }.to_not raise_error
+            expect(b.machine).to be_segment(:XX, 1)
+          end
+        end
       end
     end
 
-    todo "composite"
+    context "composite" do
+      context "when element should be simple" do
+        let(:b) do
+          strict(Detail("2", Segment(10, IDA(), s_mandatory, bounded(1))))
+        end
+
+        it "raises an exception" do
+          expect { b.IDA(b.composite(1)) }.to raise_error(/IDA01 is a non-repeatable simple element/)
+          expect(b.machine).to be_segment(:ST)
+        end
+      end
+
+      context "when element is repeating" do
+        let(:b) do
+          strict(Detail("2", Segment(10, REP(), s_mandatory, bounded(1))))
+        end
+
+        it "raises an exception" do
+          expect { b.REP(b.composite(1)) }.to raise_error(/REP01 is a repeatable element/)
+          expect(b.machine).to be_segment(:ST)
+        end
+      end
+
+      context "when given a valid composite value" do
+        let(:b) do
+          strict(Detail("2", Segment(10, COM(), s_mandatory, bounded(1))))
+        end
+
+        it "is a-ok" do
+          expect { b.COM(b.composite(1, 2)) }.to_not raise_error
+          expect(b.machine).to be_segment(:COM, b.composite(1, 2))
+        end
+      end
+    end
 
     context "repeating" do
-      todo "simple"
+      context "when element should not repeat" do
+        let(:b) do
+          strict(Detail("2", Segment(10, IDA(), s_mandatory, bounded(1))))
+        end
 
-      todo "composite"
+        it "raises and exception" do
+          expect { b.IDA(b.repeated("A", "B")) }.to raise_error(/IDA01 is a non-repeatable simple element/)
+        end
+      end
+
+      context "when too many repeats are present" do
+        let(:b) do
+          strict(Detail("2", Segment(10, REP(), s_mandatory, bounded(1))))
+        end
+
+        it "raises an exception" do
+          expect { b.REP(b.repeated(1, 2, 3, 4)) }.to raise_error(/repeating element REP01 .+? occurs too many times/)
+        end
+      end
+
+      context "when " do
+        let(:b) do
+          strict(Detail("2", Segment(10, REP(), s_mandatory, bounded(1))))
+        end
+
+        it "is a-ok" do
+          expect { b.REP(b.repeated(1, 2, 3)) }.to_not raise_error
+          expect(b.machine).to be_segment(:REP)
+          # expect(b.machine).to be_segment(:REP, b.repeated(1, 2, 3))
+        end
+      end
     end
   end
 end

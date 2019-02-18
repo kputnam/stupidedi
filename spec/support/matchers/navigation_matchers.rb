@@ -28,7 +28,7 @@ module NavigationMatchers
     def matches?(value)
       @filter_tok, @syntax_val = extract_arguments(value)
       matches   = @syntax_val.segment? 
-      matches &&= !(@syntax_id.present? and filter?(@filter_tok, @syntax_val))
+      matches &&= !(@segment_id.present? and filter?(@filter_tok, @syntax_val))
     end
 
     def failure_message
@@ -67,7 +67,7 @@ module NavigationMatchers
 
     def filter_tok(zipper, segment_dict = nil)
       return nil if @segment_id.nil?
-      return nil if @elemnets.nil?
+      return nil if @elements.nil?
 
       unless segment_dict.nil?
         return mksegment_tok(segment_dict, @segment_id, @elements, nil)

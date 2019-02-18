@@ -18,6 +18,7 @@ module Stupidedi
       attr_reader :usage
 
       def_delegators :@children, :defined_at?, :length
+      def_delegators "@children.first", :position
 
       def initialize(children, usage)
         @children, @usage =
@@ -60,6 +61,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         if @children.empty?
           id = definition.try do |d|
@@ -80,6 +82,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)

@@ -128,7 +128,9 @@ describe Stupidedi::Versions::Common::ElementTypes::R do
       specify { expect(value("-1.9").to_i).to eq(-1) }
     end
 
-    todo "#to_r"
+    describe "#to_r" do
+      specify { expect(value("13.25").to_r).to eq("13.25".to_r) }
+    end
 
     describe "#to_x12(truncate)" do
       # Remember the element definition has length 4-6, with precision 2

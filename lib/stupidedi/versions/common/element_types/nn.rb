@@ -242,14 +242,14 @@ module Stupidedi
                 end
               end
 
-              ansi.element("Nn.value#{id}") + "(#{value.to_s("F")})"
+              ansi.element("Nn.value#{id}") + "(#{@value.to_s("F")})"
             end
             # :nocov:
 
             # @return [String]
             def to_s
               # The number of fractional digits is implied by usage.precision
-              (@value * (10 ** definition.precision)).to_i.to_s
+              @value.to_s("F")
             end
 
             # @return [String]
@@ -260,10 +260,12 @@ module Stupidedi
               # Leading zeros must be suppressed unless necessary to satisfy a
               # minimum length requirement
               if truncate
-                sign = sign + nn.abs.to_s.take(definition.max_length).
-                                    rjust(definition.min_length, "0")
+                sign = sign + nn.abs.to_s.
+                  take(definition.max_length).
+                  rjust(definition.min_length, "0")
               else
-                sign = sign + nn.abs.to_s.rjust(definition.min_length, "0")
+                sign = sign + nn.abs.to_s.
+                  rjust(definition.min_length, "0")
               end
             end
           end
