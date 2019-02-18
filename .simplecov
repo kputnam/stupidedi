@@ -55,11 +55,11 @@ class SimpleCov::Formatter::SummaryFormatter
   end
 end
 
-# Don't let the file name in the first column be broken into two lines
 class SimpleCov::Formatter::CustomHtmlFormatter < SimpleCov::Formatter::InlineHTMLFormatter
   def output_message(result)
   end
 
+  # This image is missing from simplecov-inline-html
   BORDER = <<-EOF.gsub(/\s/, '')
     iVBORw0KGgoAAAANSUhEUgAAAAEAAABLCAIAAAA+tHrUAAAAUklEQVR4AcXH
     sQ3AIAwFUfuDYADSMQkrMiVdqKGzLDnCRTaIUjzpjnvvodaKtRbM7KWqTkT4
@@ -67,6 +67,7 @@ class SimpleCov::Formatter::CustomHtmlFormatter < SimpleCov::Formatter::InlineHT
     rkJggg==
   EOF
 
+  # This image is missing from simplecov-inline-html
   CONTROLS = <<-EOF.gsub(/\s/, '')
     iVBORw0KGgoAAAANSUhEUgAAAOEAAABLCAMAAACx6hDAAAABj1BMVEVPT0/e
     3t7b29vS0tK7urq5uLjq6uqZmZmSkpJaWlrU1NTj4+PFxcWvr6+goKBbW1u3
@@ -121,6 +122,8 @@ class SimpleCov::Formatter::CustomHtmlFormatter < SimpleCov::Formatter::InlineHT
       css = super(path)
       css.gsub!("url(colorbox/border.png)", "url(data:image/png;base64,#{BORDER})")
       css.gsub!("url(colorbox/controls.png)", "url(data:image/png;base64,#{CONTROLS})")
+
+      # Fit more stuff without scroll bars, don't linewrap filenames
       css << <<-EOF
         body       { padding:0 !important; }
         .src_link  { white-space:nowrap; }
