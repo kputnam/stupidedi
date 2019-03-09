@@ -93,7 +93,7 @@ module Stupidedi
           end
 
           element_idx  = "00"
-          element_uses.zip(elements) do |e_use, (e_tag, e_val, e_position)|
+          elements.zip(element_uses) do |(e_tag, e_val, e_position), e_use|
             element_idx = element_idx.succ
             designator = "#{id}#{element_idx}"
 

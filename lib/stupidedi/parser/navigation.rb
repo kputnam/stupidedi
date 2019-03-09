@@ -154,7 +154,7 @@ module Stupidedi
           elsif element_use.composite? and not element_use.repeatable?
             # m: element   of segment
             # n: component of composite element
-            # o: occurence of repeated component
+            # o: occurence of repeated component (commented-out below)
             descriptor = "%s%02d" % [segment_id, m]
             components = element_def.component_uses.length
             unless n <= components
@@ -165,8 +165,12 @@ module Stupidedi
             # component_use = element_def.component_uses.at(n - 1)
 
             if o.nil?
-              # This is a component of a composite element
-              return Either.success(element_zip.child(n - 1))
+              if element_zip.node.blank?
+                Either.failure("#{descriptor} is empty")
+              else
+                # This is a component of a composite element
+                Either.success(element_zip.child(n - 1))
+              end
 
             # @todo: There currently doesn't seem to be any instances of this in
             # the real world (a composite element that has a component that can
@@ -209,11 +213,11 @@ module Stupidedi
             if o.nil?
               description = (element_use.composite?) ? "repeatable composite" : "repeatable"
               if element_zip.node.blank?
-                return Either.failure("#{description} element #{descriptor} does not occur")
+                Either.failure("#{description} element #{descriptor} does not occur")
               elsif occurs_count < n
-                return Either.failure("#{description} element #{descriptor} only occurs #{occurs_count} times")
+                Either.failure("#{description} element #{descriptor} only occurs #{occurs_count} times")
               else
-                return Either.success(element_zip.child(n - 1))
+                Either.success(element_zip.child(n - 1))
               end
 
             elsif element_use.composite?
@@ -226,12 +230,12 @@ module Stupidedi
               descriptor = "%s%02d" % [segment_id, m]
 
               if element_zip.node.blank?
-                return Either.failure("repeatable composite element #{descriptor} does not occur")
+                Either.failure("repeatable composite element #{descriptor} does not occur")
               elsif occurs_count < n
-                return Either.failure("repeatable composite element #{descriptor} only occurs #{occurs_count} times")
+                Either.failure("repeatable composite element #{descriptor} only occurs #{occurs_count} times")
               else
                 component_zip = element_zip.children.at(n - 1)
-                return Either.success(component_zip.child(o - 1))
+                Either.success(component_zip.child(o - 1))
               end
 
             else

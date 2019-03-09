@@ -866,6 +866,13 @@ describe Stupidedi::Parser::Navigation do
           end
         end
 
+        context "when mth element does not occur" do
+          it "returns a failure" do
+            result = b.COM.machine.tap{|x| pp x }.elementn(1, 2)
+            expect(result).to be_failure(/COM01 is empty/)
+          end
+        end
+
         context "when nth component does not occur" do
           it "returns an empty value" do
             result = b.COM(b.composite(1, 2)).machine.elementn(1, 3)
