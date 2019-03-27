@@ -1,16 +1,17 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class AbstractVal
       include Inspect
       include Color
 
       # @return [SimpleElementDef, CompositeElementDef, LoopDef, SegmentDef, TableDef]
       abstract :definition
+
+      # @return [String]
+      abstract :descriptor
 
       # @see X222.pdf B.1.3.10 Absence of Data
       def empty?
@@ -127,8 +128,6 @@ module Stupidedi
           children.inject(result){|r,c| c.characters(r) }
         end
       end
-
     end
-
   end
 end

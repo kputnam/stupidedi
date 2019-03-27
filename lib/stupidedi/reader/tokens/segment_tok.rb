@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class SegmentTok
       include Inspect
 
@@ -33,9 +32,11 @@ module Stupidedi
           changes.fetch(:remainder, @remainder)
       end
 
+      # :nocov:
       def pretty_print(q)
         q.pp(:segment.cons(@id.cons(@element_toks)))
       end
+      # :nocov:
 
       def blank?
         @element_toks.all?(&:blank?)
@@ -45,12 +46,14 @@ module Stupidedi
         not blank?
       end
 
-      def to_s(separators)
+      def to_x12(separators)
         if blank?
           "#{id}#{separators.segment}"
         else
-          es = @element_toks.map{|x| x.to_s(separators) }
-          id.cons(es).join(separators.element) + separators.segment
+          es  = @element_toks.map{|x| x.to_x12(separators) }
+          sep = separators.element || "*"
+          eos = separators.segment || "~"
+          id.cons(es).join(sep).gsub(/#{Regexp.escape(sep)}+$/, "") + eos.strip
         end
       end
     end
@@ -67,6 +70,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

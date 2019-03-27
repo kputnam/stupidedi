@@ -1,15 +1,30 @@
 # frozen_string_literal: true
 module Stupidedi
-  using Refinements
-
   module Versions
     module FunctionalGroups
-      autoload :TwoThousandOne, "stupidedi/versions/functional_groups/002001"
-      autoload :ThirtyTen, 		"stupidedi/versions/functional_groups/003010"
-      autoload :ThirtyForty, 	"stupidedi/versions/functional_groups/003040"
-      autoload :ThirtyFifty, 	"stupidedi/versions/functional_groups/003050"
-      autoload :FortyTen, 		"stupidedi/versions/functional_groups/004010"
-      autoload :FiftyTen, 		"stupidedi/versions/functional_groups/005010"
+      warn "DEPRECATION WARNING: #{self} is deprecated, use Stupidedi::TransactionSets::*::Standards instead"
+
+      module TwoThousandOne
+      end
+
+      module ThirtyTen
+      end
+
+      module ThirtyForty
+      end
+
+      module ThirtyFifty
+      end
+
+      module FortyTen
+        # @deprecated Use Stupidedi::TransactionSets::FortyTen::Standards
+        TransactionSetDefs = Stupidedi::TransactionSets::FortyTen::Standards
+      end
+
+      module FiftyTen
+        # @deprecated Use Stupidedi::TransactionSets::FiftyTen::Standards
+        TransactionSetDefs = Stupidedi::TransactionSets::FiftyTen::Standards
+      end
     end
   end
 end

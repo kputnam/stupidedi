@@ -3,9 +3,7 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     class Result
-
       # @return [Zipper::AbstractCursor]
       abstract :zipper
 
@@ -22,7 +20,6 @@ module Stupidedi
     end
 
     class Warning < Result
-
       # @return [Zipper::AbstractCursor]
       attr_reader :zipper
 
@@ -45,7 +42,6 @@ module Stupidedi
     end
 
     class Error < Result
-
       # @return [Zipper::AbstractCursor]
       attr_reader :zipper
 
@@ -65,7 +61,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        name = self.class.name.split('::').last
+        name = self.class.name.split("::").last
         "#{name}(#{zipper.node.position.inspect}, #{@reason}, #{@zipper.node.inspect})"
       end
 
@@ -97,6 +93,5 @@ module Stupidedi
     # 277 Claim Acknowledgment
     class ClaimStatus < Error
     end
-
   end
 end

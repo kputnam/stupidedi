@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class AbstractDef
-
       def usage?
         false
       end
@@ -15,8 +12,10 @@ module Stupidedi
         true
       end
 
-      #
-      #########################################################################
+      # @return [String]
+      abstract :descriptor
+
+      abstract :required?
 
       # Is this an {InterchangeDef}?
       def interchange?
@@ -73,6 +72,5 @@ module Stupidedi
         false
       end
     end
-
   end
 end

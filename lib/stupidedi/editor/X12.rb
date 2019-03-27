@@ -3,9 +3,7 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     class X12 < AbstractEd
-
       # @return [Config]
       attr_reader :config
 
@@ -26,7 +24,6 @@ module Stupidedi
         #     n.times { st.next.tap{|z| z }}
         #   end
         # end
-
         end
       end
 
@@ -153,8 +150,6 @@ module Stupidedi
           end
         end
       end
-
     end
-
   end
 end

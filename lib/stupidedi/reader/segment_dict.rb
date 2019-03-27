@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     class SegmentDict
       include Inspect
 
@@ -174,6 +172,5 @@ module Stupidedi
 
     SegmentDict.eigenclass.send(:protected, :new)
     SegmentDict::NonEmpty.eigenclass.send(:public, :new)
-
   end
 end

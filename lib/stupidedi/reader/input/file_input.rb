@@ -3,15 +3,13 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     #
     # @note This class is not thread-safe. If more than one `Thread` has access
-    #   to the same instance, and they simultaneously call methods on that
-    #   instance, the methods may produce incorrect results and the object might
-    #   be left in an inconsistent state.
+    # to the same instance, and they simultaneously call methods on that
+    # instance, the methods may produce incorrect results and the object might
+    # be left in an inconsistent state.
     #
     class FileInput < AbstractInput
-
       # @return [IO]
       attr_reader :io
 
@@ -64,18 +62,18 @@ module Stupidedi
       end
 
       # (see AbstractInput#index)
-      def index(value)
+      def index(element)
         @io.seek(@offset)
-        length = value.length
+        length = element.length
 
-        # We need to start with value != buffer, and this is a reasonable guess
+        # We need to start with element != buffer, and this is a reasonable guess
         buffer = "\377" * length
 
         until @io.eof?
           buffer.slice!(0)
           buffer = buffer + @io.read(1)
 
-          if buffer == value
+          if buffer == element
             return @io.tell - @offset - length
           end
         end
@@ -90,7 +88,7 @@ module Stupidedi
 
         @io.seek(@offset)
         prefix = @io.read(n)
-        suffix = @io
+        # suffix = @io
 
         length = prefix.length
         count  = prefix.count("\n")
@@ -124,6 +122,7 @@ module Stupidedi
       ########################################################################
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("FileInput")
         q.group(2, "(", ")") do
@@ -140,6 +139,7 @@ module Stupidedi
           q.text " at line #{@line}, column #{@column}, offset #{@offset}, file #{File.basename(@io.path)}"
         end
       end
+      # :nocov:
 
     private
 
@@ -153,6 +153,5 @@ module Stupidedi
           changes.fetch(:size, @size)
       end
     end
-
   end
 end

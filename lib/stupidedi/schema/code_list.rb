@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class CodeList
       include Inspect
 
@@ -15,7 +13,6 @@ module Stupidedi
       end
 
       class Internal < CodeList
-
         def_delegators :@hash, :at, :defined_at?
 
         def initialize(hash)
@@ -54,7 +51,6 @@ module Stupidedi
       end
 
       class External < CodeList
-
         # @return [String]
         attr_reader :id
 
@@ -82,6 +78,12 @@ module Stupidedi
 
       # @return [CodeList::Internal]
       def build(hash)
+        # @todo: deprecate
+        CodeList::Internal.new(hash)
+      end
+
+      # @return [CodeList::Internal]
+      def internal(hash)
         CodeList::Internal.new(hash)
       end
 
@@ -93,6 +95,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # X12 standards are released three times yearly. The version codes sent in
     # the `GS08` and `ST03` elements encode the version (eg 004, 005), the
@@ -60,6 +58,15 @@ module Stupidedi
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
       end
 
+      # @return [String]
+      def descriptor
+        "transaction set #{id}"
+      end
+
+      def required?
+        false
+      end
+
       # @return [SegmentUse]
       def entry_segment_use
         @header_segment_uses.head
@@ -113,6 +120,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

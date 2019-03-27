@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class SimpleElementTok
       include Inspect
 
@@ -57,8 +56,8 @@ module Stupidedi
         false
       end
 
-      def to_s(separators)
-        @value
+      def to_x12(separators)
+        @value.to_s
       end
     end
 
@@ -73,6 +72,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

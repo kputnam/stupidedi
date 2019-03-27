@@ -3,14 +3,12 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     #
     # Critiques (edits) interchanges (ISA/IEA) with version "00501", then
     # selects the appropriate editor, according to the config, and edits
     # each functional group (GS/GE)
     #
     class FiveOhOneEd < AbstractEd
-
       # @return [Config]
       attr_reader :config
 
@@ -339,6 +337,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

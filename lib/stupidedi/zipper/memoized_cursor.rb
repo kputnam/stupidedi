@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class MemoizedCursor < AbstractCursor
-
       # @return [#leaf?, #children, #copy]
       attr_reader :node
 
@@ -132,6 +129,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

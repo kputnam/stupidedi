@@ -1,0 +1,8 @@
+version: "2"
+exclude_patterns:
+- "spec/"
+- "**/segment_defs/*.rb"
+- "**/element_defs.rb"
+- "**/implementations/*.rb"
+- "**/standards/*.rb"
+- "lib/stupidedi/editor/"

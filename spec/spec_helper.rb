@@ -1,37 +1,24 @@
-require File.expand_path("../../lib/stupidedi", __FILE__)
-require "pathname"
-require "pp"
-
 begin
-  # RSpec-1: https://github.com/dchelimsky/rspec
-  require "spec"
-rescue LoadError
-  # RSpec-2: https://github.com/rspec/rspec
-  require "rspec"
-end
-
-begin
+  # This will load configuration from .simplecov
   require "simplecov"
-  SimpleCov.start
 rescue LoadError
-  warn $!
-end if RUBY_VERSION >= "1.9"
-
-# Require supporting files with custom matchers and macros
-begin
-  specdir = Pathname.new(File.dirname(__FILE__))
-  Dir["#{specdir}/support/**/*.rb"].each do |file|
-    require Pathname.new(file).relative_path_from(specdir)
-  end
 end
 
-RSpec::Expectations.configuration.warn_about_potential_false_positives = false
+require File.expand_path("../../lib/stupidedi", __FILE__)
+require "pp"
+require "ostruct"
+
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|
+  require file
+end
 
 RSpec.configure do |config|
   config.include(EitherMatchers)
+  config.include(Quickcheck::Macro)
+  config.extend(RSpecHelpers)
 
   config.expect_with :rspec do |c|
-    c.syntax = [:should, :expect]
+    c.syntax = :expect
   end
 
   # Use either of these to run only specs marked 'focus: true'
@@ -52,4 +39,5 @@ RSpec.configure do |config|
 
   # Skip platform-specific examples unless our platform matches
   config.filter_run_excluding(:ruby => lambda{|n| RUBY_VERSION !~ /^#{n}/ })
+  config.filter_run_excluding(:skip)
 end

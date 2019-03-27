@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X12-5.pdf 3.2.1 Basic Interchange Service Request
     # @see X222.pdf B.1.1.4.1 Interchange Control Structures
@@ -41,6 +39,15 @@ module Stupidedi
           changes.fetch(:id, @id),
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses)
+      end
+
+      def required?
+        false
+      end
+
+      # @return [String]
+      def descriptor
+        "interchange #{id}"
       end
 
       # @return [SegmentUse]
@@ -92,6 +99,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

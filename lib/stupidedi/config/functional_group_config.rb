@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   class Config
-
     #
     # The functional group segments (GS/GE) and the segments contained by that
     # functional group are versioned separately from the interchange control
@@ -21,6 +20,9 @@ module Stupidedi
     #
     class FunctionalGroupConfig
       include Inspect
+
+      # @return [Hash<String, FunctionalGroupDef>]
+      attr_reader :table
 
       def_delegators :@table, :defined_at?
 
@@ -62,6 +64,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

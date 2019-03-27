@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 module Stupidedi
   module Refinements
-
     refine Module do
       # Creates an abstract method
       #
@@ -31,7 +30,7 @@ module Stupidedi
           class_eval(<<-RUBY, file, line.to_i - 1)
             def #{name}(*args)
               raise NoMethodError,
-                "method \#{self.class.name}.#{name}(#{params.join(', ')}) is abstract"
+                "method \#{self.class.name}.#{name}(#{params.join(", ")}) is abstract"
             end
           RUBY
         end
@@ -57,6 +56,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

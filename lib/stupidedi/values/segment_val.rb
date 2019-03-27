@@ -1,16 +1,14 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
+    #
     # @see X222 B.1.1.3.4 Data Segment
+    #
     class SegmentVal < AbstractVal
-
       # @return [SegmentDef]
-
-      def_delegators :@usage, :definition
+      def_delegators :usage, :definition, :descriptor, :id
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children
@@ -37,11 +35,6 @@ module Stupidedi
       # (see AbstractVal#size)
       def size
         1
-      end
-
-      # @return [Symbol]
-      def id
-        definition.id
       end
 
       # @return false
@@ -74,6 +67,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         id = definition.try do |d|
           ansi.bold("[#{d.id}: #{d.name}]")
@@ -91,11 +85,14 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
+      # :nocov:
       def inspect
         ansi.segment(ansi.bold(definition.id.to_s))
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)
@@ -104,6 +101,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

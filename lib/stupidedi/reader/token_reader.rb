@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     class TokenReader
-
       # @private
       SEGMENT_ID = /\A[A-Z][A-Z0-9]{1,2}\Z/
 
@@ -130,7 +127,6 @@ module Stupidedi
       # @return [Either<Result<String>>]
       def read_character
         position = 0
-        buffer   = ""
 
         while @input.defined_at?(position)
           character = @input.at(position)
@@ -465,6 +461,5 @@ module Stupidedi
         CompositeElementTok.build(value, input.position, remainder.position)
       end
     end
-
   end
 end

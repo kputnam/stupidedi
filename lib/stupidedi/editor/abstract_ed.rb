@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     class AbstractEd
       include Inspect
 
@@ -34,6 +33,5 @@ module Stupidedi
       def rewrite(*args)
       end
     end
-
   end
 end

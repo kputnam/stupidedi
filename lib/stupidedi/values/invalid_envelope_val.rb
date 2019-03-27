@@ -1,16 +1,13 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class InvalidEnvelopeVal < AbstractVal
-
       # @return [Array<SegmentVal>]
       attr_reader :children
 
-      def_delegators "@children.head", :position
+      def_delegators "@children.head", :descriptor, :position, :reason
 
       def initialize(children)
         @children = children
@@ -57,9 +54,8 @@ module Stupidedi
       # @return [String]
       def inspect
         ansi.invalid("InvalidEnvelopeVal") <<
-          "(#{@children.map(&:inspect).join(', ')})"
+          "(#{@children.map(&:inspect).join(", ")})"
       end
     end
-
   end
 end

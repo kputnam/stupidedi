@@ -13,7 +13,7 @@ Usage:
 ```ruby
 io = File.open("spec/fixtures/X231-FA999/1-good.txt")
 config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 parser, _result = parser.read(Stupidedi::Reader.build(io))
 
 result = {}

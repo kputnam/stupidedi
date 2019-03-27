@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @abstract This must be subclassed to add type- and version-specific
     #   functionality. For instance, DateVal adds `#day`, `#month`, etc.
@@ -12,10 +10,8 @@ module Stupidedi
     # @see X222 B.1.1.3.1 Data Element
     #
     class SimpleElementVal < AbstractElementVal
-
       # @return [SimpleElementDef]
-
-      def_delegators :@usage, :definition
+      def_delegators :usage, :definition, :descriptor
 
       abstract :valid?
 
@@ -42,7 +38,7 @@ module Stupidedi
       # @return [SimpleElementVal]
       abstract :copy, "changes={}"
 
-      # True unless this value isn't included in {AbstractElementUse#allowed_values}
+      # True unless this value isn't included in {Schema::SimpleElementUse#allowed_values}
       def allowed?
         empty? or invalid? or usage.allowed_values.include?(to_s)
       end
@@ -80,6 +76,5 @@ module Stupidedi
         not @usage.component?
       end
     end
-
   end
 end

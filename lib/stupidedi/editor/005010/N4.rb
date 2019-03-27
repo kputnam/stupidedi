@@ -3,10 +3,8 @@ class Stupidedi
   using Refinements
 
   module Editor
-
     class FiftyTenEd
       module N4
-
         def critique_n4(n4, acc)
           edit(:N4) do
             usa_canada =
@@ -58,9 +56,7 @@ class Stupidedi
           # end
           end
         end
-
       end
     end
-
   end
 end

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X222.pdf B.1.1.3.12.5 Data Segments in a Transaction Set
     #
@@ -33,7 +31,7 @@ module Stupidedi
       # @return [LoopDef, TableDef]
       attr_reader :parent
 
-      def_delegators :definition, :id, :code_lists
+      def_delegators :definition, :descriptor, :id, :name, :code_lists
 
       def_delegators :requirement, :required?, :optional?
 
@@ -97,6 +95,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

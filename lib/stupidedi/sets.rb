@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require "cantor"
 
 module Stupidedi
@@ -40,6 +39,4 @@ module Stupidedi
     # @endgroup
     ###########################################################################
   end
-
-
 end

@@ -84,16 +84,15 @@ def simple(e, u)
     return e
   end
 
-  if type.end_with?("AN")
+  case type
+  when /AN$/
     e.copy(value: "_" * u.definition.min_length)
-  elsif type == "TM"
-    e.copy(value: "0" * e.value.length)
-  elsif type == "DT"
-    if e.value.length == 8
-      e.copy(value: "20151230")
-    else
-      e.copy(value: "151230")
-    end
+  when "TM"
+    e.copy(value: "0" * u.definition.min_length)
+  when "DT"
+    e.copy(value: "0" * u.definition.min_length)
+  when "Nn", "R"
+    e.copy(value: "0" * u.definition.min_length)
   else
     e
   end

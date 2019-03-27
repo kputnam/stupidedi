@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class ComponentElementTok
       include Inspect
 
@@ -29,9 +28,11 @@ module Stupidedi
           changes.fetch(:remainder, @remainder)
       end
 
+      # :nocov:
       def pretty_print(q)
         q.pp(:component.cons(@value.cons))
       end
+      # :nocov:
 
       def blank?
         @value.blank?
@@ -49,8 +50,8 @@ module Stupidedi
         false
       end
 
-      def to_s(separators)
-        @value
+      def to_x12(separators)
+        @value.to_s
       end
     end
 
@@ -66,6 +67,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end
