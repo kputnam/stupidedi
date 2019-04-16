@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
                          "doc/**/*.md",
                          "spec/**/*"].map { |glob| Dir[glob] }.flatten
   s.test_files        = Dir["spec/examples/**/*.example"].to_a
-  s.has_rdoc          = false
   s.bindir            = "bin"
   s.executables       = ["edi-pp", "edi-ed"]
   s.require_path      = "lib"
