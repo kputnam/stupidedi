@@ -160,7 +160,7 @@ module Stupidedi
 
             # @return [StringVal]
             def copy(changes = {})
-              StringVal.value \
+              IdentifierVal.value \
                 changes.fetch(:value, value),
                 changes.fetch(:usage, usage),
                 changes.fetch(:position, position)
