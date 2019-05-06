@@ -1,9 +1,11 @@
 v master / unreleased
+
   **Bug Fixes**
   
   * Fix copy-pasted StringVal -> IdentifierVal 
   
 v 1.4.0
+
   **Bug fixes**
 
   * Fix ambiguous grammars (mostly due to incorrect parentheses)
