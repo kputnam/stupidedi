@@ -156,7 +156,7 @@ module Stupidedi
                 end
               end
 
-            st.find!(:ST)
+            st_.find!(:ST)
           end
         end
 
