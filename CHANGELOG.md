@@ -2,7 +2,8 @@ v master / unreleased
 
   **Bug Fixes**
   
-  * Fix copy-pasted StringVal -> IdentifierVal 
+  * Fix copy-pasted StringVal -> IdentifierVal #187
+  * call find! on StateMachine not Either wrapper #188
   
 v 1.4.0
 
