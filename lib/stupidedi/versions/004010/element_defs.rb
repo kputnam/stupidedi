@@ -34,6 +34,7 @@ module Stupidedi
             "TL" => "Trailer (not otherwise specified)",
             "TV" => "Truck, Van"))
         E46   = t::AN.new(:E46  , "Ex Parte"                             , 4, 4)
+        E55   = t::AN.new(:E55  , "Voyage Number"                        , 2, 10)
         E56   = t::ID.new(:E56  , "Type of Service Code"                 , 2, 2,
           s::CodeList.build(
             "AI" => "Transport Mode Change",
@@ -392,11 +393,11 @@ module Stupidedi
             "TLD" => "Intermodal Trailer/Container Load (Rail)",
             "TRY" => "Tray",
             "PLT94" => "Pallet - Wood"))
-        E122  = t::ID.new(:E122 , "Rate/Value Qualifier"                 , 2, 2,
+        E114  = t::AN.new(:E114 , "Port Name"                            , 2, 24)
+        E115  = t::ID.new(:E115 , "Port or Terminal Function Code"       , 1, 1,
           s::CodeList.build(
-            "FR" => "Flat Rate",
-            "PM" => "Per Mile",
-            "PL" => "Per Load"))
+            "L"   => "Load Port",
+            "D"   => "Discharge Port"))
         E116  = t::ID.new(:E116 , "Postal Code"                          , 3, 15,
           s::CodeList.external("51"))
         E117  = t::Nn.new(:E117 , "Prepaid Amount"                       , 1, 15, 2)
@@ -429,6 +430,11 @@ module Stupidedi
             "DMC" => "Demurrage Period 3",
             "ECR" => "Econo Rate",
             "QUO" => "Quoted Rate"))
+        E122  = t::ID.new(:E122 , "Rate/Value Qualifier"                 , 2, 2,
+          s::CodeList.build(
+            "FR" => "Flat Rate",
+            "PM" => "Per Mile",
+            "PL" => "Per Load"))
         E123  = t::Nn.new(:E123 , "Number of Received Transaction Sets"  , 1, 6, 0)
         E124  = t::AN.new(:E124 , "Application Receiver's Code"          , 2, 15)
         E127  = t::AN.new(:E127 , "Reference Identification"             , 1, 30)
@@ -3961,8 +3967,26 @@ module Stupidedi
             "ZZZ" => "Mutually Defined"))
         E153  = t::AN.new(:E153 , "Special Handling Description"         , 2, 30)
         E154  = t::ID.new(:E154 , "Standard Point Location Code"         , 6, 9)
-        E156  = t::ID.new(:E156  , "State or Province Code"              , 2, 2,
+        E156  = t::ID.new(:E156 , "State or Province Code"               , 2, 2,
           s::CodeList.external("22"))
+        E157  = t::ID.new(:E157 , "Shipment Status Code"                 , 1, 1,
+          s::CodeList.build(
+            "AF" => "Picked Up",
+            "AE" => "Loaded on Vessel",
+            "AL" => "Loaded on Rail",
+            "VD" => "Vessel Departed from Origin Port",
+            "RD" => "Rail Departure from Origin Intermodal Ramp",
+            "CP" => "Customs Release",
+            "CR" => "Carrier Release",
+            "VA" => "Vessel Arrived at Destination Port",
+            "UV" => "Unloaded from Vessel",
+            "AR" => "Rail Arrived at Destination Intermodal Ramp",
+            "OA" => "Out Gate",
+            "AV" => "Available for Delivery",
+            "IY" => "Delivered / In Yard",
+            "RD" => "Empty Returned"))
+        E159  = t::AN.new(:E159 , "Status Location"                      , 3, 5)
+        E161  = t::AN.new(:E161 , "Status Time"                          , 4, 4)
         E163  = t::ID.new(:E163 , "Stop Reason Code"                     , 2, 2,
           s::CodeList.build(
             "CL" => "Complete Load",
@@ -3985,6 +4009,7 @@ module Stupidedi
             "G" => "Deliver Not Before Time",
             "L" => "Deliver Not Later Than Time",
             "1" => "Must Respond By"))
+        E182  = t::AN.new(:E182 , "Vessel Name"                          , 2, 28)
         E183  = t:: R.new(:E183 , "Volume"                               , 1, 8)
         E184  = t::ID.new(:E184 , "Volume Unit Qualifier"                , 1, 1,
           s::CodeList.build(
@@ -5368,6 +5393,10 @@ module Stupidedi
           s::CodeList.build(
             "A" => "Actual",
             "M" => "Marked"))
+        E578  = t::ID.new(:E578 , "Equipment Status Code"                , 1, 2,
+          s::CodeList.build(
+            "E" => "Empty",
+            "L" => "Load"))
         E587  = t::ID.new(:E587 , "Acknowledgment Type Code"             , 2, 2,
           s::CodeList.build(
             "AC" => "Acknowledge - With Detail and Change",
@@ -5394,6 +5423,7 @@ module Stupidedi
             "4" => "4th from Brake End",
             "5" => "5th from Brake End",
             "6" => "6th from Brake End"))
+        E597  = t::ID.new(:E597 , "Vessel Code"                          , 1, 8)
         E610  = t::Nn.new(:E610 , "Amount"                               , 1, 15, 2)
         E623  = t::ID.new(:E623 , "Time Code"                            , 2, 2,
           s::CodeList.build(
@@ -7875,6 +7905,7 @@ module Stupidedi
           s::CodeList.build(
             "1" => "Adjustment Having Normal Effect on Inventory for Type of Transaction Set in which Code is Used",
             "2" => "Adjustment Having Reversal Effect on Inventory for Type of Transaction Set in Which Code is Used"))
+        E897  = t::ID.new(:E897 , "Vessel Code Qualifier"                , 1, 1)
         E935  = t::ID.new(:E935 , "Measurement Significance Code"        , 2, 2,
           s::CodeList.build(
             "01" => "Where Air = 1",
