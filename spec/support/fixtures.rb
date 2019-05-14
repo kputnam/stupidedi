@@ -81,7 +81,7 @@ Fixtures = Class.new do
       std = parts(path).tap{|xs| xs[1] = "Standards" }
       [mkconfig(*imp), mkconfig(*std)]
 
-    when /^[A-Z]\d{3}/
+    when /^[A-Z]{2}\d{3}/
       [mkconfig(*parts(path))]
     else
       []

@@ -74,7 +74,7 @@ describe "Stupidedi::TransactionSets" do
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
                   end
-                end).to raise_error
+                end).to raise_error(Stupidedi::Exceptions::ParseError)
               end
             end
           end
