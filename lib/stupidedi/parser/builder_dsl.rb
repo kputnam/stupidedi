@@ -136,8 +136,11 @@ module Stupidedi
         elsif zipper.node.composite?
           if zipper.node.blank?
             if zipper.node.usage.required?
+              # GH-194: Normally the position of a composit element is the
+              # position of it's first child; but an empty composit element
+              # doesn't have children. So the closest position is of the parent
               raise Exceptions::ParseError,
-                "required element #{zipper.node.descriptor} is blank at #{zipper.node.position.inspect}"
+                "required #{zipper.node.descriptor} is blank at #{zipper.parent.node.position.inspect}"
             end
           elsif zipper.node.usage.forbidden?
             raise Exceptions::ParseError,

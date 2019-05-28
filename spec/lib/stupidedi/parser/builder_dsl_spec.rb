@@ -1416,7 +1416,18 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       end
     end
 
-    context "composite" do
+    fcontext "composite" do
+      context "when element is missing" do
+        let(:b) do
+          strict(Detail("2", Segment(10, COS(), s_mandatory, bounded(1))))
+        end
+
+        it "raises an exception" do
+          expect { b.COS() }.to raise_error(/required element COS01 .+? is blank/)
+          expect(b.machine).to be_segment(:ST)
+        end
+      end
+
       context "when element should be simple" do
         let(:b) do
           strict(Detail("2", Segment(10, IDA(), s_mandatory, bounded(1))))

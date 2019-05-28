@@ -17,8 +17,6 @@ module Stupidedi
 
       def_delegators :@usage, :definition, :descriptor
 
-      def_delegators "@children.head", :position
-
       def initialize(children, usage)
         @children, @usage =
           children, usage
@@ -29,6 +27,15 @@ module Stupidedi
         CompositeElementVal.new \
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
+      end
+
+      def position
+        if @children.present?
+          @children.head.position
+        else
+          # GH-194
+          "<position unknown>"
+        end
       end
 
       # @return false

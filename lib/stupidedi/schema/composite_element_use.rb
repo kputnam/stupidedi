@@ -38,6 +38,11 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
+      def descriptor
+        n = parent.element_uses.index{|u| u.eql?(self) } + 1
+        "element #{parent.id}#{"%02d" % n} #{definition.name}".strip
+      end
+
       def repeatable?
         @repeat_count.try{|r| r.include?(2) }
       end

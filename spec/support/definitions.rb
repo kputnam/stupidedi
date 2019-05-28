@@ -252,6 +252,10 @@ module Definitions
       Stupidedi::Schema::SegmentDef.build(:COR, "Example Segment", "",
         ElementDefs::DE_CON.simple_use(ElementReqs::Optional, RepeatCount.bounded(3)))
 
+    COS =
+      Stupidedi::Schema::SegmentDef.build(:COS, "Example Segment", "",
+        ElementDefs::DE_CON.simple_use(ElementReqs::Mandatory, RepeatCount.bounded(1)))
+
     REP =
       Stupidedi::Schema::SegmentDef.build(:REP, "Example Segment", "",
         ElementDefs::DE_N0.simple_use(ElementReqs::Optional, RepeatCount.bounded(3)))
@@ -261,6 +265,7 @@ module Definitions
   def NNB; SegmentDefs::NNB end
   def COM; SegmentDefs::COM end
   def COR; SegmentDefs::COR end
+  def COS; SegmentDefs::COS end
   def REP; SegmentDefs::REP end
 
   def ANA(*args) AN_(SegmentDefs::ANA, *args) end
