@@ -4,6 +4,7 @@ v master / unreleased
   
   * Fix copy-pasted StringVal -> IdentifierVal #187
   * call find! on StateMachine not Either wrapper #188
+  * Fix error message when required composite is missing #194
   
 v 1.4.0
 
