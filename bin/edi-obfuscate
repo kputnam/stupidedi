@@ -60,7 +60,7 @@ def main(argv)
             end
           end.compact
 
-          puts token.copy(element_toks: element_toks).to_s(delims)
+          puts token.copy(element_toks: element_toks).to_x12(delims)
         else
           raise "unknown segment: #{token.id}" if strict
           next
