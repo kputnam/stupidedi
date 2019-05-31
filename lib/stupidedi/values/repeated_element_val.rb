@@ -86,7 +86,7 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        eql?(other)
+        eql?(other) or \
          (other.definition == definition and
           other.children   == @children)
       end
