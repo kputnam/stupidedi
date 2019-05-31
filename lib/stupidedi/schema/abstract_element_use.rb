@@ -10,6 +10,15 @@ module Stupidedi
 
       def_delegators :definition, :code_lists
 
+      # @return [Symbol]
+      abstract :id
+
+      # @return [String]
+      abstract :name
+
+      # @return [String]
+      abstract :description
+
       # @return [ElementReq]
       abstract :requirement
 

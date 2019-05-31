@@ -7,6 +7,8 @@ module Stupidedi
       # @return [SimpleElementDef]
       attr_reader :definition
 
+      def_delegators :definition, :id, :name, :description
+
       # @return [ElementReq]
       attr_reader :requirement
 

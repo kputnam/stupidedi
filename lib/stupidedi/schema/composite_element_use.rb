@@ -7,7 +7,7 @@ module Stupidedi
       # @return [CompositeElementDef]
       attr_reader :definition
 
-      def_delegators :definition, :id
+      def_delegators :definition, :id, :name, :description
 
       # @return [ElementReq]
       attr_reader :requirement
