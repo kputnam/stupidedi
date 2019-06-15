@@ -13,7 +13,7 @@ module Stupidedi
       # @return [String]
       def at(n)
         raise ArgumentError, "n must be positive" if n < 0
-        self[n, 1] unless n >= length
+        self[n] unless n >= length # FIXME: Big source of memory allocation
       end
 
       # Return the string with `n` characters removed from the front
@@ -27,7 +27,8 @@ module Stupidedi
       # @return [String]
       def drop(n)
         raise ArgumentError, "n must be positive" if n < 0
-        (length >= n) ? self[n..-1] : ""
+        (length >= n) ? self[n..-1] : "" # FIXME: Big source of memory allocation
+                                         # FIXME: Big source of object allocation
       end
 
       # Return the first `n` characters from the front
@@ -64,7 +65,7 @@ module Stupidedi
       #   "abc".defined_at?(0)  #=> true
       #   "abc".defined_at?(3)  #=> false
       def defined_at?(n)
-        n < length
+        n < length # FIXME, should be false or raise error n < 0
       end
 
       # To make String compatible with the {Stupidedi::Reader::Input} interface,
@@ -85,5 +86,104 @@ module Stupidedi
         gsub(/\n[ \t]+/, " ")
       end
     end
+  end
+end
+
+class Substring
+  attr_reader :whole
+  attr_reader :m
+  attr_reader :n
+
+  def initialize(whole, m = 0, n = whole.length - 1)
+    if n < m - 1
+      n = m - 1
+    end
+
+    if m < 0
+      raise ArgumentError, "start index must be non-negative"
+    end
+
+    if n >= whole.length
+      raise ArgumentError, "end index must not exceed underlying String length"
+    end
+
+    @whole, @m, @n = whole, m, n
+
+    # w = @whole[@m, [@n - @m + 1, 60].min]
+    # p [w, " "*(60 - w.length), @m, @n]
+  end
+
+  # @note: Avoid calling this unless needed because it allocates another String
+  def repro
+    @whole[@m..@n]
+  end
+
+  def to_str
+    repro
+  end
+
+  def to_s
+    repro
+  end
+
+  def length
+    @n - @m + 1
+  end
+
+  def empty?
+    @m > @n
+  end
+
+  def inspect
+    repro.inspect
+  end
+
+  def ==(other)
+    eql?(other) or repro == other
+  end
+
+  def =~(other)
+    repro =~ other
+  end
+
+  def at(n)
+    raise ArgumentError, "n must be positive" if n < 0
+    @whole[@m + n] unless n > @n - @m
+  end
+
+  def defined_at?(n)
+    n <= @n - @m # FIXME should be false or exception when n < 0
+  end
+
+  def take(n)
+    raise ArgumentError, "n must be positive" if n < 0
+    Substring.new(@whole, @m, [@m + n - 1, @whole.length - 1].min)
+  end
+
+  def drop(n)
+    raise ArgumentError, "n must be positive" if n < 0
+    Substring.new(@whole, [@m + n, @n + 1].min, @n)
+  end
+
+  def count(other)
+    k, m = 0, @m - 1
+
+    while true
+      m  = @whole.index(other, m + 1)
+      m and m <= @n or break
+      k += 1
+    end
+
+    k
+  end
+
+  def index(other, m = 0)
+    z = @whole.index(other, @m + m)
+    z - @m if z and z <= @n
+  end
+
+  def rindex(other, n = @whole.length - 1)
+    z = @whole.rindex(other, [@m + n, @n].min)
+    z - @m if z and z >= @m
   end
 end

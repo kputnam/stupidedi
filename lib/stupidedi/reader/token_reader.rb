@@ -234,7 +234,8 @@ module Stupidedi
       # @return [Either<Result<Symbol, TokenReader>>]
       def read_segment_id
         position = 0
-        buffer   = ""
+        buffer   = String.new("") # Intentionally using a mutable here, to
+                                  # avoid allocations when building buffer below
 
         while true
           unless @input.defined_at?(position)
@@ -253,7 +254,7 @@ module Stupidedi
               break
             end
 
-            buffer = buffer + character
+            buffer << character
           end
         end
 
@@ -302,8 +303,8 @@ module Stupidedi
         position = 0
         buffer   = ""
 
-        while @input.defined_at?(position)
-          character = @input.at(position)
+        while @input.defined_at?(position) # FIXME: Big source of memory & object allocation
+          character = @input.at(position)  # FIXME: Big source of memory & object allocation
           position += 1
 
           if is_control?(character)
