@@ -49,7 +49,7 @@ module Stupidedi
       end
 
       def repeatable?
-        @repeat_count.try{|r| r.include?(2) }
+        @repeat_count and @repeat_count.include?(2)
       end
 
       # @return true

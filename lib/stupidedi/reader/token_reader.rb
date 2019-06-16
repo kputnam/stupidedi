@@ -303,8 +303,8 @@ module Stupidedi
         position = 0
         buffer   = ""
 
-        while @input.defined_at?(position) # FIXME: Big source of memory & object allocation
-          character = @input.at(position)  # FIXME: Big source of memory & object allocation
+        while @input.defined_at?(position)
+          character = @input.at(position)
           position += 1
 
           if is_control?(character)

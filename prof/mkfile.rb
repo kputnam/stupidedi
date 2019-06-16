@@ -45,12 +45,15 @@ X12
 
 buffer = StringIO.new
 
-if ARGV.delete('--small')
+if ARGV.delete('--tiny')
+  n = 1
+  m = 1
+elsif ARGV.delete('--small')
   n = 10
   m = 250
 else
-  n = 500
-  m = 500
+  n = 100
+  m = 250
 end
 
 n.times do
