@@ -18,8 +18,7 @@ module Stupidedi
         when IO
           FileInput.new(o, *args)
         when String
-        # DelegatedInput.new(Substring.new(o), *args)
-          DelegatedInput.new(o, *args)
+          DelegatedInput.new(Substring.new(o), *args)
         when Array
           DelegatedInput.new(o, *args)
         else

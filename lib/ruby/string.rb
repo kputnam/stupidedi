@@ -13,7 +13,7 @@ module Stupidedi
       # @return [String]
       def at(n)
         raise ArgumentError, "n must be positive" if n < 0
-        self[n] unless n >= length # FIXME: Big source of memory allocation
+        self[n] unless n >= length
       end
 
       # Return the string with `n` characters removed from the front
@@ -27,8 +27,7 @@ module Stupidedi
       # @return [String]
       def drop(n)
         raise ArgumentError, "n must be positive" if n < 0
-        (length >= n) ? self[n..-1] : "" # FIXME: Big source of memory allocation
-                                         # FIXME: Big source of object allocation
+        (length >= n) ? self[n..-1] : ""
       end
 
       # Return the first `n` characters from the front
@@ -65,7 +64,7 @@ module Stupidedi
       #   "abc".defined_at?(0)  #=> true
       #   "abc".defined_at?(3)  #=> false
       def defined_at?(n)
-        n < length # FIXME, should be false or raise error n < 0
+        n < length
       end
 
       # To make String compatible with the {Stupidedi::Reader::Input} interface,
@@ -115,7 +114,11 @@ class Substring
 
   # @note: Avoid calling this unless needed because it allocates another String
   def repro
-    @whole[@m..@n]
+    if @m <= @n
+      @whole[@m..@n]
+    else
+      ""
+    end
   end
 
   def to_str
@@ -152,7 +155,7 @@ class Substring
   end
 
   def defined_at?(n)
-    n <= @n - @m # FIXME should be false or exception when n < 0
+    n <= @n - @m
   end
 
   def take(n)
