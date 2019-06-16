@@ -17,13 +17,15 @@ module Stupidedi
       attr_reader :path
 
       def initialize(offset, line, column, path)
-        @offset, @line, @column, @path =
-          offset, line, column, path
+        # @offset, @line, @column, @path =
+        #   offset, line, column, path
+        @line, @column, @path =
+          line, column, path
       end
 
       def copy(changes = {})
         Position.new \
-          changes.fetch(:offset, @offset),
+          nil, #changes.fetch(:offset, @offset),
           changes.fetch(:line, @line),
           changes.fetch(:column, @column),
           changes.fetch(:path, @path)
@@ -56,8 +58,8 @@ module Stupidedi
           q.text "line #{@line},"
           q.breakable
           q.text "column #{@column},"
-          q.breakable
-          q.text "offset #{@offset}"
+          #q.breakable
+          #q.text "offset #{@offset}"
 
           unless @path.nil?
             q.text ","

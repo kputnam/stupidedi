@@ -5,15 +5,17 @@ module Stupidedi
   module Reader
     class DelegatedInput < AbstractInput
       def initialize(delegate, offset = 0, line = 1, column = 1)
-        @delegate, @offset, @line, @column =
-          delegate, offset, line, column
+        @delegate, @line, @column =
+          delegate, line, column
       end
 
       # @group Querying the Position
       ########################################################################
 
       # (see AbstractInput#offset)
-      attr_reader :offset
+      def offset
+        nil
+      end
 
       # (see AbstractInput#line)
       attr_reader :line
@@ -23,7 +25,7 @@ module Stupidedi
 
       # (see AbstractInput#position)
       def position
-        Position.new(@offset, @line, @column, nil)
+        Position.new(nil, @line, @column, nil)
       end
 
       # @group Reading the Input
@@ -45,9 +47,7 @@ module Stupidedi
       def drop(n)
         raise ArgumentError, "n must be positive" unless n >= 0
 
-        suffix = @delegate.drop(n)
         prefix = @delegate.take(n)
-
         length = prefix.length
         count  = prefix.count("\n")
 
@@ -57,8 +57,7 @@ module Stupidedi
                    @column + length
                  end
 
-        copy(:delegate => suffix,
-             :offset   => @offset + length,
+        copy(:delegate => @delegate.drop(n),
              :line     => @line + count,
              :column   => column)
       end
@@ -71,7 +70,6 @@ module Stupidedi
 
       # (see AbstractInput#empty?)
       def_delegators :@delegate, :empty?
-
 
       # (see AbstractInput#==)
       def_delegators :@delegate, :==
@@ -93,7 +91,7 @@ module Stupidedi
                     end
 
           q.text preview
-          q.text " at line #{@line}, column #{@column}, offset #{@offset}"
+          q.text " at line #{@line}, column #{@column}, offset #{nil}"
         end
       end
 
@@ -103,7 +101,7 @@ module Stupidedi
       def copy(changes = {})
         DelegatedInput.new \
           changes.fetch(:delegate, @delegate),
-          changes.fetch(:offset, @offset),
+          nil,
           changes.fetch(:line, @line),
           changes.fetch(:column, @column)
       end
