@@ -115,18 +115,18 @@ fdescribe Stupidedi::Reader::DelegatedInput do
       end
     end
 
-    pending "when n elements are available" do
-      it "increments the offset" do
+    context "when n elements are available" do
+      pending "increments the offset" do
         expect(mkinput("abc", 10).drop(2).offset).to be == 12
       end
 
-      pending "increments the offset" do
-        with(:size, between(0, 25)) do
-          [string, between(0, size), between(10, 1000)]
-        end
-      end.check do |s, n, offset|
-        expect(mkinput(s, offset).drop(n).offset).to be == offset + n
-      end
+      # property "increments the offset" do
+      #   with(:size, between(0, 25)) do
+      #     [string, between(0, size), between(10, 1000)]
+      #   end
+      # end.check do |s, n, offset|
+      #   expect(mkinput(s, offset).drop(n).offset).to be == offset + n
+      # end
 
       it "returns an input with the first n elements removed" do
         expect(mkinput(%w(a b c d)).drop(3)).to be == %w(d)

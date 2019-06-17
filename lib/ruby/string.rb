@@ -145,8 +145,8 @@ class Substring
     eql?(other) or repro == other
   end
 
-  def =~(other)
-    repro =~ other
+  def =~(pattern)
+    pattern.match?(repro)
   end
 
   def at(n)

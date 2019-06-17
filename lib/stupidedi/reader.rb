@@ -89,14 +89,21 @@ module Stupidedi
         H_EXTENDED.include?(character)
       end
 
-      # @private
-      def has_extended_characters?(string)
-        R_EXTENDED =~ string
+      if R_EXTENDED.respond_to?(:match?)
+        # @private
+        def has_extended_characters?(string)
+          R_EXTENDED.match?(string)
+        end
+      else
+        # @private
+        def has_extended_characters?(string)
+          R_EXTENDED.match?(string)
+        end
       end
 
       # @private
       def has_control_characters?(string)
-        #_CONTROL =~ string
+        #_CONTROL.match?(string)
       end
 
       # @return [Character]

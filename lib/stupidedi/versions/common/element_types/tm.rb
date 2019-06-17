@@ -287,6 +287,9 @@ module Stupidedi
             self::Empty.new(usage, position)
           end
 
+          # @private
+          FOUR_DIGITS = /^\d{4,}$/
+
           # @return [TimeVal]
           def value(object, usage, position)
             if object.is_a?(TimeVal)
@@ -295,7 +298,7 @@ module Stupidedi
               self::Empty.new(usage, position)
             elsif object.is_a?(String) or object.is_a?(StringVal)
               return self::Invalid.new(object, usage, position) \
-                unless object =~ /^\d{4,}$/
+                unless FOUR_DIGITS.match?(object)
 
               hour   = object.to_s.slice(0, 2).to_i
               minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }

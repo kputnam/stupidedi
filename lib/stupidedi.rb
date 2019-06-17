@@ -12,6 +12,7 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
+require "ruby/regexp"
 require "ruby/array"
 require "ruby/blank"
 require "ruby/exception"

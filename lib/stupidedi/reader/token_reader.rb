@@ -260,7 +260,7 @@ module Stupidedi
 
         # We only arrive here if {character} is a delimiter, or if we read
         # three characters into {buffer} and an additional into {character}
-        if buffer =~ SEGMENT_ID
+        if SEGMENT_ID.match?(buffer)
           remainder = advance(position - 1)
 
           case character

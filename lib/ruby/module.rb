@@ -40,7 +40,7 @@ module Stupidedi
         file, line, = Stupidedi.caller
 
         for m in methods
-          if m.to_s =~ /=$/
+          if m.to_s.end_with?("=")
             class_eval(<<-RUBY, file, line.to_i - 1)
               def #{m}(value)
                 #{target}.#{m}(value)

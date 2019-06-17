@@ -29,7 +29,7 @@ module Stupidedi
       end
 
       def respond_to_missing?(name, include_private = false)
-        SEGMENT_ID =~ name.to_s || super
+        SEGMENT_ID.match?(name.to_s) || super
       end
 
       def strict?
@@ -99,7 +99,7 @@ module Stupidedi
     private
 
       def method_missing(name, *args)
-        if SEGMENT_ID =~ name.to_s
+        if SEGMENT_ID.match?(name.to_s)
           segment!(name, Reader::Position.caller(2), *args)
         else
           super
