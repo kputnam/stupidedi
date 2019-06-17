@@ -54,14 +54,14 @@ module Stupidedi
         return success(self) if s.empty?
 
         position = 0
-        buffer   = ""
+        buffer   = String.new("")
 
         while @input.defined_at?(position)
           character = @input.at(position)
           position += 1
 
           unless is_control?(character)
-            buffer = buffer + character
+            buffer << character
 
             if s.length == buffer.length
               if s == buffer
@@ -106,7 +106,8 @@ module Stupidedi
 
           unless is_control?(character)
             # Slide the "window" forward one character
-            buffer = buffer.slice(1..-1) + character
+            buffer.slice!(0)
+            buffer << character
           end
 
           position += 1
@@ -234,8 +235,7 @@ module Stupidedi
       # @return [Either<Result<Symbol, TokenReader>>]
       def read_segment_id
         position = 0
-        buffer   = String.new("") # Intentionally using a mutable here, to
-                                  # avoid allocations when building buffer below
+        buffer   = String.new("")
 
         while true
           unless @input.defined_at?(position)
@@ -301,7 +301,7 @@ module Stupidedi
       # @return [Either<Result<SimpleElementToken, TokenReader>>]
       def read_simple_element(repeatable = false)
         position = 0
-        buffer   = ""
+        buffer   = String.new("")
 
         while @input.defined_at?(position)
           character = @input.at(position)
@@ -332,7 +332,7 @@ module Stupidedi
         #   # @todo: Read this as data but sound the alarms
           end
 
-          buffer = buffer + character
+          buffer << character
         end
 
         failure("reached end of input without finding a simple data element")
@@ -341,7 +341,7 @@ module Stupidedi
       # @return [Either<Result<ComponentElementTok, TokenReader>>]
       def read_component_element(repeatable = false)
         position = 0
-        buffer   = ""
+        buffer   = String.new("")
 
         while @input.defined_at?(position)
           character = @input.at(position)
@@ -368,7 +368,7 @@ module Stupidedi
             end
           end
 
-          buffer = buffer + character
+          buffer << character
         end
 
         failure("reached end of input without finding a component data element")
