@@ -22,40 +22,67 @@ module Stupidedi
       # via the {StateMachine} to aide diagnosis.
       #
       # @return [(StateMachine, Reader::Result)]
-      def read(reader, options = {})
-        limit    = options.fetch(:nondeterminism, 1)
-        machine  = self
-        reader_e = reader.read_segment
+      def read(tokenizer, options = {})
+        drain(tokenizer)
+      end
 
-        while reader_e.defined?
-          reader_e = reader_e.flatmap do |segment_tok, reader_|
-            machine, reader__ =
-              machine.insert(segment_tok, false, reader_)
+      # @return [StateMachine]
+      def drain(tokenizer)
+        machine_ = machine.dup
 
-            if machine.active.length <= limit
-              reader__.read_segment
+        tokenizer.each do |token|
+          case token
+          when ErrorTok
+            if block_given?
+              yield token # TODO: Should user be able to signal something to us?
             else
-              matches = machine.active.map do |m|
+              #
+            end
+
+          when IgnoreTok
+            if block_given?
+              yield token # TODO: Should user be able to signal something to us?
+            else
+              #
+            end
+
+          when SegmentTok
+            machine_.insert!(token, false, tokenizer)
+
+            if machine_.active.length > limit
+              matches = machine_.active.map do |m|
                 if segment_use = m.node.zipper.node.usage
-                  "SegmentUse(#{segment_use.position}, #{segment_use.id},
-                  #{segment_use.requirement.inspect}, #{segment_use.repeat_count.inspect})".join
+                  "SegmentUse(%s, %s, %s, %s)" % [segment_use.position,
+                                                  segment_use.id,
+                                                  segment_use.requirement.inspect,
+                                                  segment_use.repeat_count.inspect]
                 else
                   m.node.zipper.node.inspect
                 end
               end.join(", ")
 
-              return machine,
-                Reader::Result.failure("too much non-determinism: #{matches}", reader__.input, true)
+              raise ...
             end
           end
         end
-
-        return machine, reader_e
       end
 
-      # @return [(StateMachine, Reader::TokenReader)]
-      def insert(segment_tok, strict, reader)
-        active = @active.flat_map do |zipper|
+      # @return [StateMachine]
+      def insert(segment_tok, strict, tokenizer)
+        StateMachine.new(@config, insert_(segment_tok, strict, tokenizer))
+      end
+
+      # @return self
+      def insert!(segment_tok, strict, tokenizer)
+        @active = insert_(segment_tok, strict, tokenizer)
+        self
+      end
+
+    private
+
+      # @return [Array<Zipper::AbstractCursor<StateMachine::AbstractState>>]
+      def insert_(segment_tok, strict, tokenizer)
+        @active.flat_map do |zipper|
           state        = zipper.node
           instructions = state.instructions.matches(segment_tok, strict, :insert)
 
@@ -63,14 +90,19 @@ module Stupidedi
             zipper.append(FailureState.mksegment(segment_tok, state)).cons
           else
             instructions.map do |op|
-              successor = execute(op, zipper, reader, segment_tok)
-              reader    = update_reader(op, reader, successor)
+              successor = execute(op, zipper, tokenizer, segment_tok)
+
+              # We might be moving up or down past the interchange or functional
+              # group envelope, which determine the separators and segment_dict
+              unless op.push.nil? and (op.pop_count.zero? or tokenizer.stream?)
+                tokenizer.separators   = successor.node.separators
+                tokenizer.segment_dict = successor.node.segment_dict
+              end
+
               successor
             end
           end
         end
-
-        return StateMachine.new(@config, active), reader
       end
 
       # Three things change together when executing an {Instruction}:
@@ -85,7 +117,7 @@ module Stupidedi
       #    two and are also updated using a zipper
       #
       # @return [AbstractCursor<StateMachine>]
-      def execute(op, zipper, reader, segment_tok)
+      def execute(op, zipper, tokenizer, segment_tok)
         table = zipper.node.instructions  # 1.
         value = zipper.node.zipper        # 2.
         state = zipper                    # 3.
@@ -116,32 +148,19 @@ module Stupidedi
           parent = state.node.copy \
             :zipper       => value,
             :children     => [],
-            :separators   => reader.try(&:separators),
-            :segment_dict => reader.try(&:segment_dict),
+            :separators   => tokenizer.try(&:separators),
+            :segment_dict => tokenizer.try(&:segment_dict),
             :instructions => table.pop(op.pop_count).drop(op.drop_count)
 
           # Note, `state` is a cursor pointing at a state, while `parent`
           # is an actual state
           state = state.append(parent) unless state.root?
 
-          # Note, eg, op.push == TableState; op.push.push == TableState.push
+          # Note, op.push == TableState; op.push.push == TableState.push
           op.push.push(state, parent, segment_tok, op.segment_use, @config)
         end
       end
 
-      def update_reader(op, reader, successor)
-        # We might be moving up or down past the interchange or functional
-        # group envelope, which control the set of separators and the set
-        # of all possible segments
-        unless op.push.nil? and (op.pop_count.zero? or reader.stream?)
-          unless reader.separators.eql?(successor.node.separators) \
-            and reader.segment_dict.eql?(successor.node.segment_dict)
-            reader.copy \
-              :separators   => successor.node.separators,
-              :segment_dict => successor.node.segment_dict
-          end
-        end || reader
-      end
     end
   end
 end

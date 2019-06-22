@@ -46,6 +46,16 @@ module Stupidedi
           other.segment    || @segment
       end
 
+      # Indicates if the given char is among one of the separators
+      #
+      # @return [Boolean]
+      def include?(char)
+        @component  == char ||
+        @repetition == char ||
+        @element    == char ||
+        @segment    == char
+      end
+
       # @return [AbstractSet<String>]
       def characters
         chars =

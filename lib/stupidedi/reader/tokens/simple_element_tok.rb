@@ -12,28 +12,19 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(value, position, remainder)
-        @value, @position, @remainder =
-          value, position, remainder
+      def initialize(value, position)
+        @value, @position = value, position
       end
 
       # @return [SimpleElementTok]
       def copy(changes = {})
         SimpleElementTok.new \
           changes.fetch(:value, @value),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
       def pretty_print(q)
         q.pp(:simple.cons(@value.cons))
-      end
-
-      def repeated
-        RepeatedElementTok.new(self.cons, @position)
       end
 
       def repeated?
@@ -65,8 +56,8 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      def build(value, position, remainder)
-        new(value, position, remainder)
+      def build(value, position)
+        new(value, position)
       end
 
       # @endgroup

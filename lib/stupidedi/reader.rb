@@ -4,26 +4,23 @@ module Stupidedi
   using Refinements
 
   module Reader
-    autoload :Result,       "stupidedi/reader/result"
-    autoload :Success,      "stupidedi/reader/result"
-    autoload :Failure,      "stupidedi/reader/result"
-
-    autoload :StreamReader, "stupidedi/reader/stream_reader"
-    autoload :TokenReader,  "stupidedi/reader/token_reader"
     autoload :Separators,   "stupidedi/reader/separators"
     autoload :SegmentDict,  "stupidedi/reader/segment_dict"
 
+    autoload :IgnoredTok,           "stupidedi/reader/tokens/ignored_tok"
+    autoload :SegmentTok,           "stupidedi/reader/tokens/segment_tok"
+    autoload :SimpleElementTok,     "stupidedi/reader/tokens/simple_element_tok"
     autoload :ComponentElementTok,  "stupidedi/reader/tokens/component_element_tok"
     autoload :CompositeElementTok,  "stupidedi/reader/tokens/composite_element_tok"
     autoload :RepeatedElementTok,   "stupidedi/reader/tokens/repeated_element_tok"
-    autoload :SegmentTok,           "stupidedi/reader/tokens/segment_tok"
-    autoload :SimpleElementTok,     "stupidedi/reader/tokens/simple_element_tok"
 
-    autoload :Input,          "stupidedi/reader/input"
-    autoload :Position,       "stupidedi/reader/position"
-    autoload :AbstractInput,  "stupidedi/reader/input/abstract_input"
-    autoload :DelegatedInput, "stupidedi/reader/input/delegated_input"
-    autoload :FileInput,      "stupidedi/reader/input/file_input"
+    autoload :Position,     "stupidedi/reader/position"
+    autoload :NoPosition,   "stupidedi/reader/position"
+    autoload :Tokenizer,    "stupidedi/reader/tokenizer"
+
+    autoload :Pointer,      "stupidedi/reader/pointer"
+    autoload :ArrayPtr,     "stupidedi/reader/pointer"
+    autoload :StringPtr,    "stupidedi/reader/pointer"
 
     # @private
     # @return [Regexp]

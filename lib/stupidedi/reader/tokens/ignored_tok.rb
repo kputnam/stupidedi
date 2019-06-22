@@ -3,8 +3,8 @@ module Stupidedi
   using Refinements
 
   module Reader
-    class ComponentElementTok
-      include Inspect
+    class IgnoredTok
+      # include Inspect
 
       # @return [String]
       attr_reader :value
@@ -17,45 +17,37 @@ module Stupidedi
           value, position
       end
 
-      # @return [CompositeElementTok]
+      # @return [IgnoredTok]
       def copy(changes = {})
-        ComponentElementTok.new \
+        IgnoredTok.new \
           changes.fetch(:value, @value),
           changes.fetch(:position, @position)
       end
 
       # :nocov:
       def pretty_print(q)
-        q.pp(:component.cons(@value.cons))
+        q.pp(:ignored.cons(@value))
       end
       # :nocov:
 
       def blank?
-        @value.blank?
+        @value.all?(&:blank?)
       end
 
       def present?
         not blank?
       end
 
-      def simple?
-        true
-      end
-
-      def composite?
-        false
-      end
-
       def to_x12(separators)
-        @value.to_s
+        ""
       end
     end
 
-    class << ComponentElementTok
+    class << IgnoredTok
       # @group Constructors
       #########################################################################
 
-      # @return [ComponentElementTok]
+      # @return [IgnoredTok]
       def build(value, position)
         new(value, position)
       end

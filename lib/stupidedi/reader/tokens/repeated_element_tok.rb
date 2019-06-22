@@ -12,16 +12,9 @@ module Stupidedi
 
       attr_reader :position
 
-      def_delegators "element_toks.last", :remainder
-
       def initialize(element_toks, position)
         @element_toks, @position =
           element_toks, position
-      end
-
-      def repeated(element_tok)
-        @element_toks.unshift(element_tok)
-        self
       end
 
       def pretty_print(q)
