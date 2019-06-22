@@ -26,12 +26,12 @@ module Stupidedi
 
       # :nocov:
       def pretty_print(q)
-        q.pp(:ignored.cons(@value))
+        q.pp([:ignored, @value])
       end
       # :nocov:
 
       def blank?
-        @value.all?(&:blank?)
+        @value.blank?
       end
 
       def present?

@@ -55,7 +55,7 @@ module Stupidedi
       def inspect
         "#<%s%s@storage=0x%s @offset=%d @length=%d>" %
           [self.class.name.split("::").last,
-           @storage.frozen? ? "-" : " ",
+           @storage.frozen? ? "+" : "-",
            (@storage.object_id << 1).to_s(16), @offset, @length]
       end
 
@@ -117,6 +117,10 @@ module Stupidedi
       # @return [E]
       def last
         @storage[@offset + @length] if @length > 0
+      end
+
+      def end
+        self.class.new(@storage.freeze, @length, 0)
       end
 
       # True if `#at(n)` is defined.
@@ -332,7 +336,7 @@ module Stupidedi
           return reify.match?(pattern)
         end
 
-        if @offset + @length != @storage.length and ANCHORED_B.match?(pattern.inspect)
+        if @offset + @length != @storage.length and ANCHORED_Z.match?(pattern.inspect)
           # Because the pattern is anchored to the end, we can't match on
           # @storage directly, unless our end is also the end of @storage.
           return reify.match?(pattern)
