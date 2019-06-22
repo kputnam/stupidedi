@@ -51,6 +51,9 @@ if ARGV.delete('--tiny')
 elsif ARGV.delete('--small')
   n = 10
   m = 250
+elsif ARGV.delete('--large')
+  n = 1000
+  m = 250
 else
   n = 100
   m = 250
