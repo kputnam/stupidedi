@@ -4,7 +4,7 @@ module Stupidedi
 
   module Reader
     #
-    # Provides a "view" into a continuous substring of a larger string, without
+    # Provides a pointer into a continuous substring of a larger string, without
     # allocating a new string (or whatever the type of the whole is). This saves
     # memory when many substrings are needed, or long substrings are needed. It
     # also makes #take, #drop, #[a,b], #[a..b] and #split_at run in constant time
@@ -32,6 +32,10 @@ module Stupidedi
       # In that case, certain operations can be optimized by destructively
       # updating `@storage` in place. However, when another pointer shares
       # with us, `@storage` will be frozen.
+      #
+      # NOTE: We can't know if there are references to `@storage` apart from
+      # the ones created by this class. If there are outside references to
+      # `@storage`, destructive updates to it may cause unexpected behavior.
       #
       # @return [S]
       attr_reader :storage
@@ -312,12 +316,10 @@ module Stupidedi
       ANCHORED_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[$])/
 
       # TODO: More of these
-      def_delegators :reify, :to_sym
+      def_delegators :reify, :to_sym, :intern
 
       # This is called implicitly when we are used in String interpolation,
       # eg `"abc #{pointer} xyz"` or `"abc %s xyz" % pointer`.
-      #
-      # TODO
       def to_s
         reify
       end
@@ -327,8 +329,8 @@ module Stupidedi
         reify
       end
 
-      # An implementation of `String#match?` optimized to work on pointer
-      # strings. In some circumstances, the substring needs to be allocated,
+      # An implementation of `String#match?` optimized to work on string
+      # pointers. In some circumstances, the substring needs to be allocated,
       # but in many cases no allocation is performed.
       #
       # @return [Boolean]
@@ -363,9 +365,9 @@ module Stupidedi
         end
       end
 
-      # We can't correctly implement `String#match` -alike here, because it
-      # returns a {MatchData} that includes offsets and indexes relative to
-      # the whole @storage, not the start of this pointer string.
+      # We can't correctly implement `String#match` here, because it returns
+      # a {MatchData} that includes offsets and indexes relative to the whole
+      # @storage, not the start of this pointer string.
       #
       # We can't update the MatchData to have adjusted offsets, but we return
       # the offset to let the caller make adjustments when needed.
@@ -600,6 +602,26 @@ module Stupidedi
         else
           # allocations: 2 strings, 0 pointers
           reify(true) << other
+        end
+      end
+
+      # Optimized to only allocate one string, when two pointers don't share
+      # the same storage. Otherwise zero allocations are performed.
+      #
+      # @return [Boolean]
+      def ==(other)
+        if self.class == other.class
+          if @storage.eql?(other.storage)
+            @offset == other.offset and @length == other.length
+          else
+            # length == other.length and reify == other.reify
+            length == other.length and \
+              @storage.index(other.reify, @offset) == @offset
+          end
+        else
+          # length == other.length and reify == other
+          length == other.length and \
+            @storage.index(other, @offset) == @offset
         end
       end
     end
