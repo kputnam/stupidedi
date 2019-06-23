@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 require "pp"
 require "benchmark/ips"
 require "memory_profiler"
@@ -10,10 +11,34 @@ def mem(label, &block)
   print label.ljust(30); pp result.allocated_memory_by_class
 end
 
-XS = [1, 2, 3, 4].freeze
+N  = 1
 
-mem("<<") { s = ""; x = "x"; 1000.times { s << x }}
-mem("+=") { s = ""; x = "x"; 1000.times { s += x }}
+##########
+r = String.new(" nai a al.,j,a"); x = "x"; mem("<<") { N.times { r << x }}      # none
+s = String.new("nhaoe aoeuntho"); y = "x"; mem("+=") { N.times { s += y }}      # 1 String
+t = String.new("nhaoe aoeuntho"); z = "x"; mem("+")  { N.times { s = s + y }}   # 1 String
+puts
+
+
+##########
+a = "alpha"; b = "beta"; c = "charlie"; d = :delta; x = String.new("10"); void = nil
+mem("lit")        { N.times { void = "lit"      }}          # none, allocated statically
+mem("% a")        { N.times { void = "%s" % a   }}          # 1 String
+mem("% d")        { N.times { void = "%s" % d   }}          # 2 String
+mem("% [a]")      { N.times { void = "%s" % [a] }}          # 1 String, 1 Array
+mem("% [a,b,c]")  { N.times { void = "%s-%s-%s" % [a,b,c] }}# 1 String, 1 Array
+mem('"#{a}"')     { N.times { void = "#{a}"     }}          # 1 String
+mem('"#{d}"')     { N.times { void = "#{d}"     }}          # 2 String
+mem("succ")       { N.times { void = x.succ     }}          # 1 String
+mem("succ!")      { N.times { void = x.succ!    }}          # none
+puts
+
+
+##########
+xs = %w(abc def ghi jkl mno)
+mem("map")  { N.times { void = xs.map {|x| x }} }   # 1 array
+mem("map!") { N.times { void = xs.map!{|x| x }} }   # none
+puts
 
 exit
 

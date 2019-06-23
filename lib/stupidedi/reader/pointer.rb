@@ -73,10 +73,10 @@ module Stupidedi
         and @offset == 0 \
         and @length == @storage.length \
         and not always_allocate
-          $stderr.puts "reify: no allocation"
+          #stderr.puts "reify: no allocation"
           @storage
         else
-          $stderr.puts "reify: allocate[#@offset, #@length]"
+          #stderr.puts "reify: allocate[#@offset, #@length]"
           @storage[@offset, @length]
         end
       end
@@ -257,6 +257,7 @@ module Stupidedi
       # @return [Pointer<S, E>]
       def +(other)
         if @storage.eql?(other.storage) and @offset + @length == other.offset
+          # allocations: 0 strings, 1 pointer
           self.class.new(@storage.freeze, @offset, @length + other.length)
         else
           # It doesn't make much sense to allocate two new operands and then
@@ -265,6 +266,8 @@ module Stupidedi
           # TODO: Should this be a new Pointer? Depends on how the result
           # will be used. If more concatenation is done, then it's a waste,
           # and slightly worse than plain String + String.
+          #
+          # allocations: 2 string, 0 pointers
           reify(true) << other.reify
         end
       end
@@ -495,18 +498,21 @@ module Stupidedi
       def <<(other)
         if other.is_a?(self.class)
           if @storage.eql?(other.storage) and @offset + @length == other.offset
+            # allocations: 0 strings, 0 pointers
             @length += other.length
-          elsif @storage.frozen?
+          elsif not @storage.frozen?
+            # Surely no one will notice if we destructively update @storage
+            #   allocations: 1 string, 0 pointers
+            @storage << other.reify
+            @length  += other.length
+          else
             # Other flyweights are sharing our storage. We need to make our
             # own copy now. Be sure `reify` gives back a copy, not the original.
+            #   allocations: 2 strings, 0 pointers
             @storage  = reify(true)
             @storage << other.reify
             @length  += other.length
             @offset   = 0
-          else
-            # Surely no one will notice if we destructively update @storage
-            @storage << other.reify
-            @length  += other.length
           end
 
         # NOTE: There doesn't seem to be a string comparison function in Ruby
@@ -520,18 +526,23 @@ module Stupidedi
         #
         elsif @storage.length - @offset - @length >= other.length \
           and @storage.index(other, @offset + @length) == @offset + @length
+          # allocations: 0 strings, 0 pointers
           @length += other.length
-        elsif @storage.frozen?
+        elsif not @storage.frozen?
+          # Surely no one will notice if we destructively update @storage
+          #
+          # allocations: 0 strings, 0 pointers
+          @storage << other
+          @length  += other.length
+        else
           # Other flyweights are sharing our storage. We need to make our
           # own copy now. Be sure `reify` gives back a copy, not the original.
+          #
+          # allocations: 1 string, 0 pointers
           @storage  = reify(true)
           @storage << other
           @length  += other.length
           @offset   = 0
-        else
-          # Surely no one will notice if we destructively update @storage
-          @storage << other
-          @length  += other.length
         end
 
         self
@@ -567,9 +578,10 @@ module Stupidedi
       def +(other)
         if other.is_a?(self.class)
           if @storage.eql?(other.storage) and @offset + @length == other.offset
+            # allocations: 0 strings, 1 pointer
             self.class.new(@storage.freeze, @offset, @length + other.length)
           else
-            # TODO: Explain why we're not returning a Pointer
+            # allocations: 2 strings, 0 pointers
             reify(true) << other.reify
           end
 
@@ -583,9 +595,10 @@ module Stupidedi
         #
         elsif @storage.length - @offset - @length >= other.length \
           and @storage.index(other, @offset + @length) == @offset + @length
+          # allocations: 0 strings, 1 pointer
           self.class.new(@storage.freeze, @offset, @length + other.length)
         else
-          # TODO: Explain why we're not returning a Pointer
+          # allocations: 2 strings, 0 pointers
           reify(true) << other
         end
       end

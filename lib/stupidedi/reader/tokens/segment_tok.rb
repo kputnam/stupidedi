@@ -7,7 +7,7 @@ module Stupidedi
       include Inspect
 
       # @return [Symbol]
-      attr_reader :id
+      attr_reader :segment_id
 
       # @return [Array<CompositeElementTok, SimpleElementTok>]
       attr_reader :element_toks
@@ -15,22 +15,22 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      def initialize(id, element_toks, position)
-        @id, @element_toks, @position =
-          id, element_toks, position
+      def initialize(segment_id, element_toks, position)
+        @segment_id, @element_toks, @position =
+          segment_id, element_toks, position
       end
 
       # @return [SegmentTok]
       def copy(changes = {})
         SegmentTok.new \
-          changes.fetch(:id, @id),
+          changes.fetch(:segment_id, @segment_id),
           changes.fetch(:element_toks, @element_toks),
           changes.fetch(:position, @position)
       end
 
       # :nocov:
       def pretty_print(q)
-        q.pp(:segment.cons(@id.cons(@element_toks)))
+        q.pp(:segment.cons(@segment_id.cons(@element_toks)))
       end
       # :nocov:
 
@@ -44,12 +44,12 @@ module Stupidedi
 
       def to_x12(separators)
         if blank?
-          "#{id}#{(separators.segment || "~").strip}"
+          "#{segment_id}#{(separators.segment || "~").strip}"
         else
           es  = @element_toks.map{|x| x.to_x12(separators) }
           sep = separators.element || "*"
           eos = separators.segment || "~"
-          id.cons(es).join(sep).gsub(/#{Regexp.escape(sep)}+$/, "") + eos.strip
+          segment_id.cons(es).join(sep).gsub(/#{Regexp.escape(sep)}+$/, "") + eos.strip
         end
       end
     end
@@ -59,8 +59,8 @@ module Stupidedi
       #########################################################################
 
       # @return [SegmentTok]
-      def build(id, element_toks, position)
-        new(id, element_toks, position)
+      def build(segment_id, element_toks, position)
+        new(segment_id, element_toks, position)
       end
 
       # @endgroup
