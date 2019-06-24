@@ -24,15 +24,15 @@ module Stupidedi
 
     # @private
     # @return [Regexp]
-    R_BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/.freeze
+    R_BASIC    = /[A-Z0-9!"&'()*+,.\/:;?= -]/
 
     # @private
     # @return [Regexp]
-    R_EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/.freeze
+    R_EXTENDED = /[a-z%@\[\]_{}\\|<>~^`#\$ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡]/
 
     # @private
     # @return [Regexp]
-    R_EITHER   = Regexp.union(R_BASIC, R_EXTENDED).freeze
+    R_EITHER   = Regexp.union(R_BASIC, R_EXTENDED)
 
     # @private
     # @return [String]
@@ -40,15 +40,15 @@ module Stupidedi
 
     # @private
     # @return [Hash]
-    H_BASIC    = C_BYTES.scan(R_BASIC).inject({}){|h,c| h[c] = nil; h }.freeze
+    H_BASIC    = C_BYTES.scan(R_BASIC).inject({}){|h,c| h[c] = nil; h }
 
     # @private
     # @return [Hash]
-    H_EXTENDED = C_BYTES.scan(R_EXTENDED).inject({}){|h,c| h[c] = nil; h }.freeze
+    H_EXTENDED = C_BYTES.scan(R_EXTENDED).inject({}){|h,c| h[c] = nil; h }
 
     # @private
     # @return [Hash]
-    H_EITHER   = C_BYTES.scan(R_EITHER).inject({}){|h,c| h[c] = nil; h }.freeze
+    H_EITHER   = C_BYTES.scan(R_EITHER).inject({}){|h,c| h[c] = nil; h }
 
     # @private
     # @return [Regexp]

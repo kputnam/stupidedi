@@ -80,7 +80,8 @@ module Stupidedi
           #stderr.puts "reify: no allocation"
           @storage
         else
-          #stderr.puts "reify: allocate[#@offset, #@length]"
+          $stderr.puts "reify: allocate[#@offset, #@length]"
+          raise
           @storage[@offset, @length]
         end
       end
@@ -312,8 +313,6 @@ module Stupidedi
     end
 
     class StringPtr < Pointer
-      ANCHORED_A = /(?<!\\)(?:\\\\)*(?:\\[Aa]|[\^])/
-      ANCHORED_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[$])/
 
       # TODO: More of these
       def_delegators :reify, :to_sym, :intern
@@ -329,35 +328,43 @@ module Stupidedi
         reify
       end
 
+      # an unescaped \A, \a, or ^, \Z, \z, $
+      ANCHORS_A = /(?<!\\)(?:\\\\)*(?:\\[Aa]|[\^])/x
+      ANCHORS_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[\$])/x
+
       # An implementation of `String#match?` optimized to work on string
       # pointers. In some circumstances, the substring needs to be allocated,
       # but in many cases no allocation is performed.
       #
+      # NOTE: See `match_` below for code comments.
+      #
       # @return [Boolean]
-      def match?(pattern, offset = 0)
-        if @offset != 0 and ANCHORED_A.match?(pattern.inspect)
-          # We can't match on @storage.directly unless our @offset is 0,
-          # because String#match(/^./, n) never matches unless n is 0.
+      def match?(pattern, offset=0, anchorless=false)
+        if @length < 1024 and @storage.length - @offset > 1024
+          return reify.match?(pattern, offset)
+        end
+
+        if not anchorless and @offset != 0 \
+          and ANCHORS_A.match?(pattern.inspect)
           return reify.match?(pattern)
         end
 
-        if @offset + @length != @storage.length and ANCHORED_Z.match?(pattern.inspect)
-          # Because the pattern is anchored to the end, we can't match on
-          # @storage directly, unless our end is also the end of @storage.
+        if anchorless and @offset + @length != @storage.length \
+          and ANCHORS_Z.match?(pattern.inspect)
           return reify.match?(pattern)
         end
 
         offset = @length if offset > length
         offset = @offset + offset
+
+        # Unfortunately we can't use pattern.match?, which doesn't allocate
+        # a MatchData object, because we need to check bounds on the match
         m = pattern.match(@storage, offset)
 
         if m and m.begin(0) <= @offset + @length
           if m.end(0) <= @offset + @length
-            # The entire match is inside the bounds
             true
           else
-            # The match starts within bounds but ends outside, so we need to
-            # to allocate a new String of the correct length and try again
             @storage[m.begin(0), @offset + @length - m.begin(0)].match?(pattern)
           end
         else
@@ -379,17 +386,30 @@ module Stupidedi
       # as String#match.
       #
       # @return [MatchData, Integer]
-      def match_(pattern, offset)
-        if @offset != 0 and ANCHORED_A.match?(pattern.inspect)
-          # We can't match on @storage.directly unless our @offset is 0,
-          # because String#match(/^./, n) never matches unless n is 0.
-          return [reify.match(pattern, offset), 0]
+      def match_(pattern, offset, anchorless=false)
+        if @length < 1024 and @storage.length - @offset > 1024
+          # We are pointing to a short segment, but there is still a very
+          # long string that follows in @storage. There's no way to tell
+          # the regexp engine to stop after a given offset, so it will start
+          # at @offset and continue searching well past @offset + @length.
+          #
+          # It's faster at this point to allocate the relatively shorter
+          # string, so the regexp engine has less work.
+          return [reify.match(pattern), 0]
         end
 
-        if @offset + @length != @storage.length and ANCHORED_Z.match?(pattern.inspect)
+        if not anchorless and @offset != 0 \
+          and ANCHORS_A.match?(pattern.inspect)
+          # We can't match on @storage.directly unless our @offset is 0,
+          # because String#match(/^./, n) never matches unless n is 0.
+          return [reify.match(pattern), 0]
+        end
+
+        if not anchorless and @offset + @length != @storage.length \
+          and ANCHORS_Z.match?(pattern.inspect)
           # Because the pattern is anchored to the end, we can't match on
           # @storage directly, unless our end is also the end of @storage.
-          return [reify.match(pattern, offset), 0]
+          return [reify.match(pattern), 0]
         end
 
         offset = @length if offset > length
@@ -423,12 +443,12 @@ module Stupidedi
       # the given `offset`. If not found, then `nil` is returned.
       #
       # @return [Integer]
-      def index(other, offset=0)
+      def index(other, offset=0, anchorless=false)
         raise ArgumentError, "offset must be non-negative" if offset < 0
         return nil if offset > @length
 
         if other.is_a?(Regexp)
-          m, offset = self.match_(other, offset)
+          m, offset = match_(other, offset)
           m and m.begin(0) + offset
         else
           n = @storage.index(other, @offset + offset)
@@ -618,7 +638,7 @@ module Stupidedi
             length == other.length and \
               @storage.index(other.reify, @offset) == @offset
           end
-        else
+        elsif other.is_a?(String)
           # length == other.length and reify == other
           length == other.length and \
             @storage.index(other, @offset) == @offset

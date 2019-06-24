@@ -5,6 +5,7 @@ module Stupidedi
   module Reader
 
     # TODO:
+    # - fix shared builder from caller to callee
     # - review/improve errors
     # - determine what is yield'd, what is return'd
     # - determine error recovery
@@ -12,7 +13,8 @@ module Stupidedi
     # - switch char-by-char concat with regexps that grab whole elements
 
     class Tokenizer
-      SEGMENT_ID = /\A[A-Z][A-Z0-9]{1,2}\Z/
+      SEGMENT_ID     = /\A[A-Z][A-Z0-9]{1,2}\Z/
+      NOT_SEGMENT_ID = /[^A-Z0-9]/
 
       def initialize(input)
         @input = input
@@ -175,20 +177,19 @@ module Stupidedi
       # @yield [SegmentTok | IgnoredTok | ErrorTok]
       def each(input)
         return enum_for(:each, input) unless block_given?
-        state = Tokenizer::State.new(nil, nil)
+        state = Tokenizer::State.new(nil, SegmentDict.empty, Tokenizer::ElementTokSwitch.new)
 
-        until input.empty?
-          next_segment(input, state) do |token|
-            # Ordinarily there's only one SegmentTok returned, but in other
-            # cases there could be a IgnoreTok at the beginning, with non-X12
-            # header text. Or there could be an ErrorTok and IgnoreTok because
-            # the first ISA was malformed and the text after was ignored.
-            #
-            # Usually read_segment will only return a single SegmentTok, but
-            # there could also be unparseable text in an ErrorTok
+        while true
+          result = next_segment(input, state) do |token|
             yield token
           end
+
+          break if result.fail?
+          yield result.value
+          input = result.rest
         end
+
+        result
       end
 
       # This method will skip over without tokenizing input, until an ISA
@@ -197,14 +198,22 @@ module Stupidedi
       # @yield [SegmentTok | IgnoredTok | ErrorTok]
       def each_isa(input)
         return enum_for(:each, input) unless block_given?
-        state = Tokenizer::State.new(nil, nil)
+        state = Tokenizer::State.new(nil, SegmentDict.empty, Tokenizer::ElementTokSwitch.new)
 
-        until input.empty?
-          next_isa_segment(input, state).each do |token|
-            yield token
+        while true
+          result = next_isa_segment(input, state) do |token|
+            yield token # IgnoreTok
           end
+
+          break if result.fail?
+          yield result.value
+          input = result.rest
         end
+
+        result
       end
+
+      BAD_SEPARATOR = /[a-zA-Z0-9 ]/
 
       # Consume next occurrence of "ISA" and any control characters that
       # immediately follow. Validation is done to skip over "ISA" where
@@ -235,7 +244,7 @@ module Stupidedi
           return eof("ISA", :position) if s.nil?
 
           # There's something between I..S but it's not a control character
-          next if s > i + 1 and input[i+1, s-i-1].match?(Reader::R_EITHER)
+          next if s > i + 1 and input[i+1, s-i-1].match?(Reader::R_EITHER, 0, true)
 
           a = input.index("A", offset)
 
@@ -243,7 +252,7 @@ module Stupidedi
           return eof("ISA", :position) if a.nil?
 
           # There's something between S..A but it's not a control character
-          next if a > s + 1 and input[s+1, a-s-1].match?(Reader::R_EITHER)
+          next if a > s + 1 and input[s+1, a-s-1].match?(Reader::R_EITHER, 0, true)
 
           # Needed to perform the extra validation below
           a = _skip_control_characters(input, a)
@@ -251,7 +260,7 @@ module Stupidedi
           # The next character determines the element separator. If it's an
           # alphanumeric or space, we assume this is not the start of an ISA
           # segment. Perhaps a word like "L[ISA] " or "D[ISA]RRAY"
-          next if not input.defined_at?(a+1) or input[a+1].match?(/[a-zA-Z0-9 ]/)
+          next if not input.defined_at?(a+1) or input[a+1].match?(BAD_SEPARATOR)
 
           # Success, ignore everything before "I", resume parsing after "A".
           yield IgnoredTok.new(input.take(i), :position)
@@ -272,7 +281,7 @@ module Stupidedi
         # The next character is a declaration of the element separator
         separators = Separators.new(nil, nil, input.head, nil)
 
-        # NOTE: This destructive update would make backtracking more painful
+        # NOTE: Doing this destructive update here would complicate backtracking
         state.separators = separators
 
         # Read the first 15 simple elements into an array
@@ -349,13 +358,21 @@ module Stupidedi
           break if buffer.length >= 3
         end
 
-        segment_id = buffer.to_s
+        # This is the only String allocation we cannot get around. The `match?`
+        # call either has a pattern with \A..\z, or the length of segment_id
+        # is very small compared to the `@storage` after it, so `match?` will
+        # allocate the short substring. Next, we need to convert segment_id to
+        # a symbol, and this also requires reifying the string to call `to_sym`
+        #
+        # So it's better to make one copy here instead of them being created
+        # implicitly twice below.
+        segment_id = buffer #.to_s
 
-        return expected("segment identifier, found %s" % segment_id.inspect, :position) \
-          unless segment_id.match?(Tokenizer::SEGMENT_ID)
+        # return expected("segment identifier, found %s" % segment_id.inspect, :position) \
+        #   if segment_id.match?(Tokenizer::NOT_SEGMENT_ID, 0, true)
 
         offset = _skip_control_characters(input, offset)
-        return done([segment_id.to_sym, :position], input.drop(offset))
+        return done([segment_id, :position], input.drop(offset))
       end
 
       # @return [SegmentTok]
@@ -376,7 +393,17 @@ module Stupidedi
         return unexpected("eof after %s" % segment_id, :position) \
           if result.rest.empty?
 
-        if segment_id == :ISA
+        # This is the only String allocation we cannot get around. The `match?`
+        # call either has a pattern with \A..\z, or the length of segment_id
+        # is very small compared to the `@storage` after it, so `match?` will
+        # allocate the short substring. Next, we need to convert segment_id to
+        # a symbol, and this also requires reifying the string to call `to_sym`
+        #
+        # So it's better to make one copy here instead of them being created
+        # implicitly twice below.
+        # segment_id = segment_id.to_sym
+
+        if segment_id == "ISA" # :ISA
           # We encountered a new ISA segment without having seen the previous
           # ISA's matching IEA segment.
           result = _read_isa_elements(result.rest, state){|t| yield t if block_given? }
@@ -388,20 +415,20 @@ module Stupidedi
         unless result.rest.head == separators.element \
             or result.rest.head == separators.segment
           return unexpected("%s after segment identifier %s" % [
-            result.rest.head.inspect, segment_id], :position) # TODO yield
+            result.rest.head.inspect, segment_id], :position)
         end
 
-        if state.segment_dict.defined_at?(segment_id)
-          element_uses = state.segment_dict.at(segment_id).element_uses
-        else
-          element_uses = []
-        end
+        # if state.segment_dict.defined_at?(segment_id)
+        #   element_uses = state.segment_dict.at(segment_id).element_uses
+        # else
+            element_uses = []
+        # end
 
         result = _read_elements(result.rest, state, segment_id, element_uses)
-        return result if result.fail? # TODO yield
+        return result if result.fail?
 
         # We've parsed an IEA segment, so reset and look for an ISA next time
-        state.separators = nil if segment_id == :IEA
+        state.separators = nil if segment_id == "IEA" # :IEA
 
         done(SegmentTok.build(segment_id, result.value, :position), result.rest)
       end
