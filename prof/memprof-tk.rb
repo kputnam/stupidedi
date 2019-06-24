@@ -23,18 +23,17 @@ def run(config, input, state)
 
   until result.fail?
     segment_tok = result.value
-    #p segment_tok.segment_id
+    puts segment_tok.segment_id
 
-    if false
     case segment_tok.segment_id
     when "GS"
        # GS08: Version / Release / Industry Identifier Code
        version = segment_tok.element_toks.at(7).try(:value).try(:to_s)
        gscode  = version.try(:slice, 0, 6)
- 
+
        # GS01: Functional Identifier Code
        fgcode = segment_tok.element_toks.at(0).try(:value)
- 
+
        if config.functional_group.defined_at?(gscode)
          envelope_def = config.functional_group.at(gscode)
          envelope_val = envelope_def.empty
@@ -46,7 +45,6 @@ def run(config, input, state)
         segment_dict = state.segment_dict.pop
         state.segment_dict = segment_dict
       end
-    end
     end
 
     result = Stupidedi::Reader::Tokenizer.next_segment(result.rest, state)
