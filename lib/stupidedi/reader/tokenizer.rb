@@ -366,10 +366,10 @@ module Stupidedi
         #
         # So it's better to make one copy here instead of them being created
         # implicitly twice below.
-        segment_id = buffer #.to_s
+        segment_id = buffer.to_s
 
-        # return expected("segment identifier, found %s" % segment_id.inspect, :position) \
-        #   if segment_id.match?(Tokenizer::NOT_SEGMENT_ID, 0, true)
+        return expected("segment identifier, found %s" % segment_id.inspect, :position) \
+          if segment_id.match?(Tokenizer::NOT_SEGMENT_ID)
 
         offset = _skip_control_characters(input, offset)
         return done([segment_id, :position], input.drop(offset))
@@ -393,17 +393,7 @@ module Stupidedi
         return unexpected("eof after %s" % segment_id, :position) \
           if result.rest.empty?
 
-        # This is the only String allocation we cannot get around. The `match?`
-        # call either has a pattern with \A..\z, or the length of segment_id
-        # is very small compared to the `@storage` after it, so `match?` will
-        # allocate the short substring. Next, we need to convert segment_id to
-        # a symbol, and this also requires reifying the string to call `to_sym`
-        #
-        # So it's better to make one copy here instead of them being created
-        # implicitly twice below.
-        # segment_id = segment_id.to_sym
-
-        if segment_id == "ISA" # :ISA
+        if segment_id == :ISA
           # We encountered a new ISA segment without having seen the previous
           # ISA's matching IEA segment.
           result = _read_isa_elements(result.rest, state){|t| yield t if block_given? }
@@ -418,17 +408,17 @@ module Stupidedi
             result.rest.head.inspect, segment_id], :position)
         end
 
-        # if state.segment_dict.defined_at?(segment_id)
-        #   element_uses = state.segment_dict.at(segment_id).element_uses
-        # else
-            element_uses = []
-        # end
+        if state.segment_dict.defined_at?(segment_id)
+          element_uses = state.segment_dict.at(segment_id).element_uses
+        else
+          element_uses = []
+        end
 
         result = _read_elements(result.rest, state, segment_id, element_uses)
         return result if result.fail?
 
         # We've parsed an IEA segment, so reset and look for an ISA next time
-        state.separators = nil if segment_id == "IEA" # :IEA
+        state.separators = nil if segment_id == :IEA
 
         done(SegmentTok.build(segment_id, result.value, :position), result.rest)
       end

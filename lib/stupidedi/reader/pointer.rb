@@ -80,8 +80,7 @@ module Stupidedi
           #stderr.puts "reify: no allocation"
           @storage
         else
-          $stderr.puts "reify: allocate[#@offset, #@length]"
-          raise
+          # $stderr.puts "reify: allocate[#@offset, #@length]"
           @storage[@offset, @length]
         end
       end
