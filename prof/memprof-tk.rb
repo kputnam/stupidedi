@@ -26,7 +26,7 @@ def run(config, input, state)
     puts segment_tok.segment_id
 
     case segment_tok.segment_id
-    when "GS"
+    when :GS
        # GS08: Version / Release / Industry Identifier Code
        version = segment_tok.element_toks.at(7).try(:value).try(:to_s)
        gscode  = version.try(:slice, 0, 6)
@@ -40,7 +40,7 @@ def run(config, input, state)
          segment_dict = state.segment_dict.push(envelope_val.segment_dict)
          state.segment_dict = segment_dict
        end
-    when "GE"
+    when :GE
       unless state.segment_dict.empty?
         segment_dict = state.segment_dict.pop
         state.segment_dict = segment_dict

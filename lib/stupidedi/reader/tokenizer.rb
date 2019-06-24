@@ -371,7 +371,7 @@ module Stupidedi
           unless segment_id.match?(Tokenizer::SEGMENT_ID)
 
         offset = _skip_control_characters(input, offset)
-        return done([segment_id, :position], input.drop(offset))
+        return done([segment_id.to_sym, :position], input.drop(offset))
       end
 
       # @return [SegmentTok]
@@ -392,7 +392,7 @@ module Stupidedi
         return unexpected("eof after %s" % segment_id, :position) \
           if result.rest.empty?
 
-        if segment_id == "ISA" #:ISA
+        if segment_id == :ISA
           # We encountered a new ISA segment without having seen the previous
           # ISA's matching IEA segment.
           result = _read_isa_elements(result.rest, state){|t| yield t if block_given? }
@@ -417,7 +417,7 @@ module Stupidedi
         return result if result.fail?
 
         # We've parsed an IEA segment, so reset and look for an ISA next time
-        state.separators = nil if segment_id == "IEA"#:IEA
+        state.separators = nil if segment_id == :IEA
 
         done(SegmentTok.build(segment_id, result.value, :position), result.rest)
       end
