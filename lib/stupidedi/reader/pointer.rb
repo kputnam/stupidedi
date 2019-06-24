@@ -57,9 +57,9 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "#<%s%s@storage=0x%s @offset=%d @length=%d>" %
+        "#<%s %s@storage=0x%s@offset=%d @length=%d>" %
           [self.class.name.split("::").last,
-           @storage.frozen? ? "+" : "-",
+           @storage.frozen? ? "-" : "+",
            (@storage.object_id << 1).to_s(16), @offset, @length]
       end
 
@@ -327,9 +327,11 @@ module Stupidedi
         reify
       end
 
-      # an unescaped \A, \a, or ^, \Z, \z, $
-      ANCHORS_A = /(?<!\\)(?:\\\\)*(?:\\[Aa]|[\^])/x
-      ANCHORS_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[\$])/x
+      # Match an unescaped anchor \A, \a, or ^, \Z, \z, $
+      # NOTE: These will match [^$], which aren't anchors, but the regexp to
+      # exclude those is very gnarly and very noticeably slow.
+      ANCHORS_A = /(?<!\\)(?:\\\\)*(?:\\[Aa]|[\^])/
+      ANCHORS_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[\$])/
 
       # An implementation of `String#match?` optimized to work on string
       # pointers. In some circumstances, the substring needs to be allocated,
@@ -340,6 +342,7 @@ module Stupidedi
       # @return [Boolean]
       def match?(pattern, offset=0, anchorless=false)
         if @length < 1024 and @storage.length - @offset > 1024
+          # TODO: Run some experiments to test when reify is faster than not
           return reify.match?(pattern, offset)
         end
 
@@ -387,6 +390,8 @@ module Stupidedi
       # @return [MatchData, Integer]
       def match_(pattern, offset, anchorless=false)
         if @length < 1024 and @storage.length - @offset > 1024
+          # TODO: Run some experiments to test when reify is faster than not
+          #
           # We are pointing to a short segment, but there is still a very
           # long string that follows in @storage. There's no way to tell
           # the regexp engine to stop after a given offset, so it will start
@@ -633,12 +638,14 @@ module Stupidedi
           if @storage.eql?(other.storage)
             @offset == other.offset and @length == other.length
           else
-            # length == other.length and reify == other.reify
+            # TODO: When can String#index on a long String be slower than an
+            # allocation and String#== ?
             length == other.length and \
               @storage.index(other.reify, @offset) == @offset
           end
         elsif other.is_a?(String)
-          # length == other.length and reify == other
+          # TODO: When can String#index on a long String be slower than an
+          # allocation and String#== ?
           length == other.length and \
             @storage.index(other, @offset) == @offset
         end

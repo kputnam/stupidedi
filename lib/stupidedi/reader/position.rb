@@ -5,7 +5,7 @@ module Stupidedi
   module Reader
 
     #
-    # This module is intended to be used with a user-defined Struct. This
+    # This mixin is intended to be used with a user-defined Struct. This
     # scheme allows customization of what position information is tracked via
     # the tokenizer and passed along into the parse tree.
     #
@@ -31,7 +31,7 @@ module Stupidedi
     # beneficial to track the minimum.
     #
     # Here's how the memory footprint works out:
-    #   path: roughly 20 bytes + length of string in bytes, but minimum is 40
+    #   path: roughly 20 bytes + length of string in bytes, but minimum is 40b
     #   line: represented directly, so no overhead besides the VALUE struct
     #   column: same
     #   offset: same
@@ -54,7 +54,6 @@ module Stupidedi
     # The default NoPosition implementation is provided which still consumes
     # 40 bytes, but only one instance is created.
     #
-
     module Position
       def self.included(base)
         base.__send__(:extend,  ClassMethods)
@@ -62,6 +61,10 @@ module Stupidedi
       end
 
       module ClassMethods
+        def build(path)
+          new.reset(path, 1, 0, 0)
+        end
+
         def caller(offset = 1)
           path, line, = Stupidedi.caller(offset + 1)
           new.reset(path, line, nil, nil)
@@ -69,12 +72,8 @@ module Stupidedi
       end
 
       module InstanceMethods
-        def to_s
-          inspect
-        end
-
         # @return [String]
-        def inspect
+        def to_s
           parts  = []
           parts << "path #{path}"     if respond_to?(:path)
           parts << "line #{line}"     if respond_to?(:line)
@@ -83,6 +82,30 @@ module Stupidedi
           parts.join(", ")
         end
 
+        # Calculate the new position if we started on the current position and
+        # then read the given input.
+        #
+        # @parma  input [#length, #count, #rindex]
+        # @return [self.class]
+        def advance(input)
+          length_ = input.length
+          lines_  = input.count("\n")
+          column_ = unless lines_.zero?
+                      # Column numbering starts at 1
+                      length_ - input.rindex("\n") - 1
+                    else
+                      _column = respond_to?(:column) ? column : 0
+                      length_ + _column
+                    end
+
+          clone.reset \
+            respond_to?(:path)   ? path : nil,
+            respond_to?(:line)   ? line + lines_ : nil,
+            respond_to?(:column) ? column_ : nil,
+            respond_to?(:offset) ? offset + length_ : nil
+        end
+
+        # @return self
         def reset(path, line, column, offset)
           self[:path]   = path   if respond_to?(:path)
           self[:line]   = line   if respond_to?(:line)
@@ -93,26 +116,30 @@ module Stupidedi
       end
     end
 
+    # This provides a stub that acts like a Position but doesn't compute
+    # or retain any information. Because it has no state, `NoPosition.new`
+    # returns the class itself, which implements `#to_s` and `#advance`.
     class NoPosition
-      def to_s
-        inspect
-      end
-
-      def inspect
-        "no position info"
-      end
-
-      def reset(path, line, column, offset)
-      end
     end
 
     class << NoPosition
       def caller(offset = 1)
-        @instance ||= NoPosition.allocate
+        self
       end
 
       def new(*args)
-        @instance ||= NoPosition.allocate
+        self
+      end
+
+      # Singleton instance methods
+      #########################################################################
+
+      def to_s
+        "no position info"
+      end
+
+      def advance(input)
+        self
       end
     end
   end
