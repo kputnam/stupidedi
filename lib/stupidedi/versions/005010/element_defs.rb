@@ -371,6 +371,7 @@ module Stupidedi
             "T4"  => "Signal Code",
             "TJ"  => "Federal Taxpayer's Identification Number",
             "TV"  => s::CodeList.external("224"),
+            "VV"  => "Voucher",
             "VY"  => "Link Sequence Number",
             "Y4"  => "Agency Claim Number",
             "WH"  => "Master Reference (Link) Number",
