@@ -2,6 +2,8 @@
 module Stupidedi
   using Refinements
 
+  # TODO: Rename this
+  #
   module Parser
     module Generation
       # Consumes all input from `reader` and returns the updated
@@ -21,52 +23,28 @@ module Stupidedi
       # been consumed. The extra parse trees are returned (in memory)
       # via the {StateMachine} to aide diagnosis.
       #
-      # @return [(StateMachine, Reader::Result)]
+      # @param  tokenizer [Reader::Tokenizer]
+      # @param  options
+      #
+      # @yield  [Reader::IgnoredTok]
+      # @return [(StateMachine, Reader::Tokenizer::Result)]
       def read(tokenizer, options = {})
-        drain(tokenizer)
-      end
+        limit   = options.fetch(:nondeterminism, 1)
+        machine = self.dup
 
-      # @return [StateMachine]
-      def drain(tokenizer)
-        machine_ = machine.dup
-
-        tokenizer.each do |token|
+        return machine, tokenizer.each do |token|
           case token
-          when ErrorTok
-            if block_given?
-              yield token # TODO: Should user be able to signal something to us?
-            else
-              #
-            end
-
-          when IgnoreTok
-            if block_given?
-              yield token # TODO: Should user be able to signal something to us?
-            else
-              #
-            end
-
-          when SegmentTok
-            machine_.insert!(token, false, tokenizer)
-
-            if machine_.active.length > limit
-              matches = machine_.active.map do |m|
-                if segment_use = m.node.zipper.node.usage
-                  "SegmentUse(%s, %s, %s, %s)" % [segment_use.position,
-                                                  segment_use.id,
-                                                  segment_use.requirement.inspect,
-                                                  segment_use.repeat_count.inspect]
-                else
-                  m.node.zipper.node.inspect
-                end
-              end.join(", ")
-
-              raise ...
-            end
+          when Reader::SegmentTok
+            machine.insert!(token, false, tokenizer)
+          when Reader::IgnoredTok
+            yield token if block_given?
           end
         end
       end
 
+      # NOTE: This may destructively update the `state` by reassigning its
+      # `segment_dict` or `separators` attributes.
+      #
       # @return [StateMachine]
       def insert(segment_tok, strict, tokenizer)
         StateMachine.new(@config, insert_(segment_tok, strict, tokenizer))
@@ -80,6 +58,9 @@ module Stupidedi
 
     private
 
+      # NOTE: This may destructively update the `state` by reassigning its
+      # `segment_dict` or `separators` attributes.
+      #
       # @return [Array<Zipper::AbstractCursor<StateMachine::AbstractState>>]
       def insert_(segment_tok, strict, tokenizer)
         @active.flat_map do |zipper|
@@ -94,7 +75,7 @@ module Stupidedi
 
               # We might be moving up or down past the interchange or functional
               # group envelope, which determine the separators and segment_dict
-              unless op.push.nil? and (op.pop_count.zero? or tokenizer.stream?)
+              unless op.push.nil? and (op.pop_count.zero? or tokenizer.separators.blank?)
                 tokenizer.separators   = successor.node.separators
                 tokenizer.segment_dict = successor.node.segment_dict
               end
@@ -104,6 +85,8 @@ module Stupidedi
           end
         end
       end
+
+    public
 
       # Three things change together when executing an {Instruction}:
       #
@@ -148,8 +131,8 @@ module Stupidedi
           parent = state.node.copy \
             :zipper       => value,
             :children     => [],
-            :separators   => tokenizer.try(&:separators),
-            :segment_dict => tokenizer.try(&:segment_dict),
+            :separators   => tokenizer.try{|x| x.separators },
+            :segment_dict => tokenizer.try{|x| x.segment_dict },
             :instructions => table.pop(op.pop_count).drop(op.drop_count)
 
           # Note, `state` is a cursor pointing at a state, while `parent`

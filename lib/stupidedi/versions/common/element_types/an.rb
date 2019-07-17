@@ -363,6 +363,7 @@ module Stupidedi
             elsif object.kind_of?(Date) or object.kind_of?(Time)
               self::Invalid.new(object, usage, position)
             else
+              # STRINGPTR: to_s + rstrip + new
               self::NonEmpty.new(object.to_s.rstrip, usage, position)
             end
           rescue

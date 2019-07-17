@@ -50,8 +50,8 @@ module Stupidedi
   autoload :Versions,         "stupidedi/versions"
   autoload :VERSION,          "stupidedi/version"
 
-  def self.caller(depth = 2)
-    if k = ::Kernel.caller.at(depth - 1)
+  def self.caller(offset = 2)
+    if k = ::Kernel.caller(offset, 1).first
       k.split(":")
     end
   end

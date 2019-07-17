@@ -11,14 +11,14 @@ module Stupidedi
       #
       # @return [void]
       def repeated(*elements)
-        [:repeated, elements, Reader::Position.caller(2)]
+        [:repeated, elements, Reader::StacktracePosition.build]
       end
 
       # Generates a composite element
       #
       # @return [void]
       def composite(*components)
-        [:composite, components, Reader::Position.caller(2)]
+        [:composite, components, Reader::StacktracePosition.build]
       end
 
       #########################################################################
@@ -28,7 +28,7 @@ module Stupidedi
       #
       # @return [void]
       def blank
-        [:blank, nil, Reader::Position.caller(2)]
+        [:blank, nil, Reader::StacktracePosition.build]
       end
 
       # Generates a blank element and asserts that the element's usage
@@ -38,7 +38,7 @@ module Stupidedi
       #
       # @return [void]
       def not_used
-        [:not_used, nil, Reader::Position.caller(2)]
+        [:not_used, nil, Reader::StacktracePosition.build]
       end
 
       # Generates the only possible value an element may have, which may
@@ -50,7 +50,7 @@ module Stupidedi
       #
       # @return [void]
       def default
-        [:default, nil, Reader::Position.caller(2)]
+            [:default, nil, Reader::StacktracePosition.build]
       end
 
       # @endgroup
@@ -124,7 +124,7 @@ module Stupidedi
           end
         end
 
-        Reader::SegmentTok.new(id, element_toks, position, nil)
+        Reader::SegmentTok.build(id, element_toks, position)
       end
 
       # @return [Reader::RepeatedElementTok]
@@ -175,17 +175,17 @@ module Stupidedi
           component_toks << mkcomponent_tok(c_tag, c_position || position)
         end
 
-        Reader::CompositeElementTok.build(component_toks, position, nil)
+        Reader::CompositeElementTok.build(component_toks, position)
       end
 
       # @return [Reader::ComponentElementTok]
       def mkcomponent_tok(value, position)
-        Reader::ComponentElementTok.build(value, position, nil)
+        Reader::ComponentElementTok.build(value, position)
       end
 
       # @return [Reader::SimpleElementTok]
       def mksimple_tok(value, position)
-        Reader::SimpleElementTok.build(value, position, nil)
+        Reader::SimpleElementTok.build(value, position)
       end
 
       # @endgroup

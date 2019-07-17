@@ -27,6 +27,19 @@ module Stupidedi
           component, repetition, element, segment
       end
 
+      # True if all separators are `#blank?`
+      def blank?
+        @component.blank?   and
+        @repetition.blank?  and
+        @element.blank?     and
+        @segment.blank?
+      end
+
+      # True if any one separator is not `#blank?`
+      def present?
+        not blank?
+      end
+
       # @return [Separators]
       def copy(changes = {})
         Separators.new \
@@ -38,6 +51,8 @@ module Stupidedi
 
       # Creates a new value that has the separators from `other`, when they
       # are not nil, and will use separators from `self` otherwise.
+      #
+      # @return [Separators]
       def merge(other)
         Separators.new \
           other.component  || @component,

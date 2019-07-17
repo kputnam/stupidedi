@@ -287,6 +287,7 @@ module Stupidedi
             elsif object.blank?
               self::Empty.new(usage, position)
             else
+              # STRINGPTR: to_s + rstrip + new
               self::NonEmpty.new(object.to_s.rstrip, usage, position)
             end
           rescue

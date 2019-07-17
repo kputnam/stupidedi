@@ -62,7 +62,7 @@ module Stupidedi
       # @return [String]
       def inspect
         name = self.class.name.split("::").last
-        "#{name}(#{zipper.node.position.inspect}, #{@reason}, #{@zipper.node.inspect})"
+        "#{name}(#{zipper.node.position}, #{@reason}, #{@zipper.node.inspect})"
       end
 
       def error?

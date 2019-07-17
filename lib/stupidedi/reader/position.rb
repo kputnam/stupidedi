@@ -14,10 +14,10 @@ module Stupidedi
     #   TinyPosition = Struct.new(:offset)
     #   TinyPosition.include(Stupidedi::Reader::Position)
     #
-    #   anonClass = Struct.new(:path, :line)
+    #   anonClass = Struct.new(:name, :line)
     #   anonClass.include(Stupidedi::Reader::Position)
     #
-    #   class BigPosition < Struct.new(:path, :line, :column, :offset)
+    #   class BigPosition < Struct.new(:name, :line, :column, :offset)
     #     include Stupidedi::Reader::Position
     #
     #     # Return 50 chars before and after this position
@@ -31,7 +31,7 @@ module Stupidedi
     # beneficial to track the minimum.
     #
     # Here's how the memory footprint works out:
-    #   path: roughly 20 bytes + length of string in bytes, but minimum is 40b
+    #   name: roughly 20 bytes + length of string in bytes, but minimum is 40b
     #   line: represented directly, so no overhead besides the VALUE struct
     #   column: same
     #   offset: same
@@ -41,14 +41,14 @@ module Stupidedi
     # consumed.
     #
     # So tracking three or fewer numeric-only fields consumes 40 bytes. But
-    # adding the fourth field increases that to 100 bytes + length of path.
-    # Tracking the path and two or less integer fields consumes 60 + length of
-    # the path string.
+    # adding the fourth field increases that to 100 bytes + length of name.
+    # Tracking the name and two or less integer fields consumes 60 + length of
+    # the name string.
     #
     # Because a position is attached to each individual part of syntax (the
     # start of a segment, the start of each individual element), this can add
     # up to a lot of space. In different situations, the user may independently
-    # know the file path and not need it stored here. Or they may not care
+    # know the file name and not need it stored here. Or they may not care
     # about the offset and manage with only line and column numbers.
     #
     # The default NoPosition implementation is provided which still consumes
@@ -61,13 +61,13 @@ module Stupidedi
       end
 
       module ClassMethods
-        def build(path)
-          new.reset(path, 1, 0, 0)
+        def build(name)
+          new.reset(name, 1, 1, 0)
         end
 
         def caller(offset = 1)
-          path, line, = Stupidedi.caller(offset + 1)
-          new.reset(path, line, nil, nil)
+          name, line, = Stupidedi.caller(offset + 1)
+          new.reset(name, line, nil, nil)
         end
       end
 
@@ -75,7 +75,7 @@ module Stupidedi
         # @return [String]
         def to_s
           parts  = []
-          parts << "path #{path}"     if respond_to?(:path)
+          parts << name               if respond_to?(:name) and name.present?
           parts << "line #{line}"     if respond_to?(:line)
           parts << "column #{column}" if respond_to?(:column)
           parts << "offset #{offset}" if respond_to?(:offset)
@@ -88,58 +88,41 @@ module Stupidedi
         # @parma  input [#length, #count, #rindex]
         # @return [self.class]
         def advance(input)
-          length_ = input.length
-          lines_  = input.count("\n")
-          column_ = unless lines_.zero?
-                      # Column numbering starts at 1
-                      length_ - input.rindex("\n") - 1
-                    else
-                      _column = respond_to?(:column) ? column : 0
-                      length_ + _column
-                    end
+          length_  = input.length
+          r_name   = respond_to?(:name)
+          r_line   = respond_to?(:line)
+          r_column = respond_to?(:column)
+          r_offset = respond_to?(:offset)
 
+          if r_line or r_column
+            lines_  = input.count("\n")
+          end
+
+          if r_column
+            column_ = if lines_.zero?
+                        length_ + column
+                      else
+                        length_ - input.rindex("\n")
+                      end
+          end
+
+          # Use `clone` because it's already implemented for Struct and any other
+          # class. Otherwise we would prefer our own `#copy(changes)` convention.
           clone.reset \
-            respond_to?(:path)   ? path : nil,
-            respond_to?(:line)   ? line + lines_ : nil,
-            respond_to?(:column) ? column_ : nil,
-            respond_to?(:offset) ? offset + length_ : nil
+            r_name   ? name : nil,
+            r_line   ? line + lines_ : nil,
+            r_column ? column_ : nil,
+            r_offset ? offset + length_ : nil
         end
 
         # @return self
-        def reset(path, line, column, offset)
-          self[:path]   = path   if respond_to?(:path)
+        def reset(name, line, column, offset)
+          self[:name]   = name   if respond_to?(:name)
           self[:line]   = line   if respond_to?(:line)
           self[:column] = column if respond_to?(:column)
           self[:offset] = offset if respond_to?(:offset)
           self
         end
-      end
-    end
-
-    # This provides a stub that acts like a Position but doesn't compute
-    # or retain any information. Because it has no state, `NoPosition.new`
-    # returns the class itself, which implements `#to_s` and `#advance`.
-    class NoPosition
-    end
-
-    class << NoPosition
-      def caller(offset = 1)
-        self
-      end
-
-      def new(*args)
-        self
-      end
-
-      # Singleton instance methods
-      #########################################################################
-
-      def to_s
-        "no position info"
-      end
-
-      def advance(input)
-        self
       end
     end
   end

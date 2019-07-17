@@ -5,10 +5,11 @@ Definitions.interchange_defs.each do |constant_name, interchange_def|
 
     let(:version_id) { version_id }
     let(:separators) { Stupidedi::Reader::Separators.default }
+    let(:position)   { Stupidedi::Reader::NoPosition }
 
     def mksegment_tok(id, *elements)
       Stupidedi::Reader::SegmentTok.build(id,
-        elements.map{|e| Stupidedi::Reader::SimpleElementTok.build(e, nil, "")}, nil, "")
+        elements.map{|e| Stupidedi::Reader::SimpleElementTok.build(e, position)}, position)
     end
 
     let(:segment_val) do

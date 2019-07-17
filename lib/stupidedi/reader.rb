@@ -14,10 +14,13 @@ module Stupidedi
     autoload :CompositeElementTok,  "stupidedi/reader/tokens/composite_element_tok"
     autoload :RepeatedElementTok,   "stupidedi/reader/tokens/repeated_element_tok"
 
-    autoload :Position,     "stupidedi/reader/position"
-    autoload :NoPosition,   "stupidedi/reader/position"
-    autoload :Tokenizer,    "stupidedi/reader/tokenizer"
+    autoload :Input,              "stupidedi/reader/input"
+    autoload :Position,           "stupidedi/reader/position"
+    autoload :NoPosition,         "stupidedi/reader/position/no_position"
+    autoload :OffsetPosition,     "stupidedi/reader/position/offset_position"
+    autoload :StacktracePosition, "stupidedi/reader/position/stacktrace_position"
 
+    autoload :Tokenizer,    "stupidedi/reader/tokenizer"
     autoload :Pointer,      "stupidedi/reader/pointer"
     autoload :ArrayPtr,     "stupidedi/reader/pointer"
     autoload :StringPtr,    "stupidedi/reader/pointer"
@@ -59,8 +62,8 @@ module Stupidedi
       #########################################################################
 
       # @return [StreamReader]
-      def build(input)
-        StreamReader.new(Input.build(input))
+      def build(input, position = NoPosition)
+        Tokenizer.build(Input.build(input, position))
       end
 
       # @endgroup

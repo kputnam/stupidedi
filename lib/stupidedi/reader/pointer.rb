@@ -57,7 +57,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        "#<%s %s@storage=0x%s@offset=%d @length=%d>" %
+        "#<%s %s@storage=0x%s @offset=%d @length=%d>" %
           [self.class.name.split("::").last,
            @storage.frozen? ? "-" : "+",
            (@storage.object_id << 1).to_s(16), @offset, @length]
@@ -102,6 +102,14 @@ module Stupidedi
         @length <= 0
       end
 
+      def blank?
+        empty?
+      end
+
+      def present?
+        not blank?
+      end
+
       # Return the first element. If {empty?}, `nil` will be returned.
       #
       # @return [E]
@@ -120,11 +128,7 @@ module Stupidedi
       #
       # @return [E]
       def last
-        @storage[@offset + @length] if @length > 0
-      end
-
-      def end
-        self.class.new(@storage.freeze, @length, 0)
+        @storage[@offset + @length - 1] if @length > 0
       end
 
       # True if `#at(n)` is defined.
@@ -155,28 +159,36 @@ module Stupidedi
       # @return [Pointer<S, E> | E]
       def [](offset, length=nil)
         if length.present?
-          raise ArgumentError, "offset must be non-negative" if 0 > offset
           raise ArgumentError, "length must be non-negative" if 0 > length
-          return nil if offset >= @length
+          return nil if offset >= @length or offset < -@length
 
-          if length > @length - offset
-            length = @length - offset
-          end
+          offset += @length           if offset < 0
+          length  = @length - offset  if length > @length - offset
 
           self.class.new(@storage.freeze, @offset + offset, length)
 
         elsif offset.kind_of?(Range)
-          unless offset.last
-            length = @storage.length - offset.first
+          a = offset.begin
+          b = offset.end
+
+          a += @length if a < 0
+          b += @length if b and b < 0
+
+          return nil if a < 0 or a >= @length
+          return nil if b and (b < 0 or b >= @length)
+
+          if b.nil?
+            length = @length - a
           else
-            length  = offset.last - offset.first
+            length  = b - a
             length += 1 unless offset.exclude_end?
           end
-          self[offset.first, length]
+
+          self[a, length]
 
         else
-          raise ArgumentError, "argument must be non-negative" if 0 > offset
-          @storage[@offset + offset] if @length > offset
+          offset += @length if offset < 0
+          @storage[@offset + offset] if @length > offset and offset >= 0
         end
       end
 
@@ -188,6 +200,7 @@ module Stupidedi
       def drop(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
         n = @length if n > @length
+        return self if n.zero?
         self.class.new(@storage.freeze, @offset + n, @length - n)
       end
 
@@ -239,6 +252,22 @@ module Stupidedi
         @length -= n
 
         prefix
+      end
+
+      # This method is equivalent to x.drop(n).take(m), but it allocates
+      # one less object because the intermediate Pointer value isn't needed
+      #
+      # @return [Pointer<S, E>]
+      def drop_take(drop, take)
+        raise ArgumentError, "drop must be non-negative" if drop < 0
+        raise ArgumentError, "take must be non-negative" if take < 0
+
+        drop   = @length if drop > @length
+        offset = @offset + drop
+        length = @length - drop
+
+        take = length if take > length
+        self.class.new(@storage.freeze, offset, take)
       end
 
       # Split the Pointer in two at the given position by creating two new
@@ -314,7 +343,7 @@ module Stupidedi
     class StringPtr < Pointer
 
       # TODO: More of these
-      def_delegators :reify, :to_sym, :intern
+      def_delegators :reify, :to_sym, :intern, :to_i, :to_d
 
       # This is called implicitly when we are used in String interpolation,
       # eg `"abc #{pointer} xyz"` or `"abc %s xyz" % pointer`.
@@ -464,13 +493,13 @@ module Stupidedi
       # the given `offset`. If not found, then `nil` is returned.
       #
       # @return [Integer]
-      def rindex(other, offset=@length)
+      def rindex(other, offset=@length-1)
         raise ArgumentError, "offset must be non-negative" if offset < 0
-        offset = @length if offset > @length
+        offset = @length - 1 if offset >= @length
 
         if other.is_a?(Regexp)
           if n = @storage.rindex(other, @offset + offset)
-            if n + $&.length <= @offset + @length
+            if n + other.length <= @offset + @length
               n - @offset
             else
               # The match starts within bounds but ends outside, so we need to
@@ -497,7 +526,7 @@ module Stupidedi
 
         while true
           offset = @storage.index(char, offset)
-          offset and offset <= @offset + @length or break
+          offset and offset < @offset + @length or break
           offset += 1
           count  += 1
         end
