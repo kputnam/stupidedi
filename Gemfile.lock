@@ -30,7 +30,7 @@ GEM
     term-ansicolor (1.7.1)
       tins (~> 1.0)
     tins (1.20.2)
-    yard (0.9.16)
+    yard (0.9.20)
 
 PLATFORMS
   java
@@ -44,7 +44,7 @@ DEPENDENCIES
   simplecov
   simplecov-inline-html
   term-ansicolor
-  yard (~> 0.9.12)
+  yard (~> 0.9.20)
 
 BUNDLED WITH
    1.17.2
