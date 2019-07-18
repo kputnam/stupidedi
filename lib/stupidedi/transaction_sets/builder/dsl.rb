@@ -3,19 +3,28 @@ module Stupidedi
     module Builder
       class Dsl
 
-        def self.build(ac, code, name, &block)
+        ##
+        # Build a definition for a given document using DSL-style.
+        # DSL style is a bit easier to use than manually building a syntax tree.
+        def self.build(shortcode, code, name, &block)
           body = DocumentBodyDSL.new(&block).tables
-          Builder.build(ac, code, name, *body)
+          Builder.build(shortcode, code, name, *body)
         end
 
         private
 
+        ##
+        # Syntax for DSLs in which you can define elements.
         module ElementSyntax
 
+          ##
+          # Define an element within this block
           def element(*args)
             add_element(Builder::Element(*args))
           end
 
+          ##
+          # Define a composite element within this block, using a sub-block for the sub-elements
           def composite(*args, &block)
             subelements = SegmentBodyDSL.new(&block).elements
             add_element(Builder::Element(*(args + subelements)))
@@ -23,15 +32,17 @@ module Stupidedi
 
         end
 
+        ##
+        # Syntax for DSLs in which you can define segments.
         module SegmentSyntax
 
-          def segment(pos, type, name, req, repeat, &block)
+          def segment(pos, type, name, requirement, repeat, &block)
             elements = SegmentBodyDSL.new(&block).elements
             segment = Builder::Segment(
               pos,
               type,
               name,
-              req,
+              requirement,
               repeat,
               *elements
             )
@@ -41,8 +52,13 @@ module Stupidedi
 
         end
 
+        ##
+        # Syntax for DSLs in which you can define loops.
         module LoopSyntax
 
+          ##
+          # Define a loop within this block.
+          # The underscore is there because "loop" is a ruby keyword.
           def loop_(name, repeat, &block)
             body = LoopBodyDSL.new(&block).elements
             add_loop(Schema::LoopDef.build(name, repeat, *body))
@@ -50,34 +66,32 @@ module Stupidedi
 
         end
 
+        ##
+        # Syntax for DSLs in which you can define tables.
         module TableSyntax
 
+          ##
+          # Define a header table within this block.
           def table_header(name, &block)
             add_table(Schema::TableDef.header(name, *get_table_contents(&block)))
           end
 
+          ##
+          # Define a detail table within this block
           def table_detail(name, &block)
             add_table(Schema::TableDef.detail(name, *get_table_contents(&block)))
           end
 
+          ##
+          # Helper method to get the body of a table.
           def get_table_contents(&block)
             TableBodyDSL.new(&block).elements
           end
 
         end
 
-        module RepeatSyntax
-
-          def repeat_bounded(n)
-            Schema::RepeatCount.bounded(n)
-          end
-
-          def repeat_unbounded
-            Schema::RepeatCount.unbounded
-          end
-
-        end
-
+        ##
+        # Syntax for DSLs in which you can define values lists.
         module ValuesSyntax
 
           def values(*args)
@@ -86,11 +100,12 @@ module Stupidedi
 
         end
 
+        ##
+        # A DSL for the body of a loop, which allows defining loops and segments
         class LoopBodyDSL
 
           include LoopSyntax
           include SegmentSyntax
-          include RepeatSyntax
 
           def initialize(&block)
             @elements = []
@@ -109,6 +124,9 @@ module Stupidedi
 
         end
 
+        ##
+        # A DSL for the body of a segment, which allows defining elements and using
+        # values lists.
         class SegmentBodyDSL
 
           include ElementSyntax
@@ -126,11 +144,12 @@ module Stupidedi
           attr_accessor :elements
         end
 
+        ##
+        # A DSL for the body of a table, which allows defining segments and loops.
         class TableBodyDSL
 
           include LoopSyntax
           include SegmentSyntax
-          include RepeatSyntax
 
           def initialize(&block)
             @elements = []
@@ -148,6 +167,8 @@ module Stupidedi
           attr_accessor :elements
         end
 
+        ##
+        # A DSL for the body of a document, which allows defining tables.
         class DocumentBodyDSL
 
           include TableSyntax

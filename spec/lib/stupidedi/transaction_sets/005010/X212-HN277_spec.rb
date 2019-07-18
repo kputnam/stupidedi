@@ -1,4 +1,4 @@
-describe "Stupidedit::TransactionSets::FiftyTen::Implementations::X212::HN277" do
+describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HN277" do
   using Stupidedi::Refinements
   include TreeMatchers
   include NavigationMatchers

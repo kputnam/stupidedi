@@ -1,6 +1,6 @@
 describe Stupidedi::TransactionSets::Builder::Dsl do
 
-  context 'with the most basic built' do
+  context 'with the most basic build' do
     SegmentReqs = Stupidedi::TransactionSets::FiftyTen::Implementations::SegmentReqs
     let(:definition) do
       e  = Stupidedi::TransactionSets::FiftyTen::Implementations::ElementReqs
