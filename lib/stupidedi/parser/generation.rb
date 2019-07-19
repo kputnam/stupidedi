@@ -29,7 +29,7 @@ module Stupidedi
       # @yield  [Reader::IgnoredTok]
       # @return [(StateMachine, Reader::Tokenizer::Result)]
       def read(tokenizer, options = {})
-        limit   = options.fetch(:nondeterminism, 1)
+        #imit   = options.fetch(:nondeterminism, 1)
         machine = self.dup
 
         return machine, tokenizer.each do |token|

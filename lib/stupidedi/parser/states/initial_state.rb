@@ -39,7 +39,7 @@ module Stupidedi
       # @return [InitialState]
       def build(zipper)
         new(
-          Reader::Separators.empty,
+          Reader::Separators.blank,
           Reader::SegmentDict.empty,
 
           InstructionTable.build(

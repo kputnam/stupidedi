@@ -84,6 +84,17 @@ module Stupidedi
       def join
         gsub(/\n[ \t]+/, " ")
       end
+
+      unless "".respond_to?(:match?)
+        def match?(pattern, pos=nil)
+          if pos.nil?
+            !!(self =~ pattern)
+          else
+            !!match(pattern, pos)
+          end
+        end
+      end
+
     end
   end
 end

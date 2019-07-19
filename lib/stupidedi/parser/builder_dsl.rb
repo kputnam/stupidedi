@@ -26,10 +26,10 @@ module Stupidedi
         :empty?, :first?, :last?, :deterministic?
 
       def initialize(machine, strict = true)
-        @position     = Reader::NoPosition
+        @position     = Reader::StacktracePosition
         @machine      = machine
         @strict       = strict
-        @separators   = Reader::Separators.empty
+        @separators   = Reader::Separators.blank
         @segment_dict = Reader::SegmentDict.empty
       end
 

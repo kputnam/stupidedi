@@ -90,7 +90,7 @@ module Stupidedi
       #########################################################################
 
       # @return [Separators]
-      def empty
+      def blank
         new(nil, nil, nil, nil)
       end
 

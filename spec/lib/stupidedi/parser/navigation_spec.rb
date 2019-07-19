@@ -868,7 +868,7 @@ describe Stupidedi::Parser::Navigation do
 
         context "when mth element does not occur" do
           it "returns a failure" do
-            result = b.COM.machine.tap{|x| pp x }.elementn(1, 2)
+            result = b.COM.machine.elementn(1, 2)
             expect(result).to be_failure(/COM01 is empty/)
           end
         end

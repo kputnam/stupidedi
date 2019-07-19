@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
                          "bin/*",
                          "lib/**/*",
                          "doc/**/*.md"].map {|glob| Dir[glob] }.flatten
-  s.has_rdoc          = false
   s.bindir            = "bin"
   s.executables       = ["edi-pp", "edi-ed"]
   s.require_path      = "lib"
@@ -23,4 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency "term-ansicolor", "~> 1.3"
   s.add_dependency "cantor",         "~> 1.2.1"
   # s.metadata["yard.run"] = "yard doc"
+
+  if RUBY_PLATFORM !~ /java/
+    s.extensions << "ext/strncmp/extconf.rb"
+  end
 end

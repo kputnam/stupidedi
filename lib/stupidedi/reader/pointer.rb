@@ -357,14 +357,15 @@ module Stupidedi
       end
 
       # Match an unescaped anchor \A, \a, or ^, \Z, \z, $
-      # NOTE: These will match [^$], which aren't anchors, but the regexp to
-      # exclude those is very gnarly and very noticeably slow.
+      #
+      # NOTE: These will match character class [^$], which aren't anchors, but
+      # the regexp to exclude those is very gnarly and very noticeably slow.
       ANCHORS_A = /(?<!\\)(?:\\\\)*(?:\\[Aa]|[\^])/
       ANCHORS_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[\$])/
 
-      # An implementation of `String#match?` optimized to work on string
-      # pointers. In some circumstances, the substring needs to be allocated,
-      # but in many cases no allocation is performed.
+      # An implementation of `String#match?` optimized for string pointers. In
+      # some cases, the substring needs to be allocated, but often no string
+      # allocation is performed.
       #
       # NOTE: See `match_` below for code comments.
       #
@@ -664,19 +665,48 @@ module Stupidedi
       # @return [Boolean]
       def ==(other)
         if self.class == other.class
-          if @storage.eql?(other.storage)
-            @offset == other.offset and @length == other.length
-          else
-            # TODO: When can String#index on a long String be slower than an
-            # allocation and String#== ?
-            length == other.length and \
-              @storage.index(other.reify, @offset) == @offset
+          if @storage.eql?(other.storage) \
+              and @offset == other.offset \
+              and @length == other.length
+            return true
           end
+
+          @length == other.length and \
+            strncmp(@storage, @offset, other.storage, other.offset, other.length)
         elsif other.is_a?(String)
-          # TODO: When can String#index on a long String be slower than an
-          # allocation and String#== ?
           length == other.length and \
-            @storage.index(other, @offset) == @offset
+            strncmp(@storage, @offset, other, 0, other.length)
+        end
+      end
+
+      def start_with?(other)
+        case other
+        when String
+          if other.length > @length
+            false
+          else
+            strncmp(@storage, @offset, other, 0, other.length)
+          end
+        when Regexp
+          reify.start_with?(other)
+        else
+          raise TypeError, "expected String or Regexp"
+        end
+      end
+
+      if String.respond_to?(:strncmp)
+        def strncmp(s1, n1, s2, n2, len)
+          String.strncmp(s1, n1, s2, n2, len)
+        end
+      else
+        def strncmp(s1, n1, s2, n2, len)
+          if s1.length <= n1 + len or s2.length <= n2 + len
+            false
+          else
+            s1 = s1[n1, len] unless n1.zero? and n1.length == len
+            s2 = s2[n2, len] unless n2.zero? and n2.length == len
+            s1 == s2
+          end
         end
       end
     end

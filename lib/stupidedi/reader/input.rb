@@ -12,12 +12,34 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      def_delegators :@pointer, :defined_at?, :empty?, :count, :head, :take,
-        :match?, :slice, :index, :rindex, :reify, :last, :length, :=~, :[]
+      def_delegators :@pointer, :count, :take, :match?, :slice,
+        :index, :rindex, :reify, :last, :length, :=~, :[]
 
       def initialize(pointer, position)
         @pointer, @position =
           pointer, position
+      end
+
+      # NOTE: This could be implemented using def_delegators, but unfortunately
+      # that allocates an Array to pass the arguments along. Since this method
+      # is called frequently, we can reduce allocations by defining it this way.
+      def head
+        @pointer.head
+      end
+
+      # NOTE: This could be implemented using def_delegators, but unfortunately
+      # that allocates an Array to pass the arguments along. Since this method
+      # is called frequently, we can reduce allocations by defining it this way.
+      def defined_at?(n)
+        @pointer.defined_at?(n)
+      end
+
+      # NOTE: This could be implemented using def_delegators, but unfortunately
+      # that allocates an Array to pass the arguments along. Since this method
+      # is called frequently, we can reduce allocations by defining it this way.
+      # NOTE: 
+      def empty?
+        @pointer.empty?
       end
 
       # @NOTE: This allocates 3 objects: Input, Position, and StringPtr
@@ -28,7 +50,11 @@ module Stupidedi
       # @NOTE: This allocates 3 objects: Input, Position, and StringPtr, so
       # if you've written x.drop(10).position.. x.position_at(10) is cheaper
       def drop(n)
-        self.class.new(@pointer.drop(n), position_at(n))
+        if n.zero?
+          self
+        else
+          self.class.new(@pointer.drop(n), position_at(n))
+        end
       end
 
       # NOTE: This allocates 2 objects: StringPtr and Position
@@ -40,6 +66,19 @@ module Stupidedi
         else
           @position.advance(@pointer.take(n))
         end
+      end
+
+      def start_with?(other)
+        other and @pointer.start_with?(other)
+      end
+
+      def skip_control_characters(offset = 0)
+        while @pointer.defined_at?(offset) \
+          and Reader.is_control_character?(@pointer[offset])
+          offset += 1
+        end
+
+        drop(offset)
       end
     end
 

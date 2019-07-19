@@ -10,22 +10,24 @@ if ARGV.length < 1
   exit
 end
 
-def run(config, input, state)
+def run(config, tokenizer)
   mem = Integer(`ps -o rss= -p #{Process.pid}`) * 0.001
   $stderr.puts "Pre-init: %0.2d MiB" % mem
 
-  start  = Time.now
+  start = Time.now
 
   mem = Integer(`ps -o rss= -p #{Process.pid}`) * 0.001
   $stderr.puts "Post-init: %0.2d MiB" % mem
 
-  result = Stupidedi::Reader::Tokenizer.next_isa_segment(input, state)
+  result = tokenizer.each do |segment_tok|
+    if segment_tok.is_a?(Stupidedi::Reader::IgnoredTok)
+      pp segment_tok
+      next
+    end
 
-  until result.fail?
-    segment_tok = result.value
-    puts segment_tok.segment_id
+    puts segment_tok.id
 
-    case segment_tok.segment_id
+    case segment_tok.id
     when :GS
        # GS08: Version / Release / Industry Identifier Code
        version = segment_tok.element_toks.at(7).try(:value).try(:to_s)
@@ -37,21 +39,17 @@ def run(config, input, state)
        if config.functional_group.defined_at?(gscode)
          envelope_def = config.functional_group.at(gscode)
          envelope_val = envelope_def.empty
-         segment_dict = state.segment_dict.push(envelope_val.segment_dict)
-         state.segment_dict = segment_dict
+         tokenizer.segment_dict =
+           tokenizer.segment_dict.push(envelope_val.segment_dict)
        end
     when :GE
-      unless state.segment_dict.empty?
-        segment_dict = state.segment_dict.pop
-        state.segment_dict = segment_dict
+      unless tokenizer.segment_dict.empty?
+        tokenizer.segment_dict = tokenizer.segment_dict.pop
       end
     end
-
-    result = Stupidedi::Reader::Tokenizer.next_segment(result.rest, state)
   end
 
-  # pp result
-  # puts
+  pp result
 
   mem = Integer(`ps -o rss= -p #{Process.pid}`) * 0.001
   $stderr.puts "Finish: %0.2d MiB" % mem
@@ -60,19 +58,39 @@ def run(config, input, state)
   $stderr.puts "%0.3f seconds" % (stop - start)
 end
 
+position =
+  if ARGV.delete('--0-pos')
+    Stupidedi::Reader::NoPosition
+
+  elsif ARGV.delete('--1-pos')
+    Stupidedi::Reader::OffsetPosition
+
+  elsif ARGV.delete('--2-pos')
+    Struct.new(:line, :column).include(Stupidedi::Reader::Position)
+
+  elsif ARGV.delete('--3-pos')
+    Struct.new(:name, :line, :column).include(Stupidedi::Reader::Position)
+
+  elsif ARGV.delete('--4-pos')
+    Struct.new(:name, :line, :column, :offset).include(Stupidedi::Reader::Position)
+
+  else
+    Stupidedi::Reader::NoPosition
+  end
+
 if ARGV.delete('--fast')
-  config = Stupidedi::Config.contrib
-  input  = Stupidedi::Reader::Pointer.build(File.read(ARGV[0]))
-  state  = Stupidedi::Reader::Tokenizer::State.todo
-  run(config, input, state)
+  config    = Stupidedi::Config.contrib
+  input     = Stupidedi::Reader::Input.file(ARGV[0], position)
+  tokenizer = Stupidedi::Reader::Tokenizer.build(input)
+  run(config, tokenizer)
 else
-  config = Stupidedi::Config.contrib
-  input  = Stupidedi::Reader::Pointer.build(File.read(ARGV[0]))
-  state  = Stupidedi::Reader::Tokenizer::State.todo
-  start = Time.now
+  start     = Time.now
+  config    = Stupidedi::Config.contrib
+  input     = Stupidedi::Reader::Input.file(ARGV[0], position)
+  tokenizer = Stupidedi::Reader::Tokenizer.build(input)
 
   MemoryProfiler.report do
-    run(config, input, state)
+    run(config, tokenizer)
   end.pretty_print(to_file: "prof/memprof-tk-#{start.strftime("%Y%m%dT%H%M%S")}.txt",
                    color_output: false, retained_strings: 100,
                    allocated_strings: 100, detailed_report: true,
