@@ -24,6 +24,6 @@ Gem::Specification.new do |s|
   # s.metadata["yard.run"] = "yard doc"
 
   if RUBY_PLATFORM !~ /java/
-    s.extensions << "ext/strncmp/extconf.rb"
+    s.extensions << "ext/stupidedi/reader_ext"
   end
 end

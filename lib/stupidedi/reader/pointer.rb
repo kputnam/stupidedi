@@ -85,43 +85,45 @@ module Stupidedi
         end
       end
 
-      # @return [Pointer<S, E>]
-      def reset
-        self.class.new(@storage.freeze, 0, @storage.length)
-      end
-
-      # @return [self]
-      def reset!
-        @offset = 0
-        @length = @storage.length
-        self
-      end
+      # @group Querying
+      #########################################################################
 
       # @return [Boolean]
       def empty?
         @length <= 0
       end
 
+      # @return [Boolean]
       def blank?
         empty?
       end
 
+      # @return [Boolean]
       def present?
         not blank?
       end
+
+      # @return [Boolean]
+      def ==(other)
+        if self.class == other.class
+          if @storage.eql?(other.storage)
+            @offset == other.offset and @length == other.length
+          else
+            length == other.length and reify == other.reify
+          end
+        else
+          length == other.length and reify == other
+        end
+      end
+
+      # @group Single Element Selection
+      #########################################################################
 
       # Return the first element. If {empty?}, `nil` will be returned.
       #
       # @return [E]
       def head
         @storage[@offset] if @length > 0
-      end
-
-      # Return a new pointer with the first item removed.
-      #
-      # @return [Pointer<S, 0E>]
-      def tail
-        drop(1)
       end
 
       # Return the last element. If {empty?}, `nil` will be returned.
@@ -136,7 +138,7 @@ module Stupidedi
       # @return [Boolean]
       def defined_at?(n)
         raise ArgumentError, "argument must be non-negative" if 0 > n
-        n <= @length
+        n < @length
       end
 
       # Return the nth element.
@@ -145,6 +147,16 @@ module Stupidedi
       def at(n)
         raise ArgumentError, "argument must be non-negative" if 0 > n
         @storage[@offset + n] if @length > n
+      end
+
+      # @group Slicing
+      #########################################################################
+
+      # Return a new pointer with the first item removed.
+      #
+      # @return [Pointer<S, E>]
+      def tail
+        drop(1)
       end
 
       # When given a range or a start index and length, returns a new pointer
@@ -280,6 +292,9 @@ module Stupidedi
         [take(n), drop(n)]
       end
 
+      # @group Concatenation
+      #########################################################################
+
       # Concatenate two flyweights to form a third.
       #
       # When the two flyweights are backed by the same storage object, and the
@@ -305,21 +320,15 @@ module Stupidedi
         end
       end
 
-      # @return [Boolean]
-      def ==(other)
-        if self.class == other.class
-          if @storage.eql?(other.storage)
-            @offset == other.offset and @length == other.length
-          else
-            length == other.length and reify == other.reify
-          end
-        else
-          length == other.length and reify == other
-        end
-      end
+      # @endgroup
+      #########################################################################
     end
 
     class << Pointer
+
+      # @group Constructors
+      #########################################################################
+
       def build(object)
         case object
         when String
@@ -338,11 +347,16 @@ module Stupidedi
           Pointer.new(object)
         end
       end
+
+      # @endgroup
+      #########################################################################
     end
 
     class StringPtr < Pointer
 
-      # TODO: More of these
+      # @group Conversion Methods
+      #########################################################################
+
       def_delegators :reify, :to_sym, :intern, :to_i, :to_d
 
       # This is called implicitly when we are used in String interpolation,
@@ -355,6 +369,9 @@ module Stupidedi
       def to_str
         reify
       end
+
+      # @group Matching
+      #########################################################################
 
       # Match an unescaped anchor \A, \a, or ^, \Z, \z, $
       #
@@ -387,11 +404,10 @@ module Stupidedi
         end
 
         offset = @length if offset > length
-        offset = @offset + offset
 
         # Unfortunately we can't use pattern.match?, which doesn't allocate
         # a MatchData object, because we need to check bounds on the match
-        m = pattern.match(@storage, offset)
+        m = pattern.match(@storage, offset + @offset)
 
         if m and m.begin(0) <= @offset + @length
           if m.end(0) <= @offset + @length
@@ -412,10 +428,18 @@ module Stupidedi
       # the offset to let the caller make adjustments when needed.
       #
       # NOTE: The offset argument controls where the regex engine begins, but
-      # it doesn't change which part of the string anchors match like ^ $ \A
-      # \Z and \z. For example, match(/^/, n) with n > 0, will never succeed
-      # because ^ is at offset 0 of the substring. This behavior is the same
-      # as String#match.
+      # it doesn't change which part anchors will match, like ^ $ \A \Z and
+      # \z. For example, match(/^/, n) with n > 0, will never succeed because
+      # ^ is at offset 0 of the substring. This behavior is the same as
+      # String#match.
+      #
+      # NOTE: Some of the optimizations in this method require knowing whether
+      # or not the given Regexp contains an anchor like ^ $ \A \Z and \z. Only
+      # a quick test is performed, which can falsely detect an anchor; when an
+      # anchor is detected, the substring must be allocated. If you know from
+      # the call site that your Regexp does not have an anchor, call with
+      # `anchorless = true` to skip the detection, thus avoiding an extra String
+      # allocation.
       #
       # @return [MatchData, Integer]
       def match_(pattern, offset, anchorless=false)
@@ -464,6 +488,73 @@ module Stupidedi
           end
         end
       end
+
+      # Optimized to only allocate one string when two pointers don't share
+      # the same storage. Otherwise no allocations are performed.
+      #
+      # @return [Boolean]
+      def ==(other)
+        if self.class == other.class
+          if @storage.eql?(other.storage) \
+              and @offset == other.offset \
+              and @length == other.length
+            return true
+          end
+
+          @length == other.length and \
+            Reader.substr_eql?(@storage, @offset, other.storage, other.offset, other.length)
+        elsif other.is_a?(String)
+          length == other.length and \
+            Reader.substr_eql?(@storage, @offset, other, 0, other.length)
+        end
+      end
+
+      # Returns true if this StringPtr begins with the given prefix. No
+      # allocations are performed.
+      #
+      # @return [Boolean]
+      def start_with?(other)
+        substr_eql?(0, other, 0)
+      end
+
+      # Returns true if this StringPtr, starting at the given offset, starts
+      # with the other string (starting at it's respective offset). This is
+      # essentially `self[offset, length] == other[offset_, length]`, but no
+      # Strings are allocated.
+      #
+      #   Pointer.build("abcdef").substr_at?(0, "abc", 0) #=> true
+      #   Pointer.build("abcdef").substr_at?(0, "abc", 1) #=> false
+      #   Pointer.build("abcdef").substr_at?(0, "xab", 1) #=> true
+      #   Pointer.build("abcdef").substr_at?(1, "abc", 0) #=> false
+      #   Pointer.build("abcdef").substr_at?(1, "bcd", 0) #=> true
+      #
+      # @return [Boolean]
+      def substr_eql?(offset, other, offset_=0, length = other.length)
+        raise ArgumentError "offset must be be non-negative" if offset < 0
+        raise ArgumentError "offset must be be non-negative" if offset_ < 0
+        raise ArgumentError "length must be be non-negative" if length < 0
+
+        case other
+        when String
+          if offset + length <= @length and length <= other.length
+            Reader.substr_eql?(@storage, @offset + offset, other, offset_, length)
+          end
+        when StringPtr
+          if offset + length <= @length and other.offset + length <= other.length
+            if @storage.eql?(other.storage) and @offset + offset == other.offset + offset_
+              # Other pointer starts at the same index and points to the same storage
+              @length >= length
+            else
+              Reader.substr_eql?(@storage, @offset + offset, other.storage, other.offset + offset_, length)
+            end
+          end
+        else
+          raise TypeError, "expected String or StringPtr, got #{other.inspect}"
+        end
+      end
+
+      # @group Indexing
+      #########################################################################
 
       # Return offset of the first match, or `nil` if no match occurs.
       #
@@ -516,6 +607,9 @@ module Stupidedi
         end
       end
 
+      # @group Search
+      #########################################################################
+
       # Return number of occurrences of given character.
       #
       # NOTE: This only supports a subset of functionality of String#count.
@@ -534,6 +628,9 @@ module Stupidedi
 
         count
       end
+
+      # @group Concatenation
+      #########################################################################
 
       # If two flyweights share the same storage and are contiguous (one ends
       # where the other starts), then string concatenation can be optimized.
@@ -659,56 +756,65 @@ module Stupidedi
         end
       end
 
-      # Optimized to only allocate one string, when two pointers don't share
-      # the same storage. Otherwise zero allocations are performed.
+      # @group Formatting
+      #########################################################################
+
+      # Returns a new StringPtr with trailing spaces removed; "\000", "\t",
+      # "\n", "\v", "\f", "\r", " "
       #
-      # @return [Boolean]
-      def ==(other)
-        if self.class == other.class
-          if @storage.eql?(other.storage) \
-              and @offset == other.offset \
-              and @length == other.length
-            return true
-          end
+      # @return [StringPtr]
+      def rstrip(offset = @length - 1)
+        raise ArgumentError, "offset must be non-negative" if offset < 0
+        offset  = @length if offset_ > @length
+        offset_ = Reader.rstrip_offset(@storage, @offset + offset)
 
-          @length == other.length and \
-            strncmp(@storage, @offset, other.storage, other.offset, other.length)
-        elsif other.is_a?(String)
-          length == other.length and \
-            strncmp(@storage, @offset, other, 0, other.length)
-        end
-      end
-
-      def start_with?(other)
-        case other
-        when String
-          if other.length > @length
-            false
-          else
-            strncmp(@storage, @offset, other, 0, other.length)
-          end
-        when Regexp
-          reify.start_with?(other)
+        if offset_ < @offset
+          self
         else
-          raise TypeError, "expected String or Regexp"
+          take(offset_ - @offset)
         end
       end
 
-      if String.respond_to?(:strncmp)
-        def strncmp(s1, n1, s2, n2, len)
-          String.strncmp(s1, n1, s2, n2, len)
-        end
-      else
-        def strncmp(s1, n1, s2, n2, len)
-          if s1.length <= n1 + len or s2.length <= n2 + len
-            false
-          else
-            s1 = s1[n1, len] unless n1.zero? and n1.length == len
-            s2 = s2[n2, len] unless n2.zero? and n2.length == len
-            s1 == s2
-          end
+      # Returns a new StringPtr with leading spaces removed; "\000", "\t",
+      # "\n", "\v", "\f", "\r", " "
+      #
+      # @return [StringPtr]
+      def lstrip(offset = 0)
+        raise ArgumentError, "offset must be non-negative" if offset < 0
+        offset  = @length if offset > @length
+        offset_ = Reader.lstrip_offset(@storage, @offset + offset)
+
+        if offset_ > @offset + @length
+          self
+        else
+          drop(offset_ - @offset)
         end
       end
+
+      # @group Miscellaneous
+      #########################################################################
+
+      # Returns the offset of the next non-control character at or after offset
+      #
+      # @return [Integer]
+      def lstrip_control_characters_offset(offset = 0)
+        raise ArgumentError, "offset must be non-negative" if offset < 0
+        offset = @length if offset > @length
+
+        n = Reader.lstrip_control_characters_offset(@storage, @offset + offset)
+        n = @offset + @length if n > @offset + @length
+        n - @offset
+      end
+
+      # Returns true if the character at the given offset is a control
+      # character (defined by X222.pdf B.1.1.2.4 Control Characters)
+      def is_control_character_at?(offset)
+        raise ArgumentError "offset must be be non-negative" if offset < 0
+        Reader.is_control_character_at?(@storage, @offset + offset)
+      end
+
+      # @endgroup
+      #########################################################################
     end
 
     class ArrayPtr < Pointer

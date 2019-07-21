@@ -1,7 +1,6 @@
 build/generated
 .bundle
 .ruby-version
-lib/strncmp
-ext/strncmp/Makefile
-ext/strncmp/strncmp.h
-ext/strncmp/strncmp.o
+lib/**/*.bundle
+ext/**/Makefile
+ext/**/*.o

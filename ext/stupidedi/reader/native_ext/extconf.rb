@@ -1,5 +1,5 @@
 require "mkmf"
-extension_name = "strncmp/strncmp"
+extension_name = "native_ext"
 
 create_header
 dir_config      extension_name

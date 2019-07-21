@@ -292,7 +292,7 @@ module Stupidedi
           return elements if elements.fail?
 
           segment_tok = SegmentTok.build(:ISA, elements.value, segment_id.position)
-          return done(segment_tok, segment_id.position, elements.rest.skip_control_characters)
+          return done(segment_tok, segment_id.position, elements.rest.lstrip_control_characters)
         end
 
         # _next_segment_id will skip any trailing control characters
@@ -351,7 +351,7 @@ module Stupidedi
           # There's something between I..S but it's not a control character
           next if s > i + 1 and input[i+1, s-i-1].match?(Reader::R_EITHER, 0, true)
 
-          a = input.index("A", offset)
+          a = input.index("A", s + 1)
 
           # There's no A in the rest of the input, so it's all ignored
           return eof("ISA", input.position_at(i)) if a.nil?
@@ -360,7 +360,7 @@ module Stupidedi
           next if a > s + 1 and input[s+1, a-s-1].match?(Reader::R_EITHER, 0, true)
 
           # Needed to perform the extra validation below
-          a = _skip_control_characters(input, a)
+          a = input.lstrip_control_characters_offset(a)
 
           # The next character determines the element separator. If it's an
           # alphanumeric or space, we assume this is not the start of an ISA
@@ -395,7 +395,7 @@ module Stupidedi
         # We have to assume the last (16th) element is fixed-length because
         # it is not terminated by an element separator. First we will skip
         # past control characters, then read the next character.
-        offset = _skip_control_characters(input, 1)
+        offset = input.lstrip_control_characters_offset(1)
         return eof("ISA16", input.position) unless input.defined_at?(offset)
         element_toks << SimpleElementTok.build(input[offset], input.position_at(offset))
 
@@ -420,7 +420,7 @@ module Stupidedi
       #
       # @return Symbol
       def _next_segment_id(input)
-        offset     = _skip_control_characters(input)
+        offset     = input.lstrip_control_characters_offset
         buffer     = input.pointer.drop_take(offset, 0)
         start_pos  = input.position_at(offset)
 
@@ -432,11 +432,10 @@ module Stupidedi
           break if char == @separators.element
           break if char == @separators.segment
 
-          offset += 1
-          next if Reader.is_control_character?(char)
-
           # Zero-copy as long as we've not skipped over any characters yet
-          buffer << char
+          buffer << char unless input.is_control_character_at?(offset)
+          offset += 1
+
           break if buffer.length >= 3
         end
 
@@ -449,10 +448,10 @@ module Stupidedi
         # is faster overall to make the substring copy here.
         segment_id = buffer.to_s
 
-        return expected("segment identifier, found %s" % segment_id.inspect, start_pos) \
-          unless segment_id.match?(Tokenizer::SEGMENT_ID)
+        return expected("segment identifier, found %s" % segment_id.inspect,
+          start_pos) unless segment_id.match?(Tokenizer::SEGMENT_ID)
 
-        return done(segment_id.to_sym, start_pos, input.skip_control_characters(offset))
+        return done(segment_id.to_sym, start_pos, input.lstrip_control_characters(offset))
       end
 
       # @param input          should be positioned on an element separator: "NM1[*].."
@@ -492,12 +491,12 @@ module Stupidedi
           element_idx += 1
         end
 
-        return eof("segment terminator for %s" % segment_id, input.position) \
-          if input.empty?
+        return eof("segment terminator %s for %s" % [@separators.segment.inspect,
+          segment_id], input.position) if input.empty?
 
-        return expected("segment terminator for %s, found %s" %
-          [segment_id, input.head.inspect], input.position) \
-          if input.head != @separators.segment
+        return expected("segment terminator %s for %s, found %s" % [
+          @separators.segment.inspect, segment_id, input.head.inspect],
+          input.position) if input.head != @separators.segment
 
         # Skip past the segment separator
         done(element_toks, nil, input.tail)
@@ -511,12 +510,13 @@ module Stupidedi
       #
       # @return [CompositeElementTok | RepeatedElementTok]
       def _read_composite_element(input, repeatable, segment_id, element_idx)
-        return eof("element separator before %s%02d" % [
-          segment_id, element_idx], input.position) if input.empty?
+        return eof("element separator %s before %s%02d" % [
+          @separators.element.inspect, segment_id, element_idx],
+          input.position) if input.empty?
 
-        return expected("element separator before %s%02d, found %s" % [
-          segment_id, element_idx, input.head.inspect], input.position) \
-          unless input.start_with?(@separators.element)
+        return expected("element separator %s before %s%02d, found %s" % [
+          @separators.element.inspect, segment_id, element_idx, input.head.inspect],
+          input.position) unless input.start_with?(@separators.element)
 
         builder        = @switcher.switch(repeatable, input.position_at(1))
         repeat_pos     = builder.position
@@ -528,19 +528,20 @@ module Stupidedi
           return result if result.fail?
 
           input           = result.rest
+          char            = input.head
           component_toks << result.value
 
-          if input.start_with?(@separators.element) \
-          or input.start_with?(@separators.segment)
+          if char == @separators.element \
+          or char == @separators.segment
             builder.add(CompositeElementTok.build(component_toks, repeat_pos))
             return done(builder.build, builder.position, input)
 
-          elsif repeatable and input.start_with?(@separators.repetition)
+          elsif repeatable and char == @separators.repetition
             builder.add(CompositeElementTok.build(component_toks, repeat_pos))
             repeat_pos = input.position_at(1)
             component_toks.clear
 
-          elsif input.start_with?(@separators.repetition)
+          elsif char == @separators.repetition
             # We aren't repetable and neither was the component element we just
             # read, or it would have consumed the repetition separator. We can
             # either pretend we didn't see it and carry on, or abort.
@@ -551,15 +552,16 @@ module Stupidedi
             # put it, because ordinary data wouldn't have occured here anyway.
             #
             # So there's not much we can do but bail.
-            return unexpected("repetition separator after %s%02d" % [
-              segment_id, element_idx], input.head)
+            return unexpected("repetition separator %s after %s%02d" % [
+              @separators.repetition.inspect, segment_id, element_idx], input.head)
           end
 
           component_idx += 1
         end
 
-        eof("element or segment separator after %s%02d" % [
-          segment_id, element_idx], builder.position)
+        eof("element %s or segment separator %s after %s%02d" % [
+          @separator.element.inspect, @separator.segment.inspect, segment_id,
+          element_idx], builder.position)
       end
 
       # @param input          should be positioned at an element separator,
@@ -571,15 +573,17 @@ module Stupidedi
       #
       # @return [ComponentElementTok | RepeatedElementTok]
       def _read_component_element(input, repeatable, segment_id, element_idx, component_idx)
-        return eof("element or component separator before %s%02d-%02d" % [
-          segment_id, element_idx, component_idx], input.position) if input.empty?
+        return eof("element %s or component separator %s before %s%02d-%02d" % [
+          @separators.element.inspect, @separators.component.inspect, segment_id,
+          element_idx, component_idx], input.position) if input.empty?
 
-        return expected("element or component separator before %s%02d-%02d, found %s" %
-          [segment_id, element_idx, component_idx, input.head.inspect], input.position) \
+        return expected("element %s or component separator %s before %s%02d-%02d, found %s" % [
+          @separators.element.inspect, @separators.component.inspect, segment_id,
+          element_idx, component_idx, input.head.inspect], input.position) \
           unless input.start_with?(@separators.element) \
               or input.start_with?(@separators.component)
 
-        offset     = _skip_control_characters(input, 1)
+        offset     = input.lstrip_control_characters_offset(1)
         buffer     = input.pointer.drop_take(offset, 0)
         repeat_pos = input.position
         builder    = @switcher_.switch(repeatable, input.position)
@@ -604,17 +608,21 @@ module Stupidedi
 
           else
             # This is zero-copy as long as we haven't skipped any characters
-            buffer << char unless Reader.is_control_character?(char)
+            buffer << char unless input.is_control_character_at?(offset)
             offset += 1
           end
         end
 
         if repeatable
-          eof("segment, element, component or repetition separator after %s%02d-%02d" % [
+          eof("segment %s, element %s, component %s or repetition separator %s after %s%02d-%02d" % [
+            @separators.segment.inspect, @separators.element.inspect,
+            @separators.component.inspect, @separators.repetition.inspect,
             segment_id, element_idx, component_idx], builder.position)
         else
-          eof("segment, element or repetition separator after %s%02d-%02d" % [
-            segment_id, element_idx, component_idx], builder.position)
+          eof("segment %s, element %s or component separator %s after %s%02d-%02d" % [
+            @separators.segment.inspect, @separators.element.inspect,
+            @separators.component.inspect, segment_id, element_idx,
+            component_idx], builder.position)
         end
       end
 
@@ -625,14 +633,15 @@ module Stupidedi
       #
       # @return [SimpleElementTok | RepeatedElementTok]
       def _read_simple_element(input, repeatable, segment_id, element_idx)
-        return eof("element separator before %s%02d" % [segment_id, element_idx],
+        return eof("element separator %s before %s%02d" % [
+          @separators.element.inspect, segment_id, element_idx],
           input.position) if input.empty?
 
-        return expected("element separator before %s%02d, found %s" % [
-          segment_id, element_idx, input.head.inspect], input.position) \
-          unless input.start_with?(@separators.element)
+        return expected("element separator %s before %s%02d, found %s" % [
+          @separators.element.inspect, segment_id, element_idx, input.head.inspect],
+          input.position) unless input.start_with?(@separators.element)
 
-        offset     = _skip_control_characters(input, 1)
+        offset     = input.lstrip_control_characters_offset(1)
         buffer     = input.pointer.drop_take(offset, 0)
         start_pos  = input.position
         repeat_pos = input.position
@@ -652,45 +661,22 @@ module Stupidedi
             buffer     = input.pointer.drop_take(offset, 0)
             repeat_pos = input.position_at(offset)
 
-          # We won't do this because it could make tokenizing a valid file not
-          # possible. If it truly had repeatable elements, but we hadn't setup
-          # segment_dict to recognize which elements are repeatable, this would
-          # halt tokenization. Instead, we just read the separator as data, but
-          # this might later result in an invalid element in the parse tree.
-          #
-          # elsif char == @separators.repetition
-          #   return unexpected("...", ...)
           else
             # This is zero-copy as long as we haven't skipped any characters
-            buffer << char unless Reader.is_control_character?(char)
+            buffer << char unless input.is_control_character_at?(offset)
             offset += 1
           end
         end
 
-        eof("segment or element separator after %s%02d" % [
-          segment_id, element_idx], start_pos)
-      end
-
-      # @return [Integer]
-      def _skip_control_characters(input, offset=0)
-        while input.defined_at?(offset) \
-          and Reader.is_control_character?(input[offset])
-          offset += 1
-        end
-
-        offset
+        eof("segment %s or element separator %s after %s%02d" % [
+          @separators.segment.inspect, @separators.element.inspect, segment_id,
+          element_idx], start_pos)
       end
 
       # @param value [Object]
       # @param rest  [Input]
       def done(value, position, rest)
         Tokenizer::Result::Done.new(value, position, rest)
-      end
-
-      # @param value    [String]
-      # @param position [Position]
-      def fail(error, position)
-        Tokenizer::Result::Fail.new(error, position)
       end
 
       # @param value    [String]
@@ -707,13 +693,8 @@ module Stupidedi
 
       # @param value    [String]
       # @param position [Position]
-      def eof(error, x)
-        case x
-        when Input
-          expected("#{error}, found eof", x.position_at(x.length))
-        else
-          expected("#{error}, found eof", x)
-        end
+      def eof(error, position)
+        expected("#{error}, found eof", position)
       end
     end
 

@@ -12,10 +12,6 @@ end
 
 $:.unshift(File.expand_path("..", __FILE__))
 
-if RUBY_PLATFORM !~ /java/
-  require "strncmp"
-end
-
 require "ruby/regexp"
 require "ruby/array"
 require "ruby/blank"

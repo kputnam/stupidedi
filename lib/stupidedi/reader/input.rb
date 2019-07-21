@@ -72,13 +72,26 @@ module Stupidedi
         other and @pointer.start_with?(other)
       end
 
-      def skip_control_characters(offset = 0)
-        while @pointer.defined_at?(offset) \
-          and Reader.is_control_character?(@pointer[offset])
-          offset += 1
-        end
+      def substr_at?(offset, other)
+        other and @pointer.substr_at?(offset, other)
+      end
 
-        drop(offset)
+      def is_control_character_at?(offset)
+        @pointer.is_control_character_at?(offset)
+      end
+
+      # Returns a new Input with the leading control characters removed
+      #
+      # @return [Input]
+      def lstrip_control_characters(offset = 0)
+        drop(lstrip_control_characters_offset(offset))
+      end
+
+      # Returns the offset of the next non-control character at or after offset
+      #
+      # @return [Integer]
+      def lstrip_control_characters_offset(offset = 0)
+        @pointer.lstrip_control_characters_offset(offset)
       end
     end
 

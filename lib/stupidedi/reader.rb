@@ -3,6 +3,10 @@
 module Stupidedi
   using Refinements
 
+  if RUBY_PLATFORM !~ /java/
+    require "stupidedi/reader/native_ext"
+  end
+
   module Reader
     autoload :Separators,   "stupidedi/reader/separators"
     autoload :SegmentDict,  "stupidedi/reader/segment_dict"
@@ -87,6 +91,34 @@ module Stupidedi
       # @see X222.pdf B.1.1.2.2 Extended Characters
       def is_extended_character?(character)
         H_EXTENDED.include?(character)
+      end
+
+      unless Reader.respond_to?(:is_control_character_at?)
+        # @private
+        # @see X222.pdf B.1.1.2.2 Extended Characters
+        def is_control_character_at?(string, offset)
+          is_control_character?(string[offset])
+        end
+      end
+
+      unless Reader.respond_to?(:lstrip_control_characters_offset)
+        def lstrip_control_characters_offset(string, offset)
+          while string.defined_at?(offset)
+            break offset unless is_control_character_at?(string, offset)
+            offset += 1
+          end
+        end
+      end
+
+      unless Reader.respond_to?(:substr_eql?)
+        # @private
+        def substr_eql?(s1, n1, s2, n2, length)
+          if s1.length >= n1 + length and s2.length >= n2 + length
+            s1 = s1[n1, length] unless n1.zero? and length == s1.length
+            s2 = s2[n2, length] unless n2.zero? and length == s2.length
+            s1 == s2
+          end
+        end
       end
 
       if R_EXTENDED.respond_to?(:match?)

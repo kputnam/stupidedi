@@ -35,7 +35,7 @@ if RUBY_PLATFORM !~ /java/
   require "rake/extensiontask"
   gemspec = Gem::Specification.load("stupidedi.gemspec")
 
-  Rake::ExtensionTask.new("strncmp") do |x|
-    x.lib_dir = "lib/strncmp"
+  Rake::ExtensionTask.new("stupidedi/reader/native_ext") do |x|
+    x.lib_dir = "lib"
   end
 end
