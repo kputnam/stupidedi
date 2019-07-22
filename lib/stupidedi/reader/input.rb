@@ -12,43 +12,21 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      def_delegators :@pointer, :count, :take, :match?, :slice,
-        :index, :rindex, :reify, :last, :length, :=~, :[]
+      def_delegators "@pointer", :head, :defined_at?, :empty?, :[], :length,
+        :count, :take, :match?, :slice, :index, :rindex, :reify, :last, :=~,
+        :at, type: StringPtr
 
       def initialize(pointer, position)
         @pointer, @position =
           pointer, position
       end
 
-      # NOTE: This could be implemented using def_delegators, but unfortunately
-      # that allocates an Array to pass the arguments along. Since this method
-      # is called frequently, we can reduce allocations by defining it this way.
-      def head
-        @pointer.head
-      end
+      # @endgroup
+      #########################################################################
 
-      # NOTE: This could be implemented using def_delegators, but unfortunately
-      # that allocates an Array to pass the arguments along. Since this method
-      # is called frequently, we can reduce allocations by defining it this way.
-      def defined_at?(n)
-        @pointer.defined_at?(n)
-      end
-
-      # NOTE: This could be implemented using def_delegators, but unfortunately
-      # that allocates an Array to pass the arguments along. Since this method
-      # is called frequently, we can reduce allocations by defining it this way.
-      # NOTE: 
-      def empty?
-        @pointer.empty?
-      end
-
-      # @NOTE: This allocates 3 objects: Input, Position, and StringPtr
-      def tail
-        drop(1)
-      end
-
-      # @NOTE: This allocates 3 objects: Input, Position, and StringPtr, so
-      # if you've written x.drop(10).position.. x.position_at(10) is cheaper
+      # Returns the input with the first `n` characters removed
+      #
+      # @return [Input]
       def drop(n)
         if n.zero?
           self
@@ -57,7 +35,30 @@ module Stupidedi
         end
       end
 
-      # NOTE: This allocates 2 objects: StringPtr and Position
+      # Destructively updates this Input to start `n` characters after the
+      # first.
+      #
+      # @return [Input]
+      def drop!(n)
+        unless n.zero?
+          if @position.is_a?(Integer)
+            @pointer.drop!(n)
+            @position += n
+          else
+            unless @position.eql?(NoPosition)
+              @position = @position.advance(@pointer.take(n))
+            end
+
+            @pointer.drop!(n)
+          end
+        end
+
+        self
+      end
+
+      # Calculates the position at the given offset.
+      # 
+      # @return [Position]
       def position_at(n)
         if @position.eql?(NoPosition)
           @position
@@ -68,14 +69,20 @@ module Stupidedi
         end
       end
 
+      # Returns true if the input begins with the other value (String, StringPtr)
       def start_with?(other)
         other and @pointer.start_with?(other)
       end
 
+      # Returns true if the input contains the other value, starting at the
+      # `nth` character.
+      #
       def substr_at?(offset, other)
         other and @pointer.substr_at?(offset, other)
       end
 
+      # Returns true if the character at the given offset is a control
+      # character (defined by X222.pdf B.1.1.2.4 Control Characters)
       def is_control_character_at?(offset)
         @pointer.is_control_character_at?(offset)
       end
@@ -96,29 +103,66 @@ module Stupidedi
     end
 
     class << Input
-      def build(value, position = NoPosition)
+      # @group Constructors
+      #########################################################################
+
+      # @examples
+      #   Input.build(File.open("sample.edi"), mode: "rb")
+      #   Input.build(File.read("sample.edi", encoding: "UTF-8"))
+      #   Input.build(Pathname.new("sample.edi"), position: OffsetPosition)
+      #
+      def build(value, *args)
         if value.is_a?(String)
-          string(value, position)
+          string(value, *args)
+
         elsif defined?(Pathname) and value.is_a?(Pathname)
-          file(value, position)
+          file(value, *args)
+
         elsif value.is_a?(Input)
           value
+
         elsif value.respond_to?(:read)
-          path = value.path if value.respond_to?(:path)
-          new(Pointer.build(value.read), position.build(path))
+          position = args.last.delete(:position) if args.last.is_a?(Hash)
+          path     = value.path if value.respond_to?(:path)
+          new(Pointer.build(value.read), (position || NoPosition).build(path))
+
         else
           raise TypeError,
             "value must be a String, Pathname, or respond to #read"
         end
       end
 
-      def file(path, position = NoPosition)
-        new(Pointer.build(File.read(path)), position.build(path))
+      #
+      # @examples
+      #   Input.file("example.edi", length, offset)
+      #   Input.file("example.edi", mode: "rb")
+      #   Input.file("example.edi", encoding: "US-ASCII")
+      #   Input.file("example.edi", position: Stupidedi::Reader::NoPosition)
+      #
+      def file(path, *args)
+        position =
+          if args.last.is_a?(Hash)
+            args.last.delete(:position)
+          end || NoPosition
+
+        new(Pointer.build(File.read(path, *args)), position.build(path))
       end
 
-      def string(value, position = NoPosition)
+      # @examples
+      #   Input.string(io.read)
+      #   Input.string("...", position: Stupidedi::Reader::OffsetPosition)
+      #
+      def string(value, *args)
+        position =
+          if args.last.is_a?(Hash)
+            args.last.delete(:position)
+          end || NoPosition
+
         new(Pointer.build(value), position.build(nil))
       end
+
+      # @endgroup
+      #########################################################################
     end
   end
 end

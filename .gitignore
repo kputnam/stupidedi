@@ -4,3 +4,4 @@ build/generated
 lib/**/*.bundle
 ext/**/Makefile
 ext/**/*.o
+tmp

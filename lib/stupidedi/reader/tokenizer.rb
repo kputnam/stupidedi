@@ -5,7 +5,7 @@ module Stupidedi
   module Reader
 
     # TODO: One of the top garbage producers is reading a single character like
-    # input[offset]. It might be more efficient to replace char-at-a-time reads
+    # input.at(offset). It might be more efficient to replace char-at-a-time reads
     # with Regexps that consume multiple characters at once.
 
     class Tokenizer
@@ -299,7 +299,7 @@ module Stupidedi
         unless segment_id.rest.start_with?(@separators.element) \
             or segment_id.rest.start_with?(@separators.segment)
           return unexpected("%s after segment identifier %s" % [
-            char.head.inspect, segment_id.value], segment_id.rest.position)
+            segment_id.rest.head.inspect, segment_id.value], segment_id.rest.position)
         end
 
         if @segment_dict.defined_at?(segment_id.value)
@@ -365,12 +365,12 @@ module Stupidedi
           # The next character determines the element separator. If it's an
           # alphanumeric or space, we assume this is not the start of an ISA
           # segment. Perhaps a word like "L[ISA] " or "D[ISA]RRAY"
-          next if not input.defined_at?(a+1) or input[a+1].match?(BAD_SEPARATOR)
+          next if not input.defined_at?(a+1) or input.at(a+1).match?(BAD_SEPARATOR)
 
           # Success, ignore everything before "I", resume parsing after "A".
           yield IgnoredTok.new(input.take(i), input.position) if block_given?
 
-          return done(:ISA, input.position_at(i), input.drop(a + 1))
+          return done(:ISA, input.position_at(i), input.drop!(a + 1))
         end
 
         return eof("ISA", input.position)
@@ -397,7 +397,7 @@ module Stupidedi
         # past control characters, then read the next character.
         offset = input.lstrip_control_characters_offset(1)
         return eof("ISA16", input.position) unless input.defined_at?(offset)
-        element_toks << SimpleElementTok.build(input[offset], input.position_at(offset))
+        element_toks << SimpleElementTok.build(input.at(offset), input.position_at(offset))
 
         # The character immediately after ISA16 is defined to be the
         # segment terminator. The separator could be a control character,
@@ -405,8 +405,8 @@ module Stupidedi
         return eof("segment terminator for ISA", input.position_at(offset)) \
           unless input.defined_at?(offset + 1)
 
-        @separators.segment = input[offset + 1]
-        done(element_toks, nil, input.drop(offset + 2))
+        @separators.segment = input.at(offset + 1)
+        done(element_toks, nil, input.drop!(offset + 2))
       end
 
       # Works similarly to `_next_isa_segment_id`, except the result is the
@@ -428,7 +428,7 @@ module Stupidedi
           return eof("segment identifier", input.position) \
             unless input.defined_at?(offset)
 
-          char = input[offset]
+          char = input.at(offset)
           break if char == @separators.element
           break if char == @separators.segment
 
@@ -499,7 +499,7 @@ module Stupidedi
           input.position) if input.head != @separators.segment
 
         # Skip past the segment separator
-        done(element_toks, nil, input.tail)
+        done(element_toks, nil, input.drop!(1))
       end
 
       # @param input          should be positioned at an element separator,
@@ -589,7 +589,7 @@ module Stupidedi
         builder    = @switcher_.switch(repeatable, input.position)
 
         while input.defined_at?(offset)
-          char = input[offset]
+          char = input.at(offset)
 
           if repeatable and char == @separators.repetition
             builder.add(SimpleElementTok.build(buffer, repeat_pos))
@@ -604,7 +604,7 @@ module Stupidedi
             # belong to the parent/composite element. If it's not repeatable
             # either, an error can be returned.
             builder.add(ComponentElementTok.build(buffer, repeat_pos))
-            return done(builder.build, builder.position, input.drop(offset))
+            return done(builder.build, builder.position, input.drop!(offset))
 
           else
             # This is zero-copy as long as we haven't skipped any characters
@@ -648,12 +648,12 @@ module Stupidedi
         builder    = @switcher.switch(repeatable, input.position)
 
         while input.defined_at?(offset)
-          char = input[offset]
+          char = input.at(offset)
 
           if char == @separators.element \
           or char == @separators.segment
             builder.add(SimpleElementTok.build(buffer, repeat_pos))
-            return done(builder.build, start_pos, input.drop(offset))
+            return done(builder.build, start_pos, input.drop!(offset))
 
           elsif repeatable and char == @separators.repetition
             builder.add(SimpleElementTok.build(buffer, repeat_pos))

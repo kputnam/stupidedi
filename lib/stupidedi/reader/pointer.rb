@@ -208,6 +208,10 @@ module Stupidedi
 
       # Return a new pointer, skipping the first n items.
       #
+      #   x = Pointer.new("eyeball")
+      #   x.drop(5)   #=> "ll"
+      #   x           #=> "eyeball"
+      #
       # @return [Pointer<S, E>]
       def drop(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
@@ -216,28 +220,26 @@ module Stupidedi
         self.class.new(@storage.freeze, @offset + n, @length - n)
       end
 
-      # Return a new pointer, skipping the first n items, and destructively
-      # update this pointer to end at the nth element.
+      # Destructively update this pointer to start at the (n+1)th element.
       #
       #   x = Pointer.new("eyeball")
-      #   x.drop!(5)  == "ll"
-      #   x           == "eyeba"
+      #   x.drop!(5)  #=> "eyeba"
+      #   x           #=> "ll"
       #
       # @return [Pointer<S, E>]
       def drop!(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
-        n = @length if n > @length
-        offset = @offset + n
-        length = @length - n
-        suffix  = self.class.new(@storage.freeze, offset, length)
-
-        # We become the prefix that ends where suffix starts
-        @length = n
-
-        suffix
+        n        = @length if n > @length
+        @offset += n
+        @length -= n
+        self
       end
 
       # Return a new pointer spanning only the first n items.
+      #
+      #   x = Pointer.new("eyeball")
+      #   x.take(5)   #=> "eyeba"
+      #   x           #=> "eyeball"
       #
       # @return [Pointer<S, E>]
       def take(n)
@@ -246,24 +248,18 @@ module Stupidedi
         self.class.new(@storage.freeze, @offset, n)
       end
 
-      # Return a new pointer spanning only the first n items, and destructively
-      # update this pointer to start at the (n+1)th element.
+      # Destructively update this pointer to end at the nth element.
       #
       #   x = Pointer.new("eyeball")
-      #   x.take!(5)  == "eyeba"
-      #   x           == "ll"
+      #   x.take!(5)  #=> "eyeba"
+      #   x           #=> "eyeba"
       #
       # @return [Pointer<S, E>]
       def take!(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
-        n = @length if n > @length
-        prefix = self.class.new(@storage.freeze, @offset, n)
-
-        # We become the suffix starts where prefix ends
-        @offset += n
-        @length -= n
-
-        prefix
+        n       = @length if n > @length
+        @length = n
+        self
       end
 
       # This method is equivalent to x.drop(n).take(m), but it allocates
