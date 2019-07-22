@@ -32,9 +32,10 @@ rb_substr_eql_p(VALUE self, VALUE str1, VALUE offset1, VALUE str2, VALUE offset2
     Check_Type(offset2, T_FIXNUM);
     Check_Type(length,  T_FIXNUM);
 
-    long len  = NUM2LONG(length);
-    long beg1 = NUM2LONG(offset1);
-    long beg2 = NUM2LONG(offset2);
+    long len, beg1, beg2;
+    len  = NUM2LONG(length);
+    beg1 = NUM2LONG(offset1);
+    beg2 = NUM2LONG(offset2);
 
     if (len  < 0)  rb_raise(rb_eArgError, "length cannot be negative");
     if (beg1 < 0) rb_raise(rb_eArgError, "offset1 cannot be negative");
@@ -44,11 +45,13 @@ rb_substr_eql_p(VALUE self, VALUE str1, VALUE offset1, VALUE str2, VALUE offset2
     if (beg2 + len > rb_str_strlen(str2)) return Qnil;
 
     /* Number of bytes in str1[offset, length], calculated by rb_str_subpos */
-    long len1 = len;
-    long len2 = len;
+    long len1, len2;
+    len1 = len;
+    len2 = len;
 
-    const char *ptr1 = rb_str_subpos(str1, beg1, &len1);
-    const char *ptr2 = rb_str_subpos(str2, beg2, &len2);
+    const char *ptr1, *ptr2;
+    ptr1 = rb_str_subpos(str1, beg1, &len1);
+    ptr2 = rb_str_subpos(str2, beg2, &len2);
 
     if (ptr1 == NULL || ptr2 == NULL) return Qnil;
     if (len1 != len2 || len1 < len)   return Qnil;
@@ -66,8 +69,12 @@ rb_lstrip_offset(VALUE self, VALUE str, VALUE offset) {
     Check_Type(str,    T_STRING);
     Check_Type(offset, T_FIXNUM);
 
-    char *ptr, *start = RSTRING_PTR(str), *end = RSTRING_END(str);
-    rb_encoding *enc = rb_enc_from_index(ENCODING_GET(str));
+    char *ptr, *start, *end;
+    rb_encoding *enc;
+
+    start = RSTRING_PTR(str);
+    end   = RSTRING_END(str);
+    enc   = rb_enc_from_index(ENCODING_GET(str));
 
     if (single_byte_optimizable(str, enc)) {
         ptr = start + FIX2LONG(offset);
@@ -81,9 +88,13 @@ rb_lstrip_offset(VALUE self, VALUE str, VALUE offset) {
         return LONG2NUM(ptr - start);
     }
 
-    long len_ = 1, count = 0;
-    unsigned int c;  int len;
-    ptr = rb_str_subpos(str, FIX2LONG(offset), &len_);
+    int len;
+    long len_, count;
+    unsigned int c;
+
+    len_  = 1;
+    count = 0;
+    ptr   = rb_str_subpos(str, FIX2LONG(offset), &len_);
 
     if (!ptr || ptr >= end || ptr < start)
         return LONG2NUM(RSTRING_LEN(str));
@@ -107,8 +118,12 @@ rb_rstrip_offset(VALUE self, VALUE str, VALUE offset) {
     Check_Type(str,    T_STRING);
     Check_Type(offset, T_FIXNUM);
 
-    char *ptr, *start = RSTRING_PTR(str), *end = RSTRING_END(str);
-    rb_encoding *enc = rb_enc_from_index(ENCODING_GET(str));
+    char *ptr, *start, *end;
+    rb_encoding *enc;
+
+    start = RSTRING_PTR(str);
+    end   = RSTRING_END(str);
+    enc   = rb_enc_from_index(ENCODING_GET(str));
 
     if (single_byte_optimizable(str, enc)) {
         ptr = RSTRING_PTR(str) + FIX2LONG(offset);
@@ -122,19 +137,21 @@ rb_rstrip_offset(VALUE self, VALUE str, VALUE offset) {
         return LONG2NUM(ptr - start);
     }
 
-    long len = 1;
+    long len;
+    len = 1;
     end = RSTRING_END(str);
     ptr = rb_str_subpos(str, FIX2LONG(offset), &len);
 
     if (!ptr || ptr >= end || ptr < start)
         return LONG2NUM(RSTRING_LEN(str));
 
-    long count = 0;
     unsigned int c;
+    long count;
+    count = 0;
 
     while (ptr >= start && (c = rb_enc_codepoint(ptr, end, enc)) != 0 && rb_isspace(c)) {
-        char *ptr_ = rb_enc_prev_char(start, ptr, end, enc);
-        if (ptr_ == NULL) break;
+        char *ptr_;
+        if ((ptr_ = rb_enc_prev_char(start, ptr, end, enc)) == NULL) break;
         ptr   = ptr_;
         count ++;
     }
@@ -160,8 +177,12 @@ rb_lstrip_control_characters_offset(VALUE self, VALUE str, VALUE offset) {
     Check_Type(str,    T_STRING);
     Check_Type(offset, T_FIXNUM);
 
-    char *ptr, *start = RSTRING_PTR(str), *end = RSTRING_END(str);
-    rb_encoding *enc = rb_enc_from_index(ENCODING_GET(str));
+    char *ptr, *start, *end;
+    rb_encoding *enc;
+
+    start = RSTRING_PTR(str);
+    end   = RSTRING_END(str);
+    enc   = rb_enc_from_index(ENCODING_GET(str));
 
     if (single_byte_optimizable(str, enc)) {
         ptr = start + FIX2LONG(offset);
@@ -175,7 +196,9 @@ rb_lstrip_control_characters_offset(VALUE self, VALUE str, VALUE offset) {
         return LONG2NUM(ptr - start);
     }
 
-    long len_ = 1, count = 0;
+    long len_, count;
+    len_  = 1;
+    count = 0;
     ptr = rb_str_subpos(str, FIX2LONG(offset), &len_);
 
     if (!ptr || ptr >= end || ptr < start)
@@ -184,6 +207,7 @@ rb_lstrip_control_characters_offset(VALUE self, VALUE str, VALUE offset) {
     while (ptr < end) {
         int len;
         const unsigned int c = rb_enc_codepoint_len(ptr, end, &len, enc);
+
         if (c != 0 && !is_ctrl_char(c)) break;
         ptr   += len;
         count ++;
@@ -207,8 +231,11 @@ rb_is_control_character_at_p(VALUE self, VALUE str, VALUE offset) {
     Check_Type(str,    T_STRING);
     Check_Type(offset, T_FIXNUM);
 
-    long len  = 1;
-    char *ptr = rb_str_subpos(str, FIX2LONG(offset), &len);
+    long len;
+    char *ptr;
+
+    len = 1;
+    ptr = rb_str_subpos(str, FIX2LONG(offset), &len);
 
     if (!ptr || !len) return Qnil;
     if (len > 1)    return Qfalse;  // There be a multi-byte character here
