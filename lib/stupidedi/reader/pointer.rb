@@ -353,7 +353,8 @@ module Stupidedi
       # @group Conversion Methods
       #########################################################################
 
-      def_delegators :reify, :to_sym, :intern, :to_i, :to_d
+      def_delegators :reify, :to_sym, :intern, :to_i, type: String
+      def_delegators :reify, :to_d
 
       # This is called implicitly when we are used in String interpolation,
       # eg `"abc #{pointer} xyz"` or `"abc %s xyz" % pointer`.

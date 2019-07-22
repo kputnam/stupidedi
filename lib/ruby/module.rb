@@ -111,7 +111,8 @@ module Stupidedi
           optionals = []
 
           triples   = method.parameters.map do |k, n|
-            n ||= new_names.succ!                 # Get a fresh name if needed
+            n ||= (new_names.succ!).dup               # Get a fresh name if needed
+
             case k
             when :req     then [n, n, n]              # def foo(x)
             when :keyreq  then [n, n, "#{n}:#{n}"]    # def foo(x:)
@@ -177,12 +178,12 @@ module Stupidedi
       end
 
       def emit_args(arg_names, arguments, optionals, state)
-        arg_names.inject([]) do |args, name|
+        arg_names.inject([]) do |xs, name|
            if k = optionals.index(name)
-             args << arguments[name] if state[k].zero?
+             xs << arguments[name] if state[k].zero?
            else
-             args << arguments[name]
-           end; args
+             xs << arguments[name]
+           end; xs
         end.join(", ")
       end
     end
