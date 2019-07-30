@@ -102,6 +102,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("LoopDef[#{@id}]")
         q.group(2, "(", ")") do
@@ -129,6 +130,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
     end
 
     class << LoopDef

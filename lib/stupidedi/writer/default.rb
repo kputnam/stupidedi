@@ -17,7 +17,7 @@ module Stupidedi
           common  = @separators.characters & @zipper.node.characters
           message = common.to_a.map(&:inspect).join(", ")
 
-          if common.present?
+          unless common.empty?
             raise Exceptions::OutputError,
               "separator characters #{message} occur as data"
           end
@@ -51,10 +51,10 @@ module Stupidedi
             separators = value.separators
 
             raise Exceptions::OutputError,
-              "separators.segment cannot be blank" if separators.segment.blank?
+              "separators.segment cannot be blank" if separators.segment.empty?
 
             raise Exceptions::OutputError,
-              "separators.element cannot be blank" if separators.element.blank?
+              "separators.element cannot be blank" if separators.element.empty?
           end
 
           value.children.each{|c| recurse(c, separators, out) }

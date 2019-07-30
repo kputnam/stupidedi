@@ -15,8 +15,8 @@ module Stupidedi
         Schema::TransactionSetDef.build(functional_group, id, name, *table_defs)
       end
 
-      # @group Element Constraints
       #######################################################################
+      # @group Element Constraints
 
       # @param [String, ...] values
       def Values(*values)
@@ -36,8 +36,8 @@ module Stupidedi
       # @endgroup
       #######################################################################
 
-      # @group Definition Constructors
       #######################################################################
+      # @group Definition Constructors
 
       # @param [Schema::ElementReq] requirement
       # @param [String] name

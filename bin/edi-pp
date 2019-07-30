@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-require File.expand_path("../../lib/stupidedi", __FILE__)
+require "stupidedi"
 require "pp"
 
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
+
 if idx = ARGV.index("--format")
   ARGV.delete("--format")
   format = ARGV.delete_at(idx)

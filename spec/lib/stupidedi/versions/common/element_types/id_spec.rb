@@ -9,7 +9,7 @@ describe Stupidedi::Versions::Common::ElementTypes::ID do
     t::ID.new(:DE1, "Quailfier Element", 2, 4).simple_use(r::Mandatory, d.bounded(1))
   end
 
-  let(:position) { Stupidedi::Reader::NoPosition }
+  let(:position) { Stupidedi::Position::NoPosition }
 
   let(:invalid_str) do
     "i'm angry!!".tap do |invalid|

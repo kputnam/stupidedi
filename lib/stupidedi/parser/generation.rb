@@ -10,33 +10,20 @@ module Stupidedi
       # {StateMachine} along with the result of the last attempt
       # to read a segment.
       #
-      # The `nondeterminism` argument specifies a limit on how many
-      # parse trees can be built simultaneously due to ambiguity in
-      # the input and/or specification. This prevents runaway memory
-      # CPU consumption (see GH-129), and will return a {Reader::Result.failure}
-      # once exceeded.
-      #
-      # The default value is 1, resulting in an error if any input
-      # is ambiguous.
-      #
-      # NOTE: The error is detected *after* the resources are already
-      # been consumed. The extra parse trees are returned (in memory)
-      # via the {StateMachine} to aide diagnosis.
-      #
-      # @param  tokenizer [Reader::Tokenizer]
+      # @param  tokenizer [Tokens::Tokenizer]
       # @param  options
       #
-      # @yield  [Reader::IgnoredTok]
-      # @return [(StateMachine, Reader::Tokenizer::Result)]
+      # @yield  [Tokens::IgnoredTok]
+      # @return [(StateMachine, Tokens::Tokenizer::Result)]
       def read(tokenizer, options = {})
         #imit   = options.fetch(:nondeterminism, 1)
         machine = self.dup
 
         return machine, tokenizer.each do |token|
           case token
-          when Reader::SegmentTok
+          when Tokens::SegmentTok
             machine.insert!(token, false, tokenizer)
-          when Reader::IgnoredTok
+          when Tokens::IgnoredTok
             yield token if block_given?
           end
         end

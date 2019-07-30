@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# encoding: utf-8
 module Stupidedi
   using Refinements
 
@@ -12,9 +13,9 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      def_delegators "@pointer", :head, :defined_at?, :empty?, :[], :length,
+      def_delegators :@pointer, :head, :defined_at?, :empty?, :[], :length,
         :count, :take, :match?, :slice, :index, :rindex, :reify, :last, :=~,
-        :at, type: StringPtr
+        :at, :encoding, type: StringPtr
 
       def initialize(pointer, position)
         @pointer, @position =
@@ -45,7 +46,7 @@ module Stupidedi
             @pointer.drop!(n)
             @position += n
           else
-            unless @position.eql?(NoPosition)
+            unless @position.eql?(Position::NoPosition)
               @position = @position.advance(@pointer.take(n))
             end
 
@@ -60,7 +61,7 @@ module Stupidedi
       # 
       # @return [Position]
       def position_at(n)
-        if @position.eql?(NoPosition)
+        if @position.eql?(Position::NoPosition)
           @position
         elsif @position.is_a?(Integer)
           @position + n
@@ -83,22 +84,22 @@ module Stupidedi
 
       # Returns true if the character at the given offset is a control
       # character (defined by X222.pdf B.1.1.2.4 Control Characters)
-      def is_control_character_at?(offset)
-        @pointer.is_control_character_at?(offset)
+      def graphic?(offset)
+        @pointer.graphic?(offset)
       end
 
       # Returns a new Input with the leading control characters removed
       #
       # @return [Input]
-      def lstrip_control_characters(offset = 0)
-        drop(lstrip_control_characters_offset(offset))
+      def lstrip_nongraphic(offset = 0)
+        drop(min_graphic_index(offset))
       end
 
       # Returns the offset of the next non-control character at or after offset
       #
       # @return [Integer]
-      def lstrip_control_characters_offset(offset = 0)
-        @pointer.lstrip_control_characters_offset(offset)
+      def min_graphic_index(offset = 0)
+        @pointer.min_graphic_index(offset)
       end
     end
 
@@ -106,10 +107,10 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      # @examples
+      # @example
       #   Input.build(File.open("sample.edi"), mode: "rb")
       #   Input.build(File.read("sample.edi", encoding: "UTF-8"))
-      #   Input.build(Pathname.new("sample.edi"), position: OffsetPosition)
+      #   Input.build(Pathname.new("sample.edi"), position: Position::OffsetPosition)
       #
       def build(value, *args)
         if value.is_a?(String)
@@ -124,7 +125,7 @@ module Stupidedi
         elsif value.respond_to?(:read)
           position = args.last.delete(:position) if args.last.is_a?(Hash)
           path     = value.path if value.respond_to?(:path)
-          new(Pointer.build(value.read), (position || NoPosition).build(path))
+          new(Pointer.build(value.read), (position || Position::NoPosition).build(path))
 
         else
           raise TypeError,
@@ -133,30 +134,30 @@ module Stupidedi
       end
 
       #
-      # @examples
+      # @example
       #   Input.file("example.edi", length, offset)
       #   Input.file("example.edi", mode: "rb")
       #   Input.file("example.edi", encoding: "US-ASCII")
-      #   Input.file("example.edi", position: Stupidedi::Reader::NoPosition)
+      #   Input.file("example.edi", position: Position::NoPosition)
       #
       def file(path, *args)
         position =
           if args.last.is_a?(Hash)
             args.last.delete(:position)
-          end || NoPosition
+          end || Position::NoPosition
 
         new(Pointer.build(File.read(path, *args)), position.build(path))
       end
 
-      # @examples
+      # @example
       #   Input.string(io.read)
-      #   Input.string("...", position: Stupidedi::Reader::OffsetPosition)
+      #   Input.string("...", position: Position::OffsetPosition)
       #
       def string(value, *args)
         position =
           if args.last.is_a?(Hash)
             args.last.delete(:position)
-          end || NoPosition
+          end || Position::NoPosition
 
         new(Pointer.build(value), position.build(nil))
       end

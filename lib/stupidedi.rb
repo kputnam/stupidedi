@@ -10,20 +10,18 @@ rescue LoadError
   warn "terminal color disabled. gem install term-ansicolor to enable"
 end
 
-$:.unshift(File.expand_path("..", __FILE__))
-
-require "ruby/regexp"
-require "ruby/array"
-require "ruby/blank"
-require "ruby/exception"
-require "ruby/hash"
-require "ruby/module"
-require "ruby/object"
-require "ruby/string"
-require "ruby/to_d"
-require "ruby/to_date"
-require "ruby/to_time"
-require "ruby/try"
+require_relative "stupidedi/ruby/regexp"
+require_relative "stupidedi/ruby/array"
+require_relative "stupidedi/ruby/blank"
+require_relative "stupidedi/ruby/exception"
+require_relative "stupidedi/ruby/hash"
+require_relative "stupidedi/ruby/module"
+require_relative "stupidedi/ruby/object"
+require_relative "stupidedi/ruby/string"
+require_relative "stupidedi/ruby/to_d"
+require_relative "stupidedi/ruby/to_date"
+require_relative "stupidedi/ruby/to_time"
+require_relative "stupidedi/ruby/try"
 
 module Stupidedi
   # @todo deprecated
@@ -39,9 +37,11 @@ module Stupidedi
   autoload :Inspect,          "stupidedi/inspect"
   autoload :Interchanges,     "stupidedi/interchanges"
   autoload :Parser,           "stupidedi/parser"
+  autoload :Position,         "stupidedi/position"
   autoload :Reader,           "stupidedi/reader"
   autoload :Schema,           "stupidedi/schema"
   autoload :Sets,             "stupidedi/sets"
+  autoload :Tokens,           "stupidedi/tokens"
   autoload :TransactionSets,  "stupidedi/transaction_sets"
   autoload :Values,           "stupidedi/values"
   autoload :Versions,         "stupidedi/versions"

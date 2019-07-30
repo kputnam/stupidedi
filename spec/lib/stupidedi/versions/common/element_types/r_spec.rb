@@ -10,7 +10,7 @@ describe Stupidedi::Versions::Common::ElementTypes::R do
   end
 
   # Dummy file position
-  let(:position) { Stupidedi::Reader::NoPosition }
+  let(:position) { Stupidedi::Position::NoPosition }
 
   def value(x)
     element_use.value(x, position)

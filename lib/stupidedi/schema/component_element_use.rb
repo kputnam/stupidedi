@@ -61,6 +61,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("ComponentElementUse")
         q.group(2, "(", ")") do
@@ -71,6 +72,7 @@ module Stupidedi
           q.pp @requirement
         end
       end
+      # :nocov:
     end
   end
 end

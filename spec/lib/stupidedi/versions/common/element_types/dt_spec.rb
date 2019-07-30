@@ -16,7 +16,7 @@ describe Stupidedi::Versions::Common::ElementTypes::DT do
     t::DT.new(:DE1, "Date Element", 6, 6).simple_use(r::Mandatory, d.bounded(1))
   end
 
-  let(:position) { Stupidedi::Reader::NoPosition }
+  let(:position) { Stupidedi::Position::NoPosition }
 
   def value_8(x)
     element_use_8.value(x, position)

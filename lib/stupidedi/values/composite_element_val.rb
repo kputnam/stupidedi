@@ -34,7 +34,7 @@ module Stupidedi
           @children.head.position
         else
           # GH-194
-          "<position unknown>"
+          Position::NoPosition
         end
       end
 
@@ -60,6 +60,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         id = definition.bind do |d|
           "[#{d.id}: #{d.name}]".bind do |s|
@@ -90,6 +91,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)

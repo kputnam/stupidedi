@@ -11,14 +11,14 @@ module Stupidedi
       #
       # @return [void]
       def repeated(*elements)
-        [:repeated, elements, Reader::StacktracePosition.build]
+        [:repeated, elements, Position::StacktracePosition.build]
       end
 
       # Generates a composite element
       #
       # @return [void]
       def composite(*components)
-        [:composite, components, Reader::StacktracePosition.build]
+        [:composite, components, Position::StacktracePosition.build]
       end
 
       #########################################################################
@@ -28,7 +28,7 @@ module Stupidedi
       #
       # @return [void]
       def blank
-        [:blank, nil, Reader::StacktracePosition.build]
+        [:blank, nil, Position::StacktracePosition.build]
       end
 
       # Generates a blank element and asserts that the element's usage
@@ -38,7 +38,7 @@ module Stupidedi
       #
       # @return [void]
       def not_used
-        [:not_used, nil, Reader::StacktracePosition.build]
+        [:not_used, nil, Position::StacktracePosition.build]
       end
 
       # Generates the only possible value an element may have, which may
@@ -50,7 +50,7 @@ module Stupidedi
       #
       # @return [void]
       def default
-            [:default, nil, Reader::StacktracePosition.build]
+        [:default, nil, Position::StacktracePosition.build]
       end
 
       # @endgroup
@@ -58,7 +58,7 @@ module Stupidedi
 
     private
 
-      # @return [Reader::SegmentTok]
+      # @return [Tokens::SegmentTok]
       def mksegment_tok(segment_dict, id, elements, position)
         id = id.to_sym
         element_toks = []
@@ -81,7 +81,7 @@ module Stupidedi
                 "#{id}#{element_idx} is assumed to be a simple element"
             end
 
-            element_toks << mksimple_tok(e_tag, e_position || position)
+            element_toks << Tokens::SimpleElementTok.build(e_tag, e_position || position)
           end
         else
           segment_def  = segment_dict.at(id)
@@ -119,15 +119,15 @@ module Stupidedi
                   "#{id}#{element_idx} is a non-repeatable simple element"
               end
 
-              element_toks << mksimple_tok(e_tag, e_position || position)
+              element_toks << Tokens::SimpleElementTok.build(e_tag, e_position || position)
             end
           end
         end
 
-        Reader::SegmentTok.build(id, element_toks, position)
+        Tokens::SegmentTok.build(id, element_toks, position)
       end
 
-      # @return [Reader::RepeatedElementTok]
+      # @return [Tokens::RepeatedElementTok]
       def mkrepeated_tok(elements, element_use, designator, position)
         element_toks = []
 
@@ -147,14 +147,14 @@ module Stupidedi
                 "#{designator} is a simple element"
             end
 
-            element_toks << mksimple_tok(e_tag, e_position || position)
+            element_toks << Tokens::SimpleElementTok.build(e_tag, e_position || position)
           end
         end
 
-        Reader::RepeatedElementTok.build(element_toks, position)
+        Tokens::RepeatedElementTok.build(element_toks, position)
       end
 
-      # @return [Reader::CompositeElementTok]
+      # @return [Tokens::CompositeElementTok]
       def mkcomposite_tok(components, composite_use, designator, position)
         component_uses = composite_use.definition.component_uses
 
@@ -172,20 +172,10 @@ module Stupidedi
               "#{designator}-#{component_idx} is a component element"
           end
 
-          component_toks << mkcomponent_tok(c_tag, c_position || position)
+          component_toks << Tokens::ComponentElementTok.build(c_tag, c_position || position)
         end
 
-        Reader::CompositeElementTok.build(component_toks, position)
-      end
-
-      # @return [Reader::ComponentElementTok]
-      def mkcomponent_tok(value, position)
-        Reader::ComponentElementTok.build(value, position)
-      end
-
-      # @return [Reader::SimpleElementTok]
-      def mksimple_tok(value, position)
-        Reader::SimpleElementTok.build(value, position)
+        Tokens::CompositeElementTok.build(component_toks, position)
       end
 
       # @endgroup

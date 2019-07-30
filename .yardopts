@@ -11,9 +11,15 @@
 --load ./build/doc/lib/meta-plugin/lib/yard-meta.rb
 --asset doc/images:images
 --files doc/**/*.md
---exclude 'element_defs\.rb'
---exclude 'segment_defs\.rb'
---exclude 'segment_defs\/'
+
+--exclude '/editor'
+--exclude '/guides.rb'
+--exclude '/contrib.rb'
+--exclude '/versions/functional_groups.rb'
+
+--exclude '/versions/[0-9]'
+--exclude '/interchanges/[0-9]'
+--exclude '/transaction_sets/[0-9]'
 
 lib/**/*.rb
-spec/examples/**/*_spec.rb
+spec/**/*_spec.rb

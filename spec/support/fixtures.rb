@@ -2,7 +2,6 @@ require "pathname"
 using Stupidedi::Refinements
 
 Fixtures = Class.new do
-
   def versions
     { "006020" => "SixtyTwenty",
       "005010" => "FiftyTen",
@@ -37,13 +36,18 @@ Fixtures = Class.new do
     Dir["#{@root}/*/*/skip/**/*.edi"].sort.flat_map{|path| all_configs(path) }
   end
 
+  # @return [Pathname]
+  def filepath(path)
+    @root.join(path)
+  end
+
   # @return [String]
   def read(path)
-    File.open(File.join(@root, path), "rb", &:read)
+    filepath(path).open("rb", &:read)
   end
 
   def position
-    @position ||= Struct.new(:name, :line, :column, :offset).include(Stupidedi::Reader::Position)
+    @position ||= Struct.new(:name, :line, :column, :offset).include(Stupidedi::Position)
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
@@ -56,7 +60,7 @@ Fixtures = Class.new do
       _, config, _ = mkconfig(*parts(path))
     end
 
-    tokenizer = Stupidedi::Reader.build(@root.join(path), position: position)
+    tokenizer = Stupidedi::Reader.build(filepath(path), position: position)
     Stupidedi::Parser.build(config).read(tokenizer)
   end
 

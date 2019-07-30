@@ -35,6 +35,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         id = @definition.try do |d|
           ansi.bold("[#{d.functional_group}#{d.id}]")
@@ -52,6 +53,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
       def inspect

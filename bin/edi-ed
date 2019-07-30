@@ -1,7 +1,4 @@
 #!/usr/bin/env ruby
-require "pathname"
-$:.unshift(File.expand_path("../../lib", Pathname.new(__FILE__).realpath))
-
 require "stupidedi"
 require "pp"
 
@@ -12,10 +9,8 @@ config = Stupidedi::Config.hipaa
 config.editor.tap do |c|
   c.register(Stupidedi::Interchanges::FourOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
   c.register(Stupidedi::Interchanges::FiveOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
-
   c.register(Stupidedi::Versions::FortyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
   c.register(Stupidedi::Versions::FiftyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
-
   c.register(Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837) { Stupidedi::Editor::X222 }
 end
 

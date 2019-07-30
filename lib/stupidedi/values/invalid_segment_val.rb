@@ -69,16 +69,20 @@ module Stupidedi
         nil
       end
 
+      # :nocov:
       # @return [void]
       def pretty_print(q)
         id = ansi.invalid("[#{@segment_tok.to_x12(@separators)}]")
         q.text(ansi.segment("InvalidSegmentVal#{id}"))
       end
+      # :nocov:
 
+      # :nocov:
       # @return [String]
       def inspect
         ansi.invalid(@segment_tok.id.to_s)
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)

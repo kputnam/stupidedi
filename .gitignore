@@ -1,7 +1,6 @@
+Gemfile.lock
 build/generated
-.bundle
-.ruby-version
 lib/**/*.bundle
 ext/**/Makefile
 ext/**/*.o
-tmp
+ext/**/*.class

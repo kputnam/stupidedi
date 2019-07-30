@@ -76,7 +76,8 @@ module Stupidedi
         chars =
           [@component, @repetition, @element, @segment].select{|s| s.present? }
 
-        Sets.absolute(chars.join.split(//), Reader::C_BYTES.split(//))
+        # This works even if any separators have more than one character
+        Set.new(chars.join.split(//))
       end
 
       # @return [String]

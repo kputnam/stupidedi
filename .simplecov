@@ -11,13 +11,15 @@ SimpleCov.start do
   add_filter %r{/transaction_sets/[0-9]+/[A-Z0-9-]+\.rb}
   add_filter %r{/stupidedi/editor}
 
-  add_group "Refinements",      "lib/ruby"
+  add_group "Refinements",      "lib/stupidedi/ruby"
   add_group "Config",           "lib/stupidedi/config"
   add_group "Editor",           "lib/stupidedi/editor"
   add_group "Exceptions",       "lib/stupidedi/exceptions"
   add_group "Interchanges",     "lib/stupidedi/interchanges"
   add_group "Parser",           "lib/stupidedi/parser"
   add_group "Reader",           "lib/stupidedi/reader"
+  add_group "Tokens",           "lib/stupidedi/tokens"
+  add_group "Position",         "lib/stupidedi/position"
   add_group "Schema",           "lib/stupidedi/schema"
   add_group "TransactionSets",  "lib/stupidedi/transaction_sets"
   add_group "Values",           "lib/stupidedi/values"
@@ -131,7 +133,6 @@ class SimpleCov::Formatter::CustomHtmlFormatter < SimpleCov::Formatter::InlineHT
         .ui-icon   { width:0px !important; height:0px !important; }
         th         { font-size:.7rem; overflow:hidden; white-space:normal !important; }
       EOF
-      css
     else
       super(path)
     end

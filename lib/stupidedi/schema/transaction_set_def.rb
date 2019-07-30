@@ -73,6 +73,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("TransactionSetDef[#{@functional_group}#{@id}]")
         q.group(2, "(", ")") do
@@ -86,6 +87,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
     end
 
     class << TransactionSetDef

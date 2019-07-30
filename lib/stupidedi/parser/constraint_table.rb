@@ -51,7 +51,7 @@ module Stupidedi
       end
 
       # Performs no filtering of the {Instruction} list. This is used when there
-      # already is a single {Instruction} or when a {Reader::SegmentTok} doesn't
+      # already is a single {Instruction} or when a {Tokens::SegmentTok} doesn't
       # provide any more information to filter the list.
       #
       class Stub < ConstraintTable
@@ -402,7 +402,7 @@ module Stupidedi
         # the value of the `n`-th component from the `n`-th element. When the
         # value is blank, the function returns `nil`.
         #
-        # @param [Array<Reader::SimpleElementTok, Reader::CompositeElementTok>] element_toks
+        # @param [Array<Tokens::SimpleElementTok, Tokens::CompositeElementTok>] element_toks
         # @param [Integer] m
         # @param [Integer, nil] n
         #

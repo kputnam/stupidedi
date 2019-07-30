@@ -26,7 +26,7 @@ module Stupidedi
         :empty?, :first?, :last?, :deterministic?
 
       def initialize(machine, strict = true)
-        @position     = Reader::StacktracePosition
+        @position     = Position::StacktracePosition
         @machine      = machine
         @strict       = strict
         @separators   = Reader::Separators.blank

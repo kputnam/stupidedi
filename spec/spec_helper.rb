@@ -1,16 +1,14 @@
+Bundler.setup(:default, :development, :test)
 begin
-  # This will load configuration from .simplecov
   require "simplecov"
 rescue LoadError
 end
 
-require File.expand_path("../../lib/stupidedi", __FILE__)
-require "pp"
+require "stupidedi"
 require "ostruct"
+require "pp"
 
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|
-  require file
-end
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each(&method(:require))
 
 RSpec.configure do |config|
   config.include(EitherMatchers)
@@ -23,11 +21,11 @@ RSpec.configure do |config|
 
   # Use either of these to run only specs marked 'focus: true'
   #   config.filter_run(:focus  => true)
-  #   $ rspec -I lib -t focus spec
+  #   $ rspec -r spec_helper -t focus
 
   # Use either of these to run only randomized specs:
   #   config.filter_run(:random => true)
-  #   $ rspec -I lib -t random spec
+  #   $ rspec -r spec_helper -t random
 
   # When a randomized test fails, it will print a seed value you
   # can use to repeat the test with the same generated inputs:
@@ -35,9 +33,17 @@ RSpec.configure do |config|
 
   # Use either of these to skip running randomized specs:
   #   config.filter_run_excluding(:random => true)
-  #   $ rspec -I lib -t ~random spec
+  #   $ rspec -r spec_helper -t ~random
 
-  # Skip platform-specific examples unless our platform matches
-  config.filter_run_excluding(:ruby => lambda{|n| RUBY_VERSION !~ /^#{n}/ })
+  # Skip platform-specific examples unless our platform matches (exclude non-matches)
+  config.filter_run_excluding(ruby: lambda{|expected| /^#{expected}/ !~ RUBY_VERSION })
   config.filter_run_excluding(:skip)
+  #onfig.filter_run_including(:focus)
+
+  config.profile_examples     = true
+  #onfig.fail_fast            = true
+  config.fail_if_no_examples  = true
+
+  # https://relishapp.com/rspec/rspec-core/v/3-8/docs/configuration/custom-deprecation-stream
+  # https://relishapp.com/rspec/rspec-core/v/3-8/docs/configuration/overriding-global-ordering
 end
