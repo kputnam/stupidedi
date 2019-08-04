@@ -2,6 +2,8 @@
 module Stupidedi
   using Refinements
 
+  # TODO: Rename this
+  #
   module Parser
     module Generation
       # Consumes all input from `reader` and returns the updated
@@ -21,41 +23,47 @@ module Stupidedi
       # been consumed. The extra parse trees are returned (in memory)
       # via the {StateMachine} to aide diagnosis.
       #
-      # @return [(StateMachine, Reader::Result)]
-      def read(reader, options = {})
-        limit    = options.fetch(:nondeterminism, 1)
-        machine  = self
-        reader_e = reader.read_segment
+      # @param  tokenizer [Reader::Tokenizer]
+      # @param  options
+      #
+      # @yield  [Reader::IgnoredTok]
+      # @return [(StateMachine, Reader::Tokenizer::Result)]
+      def read(tokenizer, options = {})
+        #imit   = options.fetch(:nondeterminism, 1)
+        machine = self.dup
 
-        while reader_e.defined?
-          reader_e = reader_e.flatmap do |segment_tok, reader_|
-            machine, reader__ =
-              machine.insert(segment_tok, false, reader_)
-
-            if machine.active.length <= limit
-              reader__.read_segment
-            else
-              matches = machine.active.map do |m|
-                if segment_use = m.node.zipper.node.usage
-                  "SegmentUse(#{segment_use.position}, #{segment_use.id},
-                  #{segment_use.requirement.inspect}, #{segment_use.repeat_count.inspect})".join
-                else
-                  m.node.zipper.node.inspect
-                end
-              end.join(", ")
-
-              return machine,
-                Reader::Result.failure("too much non-determinism: #{matches}", reader__.input, true)
-            end
+        return machine, tokenizer.each do |token|
+          case token
+          when Reader::SegmentTok
+            machine.insert!(token, false, tokenizer)
+          when Reader::IgnoredTok
+            yield token if block_given?
           end
         end
-
-        return machine, reader_e
       end
 
-      # @return [(StateMachine, Reader::TokenReader)]
-      def insert(segment_tok, strict, reader)
-        active = @active.flat_map do |zipper|
+      # NOTE: This may destructively update the `state` by reassigning its
+      # `segment_dict` or `separators` attributes.
+      #
+      # @return [StateMachine]
+      def insert(segment_tok, strict, tokenizer)
+        StateMachine.new(@config, insert_(segment_tok, strict, tokenizer))
+      end
+
+      # @return self
+      def insert!(segment_tok, strict, tokenizer)
+        @active = insert_(segment_tok, strict, tokenizer)
+        self
+      end
+
+    private
+
+      # NOTE: This may destructively update the `state` by reassigning its
+      # `segment_dict` or `separators` attributes.
+      #
+      # @return [Array<Zipper::AbstractCursor<StateMachine::AbstractState>>]
+      def insert_(segment_tok, strict, tokenizer)
+        @active.flat_map do |zipper|
           state        = zipper.node
           instructions = state.instructions.matches(segment_tok, strict, :insert)
 
@@ -63,15 +71,22 @@ module Stupidedi
             zipper.append(FailureState.mksegment(segment_tok, state)).cons
           else
             instructions.map do |op|
-              successor = execute(op, zipper, reader, segment_tok)
-              reader    = update_reader(op, reader, successor)
+              successor = execute(op, zipper, tokenizer, segment_tok)
+
+              # We might be moving up or down past the interchange or functional
+              # group envelope, which determine the separators and segment_dict
+              unless op.push.nil? and (op.pop_count.zero? or tokenizer.separators.blank?)
+                tokenizer.separators   = successor.node.separators
+                tokenizer.segment_dict = successor.node.segment_dict
+              end
+
               successor
             end
           end
         end
-
-        return StateMachine.new(@config, active), reader
       end
+
+    public
 
       # Three things change together when executing an {Instruction}:
       #
@@ -85,7 +100,7 @@ module Stupidedi
       #    two and are also updated using a zipper
       #
       # @return [AbstractCursor<StateMachine>]
-      def execute(op, zipper, reader, segment_tok)
+      def execute(op, zipper, tokenizer, segment_tok)
         table = zipper.node.instructions  # 1.
         value = zipper.node.zipper        # 2.
         state = zipper                    # 3.
@@ -116,32 +131,19 @@ module Stupidedi
           parent = state.node.copy \
             :zipper       => value,
             :children     => [],
-            :separators   => reader.try(&:separators),
-            :segment_dict => reader.try(&:segment_dict),
+            :separators   => tokenizer.try{|x| x.separators },
+            :segment_dict => tokenizer.try{|x| x.segment_dict },
             :instructions => table.pop(op.pop_count).drop(op.drop_count)
 
           # Note, `state` is a cursor pointing at a state, while `parent`
           # is an actual state
           state = state.append(parent) unless state.root?
 
-          # Note, eg, op.push == TableState; op.push.push == TableState.push
+          # Note, op.push == TableState; op.push.push == TableState.push
           op.push.push(state, parent, segment_tok, op.segment_use, @config)
         end
       end
 
-      def update_reader(op, reader, successor)
-        # We might be moving up or down past the interchange or functional
-        # group envelope, which control the set of separators and the set
-        # of all possible segments
-        unless op.push.nil? and (op.pop_count.zero? or reader.stream?)
-          unless reader.separators.eql?(successor.node.separators) \
-            and reader.segment_dict.eql?(successor.node.segment_dict)
-            reader.copy \
-              :separators   => successor.node.separators,
-              :segment_dict => successor.node.segment_dict
-          end
-        end || reader
-      end
     end
   end
 end

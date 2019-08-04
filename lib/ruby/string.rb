@@ -13,7 +13,7 @@ module Stupidedi
       # @return [String]
       def at(n)
         raise ArgumentError, "n must be positive" if n < 0
-        self[n, 1] unless n >= length
+        self[n] unless n >= length
       end
 
       # Return the string with `n` characters removed from the front
@@ -84,6 +84,17 @@ module Stupidedi
       def join
         gsub(/\n[ \t]+/, " ")
       end
+
+      unless "".respond_to?(:match?)
+        def match?(pattern, pos=nil)
+          if pos.nil?
+            !!(self =~ pattern)
+          else
+            !!match(pattern, pos)
+          end
+        end
+      end
+
     end
   end
 end

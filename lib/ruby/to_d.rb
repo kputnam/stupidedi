@@ -28,7 +28,7 @@ module Stupidedi
       #
       # @return [BigDecimal]
       def to_d
-        if BIGDECIMAL =~ self
+        if BIGDECIMAL.match?(self)
           BigDecimal(to_s)
         else
           raise ArgumentError, "#{inspect} is not a valid number"

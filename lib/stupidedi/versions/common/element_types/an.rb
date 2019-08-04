@@ -100,6 +100,9 @@ module Stupidedi
             end
           end
 
+          # @private
+          THING_DASH_THING = /^[^-]+-[^-]+$/
+
           # Parse the string into a date (Date), date time (Time), or a range
           # of either according to the given format specifier.
           #
@@ -112,7 +115,7 @@ module Stupidedi
               f, g = AN::DATE_FORMAT_RANGE.at(format)
               a, b = value.split("-", 2)
 
-              unless value =~ /^[^-]+-[^-]+$/
+              unless THING_DASH_THING.match?(value)
                 raise TypeError,
                   "expected a String with format #{f}-#{g}, but got #{value.inspect}"
               end
@@ -213,6 +216,10 @@ module Stupidedi
               :lines, :bytes, :chars, :each, :upto, :split, :scan, :unpack, :=~,
               :match, :partition, :rpatition, :encoding, :valid_enocding?, :at,
               :empty?, :blank?
+
+            if "".respond_to?(:match?)
+              def_delegators :value, :match?
+            end
 
             extend Operators::Wrappers
             wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -356,6 +363,7 @@ module Stupidedi
             elsif object.kind_of?(Date) or object.kind_of?(Time)
               self::Invalid.new(object, usage, position)
             else
+              # STRINGPTR: to_s + rstrip + new
               self::NonEmpty.new(object.to_s.rstrip, usage, position)
             end
           rescue

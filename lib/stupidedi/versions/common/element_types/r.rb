@@ -319,6 +319,7 @@ module Stupidedi
             elsif object.blank?
               self::Empty.new(usage, position)
             else
+              # STRINGPTR: to_d
               self::NonEmpty.new(object.to_d, usage, position)
             end
           rescue ArgumentError

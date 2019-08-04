@@ -15,12 +15,9 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(id, element_toks, position, remainder)
-        @id, @element_toks, @position, @remainder =
-          id, element_toks, position, remainder
+      def initialize(id, element_toks, position)
+        @id, @element_toks, @position =
+          id, element_toks, position
       end
 
       # @return [SegmentTok]
@@ -28,8 +25,7 @@ module Stupidedi
         SegmentTok.new \
           changes.fetch(:id, @id),
           changes.fetch(:element_toks, @element_toks),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
       # :nocov:
@@ -48,7 +44,7 @@ module Stupidedi
 
       def to_x12(separators)
         if blank?
-          "#{id}#{separators.segment}"
+          "#{id}#{(separators.segment || "~").strip}"
         else
           es  = @element_toks.map{|x| x.to_x12(separators) }
           sep = separators.element || "*"
@@ -63,8 +59,8 @@ module Stupidedi
       #########################################################################
 
       # @return [SegmentTok]
-      def build(id, element_toks, position, remainder)
-        new(id, element_toks, position, remainder)
+      def build(id, element_toks, position)
+        new(id, element_toks, position)
       end
 
       # @endgroup

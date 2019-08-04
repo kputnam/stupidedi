@@ -23,7 +23,7 @@ describe Stupidedi::Versions::Common::ElementTypes::TM do
     t::TM.new(:DE1, "Time Element", 8, 8).simple_use(r::Mandatory, d.bounded(1))
   end
 
-  let(:position) { Stupidedi::Reader::Position.new(100, 4, 19, "test.x12") }
+  let(:position) { Stupidedi::Reader::NoPosition }
 
   def value_4(x)
     element_use_4.value(x, position)

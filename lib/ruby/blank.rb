@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 module Stupidedi
   module Refinements
+
+    NONBLANK = /\S/
+
     refine String do
       # True if the string is `empty?` or contains all whitespace
       #
@@ -10,11 +13,11 @@ module Stupidedi
       #   "".blank?       #=> true
       #
       def blank?
-        self !~ /\S/
+        not NONBLANK.match?(self)
       end
 
       def present?
-        self =~ /\S/
+        NONBLANK.match?(self)
       end
     end
 

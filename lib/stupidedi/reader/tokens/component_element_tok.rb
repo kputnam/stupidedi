@@ -12,20 +12,16 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(value, position, remainder)
-        @value, @position, @remainder =
-          value, position, remainder
+      def initialize(value, position)
+        @value, @position =
+          value, position
       end
 
       # @return [CompositeElementTok]
       def copy(changes = {})
         ComponentElementTok.new \
           changes.fetch(:value, @value),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
       # :nocov:
@@ -60,8 +56,8 @@ module Stupidedi
       #########################################################################
 
       # @return [ComponentElementTok]
-      def build(value, position, remainder)
-        new(value, position, remainder)
+      def build(value, position)
+        new(value, position)
       end
 
       # @endgroup

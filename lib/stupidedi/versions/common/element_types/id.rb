@@ -137,6 +137,10 @@ module Stupidedi
               :match, :partition, :rpatition, :encoding, :valid_enocding?,
               :at, :empty?, :blank?
 
+            if "".respond_to?(:match?)
+              def_delegators :value, :match?
+            end
+
             # (string any* -> StringVal)
             extend Operators::Wrappers
             wrappers :%, :+, :*, :slice, :take, :drop, :[], :capitalize,
@@ -283,6 +287,7 @@ module Stupidedi
             elsif object.blank?
               self::Empty.new(usage, position)
             else
+              # STRINGPTR: to_s + rstrip + new
               self::NonEmpty.new(object.to_s.rstrip, usage, position)
             end
           rescue

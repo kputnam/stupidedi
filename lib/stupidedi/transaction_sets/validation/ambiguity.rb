@@ -78,8 +78,7 @@ module Stupidedi
         def step(machine)
           machine.successors.head.constraints.each do |segment_id, table|
             case table
-            when Stupidedi::Parser::ConstraintTable::Shallowest,
-                 Stupidedi::Parser::ConstraintTable::Deepest
+            when Stupidedi::Parser::ConstraintTable::Shallowest
               segment_tok =
                 mksegment_tok(@reader.segment_dict, segment_id, @elements[segment_id], nil)
 
@@ -365,7 +364,7 @@ module Stupidedi
           builder.GS(*gs_elements)
           builder.ST(*st_elements)
 
-          new(builder.machine, builder.reader, isa_elements, gs_elements, st_elements)
+          new(builder.machine, builder, isa_elements, gs_elements, st_elements)
         end
 
         def mkconfig(definition, functional_group_def, isa11, gs01, gs08, st01)

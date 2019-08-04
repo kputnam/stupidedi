@@ -174,7 +174,7 @@ module Stupidedi
       # The concatenation of the result is equal to the original argument.
       #
       # @example
-      #   "abba".split(//).group_seq(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
+      #   "yabba".split(//).group_seq(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
       #
       # @return [[Array]]
       def runs(&block)

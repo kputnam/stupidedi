@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Stupidedi
   module TransactionSets
     autoload :Builder,        "stupidedi/transaction_sets/builder"

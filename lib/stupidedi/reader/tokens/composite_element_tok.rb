@@ -12,20 +12,16 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(component_toks, position, remainder)
-        @component_toks, @position, @remainder =
-          component_toks, position, remainder
+      def initialize(component_toks, position)
+        @component_toks, @position =
+          component_toks, position
       end
 
       # @return [CompositeElementTok]
       def copy(changes = {})
         CompositeElementTok.new \
           changes.fetch(:component_toks, @component_toks),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
       # :nocov:
@@ -33,10 +29,6 @@ module Stupidedi
         q.pp(:composite.cons(@component_toks))
       end
       # :nocov:
-
-      def repeated
-        RepeatedElementTok.new(self.cons, @position)
-      end
 
       def repeated?
         false
@@ -74,8 +66,8 @@ module Stupidedi
       #########################################################################
 
       # @return [CompositeElementTok]
-      def build(component_toks, position, remainder)
-        new(component_toks, position, remainder)
+      def build(component_toks, position)
+        new(component_toks, position)
       end
 
       # @endgroup

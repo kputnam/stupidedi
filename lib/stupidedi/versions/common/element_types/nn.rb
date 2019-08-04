@@ -286,8 +286,9 @@ module Stupidedi
               object#.copy(:usage => usage, :position => position)
             elsif object.blank?
               self::Empty.new(usage, position)
-            elsif object.is_a?(String)
+            elsif object.is_a?(String) or object.is_a?(Reader::StringPtr)
               # The number of fractional digits is implied by usage.precision
+              # STRINGPTR: to_d
               factor = 10 ** usage.definition.precision
               self::NonEmpty.new(object.to_d / factor, usage, position)
             else

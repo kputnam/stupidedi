@@ -53,7 +53,7 @@ module Stupidedi
       def push(zipper, parent, segment_tok, segment_use, config)
         # GS08: Version / Release / Industry Identifier Code
         gs08         = segment_tok.element_toks.at(7).try(:value)
-        gs08_version = gs08.try(:slice, 0, 6)
+        gs08_version = gs08.try(:slice, 0, 6).to_s
 
         # GS01: Functional Identifier Code
         gs01 = segment_tok.element_toks.at(0).try(:value)

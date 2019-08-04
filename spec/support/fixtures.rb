@@ -2,6 +2,7 @@ require "pathname"
 using Stupidedi::Refinements
 
 Fixtures = Class.new do
+
   def versions
     { "006020" => "SixtyTwenty",
       "005010" => "FiftyTen",
@@ -41,6 +42,10 @@ Fixtures = Class.new do
     File.open(File.join(@root, path), "rb", &:read)
   end
 
+  def position
+    @position ||= Struct.new(:name, :line, :column, :offset).include(Stupidedi::Reader::Position)
+  end
+
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
   def parse(path, config = nil)
     if path.is_a?(String)
@@ -51,7 +56,8 @@ Fixtures = Class.new do
       _, config, _ = mkconfig(*parts(path))
     end
 
-    Stupidedi::Parser.build(config).read(Stupidedi::Reader.build(read(path)))
+    tokenizer = Stupidedi::Reader.build(@root.join(path), position: position)
+    Stupidedi::Parser.build(config).read(tokenizer)
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
