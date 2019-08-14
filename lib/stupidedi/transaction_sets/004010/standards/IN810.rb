@@ -18,10 +18,9 @@ module Stupidedi
               s:: N2.use( 120, r::Optional,  d::RepeatCount.bounded(2)),
               s:: N3.use( 130, r::Optional,  d::RepeatCount.bounded(2)),
               s:: N4.use( 140, r::Optional,  d::RepeatCount.unbounded)
-              )
+              ),
 
-            s::ITD.use( 200, r::Optional, d::RepeatCount.unbounded),
-            s::REF.use( 210, r::Optional,  d::RepeatCount.unbounded)  
+            s::ITD.use( 200, r::Optional, d::RepeatCount.unbounded)  
 
           ), #end TableDef Header
 
@@ -31,7 +30,7 @@ module Stupidedi
               s::TXI.use( 20, r::Optional,  d::RepeatCount.bounded(10)),
 
               d::LoopDef.build("PID", d::RepeatCount.bounded(1000),
-                s::PID.use( 30, r::Optional, d::RepeatCount.bounded(1000))
+                s::PID.use( 30, r::Optional, d::RepeatCount.bounded(1))
                 ),
 
               s::REF.use( 40, r::Optional,  d::RepeatCount.unbounded)
@@ -43,10 +42,10 @@ module Stupidedi
             s::TXI.use( 20, r::Optional, d::RepeatCount.bounded(10)),
 
             d::LoopDef.build("SAC", d::RepeatCount.bounded(25),
-              s:: SAC.use( 30, r::Optional,  d::RepeatCount.unbounded)
+              s:: SAC.use( 30, r::Optional,  d::RepeatCount.bounded(1))
             ),
 
-            s:: CTT.use( 40, r::Optional, d::RepeatCount.bounded(10))
+            s:: CTT.use( 40, r::Optional, d::RepeatCount.bounded(10)),
             s:: SE.use( 50, r::Mandatory, d::RepeatCount.bounded(1))
           ) #end TableDef Summary
         ) #end of build

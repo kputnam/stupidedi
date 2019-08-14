@@ -64,12 +64,7 @@ module Stupidedi
               b::Element(e::Situational, "Description"),
               b::Element(e::Situational, "Day of Month"),
               b::Element(e::Situational, "Payment Method Code"),
-              b::Element(e::Situational, "Percent")),
-            b::Segment(210, s:: REF, "Reference Identification", r::Situational, d::RepeatCount.unbounded,
-              b::Element(e::Required,    "Reference Identification Qualifier"),
-              b::Element(e::Situational, "Reference Identification"),
-              b::Element(e::Situational, "Description"),
-              b::Element(e::Situational, "Description"))
+              b::Element(e::Situational, "Percent"))
           ), #end TableDef HEADING
 
           d::TableDef.header("Detail",
@@ -114,7 +109,7 @@ module Stupidedi
                 b::Element(e::Situational, "Assigned Identification")
               ),
               d::LoopDef.build("PID", d::RepeatCount.bounded(1000),
-                b::Segment(30, s::PID, "Product/Item Description", r::Situational, d::RepeatCount.bounded(1000),
+                b::Segment(30, s::PID, "Product/Item Description", r::Situational, d::RepeatCount.bounded(1),
                  b::Element(e::Situational, "Item Description Type"),
                  b::Element(e::Situational, "Process Characteristic Code"),
                  b::Element(e::Situational, "Agency Qualifier Code"),
@@ -154,7 +149,7 @@ module Stupidedi
                 b::Element(e::Situational, "Assigned Identification")
               ),
             d::LoopDef.build("SAC", d::RepeatCount.bounded(25),
-              b::Segment(30, s::SAC, "Service, Promotion, Allowance, or Charge Information", r::Situational, d::RepeatCount.unbounded,
+              b::Segment(30, s::SAC, "Service, Promotion, Allowance, or Charge Information", r::Situational, d::RepeatCount.bounded(1),
                  b::Element(e::Situational, "Allowance or Charge Indicator"),
                  b::Element(e::Situational, "Service, Promotion, Allowance, or Charge Code"),
                  b::Element(e::Situational, "Agency Qualifier Code"),
