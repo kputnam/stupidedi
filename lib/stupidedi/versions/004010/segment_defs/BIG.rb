@@ -14,12 +14,12 @@ module Stupidedi
           e::E76.simple_use(r::Mandatory,  s::RepeatCount.bounded(1)),
           e::E32.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
           e::E324.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-          e::E324.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
-          e::E324.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-          e::E324.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-          e::E324.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-          e::E324.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
-          e::E324.simple_use(r::Optional,   s::RepeatCount.bounded(1)))
+          e::E328.simple_use(r::Optional,  s::RepeatCount.bounded(1)),
+          e::E1716.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+          e::E640.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+          e::E353.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+          e::E306.simple_use(r::Optional,   s::RepeatCount.bounded(1)),
+          e::E76.simple_use(r::Optional,   s::RepeatCount.bounded(1)))
       end
     end
   end
