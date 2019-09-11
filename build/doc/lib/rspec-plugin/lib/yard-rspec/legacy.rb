@@ -2,7 +2,7 @@ class LegacyRSpecDescribeHandler < YARD::Handlers::Ruby::Legacy::Base
   # @todo deal with rspec metadata hash params
   MATCH = /\Adescribe\s+(.+?)\s+(?:do|\{)/
   handles MATCH
-  
+
   def process
     describes = statement.tokens.to_s[MATCH, 1].gsub(/["']/, '')
 
@@ -42,7 +42,7 @@ class LegacyRSpecItHandler < YARD::Handlers::Ruby::Legacy::Base
 
   handles MATCH
   handles /\A(?:its?|specify)\s+(?:do|\{)/
-  
+
   def process
     return unless owner.is_a?(Hash)
     return unless owner[:describes]

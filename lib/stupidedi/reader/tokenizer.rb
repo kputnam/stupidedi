@@ -21,6 +21,9 @@ module Stupidedi
       # @return [SegmentDict]
       attr_accessor :segment_dict
 
+      VALID_SEPARATOR   = /[^[:alnum:] ]/u
+      VALID_SEGMENT_ID  = /\A[A-Z][A-Z0-9]{1,2}\Z/u
+
       # @param input [Input]
       def initialize(input, separators, segment_dict, switcher, switcher_)
         # Make a separate switch for _read_component_element so building a
@@ -31,12 +34,6 @@ module Stupidedi
         @i = "I".encode(@input.encoding).freeze
         @s = "S".encode(@input.encoding).freeze
         @a = "A".encode(@input.encoding).freeze
-
-        #@bad_separator = /[a-zA-Z0-9 ]/.freeze            # TODO: encode
-        #@segment_id    = /\A[A-Z][A-Z0-9]{1,2}\Z/.freeze  # TODO: encode
-
-        @bad_separator = /[[:alnum:][:space]]/u
-        @segment_id    = /\A[A-Z][A-Z0-9]{1,2}\Z/u
       end
 
       # @yield  [Tokens::SegmentTok | Tokens::IgnoredTok]
@@ -180,38 +177,38 @@ module Stupidedi
           i = input.index(@i, offset)
 
           # There's no I in the rest of the input, so it's all ignored
-          return eof("ISA", input.position_at(offset)) if i.nil?
+          #return eof("ISA", input.position_at(offset)) if i.nil?
+          return eof("ISA", input.position) if i.nil?
 
           # In the next iteration, search for "I" begins right after this one
           offset = i+1
 
-          s = input.index(@s, i+1)
+          # Skip to the next character
+          s = input.min_graphic_index(i+1)
 
-          # There's no S in the rest of the input, so it's all ignored
-          return eof("ISA", input.position_at(i)) if s.nil?
+          #return eof("ISA", input.position_at(i)) unless input.defined_at?(s)
+          return eof("ISA", input.position) unless input.defined_at?(s)
 
-          # There's something between I..S but it's not a control character
-          next if s > i+1 and input[i+1, s-i-1].min_graphic_index > i+1
+          # The character after this "I" is not "S"
+          next unless input[s, 1] == @s
 
-          a = input.index(@a, s+1)
+          a = input.min_graphic_index(s+1)
 
-          # There's no A in the rest of the input, so it's all ignored
-          return eof("ISA", input.position_at(i)) if a.nil?
+          #return eof("ISA", input.position_at(i)) unless input.defined_at?(a)
+          return eof("ISA", input.position) unless input.defined_at?(a)
 
-          # There's something between S..A but it's not a control character
-          next if a > s+1 and input[s+1, a-s-1].min_graphic_index > s+1
-
-          # Needed to perform the extra validation below
-          a = input.min_graphic_index(a)
+          # The character after this "S" is not "A"
+          next unless input[a, 1] == @a
 
           # The next character determines the element separator. If it's an
           # alphanumeric or space, we assume this is not the start of an ISA
           # segment. Perhaps a word like "L[ISA] " or "D[ISA]RRAY"
-          next if not input.defined_at?(a+1) or input.at(a+1).match?(@bad_separator)
+          next unless input.defined_at?(a+1) and input[a+1].match?(VALID_SEPARATOR)
 
           # Success, ignore everything before "I", resume parsing after "A".
           yield Tokens::IgnoredTok.new(input.take(i), input.position) if block_given?
 
+          # First character of input will be the element separator
           return done(:ISA, input.position_at(i), input.drop!(a+1))
         end
 
@@ -235,21 +232,22 @@ module Stupidedi
           element.value
         end
 
-        # We have to assume the last (16th) element is fixed-length because
-        # it is not terminated by an element separator. First we will skip
-        # past control characters, then read the next character.
-        offset = input.min_graphic_index(1)
-        return eof("ISA16", input.position) unless input.defined_at?(offset)
-        element_toks << Tokens::SimpleElementTok.build(input.at(offset), input.position_at(offset))
+        # The next two characters define ISA16 (this is the component separator,
+        # at least as early as version 00304) and the segment terminator. Both
+        # can have control characters as values, so we don't skip ahead here.
+        us = input.at(1)
+        return eof("ISA16", input.position_at(1)) if us.nil?
+        return expected("component separator in ISA16, found %s" % us.inspect,
+          input.position_at(1)) unless us.match?(VALID_SEPARATOR)
+        element_toks << Tokens::SimpleElementTok.build(input.at(1), input.position)
 
-        # The character immediately after ISA16 is defined to be the
-        # segment terminator. The separator could be a control character,
-        # e.g. \n, because we do not skip past them here.
-        return eof("segment terminator for ISA", input.position_at(offset)) \
-          unless input.defined_at?(offset + 1)
+        tr = input.at(2)
+        return eof("segment terminator for ISA", input.position_at(2)) if tr.nil?
+        return expected("segment terminator after ISA16, found %s" % tr.inspect,
+          input.position_at(2)) unless tr.match?(VALID_SEPARATOR)
 
-        @separators.segment = input.at(offset + 1)
-        done(element_toks, nil, input.drop!(offset + 2))
+        @separators.segment = tr
+        done(element_toks, nil, input.drop!(3))
       end
 
       # Works similarly to `_next_isa_segment_id`, except the result is the
@@ -292,9 +290,9 @@ module Stupidedi
         segment_id = buffer.to_s
 
         return expected("segment identifier, found %s" % segment_id.inspect,
-          start_pos) unless segment_id.match?(@segment_id)
+          start_pos) unless segment_id.match?(VALID_SEGMENT_ID)
 
-        return done(segment_id.to_sym, start_pos, input.lstrip_nongraphic(offset))
+        return done(segment_id.to_sym, start_pos, input.drop(offset))#.lstrip_nongraphic(offset)#
       end
 
       # @param input          should be positioned on an element separator: "NM1[*].."

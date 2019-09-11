@@ -34,15 +34,4 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = ">= 2.0.0"
   s.required_rubygems_version = ">= 2.5.0"
   s.requirements              # << ""
-
-  # Development dependencies
-  s.add_development_dependency "irb"#                       "~> 1.0"
-  s.add_development_dependency "rake",                      "~> 12.3"
-  s.add_development_dependency "rspec",                     "~> 3.8"
-  s.add_development_dependency "rspec-collection_matchers"# " "
-  s.add_development_dependency "simplecov"#                 ""
-  s.add_development_dependency "simplecov-inline-html"#     ""        # requires ruby 2.4+
-  s.add_development_dependency "stackprof",                 "~> 0.2"
-  s.add_development_dependency "benchmark-ips"#             ""
-  s.add_development_dependency "memory_profiler"#           ""        # requires ruby 2.3+
 end

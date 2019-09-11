@@ -42,8 +42,8 @@ Fixtures = Class.new do
   end
 
   # @return [String]
-  def read(path)
-    filepath(path).open("rb", &:read)
+  def read(path, *args)
+    filepath(path).open(*args, &:read)
   end
 
   def position
@@ -51,7 +51,7 @@ Fixtures = Class.new do
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
-  def parse(path, config = nil)
+  def parse(path, config:nil, encoding:nil)
     if path.is_a?(String)
       path = Pathname.new(path)
     end
@@ -60,13 +60,13 @@ Fixtures = Class.new do
       _, config, _ = mkconfig(*parts(path))
     end
 
-    tokenizer = Stupidedi::Reader.build(filepath(path), position: position)
+    tokenizer = Stupidedi::Reader.build(filepath(path), position: position, encoding: encoding)
     Stupidedi::Parser.build(config).read(tokenizer)
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
-  def parse!(path, config = nil)
-    machine, result = parse(path, config)
+  def parse!(path, *args)
+    machine, result = parse(path, *args)
 
     if result.fatal?
       result.explain{|msg| raise Stupidedi::Exceptions::ParseError, "#{msg} at #{result.position.inspect}" }

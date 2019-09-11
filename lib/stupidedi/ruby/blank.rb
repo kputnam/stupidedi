@@ -44,11 +44,11 @@ module Stupidedi
       #   100.blank?      #=> false
       #
       def blank?
-        false
+        respond_to?(:empty?) and empty?
       end
 
       def present?
-        true
+        not blank?
       end
     end
   end

@@ -49,15 +49,15 @@ end
 
 describe "Object#bind" do
   it "provides an alternative syntax to local variables and parethesized expressions" do
-    expect(1.bind{|a| a + 2 } * 3).to be == ((1 + 2) * 3)
+    expect(1.then{|a| a + 2 } * 3).to be == ((1 + 2) * 3)
   end
 
   it "provides an alternative syntax to local variables and parethesized expressions" do
-    expect(1.bind{|a| (a + 2).bind{|b| b * 3 }}).to be == ((1 + 2) * 3)
+    expect(1.then{|a| (a + 2).then{|b| b * 3 }}).to be == ((1 + 2) * 3)
   end
 
   it "provides an alternative syntax to local variables and parethesized expressions" do
-    expect(1.bind{|a| a.bind{|b| b + 2 }.bind{|c| c * 3 }}).to be == ((1 + 2) * 3)
+    expect(1.then{|a| a.then{|b| b + 2 }.then{|c| c * 3 }}).to be == ((1 + 2) * 3)
   end
 end
 

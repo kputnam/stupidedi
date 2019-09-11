@@ -9,13 +9,14 @@ before_install:
     else
       gem update --system;
       gem install bundler;
+      bundle install;
       bundle update --bundler;
     fi
 
 os:
   - osx
   - linux
-  - windows
+  # windows
 
 rvm:
   # 2.0.0

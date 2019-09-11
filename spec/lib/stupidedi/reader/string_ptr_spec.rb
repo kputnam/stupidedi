@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 # encoding: utf-8
 describe Stupidedi::Reader::StringPtr do
+
+  def pointer(s)
+    Stupidedi::Reader::Pointer.build(s)
+  end
+
   let(:lower) { "abcdefghijklmnopqrstuvwxyz abcdefghijklmnOPQRSTUVWXYZ" }
   let(:upper) { "ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNopqrstuvwxyz" }
 
-  let(:lower_ptr) { Stupidedi::Reader::Pointer.build(lower.dup) }
-  let(:upper_ptr) { Stupidedi::Reader::Pointer.build(upper.dup) }
+  # NOTE: Ruby 2.2 and lower don't support frozen string literals. This is
+  # important for StringPtr, because if StringPtr#storage is not frozen, it
+  # is assumed destructive updates are safe. However, some tests below will
+  # fail due to destructive updates.
+  let(:upper_ptr) { pointer(upper.freeze) }
+  let(:lower_ptr) { pointer(lower.freeze) }
 
   describe "#to_s" do
     it "is called implicitly" do
@@ -82,25 +91,25 @@ describe Stupidedi::Reader::StringPtr do
       it "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(0) << "defghi"
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       it "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(3) << "ghi"
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       it "is zero-copy when possible" do
         result = lower_ptr << upper_ptr.take(3)
         expect(result).to         eq(lower + "ABC")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       it "allocates new string otherwise" do
         result = lower_ptr.drop(3).take(3) << "xyz"
         expect(result).to             eq("defxyz")
-        expect(result.storage).to_not eql(lower_ptr.storage)
+        expect(result.storage).to_not equal(lower_ptr.storage)
       end
     end
 
@@ -108,19 +117,19 @@ describe Stupidedi::Reader::StringPtr do
       it "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(3) << lower_ptr.drop(6).take(3)
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       todo "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(3) << lower_ptr.drop(33).take(3)
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       todo "is zero-copy when possible" do
         result = lower_ptr.drop(15).take(3) << upper_ptr.drop(45).take(3)
         expect(result).to         eq("pqrstu")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
     end
   end
@@ -130,13 +139,13 @@ describe Stupidedi::Reader::StringPtr do
       it "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(0) + "defghi"
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       it "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(3) + "ghi"
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       it "is zero-copy when possible" do
@@ -156,19 +165,19 @@ describe Stupidedi::Reader::StringPtr do
       it "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(3) + lower_ptr.drop(6).take(3)
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       todo "is zero-copy when possible" do
         result = lower_ptr.drop(3).take(3) + lower_ptr.drop(33).take(3)
         expect(result).to         eq("defghi")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
 
       todo "is zero-copy when possible" do
         result = lower_ptr.drop(15).take(3) + upper_ptr.drop(45).take(3)
         expect(result).to         eq("pqrstu")
-        expect(result.storage).to eql(lower_ptr.storage)
+        expect(result.storage).to equal(lower_ptr.storage)
       end
     end
   end
@@ -307,17 +316,17 @@ describe Stupidedi::Reader::StringPtr do
 
     context "when string doesn't end with whitespace" do
       it "returns self" do
-        expect(lower_ptr.rstrip).to eql(lower_ptr)
+        expect(lower_ptr.rstrip).to equal(lower_ptr)
       end
     end
 
     context "when string ends with whitespace" do
       it "is zero-copy" do
         expect(sb.rstrip).to eq("  abc")
-        expect(sb.rstrip.storage).to eql(sb.storage)
+        expect(sb.rstrip.storage).to eq(sb.storage)
 
         expect(mb.rstrip).to eq("  💃🏽🕺🏻")
-        expect(mb.rstrip.storage).to eql(mb.storage)
+        expect(mb.rstrip.storage).to eq(mb.storage)
       end
     end
   end
@@ -326,20 +335,48 @@ describe Stupidedi::Reader::StringPtr do
     let(:sb) { Stupidedi::Reader::Pointer.build("  abc  ") }
     let(:mb) { Stupidedi::Reader::Pointer.build("  💃🏽🕺🏻  ") }
 
-    context "when string doesn't end with whitespace" do
+    context "when string doesn't begin with whitespace" do
       it "returns self" do
-        expect(lower_ptr.rstrip).to eql(lower_ptr)
+        expect(lower_ptr.lstrip).to equal(lower_ptr)
       end
     end
 
     context "when string ends with whitespace" do
       it "is zero-copy" do
         expect(sb.lstrip).to eq("abc  ")
-        expect(sb.lstrip.storage).to eql(sb.storage)
+        expect(sb.lstrip.storage).to equal(sb.storage)
 
         expect(mb.lstrip).to eq("💃🏽🕺🏻  ")
-        expect(mb.lstrip.storage).to eql(mb.storage)
+        expect(mb.lstrip.storage).to equal(mb.storage)
       end
     end
+  end
+
+  describe "#min_graphic_index" do
+    context "when string begins with a graphic character" do
+      specify { expect(pointer(" abc ").min_graphic_index(0)).to eq(0) }
+      specify { expect(pointer(" abc ").min_graphic_index(1)).to eq(1) }
+      specify { expect(pointer("  💃🏽🕺🏻  ").min_graphic_index(0)).to eq(0) }
+      specify { expect(pointer("  💃🏽🕺🏻  ").min_graphic_index(1)).to eq(1) }
+    end
+
+    context "when string doesn't begin with a graphic character" do
+      specify { expect(pointer("\r\nabc ").min_graphic_index(0)).to eq(2) }
+      specify { expect(pointer("\r\nabc ").min_graphic_index(1)).to eq(2) }
+      specify { expect(pointer("\r\n 💃🏽🕺🏻  ").min_graphic_index(0)).to eq(2) }
+      specify { expect(pointer("\r\n 💃🏽🕺🏻  ").min_graphic_index(1)).to eq(2) }
+    end
+
+    context "when string doesn't contain a graphic character" do
+      specify { expect(pointer("").min_graphic_index(0)).to eq(0) }
+      specify { expect(pointer("\r\n").min_graphic_index(0)).to eq(2) }
+      specify { expect(pointer("abc\r\n").min_graphic_index(3)).to eq(5) }
+    end
+  end
+
+  describe "#min_whitespace_index" do
+  end
+
+  describe "#max_whitespace_index" do
   end
 end

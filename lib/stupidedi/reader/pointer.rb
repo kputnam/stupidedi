@@ -327,6 +327,14 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
+      # Constructs a new Pointer depending on what type of object is passed.
+      # 
+      # NOTE: Pointer operations can potentially destrucively modify the given
+      # object, but if it is `#frozen?`, a copy will be made before the update.
+      # If you are accessing or modifying the object outside of the Pointer API
+      # unexpected results might occur. To avoid this, either provide a copy
+      # with `#dup` or freeze the object first with `#freeze`.
+      # 
       def build(object)
         case object
         when String

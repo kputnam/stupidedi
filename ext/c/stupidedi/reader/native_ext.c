@@ -1,8 +1,14 @@
-#include "extconf.h"
 #include "ruby.h"
 #include "ruby/encoding.h"
 #include "codepoints.h"
 #include <stdbool.h>
+
+/* Note:
+ *
+ * documentation and specifications:
+ *    https://github.com/ruby/ruby/blob/master/spec/ruby/optional/capi/string_spec.rb
+ *    https://github.com/ruby/ruby/blob/master/spec/ruby/optional/capi/encoding_spec.rb
+ */
 
 extern VALUE rb_str_length(VALUE str);
 
@@ -18,6 +24,7 @@ extern VALUE rb_str_length(VALUE str);
 #endif
 #endif
 
+/*
 static int ENCIDX_CP850 = -1;
 static int ENCIDX_CP852 = -1;
 static int ENCIDX_CP855 = -1;
@@ -36,13 +43,10 @@ static int ENCIDX_IBM864 = -1;
 static int ENCIDX_IBM865 = -1;
 static int ENCIDX_IBM866 = -1;
 static int ENCIDX_IBM869 = -1;
+*/
+
+static int ENCIDX_US_ASCII = -1;
 static int ENCIDX_ISO_8859_1 = -1;
-static int ENCIDX_ISO_8859_10 = -1;
-static int ENCIDX_ISO_8859_11 = -1;
-static int ENCIDX_ISO_8859_13 = -1;
-static int ENCIDX_ISO_8859_14 = -1;
-static int ENCIDX_ISO_8859_15 = -1;
-static int ENCIDX_ISO_8859_16 = -1;
 static int ENCIDX_ISO_8859_2 = -1;
 static int ENCIDX_ISO_8859_3 = -1;
 static int ENCIDX_ISO_8859_4 = -1;
@@ -51,15 +55,26 @@ static int ENCIDX_ISO_8859_6 = -1;
 static int ENCIDX_ISO_8859_7 = -1;
 static int ENCIDX_ISO_8859_8 = -1;
 static int ENCIDX_ISO_8859_9 = -1;
+static int ENCIDX_ISO_8859_10 = -1;
+static int ENCIDX_ISO_8859_11 = -1;
+static int ENCIDX_ISO_8859_13 = -1;
+static int ENCIDX_ISO_8859_14 = -1;
+static int ENCIDX_ISO_8859_15 = -1;
+static int ENCIDX_ISO_8859_16 = -1;
+
+/*
 static int ENCIDX_TIS_620 = -1;
-static int ENCIDX_US_ASCII = -1;
 static int ENCIDX_UTF_16 = -1;
 static int ENCIDX_UTF_16BE = -1;
 static int ENCIDX_UTF_16LE = -1;
 static int ENCIDX_UTF_32 = -1;
 static int ENCIDX_UTF_32BE = -1;
 static int ENCIDX_UTF_32LE = -1;
+*/
+
 static int ENCIDX_UTF_8 = -1;
+
+/*
 static int ENCIDX_Windows_1250 = -1;
 static int ENCIDX_Windows_1251 = -1;
 static int ENCIDX_Windows_1252 = -1;
@@ -69,36 +84,60 @@ static int ENCIDX_Windows_1255 = -1;
 static int ENCIDX_Windows_1256 = -1;
 static int ENCIDX_Windows_1257 = -1;
 static int ENCIDX_Windows_1258 = -1;
+*/
 
-static unsigned char encset[32];
+/* This keeps track of which which encidx-es we have seen */
+static unsigned char encdb[32];
 
 static inline bool
 bitmask_test(unsigned char *bitmask, int bitidx, int bitmask_size) {
-    if (bitidx < 0 || bitidx >= 8*bitmask_size)
+    int last = (bitmask_size - 1) / 8;
+    int  idx = last - bitidx / 8;
+    int  bit = bitidx % 8;
+
+    if (bitidx < 0 || bitmask_size <= bitidx)
         return false;
 
-    int  n = bitmask_size - 1 - bitidx / 8;
-    int  m = bitidx % 8;
-    char c = *(bitmask + n);
-    return (c >> m) & 0x1;
+    return (bitmask[idx] >> bit) & 0x1;
 }
 
 static void
 bitmask_set(unsigned char *bitmask, int bitidx, int bitmask_size) {
-    if (bitidx < 0 || bitidx >= 8*bitmask_size)
+    int last = (bitmask_size - 1) / 8;
+    int  idx = last - bitidx / 8;
+    int  bit = bitidx % 8;
+
+    if (bitidx < 0 || bitmask_size <= bitidx)
         return;
 
-    int  n = bitmask_size - 1 - bitidx / 8;
-    int  m = bitidx % 8;
-    bitmask[n] |= (1 << m);
+    bitmask[idx] |= (1 << bit);
 }
 
+/*
+ * Ideally we could write a switch(encidx) { ... } statement to handle each
+ * character encoding, but Ruby's public API doesn't export the encidx constants
+ * for each encoding.
+ *
+ * It does let us lookup the name for a given encidx, but testing the encoding
+ * name (encname == "US-ASCII") against multiple possible matches is expensive.
+ * Especially when the test is repeated for every input character, to determine
+ * if it's whitespace or a non-graphical character.
+ *
+ * This scheme only requires comparing the encoding name against known encodings
+ * on the first time we see this particular encidx; from then on, other code
+ * can just compare encidx with ENCIDX_xx.
+ *
+ * NOTE: We could enumerate all encodings in Init_native_ext and assigned each
+ * constant all at once, but many encodings are marked "autoload" and
+ * enumerating them that way would eagerly load many encodings that won't
+ * actually be used.
+ */
 static bool
-update_encidx(int encidx) {
+update_encdb(int encidx) {
     const char *encname;
 
     /* We've already assigned the encidx to an ENCIDX_xx global */
-    if (bitmask_test(encset, encidx, 32))
+    if (bitmask_test(encdb, encidx, 256))
         return false;
 
     /* Otherwise, match the "NAME" to the ENCIDX_NAME constant */
@@ -106,10 +145,13 @@ update_encidx(int encidx) {
 
 #define TESTENC(name, id) if (0 == strncmp(name,encname,64)) {\
   ENCIDX_##id = encidx;\
-  bitmask_set(encset, encidx, 32); \
+  bitmask_set(encdb, encidx, 256); \
   return true; \
 }
 
+    TESTENC("US-ASCII",         US_ASCII)
+
+    /*
     TESTENC("CP850",            CP850)  // US-ASCII+ https://en.wikipedia.org/wiki/Code_page_850
     TESTENC("CP852",            CP852)  // CP850+ https://en.wikipedia.org/wiki/Code_page_852
     TESTENC("CP855",            CP855)  // CP850+ https://en.wikipedia.org/wiki/Code_page_855
@@ -129,6 +171,7 @@ update_encidx(int encidx) {
     TESTENC("IBM865",           IBM865) // IBM437+ https://en.wikipedia.org/wiki/Code_page_865
     TESTENC("IBM866",           IBM866) // IBM437+ https://en.wikipedia.org/wiki/Code_page_866
     TESTENC("IBM869",           IBM869) // IBM437+ https://en.wikipedia.org/wiki/Code_page_869
+    */
 
     TESTENC("ISO-8859-1",       ISO_8859_1)
     TESTENC("ISO-8859-2",       ISO_8859_2)
@@ -145,18 +188,23 @@ update_encidx(int encidx) {
     TESTENC("ISO-8859-14",      ISO_8859_14)
     TESTENC("ISO-8859-15",      ISO_8859_15)
     TESTENC("ISO-8859-16",      ISO_8859_16)
-    TESTENC("TIS-620",          TIS_620) // https://en.wikipedia.org/wiki/ISO/IEC_8859-11
 
-    TESTENC("US-ASCII",         US_ASCII)
+    /*
+    TESTENC("TIS-620",          TIS_620) // https://en.wikipedia.org/wiki/ISO/IEC_8859-11
+    */
 
     TESTENC("UTF-8",            UTF_8)
+
+    /*
     TESTENC("UTF-16",           UTF_16)
     TESTENC("UTF-16BE",         UTF_16BE)
     TESTENC("UTF-16LE",         UTF_16LE)
     TESTENC("UTF-32",           UTF_32)
     TESTENC("UTF-32BE",         UTF_32BE)
     TESTENC("UTF-32LE",         UTF_32LE)
+    */
 
+    /*
     TESTENC("Windows-1250",     Windows_1250)
     TESTENC("Windows-1251",     Windows_1251)
     TESTENC("Windows-1252",     Windows_1252)
@@ -166,6 +214,7 @@ update_encidx(int encidx) {
     TESTENC("Windows-1256",     Windows_1256)
     TESTENC("Windows-1257",     Windows_1257)
     TESTENC("Windows-1258",     Windows_1258)
+    */
 
     return false;
 }
@@ -185,10 +234,10 @@ update_encidx(int encidx) {
  * This means for around 700 intervals (the number of codepoint ranges that
  * cover Unicode graphical characters), about 10 iterations are required.
  *
- * TODO: Using an optimal binary tree might reduce the number of iterations,
- * but would increase the complexity -- using a contiguous region of memory
- * like an array provides good data locality, but some scheme would be needed
- * to represent a non-complete binary tree. The best approach might be to
+ * TODO: Using an optimal binary tree might reduce the average number of
+ * iterations, but it would increase the complexity -- using a contiguous region
+ * of memory like an array provides good data locality, but some scheme would be
+ * needed to represent a non-complete binary tree. The best approach might be to
  * allocate a contiguous block of memory and then use a linked representation.
  * But reducing most queries from 10 iterations to 1-2 might not improve much?
  */
@@ -198,13 +247,12 @@ has_matching_interval(const unsigned int point,
                       const unsigned int *max,
                       const unsigned int size)
 {
-    int k, l, r, z;
-    l = 0;
-    r = size - 1;
-    z = -1;
+    int k,
+        l = 0,
+        r = size - 1,
+        z = -1;
 
-    for (l = 0, r = size - 1, z = -1;
-         k = (l + r) / 2, l <= r;) {
+    for (l = 0, r = size - 1, z = -1; k = (l + r) / 2, l <= r;) {
         if (UNLIKELY(point > min[k]))
             l = (z = k) + 1;  // descend right
         else if (point < min[k])
@@ -222,18 +270,18 @@ has_matching_interval(const unsigned int point,
     return false;
 }
 
-// https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt
-
 static inline bool
 is_whitespace(const unsigned int c, const int encidx)
 {
     if (encidx == ENCIDX_US_ASCII)
-        return (c >= 0x08 && c <= 0x0d) || c == 0x20;
+        return (0x08 <= c && c <= 0x0d) || c == 0x20;
+
     else if (encidx == ENCIDX_UTF_8)
         return has_matching_interval(c,
             ucs_codepoints_whitespace_min,
             ucs_codepoints_whitespace_max,
             ucs_codepoints_whitespace_count);
+
     else if (encidx == ENCIDX_ISO_8859_1  ||
              encidx == ENCIDX_ISO_8859_2  ||
              encidx == ENCIDX_ISO_8859_3  ||
@@ -249,11 +297,11 @@ is_whitespace(const unsigned int c, const int encidx)
              encidx == ENCIDX_ISO_8859_14 ||
              encidx == ENCIDX_ISO_8859_15 ||
              encidx == ENCIDX_ISO_8859_16)
-        return (c >= 0x08 && c <= 0x0d) || c == 0x20 || c == 0xa0;
+        return (0x08 <= c && c <= 0x0d) || c == 0x20 || c == 0xa0;
 
     /* If nothing matched, it could be the first time we've seen this encoding
      * and we haven't assigned ENCIDX_XX yet. If so, update and retry */
-    if (update_encidx(encidx))
+    if (update_encdb(encidx))
         return is_whitespace(c, encidx);
 
     rb_raise(rb_eEncCompatError, "unsupported encoding: %s",
@@ -262,9 +310,6 @@ is_whitespace(const unsigned int c, const int encidx)
 
 /*
  * Letters, punctuation, symbols, ... have a visual representation
- *
- * Not control character   (e.g., <= 0x1f in US-ASCII)
- * Not undefined character (e.g.,  > 0x7f in US-ASCII)
  */
 static bool
 is_graphic(const unsigned int c, const int encidx)
@@ -279,7 +324,7 @@ is_graphic(const unsigned int c, const int encidx)
             ucs_codepoints_graphic_count);
 
     if (encidx == ENCIDX_US_ASCII)
-        return (c >= 0x20 && c <= 0x7f);
+        return (0x20 <= c && c <= 0x7f);
 
     if (encidx == ENCIDX_ISO_8859_1  ||
         encidx == ENCIDX_ISO_8859_2  ||
@@ -296,44 +341,40 @@ is_graphic(const unsigned int c, const int encidx)
         encidx == ENCIDX_ISO_8859_14 ||
         encidx == ENCIDX_ISO_8859_15 ||
         encidx == ENCIDX_ISO_8859_16)
-        if (c >= 0x20 && c <= 0x7f)
+        if (0x20 <= c && c <= 0x7f)
             return true;
 
-    if      (encidx == ENCIDX_ISO_8859_1)  return bitmask_test(iso_8859_graphic[0],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_2)  return bitmask_test(iso_8859_graphic[1],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_3)  return bitmask_test(iso_8859_graphic[2],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_4)  return bitmask_test(iso_8859_graphic[3],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_5)  return bitmask_test(iso_8859_graphic[4],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_6)  return bitmask_test(iso_8859_graphic[5],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_7)  return bitmask_test(iso_8859_graphic[6],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_8)  return bitmask_test(iso_8859_graphic[7],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_9)  return bitmask_test(iso_8859_graphic[8],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_10) return bitmask_test(iso_8859_graphic[9],  c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_11) return bitmask_test(iso_8859_graphic[10], c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_13) return bitmask_test(iso_8859_graphic[12], c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_14) return bitmask_test(iso_8859_graphic[13], c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_15) return bitmask_test(iso_8859_graphic[14], c-0xa0, 12);
-    else if (encidx == ENCIDX_ISO_8859_16) return bitmask_test(iso_8859_graphic[15], c-0xa0, 12);
+    if      (encidx == ENCIDX_ISO_8859_1)  return bitmask_test(iso_8859_graphic[0],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_2)  return bitmask_test(iso_8859_graphic[1],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_3)  return bitmask_test(iso_8859_graphic[2],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_4)  return bitmask_test(iso_8859_graphic[3],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_5)  return bitmask_test(iso_8859_graphic[4],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_6)  return bitmask_test(iso_8859_graphic[5],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_7)  return bitmask_test(iso_8859_graphic[6],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_8)  return bitmask_test(iso_8859_graphic[7],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_9)  return bitmask_test(iso_8859_graphic[8],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_10) return bitmask_test(iso_8859_graphic[9],  c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_11) return bitmask_test(iso_8859_graphic[10], c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_13) return bitmask_test(iso_8859_graphic[12], c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_14) return bitmask_test(iso_8859_graphic[13], c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_15) return bitmask_test(iso_8859_graphic[14], c-0xa0, 96);
+    else if (encidx == ENCIDX_ISO_8859_16) return bitmask_test(iso_8859_graphic[15], c-0xa0, 96);
 
     /* If nothing matched, it could be the first time we've seen this encoding
      * and we haven't assigned ENCIDX_XX yet. If so, update and retry */
-    if (update_encidx(encidx))
+    if (update_encdb(encidx))
         return is_graphic(c, encidx);
 
     rb_raise(rb_eEncCompatError, "unsupported encoding: %s",
         rb_enc_name(rb_enc_from_index(encidx)));
 }
 
+/* True if each character in the string is a single byte */
 static inline bool
 single_byte_optimizable(VALUE str, rb_encoding *enc)
 {
-    if (ENC_CODERANGE(str) == ENC_CODERANGE_7BIT)
-        return true;
-
-    if (rb_enc_mbmaxlen(enc) == 1)
-        return true;
-
-    return false;
+    return ENC_CODERANGE(str) == ENC_CODERANGE_7BIT
+        || rb_enc_mbmaxlen(enc) == 1;
 }
 
 /*
@@ -371,20 +412,21 @@ rb_substr_eq_p(VALUE self, VALUE str1, VALUE _index1, VALUE str2, VALUE _index2,
             rb_enc_name(rb_enc_get(str1)),
             rb_enc_name(rb_enc_get(str2)));
 
-    if (idx1 + len > rb_str_strlen(str1)) return Qnil;
-    if (idx2 + len > rb_str_strlen(str2)) return Qnil;
+    if (rb_str_strlen(str1) < idx1 + len) return Qnil;
+    if (rb_str_strlen(str2) < idx2 + len) return Qnil;
 
-    /* Number of bytes in str[idx, len], calculated by rb_str_subpos */
     long len1, len2;
     len1 = len;
     len2 = len;
 
+    /* Request len _characters_ str[idx,len]. Then len1, len2 will be number of _bytes_ */
     const char *ptr1, *ptr2;
     ptr1 = rb_str_subpos(str1, idx1, &len1);
     ptr2 = rb_str_subpos(str2, idx2, &len2);
 
-    if (ptr1 == NULL || ptr2 == NULL) return Qnil;
+    /* Number of bytes in str1[idx1,len] isn't equal to str2[idx2,len] */
     if (len1 != len2 || len1 < len)   return Qnil;
+    if (ptr1 == NULL || ptr2 == NULL) return Qnil;
     return (memcmp(ptr1, ptr2, len) == 0) ? Qtrue : Qfalse;
 }
 
@@ -402,35 +444,33 @@ rb_graphic_p(int argc, const VALUE *argv, VALUE self)
 {
     rb_check_arity(argc, 1, 2);
 
-    Check_Type(argv[0],    T_STRING);
+    Check_Type(argv[0], T_STRING);
     if (argc == 2)
         Check_Type(argv[1], T_FIXNUM);
 
-    VALUE str;
-    int encidx, len_;
     long len, idx;
+    len = 1;
+    idx = argc < 2 ? 0 : FIX2LONG(argv[1]);
+
+    VALUE str = argv[0];
     char *ptr, *end;
+    end = RSTRING_END(str);
+    ptr = rb_str_subpos(str, idx, &len); /* address of str[idx], len is .bytesize */
+
+    int encidx, len_;
+    encidx = ENCODING_GET(str);
+
     rb_encoding *enc;
     unsigned int chr;
 
-    str = argv[0];
-    ptr = RSTRING_PTR(str);
-    end = RSTRING_END(str);
-    encidx = ENCODING_GET(str);
-    idx = (argc == 1) ? 0 : FIX2LONG(argv[1]);
-    len = 1;
-
-    // Skip ahead to idx
-    ptr = rb_str_subpos(str, idx, &len);
-
-    if (!ptr || !len || ptr >= end)
+    if (ptr == NULL || len == 0)
         return Qnil;
 
-    enc  = rb_enc_from_index(encidx);
     len_ = 1;
+    enc  = rb_enc_from_index(encidx);
     chr  = rb_enc_codepoint_len(ptr, end, &len_, enc);
 
-    if (!len_)
+    if (len_ == 0)
         return Qnil;
 
     return is_graphic(chr, encidx) ? Qtrue : Qfalse;
@@ -450,123 +490,213 @@ rb_whitespace_p(int argc, const VALUE *argv, VALUE self)
 {
     rb_check_arity(argc, 1, 2);
 
-    Check_Type(argv[0],    T_STRING);
+    Check_Type(argv[0], T_STRING);
     if (argc == 2)
         Check_Type(argv[1], T_FIXNUM);
 
-    VALUE str;
-    int encidx, len_;
     long len, idx;
+    len = 1;
+    idx = argc < 2 ? 0 : FIX2LONG(argv[1]);
+
+    VALUE str = argv[0];
     char *ptr, *end;
+    end = RSTRING_END(str);
+    ptr = rb_str_subpos(str, idx, &len); /* address of str[idx], len is .bytesize */
+
+    int encidx, len_;
+    encidx = ENCODING_GET(str);
+
     rb_encoding *enc;
     unsigned int chr;
 
-    str = argv[0];
-    ptr = RSTRING_PTR(str);
-    end = RSTRING_END(str);
-    encidx = ENCODING_GET(str);
-    idx = (argc == 1) ? 0 : FIX2LONG(argv[1]);
-    len = 1;
-
-    // Skip ahead to idx
-    ptr = rb_str_subpos(str, idx, &len);
-
-    if (!ptr || !len || ptr >= end)
+    if (ptr == NULL || len == 0)
         return Qnil;
 
-    enc  = rb_enc_from_index(encidx);
     len_ = 1;
+    enc  = rb_enc_from_index(encidx);
     chr  = rb_enc_codepoint_len(ptr, end, &len_, enc);
 
-    if (!len_)
+    if (len_ == 0)
         return Qnil;
 
-    return is_whitespace(chr, encidx) ? Qtrue : Qfalse;
+    return is_graphic(chr, encidx) ? Qtrue : Qfalse;
 }
 
 /*
  * call-seq:
  *   min_graphic_index(string, index=0) -> int
  *
- * Description
+ * Returns the smallest index (starting from the given index) that is a graphic
+ * character. If no graphic characters occur after the given index, then the
+ * string length is returned.
  *
  *   min_graphic_index("\r\nabc ")     #=> 2
  *   min_graphic_index("\r\nabc ", 2)  #=> 2
  *   min_graphic_index("\r\nabc ", 5)  #=> 5
+ *   min_graphic_index("\r\n")         #=> 2
  */
 static VALUE
-rb_min_graphic_index(int argc, const VALUE *argv, VALUE self) {
+rb_min_graphic_index(int argc, const VALUE *argv, VALUE self)
+{
     rb_check_arity(argc, 1, 2);
 
     Check_Type(argv[0], T_STRING);
-    if (argc == 2)
+    if (argc >= 2)
         Check_Type(argv[1], T_FIXNUM);
 
     VALUE str;
-    int encidx;
-    long idx;
-    char *ptr, *end;
-    rb_encoding *enc;
-
     str = argv[0];
+
+    char *ptr, *end;
     end = RSTRING_END(str);
     ptr = RSTRING_PTR(str);
-    idx = (argc == 1) ? 0 : FIX2LONG(argv[1]);
 
+    long idx;
+    idx = argc < 2 ? 0 : FIX2LONG(argv[1]);
+
+    int encidx;
     encidx = ENCODING_GET(str);
+
+    rb_encoding *enc;
     enc = rb_enc_from_index(encidx);
 
-    if (idx < 0)  rb_raise(rb_eArgError, "index cannot be negative");
-    if (!ptr)     return INT2FIX(0);
+    if (idx < 0)      rb_raise(rb_eArgError, "index cannot be negative");
+    if (ptr == NULL)  return INT2FIX(0);
 
     if (single_byte_optimizable(str, enc)) {
-        ptr += idx;
+        ptr += idx; /* address of str[idx] */
 
-        if (ptr >= end)
+        if (end <= ptr)
             return LONG2NUM(RSTRING_LEN(str));
 
         while (ptr < end && !is_graphic(*ptr, encidx))
             ptr ++;
 
         return LONG2NUM(ptr - RSTRING_PTR(str));
-    }
+    } else {
+      long len_, count;
+      len_  = 1;
+      count = 0;
 
-    int len;
-    long len_, count;
-    unsigned int c;
+      /* address of str[idx], len is .bytesize */
+      ptr = rb_str_subpos(str, idx, &len_);
+      if (ptr == NULL) return rb_str_length(str);
 
-    len_  = 1;
-    count = 0;
-    ptr   = rb_str_subpos(str, idx, &len_);
+      unsigned int c;
+      int len;
 
-    if (!ptr || ptr >= end)
-        return rb_str_length(str);
+      while (ptr < end) {
+        c = rb_enc_codepoint_len(ptr, end, &len, enc);
 
-    while (ptr < end
-      && (c = rb_enc_codepoint_len(ptr, end, &len, enc)) != 0
-      && !is_graphic(c, encidx)) {
+        if (is_graphic(c, encidx))
+            break;
+
         ptr   += len;
         count ++;
-    }
+      }
 
-    return LONG2NUM(count);
+      return LONG2NUM(idx + count);
+    }
 }
 
 /*
  * call-seq:
  *   min_nonspace_index(string, index=0) -> int
  *
- * Description
+ * Returns the smallest index (starting from the given index) that is not
+ * whitespace. If non-whitespace does not occur before the given index, then
+ * the length of the string is returned.
+ *
+ *   s[min_nonspace_index(s)..-1]    == s.lstrip
+ *   s[min_nonspace_index(s, n)..-1] == s[n..-1].lstrip
  *
  *   min_nonspace_index(" abc ")     #=> 1
  *   min_nonspace_index(" abc ", 2)  #=> 2
  *   min_nonspace_index(" abc ", 4)  #=> 5
- *
- *   s[min_nonspace_index(s)..-1]    == s.lstrip
- *   s[min_nonspace_index(s, n)..-1] == s[n..-1].lstrip
+ *   min_nonspace_index("\r\n ")     #=> 4
  */
 static VALUE
 rb_min_nonspace_index(int argc, const VALUE *argv, VALUE self)
+{
+    rb_check_arity(argc, 1, 2);
+
+    Check_Type(argv[0], T_STRING);
+    if (argc >= 2)
+        Check_Type(argv[1], T_FIXNUM);
+
+    VALUE str;
+    str = argv[0];
+
+    char *ptr, *end;
+    end = RSTRING_END(str);
+    ptr = RSTRING_PTR(str);
+
+    long idx;
+    idx = argc < 2 ? 0 : FIX2LONG(argv[1]);
+
+    int encidx;
+    encidx = ENCODING_GET(str);
+
+    rb_encoding *enc;
+    enc = rb_enc_from_index(encidx);
+
+    if (idx < 0)      rb_raise(rb_eArgError, "index cannot be negative");
+    if (ptr == NULL)  return INT2FIX(0);
+
+    if (single_byte_optimizable(str, enc)) {
+        ptr += idx; /* address of str[idx] */
+
+        if (end <= ptr)
+            return LONG2NUM(RSTRING_LEN(str));
+
+        while (ptr < end && is_whitespace(*ptr, encidx))
+            ptr ++;
+
+        return LONG2NUM(ptr - RSTRING_PTR(str));
+    } else {
+      long len_, count;
+      len_  = 1;
+      count = 0;
+
+      /* address of str[idx], len is .bytesize */
+      ptr = rb_str_subpos(str, idx, &len_);
+      if (ptr == NULL) return rb_str_length(str);
+
+      unsigned int c;
+      int len;
+
+      while (ptr < end) {
+        c = rb_enc_codepoint_len(ptr, end, &len, enc);
+
+        if (!is_whitespace(c, encidx))
+            break;
+
+        ptr   += len;
+        count ++;
+      }
+
+      return LONG2NUM(idx + count);
+    }
+}
+
+/*
+ * call-seq:
+ *   max_nonspace_index(string, index=0) -> int
+ *
+ * Returns the largest index (starting from the given index) that is not
+ * whitespace. If non-whitespace does not occur before the given index, then
+ * the starting position is returned.
+ *
+ *   s[0, max_nonspace_index(s)]    == s.rstrip
+ *   s[0, max_nonspace_index(s, n)] == s[0..n].rstrip
+ *
+ *   max_nonspace_index(" abc ")     #=> 3
+ *   max_nonspace_index(" abc ", 2)  #=> 2
+ *   max_nonspace_index(" abc ", 0)  #=> 0
+ *   max_nonspace_index(" abc ", 0)  #=> 0
+ */
+static VALUE
+rb_max_nonspace_index(int argc, VALUE *argv, VALUE self)
 {
     rb_check_arity(argc, 1, 2);
 
@@ -575,77 +705,60 @@ rb_min_nonspace_index(int argc, const VALUE *argv, VALUE self)
         Check_Type(argv[1], T_FIXNUM);
 
     VALUE str;
-    int encidx;
-    long idx;
-    char *ptr, *end;
-    rb_encoding *enc;
-
     str = argv[0];
-    end = RSTRING_END(str);
-    ptr = RSTRING_PTR(str);
-    idx = (argc == 1) ? 0 : FIX2LONG(argv[1]);
 
+    char *start, *end, *ptr;
+    start = RSTRING_PTR(str);
+    end   = RSTRING_END(str);
+
+    long idx;
+    idx = argc < 2 ? rb_str_strlen(str) : FIX2LONG(argv[1]);
+
+    int encidx;
     encidx = ENCODING_GET(str);
+
+    rb_encoding *enc;
     enc = rb_enc_from_index(encidx);
 
-    if (idx < 0)  rb_raise(rb_eArgError, "index cannot be negative");
-    if (!ptr)     return INT2FIX(0);
+    if (idx < 0)        rb_raise(rb_eArgError, "index cannot be negative");
+    if (start == NULL)  return INT2FIX(0);
 
     if (single_byte_optimizable(str, enc)) {
-        ptr += idx;
+        ptr = start + idx; /* address of str[idx] */
 
-        if (ptr >= end)
-            return LONG2NUM(RSTRING_LEN(str));
+        if (end <= ptr)
+            ptr = end - 1; /* start at the last character */
 
-        while (ptr < end && is_whitespace(*ptr, encidx))
-            ptr ++;
+        while (start <= ptr && is_whitespace(*ptr, encidx))
+            ptr --;
 
-        return LONG2NUM(ptr - RSTRING_PTR(str));
-    }
+        return LONG2NUM(ptr - start);
+    } else {
+      long len, count;
+      len   = 1;
+      count = 0;
 
-    int len;
-    long len_, count;
-    unsigned int c;
+        /* address of str[idx], len is .bytesize */
+      ptr = rb_str_subpos(str, idx, &len);
+      if (ptr == NULL) return rb_str_length(str);
 
-    len_  = 1;
-    count = 0;
-    ptr   = rb_str_subpos(str, idx, &len_);
+      while (ptr != NULL && ptr < end) {
+        unsigned int c = rb_enc_codepoint(ptr, end, enc);
 
-    if (!ptr || ptr >= end)
-        return rb_str_length(str);
+        if (!is_whitespace(c, encidx))
+            break;
 
-    while (ptr < end
-      && (c = rb_enc_codepoint_len(ptr, end, &len, enc)) != 0
-      && is_whitespace(c, encidx)) {
-        ptr   += len;
+        ptr = rb_enc_prev_char(start, ptr, end, enc);
         count ++;
+      }
+
+      return LONG2NUM(idx - count);
     }
-
-    return LONG2NUM(count);
 }
-
-/*
- * call-seq:
- *   max_nonspace_index(string, index=0) -> int
- *
- * Description
- *
- *   max_nonspace_index(" abc ")     #=> 3
- *   max_nonspace_index(" abc ", 2)  #=> 2
- *   max_nonspace_index(" abc ", 0)  #=> 0
- *
- *   s[0, max_nonspace_index(s)]    == s.rstrip
- *   s[0, max_nonspace_index(s, n)] == s[0..n].rstrip
- */
-static VALUE
-rb_max_nonspace_index() {
-    return Qnil;
-}
-
 
 void Init_native_ext(void) {
     for (int n = 0; n < 32; n++)
-        encset[n] = 0;
+        encdb[n] = 0;
 
     VALUE rb_mStupidedi = rb_define_module("Stupidedi");
     VALUE rb_mReader    = rb_define_module_under(rb_mStupidedi, "Reader");

@@ -4,15 +4,14 @@ RSpec::Expectations.configuration.warn_about_potential_false_positives = true
 RSpec::Support::ObjectFormatter.
   default_instance.max_formatted_output_length = 1.0/0.0
 
+# Silence warning about redefining `description_separator`
+verbose, $VERBOSE = $VERBOSE, nil
+
 # Print this
 #   Stupidedi::Parser::Generation: loops, when too many are present, raises an exception
 #
 # Instead of this
 #   Stupidedi::Parser::Generation loops when too many are present raises an exception
-#
-# Silence warning about redefining `description_separator`
-verbose, $VERBOSE = $VERBOSE, nil
-
 module RSpec
   module Core
     module Metadata

@@ -3,9 +3,7 @@ describe "Stupidedi::TransactionSets" do
                    Fixtures.failing +
                    Fixtures.skipping).group_by{|_, name, _| name }]
 
-  checked = Set.new
-
-  Definitions.transaction_set_defs.each do |name, value, error|
+  def self.mk_fixture_spec(name, value, error, fixtures, checked = Set.new)
     describe name.split("::").slice(2..-1).join("::") do
       it "is well-defined", :schema do
         expect(Object.const_get(name)).to be_a(Stupidedi::Schema::TransactionSetDef)
@@ -49,7 +47,7 @@ describe "Stupidedi::TransactionSets" do
             when %r{/pass/}
               it "can parse '#{path}'", :fixtures do
                 expect(lambda do
-                  machine, = Fixtures.parse!(path, config)
+                  machine, = Fixtures.parse!(path, config: config)
                   builder  = Stupidedi::Parser::BuilderDsl.new(nil)
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
@@ -59,7 +57,7 @@ describe "Stupidedi::TransactionSets" do
             when %r{/skip/}
               pending "can parse '#{path}'", :fixtures do
                 expect(lambda do
-                  machine, = Fixtures.parse!(path, config)
+                  machine, = Fixtures.parse!(path, config: config)
                   builder  = Stupidedi::Parser::BuilderDsl.new(nil)
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
@@ -69,7 +67,7 @@ describe "Stupidedi::TransactionSets" do
             when %r{/fail/}
               it "cannot parse '#{path}'", :fixtures do
                 expect(lambda do
-                  machine, = Fixtures.parse!(path, config)
+                  machine, = Fixtures.parse!(path, config: config)
                   builder  = Stupidedi::Parser::BuilderDsl.new(nil)
                   machine.__send__(:roots).each do |z|
                     builder.__send__(:critique, z.node.zipper, "", true)
@@ -84,13 +82,17 @@ describe "Stupidedi::TransactionSets" do
         it "can parse examples", :fixtures do
           parts   = name.split("::").slice(2..-1)
           version = Fixtures.versions.invert.fetch(parts[0], parts[0])
-          name    = parts[2..3].join(" ")
+          _name   = parts[2..3].join(" ")
 
-          pending "No fixtures were found in 'spec/fixtures/#{version}/#{name}/{pass,fail}'"
+          pending "No fixtures were found in 'spec/fixtures/#{version}/#{_name}/{pass,fail}'"
           fail
         end
       end
     end
+  end
+
+  Definitions.transaction_set_defs.each do |name, value, error|
+    mk_fixture_spec(name.dup, value, error, fixtures)
   end
 
 end

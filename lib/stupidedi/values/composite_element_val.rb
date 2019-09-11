@@ -62,8 +62,8 @@ module Stupidedi
       # @return [void]
       # :nocov:
       def pretty_print(q)
-        id = definition.bind do |d|
-          "[#{d.id}: #{d.name}]".bind do |s|
+        id = definition.then do |d|
+          "[#{d.id}: #{d.name}]".then do |s|
             if usage.forbidden?
               ansi.forbidden(s)
             elsif usage.required?

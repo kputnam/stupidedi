@@ -271,7 +271,7 @@ module Definitions
   def ANA(*args) AN_(SegmentDefs::ANA, *args) end
   def ANB(*args) AN_(SegmentDefs::ANB, *args) end
   def AN_(segment_def, changes = {})
-    segment_def.bind do |s|
+    segment_def.then do |s|
       return s if changes.empty?
       s.copy(:element_uses => s.element_uses.map{|u| u.copy(:definition => u.definition.copy(changes))})
     end
@@ -281,11 +281,11 @@ module Definitions
   def IDB(*args) ID_(SegmentDefs::IDB, *args) end
   def IDC(*args) ID_(SegmentDefs::IDC, *args) end
   def ID_(segment_def, allowed_values = [], name = nil)
-    segment_def.bind do |s|
+    segment_def.then do |s|
       return s if allowed_values.empty? and name.nil?
       s.copy(
         :name         => name || s.name,
-        :element_uses => s.element_uses.head.bind do |u|
+        :element_uses => s.element_uses.head.then do |u|
           u.copy(:allowed_values => u.allowed_values.replace(allowed_values))
         end.cons(s.element_uses.tail))
     end
@@ -295,13 +295,13 @@ module Definitions
   def COJ(*args) CO_(SegmentDefs::COJ, *args) end
   def COK(*args) CO_(SegmentDefs::COK, *args) end
   def CO_(segment_def, allowed_values = [], name = nil)
-    segment_def.bind do |s|
+    segment_def.then do |s|
       return s if allowed_values.empty? and name.nil?
       s.copy(
         :name         => name || s.name,
-        :element_uses => s.element_uses.head.bind do |u|
-          u.copy(:definition => u.definition.bind do |c|
-            c.copy(:component_uses => c.component_uses.head.bind do |x|
+        :element_uses => s.element_uses.head.then do |u|
+          u.copy(:definition => u.definition.then do |c|
+            c.copy(:component_uses => c.component_uses.head.then do |x|
               x.copy(:allowed_values => x.allowed_values.replace(allowed_values))
             end.cons(c.component_uses.tail))
           end)

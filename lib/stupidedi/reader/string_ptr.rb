@@ -8,7 +8,7 @@ module Stupidedi
       # @group Conversion Methods
       #########################################################################
 
-      def_delegators :@storage, :encoding, type: String
+      def_delegators :@storage, :encoding, :valid_encoding?, type: String
       def_delegators :reify, :to_sym, :intern, :to_i, type: String
       def_delegators :reify, :to_d
 
@@ -412,33 +412,51 @@ module Stupidedi
       # @group Formatting
       #########################################################################
 
-      # Returns a new StringPtr with trailing spaces removed; "\000", "\t",
-      # "\n", "\v", "\f", "\r", " "
+      # Returns a new StringPtr with leading whitespace removed.
       #
       # @return [StringPtr]
-      def rstrip(offset = @length - 1)
-        raise ArgumentError, "offset must be non-negative" if offset < 0
-        offset  = @length if offset > @length
-        offset_ = NativeExt.max_nonspace_index(@storage, @offset + offset)
+      def lstrip(start_at = 0)
+        raise ArgumentError, "start_at must be non-negative" if start_at < 0
+        start_at  = @length - 1 if start_at >= @length
+        index     = NativeExt.min_nonspace_index(@storage, @offset + start_at)
 
-        length = (offset_ || @offset - 1) - @offset + 1
-        take(length)
-      end
-
-      # Returns a new StringPtr with leading spaces removed; "\000", "\t",
-      # "\n", "\v", "\f", "\r", " "
-      #
-      # @return [StringPtr]
-      def lstrip(offset = 0)
-        raise ArgumentError, "offset must be non-negative" if offset < 0
-        offset  = @length if offset > @length
-        offset_ = NativeExt.min_nonspace_index(@storage, @offset + offset)
-
-        if offset_ > @offset + @length
+        if index <= @offset
           self
         else
-          drop(offset_ - @offset)
+          #      01234o--> 
+          # ----[xxxxx  ]--------
+          #
+          # In this picture, min_nonspace_index(o=5) would return an index
+          # that's past the end of this substring, but `drop` will prevent
+          # any problem because it does a boundary check.
+          drop(index  - @offset)
         end
+      end
+
+      # Returns a new StringPtr with trailing whitespace removed.
+      #
+      # @return [StringPtr]
+      def rstrip(start_at = @length - 1)
+        raise ArgumentError, "start_at must be non-negative" if start_at < 0
+        start_at  = @length - 1 if start_at >= @length
+        index     = NativeExt.max_nonspace_index(@storage, @offset + start_at)
+
+        if index >= @offset + @length - 1
+          self
+        else
+          #    <---o3456
+          # ----[   xxxx]--------
+          #
+          # In this picture, max_nonspace_index(o=2) would return an index
+          # that's before the start of this substring, which would result
+          # in take(n < 0) which throws an exception. This prevents that:
+          index = @offset - 1 if index < @offset
+          take(index + 1 - @offset)
+        end
+      end
+
+      def strip
+        lstrip.rstrip
       end
 
       # @group Miscellaneous

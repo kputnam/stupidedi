@@ -27,7 +27,7 @@ module NavigationMatchers
 
     def matches?(value)
       @filter_tok, @syntax_val = extract_arguments(value)
-      matches   = @syntax_val.segment? 
+      matches   = @syntax_val.segment?
       matches &&= !(@segment_id.present? and filter?(@filter_tok, @syntax_val))
     end
 

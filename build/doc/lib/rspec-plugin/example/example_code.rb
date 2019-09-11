@@ -8,9 +8,9 @@ class String
   end
 end
 
-# 
+#
 # Specs
-# 
+#
 describe String do
   describe '#pig_latin' do
     it "should be a pig!" do

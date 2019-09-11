@@ -1,6 +1,6 @@
 class RSpecDescribeHandler < YARD::Handlers::Ruby::Base
   handles method_call(:describe)
-  
+
   def process
     return unless statement.last.last
 
@@ -51,7 +51,7 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
   handles method_call(:it)
   handles method_call(:its)
   handles method_call(:specify)
-  
+
   def process
     return unless owner.is_a?(Hash)
     return unless owner[:describes]

@@ -34,6 +34,7 @@ describe Stupidedi::Reader::Tokenizer do
     it "yields each ISA segment and skips everything between" do
       ignored = Stupidedi::Tokens::IgnoredTok
       segment = Stupidedi::Tokens::SegmentTok
+
       expect(tokens.map(&:class)).to eq([ignored, segment,
                                          ignored, segment,
                                          ignored, segment])

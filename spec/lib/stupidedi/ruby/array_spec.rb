@@ -4,7 +4,7 @@ describe Array do
   # Creates an array with length `2*n-1` containing elements
   # 1, 2, 3, ..., n-1, n, n-1, ..., 3, 2, 1
   def mkarray(n)
-    (1..n).to_a.bind{|as| as.concat(as.init.reverse) }
+    (1..n).to_a.then{|as| as.concat(as.init.reverse) }
   end
 
   describe "#sum" do
@@ -23,7 +23,7 @@ describe Array do
       end
 
       context "with a block" do
-        it "is same as element.bind" do
+        it "is same as element.then" do
           expect{|b| [-10].sum(&b) }.to yield_with_args(-10)
           expect([-10].sum(&:abs)).to eq(10)
         end

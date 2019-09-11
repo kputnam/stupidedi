@@ -79,7 +79,7 @@ module Stupidedi
             # :nocov:
             def inspect
               id = definition.try do |d|
-                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -157,7 +157,7 @@ module Stupidedi
             # :nocov:
             def inspect
               id = definition.try do |d|
-                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -217,7 +217,7 @@ module Stupidedi
             # :nocov:
             def inspect
               id = definition.try do |d|
-                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
+                "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?

@@ -38,8 +38,10 @@ module Stupidedi
       #   nil.bind{|a| a.nil? }   #=> true
       #   100.bind{|a| a.nil? }   #=> false
       #
-      def bind
-        yield self
+      unless nil.respond_to?(:then)
+        def then
+          yield self
+        end
       end
 
       # @endgroup

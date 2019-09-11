@@ -1,7 +1,20 @@
+# NOTE: If you want change RSpec options for your own use, please create .rspec
+# and add CLI options to it. That file is in .gitignore, so it will remain out
+# of the repository. For starters, you probably want to add:
+#
+#   --require spec_helper
+#   --require stupidedi
+
 Bundler.setup(:default, :development, :test)
+
 begin
   require "simplecov"
 rescue LoadError
+end
+
+begin
+  require "memory_profiler"
+rescue
 end
 
 require "stupidedi"
@@ -11,6 +24,7 @@ require "pp"
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each(&method(:require))
 
 RSpec.configure do |config|
+  config.include(MemMatchers)
   config.include(EitherMatchers)
   config.include(Quickcheck::Macro)
   config.extend(RSpecHelpers)
@@ -19,31 +33,21 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  # Use either of these to run only specs marked 'focus: true'
-  #   config.filter_run(:focus  => true)
-  #   $ rspec -r spec_helper -t focus
-
-  # Use either of these to run only randomized specs:
-  #   config.filter_run(:random => true)
-  #   $ rspec -r spec_helper -t random
-
-  # When a randomized test fails, it will print a seed value you
-  # can use to repeat the test with the same generated inputs:
-  #   srand 44182052595481443184625304627718313206
-
-  # Use either of these to skip running randomized specs:
-  #   config.filter_run_excluding(:random => true)
-  #   $ rspec -r spec_helper -t ~random
-
   # Skip platform-specific examples unless our platform matches (exclude non-matches)
-  config.filter_run_excluding(ruby: lambda{|expected| /^#{expected}/ !~ RUBY_VERSION })
+  config.filter_run_excluding(ruby: lambda do |expected|
+    case expected
+    when String
+      /^#{expected}/ !~ RUBY_VERSION
+    when Proc
+      not expected.call(RUBY_VERSION)
+    end
+  end)
+
   config.filter_run_excluding(:skip)
-  #onfig.filter_run_including(:focus)
+  config.filter_run_excluding(:mem) unless defined? MemoryProfiler
 
-  config.profile_examples     = true
-  #onfig.fail_fast            = true
-  config.fail_if_no_examples  = true
-
-  # https://relishapp.com/rspec/rspec-core/v/3-8/docs/configuration/custom-deprecation-stream
-  # https://relishapp.com/rspec/rspec-core/v/3-8/docs/configuration/overriding-global-ordering
+  # This only applies if examples exist with :focus tag; then only :focus is
+  # run. You can mark examples with :focus by using "fdescribe", "fcontext",
+  # and "fit" instead of the normal RSpec syntax.
+  config.filter_run_when_matching(:focus)
 end

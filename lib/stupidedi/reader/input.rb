@@ -58,7 +58,7 @@ module Stupidedi
       end
 
       # Calculates the position at the given offset.
-      # 
+      #
       # @return [Position]
       def position_at(n)
         if @position.eql?(Position::NoPosition)
@@ -125,7 +125,12 @@ module Stupidedi
         elsif value.respond_to?(:read)
           position = args.last.delete(:position) if args.last.is_a?(Hash)
           path     = value.path if value.respond_to?(:path)
-          new(Pointer.build(value.read), (position || Position::NoPosition).build(path))
+          content  = value.read
+
+          # This will throw Encoding::InvalidByteSequenceErorr
+          content.encode("binary") unless content.valid_encoding?
+
+          new(content, (position || Position::NoPosition).build(path))
 
         else
           raise TypeError,
@@ -146,20 +151,28 @@ module Stupidedi
             args.last.delete(:position)
           end || Position::NoPosition
 
-        new(Pointer.build(File.read(path, *args)), position.build(path))
+        content = File.read(path, *args)
+
+        # This will throw Encoding::InvalidByteSequenceErorr
+        content.encode("binary") unless content.valid_encoding?
+
+        new(Pointer.build(content), position.build(path))
       end
 
       # @example
       #   Input.string(io.read)
       #   Input.string("...", position: Position::OffsetPosition)
       #
-      def string(value, *args)
+      def string(content, *args)
         position =
           if args.last.is_a?(Hash)
             args.last.delete(:position)
           end || Position::NoPosition
 
-        new(Pointer.build(value), position.build(nil))
+        # This will throw Encoding::InvalidByteSequenceErorr
+        content.encode("binary") unless content.valid_encoding?
+
+        new(Pointer.build(content), position.build(nil))
       end
 
       # @endgroup

@@ -1,4 +1,5 @@
 describe Stupidedi::Reader::Pointer do
+  using Stupidedi::Refinements
 
   let(:empty) { Stupidedi::Reader::Pointer.build([])        }
   let(:three) { Stupidedi::Reader::Pointer.build(%w(a b c)) }
@@ -17,12 +18,14 @@ describe Stupidedi::Reader::Pointer do
         expect(result).to eq(%w(a b c))
         expect(result).to be_a(Array)
         expect(result).to equal(three.storage)
+        expect(ignore.storage).to equal(three.storage)
       end
 
       it "returns a copy when asked" do
         ignore = shared
         result = three.reify(true)
         expect(result).to_not equal(three.storage)
+        expect(ignore.storage).to equal(three.storage)
       end
 
       it "returns a copy when needed" do
@@ -154,11 +157,11 @@ describe Stupidedi::Reader::Pointer do
       specify { expect(three[0...0]).to eq([]) }
       specify { expect(three[0..0]).to eq(%w(a)) }
       specify { expect(three[1..2]).to eq(%w(b c)) }
-      specify { expect(three[1..]).to eq(%w(b c)) }
-      specify { expect(three[1...]).to eq(%w(b c)) }
+      specify { expect(three[1..-1]).to eq(%w(b c)) }
+      specify { expect(three[1...-1]).to eq(%w(b)) }
       specify { expect(three[-3..-2]).to eq(%w(a b)) }
-      specify { expect(three[-4..]).to be_nil }
-      specify { expect(three[4..]).to be_nil }
+      specify { expect(three[-4..-1]).to be_nil }
+      specify { expect(three[4..-1]).to be_nil }
       specify { expect(three[2..9]).to eq(%w(c)) }
     end
 
