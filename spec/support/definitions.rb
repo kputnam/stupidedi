@@ -327,7 +327,7 @@ class << Definitions
   def transaction_set_defs(root = Stupidedi::TransactionSets)
     collect(root) do |name, value, error, visited, recurse|
       case error
-      when Stupidedi::Exceptions::InvalidSchemaError
+      when Stupidedi::Exceptions::InvalidSchemaError, Exception
         [[name, value, error]]
       when Exception
         error.backtrace.reject!{|x| x =~ %r{spec/}}

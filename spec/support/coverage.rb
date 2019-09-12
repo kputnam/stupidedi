@@ -17,7 +17,10 @@ lambda do |root|
     for child in namespace.constants
       value = namespace.const_get(child)
 
-      if value.is_a?(Module) and not history.include?(value)
+      if value.is_a?(Module) \
+          and not history.include?(value) \
+          and value.name !~ /Stupidedi::TransactionSets::.+::Standards/ \
+          and value.name !~ /Stupidedi::TransactionSets::.+::Implementations/
         recurse.call(value, recurse)
       end
     end

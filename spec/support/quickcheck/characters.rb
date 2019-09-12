@@ -5,8 +5,8 @@ class Quickcheck
       ALL   = (0..255).inject(""){|string, n| string << n }
 
       if ASCII.respond_to?(:encoding)
-        ASCII.force_encoding("ASCII")
-        ALL.force_encoding("BINARY")
+        ASCII.force_encoding("utf-8")
+        ALL.force_encoding("utf-8")
       end
 
       def of(regexp, set = ALL)

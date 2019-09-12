@@ -2,23 +2,48 @@
 # encoding: utf-8
 describe Stupidedi::Reader::StringPtr do
 
-  def pointer(s)
-    Stupidedi::Reader::Pointer.build(s)
+  def pointer(string)
+    Stupidedi::Reader::Pointer.build(string)
   end
 
-  let(:lower) { "abcdefghijklmnopqrstuvwxyz abcdefghijklmnOPQRSTUVWXYZ" }
-  let(:upper) { "ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNopqrstuvwxyz" }
+  def prefix(pointer)
+    pointer.storage[0, pointer.offset]
+  end
 
-  # NOTE: Ruby 2.2 and lower don't support frozen string literals. This is
-  # important for StringPtr, because if StringPtr#storage is not frozen, it
-  # is assumed destructive updates are safe. However, some tests below will
-  # fail due to destructive updates.
-  let(:upper_ptr) { pointer(upper.freeze) }
-  let(:lower_ptr) { pointer(lower.freeze) }
+  def suffix(pointer)
+    pointer.storage[pointer.offset + pointer.length..-1]
+  end
+
+  # Ruby < 2.3 doesn't support frozen string literals
+  let(:lower) { "abcdefghijklmnopqrstuvwxyz abcdefghijklmnOPQRSTUVWXYZ".freeze }
+  let(:upper) { "ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNopqrstuvwxyz".freeze }
+
+  # Ensure pointer is given a mutable String, because `#frozen?` is used by
+  # StringPtr to determine when zero-copy operations are safe to perform.
+  let(:lower_ptr) { pointer(String.new(lower)) }
+  let(:upper_ptr) { pointer(String.new(upper)) }
 
   describe "#to_s" do
     it "is called implicitly" do
       expect("-#{lower_ptr.take(3)}-").to eq("-abc-")
+    end
+
+    context "when storage is shared" do
+      allocation do
+        value  = lower_ptr.drop(10)
+        result = nil
+        expect{ result = value.to_str }.to allocate(String: 1)
+        expect(result).to_not be_frozen
+      end
+    end
+
+    context "when storage is not shared" do
+      allocation do
+        value  = lower_ptr
+        result = nil
+        expect { result = value.to_str }.to allocate(String: 1)
+        expect(result).to_not be_frozen
+      end
     end
   end
 
@@ -26,6 +51,24 @@ describe Stupidedi::Reader::StringPtr do
     it "is called implicitly" do
       comma = Stupidedi::Reader::Pointer.build(",")
       expect(%w(a b c).join(comma)).to eq("a,b,c")
+    end
+
+    context "when storage is shared" do
+      allocation do
+        value  = lower_ptr.drop(10)
+        result = nil
+        expect{ result = value.to_str }.to allocate(String: 1)
+        expect(result).to_not be_frozen
+      end
+    end
+
+    context "when storage is not shared" do
+      allocation do
+        value  = lower_ptr
+        result = nil
+        expect { result = value.to_str }.to allocate(String: 1)
+        expect(result).to_not be_frozen
+      end
     end
   end
 
@@ -57,6 +100,14 @@ describe Stupidedi::Reader::StringPtr do
       expect(lower_ptr).to_not eq(upper)
       expect(upper_ptr).to_not eq(lower)
     end
+
+    allocation do
+      value = lower_ptr
+      other = upper_ptr
+      expect { value == other }.to allocate(String: 0)
+      expect { value == value }.to allocate(String: 0)
+      expect { value == "zzz" }.to allocate(String: 0)
+    end
   end
 
   describe "=~" do
@@ -84,100 +135,299 @@ describe Stupidedi::Reader::StringPtr do
       expect(lower_ptr =~ /[$a]/).to eq(0)
       expect(lower_ptr =~ /[^a]/).to eq(1)
     end
-  end
 
-  describe "#<<" do
-    context "when argument is a string" do
-      it "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(0) << "defghi"
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
-      end
+    # Our backported implementation in Refinements allocates one MatchData
+    def cost_of_match?(ncalls)
+      unless "".respond_to?(:match?)
+        ncalls
+      end || 0
+    end
 
-      it "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(3) << "ghi"
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
-      end
-
-      it "is zero-copy when possible" do
-        result = lower_ptr << upper_ptr.take(3)
-        expect(result).to         eq(lower + "ABC")
-        expect(result.storage).to equal(lower_ptr.storage)
-      end
-
-      it "allocates new string otherwise" do
-        result = lower_ptr.drop(3).take(3) << "xyz"
-        expect(result).to             eq("defxyz")
-        expect(result.storage).to_not equal(lower_ptr.storage)
+    context "when pointer spans whole string" do
+      allocation do
+        value = lower_ptr
+        expect{ value =~ /z/ }.to allocate(String: 0, Array: 1, MatchData: 1)
       end
     end
 
-    context "when argument is a string pointer" do
-      it "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(3) << lower_ptr.drop(6).take(3)
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
+    context "when pointer starts at zero" do
+      context "and remaining string length < 1024" do
+        allocation do
+          value = lower_ptr.drop(5)
+          expect { value =~ /z/ }.to allocate(String: 1, Array: 1, MatchData: 1 + cost_of_match?(1))
+        end
       end
 
-      todo "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(3) << lower_ptr.drop(33).take(3)
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "and remaining string length > 1024" do
+        allocation do
+          value = (lower_ptr << "x" * 1024).drop(5)
+          expect { value =~ /z/ }.to allocate(String: 1, Array: 1, MatchData: 1)
+        end
+      end
+    end
+
+    context "when pointer ends at -1" do
+      context "and remaining string length < 1024" do
+        allocation do
+          value = lower_ptr.take(5)
+          expect { value =~ /z/ }.to allocate_at_most(String: 1, Array: 1, MatchData: 1 + cost_of_match?(1))
+        end
       end
 
-      todo "is zero-copy when possible" do
-        result = lower_ptr.drop(15).take(3) << upper_ptr.drop(45).take(3)
-        expect(result).to         eq("pqrstu")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "and remaining string length > 1024" do
+        allocation do
+          value = (lower_ptr << "x" * 1024).take(10)
+          expect { value =~ /z/ }.to allocate(String: 1, Array: 1)
+        end
+      end
+    end
+  end
+
+  describe "#<<" do
+    let(:a) { pointer("abcdefghi".dup) }
+
+    context "when argument is a string" do
+      context "when pointer suffix starts with argument" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = "gh"
+
+          # Precondition
+          expect(suffix(b)).to start_with(c)
+
+          expect{ b << c }.to allocate(String: 0)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("defgh")
+          expect(c).to eq("gh")
+        end
+      end
+
+      context "when argument is pointer suffix plus more" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = "ghijkl"
+
+          # Precondition
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+
+          expect{ b << c }.to allocate(String: 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("defghijkl")
+          expect(c).to eq("ghijkl")
+        end
+      end
+
+      context "when argument is not pointer suffix" do
+        context "when pointer isn't frozen" do
+          allocation do
+            b = "xxx"
+
+            # Precondition
+            expect(a.storage).to_not be_frozen
+
+            expect{ a << b }.to allocate(String: 0)
+            expect(a).to eq("abcdefghixxx")
+            expect(b).to eq("xxx")
+          end
+        end
+
+        context "when pointer is frozen" do
+          allocation do
+            b = a.take(6)
+            c = "xxx"
+
+            # Precondition
+            expect(a.storage).to be_frozen
+
+            expect{ b << c }.to allocate(String: 1)
+            expect(a).to eq("abcdefghi")
+            expect(b).to eq("abcdefxxx")
+            expect(c).to eq("xxx")
+          end
+        end
+      end
+    end
+
+    context "when argument is a pointer" do
+      context "when pointer suffix starts with argument" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = pointer("gh")
+
+          # Precondition
+          expect(suffix(b)).to start_with(c)
+
+          expect{ b << c }.to allocate(String: 0)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("defgh")
+          expect(c).to eq("gh")
+        end
+      end
+
+      context "when argument is pointer suffix plus more" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = pointer("ghijkl")
+
+          # Precondition
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+
+          expect{ b << c }.to allocate(String: 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("defghijkl")
+          expect(c).to eq("ghijkl")
+        end
+      end
+
+      context "when argument is not pointer suffix" do
+        context "when pointer isn't frozen" do
+          allocation do
+            b = pointer("xxx")
+
+            # Precondition
+            expect(a.storage).to_not be_frozen
+
+            expect{ a << b }.to allocate(String: 0)
+            expect(a).to eq("abcdefghixxx")
+            expect(b).to eq("xxx")
+          end
+        end
+
+        context "when pointer is frozen" do
+          allocation do
+            b = a.take(6)
+            c = pointer("xxx")
+
+            # Precondition
+            expect(a.storage).to be_frozen
+
+            expect{ b << c }.to allocate(String: 1)
+            expect(a).to eq("abcdefghi")
+            expect(b).to eq("abcdefxxx")
+            expect(c).to eq("xxx")
+          end
+        end
       end
     end
   end
 
   describe "#+" do
+    let(:a) { pointer("abcdefghi".dup) }
+
     context "when argument is a string" do
-      it "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(0) + "defghi"
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "when pointer suffix starts with argument" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = "gh"
+          d = nil
+
+          # Precondition
+          expect(suffix(b)).to start_with(c)
+
+          pending "Why does this allocate an Array?"
+          expect{ d = b + c }.to allocate(String: 0, a.class => 1)
+          expect(b).to eq("def")
+          expect(c).to eq("gh")
+          expect(d).to eq("defgh")
+          expect(d).to be_a(a.class)
+        end
       end
 
-      it "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(3) + "ghi"
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "when argument is pointer suffix plus more" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = "ghijkl"
+          d = nil
+
+          # Precondition
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+
+          expect{ d = b + c }.to allocate(String: 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("def")
+          expect(c).to eq("ghijkl")
+          expect(d).to eq("defghijkl")
+          expect(d).to be_a(String)
+        end
       end
 
-      it "is zero-copy when possible" do
-        result = lower_ptr + upper_ptr.take(3)
-        expect(result).to eq(lower + "ABC")
-        expect(result).to be_a(String)
-      end
+      context "when argument is not pointer suffix" do
+        allocation do
+          b = a.take(6)
+          c = "xxx"
+          d = nil
 
-      it "allocates new string otherwise" do
-        result = lower_ptr.drop(3).take(3) + "xyz"
-        expect(result).to eq("defxyz")
-        expect(result).to be_a(String)
+          # Precondition
+          expect(a.storage).to be_frozen
+
+          expect{ d = b + c }.to allocate(String: 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("abcdef")
+          expect(c).to eq("xxx")
+          expect(d).to eq("abcdefxxx")
+          expect(d).to be_a(String)
+        end
       end
     end
 
     context "when argument is a string pointer" do
-      it "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(3) + lower_ptr.drop(6).take(3)
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "when pointer suffix starts with argument" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = pointer("gh")
+          d = nil
+
+          # Precondition
+          expect(suffix(b)).to start_with(c)
+
+          pending "Why does this allocate an Array?"
+          expect{ d = b + c }.to allocate(String: 0, a.class => 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("def")
+          expect(c).to eq("gh")
+          expect(d).to eq("defgh")
+          expect(d).to be_a(a.class)
+        end
       end
 
-      todo "is zero-copy when possible" do
-        result = lower_ptr.drop(3).take(3) + lower_ptr.drop(33).take(3)
-        expect(result).to         eq("defghi")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "when argument is pointer suffix plus more" do
+        allocation do
+          b = a.drop(3).take(3)
+          c = pointer("ghijkl")
+          d = nil
+
+          # Precondition
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+
+          expect{ d = b + c }.to allocate(String: 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("def")
+          expect(c).to eq("ghijkl")
+          expect(d).to eq("defghijkl")
+          expect(d).to be_a(String)
+        end
       end
 
-      todo "is zero-copy when possible" do
-        result = lower_ptr.drop(15).take(3) + upper_ptr.drop(45).take(3)
-        expect(result).to         eq("pqrstu")
-        expect(result.storage).to equal(lower_ptr.storage)
+      context "when argument is not pointer suffix" do
+        allocation do
+          b = a.take(6)
+          c = pointer("xxx")
+          d = nil
+
+          # Precondition
+          expect(suffix(b)).to_not start_with(c)
+
+          expect{ d = b + c }.to allocate(String: 1)
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("abcdef")
+          expect(c).to eq("xxx")
+          expect(d).to eq("abcdefxxx")
+          expect(d).to be_a(String)
+        end
       end
     end
   end

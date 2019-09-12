@@ -13,6 +13,9 @@ before_install:
       bundle update --bundler;
     fi
 
+env:
+  - NOCOV=1
+
 os:
   - osx
   - linux

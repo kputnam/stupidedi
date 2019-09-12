@@ -155,10 +155,12 @@ module Stupidedi
           end
 
           @length == other.length and \
-            NativeExt.substr_eq?(@storage, @offset, other.storage, other.offset, other.length)
+            NativeExt.substr_eq?(@storage, @offset,
+                                 other.storage, other.offset, other.length)
         elsif other.is_a?(String)
           length == other.length and \
-            NativeExt.substr_eq?(@storage, @offset, other, 0, other.length)
+            NativeExt.substr_eq?(@storage, @offset,
+                                 other, 0, other.length)
         end
       end
 
@@ -190,7 +192,8 @@ module Stupidedi
         case other
         when String
           if offset + length <= @length and length <= other.length
-            NativeExt.substr_eq?(@storage, @offset + offset, other, offset_, length)
+            NativeExt.substr_eq?(@storage, @offset + offset,
+                                 other, offset_, length)
           end
         when StringPtr
           if length <= @length and length <= other.length
@@ -198,7 +201,8 @@ module Stupidedi
               # Other pointer starts at the same index and points to the same storage
               @length >= length
             else
-              NativeExt.substr_eq?(@storage, @offset + offset, other.storage, other.offset + offset_, length)
+              NativeExt.substr_eq?(@storage, @offset + offset,
+                                   other.storage, other.offset + offset_, length)
             end
           end
         else
@@ -285,127 +289,61 @@ module Stupidedi
       # @group Concatenation
       #########################################################################
 
-      # If two flyweights share the same storage and are contiguous (one ends
-      # where the other starts), then string concatenation can be optimized.
-      #
-      # In the case where the operand is a string and happens to be a prefix
-      # of @storage[@offset+@length..], then we can also simply extend the
-      # length without allocating another string.
-      #
-      # For example:
-      #   x = Pointer.build("abc xyz")
-      #   y = x.drop(0)
-      #
-      #   y << x.take(2)    # no allocation, returns self
-      #   y << "c x"        # no allocation, returns self
-      #   y << "mno"        # allocates a new String for @storage, returns self
-      #
       # @return [self]
       def <<(other)
         if other.is_a?(self.class)
-          if @storage.eql?(other.storage) and @offset + @length == other.offset
-            # allocations: 0 strings, 0 pointers
+          if (@storage.eql?(other.storage) and @offset + @length == other.offset) \
+          or NativeExt.substr_eq?(@storage, @offset + @length, other.storage, other.offset, other.length)
             @length += other.length
           elsif not @storage.frozen?
             # Surely no one will notice if we destructively update @storage
-            #   allocations: 1 string, 0 pointers
-            @storage << other.reify
+            @storage[@offset + @length, @storage.length - @offset - @length] = other
             @length  += other.length
           else
-            # Other flyweights are sharing our storage. We need to make our
-            # own copy now. Be sure `reify` gives back a copy, not the original.
-            #   allocations: 2 strings, 0 pointers
+            # Other pointers are sharing our storage. We need to make our own
+            # copy now. Be sure `reify` gives back a copy, not the original.
             @storage  = reify(true)
-            storage << other.reify
+            @storage << other.reify
             @length  += other.length
             @offset   = 0
           end
-
-        # NOTE: There doesn't seem to be a string comparison function in Ruby
-        # that allows the comparison to start a given offset. That means we'd
-        # have to allocate and copy from @storage a length of `other.length`.
-        #
-        #   @storage[@offset + @length, other.length] == other
-        #
-        # @storage.index(other, @offset + @length) == n doesn't allocate
-        # memory, but there is no way to abort the search early.
-        #
-        elsif @storage.length - @offset - @length >= other.length \
-          and @storage.index(other, @offset + @length) == @offset + @length
-          # allocations: 0 strings, 0 pointers
-          @length += other.length
-        elsif not @storage.frozen?
-          # Surely no one will notice if we destructively update @storage
-          #
-          # allocations: 0 strings, 0 pointers
-          @storage << other
-          @length  += other.length
         else
-          # Other flyweights are sharing our storage. We need to make our
-          # own copy now. Be sure `reify` gives back a copy, not the original.
-          #
-          # allocations: 1 string, 0 pointers
-          @storage  = reify(true)
-          @storage << other
-          @length  += other.length
-          @offset   = 0
+          if @storage.length - @offset - @length >= other.length \
+          and NativeExt.substr_eq?(@storage, @offset + @length, other, 0, other.length)
+            @length += other.length
+          elsif not @storage.frozen?
+            # Surely no one will notice if we destructively update @storage
+            @storage[@offset + @length, @storage.length - @offset - @length] = other
+            @length  += other.length
+          else
+            # Other pointers are sharing our storage. We need to make our own
+            # copy now. Be sure `reify` gives back a copy, not the original.
+            @storage  = reify(true)
+            @storage << other
+            @length  += other.length
+            @offset   = 0
+          end
         end
 
         self
       end
 
-      # If two flyweights share the same storage and are contiguous (one ends
-      # where the other starts), then string concatenation can be optimized.
-      #
-      # In the case where the operand is a string and happens to be a prefix
-      # what follows @offset + @length, then we can also simply extend the
-      # length without allocating more strings.
-      #
-      # For example:
-      #   x     = Pointer.build("abc xyz")
-      #   a, b  = x.split_at(2)
-      #
-      #   a + b            # no String allocation, returns new Pointer
-      #   a + "c x"        # no String allocation, returns new Pointer
-      #   a + "mno"        # returns a new String
-      #
-      # NOTE: In the case where a string must be allocated, this method
-      # does NOT return a pointer; it returns a plain String. This is
-      # because the likely operation on the result is more concatenation,
-      # or things besides creating substrings. For example,
-      #
-      #   ((x + "a") + "b") + "c"
-      #
-      # is more efficient when `x + "a"` returns a String. Otherwise the
-      # pointer wrapper is created only to immediately unwrap @storage
-      # for the next concatenation.
-      #
       # @return [Pointer<String, String> | String]
       def +(other)
         if other.is_a?(self.class)
-          if @storage.eql?(other.storage) and @offset + @length == other.offset
-            # allocations: 0 strings, 1 pointer
+          if (@storage.eql?(other.storage) and @offset + @length == other.offset) \
+          or NativeExt.substr_eq?(@storage, @offset + @length, other.storage, other.offset, other.length)
             self.class.new(@storage.freeze, @offset, @length + other.length)
           else
-            # allocations: 2 strings, 0 pointers
             reify(true) << other.reify
           end
-
-        # NOTE: There doesn't seem to be a string comparison function in Ruby
-        # that allows the comparison to start a given offset. That means we
-        # have to allocate and copy from @storage a length of `other.length`.
-        #   @storage[@offset + @length, other.length] == other
-        #
-        # @storage.index(other, @offset + @length) == n doesn't allocate
-        # memory, but there is no way to abort the search early.
-        #
-        elsif @storage.length - @offset - @length >= other.length \
-          and @storage.index(other, @offset + @length) == @offset + @length
-          # allocations: 0 strings, 1 pointer
-          self.class.new(@storage.freeze, @offset, @length + other.length)
         else
-          # allocations: 2 strings, 0 pointers
-          reify(true) << other
+          if @storage.length - @offset - @length >= other.length \
+          and NativeExt.substr_eq?(@storage, @offset + @length, other, 0, other.length)
+            self.class.new(@storage.freeze, @offset, @length + other.length)
+          else
+            reify(true) << other
+          end
         end
       end
 

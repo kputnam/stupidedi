@@ -40,7 +40,7 @@ module ConfigMatchers
     end
 
     def description
-      self.class.name.gsub(/[A-Z][a-z]+/){|m| m.downcase + " " }.strip
+      self.class.name.split("::").last.gsub(/[A-Z][a-z]+/){|m| m.downcase + " " }.strip
     end
   end
 

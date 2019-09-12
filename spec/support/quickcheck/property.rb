@@ -35,7 +35,6 @@ class Quickcheck
       @base.it(*args) do
         if property.setup.nil?
           skip
-          return
         end
 
         count = 0
@@ -46,12 +45,12 @@ class Quickcheck
               count += 1
               property.progress(count, cases)
             end
-          rescue
+          rescue => e
             seed = srand # Get the previous seed by setting it
             srand(seed)  # But immediately restore it
 
-            $!.message << " -- with srand #{seed} after #{count} successes"
-            raise $!
+            e.message << " -- with srand #{seed} after #{count} successes"
+            raise e
           end
         elsif block.arity == 1
           property.qc.generate(cases, limit, property.setup) do |input|
@@ -60,12 +59,12 @@ class Quickcheck
 
               count += 1
               property.progress(count, cases)
-            rescue
+            rescue => e
               seed = srand # Get the previous seed by setting it
               srand(seed)  # But immediately restore it
 
-              $!.message << " -- with srand #{seed} after #{count} successes, input: #{input.inspect}"
-              raise $!
+              e.message << " -- with srand #{seed} after #{count} successes, input: #{input.inspect}"
+              raise e
             end
           end
 
@@ -76,23 +75,23 @@ class Quickcheck
 
               count += 1
               property.progress(count, cases)
-            rescue
+            rescue => e
               seed = srand # Get the previous seed by setting it
               srand(seed)  # But immediately restore it
 
-              $!.message << " -- with srand #{seed} after #{count} successes, input: #{input.inspect}"
-              raise $!
+              e.message << " -- with srand #{seed} after #{count} successes, input: #{input.inspect}"
+              raise e
             end
           end
         end
       end
     end
 
-    PROGRESS = %w(% $ @ # &)
+    PROGRESS = %w(/ - \\ |)
 
     if $stdout.tty?
       def progress(completed, total)
-        print((completed == total) ? "" : "#{PROGRESS[completed % 4]}\010")
+        print((completed == total) ? "" : "#{PROGRESS[completed % PROGRESS.size]}\b")
       end
     else
       def progress(completed, total)

@@ -1,7 +1,7 @@
 begin
   # This is an optional dependency that requires Ruby 2.3+
   require "simplecov-inline-html"
-rescue
+rescue LoadError
 end
 
 class SimpleCov::Formatter::CustomHtmlFormatter < SimpleCov::Formatter::InlineHTMLFormatter

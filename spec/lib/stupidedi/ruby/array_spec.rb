@@ -421,9 +421,7 @@ describe Array do
     end
   end
 
-  describe "#take_until" do
-    skip
-  end
+  todo "#take_until"
 
   describe "#split_at" do
     context "index zero" do
@@ -505,13 +503,9 @@ describe Array do
     end
   end
 
-  describe "#split_until" do
-    skip
-  end
+  todo "#split_until"
 
-  describe "#split_when" do
-    skip
-  end
+  todo "#split_when"
 
   describe "#count" do
     context "with no given arguments" do

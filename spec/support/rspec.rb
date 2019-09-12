@@ -50,20 +50,3 @@ module RSpec
   end
 end
 $VERBOSE = verbose
-
-module RSpecHelpers
-  def todo(name = "@todo", *args, &block)
-    if block_given?
-      pending name, *args, :todo do
-        instance_exec(&block)
-      end
-    else
-      backtrace = caller.slice(0..1)
-
-      it name, *args, :todo do
-        pending "@todo"
-        raise RuntimeError.new("").tap{|e| e.set_backtrace(backtrace) }
-      end
-    end
-  end
-end

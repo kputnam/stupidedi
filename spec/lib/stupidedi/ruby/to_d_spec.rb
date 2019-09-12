@@ -55,7 +55,7 @@ describe "String#to_d" do
 
   context "when string has an invalid format" do
     property "string.to_d raises an error" do
-      string
+      string(:alpha)
     end.check do |s|
       expect(lambda { s.to_d }).to raise_error(/is not a valid number/)
     end

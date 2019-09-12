@@ -14,7 +14,7 @@ end
 
 begin
   require "memory_profiler"
-rescue
+rescue LoadError
 end
 
 require "stupidedi"
@@ -24,27 +24,33 @@ require "pp"
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each(&method(:require))
 
 RSpec.configure do |config|
-  config.include(MemMatchers)
+  config.include(AllocationMatchers)
   config.include(EitherMatchers)
   config.include(Quickcheck::Macro)
-  config.extend(RSpecHelpers)
 
-  config.expect_with :rspec do |c|
-    c.syntax = :expect
-  end
+  config.alias_example_to :allocation, mem: true
+  config.filter_run_excluding(:mem) unless defined? MemoryProfiler
+
+  # Use --tag "~todo" to hide these from output
+  config.alias_example_to :todo, todo: true, skip: "TODO"
+
+  config.expect_with(:rspec){|c| c.syntax = :expect }
 
   # Skip platform-specific examples unless our platform matches (exclude non-matches)
+  #   ruby: "2.3."               # excludes Ruby 2.3.*
+  #   ruby: /^2.[12]./           # excludes Ruby 2.1.*, 2.2.*
+  #   ruby:->(v){|v| v < "2.3" } # excludes Ruby < 2.3
   config.filter_run_excluding(ruby: lambda do |expected|
     case expected
     when String
-      /^#{expected}/ !~ RUBY_VERSION
+      not RUBY_VERSION.start_with?(expected)
+    when Regexp
+      expected !~ RUBY_VERSION
     when Proc
       not expected.call(RUBY_VERSION)
     end
   end)
 
-  config.filter_run_excluding(:skip)
-  config.filter_run_excluding(:mem) unless defined? MemoryProfiler
 
   # This only applies if examples exist with :focus tag; then only :focus is
   # run. You can mark examples with :focus by using "fdescribe", "fcontext",

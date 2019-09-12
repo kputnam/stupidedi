@@ -1,4 +1,4 @@
-module MemMatchers
+module AllocationMatchers
   def allocate(limits)
     Allocation.new(:==, limits)
   end
@@ -13,8 +13,10 @@ module MemMatchers
 
   class Allocation
     def initialize(op, limits)
+      @strict = limits.fetch(:strict, true)
+      limits.delete(:strict)
+
       @op, @limits = op, Hash[limits.map{|k,v| [k.to_s, v] }]
-      @strict      = @limits.delete(:strict)
 
       unless defined? MemoryProfiler
         raise "can't load memory_profiler, consider adding :mem tag"
@@ -22,7 +24,7 @@ module MemMatchers
     end
 
     def description
-      "allocates %s %s" % [opname(@op), @limits.map{|k,v| "#{k}:#{v}b" }.join(", ")]
+      "allocate %s %s" % [opname(@op), @limits.map{|k,v| "#{k}:#{v}" }.join(", ")]
     end
 
     def matches?(target)
@@ -57,14 +59,14 @@ module MemMatchers
     def reverse(op = @op)
       {:== => :==,
        :!= => :!=,
-       :<  => :>=,
-       :>  => :<=,
-       :>= => :<,
-       :<= => :>}.fetch(op.to_sym)
+       :<  => :>,
+       :>  => :<,
+       :>= => :<=,
+       :<= => :>=}.fetch(op.to_sym)
     end
 
     def opname(op = @op)
-      {:== => "only",
+      {:== => if @strict then "only" else "" end,
        :!= => "not",
        :<  => "less than",
        :>  => "more than",
@@ -76,8 +78,10 @@ module MemMatchers
       raise TypeError, "was not given a block" unless target.is_a?(Proc)
 
       # Track all classes (strict), or only ones with explicit limits?
-      trace  = nil #[:trace, @limits.keys.map(&:to_s)] unless @strict
-      report = MemoryProfiler.report(Hash[:top, 1000, *trace], &target)
+      opts = {trace: @limits.keys.map{|c| Object.const_get(c)}}
+      opts.delete(:trace) if @strict
+
+      report = MemoryProfiler.report(opts, &target)
       result = report.allocated_objects_by_class
       result.inject({}){|memo, x| memo.update(x[:data] => x[:count]) }
     end
