@@ -46,13 +46,14 @@ module Stupidedi
       # @return [Integer]
       attr_reader :length
 
-      def initialize(storage, offset=0, length=storage.length)
+      def initialize(storage, offset, length)
         raise ArgumentError, "offset must be non-negative" if offset < 0
         raise ArgumentError, "length must be non-negative" if length < 0
         raise ArgumentError, "given length cannot exceed storage length" if length > storage.length
 
-        @storage, @offset, @length =
-          storage, offset, length
+        @storage = storage
+        @offset  = offset
+        @length  = length
       end
 
       # @return [String]
@@ -338,7 +339,7 @@ module Stupidedi
       def build(object)
         case object
         when String
-          StringPtr.new(object)
+          StringPtr.new(object, 0, object.length)
         when Pointer
           object
         else
@@ -348,7 +349,7 @@ module Stupidedi
           raise TypeError, "object must respond to length" \
             unless object.respond_to?(:length)
 
-          Pointer.new(object)
+          Pointer.new(object, 0, object.length)
         end
       end
 

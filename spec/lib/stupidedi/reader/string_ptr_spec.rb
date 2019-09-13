@@ -14,14 +14,11 @@ describe Stupidedi::Reader::StringPtr do
     pointer.storage[pointer.offset + pointer.length..-1]
   end
 
-  # Ruby < 2.3 doesn't support frozen string literals
-  let(:lower) { "abcdefghijklmnopqrstuvwxyz abcdefghijklmnOPQRSTUVWXYZ".freeze }
-  let(:upper) { "ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNopqrstuvwxyz".freeze }
+  let(:lower) { "abcdefghijklmnopqrstuvwxyz abcdefghijklmnOPQRSTUVWXYZ".dup }
+  let(:upper) { "ABCDEFGHIJKLMNOPQRSTUVWXYZ ABCDEFGHIJKLMNopqrstuvwxyz".dup }
 
-  # Ensure pointer is given a mutable String, because `#frozen?` is used by
-  # StringPtr to determine when zero-copy operations are safe to perform.
-  let(:lower_ptr) { pointer(String.new(lower)) }
-  let(:upper_ptr) { pointer(String.new(upper)) }
+  let(:lower_ptr) { pointer(lower.dup) }
+  let(:upper_ptr) { pointer(upper.dup) }
 
   describe "#to_s" do
     it "is called implicitly" do
@@ -30,19 +27,19 @@ describe Stupidedi::Reader::StringPtr do
 
     context "when storage is shared" do
       allocation do
-        value  = lower_ptr.drop(10)
-        result = nil
-        expect{ result = value.to_str }.to allocate(String: 1)
-        expect(result).to_not be_frozen
+        a = lower_ptr.drop(10)
+        b = nil
+        expect{ b = a.to_str }.to allocate(String: 1)
+        expect(b).to_not be_frozen
       end
     end
 
     context "when storage is not shared" do
       allocation do
-        value  = lower_ptr
-        result = nil
-        expect { result = value.to_str }.to allocate(String: 1)
-        expect(result).to_not be_frozen
+        a = lower_ptr
+        b = nil
+        expect{ b = a.to_str }.to allocate(String: 1)
+        expect(b).to_not be_frozen
       end
     end
   end
@@ -55,58 +52,68 @@ describe Stupidedi::Reader::StringPtr do
 
     context "when storage is shared" do
       allocation do
-        value  = lower_ptr.drop(10)
-        result = nil
-        expect{ result = value.to_str }.to allocate(String: 1)
-        expect(result).to_not be_frozen
+        a = lower_ptr.drop(10)
+        b = nil
+        expect{ b = a.to_str }.to allocate(String: 1)
+        expect(b).to_not be_frozen
       end
     end
 
     context "when storage is not shared" do
       allocation do
-        value  = lower_ptr
-        result = nil
-        expect { result = value.to_str }.to allocate(String: 1)
-        expect(result).to_not be_frozen
+        a = lower_ptr
+        b = nil
+        expect{ b = a.to_str }.to allocate(String: 1)
+        expect(b).to_not be_frozen
       end
     end
   end
 
   describe "#==" do
-    it "is reflexive" do
-      expect(lower_ptr).to eq(lower_ptr)
-      expect(upper_ptr).to eq(upper_ptr)
+    allocation "is reflexive" do
+      a = lower_ptr
+      b = upper_ptr
+      result = nil
+
+      expect{ result = a == a }.to allocate(String: 0)
+      expect(result).to be true
+
+      expect{ result = a == b }.to allocate(String: 0)
+      expect(result).to be false
     end
 
-    it "compares string pointers to plain strings" do
-      expect(lower_ptr).to eq(lower)
-      expect(upper_ptr).to eq(upper)
+    allocation "compares string pointers to plain strings" do
+      a, a_ = lower_ptr, lower
+      b, b_ = upper_ptr, upper
+      result = nil
+
+      expect{ result = a == a_ }.to allocate(String: 0)
+      expect(result).to be true
+
+      expect{ result = a == b_ }.to allocate(String: 0)
+      expect(result).to be false
     end
 
-    it "works on identical substrings" do
-      expect(lower_ptr.drop(10).take(10)).to eq(lower_ptr.drop(10).take(10))
-      expect(upper_ptr.drop(10).take(10)).to eq(upper_ptr.drop(10).take(10))
+    allocation "works on identical substrings" do
+      a  = lower_ptr.drop(10).take(10)
+      a_ = lower_ptr.drop(10).take(10)
+      result = nil
+
+      expect{ result = a == a_ }.to allocate(String: 0)
+      expect(result).to be true
     end
 
-    it "works on non-identical substrings" do
-      expect(lower_ptr.take(10)).to           eq(lower_ptr.drop(27).take(10))
-      expect(upper_ptr.drop(15).take(10)).to  eq(lower_ptr.drop(42).take(10))
-    end
+    allocation "works on non-identical substrings" do
+      a  = lower_ptr.take(10)
+      a_ = lower_ptr.drop(27).take(10)
+      b_ = upper_ptr.drop(27).take(10)
+      result = nil
 
-    it "is case-sensitive" do
-      expect(lower_ptr).to_not eq(upper_ptr)
-      expect(upper_ptr).to_not eq(lower_ptr)
+      expect{ result = a == a_ }.to allocate(String: 0)
+      expect(result).to be true
 
-      expect(lower_ptr).to_not eq(upper)
-      expect(upper_ptr).to_not eq(lower)
-    end
-
-    allocation do
-      value = lower_ptr
-      other = upper_ptr
-      expect { value == other }.to allocate(String: 0)
-      expect { value == value }.to allocate(String: 0)
-      expect { value == "zzz" }.to allocate(String: 0)
+      expect{ result = a == b_ }.to allocate(String: 0)
+      expect(result).to be false
     end
   end
 
@@ -326,7 +333,6 @@ describe Stupidedi::Reader::StringPtr do
           # Precondition
           expect(suffix(b)).to start_with(c)
 
-          pending "Why does this allocate an Array?"
           expect{ d = b + c }.to allocate(String: 0, a.class => 1)
           expect(b).to eq("def")
           expect(c).to eq("gh")
@@ -383,7 +389,6 @@ describe Stupidedi::Reader::StringPtr do
           # Precondition
           expect(suffix(b)).to start_with(c)
 
-          pending "Why does this allocate an Array?"
           expect{ d = b + c }.to allocate(String: 0, a.class => 1)
           expect(a).to eq("abcdefghi")
           expect(b).to eq("def")
@@ -436,16 +441,16 @@ describe Stupidedi::Reader::StringPtr do
     it "is true on empty strings" do
       expect(lower_ptr.drop(10).take(0)).to be_blank
       expect(lower_ptr.drop(lower_ptr.length)).to be_blank
-      expect(Stupidedi::Reader::Pointer.build("")).to be_blank
+      expect(pointer("")).to be_blank
     end
 
     it "is true on whitespace-only strings" do
-      expect(Stupidedi::Reader::Pointer.build(" \r\n\t\v\f")).to be_blank
+      expect(pointer(" \r\n\t\v\f")).to be_blank
     end
 
     it "is false on strings with non-whitespace" do
       expect(lower_ptr).to_not be_blank
-      expect(Stupidedi::Reader::Pointer.build(" \r\n\t\v\f x")).to_not be_blank
+      expect(pointer(" \r\n\t\v\f x")).to_not be_blank
     end
   end
 

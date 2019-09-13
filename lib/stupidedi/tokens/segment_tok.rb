@@ -16,8 +16,9 @@ module Stupidedi
       attr_reader :position
 
       def initialize(id, element_toks, position)
-        @id, @element_toks, @position =
-          id, element_toks, position
+        @id           = id
+        @element_toks = element_toks
+        @position     = position
       end
 
       # @return [SegmentTok]

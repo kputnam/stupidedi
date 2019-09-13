@@ -24,8 +24,9 @@ module Stupidedi
           attr_accessor :fatal
 
           def initialize(error, position, fatal = false)
-            @error, @position, @fatal =
-              error, position, fatal
+            @error    = error
+            @position = position
+            @fatal    = fatal
           end
 
           def fail?
@@ -59,8 +60,9 @@ module Stupidedi
           attr_reader :position
 
           def initialize(value, position, rest)
-            @value, @position, @rest =
-              value, position, rest
+            @value    = value
+            @position = position
+            @rest     = rest
           end
 
           def fail?

@@ -18,8 +18,8 @@ module Stupidedi
         :at, :encoding, type: StringPtr
 
       def initialize(pointer, position)
-        @pointer, @position =
-          pointer, position
+        @pointer  = pointer
+        @position = position
       end
 
       # @endgroup

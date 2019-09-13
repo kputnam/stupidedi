@@ -13,8 +13,8 @@ module Stupidedi
       attr_reader :position
 
       def initialize(value, position)
-        @value, @position =
-          value, position
+        @value    = value
+        @position = position
       end
 
       # @return [CompositeElementTok]
