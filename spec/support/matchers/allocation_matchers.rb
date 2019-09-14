@@ -18,9 +18,7 @@ module AllocationMatchers
 
       @op, @limits = op, Hash[limits.map{|k,v| [k.to_s, v] }]
 
-      unless defined? MemoryProfiler
-        raise "can't load memory_profiler, consider adding :mem tag"
-      end
+      raise "can't load memory_profiler" unless defined? MemoryProfiler
     end
 
     def description
@@ -28,13 +26,13 @@ module AllocationMatchers
     end
 
     def matches?(target)
-      @allocs  = measure(target)
+      @allocs = measure(target)
 
       failed  = @limits.reject{|k,v| v.send(reverse, @allocs.fetch(k, 0)) }.keys
       extras  = @allocs.reject{|k,v| v.send(@op,     @limits.fetch(k, 0)) }.keys
 
       @failed  = failed
-      @failed |= extras #if @strict
+      @failed |= extras
 
       @failed.empty?
     end

@@ -51,7 +51,6 @@ RSpec.configure do |config|
     end
   end)
 
-
   # This only applies if examples exist with :focus tag; then only :focus is
   # run. You can mark examples with :focus by using "fdescribe", "fcontext",
   # and "fit" instead of the normal RSpec syntax.

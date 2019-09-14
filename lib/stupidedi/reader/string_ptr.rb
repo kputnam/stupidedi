@@ -77,8 +77,8 @@ module Stupidedi
       # a `MatchData` that includes offsets and indexes relative to the whole
       # @storage, not the start of this pointer string.
       #
-      # We can't update the `MatchData` to have adjusted offsets, but we return
-      # the offset to let the caller make adjustments when needed.
+      # We can't modify the `MatchData` to have adjusted offsets, but we return
+      # the adjustment amount to let the caller make adjustments when needed.
       #
       # NOTE: The offset argument controls where the regex engine begins, but
       # it doesn't change which part anchors will match, like ^ $ \A \Z and
@@ -109,15 +109,17 @@ module Stupidedi
           return [reify.match(pattern), 0]
         end
 
-        if not anchorless and @offset != 0 \
-          and ANCHORS_A.match?(pattern.inspect)
+        pattern_inspect = nil
+
+        if not anchorless and @offset > 0 \
+          and ANCHORS_A.match?(pattern_inspect ||= pattern.inspect)
           # We can't match on @storage.directly unless our @offset is 0,
           # because String#match(/^./, n) never matches unless n is 0.
           return [reify.match(pattern), 0]
         end
 
-        if not anchorless and @offset + @length != @storage.length \
-          and ANCHORS_Z.match?(pattern.inspect)
+        if not anchorless and @offset + @length < @storage.length \
+          and ANCHORS_Z.match?(pattern_inspect ||= pattern.inspect)
           # Because the pattern is anchored to the end, we can't match on
           # @storage directly, unless our end is also the end of @storage.
           return [reify.match(pattern), 0]
@@ -354,6 +356,7 @@ module Stupidedi
       #
       # @return [StringPtr]
       def lstrip(start_at = 0)
+        return self if @length.zero?
         raise ArgumentError, "start_at must be non-negative" if start_at < 0
         start_at  = @length - 1 if start_at >= @length
         index     = NativeExt.min_nonspace_index(@storage, @offset + start_at)
@@ -361,7 +364,7 @@ module Stupidedi
         if index <= @offset
           self
         else
-          #      01234o--> 
+          #      01234o-->
           # ----[xxxxx  ]--------
           #
           # In this picture, min_nonspace_index(o=5) would return an index
@@ -375,6 +378,7 @@ module Stupidedi
       #
       # @return [StringPtr]
       def rstrip(start_at = @length - 1)
+        return self if @length.zero?
         raise ArgumentError, "start_at must be non-negative" if start_at < 0
         start_at  = @length - 1 if start_at >= @length
         index     = NativeExt.max_nonspace_index(@storage, @offset + start_at)
