@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # encoding: utf-8
-
-describe Stupidedi::Reader::StringPtr do
+describe Stupidedi::Reader::Substring do
+  using Stupidedi::Refinements
 
   def pointer(string)
     Stupidedi::Reader::Pointer.build(string)
@@ -34,39 +34,40 @@ describe Stupidedi::Reader::StringPtr do
 
   describe "#to_s" do
     it "is called implicitly" do
-      expect("-#{lower_ptr[0, 3]}-").to eq("-#{lower[0, 3]}-")
+      expect("#{lower_ptr}").to eq(lower)
     end
 
     context "when storage is shared" do
       specify do
         a = lower_ptr.drop(10)
-        b = a.to_str
+        b = a.to_s
         expect(b).to_not be_frozen
       end
 
       allocation do
         a = lower_ptr.drop(10)
-        expect{ a.to_str }.to allocate(String: 1)
+        expect{ a.to_s }.to allocate(String: 1)
       end
     end
 
     context "when storage is not shared" do
       specify do
         a = lower_ptr
-        b = a.to_str
+        b = a.to_s
         expect(b).to_not be_frozen
       end
 
       allocation do
         a = lower_ptr
-        expect{ a.to_str }.to allocate(String: 1)
+        expect{ a.to_s }.to allocate(String: 1)
       end
     end
   end
 
   describe "#to_str" do
     it "is called implicitly" do
-      expect(%w(a b c).join(pointer(","))).to eq("a,b,c")
+      expect(lower).to eq(lower_ptr)
+      expect(lower_ptr).to eq(lower)
     end
 
     context "when storage is shared" do
@@ -879,6 +880,8 @@ describe Stupidedi::Reader::StringPtr do
       end
     end
 
+    todo "when argument is a substring"
+
     todo "when argument is a string pointer"
   end
 
@@ -908,19 +911,24 @@ describe Stupidedi::Reader::StringPtr do
   end
 
   describe "#count" do
-    it "counts matching substrings" do
-      expect(lower_ptr.count("b")).to     eq(1)
-      expect(lower_ptr.count(/./)).to     eq(9)
-      expect(lower_ptr.count(/[de]/)).to  eq(2)
+    specify { expect(lower_ptr.count("b")).to eq(1) }
+
+    context "when match starts before pointer" do
+      specify { expect(lower_ptr.drop(3).count("c")).to eq(0) }
+    end
+
+    context "when match starts past pointer" do
+      specify { expect(lower_ptr.take(3).count("d")).to eq(0) }
+    end
+
+    context "when match extends past pointer" do
+      specify { expect(lower_ptr.take(3).count("cd")).to eq(0) }
     end
 
     allocation do
       a = lower_ptr
-
-      # Ouch... this sucks
-      expect{ a.count(/./)    }.to allocate(String: 9, MatchData: 1)
-      expect{ a.count(/[de]/) }.to allocate(String: 2, MatchData: 1)
-      expect{ a.count("b")    }.to allocate(String: 0)
+      expect{ a.count("b")  }.to allocate(String: 0)
+      expect{ a.count("bc") }.to allocate(String: 0)
     end
 
     todo "when a match ends out of bounds"

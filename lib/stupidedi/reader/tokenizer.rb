@@ -131,7 +131,7 @@ module Stupidedi
           return elements if elements.fail?
 
           segment_tok = Tokens::SegmentTok.build(:ISA, elements.value, segment_id.position)
-          return done(segment_tok, segment_id.position, elements.rest.lstrip_nongraphic)
+          return done(segment_tok, segment_id.position, elements.rest.lstrip_nongraphic!)
         end
 
         # _next_segment_id will skip any trailing control characters
@@ -292,7 +292,7 @@ module Stupidedi
         return expected("segment identifier, found %s" % segment_id.inspect,
           start_pos) unless segment_id.match?(VALID_SEGMENT_ID)
 
-        return done(segment_id.to_sym, start_pos, input.drop(offset))#.lstrip_nongraphic(offset)#
+        return done(segment_id.to_sym, start_pos, input.drop!(offset))
       end
 
       # @param input          should be positioned on an element separator: "NM1[*].."
@@ -340,7 +340,7 @@ module Stupidedi
           input.position) if input.head != @separators.segment
 
         # Skip past the segment separator
-        done(element_toks, nil, input.drop!(1))
+        done(element_toks, nil, input.lstrip_nongraphic!(1))
       end
 
       # @param input          should be positioned at an element separator,

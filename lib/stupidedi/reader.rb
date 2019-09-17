@@ -10,7 +10,7 @@ module Stupidedi
     autoload :Separators,   "stupidedi/reader/separators"
     autoload :Input,        "stupidedi/reader/input"
     autoload :Pointer,      "stupidedi/reader/pointer"
-    autoload :StringPtr,    "stupidedi/reader/string_ptr"
+    autoload :Substring,    "stupidedi/reader/substring"
 
     if RUBY_PLATFORM !~ /java/
       require "stupidedi/reader/native_ext"

@@ -516,7 +516,7 @@ module Stupidedi
               object#.copy(:usage => usage, :position => position)
             elsif object.blank?
               self::Empty.new(usage, position)
-            elsif object.is_a?(String) or object.is_a?(StringVal) or object.is_a?(Reader::StringPtr)
+            elsif object.is_a?(String) or object.is_a?(StringVal) or object.is_a?(Reader::Substring)
               string = object.to_s # STRINGPTR: to_s + 3x slice + 3x to_i + civil + new
 
               if string.length < 6

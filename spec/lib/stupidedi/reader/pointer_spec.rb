@@ -1,42 +1,98 @@
+# frozen_string_literal: true
 describe Stupidedi::Reader::Pointer do
   using Stupidedi::Refinements
 
-  let(:empty) { Stupidedi::Reader::Pointer.build([])        }
-  let(:three) { Stupidedi::Reader::Pointer.build(%w(a b c)) }
-
-  describe "#inspect" do
+  def pointer(value)
+    Stupidedi::Reader::Pointer.build(value)
   end
 
-  describe "#reify" do
-    let(:shared) { three.drop(1) }
+  def pointer_(*args)
+    Stupidedi::Reader::Pointer.new(args)
+  end
 
-    context "when storage is shared" do
-      it "is zero-copy when possible" do
-        ignore = shared
-        result = three.reify
+  def prefix(pointer)
+    pointer.storage[0, pointer.offset]
+  end
 
-        expect(result).to eq(%w(a b c))
-        expect(result).to be_a(Array)
-        expect(result).to equal(three.storage)
-        expect(ignore.storage).to equal(three.storage)
-      end
+  def suffix(pointer)
+    pointer.storage[pointer.offset + pointer.length..-1]
+  end
 
-      it "returns a copy when asked" do
-        ignore = shared
-        result = three.reify(true)
-        expect(result).to_not equal(three.storage)
-        expect(ignore.storage).to equal(three.storage)
-      end
+  let(:three) { pointer([5,0,1]) }
+  let(:empty) { pointer([])      }
 
-      it "returns a copy when needed" do
-        expect(shared.reify).to_not equal(shared.storage)
+  describe ".build" do
+    context "when value is a String" do
+      specify { expect(pointer("abc")).to be_a(Stupidedi::Reader::Pointer) }
+
+      allocation do
+        storage = "X"
+        expect{ pointer(storage) }.to allocate(Stupidedi::Reader::Substring => 1)
       end
     end
 
-    context "when storage is not shared" do
-      it "returns a copy" do
-        expect(three.reify).to_not equal(three.storage)
+    context "when value is an Array" do
+      specify { expect(pointer([5,6])).to be_a(Stupidedi::Reader::Pointer) }
+
+      allocation do
+        storage = [1,2]
+        expect{ pointer(storage) }.to allocate(Stupidedi::Reader::Pointer => 1)
       end
+    end
+
+    context "when value is a Pointer" do
+      specify do
+        p = pointer("xyz")
+        expect(pointer(p)).to equal(p)
+
+        q = pointer([5,6])
+        expect(pointer(q)).to equal(q)
+      end
+    end
+
+    todo "when value is a compatible type"
+
+    todo "when value is an incompatible type"
+
+    context "when offset is negative" do
+      specify { expect{ pointer_("xxx", -1, 0) }.to raise_error(ArgumentError) }
+    end
+
+    context "when offset exceeds length" do
+      specify { expect{ pointer_("xxx", 4, 0) }.to raise_error(ArgumentError) }
+    end
+
+    context "when length is negative" do
+      specify { expect{ pointer_("xxx", 0, -1) }.to raise_error(ArgumentError) }
+    end
+
+    context "when length exceeds storage length" do
+      specify { expect{ pointer_("xxx", 0, 4) }.to raise_error(ArgumentError) }
+    end
+  end
+
+  todo "#inspect"
+
+  describe "#reify" do
+    context "when storage is frozen" do
+      let(:abcdef) { pointer("abcdef".freeze) }
+
+      context "and storage spans entire storage" do
+        allocation { p = abcdef; expect{ p.send(:reify)        }.to allocate(String: 0) }
+        allocation { p = abcdef; expect{ p.send(:reify, false) }.to allocate(String: 0) }
+
+        context "but always_allocate is true" do
+          allocation { p = abcdef; expect{ p.send(:reify, true) }.to allocate(String: 1) }
+        end
+      end
+
+      context "and storage does not span entire storage" do
+        allocate { p = abcdef.drop(1); expect{ p.send(:reify) }.to allocate(String: 1) }
+        allocate { p = abcdef.take(1); expect{ p.send(:reify) }.to allocate(String: 1) }
+      end
+    end
+
+    todo "when storage is not frozen" do
     end
   end
 
@@ -51,239 +107,247 @@ describe Stupidedi::Reader::Pointer do
   end
 
   describe "#present?" do
-    specify { expect(empty).to_not be_present }
     specify { expect(three).to be_present }
+    specify { expect(empty).to_not be_present }
   end
 
   describe "#==" do
-    it "is reflexive" do
-      expect(three).to eq(three)
-      expect(empty).to eq(empty)
+    context "when compared to self" do
+      specify { p = pointer("xxx"); expect(p).to eq(p) }
     end
 
-    context "when given a pointer" do
-      specify { expect(three.drop(1)).to_not eq(three) }
-      specify { expect(three.drop(3)).to     eq(empty) }
-      specify { expect(empty).to     eq(three.drop(3)) }
+    context "when storage is separate" do
+      context "and substring is equal" do
+        specify { expect(pointer("xxx")).to eq(pointer("xxx")) }
+        specify { expect(pointer("xxx")).to eq(pointer("   xxx").drop(3)) }
+        specify { expect(pointer("xxx")).to eq(pointer("xxx    ").take(3)) }
+        specify { expect(pointer("xxx")).to eq(pointer("   xxx    ").drop(3).take(3)) }
+      end
+
+      context "and substring is not equal" do
+        specify { expect(pointer("ooo")).to_not eq(pointer("xxx")) }
+        specify { expect(pointer("ooo")).to_not eq(pointer("    xxx").drop(3)) }
+        specify { expect(pointer("ooo")).to_not eq(pointer("xxx    ").take(3)) }
+        specify { expect(pointer("ooo")).to_not eq(pointer("   xxx    ").drop(3).take(3)) }
+      end
     end
 
-    context "when given another type" do
-      specify { expect(three).to      eq(%w(a b c)) }
-      specify { expect(three).to_not  eq(%w(x y z)) }
-      specify { expect(empty).to      eq([]) }
-      specify { expect(empty).to_not  eq(%w(a b c)) }
+    context "when storage is shared" do
+      context "and substring is equal" do
+        let(:p) { pointer("xxxoooxxx") }
+        specify { expect(p.take(3)).to eq(p.take(3)) }
+        specify { expect(p.take(3)).to eq(p.drop(6)) }
+        specify { expect(p.take(3)).to eq(p.drop(6)) }
+      end
+
+      context "and substring is not equal" do
+        let(:p) { pointer("oooxxxooo") }
+        specify { expect(p.take(3)).to eq(p.take(3)) }
+        specify { expect(p.take(3)).to eq(p.drop(6)) }
+        specify { expect(p.take(3)).to eq(p.drop(6)) }
+      end
+    end
+
+    allocation do
+      ooo = pointer("ooo")
+      xxx = pointer("xxx")
+
+      expect{ ooo == xxx }.to allocate(String: 0)
+      expect{ ooo == ooo }.to allocate(String: 0)
     end
   end
 
   describe "+" do
-    context "is zero-copy when possible" do
-      specify { expect(three.take(1) + three.drop(1)).to eq(three) }
-      specify { expect((three.take(1) + three.drop(1)).storage).to equal(three.storage) }
+    let(:a) { pointer("abcdefghi".dup) }
+
+    context "when argument is a non-pointer value" do
+      context "when pointer suffix starts with argument" do
+        specify do
+          b = a.drop(3).take(3)
+          c = "gh"
+
+          # Precondition
+          expect(suffix(b)).to start_with(c)
+
+          d = b + c
+          expect(b).to eq("def")
+          expect(c).to eq("gh")
+          expect(d).to eq("defgh")
+          expect(d).to be_a(a.class)
+        end
+
+        allocation do
+          b = a.drop(3).take(3)
+          c = "gh"
+          expect(suffix(b)).to start_with(c)
+          expect{ b + c }.to allocate(String: 0, a.class => 1)
+        end
+      end
+
+      context "when argument is pointer suffix plus more" do
+        specify do
+          b = a.drop(3).take(3)
+          c = "ghijkl"
+
+          # Precondition
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+
+          d = b + c
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("def")
+          expect(c).to eq("ghijkl")
+          expect(d).to eq("defghijkl")
+          expect(d).to be_a(c.class)
+        end
+
+        allocation do
+          b = a.drop(3).take(3)
+          c = "ghijkl"
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+          expect{ b + c }.to allocate(c.class => 1)
+        end
+      end
+
+      context "when argument is not pointer suffix" do
+        specify do
+          b = a.take(6)
+          c = "xxx"
+
+          # Precondition
+          expect(a.storage).to be_frozen
+
+          d = b + c
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("abcdef")
+          expect(c).to eq("xxx")
+          expect(d).to eq("abcdefxxx")
+          expect(d).to be_a(c.class)
+        end
+
+        allocation do
+          b = a.take(6)
+          c = "xxx"
+          expect(a.storage).to be_frozen
+          expect{ b + c }.to allocate(c.class => 1)
+        end
+      end
     end
 
-    context "returns new storage otherwise" do
-      specify { expect(three + empty).to be_a(Array) }
-      specify { expect(three + empty).to eq(three.storage) }
-      specify { expect(empty + three).to eq(three.storage) }
-      specify { expect(three + three).to be_a(Array) }
-      specify { expect(three + three).to eq(%w(a b c a b c)) }
-    end
-  end
+    context "when argument is a string pointer" do
+      context "when pointer suffix starts with argument" do
+        specify do
+          b = a.drop(3).take(3)
+          c = pointer("gh")
 
-  describe "#head" do
-    context "when empty" do
-      specify { expect(empty.head).to be_nil }
-    end
+          # Precondition
+          expect(suffix(b)).to start_with(c)
 
-    context "when non-empty" do
-      specify { expect(three.head).to eq("a") }
-      specify { expect(three.take(2).head).to eq("a") }
-      specify { expect(three.drop(1).head).to eq("b") }
-    end
-  end
+          d = b + c
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("def")
+          expect(c).to eq("gh")
+          expect(d).to eq("defgh")
+          expect(d).to be_a(a.class)
+        end
 
-  describe "#last" do
-    context "when empty" do
-      specify { expect(empty.last).to be_nil }
-    end
+        allocation do
+          b = a.drop(3).take(3)
+          c = pointer("gh")
+          expect(suffix(b)).to start_with(c)
+          expect{ b + c }.to allocate(a.class => 1)
+        end
+      end
 
-    context "when non-empty" do
-      specify { expect(three.last).to eq("c") }
-      specify { expect(three.drop(1).last).to eq("c") }
-      specify { expect(three.take(2).last).to eq("b") }
-    end
-  end
+      context "when argument is pointer suffix plus more" do
+        specify do
+          b = a.drop(3).take(3)
+          c = pointer("ghijkl")
 
-  describe "#defined_at?" do
-    specify { expect(empty).to_not be_defined_at(0) }
-    specify { expect(three).to     be_defined_at(0) }
-    specify { expect(three).to     be_defined_at(1) }
-    specify { expect(three).to     be_defined_at(2) }
-    specify { expect(three).to_not be_defined_at(3) }
-    specify { expect{three.defined_at?(-1)}.to raise_error(ArgumentError) }
-  end
+          # Precondition
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
 
-  describe "#at" do
-    specify { expect(empty.at(0)).to be_nil }
-    specify { expect(three.at(0)).to eq("a") }
-    specify { expect(three.at(1)).to eq("b") }
-    specify { expect(three.at(2)).to eq("c") }
-    specify { expect(three.at(3)).to be_nil }
-    specify { expect{three.at(-1)}.to raise_error(ArgumentError) }
-  end
+          d = b + c
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("def")
+          expect(c).to eq("ghijkl")
+          expect(d).to eq("defghijkl")
+          expect(d).to be_a(String)
+        end
 
-  describe "#tail" do
-    specify { expect(empty.tail).to eq([]) }
-    specify { expect(three.tail).to eq(%w(b c)) }
-    specify { expect(three.tail).to be_a(Stupidedi::Reader::Pointer) }
-  end
+        allocation do
+          b = a.drop(3).take(3)
+          c = pointer("ghijkl")
+          expect(c).to start_with(suffix(b))
+          expect(c).to_not eq(suffix(b))
+          expect{ b + c }.to allocate(String: 1)
+        end
+      end
 
-  describe "#[]" do
-    context "when length given" do
-      specify { expect(three[0,2]).to be_a(Stupidedi::Reader::Pointer) }
-      specify { expect{three[0,-1]}.to raise_error(ArgumentError) }
-      specify { expect(three[0,0]).to eq([]) }
-      specify { expect(three[0,1]).to eq(%w(a)) }
-      specify { expect(three[0,2]).to eq(%w(a b)) }
-      specify { expect(three[0,3]).to eq(%w(a b c)) }
-      specify { expect(three[0,4]).to eq(%w(a b c)) }
-      specify { expect(three[1,2]).to eq(%w(b c)) }
-      specify { expect(three[2,2]).to eq(%w(c)) }
-      specify { expect(three[3,2]).to be_nil }
-    end
+      context "when argument is not pointer suffix" do
+        specify do
+          b = a.take(6)
+          c = pointer("xxx")
 
-    context "when offset is a range" do
-      specify { expect(three[0..2]).to be_a(Stupidedi::Reader::Pointer) }
-      specify { expect(three[0...0]).to eq([]) }
-      specify { expect(three[0..0]).to eq(%w(a)) }
-      specify { expect(three[1..2]).to eq(%w(b c)) }
-      specify { expect(three[1..-1]).to eq(%w(b c)) }
-      specify { expect(three[1...-1]).to eq(%w(b)) }
-      specify { expect(three[-3..-2]).to eq(%w(a b)) }
-      specify { expect(three[-4..-1]).to be_nil }
-      specify { expect(three[4..-1]).to be_nil }
-      specify { expect(three[2..9]).to eq(%w(c)) }
-    end
+          # Precondition
+          expect(suffix(b)).to_not start_with(c)
 
-    context "when length is not given" do
-      specify { expect(empty[-1]).to be_nil }
-      specify { expect(empty[0]).to be_nil }
-      specify { expect(empty[1]).to be_nil }
+          d = b + c
+          expect(a).to eq("abcdefghi")
+          expect(b).to eq("abcdef")
+          expect(c).to eq("xxx")
+          expect(d).to eq("abcdefxxx")
+          expect(d).to be_a(String)
+        end
 
-      specify { expect(three[-4]).to be_nil }
-      specify { expect(three[-3]).to eq("a") }
-      specify { expect(three[-2]).to eq("b") }
-      specify { expect(three[-1]).to eq("c") }
-      specify { expect(three[0]).to eq("a") }
-      specify { expect(three[1]).to eq("b") }
-      specify { expect(three[2]).to eq("c") }
-      specify { expect(three[3]).to be_nil }
-    end
-  end
-
-  describe "#drop" do
-    specify { expect{empty.drop(-1)}.to raise_error(ArgumentError) }
-    specify { expect(empty.drop(0)).to eq(empty) }
-    specify { expect(empty.drop(1)).to eq(empty) }
-    specify { expect(three.drop(0)).to eq(three) }
-    specify { expect(three.drop(1)).to eq(%w(b c)) }
-    specify { expect(three.drop(2)).to eq(%w(c)) }
-    specify { expect(three.drop(3)).to be_empty }
-    specify { expect(three.drop(4)).to be_empty }
-  end
-
-  describe "#drop!" do
-    it "mutates the receiver" do
-      expect(three.drop!(0)).to equal(three)
-      expect(three).to eq(%w(a b c))
-    end
-
-    it "mutates the receiver" do
-      expect(three.drop!(1)).to equal(three)
-      expect(three).to eq(%w(b c))
-    end
-
-    it "mutates the receiver" do
-      expect(three.drop!(2)).to equal(three)
-      expect(three).to eq(%w(c))
-    end
-
-    it "mutates the receiver" do
-      expect(three.drop!(3)).to equal(three)
-      expect(three).to eq([])
-    end
-  end
-
-  describe "take" do
-    specify { expect{empty.take(-1)}.to raise_error(ArgumentError) }
-    specify { expect(empty.take(0)).to eq([]) }
-    specify { expect(empty.take(1)).to eq([]) }
-    specify { expect(three.take(0)).to eq([]) }
-    specify { expect(three.take(1)).to eq(%w(a)) }
-    specify { expect(three.take(2)).to eq(%w(a b)) }
-    specify { expect(three.take(3)).to eq(%w(a b c)) }
-    specify { expect(three.take(4)).to eq(%w(a b c)) }
-  end
-
-  context "#take!" do
-    it "mutates the receiver" do
-      expect(three.take!(0)).to equal(three)
-      expect(three).to eq([])
-    end
-
-    it "mutates the receiver" do
-      expect(three.take!(1)).to equal(three)
-      expect(three).to eq(%w(a))
-    end
-
-    it "mutates the receiver" do
-      expect(three.take!(2)).to equal(three)
-      expect(three).to eq(%w(a b))
-    end
-
-    it "mutates the receiver" do
-      expect(three.take!(3)).to equal(three)
-      expect(three).to eq(%w(a b c))
-    end
-  end
-
-  describe "#drop_take" do
-    it "is equivalent to drop(n).take(m)" do
-      for m in 0..4
-        for n in 0..4
-          expect(empty.drop_take(n, m)).to eq(empty.drop(n).take(m))
-          expect(three.drop_take(n, m)).to eq(three.drop(n).take(m))
+        allocation do
+          b = a.take(6)
+          c = pointer("xxx")
+          expect(suffix(b)).to_not start_with(c)
+          expect{ b + c }.to allocate(String: 1)
         end
       end
     end
   end
 
+  describe "#head" do
+  end
+
+  describe "#last" do
+  end
+
+  describe "#defined_at?" do
+  end
+
+  describe "#at" do
+  end
+
+  describe "#tail" do
+  end
+
+  describe "#[]" do
+  end
+
+  describe "#drop" do
+  end
+
+  describe "#drop!" do
+  end
+
+  describe "take" do
+  end
+
+  context "#take!" do
+  end
+
+  describe "#drop_take" do
+  end
+
   describe "#split_at" do
-    it "returns a prefix and suffix" do
-      for n in 0..3
-        prefix, suffix = three.split_at(n)
-        expect(prefix + suffix).to eq(three)
-        expect(prefix.length).to eq(n)
-        expect(suffix.length).to eq(3-n)
-      end
-    end
   end
 
   describe ".build" do
-    context "when given a String" do
-      specify { expect(Stupidedi::Reader::Pointer.build("abc")).to be_a(Stupidedi::Reader::StringPtr) }
-    end
-
-    context "when given a Pointer" do
-      specify { expect(Stupidedi::Reader::Pointer.build(empty)).to equal(empty) }
-      specify { expect(Stupidedi::Reader::Pointer.build(three)).to equal(three) }
-    end
-
-    context "when given something else" do
-      specify { expect{Stupidedi::Reader::Pointer.build(OpenStruct.new())}.to raise_error(TypeError) }
-      specify { expect{Stupidedi::Reader::Pointer.build(OpenStruct.new(:[] => 0))}.to raise_error(TypeError) }
-      specify { expect{Stupidedi::Reader::Pointer.build(OpenStruct.new(:[] => 0, :length => 0))}.to_not raise_error }
-      specify { %w(a b c).then{|x| expect(Stupidedi::Reader::Pointer.build(x).storage).to equal(x) }}
-    end
   end
 end

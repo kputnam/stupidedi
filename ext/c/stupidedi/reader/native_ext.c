@@ -253,18 +253,21 @@ has_matching_interval(const unsigned int point,
         z = -1;
 
     for (l = 0, r = size - 1, z = -1; k = (l + r) / 2, l <= r;) {
-        if (UNLIKELY(point > min[k]))
-            l = (z = k) + 1;  // descend right
+        if (UNLIKELY(min[k] < point))
+            if (point <= max[k])
+                return true;      // min[k] < point[k] <= max[k]
+            else
+                l = (z = k) + 1;  // descend right
         else if (point < min[k])
-            r = k - 1;        // descend left
+            r = k - 1;            // descend left
         else
-            break;
+            break;                // min[k] == point[k] <= max[k]
     }
 
     if (point < min[k])
         k = z;
 
-    if (k >= 0 && point <= max[k])
+    if (0 <= k && point <= max[k])
         return true;
 
     return false;

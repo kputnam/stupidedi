@@ -4,18 +4,19 @@ module Stupidedi
   using Refinements
 
   module Reader
+
+    # @private
     class Input
       include Inspect
 
-      # @return [StringPtr]
+      # @return [Substring]
       attr_reader :pointer
 
       # @return [Position]
       attr_reader :position
 
-      def_delegators :@pointer, :head, :defined_at?, :empty?, :[], :length,
-        :count, :take, :match?, :slice, :index, :rindex, :reify, :last, :=~,
-        :at, :encoding, type: StringPtr
+      def_delegators :@pointer, :head, :defined_at?, :empty?, :[],
+        :take, :index, :=~, :at, :encoding, type: Substring
 
       def initialize(pointer, position)
         @pointer  = pointer
@@ -25,33 +26,20 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      # Returns the input with the first `n` characters removed
-      #
-      # @return [Input]
-      def drop(n)
-        if n.zero?
-          self
-        else
-          self.class.new(@pointer.drop(n), position_at(n))
-        end
-      end
-
-      # Destructively updates this Input to start `n` characters after the
-      # first.
-      #
-      # @return [Input]
+      # @return self
       def drop!(n)
         unless n.zero?
-          if @position.is_a?(Integer)
-            @pointer.drop!(n)
+          case @position
+          when Position::NoPosition
+            # Optimization (don't allocate a pointer)
+          when Integer
+            # Optimization (don't allocate a pointer)
             @position += n
           else
-            unless @position.eql?(Position::NoPosition)
-              @position = @position.advance(@pointer.take(n))
-            end
-
-            @pointer.drop!(n)
+            @position = @position.advance(@pointer.take(n))
           end
+
+          @pointer.drop!(n)
         end
 
         self
@@ -60,39 +48,39 @@ module Stupidedi
       # Calculates the position at the given offset.
       #
       # @return [Position]
-      def position_at(n)
-        if @position.eql?(Position::NoPosition)
+      def position_at(offset)
+        offset = @pointer.length - 1 if offset >= @pointer.length
+
+        case @position
+        when Position::NoPosition
+          # Optimization (don't allocate a pointer)
           @position
-        elsif @position.is_a?(Integer)
-          @position + n
+        when Integer
+          # Optimization (don't allocate a pointer)
+          @position + offset
         else
-          @position.advance(@pointer.take(n))
+          @position.advance(@pointer.take(offset))
         end
       end
 
-      # Returns true if the input begins with the other value (String, StringPtr)
-      def start_with?(other)
-        other and @pointer.start_with?(other)
-      end
-
-      # Returns true if the input contains the other value, starting at the
-      # `nth` character.
-      #
-      def substr_at?(offset, other)
-        other and @pointer.substr_at?(offset, other)
+      # @return [Boolean]
+      def start_with?(other, offset=0)
+        other and @pointer.start_with?(other, offset)
       end
 
       # Returns true if the character at the given offset is a control
       # character (defined by X222.pdf B.1.1.2.4 Control Characters)
+      #
+      # @return [Boolean]
       def graphic?(offset)
         @pointer.graphic?(offset)
       end
 
-      # Returns a new Input with the leading control characters removed
+      # Remove leading control characters
       #
-      # @return [Input]
-      def lstrip_nongraphic(offset = 0)
-        drop(min_graphic_index(offset))
+      # @return self
+      def lstrip_nongraphic!(offset = 0)
+        drop!(@pointer.min_graphic_index(offset))
       end
 
       # Returns the offset of the next non-control character at or after offset

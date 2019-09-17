@@ -65,7 +65,7 @@ describe "Stupidedi::TransactionSets" do
         end
 
       else
-        it "can parse examples", :fixtures do
+        it "can parse examples", :todo, :fixtures do
           parts   = name.split("::").slice(2..-1)
           version = Fixtures.versions.invert.fetch(parts[0], parts[0])
           _name   = parts[2..3].join(" ")

@@ -3,40 +3,8 @@ module Stupidedi
   using Refinements
 
   module Reader
-    #
-    # Provides a pointer into a continuous substring of a larger string, without
-    # allocating a new string (or whatever the type of the whole is). This saves
-    # memory when many substrings are needed, or long substrings are needed. It
-    # also makes #take, #drop, #[a,b], #[a..b] and #split_at run in constant time
-    # and space rather than O(n).
-    #
-    # Each instance requires 40 bytes (in YARV), compared to making an actual
-    # substring, which consumes 40 bytes plus the number of bytes above 20
-    # which will be copied to the result. It also takes some CPU time to copy
-    # from one string to the other.
-    #
-    # Some string operations (examples listed above) can be performed directly
-    # on the pointer to delay the need to allocate new strings. Allocations
-    # will happen automatically as needed, but you can also create a String by
-    # calling `#reify`.
-    #
-    # NOTE: Pointer<S, E> is the type which represents storage of type S
-    # that has items of type E. For example,
-    #
-    #   Pointer<Array, Integer>     # represents an array of integers
-    #   Pointer<String, String>     # represents a string
-    #
     class Pointer
 
-      # When this object is not `#frozen?`, only one pointer references it.
-      # In that case, certain operations can be optimized by destructively
-      # updating `@storage` in place. However, when another pointer shares
-      # with us, `@storage` will be frozen.
-      #
-      # NOTE: We can't know if there are references to `@storage` apart from
-      # the ones created by this class. If there are outside references to
-      # `@storage`, destructive updates to it may cause unexpected behavior.
-      #
       # @return [S]
       attr_reader :storage
 
@@ -49,40 +17,12 @@ module Stupidedi
       def initialize(storage, offset, length)
         raise ArgumentError, "offset must be non-negative" if offset < 0
         raise ArgumentError, "length must be non-negative" if length < 0
+        raise ArgumentError, "offset must be less than storage length" if offset > storage.length
         raise ArgumentError, "given length cannot exceed storage length" if length > storage.length
 
         @storage = storage
         @offset  = offset
         @length  = length
-      end
-
-      # @return [String]
-      def inspect
-        "#<%s %s@storage=0x%s @offset=%d @length=%d>" %
-          [self.class.name.split("::").last,
-           @storage.frozen? ? "-" : "+",
-           (@storage.object_id << 1).to_s(16), @offset, @length]
-      end
-
-      # Convert this pointer back into a String (or whatever the underlying
-      # type is).
-      #
-      # If this points to the entire length of the underlying object, then that
-      # object may be returned without any allocations. Otherwise, the `#[a, b]`
-      # method is called on the object. For most types, this will allocate a
-      # new object and copy items into it.
-      #
-      # @return [S]
-      def reify(always_allocate = false)
-        if @storage.frozen? \
-        and @offset == 0 \
-        and @length == @storage.length \
-        and not always_allocate
-          @storage
-        else
-          # $stderr.puts "reify: allocate[#@offset, #@length]"
-          @storage[@offset, @length]
-        end
       end
 
       # @group Querying
@@ -95,87 +35,81 @@ module Stupidedi
 
       # @return [Boolean]
       def blank?
-        empty?
+        @length <= 0
       end
 
       # @return [Boolean]
       def present?
-        not blank?
+        1 <= @length
+      end
+
+      # @return [Boolean]
+      def defined_at?(n)
+        raise ArgumentError, "argument must be non-negative" if n < 0
+        n < @length
+      end
+
+      # Returns true if the pointer begins with the given prefix.
+      #
+      # @return [Boolean]
+      def start_with?(prefix, offset=0)
+        case prefix
+        when self.class
+          subseq_eq?(@storage, @offset, prefix.storage, prefix.offset + offset, prefix.length)
+        when @storage.class
+          subseq_eq?(@storage, @offset, prefix, offset, prefix.length)
+        else
+          raise TypeError, "expected %s or %s, got %s" % [
+            self.class, @storage.class, prefix.class]
+        end
       end
 
       # @return [Boolean]
       def ==(other)
         if self.class == other.class
-          if @storage.eql?(other.storage)
+          if @storage.equal?(other.storage)
             @offset == other.offset and @length == other.length
-          else
-            length == other.length and reify == other.reify
-          end
+          end || subseq_eq?(@storage, @offset, other.storage, other.offset, @length)
+        elsif @storage.equal?(other)
+          @length == other.length
         else
-          length == other.length and reify == other
+          subseq_eq?(@storage, @offset, other, 0, @length)
         end
       end
 
       # @group Single Element Selection
       #########################################################################
 
-      # Return the first element. If {empty?}, `nil` will be returned.
-      #
       # @return [E]
       def head
         @storage[@offset] if @length > 0
       end
 
-      # Return the last element. If {empty?}, `nil` will be returned.
-      #
-      # @return [E]
+      # @return [Pointer<S, E>]
       def last
         @storage[@offset + @length - 1] if @length > 0
       end
 
-      # True if `#at(n)` is defined.
-      #
-      # @return [Boolean]
-      def defined_at?(n)
-        raise ArgumentError, "argument must be non-negative" if 0 > n
-        n < @length
-      end
-
-      # Return the nth element.
-      #
       # @return [E]
       def at(n)
         raise ArgumentError, "argument must be non-negative" if 0 > n
         @storage[@offset + n] if @length > n
       end
 
-      # @group Slicing
+      # @group Subsequence
       #########################################################################
 
-      # Return a new pointer with the first item removed.
-      #
-      # @return [Pointer<S, E>]
       def tail
         drop(1)
       end
 
-      # When given a range or a start index and length, returns a new pointer
-      # that spans the given indices. When given a single index, returns the
-      # single element at that index.
-      #
-      #   cursor[n]     == cursor.at(n)
-      #   cursor[a, b]  == cursor.drop(a).take(b)
-      #   cursor[a...b] == cursor.drop(a).take(b)
-      #   cursor[a..b]  == cursor.drop(a).take(b+1)
-      #
-      # @return [Pointer<S, E> | E]
       def [](offset, length=nil)
         if length.present?
           raise ArgumentError, "length must be non-negative" if 0 > length
           raise ArgumentError, "offset must be non-negative" if 0 > offset
           return nil if offset >= @length or offset < -@length
 
-          length  = @length - offset  if length > @length - offset
+          length = @length - offset if length > @length - offset
           self.class.new(@storage.freeze, @offset + offset, length)
 
         elsif offset.kind_of?(Range)
@@ -184,11 +118,7 @@ module Stupidedi
 
           a += @length if a < 0
           b += @length if b and b < 0
-
           return nil if a < 0 or a >= @length
-
-          # This doesn't match Array or String #[] implementation
-          # return nil if b and (b < 0 or b >= @length)
 
           if b.nil?
             length = @length - a
@@ -208,13 +138,6 @@ module Stupidedi
 
       alias_method :slice, :[]
 
-      # Return a new pointer, skipping the first n items.
-      #
-      #   x = Pointer.new("eyeball")
-      #   x.drop(5)   #=> "ll"
-      #   x           #=> "eyeball"
-      #
-      # @return [Pointer<S, E>]
       def drop(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
         n = @length if n > @length
@@ -222,28 +145,6 @@ module Stupidedi
         self.class.new(@storage.freeze, @offset + n, @length - n)
       end
 
-      # Destructively update this pointer to start at the (n+1)th element.
-      #
-      #   x = Pointer.new("eyeball")
-      #   x.drop!(5)  #=> "eyeba"
-      #   x           #=> "ll"
-      #
-      # @return [Pointer<S, E>]
-      def drop!(n)
-        raise ArgumentError, "argument must be non-negative" if n < 0
-        n        = @length if n > @length
-        @offset += n
-        @length -= n
-        self
-      end
-
-      # Return a new pointer spanning only the first n items.
-      #
-      #   x = Pointer.new("eyeball")
-      #   x.take(5)   #=> "eyeba"
-      #   x           #=> "eyeball"
-      #
-      # @return [Pointer<S, E>]
       def take(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
         n = @length if n > @length
@@ -251,24 +152,6 @@ module Stupidedi
         self.class.new(@storage.freeze, @offset, n)
       end
 
-      # Destructively update this pointer to end at the nth element.
-      #
-      #   x = Pointer.new("eyeball")
-      #   x.take!(5)  #=> "eyeba"
-      #   x           #=> "eyeba"
-      #
-      # @return [Pointer<S, E>]
-      def take!(n)
-        raise ArgumentError, "argument must be non-negative" if n < 0
-        n       = @length if n > @length
-        @length = n
-        self
-      end
-
-      # This method is equivalent to x.drop(n).take(m), but it allocates
-      # one less object because the intermediate Pointer value isn't needed
-      #
-      # @return [Pointer<S, E>]
       def drop_take(drop, take)
         raise ArgumentError, "drop must be non-negative" if drop < 0
         raise ArgumentError, "take must be non-negative" if take < 0
@@ -281,12 +164,6 @@ module Stupidedi
         self.class.new(@storage.freeze, offset, take)
       end
 
-      # Split the Pointer in two at the given position by creating two new
-      # Flyweights.
-      #
-      # @param [Integer] n number of items at which to split (`n > 0`)
-      #
-      # @return [Array(Pointer<S, E>, Pointer<S, E>)]
       def split_at(n)
         [take(n), drop(n)]
       end
@@ -294,37 +171,95 @@ module Stupidedi
       # @group Concatenation
       #########################################################################
 
-      # Concatenate two flyweights to form a third.
-      #
-      # When the two flyweights are backed by the same storage object, and the
-      # first pointer ends where the second begins, no allocation is needed
-      # (only extending `@length`). Otherwise, at least partial copies of each's
-      # `@storage` are made to create a third `@storage`.
-      #
-      # @return [Pointer<S, E>]
       def +(other)
-        if @storage.eql?(other.storage) and @offset + @length == other.offset
-          # allocations: 0 strings, 1 pointer
-          self.class.new(@storage.freeze, @offset, @length + other.length)
+        if other.is_a?(self.class)
+          o_storage = other.storage
+          o_length  = other.length
+          o_offset  = other.offset
         else
-          # It doesn't make much sense to allocate two new operands and then
-          # use `+` to allocate a third for the result.
-          #
-          # TODO: Should this be a new Pointer? Depends on how the result
-          # will be used. If more concatenation is done, then it's a waste,
-          # and slightly worse than plain String + String.
-          #
-          # allocations: 2 string, 0 pointers
-          reify(true).concat(other.reify)
+          o_storage = other
+          o_length  = other.length
+          o_offset  = 0
         end
+
+        if (@storage.equal?(o_storage) and @offset + @length == o_offset) \
+        or subseq_eq?(@storage, @offset + @length, o_storage, o_offset, o_length)
+          self.class.new(@storage.freeze, @offset, @length + o_length)
+        else
+          if other.is_a?(self.class)
+            reify(true).concat(other.reify)
+          else
+            reify(true).concat(other)
+          end
+        end
+      end
+
+      # @group Destructive methods
+      #########################################################################
+
+      # @return self
+      def drop!(n)
+        raise ArgumentError, "argument must be non-negative" if n < 0
+        n        = @length if n > @length
+        @offset += n
+        @length -= n
+        self
+      end
+
+      # @return self
+      def take!(n)
+        raise ArgumentError, "argument must be non-negative" if n < 0
+        n       = @length if n > @length
+        @length = n
+        self
       end
 
       # @endgroup
       #########################################################################
+
+      # @return [String]
+      def inspect
+        "#<%s %s@storage=0x%s @offset=%d @length=%d>" %
+          [self.class.name.split("::").last,
+           @storage.frozen? ? "-" : "+",
+           (@storage.object_id << 1).to_s(16), @offset, @length]
+      end
+
+      # This operation typically allocates memory and copies part of @storage,
+      # so this is avoided as much as possible.
+      #
+      # @return [S]
+      def reify(always_allocate = false)
+        if @storage.frozen? \
+        and @offset == 0 \
+        and @length == @storage.length \
+        and not always_allocate
+          @storage
+        else
+          # $stderr.puts "reify: allocate[#@offset, #@length]"
+          @storage[@offset, @length]
+        end
+      end
+
+      private
+
+      # @return [Boolean]
+      def subseq_eq?(s1, o1, s2, o2, length)
+        return false if s1.length < o1 + length
+        return false if s2.length < o2 + length
+        return true  if s1.equal?(s2) and o1 == o2
+
+        # s1 = s1[o1, length] if 0 >= 0 or length != s1.length
+        # s2 = s2[o2, length] if 0 >= 0 or length != s2.length
+        # s1 == s2
+
+        # TODO: Not sure this is an improvement over allocating the subsequences
+        # above. But when @storage is an Array, this won't allocate any objects.
+        (0 .. length-1).all?{|n| s1[o1 + n] == s2[o2 + n] }
+      end
     end
 
     class << Pointer
-
       # @group Constructors
       #########################################################################
 
@@ -332,14 +267,15 @@ module Stupidedi
       # 
       # NOTE: Pointer operations can potentially destrucively modify the given
       # object, but if it is `#frozen?`, a copy will be made before the update.
-      # If you are accessing or modifying the object outside of the Pointer API
+      # If you are accessing or modifying the object outside of the Pointer API,
       # unexpected results might occur. To avoid this, either provide a copy
       # with `#dup` or freeze the object first with `#freeze`.
       # 
+      # @return [Pointer]
       def build(object)
         case object
         when String
-          StringPtr.new(object, 0, object.length)
+          Substring.new(object, 0, object.length)
         when Pointer
           object
         else
