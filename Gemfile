@@ -17,5 +17,4 @@ group :development do
   gem "benchmark-ips"#             ""
   gem "simplecov"#                 ""
   gem "simplecov-inline-html"      if RUBY_VERSION >= "2.4"
-  gem "memory_profiler"            if RUBY_VERSION >= "2.3.8"
 end

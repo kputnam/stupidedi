@@ -80,8 +80,11 @@ module Stupidedi
       #
       # @return [Integer]
       def =~(pattern)
-        m, offset = _match(pattern, 0)
-        m and m.begin(0) + offset
+        if result = _match(pattern, 0)
+          m      = result[0]
+          offset = result[1]
+          m and m.begin(0) + offset
+        end
       end
 
       # @group Search
@@ -108,8 +111,11 @@ module Stupidedi
         return nil if offset > @length
 
         if other_ = Regexp.try_convert(other)
-          m, offset = _match(other_, offset, anchorless)
-          m and m.begin(0) + offset
+          if result = _match(other_, offset, anchorless)
+            m      = result[0]
+            offset = result[1]
+            m and m.begin(0) + offset
+          end
         elsif other_ = String.try_convert(other)
           n = @storage.index(other_, @offset + offset)
           n - @offset if n and n + other_.length <= @offset + @length
@@ -151,7 +157,8 @@ module Stupidedi
       def count(other)
         other  = _convert(String, other)
         length = other.length
-        count, offset = 0, @offset
+        count  = 0
+        offset = @offset
 
         while true
           offset = @storage.index(other, offset)

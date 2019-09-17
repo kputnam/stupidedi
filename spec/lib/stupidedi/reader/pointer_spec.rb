@@ -26,8 +26,9 @@ describe Stupidedi::Reader::Pointer do
       specify { expect(pointer("abc")).to be_a(Stupidedi::Reader::Pointer) }
 
       allocation do
-        storage = "X"
-        expect{ pointer(storage) }.to allocate(Stupidedi::Reader::Substring => 1)
+        ignore  = nil
+        storage = [1,1,1]
+        expect{ ignore = pointer(storage) }.to allocate(Stupidedi::Reader::Pointer => 1)
       end
     end
 

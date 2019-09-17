@@ -774,12 +774,12 @@ describe Stupidedi::Reader::Substring do
       let(:regexp_o) { /..+/ }
       let(:regexp_x) { /xxx/ }
 
-      #it "works like String#=~" do
-      #  substrings(lower.length) do |idx, len|
-      #    expect(lower_ptr[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-      #    expect(lower_ptr[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-      #  end
-      #end
+      it "works like String#=~" do
+        substrings(lower.length) do |idx, len|
+          expect(lower_ptr[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
+          expect(lower_ptr[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
+        end
+      end
 
       allocation do
         a = lower_ptr.drop(3).take(3)

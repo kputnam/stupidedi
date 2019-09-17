@@ -39,6 +39,10 @@ module Stupidedi
       def advance(input)
         self
       end
+
+      def ===(other)
+        equal?(other)
+      end
     end
   end
 end

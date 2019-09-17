@@ -12,11 +12,6 @@ begin
 rescue LoadError
 end
 
-begin
-  require "memory_profiler"
-rescue LoadError
-end
-
 require "stupidedi"
 require "ostruct"
 require "pp"

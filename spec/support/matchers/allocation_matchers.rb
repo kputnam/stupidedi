@@ -18,7 +18,7 @@ module AllocationMatchers
 
       @op, @limits = op, Hash[limits.map{|k,v| [k.to_s, v] }]
 
-      raise "can't load memory_profiler" unless defined? MemoryProfiler
+      raise "can't load memory_profiler" unless defined? MemProf
     end
 
     def description
@@ -79,9 +79,9 @@ module AllocationMatchers
       opts = {trace: @limits.keys.map{|c| Object.const_get(c)}}
       opts.delete(:trace) if @strict
 
-      report = MemoryProfiler.report(opts, &target)
-      result = report.allocated_objects_by_class
-      result.inject({}){|memo, x| memo.update(x[:data] => x[:count]) }
+      report = MemProf.report(opts, &target)
+      result = report.allocations_by_class
+      result.inject({}){|memo, (k,v)| memo.update(k.name => v[:count]) }
     end
   end
 end
