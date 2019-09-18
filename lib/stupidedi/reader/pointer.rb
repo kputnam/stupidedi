@@ -55,9 +55,9 @@ module Stupidedi
       def start_with?(prefix, offset=0)
         case prefix
         when self.class
-          subseq_eq?(@storage, @offset, prefix.storage, prefix.offset + offset, prefix.length)
+          subseq_eq?(@storage, @offset + offset, prefix.storage, prefix.offset, prefix.length)
         when @storage.class
-          subseq_eq?(@storage, @offset, prefix, offset, prefix.length)
+          subseq_eq?(@storage, @offset + offset, prefix,         0,             prefix.length)
         else
           raise TypeError, "expected %s or %s, got %s" % [
             self.class, @storage.class, prefix.class]

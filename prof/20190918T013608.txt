@@ -1,0 +1,283 @@
+Total allocated: 213.35 MB (4798676 objects)
+
+
+Objects most allocated
+================================================================
+   1458500  Stupidedi::Reader::Tokenizer::Result::Done
+         :    1458500  lib/stupidedi/reader/tokenizer.rb:594
+
+   1257400  Stupidedi::Reader::Substring
+         :    1006200  lib/stupidedi/reader/pointer.rb:113
+         :     251100  lib/stupidedi/reader/pointer.rb:164
+         :        100  lib/stupidedi/reader/pointer.rb:152
+
+    755000  Stupidedi::Tokens::SimpleElementTok
+         :     755000  lib/stupidedi/tokens/simple_element_tok.rb:61
+
+    713097  String
+         :     251200  lib/stupidedi/reader/pointer.rb:85
+         :     201200  ./__prof/memprof-tk.rb:28
+         :     201200  lib/stupidedi/reader/pointer.rb:240
+         :      51727  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+         :        759  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:119
+
+    304060  Array
+         :     201100  lib/stupidedi/reader/tokenizer.rb:319
+         :      50000  lib/stupidedi/reader/tokenizer.rb:380
+         :      50000  lib/stupidedi/schema/composite_element_use.rb:46
+         :        200  lib/stupidedi/reader/tokenizer.rb:152
+         :        200  ./__prof/memprof-tk.rb:33
+
+    201200  Stupidedi::Tokens::SegmentTok
+         :     201200  lib/stupidedi/tokens/segment_tok.rb:83
+
+     50000  Stupidedi::Tokens::CompositeElementTok
+         :      50000  lib/stupidedi/tokens/composite_element_tok.rb:81
+
+     50000  Stupidedi::Tokens::ComponentElementTok
+         :      50000  lib/stupidedi/tokens/component_element_tok.rb:60
+
+      6775  Hash
+         :       6422  /Users/mr/.rvm/gems/ruby-2.6.3/gems/cantor-1.2.1/lib/cantor/absolute_set.rb:286
+         :        100  lib/stupidedi/reader/segment_dict.rb:138
+         :         72  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+         :         13  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:130
+         :         10  lib/stupidedi/schema/simple_element_use.rb:31
+
+       249  MatchData
+         :        161  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:177
+         :         46  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:387
+         :         23  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:119
+         :         14  lib/stupidedi/ruby/string.rb:85
+         :          2  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/requirement.rb:100
+
+       200  Stupidedi::Reader::Separators
+         :        200  lib/stupidedi/reader/separators.rb:95
+
+       178  File
+         :        105  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:114
+         :         70  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/specification.rb:1158
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/bundler_version_finder.rb:96
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:130
+
+       168  Stupidedi::Versions::Common::ElementTypes::ID
+         :          2  lib/stupidedi/versions/common/element_types/id.rb:23
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:318
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:308
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:296
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:291
+
+       144  Enumerator
+         :        100  lib/stupidedi/reader/tokenizer.rb:232
+         :         44  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:372
+
+       142  Class
+         :          2  lib/stupidedi/versions/common/element_types/dt.rb:195
+         :          2  lib/stupidedi/versions/common/element_types/nn.rb:272
+         :          2  lib/stupidedi/versions/common/element_types/nn.rb:150
+         :          2  lib/stupidedi/versions/common/element_types/nn.rb:118
+         :          2  lib/stupidedi/versions/common/element_types/nn.rb:56
+
+       127  Range
+         :        105  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:36
+         :         20  lib/stupidedi/ruby/array.rb:73
+         :          2  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+
+       117  Regexp
+         :        105  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:119
+         :         11  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/bundler_version_finder.rb:71
+
+       113  Stupidedi::Schema::CodeList::Internal
+         :        113  lib/stupidedi/schema/code_list.rb:82
+
+       105  Gem::StubSpecification
+         :         68  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:64
+         :         37  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:60
+
+       105  Stupidedi::Schema::SimpleElementUse
+         :         50  lib/stupidedi/schema/simple_element_def.rb:34
+         :         34  lib/stupidedi/versions/common/element_types/id.rb:36
+         :         11  lib/stupidedi/versions/common/element_types/id.rb:38
+         :         10  lib/stupidedi/schema/simple_element_use.rb:37
+
+       105  Gem::StubSpecification::StubLine
+         :        105  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:125
+
+       100  Stupidedi::Tokens::IgnoredTok
+         :        100  lib/stupidedi/reader/tokenizer.rb:214
+
+       100  Stupidedi::Reader::SegmentDict::NonEmpty
+         :        100  lib/stupidedi/reader/segment_dict.rb:110
+
+       100  Stupidedi::Reader::SegmentDict::Constants
+         :        100  lib/stupidedi/reader/segment_dict.rb:110
+
+       100  Stupidedi::Values::FunctionalGroupVal
+         :        100  lib/stupidedi/versions/004010/functional_group_def.rb:11
+
+        80  Stupidedi::Versions::Common::ElementTypes::AN
+         :          3  lib/stupidedi/versions/common/element_types/simple_element.rb:47
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:12
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:315
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:290
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:285
+
+        71  Thread::Backtrace
+         :         70  lib/stupidedi.rb:54
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+
+        56  Gem::Version
+         :         56  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:203
+
+        43  Cantor::AbsoluteSet
+         :         43  /Users/mr/.rvm/gems/ruby-2.6.3/gems/cantor-1.2.1/lib/cantor/absolute_set.rb:288
+
+        33  Stupidedi::Versions::Common::ElementTypes::Nn
+         :          3  lib/stupidedi/versions/common/element_types/nn.rb:25
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:317
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:316
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:286
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:282
+
+        30  Stupidedi::Versions::Common::ElementTypes::R
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:8071
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:288
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:287
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:283
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:61
+
+        27  Integer
+         :         27  /Users/mr/.rvm/gems/ruby-2.6.3/gems/cantor-1.2.1/lib/cantor/absolute_set.rb:288
+
+        25  Stupidedi::Schema::ComponentElementUse
+         :         16  lib/stupidedi/schema/simple_element_def.rb:39
+         :          9  lib/stupidedi/versions/common/element_types/id.rb:45
+
+        24  Module
+         :          1  lib/stupidedi/values/segment_val_group.rb:19
+         :          1  lib/stupidedi/versions/004010/segment_defs.rb:118
+         :          1  lib/stupidedi/versions.rb:16
+         :          1  lib/stupidedi/versions/004010.rb:13
+         :          1  lib/stupidedi/schema.rb:28
+
+        17  Stupidedi::Schema::CodeList::External
+         :         17  lib/stupidedi/schema/code_list.rb:92
+
+        16  Stupidedi::Schema::SegmentDef
+         :         14  lib/stupidedi/schema/segment_def.rb:117
+         :          2  lib/stupidedi/schema/segment_def.rb:43
+
+        10  Stupidedi::Versions::Common::SyntaxNotes::C
+         :         10  lib/stupidedi/versions/common/syntax_notes.rb:160
+
+         7  Stupidedi::Versions::Common::SyntaxNotes::P
+         :          7  lib/stupidedi/versions/common/syntax_notes.rb:142
+
+         6  Stupidedi::Schema::CompositeElementDef
+         :          6  lib/stupidedi/schema/composite_element_def.rb:98
+
+         4  Gem::Requirement
+         :          2  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/specification.rb:2036
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/requirement.rb:64
+         :          1  /Users/mr/.rvm/gems/ruby-2.6.3/specifications/cantor-1.2.1.gemspec:8
+
+         4  Stupidedi::Versions::Common::ElementTypes::DT
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:24
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:6208
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:4744
+         :          1  lib/stupidedi/versions/common/element_types/simple_element.rb:47
+
+         4  Stupidedi::Schema::SegmentUse
+         :          2  lib/stupidedi/schema/segment_use.rb:51
+         :          2  lib/stupidedi/schema/segment_def.rb:59
+
+         3  Stupidedi::Versions::Common::ElementTypes::TM
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:6209
+         :          1  lib/stupidedi/versions/004010/element_defs.rb:4685
+         :          1  lib/stupidedi/versions/common/element_types/simple_element.rb:47
+
+         3  Time
+         :          1  ./__prof/memprof-tk.rb:57
+         :          1  ./__prof/memprof-tk.rb:17
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/specification.rb:1749
+
+         3  Process::Status
+         :          1  ./__prof/memprof-tk.rb:54
+         :          1  ./__prof/memprof-tk.rb:14
+         :          1  ./__prof/memprof-tk.rb:19
+
+         3  Stupidedi::Schema::ElementReq
+         :          1  lib/stupidedi/versions/common/element_reqs.rb:8
+         :          1  lib/stupidedi/versions/common/element_reqs.rb:7
+         :          1  lib/stupidedi/versions/common/element_reqs.rb:6
+
+         3  Stupidedi::Versions::Common::SyntaxNotes::R
+         :          3  lib/stupidedi/versions/common/syntax_notes.rb:148
+
+         2  Method
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/2.6.0/pp.rb:284
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/2.6.0/pp.rb:282
+
+         2  PrettyPrint::Group
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/2.6.0/prettyprint.rb:92
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/2.6.0/prettyprint.rb:261
+
+         1  LoadError
+         :          1  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+
+
+
+Locations with most allocations
+================================================================
+   1458500  lib/stupidedi/reader/tokenizer.rb:594
+   1006200  lib/stupidedi/reader/pointer.rb:113
+    755000  lib/stupidedi/tokens/simple_element_tok.rb:61
+    251200  lib/stupidedi/reader/pointer.rb:85
+    251100  lib/stupidedi/reader/pointer.rb:164
+    201202  ./__prof/memprof-tk.rb:28
+    201200  lib/stupidedi/tokens/segment_tok.rb:83
+    201200  lib/stupidedi/reader/pointer.rb:240
+    201100  lib/stupidedi/reader/tokenizer.rb:319
+     51884  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:54
+     50000  lib/stupidedi/reader/tokenizer.rb:380
+     50000  lib/stupidedi/tokens/component_element_tok.rb:60
+     50000  lib/stupidedi/schema/composite_element_use.rb:46
+     50000  lib/stupidedi/tokens/composite_element_tok.rb:81
+      6422  /Users/mr/.rvm/gems/ruby-2.6.3/gems/cantor-1.2.1/lib/cantor/absolute_set.rb:286
+       887  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:119
+       779  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:36
+       674  lib/stupidedi/ruby/module.rb:101
+       498  lib/stupidedi/versions/common/element_types/operators.rb:92
+       350  lib/stupidedi.rb:55
+       339  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/core_ext/kernel_require.rb:130
+       328  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/util.rb:125
+       322  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:177
+       315  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:114
+       300  lib/stupidedi/reader/pointer.rb:96
+       261  lib/stupidedi/ruby/module.rb:104
+       254  lib/stupidedi/ruby/module.rb:36
+       210  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/stub_specification.rb:117
+       210  lib/stupidedi.rb:54
+       200  lib/stupidedi/reader/tokenizer.rb:152
+       200  ./__prof/memprof-tk.rb:33
+       200  lib/stupidedi/reader/separators.rb:27
+       200  lib/stupidedi/reader/separators.rb:95
+       200  lib/stupidedi/reader/segment_dict.rb:110
+       200  lib/stupidedi/reader/tokenizer.rb:232
+       200  lib/stupidedi/versions/004010/functional_group_def.rb:11
+       199  lib/stupidedi/versions/common/element_types/operators.rb:116
+       190  lib/stupidedi/versions/common/element_types/operators.rb:48
+       185  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:387
+       137  lib/stupidedi/versions/common/element_types/operators.rb:14
+       132  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:372
+       131  lib/stupidedi/ruby/module.rb:93
+       131  lib/stupidedi/ruby/module.rb:102
+       131  lib/stupidedi/ruby/module.rb:103
+       127  lib/stupidedi/color.rb:26
+       121  lib/stupidedi/ruby/object.rb:29
+       121  lib/stupidedi/ruby/array.rb:46
+       121  lib/stupidedi/ruby/object.rb:30
+       113  lib/stupidedi/schema/code_list.rb:82
+       112  /Users/mr/.rvm/rubies/ruby-2.6.3/lib/ruby/site_ruby/2.6.0/rubygems/version.rb:203

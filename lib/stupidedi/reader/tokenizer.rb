@@ -9,6 +9,11 @@ module Stupidedi
     # input.at(offset). It might be more efficient to replace char-at-a-time reads
     # with Regexps that consume multiple characters at once.
 
+    # tr  separators.segment
+    # gs  separators.element
+    # us  separators.component
+    # rs  separators.repetition
+
     class Tokenizer
       include Inspect
 
@@ -190,7 +195,7 @@ module Stupidedi
           return eof("ISA", input.position) unless input.defined_at?(s)
 
           # The character after this "I" is not "S"
-          next unless input[s, 1] == @s
+          next unless input.start_with?(@s, s)
 
           a = input.min_graphic_index(s+1)
 
@@ -198,7 +203,7 @@ module Stupidedi
           return eof("ISA", input.position) unless input.defined_at?(a)
 
           # The character after this "S" is not "A"
-          next unless input[a, 1] == @a
+          next unless input.start_with?(@a, a)
 
           # The next character determines the element separator. If it's an
           # alphanumeric or space, we assume this is not the start of an ISA
@@ -265,20 +270,30 @@ module Stupidedi
         buffer     = input.pointer.drop_take(offset, 0)
         start_pos  = input.position_at(offset)
 
-        while true
-          return eof("segment identifier", input.position) \
-            unless input.defined_at?(offset)
+        # while true
+        #   return eof("segment identifier", input.position) \
+        #     unless input.defined_at?(offset)
 
-          char = input.at(offset)
-          break if char == @separators.element
-          break if char == @separators.segment
+        #   char = input.at(offset)
+        #   break if char == @separators.element
+        #   break if char == @separators.segment
 
-          # Zero-copy as long as we've not skipped over any characters yet
-          buffer << char if input.graphic?(offset)
-          offset += 1
+        #   # Zero-copy as long as we've not skipped over any characters yet
+        #   buffer << char if input.graphic?(offset)
+        #   offset += 1
 
-          break if buffer.length >= 3
-        end
+        #   break if buffer.length >= 3
+        # end
+
+        # Whichever occurs first
+        gs = input.index(@separators.element, offset)
+        tr = input.index(@separators.segment, offset)
+        xx = if gs and tr and gs < tr; then gs end || tr || gs
+        return eof("segment identifier", input.position) unless xx
+
+        length = xx - offset
+        length = 3 if length > 3
+        buffer = input[offset, length]
 
         # This is the only String allocation we cannot get around. The `match?`
         # call either has a pattern with \A..\z, or the length of segment_id
@@ -292,7 +307,7 @@ module Stupidedi
         return expected("segment identifier, found %s" % segment_id.inspect,
           start_pos) unless segment_id.match?(VALID_SEGMENT_ID)
 
-        return done(segment_id.to_sym, start_pos, input.drop!(offset))
+        return done(segment_id.to_sym, start_pos, input.drop!(xx))
       end
 
       # @param input          should be positioned on an element separator: "NM1[*].."
@@ -429,27 +444,57 @@ module Stupidedi
         builder    = @switcher_.switch(repeatable, input.position)
 
         while input.defined_at?(offset)
-          char = input.at(offset)
+          # char = input.at(offset)
 
-          if repeatable and char == @separators.repetition
+          # if repeatable and char == @separators.repetition
+          #   builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+          #   offset    += 1
+          #   repeat_pos = input.position_at(offset)
+
+          # elsif char == @separators.segment \
+          #    or char == @separators.element \
+          #    or char == @separators.component \
+          #    or char == @separators.repetition
+          #   # Because we're not repeatable, a repetition seperator could
+          #   # belong to the parent/composite element. If it's not repeatable
+          #   # either, an error can be returned.
+          #   builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
+          #   return done(builder.build, builder.position, input.drop!(offset))
+
+          # else
+          #   # This is zero-copy as long as we haven't skipped any characters
+          #   buffer << char if input.graphic?(offset)
+          #   offset += 1
+          # end
+
+          # Whichever occurs first
+          tr = input.index(@separators.segment, offset)   if @separators.segment
+          gs = input.index(@separators.element, offset)   if @separators.element
+          us = input.index(@separators.component, offset) if @separators.component
+          xx = if gs and tr and gs < tr; then gs end || tr || gs
+          xx = if xx and us and xx < us; then xx end || us || xx
+
+          rs = input.index(@separators.repetition, offset) \
+            if @separators.repetition and repeatable
+
+          if rs and rs < xx
+            length = rs - offset
+            buffer = input[offset, length]
+
             builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-            repeat_pos = input.position_at(offset + 1)
-            offset    += 1
+            offset     = rs + 1
+            repeat_pos = input.position_at(offset)
+          elsif xx
+            length = xx - offset
+            buffer = input[offset, length]
 
-          elsif char == @separators.segment \
-             or char == @separators.element \
-             or char == @separators.component \
-             or char == @separators.repetition
             # Because we're not repeatable, a repetition seperator could
             # belong to the parent/composite element. If it's not repeatable
             # either, an error can be returned.
             builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
-            return done(builder.build, builder.position, input.drop!(offset))
-
+            return done(builder.build, builder.position, input.drop!(xx))
           else
-            # This is zero-copy as long as we haven't skipped any characters
-            buffer << char if input.graphic?(offset)
-            offset += 1
+            break
           end
         end
 
@@ -482,29 +527,58 @@ module Stupidedi
           input.position) unless input.start_with?(@separators.element)
 
         offset     = input.min_graphic_index(1)
-        buffer     = input.pointer.drop_take(offset, 0)
+        #buffer     = input.pointer.drop_take(offset, 0)
         start_pos  = input.position
         repeat_pos = input.position
         builder    = @switcher.switch(repeatable, input.position)
 
         while input.defined_at?(offset)
-          char = input.at(offset)
+        #  char = input.at(offset)
 
-          if char == @separators.element \
-          or char == @separators.segment
-            builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-            return done(builder.build, start_pos, input.drop!(offset))
+        #  if char == @separators.element \
+        #  or char == @separators.segment
+        #    builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+        #    return done(builder.build, start_pos, input.drop!(offset))
 
-          elsif repeatable and char == @separators.repetition
+        #  elsif repeatable and char == @separators.repetition
+        #    builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+        #    offset    += 1
+        #    buffer     = input.pointer.drop_take(offset, 0)
+        #    repeat_pos = input.position_at(offset)
+
+        #  else
+        #    # This is zero-copy as long as we haven't skipped any characters
+        #    buffer << char if input.graphic?(offset)
+        #    offset += 1
+        #  end
+
+          # Whichever occurs first
+          tr = input.index(@separators.segment, offset)    if @separators.segment
+          gs = input.index(@separators.element, offset)    if @separators.element
+          xx = if gs and tr and gs < tr; then gs end || tr || gs
+          break unless xx
+
+          rs = input.index(@separators.repetition, offset) if @separators.repetition
+
+          if rs and rs < xx
+            # @sepatarors.repetition
+            length = rs - offset
+            buffer = input[offset, length]
+
             builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-            offset    += 1
+            offset     = rs + 1
             buffer     = input.pointer.drop_take(offset, 0)
             repeat_pos = input.position_at(offset)
+          elsif xx
+            # @separators.element
+            # @separators.segment
+            length = xx - offset
+            buffer = input[offset, length]
 
+            builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+            return done(builder.build, start_pos, input.drop!(xx))
           else
-            # This is zero-copy as long as we haven't skipped any characters
-            buffer << char if input.graphic?(offset)
-            offset += 1
+            break
           end
         end
 
