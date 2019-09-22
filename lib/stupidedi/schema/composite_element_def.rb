@@ -17,8 +17,12 @@ module Stupidedi
       attr_reader :parent
 
       def initialize(id, name, description, component_uses, syntax_notes, parent)
-        @id, @name, @description, @component_uses, @syntax_notes, @parent =
-          id, name, description, component_uses, syntax_notes, parent
+        @id             = id
+        @name           = name
+        @description    = description
+        @component_uses = component_uses
+        @syntax_notes   = syntax_notes
+        @parent         = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects

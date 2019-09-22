@@ -14,7 +14,7 @@ module Stupidedi
       #
       # @return [Array]
       def cons(array = [])
-        [self] + array
+        [self].concat(array)
       end
 
       # Append the item to rear of a new list

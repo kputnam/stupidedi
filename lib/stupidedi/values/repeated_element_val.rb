@@ -21,8 +21,8 @@ module Stupidedi
       def_delegators "children.first", :position
 
       def initialize(children, usage)
-        @children, @usage =
-          children, usage
+        @children = children
+        @usage    = usage
       end
 
       # @return [RepeatedElementVal]

@@ -17,7 +17,7 @@ module Stupidedi
       def initialize(storage, offset, length)
         raise ArgumentError, "offset must be non-negative" if offset < 0
         raise ArgumentError, "length must be non-negative" if length < 0
-        raise ArgumentError, "offset must be less than storage length" if offset > storage.length
+        raise ArgumentError, "offset must be less than storage length"   if offset > storage.length
         raise ArgumentError, "given length cannot exceed storage length" if length > storage.length
 
         @storage = storage
@@ -40,13 +40,14 @@ module Stupidedi
 
       # @return [Boolean]
       def present?
-        1 <= @length
+        @length >= 1
       end
 
       # @return [Boolean]
-      def defined_at?(n)
-        raise ArgumentError, "argument must be non-negative" if n < 0
-        n < @length
+      def defined_at?(index)
+        index = Integer(index)
+        raise ArgumentError, "argument must be non-negative" if index < 0
+        index < @length
       end
 
       # Returns true if the pointer begins with the given prefix.
@@ -64,6 +65,9 @@ module Stupidedi
         end
       end
 
+      # Returns true if this pointer has the same contents as another pointer
+      # or a value with the same type as storage <S>.
+      #
       # @return [Boolean]
       def ==(other)
         if self.class == other.class
@@ -80,45 +84,104 @@ module Stupidedi
       # @group Single Element Selection
       #########################################################################
 
+      # Returns the first element
+      #
       # @return [E]
       def head
         @storage[@offset] if @length > 0
       end
 
-      # @return [Pointer<S, E>]
-      def last
-        @storage[@offset + @length - 1] if @length > 0
+      # Returns the first element, or the first `count` elements, of the
+      # pointer. If the array is empty, the first form returns `nil`, and the
+      # second form returns an empty pointer. See also `#last` for the opposite
+      # effect.
+      #
+      #   first     -> element
+      #   first(n)  -> pointer
+      #
+      # @return [E or Pointer<S, E>]
+      def first(count = nil)
+        if count.nil?
+          head
+        else
+          take(count)
+        end
       end
 
+      # Returns the last `count` element(s). If the pointer is empty, the first
+      # form returns `nil`. If a negative number is given, raises an
+      # `ArgumentError`.
+      #
+      #   last      -> element
+      #   last(n)   -> pointer
+      #
+      # @return [E or Pointer<S, E>]
+      def last(count = nil)
+        if count.nil?
+          @storage[@offset + @length - 1] if @length > 0
+        else
+          count = Integer(count)
+          raise ArgumentError, "count must be non-negative" if count < 0
+          @storage[@offset + @length - count, count]
+        end
+      end
+
+      # Returns the element at `index`. Returns `nil` if the index is out
+      # of range. If a negative number is given, raises an `ArgumentError`.
+      #
       # @return [E]
-      def at(n)
-        raise ArgumentError, "argument must be non-negative" if 0 > n
-        @storage[@offset + n] if @length > n
+      def at(index)
+        index = Integer(index)
+        raise ArgumentError, "argument must be non-negative" if index < 0
+        @storage[@offset + index] if @length > index
       end
 
       # @group Subsequence
       #########################################################################
 
+      # Drops the first element and returns the remaining elements in a pointer.
+      #
+      # @return [Pointer<S, E>]
       def tail
         drop(1)
       end
 
+      # Returns the element at `offset` or returns a pointer starting at the
+      # `offset` index and continuing for `length` elements, or returns a
+      # pointer specified by a `Range` of indices.
+      #
+      #   pointer[offset]           -> element
+      #   pointer[offset, length]   -> pointer
+      #   pointer[a..b]             -> pointer
+      #   pointer[a...b]            -> pointer
+      #
+      # Negative indices count backward from the end of the pointer (-1 is the
+      # last element). For `start` and `Range` cases, the starting index is just
+      # before the element. Additionally, an empty pointer is returned when the
+      # starting index for an element range is at the end of the pointer.
+      #
+      # Returns `nil` if the index or starting index are out of range.
+      #
+      # @return [E or Pointer<S, E>]
       def [](offset, length=nil)
         if length.present?
-          raise ArgumentError, "length must be non-negative" if 0 > length
-          raise ArgumentError, "offset must be non-negative" if 0 > offset
-          return nil if offset >= @length or offset < -@length
+          length  = Integer(length)
+          offset += @length if offset < 0
+
+          raise ArgumentError, "length must be non-negative" if length < 0
+          raise ArgumentError, "offset must be non-negative" if offset < 0
+          return nil if offset < -@length or @length <= offset
 
           length = @length - offset if length > @length - offset
           self.class.new(@storage.freeze, @offset + offset, length)
 
         elsif offset.kind_of?(Range)
-          a = offset.begin
-          b = offset.end
+          a = Integer(offset.begin)
+          b = Integer(offset.end) if offset.end
 
           a += @length if a < 0
           b += @length if b and b < 0
-          return nil if a < 0 or a >= @length
+          return nil if a.nil? or a < 0 or a >= @length
 
           if b.nil?
             length = @length - a
@@ -131,39 +194,68 @@ module Stupidedi
           self[a, length]
 
         else
+          offset  = Integer(offset)
           offset += @length if offset < 0
-          @storage[@offset + offset] if @length > offset and offset >= 0
+          @storage[@offset + offset] if offset < @length and offset >= 0
         end
       end
 
+      # @return [Pointer<S, E>]
       alias_method :slice, :[]
 
+      # Drops the first `n` elements from the pointer and returns the rest of
+      # the elements in a pointer. If a negative number is given, raises an
+      # `ArgumentError`.
+      #
+      # @return [Pointer<S, E>]
       def drop(n)
+        n = Integer(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
         n = @length if n > @length
+
         return self if n.zero?
         self.class.new(@storage.freeze, @offset + n, @length - n)
       end
 
+      # Returns first `n` elements from the pointer. If a negative number is
+      # given, raises an `ArgumentError`.
+      #
+      # @return [Pointer<S, E>]
       def take(n)
+        n = Integer(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
         n = @length if n > @length
+
         return self if n == @length
         self.class.new(@storage.freeze, @offset, n)
       end
 
-      def drop_take(drop, take)
-        raise ArgumentError, "drop must be non-negative" if drop < 0
-        raise ArgumentError, "take must be non-negative" if take < 0
+      # Drops the first `n` elements, then selects `m` elements from the
+      # remaining elements. If a negative number is given for either argument,
+      # raises an `ArgumentError`.
+      #
+      # NOTE: This is equivalent to `pointer.drop(n).take(m)` but requires one
+      # less object allocation.
+      #
+      # @return [Pointer<S, E>]
+      def drop_take(n, m)
+        n = Integer(n)
+        m = Integer(m)
 
-        drop   = @length if drop > @length
-        offset = @offset + drop
-        length = @length - drop
+        raise ArgumentError, "n must be non-negative" if n < 0
+        raise ArgumentError, "m must be non-negative" if m < 0
 
-        take = length if take > length
-        self.class.new(@storage.freeze, offset, take)
+        n      = @length if @length < n
+        offset = @offset + n
+        length = @length - n
+
+        m = length if length < m
+        self.class.new(@storage.freeze, offset, m)
       end
 
+      # Convenience method to `take(n)` and `drop(n)` in one method call.
+      #
+      # @return [(Pointer<S, E>, Pointer<S, E>)]
       def split_at(n)
         [take(n), drop(n)]
       end
@@ -171,19 +263,27 @@ module Stupidedi
       # @group Concatenation
       #########################################################################
 
+      # Concatenates this pointer and the argument (either another pointer or
+      # value of type S). Depending on what is being concatenated, this will
+      # return either a new pointer or a new value of type S.
+      #
+      # @return [S or Pointer<S, E>]
       def +(other)
         if other.is_a?(self.class)
           o_storage = other.storage
           o_length  = other.length
           o_offset  = other.offset
-        else
+        elsif other.is_a?(@storage.class)
           o_storage = other
           o_length  = other.length
           o_offset  = 0
+        else
+          raise TypeError, "expected %s or %s but got %s" % [
+            self.class, @storage.class, other.class]
         end
 
         if (@storage.equal?(o_storage) and @offset + @length == o_offset) \
-        or subseq_eq?(@storage, @offset + @length, o_storage, o_offset, o_length)
+            or subseq_eq?(@storage, @offset + @length, o_storage, o_offset, o_length)
           self.class.new(@storage.freeze, @offset, @length + o_length)
         else
           if other.is_a?(self.class)
@@ -197,19 +297,29 @@ module Stupidedi
       # @group Destructive methods
       #########################################################################
 
+      # Drops the first `n` elements from the pointer. If a negative number is
+      # given, raises an `ArgumentError`.
+      #
       # @return self
       def drop!(n)
+        n = Integer(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
-        n        = @length if n > @length
+        n = @length if @length < n
+
         @offset += n
         @length -= n
         self
       end
 
+      # Removes all except the first `n` elements from the pointer. If a
+      # negative number is given, raises an `ArgumentError`.
+      #
       # @return self
       def take!(n)
+        n = Integer(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
-        n       = @length if n > @length
+        n = @length if @length < n
+
         @length = n
         self
       end
@@ -243,14 +353,18 @@ module Stupidedi
 
       private
 
+      # Return true if two subsequences s1[o1,length] and s2[o2,length] of type
+      # S are equal. This is a generic implementation that should be overridden
+      # for concrete types S to be more efficient.
+      #
       # @return [Boolean]
       def subseq_eq?(s1, o1, s2, o2, length)
         return false if s1.length < o1 + length
         return false if s2.length < o2 + length
         return true  if s1.equal?(s2) and o1 == o2
 
-        # s1 = s1[o1, length] if 0 >= 0 or length != s1.length
-        # s2 = s2[o2, length] if 0 >= 0 or length != s2.length
+        # s1 = s1[o1, length] if 0 < o1 or length < s1.length
+        # s2 = s2[o2, length] if 0 < o2 or length < s2.length
         # s1 == s2
 
         # TODO: Not sure this is an improvement over allocating the subsequences
@@ -263,7 +377,7 @@ module Stupidedi
       # @group Constructors
       #########################################################################
 
-      # Constructs a new Pointer depending on what type of object is passed.
+      # Constructs a new Pointer depending on what type of object is given.
       # 
       # NOTE: Pointer operations can potentially destrucively modify the given
       # object, but if it is `#frozen?`, a copy will be made before the update.

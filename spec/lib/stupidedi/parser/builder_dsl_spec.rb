@@ -298,7 +298,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
   describe "on tables" do
     context "when start segment repeats" do
-      context "but is not repeatable" do
+      context "but is non-repeatable" do
         it "raises an exception" do
           b = strict(
             Detail("2",

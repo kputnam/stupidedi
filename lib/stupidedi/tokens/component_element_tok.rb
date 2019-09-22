@@ -46,6 +46,10 @@ module Stupidedi
         false
       end
 
+      def repeated?
+        false
+      end
+
       def to_x12(separators)
         @value.to_s
       end

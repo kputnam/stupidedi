@@ -5,14 +5,11 @@ module Stupidedi
 
   module Reader
 
-    # TODO: One of the top garbage producers is reading a single character like
-    # input.at(offset). It might be more efficient to replace char-at-a-time reads
-    # with Regexps that consume multiple characters at once.
-
-    # tr  separators.segment
-    # gs  separators.element
-    # us  separators.component
-    # rs  separators.repetition
+    # NOTE abbrevations used in variable names:
+    #   tr: separators.segment    ~
+    #   gs: separators.element    *
+    #   us: separators.component  :
+    #   rs: separators.repetition ^
 
     class Tokenizer
       include Inspect
@@ -30,19 +27,27 @@ module Stupidedi
       VALID_SEGMENT_ID  = /\A[A-Z][A-Z0-9]{1,2}\Z/u
 
       # @param input [Input]
-      def initialize(input, separators, segment_dict, switcher, switcher_)
+      def initialize(input, config, separators, segment_dict, switcher, switcher_, strict)
         # Make a separate switch for _read_component_element so building a
         # composite element won't interfere with building its components.
-        @input, @separators, @segment_dict, @switcher, @switcher_ =
-          input, separators, segment_dict, switcher, switcher_
+        @input, @config, @separators, @segment_dict, @switcher, @switcher_, @strict =
+          input, config, separators, segment_dict, switcher, switcher_, strict
 
         @i = "I".encode(@input.encoding).freeze
         @s = "S".encode(@input.encoding).freeze
         @a = "A".encode(@input.encoding).freeze
       end
 
+      # Tokenizes the input and yields each segment as a SegmentTok. The data
+      # between interchanges (ISA..IEA envelope) is yielded as an IgnoredTok.
+      #
+      # Return value indicates why tokenization terminated; usually it's due
+      # to EOF. If no segments were read, or tokenization halts within an
+      # interchange, or tokenizations halts in the middle of a segment, then
+      # the result will be `#fatal?`.
+      #
       # @yield  [Tokens::SegmentTok | Tokens::IgnoredTok]
-      # @return [Result]
+      # @return [Result::Fail]
       def each
         return enum_for(:each) unless block_given?
         count = 0
@@ -52,9 +57,12 @@ module Stupidedi
           result = next_segment(input) do |token|
             yield token # IgnoredTok
           end
-
           break if result.fail?
+
+          # Update @separators and @segment_dict as needed
+          _update_state(result.value, @config) if @config
           yield result.value
+
           input  = result.rest
           count += 1
         end
@@ -66,8 +74,16 @@ module Stupidedi
         result
       end
 
+      # Tokenizes and yields only ISA segments as SegmentToks. Data between ISA
+      # tokens is yielded as IgnoredToks. This is more efficient than `#each`
+      # because it skips past most of the input.
+      #
+      # Return value indicates why tokenization terminated; usually it's due
+      # to EOF. If no segments were read, or tokenizations halts in the middle
+      # of a segment, then the result will be `#fatal?`.
+      #
       # @yield  [Tokens::SegmentTok | Tokens::IgnoredTok]
-      # @return [Result]
+      # @return [Result::Fail]
       def each_isa
         return enum_for(:each_isa) unless block_given?
         count = 0
@@ -88,6 +104,8 @@ module Stupidedi
         result
       end
 
+    private
+
       # Skips over any text, X12 or not, until an interchange segment is
       # found. Then @separators are reset. This is more efficient than
       # repeatedly calling `next_segment` and checking if the segment_id
@@ -99,7 +117,7 @@ module Stupidedi
         segment_id = _next_isa_segment_id(input) do |t|
           # It's not unusual for IgnoredTok to have no content, because "ISA"
           # was found at the first character of the input.
-          yield t if block_given? and not t.value.blank?
+          yield t if block_given? and t.value.present?
         end
         return segment_id if segment_id.fail?
 
@@ -123,10 +141,6 @@ module Stupidedi
         segment_id = _next_segment_id(input)
         return segment_id if segment_id.fail?
 
-        # _next_segment_id does not guarantee result.rest isn't eof
-        return unexpected("eof after %s" % segment_id.value, input.position) \
-          if segment_id.rest.empty?
-
         if segment_id.value == :ISA
           # We encountered a new ISA segment without having seen the previous
           # ISA's matching IEA segment. This is definitely a syntax error, but
@@ -139,17 +153,10 @@ module Stupidedi
           return done(segment_tok, segment_id.position, elements.rest.lstrip_nongraphic!)
         end
 
-        # _next_segment_id will skip any trailing control characters
-        unless segment_id.rest.start_with?(@separators.element) \
-            or segment_id.rest.start_with?(@separators.segment)
-          return unexpected("%s after segment identifier %s" % [
-            segment_id.rest.head.inspect, segment_id.value], segment_id.rest.position)
-        end
-
         if @segment_dict.defined_at?(segment_id.value)
           element_uses = @segment_dict.at(segment_id.value).element_uses
         else
-          element_uses = []
+          element_uses = nil
         end
 
         elements = _read_elements(segment_id.rest, segment_id.value, element_uses)
@@ -162,17 +169,8 @@ module Stupidedi
              segment_id.position, elements.rest)
       end
 
-    private
-
-      # Consume next occurrence of "ISA" and any control characters that
-      # immediately follow. Some validation is done to skip over cases
-      # where it is more likely to be part of a word (eg, LISA) than X12.
-      #
-      # Yields the input that was consumed as an {Tokens::IgnoredTok}. If no
-      # "ISA" was found, nothing will be yielded.
-      #
-      # @yield  [Tokens::IgnoredTok]    the input that was consumed before "ISA"
-      # @return [Result<Symbol>]        :ISA
+      # Preconditions:  none
+      # Postconditions: result.rest.head is '*'
       def _next_isa_segment_id(input)
         offset = 0
 
@@ -182,7 +180,6 @@ module Stupidedi
           i = input.index(@i, offset)
 
           # There's no I in the rest of the input, so it's all ignored
-          #return eof("ISA", input.position_at(offset)) if i.nil?
           return eof("ISA", input.position) if i.nil?
 
           # In the next iteration, search for "I" begins right after this one
@@ -191,7 +188,6 @@ module Stupidedi
           # Skip to the next character
           s = input.min_graphic_index(i+1)
 
-          #return eof("ISA", input.position_at(i)) unless input.defined_at?(s)
           return eof("ISA", input.position) unless input.defined_at?(s)
 
           # The character after this "I" is not "S"
@@ -199,7 +195,6 @@ module Stupidedi
 
           a = input.min_graphic_index(s+1)
 
-          #return eof("ISA", input.position_at(i)) unless input.defined_at?(a)
           return eof("ISA", input.position) unless input.defined_at?(a)
 
           # The character after this "S" is not "A"
@@ -211,7 +206,9 @@ module Stupidedi
           next unless input.defined_at?(a+1) and input[a+1].match?(VALID_SEPARATOR)
 
           # Success, ignore everything before "I", resume parsing after "A".
-          yield Tokens::IgnoredTok.new(input.take(i), input.position) if block_given?
+          if block_given? and ignored = input.take(i) and ignored.present?
+            yield Tokens::IgnoredTok.new(ignored, input.position)
+          end
 
           # First character of input will be the element separator
           return done(:ISA, input.position_at(i), input.drop!(a+1))
@@ -220,9 +217,8 @@ module Stupidedi
         return eof("ISA", input.position)
       end
 
-      # Read ISA elements and update @separators accordingly.
-      #
-      # @return [Result<Array<Tokens::SimpleElementTok>>]
+      # Preconditions:  input.head is '*'
+      # Postconditions: result.rest.head is first graphic character after '~'
       def _read_isa_elements(input)
         # The next character is a declaration of the element separator
         @separators         = Separators.blank
@@ -241,49 +237,34 @@ module Stupidedi
         # at least as early as version 00304) and the segment terminator. Both
         # can have control characters as values, so we don't skip ahead here.
         us = input.at(1)
-        return eof("ISA16", input.position_at(1)) if us.nil?
-        return expected("component separator in ISA16, found %s" % us.inspect,
-          input.position_at(1)) unless us.match?(VALID_SEPARATOR)
+        unless us and us.match?(VALID_SEPARATOR)
+          return expected("component separator, found %s" %
+            describe(us.inspect), input.position_at(1))
+        end
+
         element_toks << Tokens::SimpleElementTok.build(input.at(1), input.position)
 
-        tr = input.at(2)
-        return eof("segment terminator for ISA", input.position_at(2)) if tr.nil?
-        return expected("segment terminator after ISA16, found %s" % tr.inspect,
-          input.position_at(2)) unless tr.match?(VALID_SEPARATOR)
+        tr = input.at(2) # Segment terminator
+        unless tr and tr.match?(VALID_SEPARATOR)
+          return expected("segment terminator after ISA16, found %s" %
+            describe(tr.inspect), input.position_at(2))
+        end
+
+        return fail("segment terminator and element seprator are both %s" %
+          tr.inspect) if tr == @separators.element
+
+        return fail("segment terminator and component separator are both %s" %
+          tr.inspect) if us == tr
 
         @separators.segment = tr
         done(element_toks, nil, input.drop!(3))
       end
 
-      # Works similarly to `_next_isa_segment_id`, except the result is the
-      # segment identifier. The remaining input begins where an element or
-      # segment separator should be.
-      #
-      # This consumes any control characters following the segment identifier
-      # and the remaining input is guaranteed not to be EOF. However, there is
-      # no validation done on the next character, even though it should be a
-      # segment or element separator.
-      #
-      # @return Symbol
+      # Preconditions:  input begins on graphic character
+      # Postconditions: result.rest.head is '*' or '~'
       def _next_segment_id(input)
         offset     = input.min_graphic_index
-        buffer     = input.pointer.drop_take(offset, 0)
         start_pos  = input.position_at(offset)
-
-        # while true
-        #   return eof("segment identifier", input.position) \
-        #     unless input.defined_at?(offset)
-
-        #   char = input.at(offset)
-        #   break if char == @separators.element
-        #   break if char == @separators.segment
-
-        #   # Zero-copy as long as we've not skipped over any characters yet
-        #   buffer << char if input.graphic?(offset)
-        #   offset += 1
-
-        #   break if buffer.length >= 3
-        # end
 
         # Whichever occurs first
         gs = input.index(@separators.element, offset)
@@ -292,12 +273,11 @@ module Stupidedi
         return eof("segment identifier", input.position) unless xx
 
         length = xx - offset
-        length = 3 if length > 3
         buffer = input[offset, length]
 
-        # This is the only String allocation we cannot get around. The `match?`
-        # call either has a pattern with \A..\z, or the length of segment_id
-        # is very small compared to the `@storage` after it, so `match?` will
+        # We cannot avoid this String allocation. The `match?` call either has a
+        # pattern with \A..\z, or the length of segment_id is very small
+        # compared to the `@storage` after it, and either will cause `match?` to
         # allocate the short substring.
         #
         # Later, the segment_id will be subject to many equality checks, so it
@@ -307,22 +287,23 @@ module Stupidedi
         return expected("segment identifier, found %s" % segment_id.inspect,
           start_pos) unless segment_id.match?(VALID_SEGMENT_ID)
 
+        # DEBUG
+        raise unless input.start_with?(@separators.segment, xx) \
+                  or input.start_with?(@separators.element, xx)
+
         return done(segment_id.to_sym, start_pos, input.drop!(xx))
       end
 
-      # @param input          should be positioned on an element separator: "NM1[*].."
-      # @param segment_id     used to report errors
-      # @param element_uses   determines which elements are composite or repeatable
-      #
-      # @return [Array<Tokens::SimpleElementTok | Tokens::CompositeElementTok>]
-      def _read_elements(input, segment_id, element_uses=[])
+      # Preconditions:  input starts with '*' or '~'
+      # Postconditions: result.rest.head is first graphic character after '~'
+      def _read_elements(input, segment_id, element_uses)
         element_toks = []
         element_idx  = 1
 
         # We are placed on an element separator at the start of each iteration
-        while not input.empty? and input.start_with?(@separators.element)
+        while input.start_with?(@separators.element)
           result =
-            if element_uses.defined_at?(element_idx - 1)
+            if element_uses and element_uses.defined_at?(element_idx - 1)
               element_use = element_uses[element_idx - 1]
               repeatable  = element_use.repeatable?
 
@@ -343,48 +324,31 @@ module Stupidedi
 
           return result if result.fail?
           element_toks << result.value
-          input = result.rest
-          element_idx += 1
+          input         = result.rest
+          element_idx  += 1
         end
 
-        return eof("segment terminator %s for %s" % [@separators.segment.inspect,
-          segment_id], input.position) if input.empty?
-
-        return expected("segment terminator %s for %s, found %s" % [
-          @separators.segment.inspect, segment_id, input.head.inspect],
-          input.position) if input.head != @separators.segment
+        # DEBUG
+        raise unless input.start_with?(@separators.segment)
 
         # Skip past the segment separator
         done(element_toks, nil, input.lstrip_nongraphic!(1))
       end
 
-      # @param input          should be positioned at an element separator,
-      #                         "NM1*X[*]:A:B.."
-      # @param repeatable     whether repetition separators is data or syntax
-      # @param segment_id     used to report errors
-      # @param element_idx    used to report errors
-      #
-      # @return [Tokens::CompositeElementTok | Tokens::RepeatedElementTok]
+      # Preconditions:  input.head is '*'
+      # Postconditions: result.rest.head is '*' or '~'
       def _read_composite_element(input, repeatable, segment_id, element_idx)
-        return eof("element separator %s before %s%02d" % [
-          @separators.element.inspect, segment_id, element_idx],
-          input.position) if input.empty?
-
-        return expected("element separator %s before %s%02d, found %s" % [
-          @separators.element.inspect, segment_id, element_idx, input.head.inspect],
-          input.position) unless input.start_with?(@separators.element)
-
-        builder        = @switcher.switch(repeatable, input.position_at(1))
+        builder        = @switcher.switch(repeatable, input.position)
         repeat_pos     = builder.position
         component_idx  = 1
         component_toks = []
 
         until input.empty?
-          result = _read_component_element(input, false, segment_id, element_idx, component_idx)
+          result = _read_component_element(input, false, repeatable, segment_id, element_idx, component_idx)
           return result if result.fail?
 
-          input           = result.rest
-          char            = input.head
+          input = result.rest
+          char  = input.head
           component_toks << result.value
 
           if char == @separators.element or char == @separators.segment
@@ -394,7 +358,7 @@ module Stupidedi
           elsif repeatable and char == @separators.repetition
             builder.add(Tokens::CompositeElementTok.build(component_toks, repeat_pos))
             repeat_pos = input.position_at(1)
-            component_toks.clear
+            component_toks = []
 
           elsif char == @separators.repetition
             # We aren't repetable and neither was the component element we just
@@ -419,78 +383,49 @@ module Stupidedi
           element_idx], builder.position)
       end
 
-      # @param input          should be positioned at an element separator,
-      #                         "NM1[*]..", or component separator "FOO*A[:]B.."
-      # @param repeatable     currently X12 does not allow components to repeat
-      # @param segment_id     used to report errors
-      # @param element_idx    used to report errors
-      # @param component_idx  used to report errors
-      #
-      # @return [Tokens::ComponentElementTok | Tokens::RepeatedElementTok]
-      def _read_component_element(input, repeatable, segment_id, element_idx, component_idx)
-        return eof("element %s or component separator %s before %s%02d-%02d" % [
-          @separators.element.inspect, @separators.component.inspect, segment_id,
-          element_idx, component_idx], input.position) if input.empty?
-
-        return expected("element %s or component separator %s before %s%02d-%02d, found %s" % [
-          @separators.element.inspect, @separators.component.inspect, segment_id,
-          element_idx, component_idx, input.head.inspect], input.position) \
-          unless input.start_with?(@separators.element) \
-              or input.start_with?(@separators.component)
-
+      # Preconditions:  input.head is '*', ':', or '^'
+      # Postconditions: result.rest.head is next '~', '*', or ':'
+      def _read_component_element(input, repeatable, parent_repeatable, segment_id, element_idx, component_idx)
         offset     = input.min_graphic_index(1)
-        buffer     = input.pointer.drop_take(offset, 0)
         repeat_pos = input.position
         builder    = @switcher_.switch(repeatable, input.position)
 
         while input.defined_at?(offset)
-          # char = input.at(offset)
-
-          # if repeatable and char == @separators.repetition
-          #   builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-          #   offset    += 1
-          #   repeat_pos = input.position_at(offset)
-
-          # elsif char == @separators.segment \
-          #    or char == @separators.element \
-          #    or char == @separators.component \
-          #    or char == @separators.repetition
-          #   # Because we're not repeatable, a repetition seperator could
-          #   # belong to the parent/composite element. If it's not repeatable
-          #   # either, an error can be returned.
-          #   builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
-          #   return done(builder.build, builder.position, input.drop!(offset))
-
-          # else
-          #   # This is zero-copy as long as we haven't skipped any characters
-          #   buffer << char if input.graphic?(offset)
-          #   offset += 1
-          # end
-
           # Whichever occurs first
           tr = input.index(@separators.segment, offset)   if @separators.segment
           gs = input.index(@separators.element, offset)   if @separators.element
-          us = input.index(@separators.component, offset) if @separators.component
           xx = if gs and tr and gs < tr; then gs end || tr || gs
+
+          us = input.index(@separators.component, offset) if @separators.component
           xx = if xx and us and xx < us; then xx end || us || xx
 
+          # Because repetition separators are unlikely to occur at all, it could
+          # become costly to repeatedly linearly search the remaining input when
+          # reading every component element.
+          #
+          # However, so far X12 has said no component are repeatable, and it is
+          # also rare for the parent composite to be repeatable. So we will only
+          # search for it in those rare cases. When it occurs otherwise, we will
+          # read it as plain data instead of halting tokenization with an error.
           rs = input.index(@separators.repetition, offset) \
-            if @separators.repetition and repeatable
+            if @separators.repetition and (repeatable or parent_repeatable)
 
           if rs and rs < xx
             length = rs - offset
             buffer = input[offset, length]
 
-            builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-            offset     = rs + 1
-            repeat_pos = input.position_at(offset)
+            if repeatable
+              builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+              offset     = rs + 1
+              repeat_pos = input.position_at(offset)
+            else # parent_repeatable
+              builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
+              return done(builder.build, builder.position, input.drop!(rs))
+            end
           elsif xx
             length = xx - offset
             buffer = input[offset, length]
 
-            # Because we're not repeatable, a repetition seperator could
-            # belong to the parent/composite element. If it's not repeatable
-            # either, an error can be returned.
             builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
             return done(builder.build, builder.position, input.drop!(xx))
           else
@@ -498,67 +433,32 @@ module Stupidedi
           end
         end
 
-        if repeatable
-          eof("segment %s, element %s, component %s or repetition separator %s after %s%02d-%02d" % [
-            @separators.segment.inspect, @separators.element.inspect,
-            @separators.component.inspect, @separators.repetition.inspect,
-            segment_id, element_idx, component_idx], builder.position)
-        else
-          eof("segment %s, element %s or component separator %s after %s%02d-%02d" % [
-            @separators.segment.inspect, @separators.element.inspect,
-            @separators.component.inspect, segment_id, element_idx,
-            component_idx], builder.position)
-        end
+        eof("separator (one of %s) after %s%02d-%02d" % [
+          @separators.characters.map(&:inspect).join(", "), segment_id,
+          element_idx, component_idx], builder.position)
       end
 
-      # @param input        should be positioned at an element separator: "NM1[*].."
-      # @param repeatable   whether repetition separators is data or syntax
-      # @param segment_id   used to report errors
-      # @param element_idx  used to report errors
-      #
-      # @return [Tokens::SimpleElementTok | Tokens::RepeatedElementTok]
+      # Preconditions:  input.head is '*'
+      # Postconditions: result.rest.head is next '*' or '~'
       def _read_simple_element(input, repeatable, segment_id, element_idx)
-        return eof("element separator %s before %s%02d" % [
-          @separators.element.inspect, segment_id, element_idx],
-          input.position) if input.empty?
-
-        return expected("element separator %s before %s%02d, found %s" % [
-          @separators.element.inspect, segment_id, element_idx, input.head.inspect],
-          input.position) unless input.start_with?(@separators.element)
-
         offset     = input.min_graphic_index(1)
-        #buffer     = input.pointer.drop_take(offset, 0)
         start_pos  = input.position
         repeat_pos = input.position
         builder    = @switcher.switch(repeatable, input.position)
 
         while input.defined_at?(offset)
-        #  char = input.at(offset)
-
-        #  if char == @separators.element \
-        #  or char == @separators.segment
-        #    builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-        #    return done(builder.build, start_pos, input.drop!(offset))
-
-        #  elsif repeatable and char == @separators.repetition
-        #    builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
-        #    offset    += 1
-        #    buffer     = input.pointer.drop_take(offset, 0)
-        #    repeat_pos = input.position_at(offset)
-
-        #  else
-        #    # This is zero-copy as long as we haven't skipped any characters
-        #    buffer << char if input.graphic?(offset)
-        #    offset += 1
-        #  end
-
           # Whichever occurs first
-          tr = input.index(@separators.segment, offset)    if @separators.segment
-          gs = input.index(@separators.element, offset)    if @separators.element
+          tr = input.index(@separators.segment, offset) if @separators.segment
+          gs = input.index(@separators.element, offset) if @separators.element
           xx = if gs and tr and gs < tr; then gs end || tr || gs
           break unless xx
 
-          rs = input.index(@separators.repetition, offset) if @separators.repetition
+          # Because repetition separators are unlikely to occur at all, it could
+          # become costly to repeatedly linearly search the remaining input when
+          # reading every simple element. However only few elements are allowed
+          # to repeat, so we will only search in those cases.
+          rs = input.index(@separators.repetition, offset) \
+            if @separators.repetition and repeatable
 
           if rs and rs < xx
             # @sepatarors.repetition
@@ -567,7 +467,6 @@ module Stupidedi
 
             builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
             offset     = rs + 1
-            buffer     = input.pointer.drop_take(offset, 0)
             repeat_pos = input.position_at(offset)
           elsif xx
             # @separators.element
@@ -587,36 +486,67 @@ module Stupidedi
           element_idx], start_pos)
       end
 
-      # @param value    [Object]
-      # @param position [Position]
-      # @param rest     [Input]
+      def describe(char)
+        char.nil? && "eof" || char.inspect
+      end
+
       def done(value, position, rest)
         Tokenizer::Result::Done.new(value, position, rest)
       end
 
-      # @param error    [String]
-      # @param position [Position]
+      def fail(error, position)
+        Tokenizer::Result::Fail.new(fail, position)
+      end
+
       def expected(error, position)
         Tokenizer::Result::Fail.new("expected #{error}", position)
       end
 
-      # @param error    [String]
-      # @param position [Position]
       def unexpected(error, position)
         Tokenizer::Result::Fail.new("unexpected #{error}", position)
       end
 
-      # @param error    [String]
-      # @param position [Position]
       def eof(error, position)
         expected("#{error}, found eof", position)
+      end
+
+      def _update_state(segment_tok, config)
+        case segment_tok.id
+        when :ISA
+          version = segment_tok.element_toks.at(11)
+          version = version.value.to_s if version
+
+          if config.interchange.defined_at?(version)
+            # Configure separators that depend on the ISA version (ISA11)
+            envelope_def   = config.interchange.at(version)
+            ver_separators = envelope_def.separators(segment_tok)
+            @separators    = @separators.merge(ver_separators)
+          end
+        when :GS
+          # GS08: Version / Release / Industry Identifier Code
+          version = segment_tok.element_toks.at(7).try(:value).try(:to_s)
+          gscode  = version.try(:slice, 0, 6)
+
+          # GS01: Functional Identifier Code
+          fgcode = segment_tok.element_toks.at(0).try(:value)
+
+          if config.functional_group.defined_at?(gscode)
+            envelope_def  = config.functional_group.at(gscode)
+            envelope_val  = envelope_def.empty
+            @segment_dict = @segment_dict.push(envelope_val.segment_dict)
+          end
+        when :GE
+          unless @segment_dict.empty?
+            @segment_dict = @segment_dict.pop
+          end
+        end
       end
     end
 
     class << Tokenizer
-      def build(input)
-        new(input, Separators.blank, SegmentDict.empty,
-          Tokenizer::ElementTokSwitch.new, Tokenizer::ElementTokSwitch.new)
+      def build(input, config: nil, strict: false)
+        new(input, config, Separators.blank, SegmentDict.empty,
+          Tokenizer::ElementTokSwitch.new, Tokenizer::ElementTokSwitch.new, strict)
       end
     end
   end

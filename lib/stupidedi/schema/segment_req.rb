@@ -16,8 +16,9 @@ module Stupidedi
     #
     class SegmentReq
       def initialize(required, forbidden, to_s)
-        @required, @forbidden, @to_s =
-          required, forbidden, to_s
+        @required  = required
+        @forbidden = forbidden
+        @to_s      = to_s
       end
 
       def required?

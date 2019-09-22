@@ -16,7 +16,7 @@ module Stupidedi
       attr_reader :position
 
       def_delegators :@pointer, :head, :defined_at?, :empty?, :[],
-        :take, :index, :=~, :at, :encoding, type: Substring
+        :take, :index, :=~, :==, :at, :encoding, :offset, type: Substring
 
       def initialize(pointer, position)
         @pointer  = pointer

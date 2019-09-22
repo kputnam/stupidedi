@@ -59,8 +59,8 @@ module Stupidedi
             attr_reader :position
 
             def initialize(position)
-              @position, @element_toks =
-                position, []
+              @position     = nil
+              @element_toks = nil
             end
 
             def add(element_tok)

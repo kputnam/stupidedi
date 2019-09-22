@@ -70,7 +70,7 @@ module Stupidedi
       # @return [Array]
       def drop(n)
         raise ArgumentError, "n cannot be negative" if n < 0
-        slice(n..-1) or []
+        slice(n, length) or []
       end
 
       # Select the first `n` elements.

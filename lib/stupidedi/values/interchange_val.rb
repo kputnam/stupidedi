@@ -21,8 +21,9 @@ module Stupidedi
       def_delegators "@children.head", :position
 
       def initialize(definition, children, separators)
-        @definition, @children, @separators =
-          definition, children, separators
+        @definition = definition
+        @children   = children
+        @separators = separators
       end
 
       # @return [InterchangeVal]

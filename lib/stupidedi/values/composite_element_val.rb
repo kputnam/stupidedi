@@ -18,8 +18,8 @@ module Stupidedi
       def_delegators :@usage, :definition, :descriptor
 
       def initialize(children, usage)
-        @children, @usage =
-          children, usage
+        @children = children
+        @usage    = usage
       end
 
       # @return [CompositeElementVal]

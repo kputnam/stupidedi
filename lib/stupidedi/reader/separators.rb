@@ -23,8 +23,10 @@ module Stupidedi
       attr_accessor :segment    # ~
 
       def initialize(component, repetition, element, segment)
-        @component, @repetition, @element, @segment =
-          component, repetition, element, segment
+        @component  = component
+        @repetition = repetition
+        @element    = element
+        @segment    = segment
       end
 
       # True if all separators are `#blank?`

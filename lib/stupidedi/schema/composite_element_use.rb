@@ -19,8 +19,10 @@ module Stupidedi
       attr_reader :parent
 
       def initialize(definition, requirement, repeat_count, parent)
-        @definition, @requirement, @repeat_count, @parent =
-          definition, requirement, repeat_count, parent
+        @definition   = definition
+        @requirement  = requirement
+        @repeat_count = repeat_count
+        @parent       = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -44,7 +46,7 @@ module Stupidedi
       end
 
       def repeatable?
-        @repeat_count.try{|r| r.include?(2) }
+        @repeat_count and @repeat_count.include?(2)
       end
 
       # @return false

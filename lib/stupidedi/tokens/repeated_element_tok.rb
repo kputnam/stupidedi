@@ -13,8 +13,8 @@ module Stupidedi
       attr_reader :position
 
       def initialize(element_toks, position)
-        @element_toks, @position =
-          element_toks, position
+        @element_toks = element_toks
+        @position     = position
       end
 
       def pretty_print(q)

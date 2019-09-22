@@ -1,4 +1,5 @@
 describe Stupidedi::Reader::Tokenizer do
+
   describe "#each_isa" do
     let(:filepath)  { Fixtures.filepath("tokenizer/each_isa.edi") }
     let(:tokenizer) { Stupidedi::Reader.build(filepath) }
@@ -197,10 +198,586 @@ describe Stupidedi::Reader::Tokenizer do
       end
     end
 
-    todo "when element isn't know to be repeatable"
-    todo "when element is known to be repeatable"
     todo "when position class is NoPosition"
     todo "when position class is OffsetPosition"
     todo "when position class is a custom struct"
+  end
+
+  def self.repeated(*args)
+    args
+  end
+
+  def self.composite(*args)
+    args
+  end
+
+  todo "#next_isa_segment"
+
+  todo "#next_segment" do
+    todo "when separators are blank"
+    todo "when segment is found is SegmentDict"
+    todo "when segment is not found in SegmentDict"
+    todo "when next segment is ISA"
+    todo "when next segment is IEA"
+    todo "when next segment ID isn't found"
+    todo "when segment ID is followed by EOF"
+    todo "when segment ID is not followed by separator"
+    todo "when elements cannot be read"
+  end
+
+  describe "#_next_isa_segment_id" do
+    todo "when 'ISA' is found at start of input"
+    todo "when 'ISA' is found after ignored data"
+    todo "when 'I' does not occur"
+    todo "when 'S' does not occur"
+    todo "when 'A' does not occur"
+    todo "when next character after 'I' is not 'S'"
+    todo "when next character after 'S' is not 'A'"
+    todo "when character after 'A' is not a valid separator"
+  end
+
+  todo "#_read_isa_elements" do
+    todo "when component separator (ISA16) is ':'"
+    todo "when segment terminator is '\r\n'"
+    todo "when segment terminator is '\n'"
+    todo "when segment terminator is '~'"
+    todo "when component separator (ISA16) is not unique"
+    todo "when component separator (ISA16) is not valid"
+    todo "when segment terminator is not not unique"
+    todo "when segment terminator is not valid"
+  end
+
+  describe "#_next_segment_id" do
+    def self.pass(prefix, suffix, expected)
+      input = prefix + suffix
+
+      specify "#{input.inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        r = t.send(:_next_segment_id, t.instance_variable_get(:@input))
+        expect(r).to_not            be_fail
+        expect(r.value).to          eq(expected)
+        expect(r.position).to       eq(0)
+        expect(r.rest).to           eq(suffix)
+        expect(r.rest.position).to  eq(prefix.length)
+      end
+    end
+
+    def self.fail(input, reason: nil)
+      specify "#{input.inspect} is not tokenizable" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        r = t.send(:_next_segment_id, t.instance_variable_get(:@input))
+        expect(r).to          be_fail
+        expect(r.position).to eq(0)
+        expect(r.error).to    match(reason)
+      end
+    end
+
+    pass "XYZ", "*100~...", :XYZ
+    pass "XYZ", "*100~...", :XYZ
+    pass "XY", "~NM1*...",  :XY
+    pass "XY", "~NM1*...",  :XY
+    fail "XYZ:100~...",  reason: %q(expected segment identifier, found "XYZ:100")
+    fail "XYZ^100~...",  reason: %q(expected segment identifier, found "XYZ^100")
+    fail "X Z*100~...",  reason: %q(expected segment identifier, found "X Z")
+    fail "W*100~...",    reason: %q(expected segment identifier, found "W")
+    fail "WXYZ*100~...", reason: %q(expected segment identifier, found "WXYZ")
+  end
+
+  todo "#_read_elements" do
+    def self.pass(prefix, suffix, expected)
+      input = prefix + suffix
+
+      todo "#{input.inspect} => #{expected.inspect}" do
+      end
+    end
+
+    def self.fail(input, reason: nil)
+      todo "#{input.inspect} is not tokenizable" do
+      end
+    end
+
+  end
+
+  describe "#_read_simple_element" do
+    def self.pass(prefix, suffix, expected)
+      expected = "A" if expected.nil?
+      input    = prefix + suffix
+
+      specify "#{input.inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        if expected.is_a?(Array)
+          r = t.send(:_read_simple_element, input, true, :XYZ, 4)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to          be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.position).to eq(0)
+          expect(r.position).to       eq(0)
+          expect(r.rest).to           eq(suffix)
+          expect(r.rest.position).to  eq(prefix.length)
+        else
+          r = t.send(:_read_simple_element, input, false, :XYZ, 1)
+          expect(r).to_not            be_fail
+          expect(r.value).to          be_simple
+          expect(r.value).to_not      be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.value.to_s).to eq(expected)
+          expect(r.value.position).to eq(0)
+          expect(r.position).to       eq(0)
+          expect(r.rest).to           eq(suffix)
+          expect(r.rest.position).to  eq(prefix.length)
+        end
+      end
+    end
+
+    def self.fail(input, reason: nil)
+      specify "#{input.inspect} is not tokenizable" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        r = t.send(:_read_simple_element, input, false, :XYZ, 4)
+        expect(r).to          be_fail
+        expect(r.error).to    match(reason) unless reason.nil?
+        expect(r.position).to eq(0)
+      end
+    end
+
+    pass "*A", "*",       "A"
+    pass "*A", "*B:",     "A"
+    pass "*A", "*B:C^",   "A"
+    pass "*A", "*B:C^D~", "A"
+    pass "*A", "*B:C~",   "A"
+    pass "*A", "*B:C~D^", "A"
+    pass "*A", "*B^",     "A"
+    pass "*A", "*B^C:",   "A"
+    pass "*A", "*B^C:D~", "A"
+    pass "*A", "*B^C~",   "A"
+    pass "*A", "*B^C~D:", "A"
+    pass "*A", "*B~",     "A"
+    pass "*A", "*B~C:",   "A"
+    pass "*A", "*B~C:D^", "A"
+    pass "*A", "*B~C^",   "A"
+    pass "*A", "*B~C^D:", "A"
+    fail "*A:"
+    pass "*A:B", "*",     "A:B"
+    pass "*A:B", "*C^",   "A:B"
+    pass "*A:B", "*C^D~", "A:B"
+    pass "*A:B", "*C~",   "A:B"
+    pass "*A:B", "*C~D^", "A:B"
+    fail "*A:B^"
+
+    context "when repeating" do
+      pass "*A:B^C", "*",   repeated("A:B", "C")
+      pass "*A:B^C", "*D~", repeated("A:B", "C")
+      pass "*A:B^C", "~",   repeated("A:B", "C")
+      pass "*A:B^C", "~D*", repeated("A:B", "C")
+    end
+
+    context "when non-repeating" do
+      pass "*A:B^C", "*",   "A:B^C"
+      pass "*A:B^C", "*D~", "A:B^C"
+      pass "*A:B^C", "~",   "A:B^C"
+      pass "*A:B^C", "~D*", "A:B^C"
+    end
+
+    pass "*A:B", "~",     "A:B"
+    pass "*A:B", "~C*",   "A:B"
+    pass "*A:B", "~C*D^", "A:B"
+    pass "*A:B", "~C^",   "A:B"
+    pass "*A:B", "~C^D*", "A:B"
+    fail "*A^"
+
+    context "when repeating" do
+      pass "*A^B", "*",     repeated("A", "B")
+      pass "*A^B", "*C:",   repeated("A", "B")
+      pass "*A^B", "*C:D~", repeated("A", "B")
+      pass "*A^B", "*C~",   repeated("A", "B")
+      pass "*A^B", "*C~D:", repeated("A", "B")
+      fail "*A^B:"
+      pass "*A^B:C", "*",   repeated("A", "B:C")
+      pass "*A^B:C", "*D~", repeated("A", "B:C")
+      pass "*A^B:C", "~",   repeated("A", "B:C")
+      pass "*A^B:C", "~D*", repeated("A", "B:C")
+      pass "*A^B", "~",     repeated("A", "B")
+      pass "*A^B", "~C*",   repeated("A", "B")
+      pass "*A^B", "~C*D:", repeated("A", "B")
+      pass "*A^B", "~C:",   repeated("A", "B")
+      pass "*A^B", "~C:D*", repeated("A", "B")
+    end
+
+    context "when non-repeating" do
+      pass "*A^B", "*",     "A^B"
+      pass "*A^B", "*C:",   "A^B"
+      pass "*A^B", "*C:D~", "A^B"
+      pass "*A^B", "*C~",   "A^B"
+      pass "*A^B", "*C~D:", "A^B"
+      fail "*A^B:"
+      pass "*A^B:C", "*",   "A^B:C"
+      pass "*A^B:C", "*D~", "A^B:C"
+      pass "*A^B:C", "~",   "A^B:C"
+      pass "*A^B:C", "~D*", "A^B:C"
+      pass "*A^B", "~",     "A^B"
+      pass "*A^B", "~C*",   "A^B"
+      pass "*A^B", "~C*D:", "A^B"
+      pass "*A^B", "~C:",   "A^B"
+      pass "*A^B", "~C:D*", "A^B"
+    end
+
+    pass "*A", "~",       "A"
+    pass "*A", "~B*",     "A"
+    pass "*A", "~B*C:",   "A"
+    pass "*A", "~B*C:D^", "A"
+    pass "*A", "~B*C^",   "A"
+    pass "*A", "~B*C^D:", "A"
+    pass "*A", "~B:",     "A"
+    pass "*A", "~B:C*",   "A"
+    pass "*A", "~B:C*D^", "A"
+    pass "*A", "~B:C^",   "A"
+    pass "*A", "~B:C^D*", "A"
+    pass "*A", "~B^",     "A"
+    pass "*A", "~B^C*",   "A"
+    pass "*A", "~B^C*D:", "A"
+    pass "*A", "~B^C:",   "A"
+    pass "*A", "~B^C:D*", "A"
+  end
+
+  describe "#_read_component_element" do
+    def self.pass(prefix, suffix, expected, parent_repeatable: false)
+      expected = "A" if expected.nil?
+      input    = prefix + suffix
+
+      it "#{input.inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        input = t.instance_variable_get(:@input)
+
+        if expected.is_a?(Array)
+          r = t.send(:_read_component_element, input, true, parent_repeatable, :XYZ, 5, 6)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to          be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.position).to eq(0)
+          expect(r.position).to       eq(0)
+          expect(r.rest).to           eq(suffix)
+          expect(r.rest.position).to  eq(prefix.length)
+        else
+          r = t.send(:_read_component_element, input, false, parent_repeatable, :XYZ, 5, 6)
+          expect(r).to_not            be_fail
+          expect(r.value).to          be_simple
+          expect(r.value).to_not      be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.value.to_s).to eq(expected)
+          expect(r.value.position).to eq(0)
+          expect(r.position).to       eq(0)
+          expect(r.rest).to           eq(suffix)
+          expect(r.rest.position).to  eq(prefix.length)
+        end
+      end
+    end
+
+    def self.fail(input, repeatable: false, parent_repeatable: false, reason: nil)
+      specify "#{input.inspect} is not tokenizable" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        r = t.send(:_read_component_element, input, repeatable, parent_repeatable, :XYZ, 5, 6)
+        expect(r).to          be_fail
+        expect(r.position).to eq(0)
+        expect(r.error).to    match(reason) unless reason.nil?
+      end
+    end
+
+    pass "*A", "*",       "A"
+    pass "*A", "*B:",     "A"
+    pass "*A", "*B:C^",   "A"
+    pass "*A", "*B:C^D~", "A"
+    pass "*A", "*B:C~",   "A"
+    pass "*A", "*B:C~D^", "A"
+    pass "*A", "*B^",     "A"
+    pass "*A", "*B^C:",   "A"
+    pass "*A", "*B^C:D~", "A"
+    pass "*A", "*B^C~",   "A"
+    pass "*A", "*B^C~D:", "A"
+    pass "*A", "*B~",     "A"
+    pass "*A", "*B~C:",   "A"
+    pass "*A", "*B~C:D^", "A"
+    pass "*A", "*B~C^",   "A"
+    pass "*A", "*B~C^D:", "A"
+    pass "*A", ":",       "A"
+    pass "*A", ":B*",     "A"
+    pass "*A", ":B*C^",   "A"
+    pass "*A", ":B*C^D~", "A"
+    pass "*A", ":B*C~",   "A"
+    pass "*A", ":B*C~D^", "A"
+    pass "*A", ":B^",     "A"
+    pass "*A", ":B^C*",   "A"
+    pass "*A", ":B^C*D~", "A"
+    pass "*A", ":B^C~",   "A"
+    pass "*A", ":B^C~D*", "A"
+    pass "*A", ":B~",     "A"
+    pass "*A", ":B~C*",   "A"
+    pass "*A", ":B~C*D^", "A"
+    pass "*A", ":B~C^",   "A"
+    pass "*A", ":B~C^D*", "A"
+    fail "*A^"
+
+    context "when repeating" do
+      pass "*A^B", "*",     repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "*C:",   repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "*C:D~", repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "*C~",   repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "*C~D:", repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", ":",     repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", ":C*",   repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", ":C*D~", repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", ":C~",   repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", ":C~D*", repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "~",     repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "~C*",   repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "~C*D:", repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "~C:",   repeated("A", "B"), parent_repeatable: false
+      pass "*A^B", "~C:D*", repeated("A", "B"), parent_repeatable: false
+    end
+
+    context "when component and composite are repeating" do
+      pass "*A^B", "*",     repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "*C:",   repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "*C:D~", repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "*C~",   repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "*C~D:", repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", ":",     repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", ":C*",   repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", ":C*D~", repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", ":C~",   repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", ":C~D*", repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "~",     repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "~C*",   repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "~C*D:", repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "~C:",   repeated("A", "B"), parent_repeatable: true
+      pass "*A^B", "~C:D*", repeated("A", "B"), parent_repeatable: true
+    end
+
+    context "when component and composite are non-repeating" do
+      pass "*A^B", "*",     "A^B", parent_repeatable: false
+      pass "*A^B", "*C:",   "A^B", parent_repeatable: false
+      pass "*A^B", "*C:D~", "A^B", parent_repeatable: false
+      pass "*A^B", "*C~",   "A^B", parent_repeatable: false
+      pass "*A^B", "*C~D:", "A^B", parent_repeatable: false
+      pass "*A^B", ":",     "A^B", parent_repeatable: false
+      pass "*A^B", ":C*",   "A^B", parent_repeatable: false
+      pass "*A^B", ":C*D~", "A^B", parent_repeatable: false
+      pass "*A^B", ":C~",   "A^B", parent_repeatable: false
+      pass "*A^B", ":C~D*", "A^B", parent_repeatable: false
+      pass "*A^B", "~",     "A^B", parent_repeatable: false
+      pass "*A^B", "~C*",   "A^B", parent_repeatable: false
+      pass "*A^B", "~C*D:", "A^B", parent_repeatable: false
+      pass "*A^B", "~C:",   "A^B", parent_repeatable: false
+      pass "*A^B", "~C:D*", "A^B", parent_repeatable: false
+    end
+
+    context "when component is non-repeating but composite is repeating" do
+      pass "*A", "^B*",     "A", parent_repeatable: true
+      pass "*A", "^B*C:",   "A", parent_repeatable: true
+      pass "*A", "^B*C:D~", "A", parent_repeatable: true
+      pass "*A", "^B*C~",   "A", parent_repeatable: true
+      pass "*A", "^B*C~D:", "A", parent_repeatable: true
+      pass "*A", "^B:",     "A", parent_repeatable: true
+      pass "*A", "^B:C*",   "A", parent_repeatable: true
+      pass "*A", "^B:C*D~", "A", parent_repeatable: true
+      pass "*A", "^B:C~",   "A", parent_repeatable: true
+      pass "*A", "^B:C~D*", "A", parent_repeatable: true
+      pass "*A", "^B~",     "A", parent_repeatable: true
+      pass "*A", "^B~C*",   "A", parent_repeatable: true
+      pass "*A", "^B~C*D:", "A", parent_repeatable: true
+      pass "*A", "^B~C:",   "A", parent_repeatable: true
+      pass "*A", "^B~C:D*", "A", parent_repeatable: true
+    end
+
+    pass "*A", "~",       "A"
+    pass "*A", "~B*",     "A"
+    pass "*A", "~B*C:",   "A"
+    pass "*A", "~B*C:D^", "A"
+    pass "*A", "~B*C^",   "A"
+    pass "*A", "~B*C^D:", "A"
+    pass "*A", "~B:",     "A"
+    pass "*A", "~B:C*",   "A"
+    pass "*A", "~B:C*D^", "A"
+    pass "*A", "~B:C^",   "A"
+    pass "*A", "~B:C^D*", "A"
+    pass "*A", "~B^",     "A"
+    pass "*A", "~B^C*",   "A"
+    pass "*A", "~B^C*D:", "A"
+    pass "*A", "~B^C:",   "A"
+    pass "*A", "~B^C:D*", "A"
+  end
+
+  describe "#_read_composite_element" do
+    def self.pass(prefix, suffix, expected, repeatable: false)
+      input = prefix + suffix
+
+      it "#{input.inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        if repeatable
+          r = t.send(:_read_composite_element, input, true, :XYZ, 7)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to          be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.element_toks.map{|t|t.component_toks.map{|c|c.value.to_s}}).to eq(expected)
+          expect(r.value.position).to eq(0)
+          expect(r.position).to       eq(0)
+          expect(r.rest).to           eq(suffix)
+          expect(r.rest.position).to  eq(prefix.length)
+        else
+          r = t.send(:_read_composite_element, input, false, :XYZ, 7)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to_not      be_repeated
+          expect(r.value).to          be_composite
+          expect(r.value.component_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.position).to eq(0)
+          expect(r.position).to       eq(0)
+          expect(r.rest).to           eq(suffix)
+          expect(r.rest.position).to  eq(prefix.length)
+        end
+      end
+    end
+
+    def self.fail(input, position: 0, reason: nil, repeatable: false)
+      it "#{input.inspect} is not tokenizable" do
+        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        r = t.send(:_read_composite_element, input, repeatable, :XYZ, 7)
+        expect(r).to          be_fail
+        expect(r.position).to eq(position)
+        expect(r.error).to    match(reason) unless reason.nil?
+      end
+    end
+
+    pass "*A", "*",       composite("A")
+    pass "*A", "*B:",     composite("A")
+    pass "*A", "*B:C^",   composite("A")
+    pass "*A", "*B:C^D~", composite("A")
+    pass "*A", "*B:C~",   composite("A")
+    pass "*A", "*B:C~D^", composite("A")
+    pass "*A", "*B^",     composite("A")
+    pass "*A", "*B^C:",   composite("A")
+    pass "*A", "*B^C:D~", composite("A")
+    pass "*A", "*B^C~",   composite("A")
+    pass "*A", "*B^C~D:", composite("A")
+    pass "*A", "*B~",     composite("A")
+    pass "*A", "*B~C:",   composite("A")
+    pass "*A", "*B~C:D^", composite("A")
+    pass "*A", "*B~C^",   composite("A")
+    pass "*A", "*B~C^D:", composite("A")
+    fail "*A:",           position: 2
+    pass "*A:B", "*",     composite("A", "B")
+    pass "*A:B", "*C^",   composite("A", "B")
+    pass "*A:B", "*C^D~", composite("A", "B")
+    pass "*A:B", "*C~",   composite("A", "B")
+    pass "*A:B", "*C~D^", composite("A", "B")
+    fail "*A:B^",         position: 2
+
+    context "when repeatable" do
+      pass "*A:B^C", "*",   repeated(composite("A", "B"), composite("C")), repeatable: true
+      pass "*A:B^C", "*D~", repeated(composite("A", "B"), composite("C")), repeatable: true
+      pass "*A:B^C", "~",   repeated(composite("A", "B"), composite("C")), repeatable: true
+      pass "*A:B^C", "~D*", repeated(composite("A", "B"), composite("C")), repeatable: true
+    end
+
+    context "when non-repeatable" do
+      pass "*A:B^C", "*",   composite("A", "B^C")
+      pass "*A:B^C", "*D~", composite("A", "B^C")
+      pass "*A:B^C", "~",   composite("A", "B^C")
+      pass "*A:B^C", "~D*", composite("A", "B^C")
+    end
+
+    pass "*A:B", "~",     composite("A", "B")
+    pass "*A:B", "~C*",   composite("A", "B")
+    pass "*A:B", "~C*D^", composite("A", "B")
+    pass "*A:B", "~C^",   composite("A", "B")
+    pass "*A:B", "~C^D*", composite("A", "B")
+    fail "*A^"
+
+    context "when repeatable" do
+      pass "*A^B", "*",     repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "*C:",   repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "*C:D~", repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "*C~",   repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "*C~D:", repeated(composite("A"), composite("B")), repeatable: true
+      fail "*A^B:",         position: 4, repeatable: true
+      pass "*A^B:C", "*",   repeated(composite("A"), composite("B", "C")), repeatable: true
+      pass "*A^B:C", "*D~", repeated(composite("A"), composite("B", "C")), repeatable: true
+      pass "*A^B:C", "~",   repeated(composite("A"), composite("B", "C")), repeatable: true
+      pass "*A^B:C", "~D*", repeated(composite("A"), composite("B", "C")), repeatable: true
+      pass "*A^B", "~",     repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "~C*",   repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "~C*D:", repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "~C:",   repeated(composite("A"), composite("B")), repeatable: true
+      pass "*A^B", "~C:D*", repeated(composite("A"), composite("B")), repeatable: true
+    end
+
+    context "when non-repeatable" do
+      pass "*A^B", "*",     composite("A^B")
+      pass "*A^B", "*C:",   composite("A^B")
+      pass "*A^B", "*C:D~", composite("A^B")
+      pass "*A^B", "*C~",   composite("A^B")
+      pass "*A^B", "*C~D:", composite("A^B")
+      fail "*A^B:",         position: 4
+      pass "*A^B:C", "*",   composite("A^B", "C")
+      pass "*A^B:C", "*D~", composite("A^B", "C")
+      pass "*A^B:C", "~",   composite("A^B", "C")
+      pass "*A^B:C", "~D*", composite("A^B", "C")
+      pass "*A^B", "~",     composite("A^B")
+      pass "*A^B", "~C*",   composite("A^B")
+      pass "*A^B", "~C*D:", composite("A^B")
+      pass "*A^B", "~C:",   composite("A^B")
+      pass "*A^B", "~C:D*", composite("A^B")
+    end
+
+    pass "*A", "~",       composite("A")
+    pass "*A", "~B*",     composite("A")
+    pass "*A", "~B*C:",   composite("A")
+    pass "*A", "~B*C:D^", composite("A")
+    pass "*A", "~B*C^",   composite("A")
+    pass "*A", "~B*C^D:", composite("A")
+    pass "*A", "~B:",     composite("A")
+    pass "*A", "~B:C*",   composite("A")
+    pass "*A", "~B:C*D^", composite("A")
+    pass "*A", "~B:C^",   composite("A")
+    pass "*A", "~B:C^D*", composite("A")
+    pass "*A", "~B^",     composite("A")
+    pass "*A", "~B^C*",   composite("A")
+    pass "*A", "~B^C*D:", composite("A")
+    pass "*A", "~B^C:",   composite("A")
+    pass "*A", "~B^C:D*", composite("A")
   end
 end

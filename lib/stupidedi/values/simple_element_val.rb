@@ -31,8 +31,8 @@ module Stupidedi
       attr_reader :position
 
       def initialize(usage, position)
-        @usage, @position =
-          usage, position
+        @usage    = usage
+        @position = position
       end
 
       # @return [SimpleElementVal]

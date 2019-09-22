@@ -19,8 +19,10 @@ module Stupidedi
       attr_reader :allowed_values
 
       def initialize(definition, requirement, allowed_values, parent)
-        @definition, @requirement, @allowed_values, @parent =
-          definition, requirement, allowed_values, parent
+        @definition     = definition
+        @requirement    = requirement
+        @allowed_values = allowed_values
+        @parent         = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects

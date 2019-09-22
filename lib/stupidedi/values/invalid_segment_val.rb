@@ -13,8 +13,9 @@ module Stupidedi
       def_delegators :@segment_tok, :position
 
       def initialize(reason, segment_tok, separators)
-        @reason, @segment_tok, @separators =
-          reason, segment_tok, separators
+        @reason       = reason
+        @segment_tok  = segment_tok
+        @separators   = separators
       end
 
       # @return [SegmentVal]

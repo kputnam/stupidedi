@@ -17,8 +17,8 @@ module Stupidedi
       def_delegators "@children.head", :position
 
       def initialize(definition, children)
-        @definition, @children =
-          definition, children
+        @definition = definition
+        @children   = children
       end
 
       # @return [TableVal]

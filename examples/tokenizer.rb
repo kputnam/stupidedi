@@ -11,7 +11,7 @@ end
 
 def run(config, path, position)
   input     = Stupidedi::Reader::Input.file(path, position: position)
-  tokenizer = Stupidedi::Reader::Tokenizer.build(input)
+  tokenizer = Stupidedi::Reader::Tokenizer.build(input, config)
 
   result = tokenizer.each do |segment_tok|
     if segment_tok.is_a?(Stupidedi::Tokens::IgnoredTok)
@@ -20,37 +20,6 @@ def run(config, path, position)
     end
 
     pp segment_tok
-
-    case segment_tok.id
-    when :ISA
-      version = segment_tok.element_toks.at(11)
-      version = version.value.to_s if version
-
-      if config.interchange.defined_at?(version)
-        # Configure separators that depend on the ISA version
-        envelope_def   = config.interchange.at(version)
-        ver_separators = envelope_def.separators(segment_tok)
-        tokenizer.separators = tokenizer.separators.merge(ver_separators)
-      end
-    when :GS
-      # GS08: Version / Release / Industry Identifier Code
-      version = segment_tok.element_toks.at(7).try(:value).try(:to_s)
-      gscode  = version.try(:slice, 0, 6)
-
-      # GS01: Functional Identifier Code
-      fgcode = segment_tok.element_toks.at(0).try(:value)
-
-      if config.functional_group.defined_at?(gscode)
-        envelope_def = config.functional_group.at(gscode)
-        envelope_val = envelope_def.empty
-        tokenizer.segment_dict =
-          tokenizer.segment_dict.push(envelope_val.segment_dict)
-      end
-    when :GE
-      unless tokenizer.segment_dict.empty?
-        tokenizer.segment_dict = tokenizer.segment_dict.pop
-      end
-    end
   end
 
   if result.fatal?

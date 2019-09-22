@@ -26,9 +26,9 @@ module Stupidedi
       abstract :separators, :args => %w(isa_segment_val)
 
       def initialize(id, header_segment_uses, trailer_segment_uses)
-        @id, @header_segment_uses, @trailer_segment_uses =
-          id, header_segment_uses, trailer_segment_uses
-
+        @id                   = id
+        @header_segment_uses  = header_segment_uses
+        @trailer_segment_uses = trailer_segment_uses
         @header_segment_uses  = header_segment_uses.map{|x| x.copy(:parent => self) }
         @trailer_segment_uses = trailer_segment_uses.map{|x| x.copy(:parent => self) }
       end
