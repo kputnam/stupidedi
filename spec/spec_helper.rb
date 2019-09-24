@@ -23,10 +23,10 @@ RSpec.configure do |config|
   config.include(EitherMatchers)
   config.include(Quickcheck::Macro)
 
+  # Use --tag "~mem" to skip these specs
   config.alias_example_to :allocation, mem: true
-  config.filter_run_excluding(:mem) unless defined? MemoryProfiler
 
-  # Use --tag "~todo" to hide these from output
+  # Use --tag "~todo" to skip these specs
   config.alias_example_to :todo, todo: true, skip: "TODO"
 
   config.expect_with(:rspec){|c| c.syntax = :expect }

@@ -1,5 +1,5 @@
+# encoding: utf-8
 describe Stupidedi::Reader::Tokenizer do
-
   describe "#each_isa" do
     let(:filepath)  { Fixtures.filepath("tokenizer/each_isa.edi") }
     let(:tokenizer) { Stupidedi::Reader.build(filepath) }
@@ -211,6 +211,24 @@ describe Stupidedi::Reader::Tokenizer do
     args
   end
 
+  def add_control_chars(string, start_on_graphic = true)
+    insert = "\a\b\t\n\v\f\r".chars
+    string.chars.inject(["", []]) do |(s, xs), c|
+      unless start_on_graphic and s.empty?
+        prefix = insert.sample(rand(3)).join
+        suffix = insert.sample(rand(3)).join
+      else
+        prefix = ""
+        suffix = insert.sample(rand(3)).join
+      end
+
+      xs << s.length + prefix.length
+      s  << prefix << c << suffix
+
+      [s, xs]
+    end
+  end
+
   todo "#next_isa_segment"
 
   todo "#next_segment" do
@@ -249,10 +267,8 @@ describe Stupidedi::Reader::Tokenizer do
 
   describe "#_next_segment_id" do
     def self.pass(prefix, suffix, expected)
-      input = prefix + suffix
-
-      specify "#{input.inspect} => #{expected.inspect}" do
-        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+      specify "#{(prefix + suffix).inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(prefix + suffix, position: Stupidedi::Position::OffsetPosition)
         t.separators = Stupidedi::Reader::Separators.default
 
         r = t.send(:_next_segment_id, t.instance_variable_get(:@input))
@@ -261,6 +277,22 @@ describe Stupidedi::Reader::Tokenizer do
         expect(r.position).to       eq(0)
         expect(r.rest).to           eq(suffix)
         expect(r.rest.position).to  eq(prefix.length)
+      end
+
+      specify "#{(prefix + suffix).inspect} with control characters => #{expected.inspect}" do
+        str, pos = add_control_chars(prefix + suffix)
+        prefix_  = str[0 .. pos[prefix.length] - 1]
+        suffix_  = str[pos[prefix.length] .. -1]
+
+        t = Stupidedi::Reader.build(str, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        r = t.send(:_next_segment_id, t.instance_variable_get(:@input))
+        expect(r).to_not            be_fail
+        expect(r.value).to          eq(expected)
+        expect(r.position).to       eq(pos[0])
+        expect(r.rest.to_s).to      eq(suffix_)
+        expect(r.rest.position).to  eq(prefix_.length)
       end
     end
 
@@ -289,26 +321,16 @@ describe Stupidedi::Reader::Tokenizer do
 
   todo "#_read_elements" do
     def self.pass(prefix, suffix, expected)
-      input = prefix + suffix
-
-      todo "#{input.inspect} => #{expected.inspect}" do
-      end
     end
 
     def self.fail(input, reason: nil)
-      todo "#{input.inspect} is not tokenizable" do
-      end
     end
-
   end
 
   describe "#_read_simple_element" do
     def self.pass(prefix, suffix, expected)
-      expected = "A" if expected.nil?
-      input    = prefix + suffix
-
-      specify "#{input.inspect} => #{expected.inspect}" do
-        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+      specify "#{(prefix + suffix).inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(prefix + suffix, position: Stupidedi::Position::OffsetPosition)
         t.separators = Stupidedi::Reader::Separators.default
 
         # This is Stupidedi::Reader::Input
@@ -336,6 +358,42 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
           expect(r.rest.position).to  eq(prefix.length)
+        end
+      end
+
+      specify "#{(prefix + suffix).inspect} with control characters => #{expected.inspect}" do
+        str, pos = add_control_chars(prefix + suffix)
+        prefix_  = str[0 .. pos[prefix.length] - 1]
+        suffix_  = str[pos[prefix.length] .. -1]
+
+        t = Stupidedi::Reader.build(str, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        if expected.is_a?(Array)
+          r = t.send(:_read_simple_element, input, true, :XYZ, 4)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to          be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.position).to eq(pos[0])
+          expect(r.position).to       eq(pos[0])
+          expect(r.rest).to           eq(suffix_)
+          expect(r.rest.position).to  eq(prefix_.length)
+        else
+          r = t.send(:_read_simple_element, input, false, :XYZ, 1)
+          expect(r).to_not            be_fail
+          expect(r.value).to          be_simple
+          expect(r.value).to_not      be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.value.to_s).to eq(expected)
+          expect(r.value.position).to eq(pos[0])
+          expect(r.position).to       eq(pos[0])
+          expect(r.rest).to           eq(suffix_)
+          expect(r.rest.position).to  eq(prefix_.length)
         end
       end
     end
@@ -456,11 +514,8 @@ describe Stupidedi::Reader::Tokenizer do
 
   describe "#_read_component_element" do
     def self.pass(prefix, suffix, expected, parent_repeatable: false)
-      expected = "A" if expected.nil?
-      input    = prefix + suffix
-
-      it "#{input.inspect} => #{expected.inspect}" do
-        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+      specify "#{(prefix + suffix).inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(prefix + suffix, position: Stupidedi::Position::OffsetPosition)
         t.separators = Stupidedi::Reader::Separators.default
 
         input = t.instance_variable_get(:@input)
@@ -487,6 +542,41 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
           expect(r.rest.position).to  eq(prefix.length)
+        end
+      end
+
+      specify "#{(prefix + suffix).inspect} with control characters => #{expected.inspect}" do
+        str, pos = add_control_chars(prefix + suffix)
+        prefix_  = str[0 .. pos[prefix.length] - 1]
+        suffix_  = str[pos[prefix.length] .. -1]
+
+        t = Stupidedi::Reader.build(str, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        input = t.instance_variable_get(:@input)
+
+        if expected.is_a?(Array)
+          r = t.send(:_read_component_element, input, true, parent_repeatable, :XYZ, 5, 6)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to          be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.position).to eq(pos[0])
+          expect(r.position).to       eq(pos[0])
+          expect(r.rest).to           eq(suffix_)
+          expect(r.rest.position).to  eq(prefix_.length)
+        else
+          r = t.send(:_read_component_element, input, false, parent_repeatable, :XYZ, 5, 6)
+          expect(r).to_not            be_fail
+          expect(r.value).to          be_simple
+          expect(r.value).to_not      be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.value.to_s).to eq(expected)
+          expect(r.value.position).to eq(pos[0])
+          expect(r.position).to       eq(pos[0])
+          expect(r.rest).to           eq(suffix_)
+          expect(r.rest.position).to  eq(prefix_.length)
         end
       end
     end
@@ -632,10 +722,8 @@ describe Stupidedi::Reader::Tokenizer do
 
   describe "#_read_composite_element" do
     def self.pass(prefix, suffix, expected, repeatable: false)
-      input = prefix + suffix
-
-      it "#{input.inspect} => #{expected.inspect}" do
-        t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
+      specify "#{(prefix + suffix).inspect} => #{expected.inspect}" do
+        t = Stupidedi::Reader.build(prefix + suffix, position: Stupidedi::Position::OffsetPosition)
         t.separators = Stupidedi::Reader::Separators.default
 
         # This is Stupidedi::Reader::Input
@@ -663,6 +751,42 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
           expect(r.rest.position).to  eq(prefix.length)
+        end
+      end
+
+      specify "#{(prefix + suffix).inspect} with control characters => #{expected.inspect}" do
+        str, pos = add_control_chars(prefix + suffix)
+        prefix_  = str[0 .. pos[prefix.length] - 1]
+        suffix_  = str[pos[prefix.length] .. -1]
+
+        t = Stupidedi::Reader.build(str, position: Stupidedi::Position::OffsetPosition)
+        t.separators = Stupidedi::Reader::Separators.default
+
+        # This is Stupidedi::Reader::Input
+        input = t.instance_variable_get(:@input)
+
+        if repeatable
+          r = t.send(:_read_composite_element, input, true, :XYZ, 7)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to          be_repeated
+          expect(r.value).to_not      be_composite
+          expect(r.value.element_toks.map{|t|t.component_toks.map{|c|c.value.to_s}}).to eq(expected)
+          expect(r.value.position).to eq(pos[0])
+          expect(r.position).to       eq(pos[0])
+          expect(r.rest).to           eq(suffix_)
+          expect(r.rest.position).to  eq(prefix_.length)
+        else
+          r = t.send(:_read_composite_element, input, false, :XYZ, 7)
+          expect(r).to_not            be_fail
+          expect(r.value).to_not      be_simple
+          expect(r.value).to_not      be_repeated
+          expect(r.value).to          be_composite
+          expect(r.value.component_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.position).to eq(pos[0])
+          expect(r.position).to       eq(pos[0])
+          expect(r.rest).to           eq(suffix_)
+          expect(r.rest.position).to  eq(prefix_.length)
         end
       end
     end

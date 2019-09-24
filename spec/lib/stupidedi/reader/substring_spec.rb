@@ -935,8 +935,8 @@ describe Stupidedi::Reader::Substring do
   end
 
   describe "#rstrip" do
-    let(:sb) { Stupidedi::Reader::Pointer.build("  abc  ") }
-    let(:mb) { Stupidedi::Reader::Pointer.build("  💃🏽🕺🏻  ") }
+    let(:sb) { pointer("  abc  ") }
+    let(:mb) { pointer("  💃🏽🕺🏻  ") }
 
     context "when string is empty" do
       specify { expect(sb.take(0).rstrip).to eq("") }
@@ -955,6 +955,7 @@ describe Stupidedi::Reader::Substring do
       end
 
       allocation do
+        sb; mb # pre-allocate Substring
         expect{ mb.rstrip }.to allocate(String: 0, mb.class => 1)
         expect{ sb.rstrip }.to allocate(String: 0, sb.class => 1)
       end
@@ -962,8 +963,8 @@ describe Stupidedi::Reader::Substring do
   end
 
   describe "#lstrip" do
-    let(:sb) { Stupidedi::Reader::Pointer.build("  abc  ") }
-    let(:mb) { Stupidedi::Reader::Pointer.build("  💃🏽🕺🏻  ") }
+    let(:sb) { pointer("  abc  ") }
+    let(:mb) { pointer("  💃🏽🕺🏻  ") }
 
     context "when string is empty" do
       specify { expect(sb.take(0).lstrip).to eq("") }
@@ -982,6 +983,7 @@ describe Stupidedi::Reader::Substring do
       end
 
       allocation do
+        sb; mb # pre-allocate Substring
         expect{ sb.lstrip }.to allocate(String: 0, sb.class => 1)
         expect{ mb.lstrip }.to allocate(String: 0, mb.class => 1)
       end
@@ -1014,5 +1016,35 @@ describe Stupidedi::Reader::Substring do
   end
 
   describe "#max_whitespace_index" do
+  end
+
+  describe "#clean" do
+    context "when no control characters present" do
+      let(:sb) { pointer("*A^B~C:D*A:B~C*D^") }
+      let(:mb) { pointer("  💃🏽🕺🏻  ") }
+
+      allocation do
+        sb; mb # pre-allocate Substring
+        expect { sb.clean }.to allocate(String: 0)
+        expect { mb.clean }.to allocate(String: 0)
+      end
+
+      specify { expect(sb.clean).to eq(sb) }
+      specify { expect(mb.clean).to eq(mb) }
+    end
+
+    context "when some control characters present" do
+      let(:sb) { pointer("*A^B\r\nC:D*A:B\r\nC*D^") }
+      let(:mb) { pointer("\r\n💃🏽🕺🏻\r\n") }
+
+      allocation do
+        sb; mb # pre-allocate Substring
+        expect { sb.clean }.to allocate(String: 3)
+        expect { mb.clean }.to allocate(String: 1)
+      end
+
+      specify { expect(sb.clean).to eq(sb.storage.gsub(/[\r\n]/, "")) }
+      specify { expect(mb.clean).to eq(mb.storage.gsub(/[\r\n]/, "")) }
+    end
   end
 end

@@ -230,7 +230,15 @@ module Stupidedi
 
       # @return [StreamReader]
       def build(input, *args)
-        Tokenizer.build(Input.build(input, *args))
+        if args.last.is_a?(Hash)
+          keywords = {}
+          keywords[:config] = args.last.delete(:config) if args.last.include?(:config)
+          keywords[:strict] = args.last.delete(:config) if args.last.include?(:strict)
+        else
+          keywords = {}
+        end
+
+        Tokenizer.build(Input.build(input, *args), *keywords)
       end
     end
   end

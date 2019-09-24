@@ -40,7 +40,6 @@ class MemProf
   end
 
   def stop
-    log "OS.trace_object_allocs_stop"
     ObjectSpace.trace_object_allocations_stop
 
     allocated = allocations
@@ -52,19 +51,15 @@ class MemProf
       GC.start
       GC.start
 
-      log "retained = ..."
       ObjectSpace.each_object do |o|
         next if ObjectSpace.allocation_generation(o) != @generation
         match = allocations[o.__id__]
         retained[o.__id__] = match if match
       end if false
-      log "retained = ... done"
     end
 
-    log "OS.trace_object_allocs_clear"
     ObjectSpace.trace_object_allocations_clear
 
-    log "Results.new..."
     Results.new(allocated.values, retained.values, out: @out)
   end
 
@@ -73,7 +68,6 @@ class MemProf
     klass   = Kernel.instance_method(:class)
     pwd     = Dir.pwd << "/"
 
-    log "OS.each_object { ... }"
     ObjectSpace.each_object do |o|
       next if ObjectSpace.allocation_generation(o) != @generation
 
@@ -92,7 +86,6 @@ class MemProf
       results[o.__id__] = Stat.new(klass_, file, "%s:%s" % [file, line], method, bytes)
     end
 
-    log "OS.each_object { ... } done"
     results
   end
 end
@@ -107,33 +100,30 @@ class MemProf::Results
   end
 
   def allocations_by_class(xs = @allocated)
-    log "allocations_by_class([#{xs.length}])"
     xs.group_by(&:klass).map do |key, stats|
       {group: key,
        stats: stats,
        bytes: stats.sum(&:bytes),
        count: stats.length}
-    end.tap { log "allocations_by_class done" }
+    end
   end
 
   def allocations_by_method(xs = @allocated)
-    log "allocations_by_method([#{xs.length}])"
     xs.group_by(&:method).map do |key, stats|
       {group: key,
        stats: stats,
        bytes: stats.sum(&:bytes),
        count: stats.length}
-    end.tap { log "allocations_by_method done" }
+    end
   end
 
   def allocations_by_location(xs = @allocated)
-    log "allocations_by_location([#{xs.length}])"
     xs.group_by(&:location).map do |key, stats|
       {group: key,
        stats: stats,
        bytes: stats.sum(&:bytes),
        count: stats.length}
-    end.tap { log "allocations_by_location done" }
+    end
   end
 
   def print(limit: 50, io: $stdout)
@@ -144,9 +134,9 @@ class MemProf::Results
       human(@allocated.sum(&:bytes)), @allocated.size]
 
     io.puts "\n\nObjects most allocated\n#{"="*64}"
-    allocations_by_class.sort_by{|x|-x[:count]}.tap{log "sorted"}.take(limit).each do |x|
+    allocations_by_class.sort_by{|x|-x[:count]}.take(limit).each do |x|
       io.puts "%10s  %s" % [x[:count], x[:group]]
-      allocations_by_location(x[:stats]).sort_by{|x|-x[:count]}.tap{log "sorted"}.take(5).each do |y|
+      allocations_by_location(x[:stats]).sort_by{|x|-x[:count]}.take(5).each do |y|
         io.puts "         : %10s  %s" % [y[:count], y[:group]]
       end
       io.puts
@@ -162,7 +152,7 @@ class MemProf::Results
     # end
 
     io.puts "\n\nLocations with most allocations\n#{"="*64}"
-    allocations_by_location.sort_by{|x| -x[:count] }.tap{log "sorted"}.take(limit).each do |x|
+    allocations_by_location.sort_by{|x| -x[:count] }.take(limit).each do |x|
       io.puts "%10s  %s" % [x[:count], x[:group]] # classes, method(s)
       # allocations_by_class(x[:stats]).sort_by{|x|-x[:count]}.take(5).each do |y|
       #   io.puts "         : %10s  %s" % [y[:count], y[:group]]
@@ -223,8 +213,4 @@ class << MemProf
   def report(options={}, &block)
     new(options).run(&block)
   end
-end
-
-def log(msg)
-  $stderr.puts "%s: %s" % [Time.now.strftime("%H:%M:%S.%N"), msg]
 end

@@ -282,14 +282,14 @@ module Stupidedi
         #
         # Later, the segment_id will be subject to many equality checks, so it
         # is faster overall to make the substring copy here.
-        segment_id = buffer.to_s
+        segment_id = buffer.clean.to_s
 
         return expected("segment identifier, found %s" % segment_id.inspect,
           start_pos) unless segment_id.match?(VALID_SEGMENT_ID)
 
-        # DEBUG
-        raise unless input.start_with?(@separators.segment, xx) \
-                  or input.start_with?(@separators.element, xx)
+        # TODO: DEBUG
+        # raise unless input.start_with?(@separators.segment, xx) \
+        #           or input.start_with?(@separators.element, xx)
 
         return done(segment_id.to_sym, start_pos, input.drop!(xx))
       end
@@ -328,8 +328,8 @@ module Stupidedi
           element_idx  += 1
         end
 
-        # DEBUG
-        raise unless input.start_with?(@separators.segment)
+        # TODO: DEBUG
+        # raise unless input.start_with?(@separators.segment)
 
         # Skip past the segment separator
         done(element_toks, nil, input.lstrip_nongraphic!(1))
@@ -415,18 +415,18 @@ module Stupidedi
             buffer = input[offset, length]
 
             if repeatable
-              builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+              builder.add(Tokens::SimpleElementTok.build(buffer.clean, repeat_pos))
               offset     = rs + 1
               repeat_pos = input.position_at(offset)
             else # parent_repeatable
-              builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
+              builder.add(Tokens::ComponentElementTok.build(buffer.clean, repeat_pos))
               return done(builder.build, builder.position, input.drop!(rs))
             end
           elsif xx
             length = xx - offset
             buffer = input[offset, length]
 
-            builder.add(Tokens::ComponentElementTok.build(buffer, repeat_pos))
+            builder.add(Tokens::ComponentElementTok.build(buffer.clean, repeat_pos))
             return done(builder.build, builder.position, input.drop!(xx))
           else
             break
@@ -465,7 +465,7 @@ module Stupidedi
             length = rs - offset
             buffer = input[offset, length]
 
-            builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+            builder.add(Tokens::SimpleElementTok.build(buffer.clean, repeat_pos))
             offset     = rs + 1
             repeat_pos = input.position_at(offset)
           elsif xx
@@ -474,7 +474,7 @@ module Stupidedi
             length = xx - offset
             buffer = input[offset, length]
 
-            builder.add(Tokens::SimpleElementTok.build(buffer, repeat_pos))
+            builder.add(Tokens::SimpleElementTok.build(buffer.clean, repeat_pos))
             return done(builder.build, start_pos, input.drop!(xx))
           else
             break

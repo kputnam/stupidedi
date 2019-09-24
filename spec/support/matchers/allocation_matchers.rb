@@ -81,7 +81,7 @@ module AllocationMatchers
 
       report = MemProf.report(opts, &target)
       result = report.allocations_by_class
-      result.inject({}){|memo, (k,v)| memo.update(k.name => v[:count]) }
+      result.inject({}){|memo, record| memo.update(record[:group].name => record[:count]) }
     end
   end
 end

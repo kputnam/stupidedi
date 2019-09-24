@@ -260,8 +260,9 @@ module Stupidedi
       def rstrip(start_at = @length - 1)
         return self if @length.zero?
         raise ArgumentError, "start_at must be non-negative" if start_at < 0
-        start_at  = @length - 1 if start_at >= @length
-        index     = NativeExt.max_nonspace_index(@storage, @offset + start_at)
+
+        start_at = @length - 1 if start_at >= @length
+        index    = NativeExt.max_nonspace_index(@storage, @offset + start_at)
 
         if index >= @offset + @length - 1
           self
@@ -315,6 +316,15 @@ module Stupidedi
         n - @offset
       end
 
+      def min_nongraphic_index(offset = 0)
+        raise ArgumentError, "offset must be non-negative" if offset < 0
+        offset = @length if offset > @length
+
+        n = NativeExt.min_nongraphic_index(@storage, @offset + offset)
+        n = @offset + @length if n > @offset + @length
+        n - @offset
+      end
+
       # Returns true if the character at the given offset is a control
       # character (defined by X222.pdf B.1.1.2.4 Control Characters)
       #
@@ -322,6 +332,30 @@ module Stupidedi
       def graphic?(offset)
         raise ArgumentError "offset must be be non-negative" if offset < 0
         NativeExt.graphic?(@storage, @offset + offset)
+      end
+
+      # @private
+      # @return [String]
+      def clean
+        from = 0
+        upto = min_nongraphic_index
+        return self unless upto < @length
+
+        # We know Substring#<< cannot be zero-copy at this point
+        buffer = @storage[@offset + from, upto - from] unless from == upto
+
+        while from < @length and upto < @length
+          from = min_graphic_index(upto)
+          upto = min_nongraphic_index(from)
+
+          if buffer.nil?
+            buffer = @storage[@offset + from, upto - from]
+          else
+            buffer << @storage[@offset + from, upto - from]
+          end unless from == upto
+        end
+
+        buffer || ""
       end
 
       # @endgroup

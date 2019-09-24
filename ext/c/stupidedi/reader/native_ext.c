@@ -604,6 +604,83 @@ rb_min_graphic_index(int argc, const VALUE *argv, VALUE self)
 
 /*
  * call-seq:
+ *   min_nongraphic_index(string, index=0) -> int
+ *
+ * Returns the smallest index (starting from the given index) that is not a
+ * graphic character. If no non-graphic characters occur after the given index,
+ * then the string length is returned.
+ *
+ *   min_nongraphic_index("\r\nabc ")     #=> 2
+ *   min_nongraphic_index("\r\nabc ", 2)  #=> 2
+ *   min_nongraphic_index("\r\nabc ", 5)  #=> 5
+ *   min_nongraphic_index("\r\n")         #=> 2
+ */
+static VALUE
+rb_min_nongraphic_index(int argc, const VALUE *argv, VALUE self)
+{
+    rb_check_arity(argc, 1, 2);
+
+    Check_Type(argv[0], T_STRING);
+    if (argc >= 2)
+        Check_Type(argv[1], T_FIXNUM);
+
+    VALUE str;
+    str = argv[0];
+
+    char *ptr, *end;
+    end = RSTRING_END(str);
+    ptr = RSTRING_PTR(str);
+
+    long idx;
+    idx = argc < 2 ? 0 : FIX2LONG(argv[1]);
+
+    int encidx;
+    encidx = ENCODING_GET(str);
+
+    rb_encoding *enc;
+    enc = rb_enc_from_index(encidx);
+
+    if (idx < 0)      rb_raise(rb_eArgError, "index cannot be negative");
+    if (ptr == NULL)  return INT2FIX(0);
+
+    if (single_byte_optimizable(str, enc)) {
+        ptr += idx; /* address of str[idx] */
+
+        if (end <= ptr)
+            return LONG2NUM(RSTRING_LEN(str));
+
+        while (ptr < end && is_graphic(*ptr, encidx))
+            ptr ++;
+
+        return LONG2NUM(ptr - RSTRING_PTR(str));
+    } else {
+      long len_, count;
+      len_  = 1;
+      count = 0;
+
+      /* address of str[idx], len is .bytesize */
+      ptr = rb_str_subpos(str, idx, &len_);
+      if (ptr == NULL) return rb_str_length(str);
+
+      unsigned int c;
+      int len;
+
+      while (ptr < end) {
+        c = rb_enc_codepoint_len(ptr, end, &len, enc);
+
+        if (!is_graphic(c, encidx))
+            break;
+
+        ptr   += len;
+        count ++;
+      }
+
+      return LONG2NUM(idx + count);
+    }
+}
+
+/*
+ * call-seq:
  *   min_nonspace_index(string, index=0) -> int
  *
  * Returns the smallest index (starting from the given index) that is not
@@ -771,6 +848,7 @@ void Init_native_ext(void) {
     rb_define_singleton_method(rb_m, "graphic?",            rb_graphic_p,           -1);
     rb_define_singleton_method(rb_m, "whitespace?",         rb_whitespace_p,        -1);
     rb_define_singleton_method(rb_m, "min_graphic_index",   rb_min_graphic_index,   -1);
+    rb_define_singleton_method(rb_m, "min_nongraphic_index",rb_min_nongraphic_index,-1);
     rb_define_singleton_method(rb_m, "min_nonspace_index",  rb_min_nonspace_index,  -1);
     rb_define_singleton_method(rb_m, "max_nonspace_index",  rb_max_nonspace_index,  -1);
 }
