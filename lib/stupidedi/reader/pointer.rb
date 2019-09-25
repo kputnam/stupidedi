@@ -283,7 +283,7 @@ module Stupidedi
         end
 
         if (@storage.equal?(o_storage) and @offset + @length == o_offset) \
-            or subseq_eq?(@storage, @offset + @length, o_storage, o_offset, o_length)
+          or subseq_eq?(@storage, @offset + @length, o_storage, o_offset, o_length)
           self.class.new(@storage.freeze, @offset, @length + o_length)
         else
           if other.is_a?(self.class)
@@ -338,6 +338,9 @@ module Stupidedi
       # This operation typically allocates memory and copies part of @storage,
       # so this is avoided as much as possible.
       #
+      # Unless the optional parameter `always_allocate` is `true`, then the
+      # return value may be `#frozen?` in some cases.
+      #
       # @return [S]
       def reify(always_allocate = false)
         if @storage.frozen? \
@@ -378,13 +381,13 @@ module Stupidedi
       #########################################################################
 
       # Constructs a new Pointer depending on what type of object is given.
-      # 
+      #
       # NOTE: Pointer operations can potentially destrucively modify the given
       # object, but if it is `#frozen?`, a copy will be made before the update.
       # If you are accessing or modifying the object outside of the Pointer API,
       # unexpected results might occur. To avoid this, either provide a copy
       # with `#dup` or freeze the object first with `#freeze`.
-      # 
+      #
       # @return [Pointer]
       def build(object)
         case object

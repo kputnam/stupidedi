@@ -90,6 +90,7 @@ module Stupidedi
           if pos.nil?
             !!(self =~ pattern)
           else
+            # NOTE: Regexp#match allocates a MatchData, String#match does not
             !!match(pattern, pos)
           end
         end

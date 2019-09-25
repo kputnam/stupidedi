@@ -1,10 +1,15 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
+
 describe Stupidedi::Reader::Pointer do
   using Stupidedi::Refinements
 
-  def pointer(value)
-    Stupidedi::Reader::Pointer.build(value)
+  def pointer(string, frozen: nil)
+    frozen = [true, false].sample if frozen.nil?
+    string.freeze       if frozen and not string.frozen?
+    string = string.dup if not frozen and string.frozen?
+    Stupidedi::Reader::Pointer.build(string)
   end
+
 
   def pointer_(*args)
     Stupidedi::Reader::Pointer.new(args)
@@ -23,12 +28,12 @@ describe Stupidedi::Reader::Pointer do
 
   describe ".build" do
     context "when value is a String" do
-      specify { expect(pointer("abc")).to be_a(Stupidedi::Reader::Pointer) }
+      specify { expect(pointer("111")).to be_a(Stupidedi::Reader::Pointer) }
 
       allocation do
         ignore  = nil
-        storage = [1,1,1]
-        expect{ ignore = pointer(storage) }.to allocate(Stupidedi::Reader::Pointer => 1)
+        storage = "111"
+        expect{ ignore = pointer(storage, frozen: true) }.to allocate(Stupidedi::Reader::Substring => 1)
       end
     end
 
@@ -37,7 +42,7 @@ describe Stupidedi::Reader::Pointer do
 
       allocation do
         storage = [1,2]
-        expect{ pointer(storage) }.to allocate(Stupidedi::Reader::Pointer => 1)
+        expect{ pointer(storage, frozen: true) }.to allocate(Stupidedi::Reader::Pointer => 1)
       end
     end
 
@@ -76,24 +81,39 @@ describe Stupidedi::Reader::Pointer do
 
   describe "#reify" do
     context "when storage is frozen" do
-      let(:abcdef) { pointer("abcdef".freeze) }
+      let(:p) { pointer("abcdef", frozen: true) }
 
       context "and storage spans entire storage" do
-        allocation { p = abcdef; expect{ p.send(:reify)        }.to allocate(String: 0) }
-        allocation { p = abcdef; expect{ p.send(:reify, false) }.to allocate(String: 0) }
+        allocation { p; expect{ p.send(:reify)        }.to allocate(String: 0) }
+        allocation { p; expect{ p.send(:reify, false) }.to allocate(String: 0) }
 
         context "but always_allocate is true" do
-          allocation { p = abcdef; expect{ p.send(:reify, true) }.to allocate(String: 1) }
+          allocation { p; expect{ p.send(:reify, true) }.to allocate(String: 1) }
         end
       end
 
       context "and storage does not span entire storage" do
-        allocate { p = abcdef.drop(1); expect{ p.send(:reify) }.to allocate(String: 1) }
-        allocate { p = abcdef.take(1); expect{ p.send(:reify) }.to allocate(String: 1) }
+        allocate { p = p.drop(1); expect{ p.send(:reify) }.to allocate(String: 1) }
+        allocate { p = p.take(1); expect{ p.send(:reify) }.to allocate(String: 1) }
       end
     end
 
-    todo "when storage is not frozen" do
+    context "when storage is not frozen" do
+      let(:p) { pointer("abcdef", frozen: false) }
+
+      context "and storage spans entire storage" do
+        allocation { p; expect{ p.send(:reify)        }.to allocate(String: 1) }
+        allocation { p; expect{ p.send(:reify, false) }.to allocate(String: 1) }
+
+        context "but always_allocate is true" do
+          allocation { p; expect{ p.send(:reify, true) }.to allocate(String: 1) }
+        end
+      end
+
+      context "and storage does not span entire storage" do
+        allocate { p = p.drop(1); expect{ p.send(:reify) }.to allocate(String: 1) }
+        allocate { p = p.take(1); expect{ p.send(:reify) }.to allocate(String: 1) }
+      end
     end
   end
 
@@ -159,11 +179,10 @@ describe Stupidedi::Reader::Pointer do
   end
 
   describe "+" do
-    let(:a) { pointer("abcdefghi".dup) }
-
     context "when argument is a non-pointer value" do
       context "when pointer suffix starts with argument" do
         specify do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = "gh"
 
@@ -178,15 +197,17 @@ describe Stupidedi::Reader::Pointer do
         end
 
         allocation do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = "gh"
           expect(suffix(b)).to start_with(c)
-          expect{ b + c }.to allocate(String: 0, a.class => 1)
+          expect{ b + c }.to allocate(b.class => 1)
         end
       end
 
       context "when argument is pointer suffix plus more" do
         specify do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = "ghijkl"
 
@@ -203,6 +224,7 @@ describe Stupidedi::Reader::Pointer do
         end
 
         allocation do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = "ghijkl"
           expect(c).to start_with(suffix(b))
@@ -213,6 +235,7 @@ describe Stupidedi::Reader::Pointer do
 
       context "when argument is not pointer suffix" do
         specify do
+          a = pointer("abcdefghi")
           b = a.take(6)
           c = "xxx"
 
@@ -228,6 +251,7 @@ describe Stupidedi::Reader::Pointer do
         end
 
         allocation do
+          a = pointer("abcdefghi")
           b = a.take(6)
           c = "xxx"
           expect(a.storage).to be_frozen
@@ -239,6 +263,7 @@ describe Stupidedi::Reader::Pointer do
     context "when argument is a string pointer" do
       context "when pointer suffix starts with argument" do
         specify do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = pointer("gh")
 
@@ -254,15 +279,17 @@ describe Stupidedi::Reader::Pointer do
         end
 
         allocation do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = pointer("gh")
           expect(suffix(b)).to start_with(c)
-          expect{ b + c }.to allocate(a.class => 1)
+          expect{ b + c }.to allocate(b.class => 1)
         end
       end
 
       context "when argument is pointer suffix plus more" do
         specify do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = pointer("ghijkl")
 
@@ -279,6 +306,7 @@ describe Stupidedi::Reader::Pointer do
         end
 
         allocation do
+          a = pointer("abcdefghi")
           b = a.drop(3).take(3)
           c = pointer("ghijkl")
           expect(c).to start_with(suffix(b))
@@ -289,6 +317,7 @@ describe Stupidedi::Reader::Pointer do
 
       context "when argument is not pointer suffix" do
         specify do
+          a = pointer("abcdefghi")
           b = a.take(6)
           c = pointer("xxx")
 
@@ -304,51 +333,35 @@ describe Stupidedi::Reader::Pointer do
         end
 
         allocation do
+          a = pointer("abcdefghi")
           b = a.take(6)
-          c = pointer("xxx")
+          c = pointer("xxx", frozen: true)
           expect(suffix(b)).to_not start_with(c)
-          expect{ b + c }.to allocate(String: 1)
+          expect{ b + c }.to allocate(String: 1 + (c.storage.frozen? && 0 || 1))
+        end
+
+        allocation do
+          a = pointer("abcdefghi")
+          b = a.take(6)
+          c = pointer("xxx", frozen: false)
+          expect(suffix(b)).to_not start_with(c)
+          expect{ b + c }.to allocate(String: 1 + (c.storage.frozen? && 0 || 1))
         end
       end
     end
   end
 
-  describe "#head" do
-  end
-
-  describe "#last" do
-  end
-
-  describe "#defined_at?" do
-  end
-
-  describe "#at" do
-  end
-
-  describe "#tail" do
-  end
-
-  describe "#[]" do
-  end
-
-  describe "#drop" do
-  end
-
-  describe "#drop!" do
-  end
-
-  describe "take" do
-  end
-
-  context "#take!" do
-  end
-
-  describe "#drop_take" do
-  end
-
-  describe "#split_at" do
-  end
-
-  describe ".build" do
-  end
+  todo "#head"
+  todo "#last"
+  todo "#defined_at?"
+  todo "#at"
+  todo "#tail"
+  todo "#[]"
+  todo "#drop"
+  todo "#drop!"
+  todo "take"
+  todo "#take!"
+  todo "#drop_take"
+  todo "#split_at"
+  todo ".build"
 end

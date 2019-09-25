@@ -528,7 +528,7 @@ module Stupidedi
           gscode  = version.try(:slice, 0, 6)
 
           # GS01: Functional Identifier Code
-          fgcode = segment_tok.element_toks.at(0).try(:value)
+          # fgcode = segment_tok.element_toks.at(0).try(:value)
 
           if config.functional_group.defined_at?(gscode)
             envelope_def  = config.functional_group.at(gscode)

@@ -342,7 +342,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to          be_repeated
           expect(r.value).to_not      be_composite
-          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.element_toks.map{|x|x.value.to_s}).to eq(expected)
           expect(r.value.position).to eq(0)
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
@@ -378,7 +378,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to          be_repeated
           expect(r.value).to_not      be_composite
-          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.element_toks.map{|x|x.value.to_s}).to eq(expected)
           expect(r.value.position).to eq(pos[0])
           expect(r.position).to       eq(pos[0])
           expect(r.rest).to           eq(suffix_)
@@ -526,7 +526,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to          be_repeated
           expect(r.value).to_not      be_composite
-          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.element_toks.map{|x|x.value.to_s}).to eq(expected)
           expect(r.value.position).to eq(0)
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
@@ -561,7 +561,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to          be_repeated
           expect(r.value).to_not      be_composite
-          expect(r.value.element_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.element_toks.map{|x|x.value.to_s}).to eq(expected)
           expect(r.value.position).to eq(pos[0])
           expect(r.position).to       eq(pos[0])
           expect(r.rest).to           eq(suffix_)
@@ -735,7 +735,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to          be_repeated
           expect(r.value).to_not      be_composite
-          expect(r.value.element_toks.map{|t|t.component_toks.map{|c|c.value.to_s}}).to eq(expected)
+          expect(r.value.element_toks.map{|x|x.component_toks.map{|c|c.value.to_s}}).to eq(expected)
           expect(r.value.position).to eq(0)
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
@@ -746,7 +746,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to_not      be_repeated
           expect(r.value).to          be_composite
-          expect(r.value.component_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.component_toks.map{|x|x.value.to_s}).to eq(expected)
           expect(r.value.position).to eq(0)
           expect(r.position).to       eq(0)
           expect(r.rest).to           eq(suffix)
@@ -771,7 +771,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to          be_repeated
           expect(r.value).to_not      be_composite
-          expect(r.value.element_toks.map{|t|t.component_toks.map{|c|c.value.to_s}}).to eq(expected)
+          expect(r.value.element_toks.map{|x|x.component_toks.map{|c|c.value.to_s}}).to eq(expected)
           expect(r.value.position).to eq(pos[0])
           expect(r.position).to       eq(pos[0])
           expect(r.rest).to           eq(suffix_)
@@ -782,7 +782,7 @@ describe Stupidedi::Reader::Tokenizer do
           expect(r.value).to_not      be_simple
           expect(r.value).to_not      be_repeated
           expect(r.value).to          be_composite
-          expect(r.value.component_toks.map{|t|t.value.to_s}).to eq(expected)
+          expect(r.value.component_toks.map{|x|x.value.to_s}).to eq(expected)
           expect(r.value.position).to eq(pos[0])
           expect(r.position).to       eq(pos[0])
           expect(r.rest).to           eq(suffix_)

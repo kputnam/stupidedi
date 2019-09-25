@@ -103,7 +103,7 @@ class MemProf::Results
     xs.group_by(&:klass).map do |key, stats|
       {group: key,
        stats: stats,
-       bytes: stats.sum(&:bytes),
+       bytes: stats.inject(0){|s,x| s + x.bytes },
        count: stats.length}
     end
   end
@@ -112,7 +112,7 @@ class MemProf::Results
     xs.group_by(&:method).map do |key, stats|
       {group: key,
        stats: stats,
-       bytes: stats.sum(&:bytes),
+       bytes: stats.inject(0){|s,x| s + x.bytes },
        count: stats.length}
     end
   end
@@ -121,7 +121,7 @@ class MemProf::Results
     xs.group_by(&:location).map do |key, stats|
       {group: key,
        stats: stats,
-       bytes: stats.sum(&:bytes),
+       bytes: stats.inject(0){|s,x| s + x.bytes },
        count: stats.length}
     end
   end
@@ -131,12 +131,12 @@ class MemProf::Results
     io.sync = true rescue nil
 
     io.puts "Total allocated: %s (%d objects)" % [
-      human(@allocated.sum(&:bytes)), @allocated.size]
+      human(@allocated.inject(0){|s,x| s + x.bytes }), @allocated.size]
 
     io.puts "\n\nObjects most allocated\n#{"="*64}"
     allocations_by_class.sort_by{|x|-x[:count]}.take(limit).each do |x|
       io.puts "%10s  %s" % [x[:count], x[:group]]
-      allocations_by_location(x[:stats]).sort_by{|x|-x[:count]}.take(5).each do |y|
+      allocations_by_location(x[:stats]).sort_by{|w|-w[:count]}.take(5).each do |y|
         io.puts "         : %10s  %s" % [y[:count], y[:group]]
       end
       io.puts

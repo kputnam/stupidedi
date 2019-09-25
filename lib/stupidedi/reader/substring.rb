@@ -177,6 +177,7 @@ module Stupidedi
       # substring pointer.
       #
       # @return [self]
+      Z = "abc"
       def <<(other)
         case other
         when self.class
@@ -185,7 +186,7 @@ module Stupidedi
             @length += other.length
           elsif not @storage.frozen?
             # Surely no one will notice if we destructively update @storage
-            @storage[@offset + @length, @storage.length - @offset - @length] = other
+            @storage[@offset + @length, @storage.length - @offset - @length] = other.reify
             @length  += other.length
           else
             # Other pointers are sharing our storage. We need to make our own
@@ -398,7 +399,7 @@ module Stupidedi
 
         offset = @length if offset > length
         offset = @offset + offset
-        m = pattern.match(@storage, offset)
+        m = @storage.match(pattern, offset)
 
         if m and m.begin(0) <= @offset + @length
           if m.end(0) <= @offset + @length

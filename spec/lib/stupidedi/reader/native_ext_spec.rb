@@ -171,7 +171,7 @@ describe Stupidedi::Reader::NativeExt do
           expect(extend_language).to be_graphic(encoding: e)
         end
 
-        if n = e[/iso-8859-(\d+)/, 1].try{|n| Integer(n) }
+        if n = e[/iso-8859-(\d+)/, 1].try{|m| Integer(m) }
           it "identifies all graphic characters" do
             bytes  = iso_8859_table.reject{|_, no| no.include?(n) }.keys
             string = bytes.sort.map(&:chr).join.force_encoding(e)
