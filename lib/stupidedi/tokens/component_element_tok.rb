@@ -2,43 +2,33 @@
 module Stupidedi
   using Refinements
 
-  module Reader
-    class SimpleElementTok
+  module Tokens
+    class ComponentElementTok
       include Inspect
 
-      # @return [String, Object]
+      # @return [String]
       attr_reader :value
 
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(value, position, remainder)
-        @value, @position, @remainder =
-          value, position, remainder
+      def initialize(value, position)
+        @value    = value
+        @position = position
       end
 
-      # @return [SimpleElementTok]
+      # @return [CompositeElementTok]
       def copy(changes = {})
-        SimpleElementTok.new \
+        ComponentElementTok.new \
           changes.fetch(:value, @value),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
+      # :nocov:
       def pretty_print(q)
-        q.pp(:simple.cons(@value.cons))
+        q.pp(:component.cons(@value.cons))
       end
-
-      def repeated
-        RepeatedElementTok.new(self.cons, @position)
-      end
-
-      def repeated?
-        false
-      end
+      # :nocov:
 
       def blank?
         @value.blank?
@@ -56,17 +46,22 @@ module Stupidedi
         false
       end
 
+      def repeated?
+        false
+      end
+
       def to_x12(separators)
         @value.to_s
       end
     end
 
-    class << SimpleElementTok
-      # @group Constructors
+    class << ComponentElementTok
       #########################################################################
+      # @group Constructors
 
-      def build(value, position, remainder)
-        new(value, position, remainder)
+      # @return [ComponentElementTok]
+      def build(value, position)
+        new(value, position)
       end
 
       # @endgroup

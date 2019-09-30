@@ -2,7 +2,7 @@
 module Stupidedi
   using Refinements
 
-  module Reader
+  module Tokens
     class RepeatedElementTok
       include Inspect
 
@@ -12,16 +12,9 @@ module Stupidedi
 
       attr_reader :position
 
-      def_delegators "element_toks.last", :remainder
-
       def initialize(element_toks, position)
-        @element_toks, @position =
-          element_toks, position
-      end
-
-      def repeated(element_tok)
-        @element_toks.unshift(element_tok)
-        self
+        @element_toks = element_toks
+        @position     = position
       end
 
       def pretty_print(q)
@@ -59,8 +52,8 @@ module Stupidedi
     end
 
     class << RepeatedElementTok
-      # @group Constructors
       #########################################################################
+      # @group Constructors
 
       # @return [RepeatedElementTok]
       def build(element_toks, position)

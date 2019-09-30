@@ -2,7 +2,7 @@
 module Stupidedi
   using Refinements
 
-  module Reader
+  module Tokens
     class CompositeElementTok
       include Inspect
 
@@ -12,20 +12,16 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(component_toks, position, remainder)
-        @component_toks, @position, @remainder =
-          component_toks, position, remainder
+      def initialize(component_toks, position)
+        @component_toks = component_toks
+        @position       = position
       end
 
       # @return [CompositeElementTok]
       def copy(changes = {})
         CompositeElementTok.new \
           changes.fetch(:component_toks, @component_toks),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
       # :nocov:
@@ -33,10 +29,6 @@ module Stupidedi
         q.pp(:composite.cons(@component_toks))
       end
       # :nocov:
-
-      def repeated
-        RepeatedElementTok.new(self.cons, @position)
-      end
 
       def repeated?
         false
@@ -58,6 +50,17 @@ module Stupidedi
         true
       end
 
+      # @private
+      # @return [ComponentElementTok]
+      def element(n)
+        unless n > 0
+          raise ArgumentError,
+            "n must be positive"
+        end
+
+        @component_toks.at(n - 1).value
+      end
+
       def to_x12(separators)
         if blank?
           ""
@@ -70,12 +73,12 @@ module Stupidedi
     end
 
     class << CompositeElementTok
-      # @group Constructors
       #########################################################################
+      # @group Constructors
 
       # @return [CompositeElementTok]
-      def build(component_toks, position, remainder)
-        new(component_toks, position, remainder)
+      def build(component_toks, position)
+        new(component_toks, position)
       end
 
       # @endgroup

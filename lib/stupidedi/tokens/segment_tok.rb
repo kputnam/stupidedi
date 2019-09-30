@@ -2,7 +2,7 @@
 module Stupidedi
   using Refinements
 
-  module Reader
+  module Tokens
     class SegmentTok
       include Inspect
 
@@ -15,12 +15,10 @@ module Stupidedi
       # @return [Position]
       attr_reader :position
 
-      # @return [Position]
-      attr_reader :remainder
-
-      def initialize(id, element_toks, position, remainder)
-        @id, @element_toks, @position, @remainder =
-          id, element_toks, position, remainder
+      def initialize(id, element_toks, position)
+        @id           = id
+        @element_toks = element_toks
+        @position     = position
       end
 
       # @return [SegmentTok]
@@ -28,8 +26,7 @@ module Stupidedi
         SegmentTok.new \
           changes.fetch(:id, @id),
           changes.fetch(:element_toks, @element_toks),
-          changes.fetch(:position, @position),
-          changes.fetch(:remainder, @remainder)
+          changes.fetch(:position, @position)
       end
 
       # :nocov:
@@ -46,9 +43,28 @@ module Stupidedi
         not blank?
       end
 
+      # This is a hacky way to get InterchangeDef#separators to work with
+      # both SegmentVal and SegmentTok; that saves a few steps when just
+      # doing tokenization (not parsing)
+      #
+      # @private
+      # @return [SimpleElementTok or CompositeElementVal]
+      def element(m, n = nil, o = nil)
+        unless m > 0
+          raise ArgumentError,
+            "m must be positive"
+        end
+
+        unless n.nil?
+          @element_toks.at(m - 1).element(n, o)
+        else
+          @element_toks.at(m - 1).value
+        end
+      end
+
       def to_x12(separators)
         if blank?
-          "#{id}#{separators.segment}"
+          "#{id}#{(separators.segment || "~").strip}"
         else
           es  = @element_toks.map{|x| x.to_x12(separators) }
           sep = separators.element || "*"
@@ -59,12 +75,12 @@ module Stupidedi
     end
 
     class << SegmentTok
-      # @group Constructors
       #########################################################################
+      # @group Constructors
 
       # @return [SegmentTok]
-      def build(id, element_toks, position, remainder)
-        new(id, element_toks, position, remainder)
+      def build(id, element_toks, position)
+        new(id, element_toks, position)
       end
 
       # @endgroup
