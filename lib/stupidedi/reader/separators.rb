@@ -10,21 +10,40 @@ module Stupidedi
     # @see X222.pdf B.1.1.2.5 Delimiters
     #
     class Separators
+      # Denotes the beginning of a component (subelement); typically `":"`.
       # @return [String]
       attr_accessor :component  # :
 
+      # Denotes a new iteration of a repeated element; typically `"^"`.
       # @return [String]
       attr_accessor :repetition # ^
 
+      # Denotes the beginning of a data element; typically `"*"`.
       # @return [String]
       attr_accessor :element    # *
 
+      # Denotes the end of a data segment; typically `"~"`.
       # @return [String]
       attr_accessor :segment    # ~
 
       def initialize(component, repetition, element, segment)
-        @component, @repetition, @element, @segment =
-          component, repetition, element, segment
+        @component  = component
+        @repetition = repetition
+        @element    = element
+        @segment    = segment
+      end
+
+      # True if all separators are `#blank?`
+      def blank?
+        @component.blank?   and
+        @repetition.blank?  and
+        @element.blank?     and
+        @segment.blank?
+      end
+
+      # True if any one separator is not `#blank?`
+      def present?
+        not blank?
       end
 
       # @return [Separators]
@@ -38,6 +57,8 @@ module Stupidedi
 
       # Creates a new value that has the separators from `other`, when they
       # are not nil, and will use separators from `self` otherwise.
+      #
+      # @return [Separators]
       def merge(other)
         Separators.new \
           other.component  || @component,
@@ -46,12 +67,23 @@ module Stupidedi
           other.segment    || @segment
       end
 
+      # Indicates if the given char is among one of the separators
+      #
+      # @return [Boolean]
+      def include?(char)
+        @component  == char ||
+        @repetition == char ||
+        @element    == char ||
+        @segment    == char
+      end
+
       # @return [AbstractSet<String>]
       def characters
         chars =
           [@component, @repetition, @element, @segment].select{|s| s.present? }
 
-        Sets.absolute(chars.join.split(//), Reader::C_BYTES.split(//))
+        # This works even if any separators have more than one character
+        Set.new(chars.join.split(//))
       end
 
       # @return [String]
@@ -65,7 +97,7 @@ module Stupidedi
       #########################################################################
 
       # @return [Separators]
-      def empty
+      def blank
         new(nil, nil, nil, nil)
       end
 
