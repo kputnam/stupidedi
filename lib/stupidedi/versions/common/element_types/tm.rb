@@ -66,8 +66,8 @@ module Stupidedi
             # @return [String]
             # :nocov:
             def inspect
-              id = definition.bind do |d|
-                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
+              id = definition.then do |d|
+                "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -142,8 +142,8 @@ module Stupidedi
             # @return [String]
             # :nocov:
             def inspect
-              id = definition.bind do |d|
-                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
+              id = definition.then do |d|
+                "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -235,8 +235,8 @@ module Stupidedi
             # @return [String]
             # :nocov:
             def inspect
-              id = definition.bind do |d|
-                "[#{"% 5s" % d.id}: #{d.name}]".bind do |s|
+              id = definition.then do |d|
+                "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
                   if usage.forbidden?
                     ansi.forbidden(s)
                   elsif usage.required?
@@ -287,21 +287,25 @@ module Stupidedi
             self::Empty.new(usage, position)
           end
 
+          # @private
+          FOUR_DIGITS = /^\d{4,}$/.freeze
+
           # @return [TimeVal]
           def value(object, usage, position)
             if object.is_a?(TimeVal)
               object#.copy(:usage => usage, :position => position)
             elsif object.blank?
               self::Empty.new(usage, position)
-            elsif object.is_a?(String) or object.is_a?(StringVal)
+            elsif object.is_a?(String) or object.is_a?(StringVal) or object.is_a?(Reader::Substring)
+              object = object.to_s
               return self::Invalid.new(object, usage, position) \
-                unless object =~ /^\d{4,}$/
+                unless object.match?(FOUR_DIGITS)
 
-              hour   = object.to_s.slice(0, 2).to_i
-              minute = object.to_s.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
-              second = object.to_s.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
+              hour   = object.slice(0, 2).to_i
+              minute = object.slice(2, 2).try{|mm| mm.to_i unless mm.blank? }
+              second = object.slice(4, 2).try{|ss| ss.to_d unless ss.blank? }
 
-              if decimal = object.to_s.slice(6..-1)
+              if decimal = object.slice(6..-1)
                 decimal = 0 if decimal.empty?
                 second += "0.#{decimal}".to_d
               end

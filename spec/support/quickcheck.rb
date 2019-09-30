@@ -181,7 +181,7 @@ class Quickcheck
       rand(hi + 1 - lo) + lo
     when Range
       # @todo: #to_a is wasteful for large Ranges
-      lo.to_a.bind{|a| a[between(0, a.length - 1)] }
+      lo.to_a.then{|a| a[between(0, a.length - 1)] }
     end
   end
 
