@@ -2,8 +2,6 @@
 module Stupidedi
   using Refinements
 
-  # TODO: Rename this
-  #
   module Parser
     module Generation
       # Consumes all input from `reader` and returns the updated

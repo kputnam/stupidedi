@@ -11,6 +11,7 @@ module Stupidedi
       end
     end
 
+    # @private
     BIGDECIMAL = /\A[+-]?            (?# optional leading sign            )
                   (?:
                     (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)

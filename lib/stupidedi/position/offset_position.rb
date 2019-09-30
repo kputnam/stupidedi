@@ -9,7 +9,7 @@ module Stupidedi
     # NOTE: There aren't any instances of this class, because `build` returns
     # an Integer rather than an instance of OffsetPosition. We don't need to
     # implement `advance` because there is a special case in `Input#position_at`
-    # that does the work when its @position is an Integer.
+    # that does the work when its `@position` is an Integer.
     #
     class OffsetPosition
     end

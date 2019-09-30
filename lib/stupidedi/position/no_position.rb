@@ -25,7 +25,7 @@ module Stupidedi
     end
 
     class << NoPosition
-      # Singleton "instance" methods
+      # @group Singleton "instance" methods
       #########################################################################
 
       def to_s
@@ -43,6 +43,9 @@ module Stupidedi
       def ===(other)
         equal?(other)
       end
+
+      # @endgroup
+      #########################################################################
     end
   end
 end

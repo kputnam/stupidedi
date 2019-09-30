@@ -10,15 +10,19 @@ module Stupidedi
     # @see X222.pdf B.1.1.2.5 Delimiters
     #
     class Separators
+      # Denotes the beginning of a component (subelement); typically `":"`.
       # @return [String]
       attr_accessor :component  # :
 
+      # Denotes a new iteration of a repeated element; typically `"^"`.
       # @return [String]
       attr_accessor :repetition # ^
 
+      # Denotes the beginning of a data element; typically `"*"`.
       # @return [String]
       attr_accessor :element    # *
 
+      # Denotes the end of a data segment; typically `"~"`.
       # @return [String]
       attr_accessor :segment    # ~
 

@@ -5,11 +5,12 @@ module Stupidedi
 
   module Reader
 
-    # NOTE abbrevations used in variable names:
-    #   tr: separators.segment    ~
-    #   gs: separators.element    *
-    #   us: separators.component  :
-    #   rs: separators.repetition ^
+    # Abbrevations used in variable names:
+    #
+    #     tr: separators.segment    "~"
+    #     gs: separators.element    "*"
+    #     us: separators.component  ":"
+    #     rs: separators.repetition "^"
 
     class Tokenizer
       include Inspect
@@ -23,15 +24,18 @@ module Stupidedi
       # @return [SegmentDict]
       attr_accessor :segment_dict
 
+      # @private
       VALID_SEPARATOR   = /[^[:alnum:] ]/u
+
+      # @private
       VALID_SEGMENT_ID  = /\A[A-Z][A-Z0-9]{1,2}\Z/u
 
       # @param input [Input]
-      def initialize(input, config, separators, segment_dict, switcher, switcher_, strict)
+      def initialize(input, config, separators, segment_dict, switcher, switcher_)
         # Make a separate switch for _read_component_element so building a
         # composite element won't interfere with building its components.
-        @input, @config, @separators, @segment_dict, @switcher, @switcher_, @strict =
-          input, config, separators, segment_dict, switcher, switcher_, strict
+        @input, @config, @separators, @segment_dict, @switcher, @switcher_ =
+          input, config, separators, segment_dict, switcher, switcher_
 
         @i = "I".encode(@input.encoding).freeze
         @s = "S".encode(@input.encoding).freeze
@@ -46,7 +50,7 @@ module Stupidedi
       # interchange, or tokenizations halts in the middle of a segment, then
       # the result will be `#fatal?`.
       #
-      # @yield  [Tokens::SegmentTok | Tokens::IgnoredTok]
+      # @yield  [Tokens::SegmentTok or Tokens::IgnoredTok]
       # @return [Result::Fail]
       def each
         return enum_for(:each) unless block_given?
@@ -82,7 +86,7 @@ module Stupidedi
       # to EOF. If no segments were read, or tokenizations halts in the middle
       # of a segment, then the result will be `#fatal?`.
       #
-      # @yield  [Tokens::SegmentTok | Tokens::IgnoredTok]
+      # @yield  [Tokens::SegmentTok or Tokens::IgnoredTok]
       # @return [Result::Fail]
       def each_isa
         return enum_for(:each_isa) unless block_given?
@@ -537,9 +541,9 @@ module Stupidedi
     end
 
     class << Tokenizer
-      def build(input, config: nil, strict: false)
+      def build(input, config: nil)
         new(input, config, Separators.blank, SegmentDict.empty,
-          Tokenizer::ElementTokSwitch.new, Tokenizer::ElementTokSwitch.new, strict)
+          Tokenizer::ElementTokSwitch.new, Tokenizer::ElementTokSwitch.new)
       end
     end
   end

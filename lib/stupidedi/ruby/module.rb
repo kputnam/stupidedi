@@ -4,6 +4,8 @@ module Stupidedi
 
     # When `def_delegators` is given `debug: true`, this hash map will
     # have [class, method] => number of invocations.
+    #
+    # @private
     CALL_COUNT = Hash.new(0)
 
     # Kernel.at_exit do
@@ -12,6 +14,8 @@ module Stupidedi
 
     # Used as a default value for optional arguments; when this is received
     # by a delegator method we know the user didn't provide a value.
+    #
+    # @private
     class DEFAULT < BasicObject; end
 
     refine Module do

@@ -243,7 +243,7 @@ module Stupidedi
       end
 
 
-      # @param  [String or Pathname or IO] input
+      # @param  [String or Pathname or IO] path
       # @return [Tokenizer]
       def file(path, *args)
         if path.is_a?(String)

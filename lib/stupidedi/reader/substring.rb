@@ -4,6 +4,12 @@ module Stupidedi
   using Refinements
 
   module Reader
+    #
+    # This class provides memory-efficient implementations of operations on
+    # substrings (by avoiding allocating the substring before performing the
+    # operation). Many optimizations related to comparing substrings or trimming
+    # nongraphic or whitespace characters rely on `NativeExt`.
+    #
     class Substring < Slice
       # @group Conversion Methods
       #########################################################################
@@ -20,7 +26,6 @@ module Stupidedi
 
       # A substring is blank if it's empty or only whitespace.
       #
-      # @override
       # @return [Boolean]
       def blank?
         empty? or NativeExt.min_nonspace_index(@storage, @offset) >= @offset + @length
@@ -29,12 +34,15 @@ module Stupidedi
       # @group Matching
       #########################################################################
 
-      # @private
       # Match an unescaped anchor \A, \a, or ^, \Z, \z, $; this is fast but
       # can give false positives on stuff like [^...] and [...$]. For those
       # cases, `match?` and `index` can be given `anchorless: true`. When
       # a Regexp is not anchored, we can usually avoid calling `reify`.
+      #
+      # @private
       ANCHORS_A = /(?<!\\)(?:\\\\)*(?:\\[Aa]|[\^])/
+
+      # @private
       ANCHORS_Z = /(?<!\\)(?:\\\\)*(?:\\[Zz]|[\$])/
 
       # Indicates whether the regexp matches this substring or not. See specs
@@ -318,6 +326,10 @@ module Stupidedi
         n - @offset
       end
 
+      # Returns the index of the next control character at or after the
+      # given offset.
+      #
+      # @return [Integer]
       def min_nongraphic_index(offset = 0)
         raise ArgumentError, "offset must be non-negative" if offset < 0
         offset = @length if offset > @length
@@ -417,7 +429,6 @@ module Stupidedi
         end
       end
 
-      # @override
       def subseq_eq?(s1, o1, s2, o2, length)
         return false unless s1.is_a?(String)
         return false unless s2.is_a?(String)

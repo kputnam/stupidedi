@@ -11,6 +11,7 @@ module Stupidedi
       # be allocated each time a simple or composite is tokenized, then thrown
       # out once it's finished.
       #
+      # @private
       class ElementTokSwitch
         include Inspect
 

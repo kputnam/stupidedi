@@ -8,9 +8,6 @@ module Stupidedi
     # Usually the stack frame just above the stupidedi boundary is chosen, so
     # users will have the location in their source where a value was generated.
     #
-    # TODO: Build a way to store more than a single stack frame's worth of data
-    # along with a way to configure how many stack frames should be saved.
-    #
     class StacktracePosition
 
       # @return [Thread::Backtrace::Location]

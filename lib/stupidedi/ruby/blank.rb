@@ -2,6 +2,7 @@
 module Stupidedi
   module Refinements
 
+    # @private
     NONBLANK = /\S/u.freeze
 
     refine String do

@@ -7,7 +7,7 @@ module Stupidedi
     abstract :defined?
 
     ###########################################################################
-    # @group Filtering the Value
+    # @group Filtering
 
     # @return [Either]
     abstract :select, :args => %w(reason='select' &block)
@@ -19,7 +19,7 @@ module Stupidedi
     ###########################################################################
 
     ###########################################################################
-    # @group Transforming the Value
+    # @group Transforming
 
     # @return [Either]
     abstract :map, :args => %w(&block)
@@ -59,7 +59,7 @@ module Stupidedi
       end
 
       #########################################################################
-      # @group Filtering the Value
+      # @group Filtering
 
       # @return [Either]
       # @yieldparam value
@@ -87,7 +87,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Transforming the Value
+      # @group Transforming
 
       # @return [Success]
       # @yieldparam value
@@ -179,7 +179,7 @@ module Stupidedi
       end
 
       #########################################################################
-      # @group Filtering the Value
+      # @group Filtering
 
       # @return [Failure]
       def select(reason = nil)
@@ -195,7 +195,7 @@ module Stupidedi
       #########################################################################
 
       #########################################################################
-      # @group Transforming the Value
+      # @group Transforming
 
       # @return [Failure]
       def map

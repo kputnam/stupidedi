@@ -10,9 +10,13 @@ module Stupidedi
         # @return [Boolean]
         abstract :fail?
 
+        # @return [Boolean]
+        abstract :fatal?
+
         # @return [Position]
         abstract :position
 
+        # @private
         class Fail < Result
           # @return [String]
           attr_reader :error
@@ -51,6 +55,7 @@ module Stupidedi
           end
         end
 
+        # @private
         class Done < Result
           # @return [Object]
           attr_reader :value

@@ -3,10 +3,35 @@ module Stupidedi
   using Refinements
 
   module Reader
-    # 
-    # 
+    #
+    # This class provides a lightweight way to use array slices or substrings
+    # without allocating the slice as new object and copying contents into it.
+    # The Ruby VM requires 40 bytes for ordinary objects with three or fewer
+    # instance variables. Strings require a minimum of 40 bytes. Strings longer
+    # than 23 bytes require a mininum 64 bytes plus an additional byte for each
+    # byte after the 23rd.
+    #
+    # Therefore substrings longer than 23 bytes can be represented with less
+    # memory (and no time spent copying) using Slice. Many String operations can
+    # be performed with minimal allocations by using the implementations in the
+    # {Substring} class which inhertis from Slice.
+    #
+    # The type `Slice<S, E>` represents a slice from storage of type S that has
+    # items of type E. For example,
+    #
+    # * `Slice<Array, Integer>` represents an array of integers
+    # * `Slice<String, String>` represents a string (single chars have type String)
     #
     class Slice
+      # When this object is not `#frozen?`, only one slice references it.  In
+      # that case, some operations can be optimized by destructively updating
+      # `@storage` in place. However, when another slice shares with us,
+      # `@storage` will be frozen.
+      #
+      # We can't know if there are references to `@storage` apart from the ones
+      # created by this class. If there are outside references to `@storage`,
+      # destructive updates to it may cause unexpected behavior.
+      #
       # @return [S]
       attr_reader :storage
 
@@ -54,6 +79,8 @@ module Stupidedi
 
       # Returns true if the slice begins with the given prefix.
       #
+      # @param  [S or Slice<S, E>] prefix
+      # @param  [Integer] offset
       # @return [Boolean]
       def start_with?(prefix, offset=0)
         case prefix
@@ -68,8 +95,9 @@ module Stupidedi
       end
 
       # Returns true if this slice has the same contents as another slice
-      # or a value with the same type as storage <S>.
+      # or a value with the same type as storage S.
       #
+      # @param  [S or Slice<S, E>] other
       # @return [Boolean]
       def ==(other)
         if self.class == other.class
@@ -83,7 +111,7 @@ module Stupidedi
         end
       end
 
-      # @group Single Element Selection
+      # @group Single Elements
       #########################################################################
 
       # Returns the first element
@@ -98,9 +126,10 @@ module Stupidedi
       # second form returns an empty slice. See also `#last` for the opposite
       # effect.
       #
-      #   first     -> element
-      #   first(n)  -> slice
+      #     first     -> element
+      #     first(n)  -> slice
       #
+      # @param  [Integer] count
       # @return [E or Slice<S, E>]
       def first(count = nil)
         if count.nil?
@@ -114,9 +143,10 @@ module Stupidedi
       # form returns `nil`. If a negative number is given, raises an
       # `ArgumentError`.
       #
-      #   last      -> element
-      #   last(n)   -> slice
+      #     last      -> element
+      #     last(n)   -> slice
       #
+      # @param  [Integer] count
       # @return [E or Slice<S, E>]
       def last(count = nil)
         if count.nil?
@@ -131,6 +161,7 @@ module Stupidedi
       # Returns the element at `index`. Returns `nil` if the index is out
       # of range. If a negative number is given, raises an `ArgumentError`.
       #
+      # @param  [Integer] index
       # @return [E]
       def at(index)
         index = Integer(index)
@@ -138,7 +169,7 @@ module Stupidedi
         @storage[@offset + index] if @length > index
       end
 
-      # @group Subsequence
+      # @group Slices
       #########################################################################
 
       # Drops the first element and returns the remaining elements in a slice.
@@ -152,10 +183,10 @@ module Stupidedi
       # `offset` index and continuing for `length` elements, or returns a
       # slice specified by a `Range` of indices.
       #
-      #   slice[offset]           -> element
-      #   slice[offset, length]   -> slice
-      #   slice[a..b]             -> slice
-      #   slice[a...b]            -> slice
+      #     slice[offset]           -> element
+      #     slice[offset, length]   -> slice
+      #     slice[a..b]             -> slice
+      #     slice[a...b]            -> slice
       #
       # Negative indices count backward from the end of the slice (-1 is the
       # last element). For `start` and `Range` cases, the starting index is just
@@ -164,6 +195,8 @@ module Stupidedi
       #
       # Returns `nil` if the index or starting index are out of range.
       #
+      # @param  [Integer or Range] offset
+      # @param  [Integer] length
       # @return [E or Slice<S, E>]
       def [](offset, length=nil)
         if length.present?
@@ -176,7 +209,6 @@ module Stupidedi
 
           length = @length - offset if length > @length - offset
           self.class.new(@storage.freeze, @offset + offset, length)
-
         elsif offset.kind_of?(Range)
           a = Integer(offset.begin)
           b = Integer(offset.end) if offset.end
@@ -194,7 +226,6 @@ module Stupidedi
           end
 
           self[a, length]
-
         else
           offset  = Integer(offset)
           offset += @length if offset < 0
@@ -209,6 +240,7 @@ module Stupidedi
       # the elements in a slice. If a negative number is given, raises an
       # `ArgumentError`.
       #
+      # @param  [Integer] n
       # @return [Slice<S, E>]
       def drop(n)
         n = Integer(n)
@@ -222,6 +254,7 @@ module Stupidedi
       # Returns first `n` elements from the slice. If a negative number is
       # given, raises an `ArgumentError`.
       #
+      # @param  [Integer] n
       # @return [Slice<S, E>]
       def take(n)
         n = Integer(n)
@@ -239,6 +272,8 @@ module Stupidedi
       # NOTE: This is equivalent to `slice.drop(n).take(m)` but requires one
       # less object allocation.
       #
+      # @param  [Integer] n
+      # @param  [Integer] m
       # @return [Slice<S, E>]
       def drop_take(n, m)
         n = Integer(n)
@@ -257,6 +292,7 @@ module Stupidedi
 
       # Convenience method to `take(n)` and `drop(n)` in one method call.
       #
+      # @param  [Integer] n
       # @return [(Slice<S, E>, Slice<S, E>)]
       def split_at(n)
         [take(n), drop(n)]
@@ -269,6 +305,7 @@ module Stupidedi
       # value of type S). Depending on what is being concatenated, this will
       # return either a new slice or a new value of type S.
       #
+      # @param  [S or Slice<S, E>] other
       # @return [S or Slice<S, E>]
       def +(other)
         if other.is_a?(self.class)
@@ -302,6 +339,7 @@ module Stupidedi
       # Drops the first `n` elements from the slice. If a negative number is
       # given, raises an `ArgumentError`.
       #
+      # @param  [Integer] n
       # @return self
       def drop!(n)
         n = Integer(n)
@@ -316,6 +354,7 @@ module Stupidedi
       # Removes all except the first `n` elements from the slice. If a
       # negative number is given, raises an `ArgumentError`.
       #
+      # @param  [Integer] n
       # @return self
       def take!(n)
         n = Integer(n)
@@ -329,6 +368,7 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
+      # :nocov:
       # @return [String]
       def inspect
         "#<%s %s@storage=0x%s @offset=%d @length=%d>" %
@@ -336,13 +376,17 @@ module Stupidedi
            @storage.frozen? ? "-" : "+",
            (@storage.object_id << 1).to_s(16), @offset, @length]
       end
+      # :nocov:
 
+      # Converts this slice back into whatever the underlying storage type is.
       # This operation typically allocates memory and copies part of @storage,
       # so this is avoided as much as possible.
       #
-      # Unless the optional parameter `always_allocate` is `true`, then the
-      # return value may be `#frozen?` in some cases.
+      # The return value may or may not be `#frozen?` unless the optional param
+      # `always_allocate` is true -- then an allocation will always be performed
+      # and the result will not be `#frozen?`.
       #
+      # @param  [Boolean] always_allocate
       # @return [S]
       def reify(always_allocate = false)
         if @storage.frozen? \

@@ -2,8 +2,6 @@
 module Stupidedi
   using Refinements
 
-  # TODO: Remove support for ambiguous input / multiple parse trees
-  #
   module Parser
     class StateMachine
       include Inspect

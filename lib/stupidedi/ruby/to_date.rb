@@ -19,6 +19,7 @@ module Stupidedi
       end
     end
 
+    # @private
     class << Date
       public :parse
     end
