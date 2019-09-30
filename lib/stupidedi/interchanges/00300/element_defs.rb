@@ -4,7 +4,7 @@ module Stupidedi
     module ThreeHundred
       module ElementDefs
         t = Versions::ThirtyTen::ElementTypes
-        c = ElementTypes
+        c = Interchanges::Common::ElementTypes
         s = Schema
 
         I01 = t::ID.new(:I01, "Authorization Information Qualifier",      2,  2,

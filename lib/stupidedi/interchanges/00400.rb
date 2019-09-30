@@ -6,7 +6,8 @@ module Stupidedi
       autoload :SegmentDefs,    "stupidedi/interchanges/00400/segment_defs"
       autoload :InterchangeDef, "stupidedi/interchanges/00400/interchange_def"
 
-      ElementReqs = Versions::Common::ElementReqs
+      ElementReqs   = Versions::Common::ElementReqs
+      ElementTypes  = Interchanges::Common::ElementTypes
     end
   end
 end

@@ -1,14 +1,14 @@
-describe Stupidedi::Interchanges::ElementTypes::SeparatorVal do
+describe Stupidedi::Interchanges::Common::ElementTypes::Separator do
   using Stupidedi::Refinements
 
   let(:element_use) do
-    t = Stupidedi::Interchanges::ElementTypes
+    t = Stupidedi::Interchanges::Common::ElementTypes
     r = Stupidedi::Versions::Common::ElementReqs
     d = Stupidedi::Schema::RepeatCount
     t::Separator.new(:DE1, "String Element", 4, 10).simple_use(r::Mandatory, d.bounded(1))
   end
 
-  let(:position) { Stupidedi::Reader::Position.new(100, 4, 19, "test.x12") }
+  let(:position) { Stupidedi::Position::NoPosition }
 
   def value(x)
     element_use.value(x, position)
