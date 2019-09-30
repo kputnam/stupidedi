@@ -1,31 +1,22 @@
 source "http://rubygems.org"
 
-gem "cantor", "~> 1.2.1"
+gemspec(path: "build/gemspec", name: "stupidedi")
+gemspec(path: "build/gemspec", name: "stupidedi-core")
+gemspec(path: "build/gemspec", name: "stupidedi-defs")
+gemspec(path: "build/gemspec", name: "stupidedi-exts")
 
 group :development do
-  gem "rake"
-  gem "term-ansicolor"
+  # YARD 0.9.16 is the newest version that correctly builds our docs
+  #   https://github.com/lsegal/yard/issues/1267
+  gem "yard",      "= 0.9.16"
+  gem "rdiscount", "~> 2.2"
 
-  gem "rspec", "3.8.0"
-  gem "rspec-collection_matchers"
-
-  gem "yard","~> 0.9.20"
-# gem "redcarpet","~> 3.4.0", :platforms => [:mri]
-
-  # https://github.com/colszowka/simplecov#ruby-version-compatibility
-  gem "simplecov",              :platforms => [:ruby_24, :ruby_25]
-  gem "simplecov-inline-html",  :platforms => [:ruby_24, :ruby_25]
-
-  # gem "stackprof"
-  # gem "fasterer"
-  # gem "benchmark-ips"
-  # gem "memory_profiler"
-  # gem "allocation_stats"
-  # gem "heapy"
-
-  # We're using a patched version installed in yard/ until the
-  # maintainer improves the plugin. The patch has been submitted
-  # to the author.
-  #
-  # gem "yard-rspec", "~> 0.1"
+  gem "irb"#                       "~> 1.0"
+  gem "rake",                      "~> 12.3"
+  gem "rspec",                     "~> 3.8"
+  # gem "rspec-collection_matchers"# " "
+  # gem "stackprof",                 "~> 0.2"
+  # gem "benchmark-ips"#             ""
+  gem "simplecov"#                 ""
+  gem "simplecov-inline-html"      if RUBY_VERSION >= "2.4"
 end
