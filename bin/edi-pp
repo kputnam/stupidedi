@@ -22,14 +22,9 @@ parser = Stupidedi::Parser.build(config)
 start  = Time.now
 
 ARGV.each do |path|
-  # Reading the entire input at once is slightly faster than streaming
-  # from a file handle.
-  #
-  # content   = File.read(path, :encoding => "ISO-8859-1")
-  # parser, r = parser.read(Stupidedi::Reader.build(content))
-  #
-  reader  = Stupidedi::Reader.build(File.read(path))
-  parser, = parser.read(reader)
+  reader         = Stupidedi::Reader.file(path)
+  parser, result = parser.read(reader)
+  raise result.to_s if result.fatal?
 end
 
 stop = Time.now

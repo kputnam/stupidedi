@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require "bigdecimal"
+require "pathname"
 require "time"
 require "date"
 require "set"

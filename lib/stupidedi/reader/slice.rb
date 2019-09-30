@@ -3,8 +3,10 @@ module Stupidedi
   using Refinements
 
   module Reader
-    class Pointer
-
+    # 
+    # 
+    #
+    class Slice
       # @return [S]
       attr_reader :storage
 
@@ -50,7 +52,7 @@ module Stupidedi
         index < @length
       end
 
-      # Returns true if the pointer begins with the given prefix.
+      # Returns true if the slice begins with the given prefix.
       #
       # @return [Boolean]
       def start_with?(prefix, offset=0)
@@ -65,7 +67,7 @@ module Stupidedi
         end
       end
 
-      # Returns true if this pointer has the same contents as another pointer
+      # Returns true if this slice has the same contents as another slice
       # or a value with the same type as storage <S>.
       #
       # @return [Boolean]
@@ -92,14 +94,14 @@ module Stupidedi
       end
 
       # Returns the first element, or the first `count` elements, of the
-      # pointer. If the array is empty, the first form returns `nil`, and the
-      # second form returns an empty pointer. See also `#last` for the opposite
+      # slice. If the array is empty, the first form returns `nil`, and the
+      # second form returns an empty slice. See also `#last` for the opposite
       # effect.
       #
       #   first     -> element
-      #   first(n)  -> pointer
+      #   first(n)  -> slice
       #
-      # @return [E or Pointer<S, E>]
+      # @return [E or Slice<S, E>]
       def first(count = nil)
         if count.nil?
           head
@@ -108,14 +110,14 @@ module Stupidedi
         end
       end
 
-      # Returns the last `count` element(s). If the pointer is empty, the first
+      # Returns the last `count` element(s). If the slice is empty, the first
       # form returns `nil`. If a negative number is given, raises an
       # `ArgumentError`.
       #
       #   last      -> element
-      #   last(n)   -> pointer
+      #   last(n)   -> slice
       #
-      # @return [E or Pointer<S, E>]
+      # @return [E or Slice<S, E>]
       def last(count = nil)
         if count.nil?
           @storage[@offset + @length - 1] if @length > 0
@@ -139,30 +141,30 @@ module Stupidedi
       # @group Subsequence
       #########################################################################
 
-      # Drops the first element and returns the remaining elements in a pointer.
+      # Drops the first element and returns the remaining elements in a slice.
       #
-      # @return [Pointer<S, E>]
+      # @return [Slice<S, E>]
       def tail
         drop(1)
       end
 
-      # Returns the element at `offset` or returns a pointer starting at the
+      # Returns the element at `offset` or returns a slice starting at the
       # `offset` index and continuing for `length` elements, or returns a
-      # pointer specified by a `Range` of indices.
+      # slice specified by a `Range` of indices.
       #
-      #   pointer[offset]           -> element
-      #   pointer[offset, length]   -> pointer
-      #   pointer[a..b]             -> pointer
-      #   pointer[a...b]            -> pointer
+      #   slice[offset]           -> element
+      #   slice[offset, length]   -> slice
+      #   slice[a..b]             -> slice
+      #   slice[a...b]            -> slice
       #
-      # Negative indices count backward from the end of the pointer (-1 is the
+      # Negative indices count backward from the end of the slice (-1 is the
       # last element). For `start` and `Range` cases, the starting index is just
-      # before the element. Additionally, an empty pointer is returned when the
-      # starting index for an element range is at the end of the pointer.
+      # before the element. Additionally, an empty slice is returned when the
+      # starting index for an element range is at the end of the slice.
       #
       # Returns `nil` if the index or starting index are out of range.
       #
-      # @return [E or Pointer<S, E>]
+      # @return [E or Slice<S, E>]
       def [](offset, length=nil)
         if length.present?
           length  = Integer(length)
@@ -200,14 +202,14 @@ module Stupidedi
         end
       end
 
-      # @return [Pointer<S, E>]
+      # @return [Slice<S, E>]
       alias_method :slice, :[]
 
-      # Drops the first `n` elements from the pointer and returns the rest of
-      # the elements in a pointer. If a negative number is given, raises an
+      # Drops the first `n` elements from the slice and returns the rest of
+      # the elements in a slice. If a negative number is given, raises an
       # `ArgumentError`.
       #
-      # @return [Pointer<S, E>]
+      # @return [Slice<S, E>]
       def drop(n)
         n = Integer(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
@@ -217,10 +219,10 @@ module Stupidedi
         self.class.new(@storage.freeze, @offset + n, @length - n)
       end
 
-      # Returns first `n` elements from the pointer. If a negative number is
+      # Returns first `n` elements from the slice. If a negative number is
       # given, raises an `ArgumentError`.
       #
-      # @return [Pointer<S, E>]
+      # @return [Slice<S, E>]
       def take(n)
         n = Integer(n)
         raise ArgumentError, "argument must be non-negative" if n < 0
@@ -234,10 +236,10 @@ module Stupidedi
       # remaining elements. If a negative number is given for either argument,
       # raises an `ArgumentError`.
       #
-      # NOTE: This is equivalent to `pointer.drop(n).take(m)` but requires one
+      # NOTE: This is equivalent to `slice.drop(n).take(m)` but requires one
       # less object allocation.
       #
-      # @return [Pointer<S, E>]
+      # @return [Slice<S, E>]
       def drop_take(n, m)
         n = Integer(n)
         m = Integer(m)
@@ -255,7 +257,7 @@ module Stupidedi
 
       # Convenience method to `take(n)` and `drop(n)` in one method call.
       #
-      # @return [(Pointer<S, E>, Pointer<S, E>)]
+      # @return [(Slice<S, E>, Slice<S, E>)]
       def split_at(n)
         [take(n), drop(n)]
       end
@@ -263,11 +265,11 @@ module Stupidedi
       # @group Concatenation
       #########################################################################
 
-      # Concatenates this pointer and the argument (either another pointer or
+      # Concatenates this slice and the argument (either another slice or
       # value of type S). Depending on what is being concatenated, this will
-      # return either a new pointer or a new value of type S.
+      # return either a new slice or a new value of type S.
       #
-      # @return [S or Pointer<S, E>]
+      # @return [S or Slice<S, E>]
       def +(other)
         if other.is_a?(self.class)
           o_storage = other.storage
@@ -297,7 +299,7 @@ module Stupidedi
       # @group Destructive methods
       #########################################################################
 
-      # Drops the first `n` elements from the pointer. If a negative number is
+      # Drops the first `n` elements from the slice. If a negative number is
       # given, raises an `ArgumentError`.
       #
       # @return self
@@ -311,7 +313,7 @@ module Stupidedi
         self
       end
 
-      # Removes all except the first `n` elements from the pointer. If a
+      # Removes all except the first `n` elements from the slice. If a
       # negative number is given, raises an `ArgumentError`.
       #
       # @return self
@@ -376,24 +378,24 @@ module Stupidedi
       end
     end
 
-    class << Pointer
+    class << Slice
       # @group Constructors
       #########################################################################
 
-      # Constructs a new Pointer depending on what type of object is given.
+      # Constructs a new Slice depending on what type of object is given.
       #
-      # NOTE: Pointer operations can potentially destrucively modify the given
+      # NOTE: Slice operations can potentially destrucively modify the given
       # object, but if it is `#frozen?`, a copy will be made before the update.
-      # If you are accessing or modifying the object outside of the Pointer API,
+      # If you are accessing or modifying the object outside of the Slice API,
       # unexpected results might occur. To avoid this, either provide a copy
       # with `#dup` or freeze the object first with `#freeze`.
       #
-      # @return [Pointer]
+      # @return [Slice]
       def build(object)
         case object
         when String
           Substring.new(object, 0, object.length)
-        when Pointer
+        when Slice
           object
         else
           raise TypeError, "object must respond to []" \
@@ -402,7 +404,7 @@ module Stupidedi
           raise TypeError, "object must respond to length" \
             unless object.respond_to?(:length)
 
-          Pointer.new(object, 0, object.length)
+          Slice.new(object, 0, object.length)
         end
       end
 

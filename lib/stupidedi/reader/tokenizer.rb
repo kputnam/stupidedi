@@ -287,10 +287,6 @@ module Stupidedi
         return expected("segment identifier, found %s" % segment_id.inspect,
           start_pos) unless segment_id.match?(VALID_SEGMENT_ID)
 
-        # TODO: DEBUG
-        # raise unless input.start_with?(@separators.segment, xx) \
-        #           or input.start_with?(@separators.element, xx)
-
         return done(segment_id.to_sym, start_pos, input.drop!(xx))
       end
 
@@ -327,9 +323,6 @@ module Stupidedi
           input         = result.rest
           element_idx  += 1
         end
-
-        # TODO: DEBUG
-        # raise unless input.start_with?(@separators.segment)
 
         # Skip past the segment separator
         done(element_toks, nil, input.lstrip_nongraphic!(1))

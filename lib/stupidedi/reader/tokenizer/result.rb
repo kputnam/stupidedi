@@ -41,6 +41,14 @@ module Stupidedi
           def explain
             yield @error
           end
+
+          def to_s
+            if @position.equal?(Position::NoPosition)
+              @error
+            else
+              "%s at %s" % [@error, @position]
+            end
+          end
         end
 
         class Done < Result
@@ -66,6 +74,10 @@ module Stupidedi
           end
 
           def fail?
+            false
+          end
+
+          def fatal?
             false
           end
 

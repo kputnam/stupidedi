@@ -13,15 +13,17 @@ rescue LoadError
 end
 
 require "stupidedi"
+require "tempfile"
 require "ostruct"
 require "pp"
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each(&method(:require))
 
 RSpec.configure do |config|
-  config.include(AllocationMatchers)
   config.include(EitherMatchers)
-  config.include(Quickcheck::Macro)
+  config.include(AllocationMatchers)
+  config.include(SmallcheckMatchers)
+  config.include(Quickcheck::Macro) # @todo deprecate
 
   # Use --tag "~mem" to skip these specs
   config.alias_example_to :allocation, mem: true

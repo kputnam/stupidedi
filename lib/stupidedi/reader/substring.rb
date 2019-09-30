@@ -4,7 +4,7 @@ module Stupidedi
   using Refinements
 
   module Reader
-    class Substring < Pointer
+    class Substring < Slice
       # @group Conversion Methods
       #########################################################################
 
@@ -43,28 +43,29 @@ module Stupidedi
       # @return [Boolean]
       def match?(pattern, offset=0, anchorless: false)
         pattern = _convert(Regexp, pattern)
+        return false if offset > @length
 
         if @length < 1024 and @storage.length - @offset > 1024
           # TODO: Run some experiments to evalaute performance here
           return reify.match?(pattern, offset)
         end
 
+        pattern_inspect = nil
+
         if not anchorless and @offset != 0 \
-          and ANCHORS_A.match?(pattern.inspect)
+          and ANCHORS_A.match?(pattern_inspect ||= pattern.inspect)
           return reify.match?(pattern)
         end
 
         if not anchorless and @offset + @length != @storage.length \
-          and ANCHORS_Z.match?(pattern.inspect)
+          and ANCHORS_Z.match?(pattern_inspect ||= pattern.inspect)
           return reify.match?(pattern)
         end
-
-        offset = @length if offset > length
 
         # Unfortunately we can't use pattern.match?, which doesn't allocate a
         # MatchData object (Ruby 2.4+), because we need to check bounds on the
         # match.
-        m = pattern.match(@storage, offset + @offset)
+        m = @storage.match(pattern, offset + @offset)
 
         if m and m.begin(0) <= @offset + @length
           if m.end(0) <= @offset + @length
@@ -93,6 +94,7 @@ module Stupidedi
       def [](offset, length=nil)
         case offset
         when Regexp
+          # This second argument selects the capture group, it's not a length
           length ||= 0
           m = match(offset)
           m and m[length]
@@ -110,15 +112,15 @@ module Stupidedi
         raise ArgumentError, "offset must be non-negative" if offset < 0
         return nil if offset > @length
 
-        if other_ = Regexp.try_convert(other)
+        if other_ = String.try_convert(other)
+          n = @storage.index(other_, @offset + offset)
+          n - @offset if n and n + other_.length <= @offset + @length
+        elsif other_ = Regexp.try_convert(other)
           if result = _match(other_, offset, anchorless)
             m      = result[0]
             offset = result[1]
             m and m.begin(0) + offset
           end
-        elsif other_ = String.try_convert(other)
-          n = @storage.index(other_, @offset + offset)
-          n - @offset if n and n + other_.length <= @offset + @length
         else
           raise TypeError, "expected Regexp or String, got %s" % other.class
         end
@@ -135,7 +137,7 @@ module Stupidedi
 
         if other_ = Regexp.try_convert(other)
           if n = @storage.rindex(other_, @offset + offset)
-            if n + other_.length <= @offset + @length
+            if @offset <= n and n <= @offset + @length
               n - @offset
             else
               # The match starts within bounds but ends outside, so we need to
@@ -174,10 +176,9 @@ module Stupidedi
       #########################################################################
 
       # Destructively updates this substring by appending the given string or
-      # substring pointer.
+      # substring.
       #
       # @return [self]
-      Z = "abc"
       def <<(other)
         case other
         when self.class
@@ -189,7 +190,7 @@ module Stupidedi
             @storage[@offset + @length, @storage.length - @offset - @length] = other.reify
             @length  += other.length
           else
-            # Other pointers are sharing our storage. We need to make our own
+            # Other substrings are sharing our storage. We need to make our own
             # copy now. Be sure `reify` gives back a copy, not the original.
             @storage  = reify(true)
             @storage << other.reify
@@ -209,7 +210,7 @@ module Stupidedi
             @storage[@offset + @length, @storage.length - @offset - @length] = other_
             @length  += other_.length
           else
-            # Other pointers are sharing our storage. We need to make our own
+            # Other substrings are sharing our storage. We need to make our own
             # copy now. Be sure `reify` gives back a copy, not the original.
             @storage  = reify(true)
             @storage << other_
@@ -252,7 +253,7 @@ module Stupidedi
       #
       # @return self
       def lstrip!(start_at = 0)
-        # TODO
+        lstrip(start_at) # @todo
       end
 
       # Returns a new substring with trailing whitespace removed.
@@ -283,7 +284,7 @@ module Stupidedi
       #
       # @return self
       def rstrip!(start_at = @length - 1)
-        # TODO
+        rstrip(start_at) # @todo
       end
 
       # Returns a new substring with leading and trailing whitespace removed.
@@ -340,7 +341,7 @@ module Stupidedi
       def clean
         from = 0
         upto = min_nongraphic_index
-        return self unless upto < @length
+        return reify unless upto < @length
 
         # We know Substring#<< cannot be zero-copy at this point
         buffer = @storage[@offset + from, upto - from] unless from == upto

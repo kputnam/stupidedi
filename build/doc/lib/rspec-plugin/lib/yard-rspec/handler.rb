@@ -60,7 +60,7 @@ class RSpecItHandler < YARD::Handlers::Ruby::Base
     spec = if statement.parameters and statement.parameters.first
              statement.parameters.first.jump(:string_content).source
            else
-             "untitled spec"
+             owner[:context].empty? && "untitled spec" || ""
            end
 
     unless node

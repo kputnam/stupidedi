@@ -101,25 +101,24 @@ module Stupidedi
       #   Input.build(Pathname.new("sample.edi"), position: Position::OffsetPosition)
       #
       def build(value, *args)
-        if value.is_a?(String)
-          string(value, *args)
-
-        elsif defined?(Pathname) and value.is_a?(Pathname)
-          file(value, *args)
+        if x = String.try_convert(value)
+          string(x, *args)
 
         elsif value.is_a?(Input)
           value
 
-        elsif value.respond_to?(:read)
+        elsif value.is_a?(Pathname)
+          file(value, *args)
+
+        elsif value.respond_to?(:read) or x = IO.try_convert(value)
+          value    = x unless x.nil?
           position = args.last.delete(:position) if args.last.is_a?(Hash)
           path     = value.path if value.respond_to?(:path)
           content  = value.read
 
           # This will throw Encoding::InvalidByteSequenceErorr
           content.encode("binary") unless content.valid_encoding?
-
-          new(content, (position || Position::NoPosition).build(path))
-
+          new(Slice.build(content), (position || Position::NoPosition).build(path))
         else
           raise TypeError,
             "value must be a String, Pathname, or respond to #read"
@@ -144,7 +143,7 @@ module Stupidedi
         # This will throw Encoding::InvalidByteSequenceErorr
         content.encode("binary") unless content.valid_encoding?
 
-        new(Pointer.build(content), position.build(path))
+        new(Slice.build(content), position.build(path))
       end
 
       # @example
@@ -160,7 +159,7 @@ module Stupidedi
         # This will throw Encoding::InvalidByteSequenceErorr
         content.encode("binary") unless content.valid_encoding?
 
-        new(Pointer.build(content), position.build(nil))
+        new(Slice.build(content), position.build(nil))
       end
 
       # @endgroup

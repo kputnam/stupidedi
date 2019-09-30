@@ -2,24 +2,25 @@ describe Stupidedi::Reader::Substring do
   using Stupidedi::HashOps
   using Stupidedi::Refinements
 
-  def pointer(string, frozen: nil)
+  def slice(string, frozen: nil)
     frozen = false if frozen.nil?
     #rozen = [true, false].sample if frozen.nil?
     string.freeze       if frozen and not string.frozen?
     string = string.dup if not frozen and string.frozen?
-    Stupidedi::Reader::Pointer.build(string)
+    Stupidedi::Reader::Slice.build(string)
   end
 
-  def prefix(pointer)
-    pointer.storage[0, pointer.offset]
+  def prefix(slice)
+    slice.storage[0, slice.offset]
   end
 
-  def suffix(pointer)
-    pointer.storage[pointer.offset + pointer.length..-1]
+  def suffix(slice)
+    slice.storage[slice.offset + slice.length..-1]
   end
 
   # Yields all valid offset and length pairs for a string of the given length
   def substrings(length)
+    return enum_for(:substrings, length) unless block_given?
     length.times{|n| (length - n).times{|o| yield o, n } unless n.zero? }
   end
 
@@ -28,19 +29,19 @@ describe Stupidedi::Reader::Substring do
 
   describe "#to_s" do
     it "is called implicitly" do
-      p = pointer(lower)
+      p = slice(lower)
       expect("#{p}").to eq(lower)
     end
 
     context "when storage is shared" do
       specify do
-        p = pointer(lower)
+        p = slice(lower)
         q = p.drop(10)
         expect(q.to_s).to_not be_frozen
       end
 
       allocation do
-        p = pointer(lower)
+        p = slice(lower)
         q = p.drop(10)
         expect{ q.to_s }.to allocate(String: 1)
       end
@@ -48,12 +49,12 @@ describe Stupidedi::Reader::Substring do
 
     context "when storage is not shared" do
       specify do
-        p = pointer(lower, frozen: false)
+        p = slice(lower, frozen: false)
         expect(p.to_s).to_not be_frozen
       end
 
       allocation do
-        p = pointer(lower, frozen: false)
+        p = slice(lower, frozen: false)
         expect{ p.to_s }.to allocate(String: 1)
       end
     end
@@ -61,19 +62,19 @@ describe Stupidedi::Reader::Substring do
 
   describe "#to_str" do
     it "is called implicitly" do
-      expect(lower).to eq(pointer(lower))
-      expect(pointer(lower)).to eq(lower)
+      expect(lower).to eq(slice(lower))
+      expect(slice(lower)).to eq(lower)
     end
 
     context "when storage is shared" do
       specify do
-        p = pointer(lower)
+        p = slice(lower)
         q = p.drop(10)
         expect(q.to_str).to_not be_frozen
       end
 
       allocation do
-        p = pointer(lower)
+        p = slice(lower)
         q = p.drop(10)
         expect{ q.to_str }.to allocate(String: 1)
       end
@@ -81,12 +82,12 @@ describe Stupidedi::Reader::Substring do
 
     context "when storage is not shared" do
       specify do
-        p = pointer(lower, frozen: false)
+        p = slice(lower, frozen: false)
         expect(p.to_str).to_not be_frozen
       end
 
       allocation do
-        p = pointer(lower, frozen: false)
+        p = slice(lower, frozen: false)
         expect{ p.to_str }.to allocate(String: 1)
       end
     end
@@ -94,55 +95,55 @@ describe Stupidedi::Reader::Substring do
 
   describe "#==" do
     allocation "is reflexive" do
-      a = pointer(lower)
-      b = pointer(upper)
+      a = slice(lower)
+      b = slice(upper)
 
       expect(a).to eq(a)
       expect(a).to_not eq(b)
     end
 
     allocation "is reflexive" do
-      a = pointer(lower)
-      b = pointer(upper)
+      a = slice(lower)
+      b = slice(upper)
       expect{ a == a }.to allocate(String: 0)
       expect{ a == b }.to allocate(String: 0)
     end
 
-    context "when pointer is a string" do
+    context "when slice is a String" do
       specify do
-        a, a_ = pointer(lower), lower
-        _, b_ = pointer(upper), upper
+        a, a_ = slice(lower), lower
+        _, b_ = slice(upper), upper
 
         expect(a).to     eq(a_)
         expect(a).to_not eq(b_)
       end
 
       allocation do
-        a, a_ = pointer(lower), lower
-        _, b_ = pointer(upper), upper
+        a, a_ = slice(lower), lower
+        _, b_ = slice(upper), upper
         expect{ a == a_ }.to allocate(String: 0)
         expect{ a == b_ }.to allocate(String: 0)
       end
     end
 
-    context "when two pointers are identical" do
+    context "when two slices are identical" do
       specify do
-        a  = pointer(lower).drop(10).take(10)
-        a_ = pointer(lower).drop(10).take(10)
+        a  = slice(lower).drop(10).take(10)
+        a_ = slice(lower).drop(10).take(10)
 
         expect(a).to eq(a_)
       end
 
       allocation do
-        a  = pointer(lower).drop(10).take(10)
-        a_ = pointer(lower).drop(10).take(10)
+        a  = slice(lower).drop(10).take(10)
+        a_ = slice(lower).drop(10).take(10)
         expect{ a == a_ }.to allocate(String: 0)
       end
     end
 
-    context "when pointers are not identical" do
+    context "when slices are not identical" do
       specify do
-        p  = pointer("abcdef abcdef")
+        p  = slice("abcdef abcdef")
         a  = p.take(3)
         a_ = p.drop(7).take(3)
         b_ = p.drop(2).take(3)
@@ -152,7 +153,7 @@ describe Stupidedi::Reader::Substring do
       end
 
       allocation do
-        p  = pointer("abcdef abcdef")
+        p  = slice("abcdef abcdef")
         a  = p.take(3)
         a_ = p.drop(1).take(3)
         b_ = p.drop(2).take(3)
@@ -163,10 +164,14 @@ describe Stupidedi::Reader::Substring do
   end
 
   describe "#<<" do
-    context "when argument is a string" do
-      context "when pointer suffix starts with argument" do
+    context "when argument is a String" do
+      context "and encodings don't match" do
+        todo "raises an exception"
+      end
+
+      context "and slice suffix starts with argument" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "gh"
 
@@ -180,7 +185,7 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a   = pointer(lower)
+          a   = slice(lower)
           b   = a.drop(3).take(3)
           gh  = "gh"
           expect(suffix(b)).to start_with(gh)
@@ -188,9 +193,9 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when argument is pointer suffix plus more" do
+      context "and argument is slice suffix plus more" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "ghijkl"
 
@@ -205,7 +210,7 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "ghijkl"
           expect(c).to start_with(suffix(b))
@@ -214,10 +219,10 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when argument is not pointer suffix" do
-        context "when pointer isn't frozen" do
+      context "and argument is not slice suffix" do
+        context "when slice isn't frozen" do
           specify do
-            a = pointer(lower, frozen: false)
+            a = slice(lower, frozen: false)
             b = "xxx"
 
             # Precondition
@@ -229,16 +234,16 @@ describe Stupidedi::Reader::Substring do
           end
 
           allocation do
-            a = pointer(lower, frozen: false)
+            a = slice(lower, frozen: false)
             b = "xxx"
             expect(a.storage).to_not be_frozen
             expect{ a << b }.to allocate(String: 0)
           end
         end
 
-        context "when pointer is frozen" do
+        context "when slice is frozen" do
           specify do
-            a = pointer(lower, frozen: true)
+            a = slice(lower, frozen: true)
             b = a.take(6)
             c = "xxx"
 
@@ -252,7 +257,7 @@ describe Stupidedi::Reader::Substring do
           end
 
           allocation do
-            a = pointer(lower, frozen: true)
+            a = slice(lower, frozen: true)
             b = a.take(6)
             c = "xxx"
             expect(a.storage).to be_frozen
@@ -262,12 +267,16 @@ describe Stupidedi::Reader::Substring do
       end
     end
 
-    context "when argument is a pointer" do
-      context "when pointer suffix starts with argument" do
+    context "when argument is a Slice" do
+      context "and encodings don't match" do
+        todo "raises an exception"
+      end
+
+      context "and slice suffix starts with argument" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("gh")
+          c = slice("gh")
 
           # Precondition
           expect(suffix(b)).to start_with(c)
@@ -279,19 +288,19 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("gh")
+          c = slice("gh")
           expect(suffix(b)).to start_with(c)
           expect{ b << c }.to allocate(String: 0)
         end
       end
 
-      context "when argument is pointer suffix plus more" do
+      context "and argument is slice suffix plus more" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("ghijkl")
+          c = slice("ghijkl")
 
           # Precondition
           expect(c).to start_with(suffix(b))
@@ -304,20 +313,20 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("ghijkl")
+          c = slice("ghijkl")
           expect(c).to start_with(suffix(b))
           expect(c).to_not eq(suffix(b))
           expect{ b << c }.to allocate(String: 1)
         end
       end
 
-      context "when argument is not pointer suffix" do
-        context "when pointer isn't frozen" do
+      context "and argument is not slice suffix" do
+        context "when slice isn't frozen" do
           specify do
-            a = pointer(lower, frozen: false)
-            b = pointer("xxx".freeze)
+            a = slice(lower, frozen: false)
+            b = slice("xxx".freeze)
 
             # Precondition
             expect(a.storage).to_not be_frozen
@@ -328,18 +337,18 @@ describe Stupidedi::Reader::Substring do
           end
 
           allocation do
-            a = pointer(lower, frozen: false)
-            b = pointer("xxx", frozen: true)
+            a = slice(lower, frozen: false)
+            b = slice("xxx", frozen: true)
             expect(a.storage).to_not be_frozen
             expect{ a << b }.to allocate(String: 0)
           end
         end
 
-        context "when pointer is frozen" do
+        context "when slice is frozen" do
           specify do
-            a = pointer(lower)
+            a = slice(lower)
             b = a.take(6)
-            c = pointer("xxx")
+            c = slice("xxx")
 
             # Precondition
             expect(b.storage).to be_frozen
@@ -351,24 +360,32 @@ describe Stupidedi::Reader::Substring do
           end
 
           allocation do
-            a = pointer(lower)
+            a = slice(lower)
             b = a.take(6)
-            c = pointer("xxx", frozen: true)
+            c = slice("xxx", frozen: true)
             expect(b.storage).to be_frozen
             expect{ b << c }.to allocate(String: 1)
           end
         end
       end
     end
+
+    context "when argument is something else" do
+      specify { expect{ slice(lower) << :no }.to raise_error(TypeError) }
+    end
   end
 
   describe "#+" do
-    let(:a) { pointer("abcdefghi".dup) }
+    let(:a) { slice("abcdefghi".dup) }
 
-    context "when argument is a string" do
-      context "when pointer suffix starts with argument" do
+    context "when argument is a String" do
+      context "and encodings don't match" do
+        todo "raises an exception"
+      end
+
+      context "and slice suffix starts with argument" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "gh"
 
@@ -383,7 +400,7 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "gh"
           expect(suffix(b)).to start_with(c)
@@ -391,9 +408,9 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when argument is pointer suffix plus more" do
+      context "and argument is slice suffix plus more" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "ghijkl"
 
@@ -410,7 +427,7 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
           c = "ghijkl"
           expect(c).to start_with(suffix(b))
@@ -419,9 +436,9 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when argument is not pointer suffix" do
+      context "and argument is not slice suffix" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.take(6)
           c = "xxx"
 
@@ -437,7 +454,7 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.take(6)
           c = "xxx"
           expect(a.storage).to be_frozen
@@ -446,12 +463,16 @@ describe Stupidedi::Reader::Substring do
       end
     end
 
-    context "when argument is a string pointer" do
-      context "when pointer suffix starts with argument" do
+    context "when argument is a Substring" do
+      context "and encodings don't match" do
+        todo "raises an exception"
+      end
+
+      context "and slice suffix starts with argument" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("gh")
+          c = slice("gh")
 
           # Precondition
           expect(suffix(b)).to start_with(c)
@@ -465,19 +486,19 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("gh")
+          c = slice("gh")
           expect(suffix(b)).to start_with(c)
           expect{ b + c }.to allocate(String: 0, a.class => 1)
         end
       end
 
-      context "when argument is pointer suffix plus more" do
+      context "and argument is slice suffix plus more" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("ghijkl")
+          c = slice("ghijkl")
 
           # Precondition
           expect(c).to start_with(suffix(b))
@@ -492,20 +513,20 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.drop(3).take(3)
-          c = pointer("ghijkl")
+          c = slice("ghijkl")
           expect(c).to start_with(suffix(b))
           expect(c).to_not eq(suffix(b))
           expect{ b + c }.to allocate(String: 1)
         end
       end
 
-      context "when argument is not pointer suffix" do
+      context "and argument is not slice suffix" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.take(6)
-          c = pointer("xxx")
+          c = slice("xxx")
 
           # Precondition
           expect(suffix(b)).to_not start_with(c)
@@ -519,9 +540,9 @@ describe Stupidedi::Reader::Substring do
         end
 
         allocation do
-          a = pointer(lower)
+          a = slice(lower)
           b = a.take(6)
-          c = pointer("xxx", frozen: true)
+          c = slice("xxx", frozen: true)
           expect(suffix(b)).to_not start_with(c)
           expect{ b + c }.to allocate(String: 1)
         end
@@ -530,6 +551,8 @@ describe Stupidedi::Reader::Substring do
   end
 
   allocation do
+    skip "Only needed for debugging other failed specs"
+
     abc = "abc"
     dot = /./
     zee = /z/
@@ -574,11 +597,11 @@ describe Stupidedi::Reader::Substring do
     end
   end
 
-  # Returns number of objects allocated per class by Pointer#reify
-  def alloc_reify(pointer)
-    pointer.storage.frozen? \
-      && pointer.offset.zero? \
-      && pointer.length == pointer.storage.length \
+  # Returns number of objects allocated per class by Slice#reify
+  def alloc_reify(slice)
+    slice.storage.frozen? \
+      && slice.offset.zero? \
+      && slice.length == slice.storage.length \
       && {String: 0} || {String: 1}
   end
 
@@ -616,18 +639,21 @@ describe Stupidedi::Reader::Substring do
     end
   end
 
-  fdescribe "=~" do
+  describe "=~" do
     shared_examples "=~ memory allocation" do
       let(:anchored) { anchor_a || anchor_z }
 
-      # NOTE: There are three places a String can be allocated
-      # - Invoking Regexp#inspect to determine if the regexp is anchored
-      # - When the regexp matches, the MatchData has the matching substring
-      # - For anchored regexps, in some cases, Pointer#reify is called
+      it "works like String#=~" do
+        str = lower
+        ptr = slice(str)
+        all = substrings(lower.length).map{|idx, len| [ptr[idx,len], str[idx,len]]}
+        expect(all).to(smallcheck{|p,s| (p =~ regexp_o) == (s =~ regexp_o) })
+        expect(all).to(smallcheck{|p,s| (p =~ regexp_x) == (s =~ regexp_x) })
+      end
 
-      context "when pointer looks like [*************]" do
+      context "and slice looks like [*************]" do
         specify do
-          a = pointer(lower)
+          a = slice(lower)
 
           # Preconditions
           expect(a.length).to         eq(a.storage.length)
@@ -639,7 +665,7 @@ describe Stupidedi::Reader::Substring do
 
         allocation do
           skip "requires ruby >= 2.4" unless RUBY_VERSION >= "2.4"
-          a = pointer(lower)
+          a = slice(lower)
 
           # Preconditions
           expect(a.length).to         eq(a.storage.length)
@@ -652,9 +678,9 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when pointer looks like [*****]--------" do
+      context "and slice looks like [*****]--------" do
         specify do
-          a = pointer(lower).take(6)
+          a = slice(lower).take(6)
 
           # Preconditions
           expect(a.offset).to         eq(0)
@@ -667,7 +693,7 @@ describe Stupidedi::Reader::Substring do
 
         allocation do
           skip "requires ruby >= 2.4" unless RUBY_VERSION >= "2.4"
-          a = pointer(lower).take(6)
+          a = slice(lower).take(6)
 
           # Preconditions
           expect(a.offset).to         eq(0)
@@ -709,9 +735,9 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when pointer looks like ----[*****]----" do
+      context "and slice looks like ----[*****]----" do
         specify do
-          a = pointer(lower).drop(3).take(3)
+          a = slice(lower).drop(3).take(3)
 
           # Preconditions
           expect(a.offset).to_not         eq(0)
@@ -725,7 +751,7 @@ describe Stupidedi::Reader::Substring do
         allocation do
           skip "requires ruby >= 2.4" unless RUBY_VERSION >= "2.4"
 
-          a = pointer(lower).drop(3).take(3)
+          a = slice(lower).drop(3).take(3)
           expect(a.offset).to_not         eq(0)
           expect(a.offset + a.length).to  be < a.storage.length
           expect(a).to                    match(regexp_o)
@@ -770,9 +796,9 @@ describe Stupidedi::Reader::Substring do
         end
       end
 
-      context "when pointer looks like --------[*****]" do
+      context "and slice looks like --------[*****]" do
         specify do
-          a = pointer(lower).drop(3)
+          a = slice(lower).drop(3)
 
           # Preconditions
           expect(a.offset + a.length).to  eq(a.storage.length)
@@ -786,7 +812,7 @@ describe Stupidedi::Reader::Substring do
         allocation do
           skip "requires ruby >= 2.4" unless RUBY_VERSION >= "2.4"
 
-          a = pointer(lower).drop(3)
+          a = slice(lower).drop(3)
 
           # Preconditions
           expect(a.offset + a.length).to  eq(a.storage.length)
@@ -811,7 +837,7 @@ describe Stupidedi::Reader::Substring do
               alloc_match(true))    # reify.match
           else
             # We know ANCHORS_A will be tested and fail (reify_xoo is false),
-            # and ANCHORS_Z won't be tested due to where the pointer ends.
+            # and ANCHORS_Z won't be tested due to where the slice ends.
 
             expect { $~ = nil; a =~ regexp_x }.to allocate(
               {String: 1}         + # pattern.inspect
@@ -833,13 +859,6 @@ describe Stupidedi::Reader::Substring do
       let(:regexp_o) { /.../ }
       let(:regexp_x) { /xxx/ }
 
-      it "works like String#=~" do
-        substrings(lower.length) do |idx, len|
-          expect(pointer(lower)[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-          expect(pointer(lower)[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-        end
-      end
-
       let(:anchor_a)  { false }
       let(:anchor_z)  { false }
       let(:reify_xoo) { false }
@@ -852,13 +871,6 @@ describe Stupidedi::Reader::Substring do
     context "when regexp has an anchor /^.../" do
       let(:regexp_o) { /^.../ }
       let(:regexp_x) { /^xxx/ }
-
-      it "works like String#=~" do
-        substrings(lower.length) do |idx, len|
-          expect(pointer(lower)[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-          expect(pointer(lower)[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-        end
-      end
 
       let(:anchor_a)  { true  }
       let(:anchor_z)  { false }
@@ -873,14 +885,6 @@ describe Stupidedi::Reader::Substring do
       let(:regexp_o) { /...$/ }
       let(:regexp_x) { /xxx$/ }
 
-      it "works like String#=~" do
-        p = pointer(lower)
-        substrings(lower.length) do |idx, len|
-          expect(p[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-          expect(p[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-        end
-      end
-
       let(:anchor_a)  { false }
       let(:anchor_z)  { true  }
       let(:reify_oox) { true  }
@@ -894,14 +898,6 @@ describe Stupidedi::Reader::Substring do
       let(:regexp_o) { /[\^a-z]/ }
       let(:regexp_x) { /[\^0-9]/ }
 
-      it "works like String#=~" do
-        p = pointer(lower)
-        substrings(lower.length) do |idx, len|
-          expect(p[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-          expect(p[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-        end
-      end
-
       let(:anchor_a)  { false }
       let(:anchor_z)  { false }
       let(:reify_oox) { false }
@@ -914,14 +910,6 @@ describe Stupidedi::Reader::Substring do
     context "when regexp has [\\$]" do
       let(:regexp_o) { /[a-z\$]/ }
       let(:regexp_x) { /[\$0-9]/ }
-
-      it "works like String#=~" do
-        p = pointer(lower)
-        substrings(lower.length) do |idx, len|
-          expect(p[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-          expect(p[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-        end
-      end
 
       let(:anchor_a)  { false }
       let(:anchor_z)  { false }
@@ -937,15 +925,15 @@ describe Stupidedi::Reader::Substring do
       let(:regexp_x) { /xxx/ }
 
       it "works like String#=~" do
-        p = pointer(lower)
-        substrings(lower.length) do |idx, len|
-          expect(p[idx, len] =~ regexp_o).to eq(lower[idx, len] =~ regexp_o)
-          expect(p[idx, len] =~ regexp_x).to eq(lower[idx, len] =~ regexp_x)
-        end
+        str = lower
+        ptr = slice(str)
+        all = substrings(lower.length).map{|idx, len| [ptr[idx,len], str[idx,len]]}
+        expect(all).to(smallcheck{|p,s| (p =~ regexp_o) == (s =~ regexp_o) })
+        expect(all).to(smallcheck{|p,s| (p =~ regexp_x) == (s =~ regexp_x) })
       end
 
       allocation do
-        a = pointer(lower).drop(3).take(3)
+        a = slice(lower).drop(3).take(3)
 
         # Preconditions
         expect(a.offset + a.length).to  be < a.storage.length
@@ -959,76 +947,168 @@ describe Stupidedi::Reader::Substring do
       end
     end
 
-    context "when there is a long string past the end of the pointer"
+    todo "when there is a long string past the end of the slice"
   end
 
   describe "#blank?" do
     it "is true on empty strings" do
-      expect(pointer(lower).drop(10).take(0)).to be_blank
-      expect(pointer(lower).drop(lower.length)).to be_blank
-      expect(pointer("")).to be_blank
+      expect(slice(lower).drop(10).take(0)).to be_blank
+      expect(slice(lower).drop(lower.length)).to be_blank
+      expect(slice("")).to be_blank
     end
 
     it "is true on whitespace-only strings" do
-      expect(pointer(" \r\n\t\v\f")).to be_blank
+      expect(slice(" \r\n\t\v\f")).to be_blank
     end
 
     it "is false on strings with non-whitespace" do
-      expect(pointer(lower)).to_not be_blank
-      expect(pointer(" \r\n\t\v\f x")).to_not be_blank
+      expect(slice(lower)).to_not be_blank
+      expect(slice(" \r\n\t\v\f x")).to_not be_blank
     end
   end
 
   describe "#match?" do
-    it "returns true when matched" do
-      expect(pointer(lower).drop(3).take(3)).to be_match(/e/)
-      expect(pointer(lower).drop(3).take(3)).to be_match(/$/)
+    shared_examples "#match?(pattern)" do
+      context "and offset not given" do
+        it "works like String#match?" do
+          str = lower
+          ptr = slice(str)
+          all = substrings(lower.length).map{|idx, len| [ptr[idx,len], str[idx,len]]}
+          expect(all).to(smallcheck{|p,s| p.match?(regexp_o) == s.match?(regexp_o) })
+          expect(all).to(smallcheck{|p,s| p.match?(regexp_x) == s.match?(regexp_x) })
+        end
+      end
     end
 
-    it "returns false when not matched" do
-      expect(pointer(lower).drop(3).take(3)).to_not be_match(/c/)
-      expect(pointer(lower).drop(3).take(3)).to_not be_match(/i/)
+    shared_examples "#match?(pattern, offset)" do
+      context "and offset is given" do
+        it "works like String#match?" do
+          str = lower
+          ptr = slice(str)
+          all = substrings(lower.length).flat_map do |idx, len|
+            (len + 1).times.map do |offset|
+              [ptr[idx,len], str[idx,len], offset]
+            end
+          end
+          expect(all).to(smallcheck{|p,s,n| p.match?(regexp_o, n) == s.match?(regexp_o, n) })
+          expect(all).to(smallcheck{|p,s,n| p.match?(regexp_x, n) == s.match?(regexp_x, n) })
+        end
+      end
+    end
+
+    context "when regexp has an anchor /^.../" do
+      let(:regexp_o) { /^.../ }
+      let(:regexp_x) { /^xxx/ }
+      include_examples "#match?(pattern)"
+
+      # NOTE: In this circumstance, `#match?pattern, offset)` is not tested for
+      # equivalence with `String#match?(pattern, offset)`.
+      #
+      # Substring#match?(pattern, offset) does not work like the String
+      # implementation when the pattern has an ^ or \A anchor. String#match?
+      # interprets ^ to mean the beginning of @storage (even when the offset
+      # argument is not 0).
+      #
+      # Substring#match? works as if ^ is at the given offset, so we can check
+      # if a pattern would match as if we had called `#reify` on the substring.
+      # Therefore we do not have `include_examples "#match?(pattern, offset)"`.
+    end
+
+    context "when regexp has an anchor /...$/" do
+      let(:regexp_o) { /...$/ }
+      let(:regexp_x) { /xxx$/ }
+      include_examples "#match?(pattern)"
+
+      # NOTE: In this circumstance, `#match?pattern, offset)` is not tested for
+      # equivalence with `String#match?(pattern, offset)`.
+      #
+      # Substring#match?(pattern, offset) does not work like the String
+      # implementation when the pattern has an $ or \Z anchor. String#match?
+      # interprets $ to mean the end of @storage
+      #
+      # Substring#match? works as if $ is at the end of the substring, so we can
+      # check if a pattern would match as if we had called `#reify` on the
+      # substring.
+    end
+
+    context "when regexp doesn't have an anchor" do
+      let(:regexp_o) { /.../ }
+      let(:regexp_x) { /xxx/ }
+      include_examples "#match?(pattern)"
+      include_examples "#match?(pattern, offset)"
+    end
+
+    context "when regexp has [\\^]" do
+      let(:regexp_o) { /[\^a-z]/ }
+      let(:regexp_x) { /[\^0-9]/ }
+      include_examples "#match?(pattern)"
+      include_examples "#match?(pattern, offset)"
+    end
+
+    context "when regexp has [\\$]" do
+      let(:regexp_o) { /[a-z\$]/ }
+      let(:regexp_x) { /[\$0-9]/ }
+      include_examples "#match?(pattern)"
+      include_examples "#match?(pattern, offset)"
+    end
+
+    context "when regexp match ends out of bounds" do
+      let(:regexp_o) { /..+/ }
+      let(:regexp_x) { /xxx/ }
+      include_examples "#match?(pattern)"
+      include_examples "#match?(pattern, offset)"
     end
   end
 
   describe "#start_with?" do
-    context "when argument is a string" do
-      specify { expect(pointer(lower)).to         be_start_with("abc") }
-      specify { expect(pointer(lower).drop(3)).to be_start_with("def") }
+    context "when argument is a String" do
+      specify { expect(slice(lower)).to         be_start_with("abc") }
+      specify { expect(slice(lower).drop(3)).to be_start_with("def") }
 
-      specify { expect(pointer(lower).drop(3)).to_not be_start_with("abc") }
-      specify { expect(pointer(lower).drop(3)).to_not be_start_with("ghi") }
+      specify { expect(slice(lower).drop(3)).to_not be_start_with("abc") }
+      specify { expect(slice(lower).drop(3)).to_not be_start_with("ghi") }
     end
 
-    context "when argument is a string pointer" do
-      specify { expect(pointer(lower)).to be_start_with(pointer(lower).take(5)) }
-      specify { expect(pointer(lower).drop(5)).to_not be_start_with(pointer(lower)) }
+    context "when argument is a Substring" do
+      specify { expect(slice(lower)).to be_start_with(slice(lower).take(5)) }
+      specify { expect(slice(lower).drop(5)).to_not be_start_with(slice(lower)) }
     end
 
-    context "when argument is an unrelated string pointer" do
+    context "when argument is an unrelated string slice" do
       specify do
-        stuvw = pointer("stuvwx").drop(3)
-        other = pointer("vw uts").take(2)
+        stuvw = slice("stuvwx").drop(3)
+        other = slice("vw uts").take(2)
         expect(stuvw).to be_start_with(other)
       end
     end
 
     context "when argument is some other type" do
       it "raises an error" do
-        expect{pointer(lower).start_with?(:abc)}.to raise_error(TypeError)
+        expect{slice(lower).start_with?(:abc)}.to raise_error(TypeError)
       end
     end
   end
 
   describe "#index" do
-    let(:a) { pointer("abcdef abcdef") }
+    let(:a) { slice("abcdef abcdef") }
 
-    context "when argument is a regexp" do
-      todo "returns the first match"
-      todo "doesn't match outside of pointer bounds"
+    context "when argument is a Regexp" do
+      it "returns the first match" do
+        expect(a.index(/a/)).to    eq(0)
+        expect(a.index(/f/)).to    eq(5)
+        expect(a.index(/f/, 5)).to eq(5)
+        expect(a.index(/f/, 6)).to eq(12)
+      end
+
+      it "doesn't match outside of slice bounds" do
+        expect(a.take(0).index(/./)).to be_nil
+        expect(a.take(5).index(/ /)).to be_nil
+        expect(a.take(5).index(/e./)).to be_nil
+        expect(a.drop(8).index(/a/)).to be_nil
+      end
     end
 
-    context "when argument is a string" do
+    context "when argument is a String" do
       it "returns the first match" do
         expect(a.index("a")).to    eq(0)
         expect(a.index("f")).to    eq(5)
@@ -1036,26 +1116,49 @@ describe Stupidedi::Reader::Substring do
         expect(a.index("f", 6)).to eq(12)
       end
 
-      it "doesn't match outside of pointer bounds" do
+      it "doesn't match outside of slice bounds" do
         expect(a.take(5).index(" ")).to be_nil
         expect(a.drop(8).index("a")).to be_nil
       end
     end
 
-    todo "when argument is a substring"
+    context "when argument is a Substring" do
+      it "returns the first match" do
+        expect(a.index(slice("a"))).to    eq(0)
+        expect(a.index(slice("f"))).to    eq(5)
+        expect(a.index(slice("f"), 5)).to eq(5)
+        expect(a.index(slice("f"), 6)).to eq(12)
+      end
 
-    todo "when argument is a string pointer"
+      it "doesn't match outside of slice bounds" do
+        expect(a.take(5).index(slice(" "))).to be_nil
+        expect(a.drop(8).index(slice("a"))).to be_nil
+      end
+    end
+
+    context "when argument is something else" do
+      specify{ expect{ a.index(:no) }.to raise_error(TypeError) }
+    end
   end
 
   describe "#rindex" do
-    let(:a) { pointer("abcdef abcdef") }
+    let(:a) { slice("abcdef abcdef") }
 
-    context "when argument is a regexp" do
-      todo "returns the last match"
-      todo "doesn't match outside of pointer bounds"
+    context "when argument is a Regexp" do
+      it "returns the last match" do
+        expect(a.rindex(/a/)).to     eq(7)
+        expect(a.rindex(/f/)).to     eq(12)
+        expect(a.rindex(/f/, 12)).to eq(12)
+        expect(a.rindex(/f/, 11)).to eq(5)
+      end
+
+      it "doesn't match outside of slice bounds" do
+        expect(a.take(5).rindex(/f/)).to be_nil
+        expect(a.drop(8).rindex(/ /)).to be_nil
+      end
     end
 
-    context "when argument is a string" do
+    context "when argument is a String" do
       it "returns the last match" do
         expect(a.rindex("a")).to     eq(7)
         expect(a.rindex("f")).to     eq(12)
@@ -1063,32 +1166,48 @@ describe Stupidedi::Reader::Substring do
         expect(a.rindex("f", 11)).to eq(5)
       end
 
-      it "doesn't match outside of pointer bounds" do
+      it "doesn't match outside of slice bounds" do
         expect(a.take(5).rindex("f")).to be_nil
         expect(a.drop(8).rindex(" ")).to be_nil
       end
     end
 
-    todo "when argument is a string pointer"
+    context "when argument is a Substring" do
+      it "returns the last match" do
+        expect(a.rindex(slice("a"))).to     eq(7)
+        expect(a.rindex(slice("f"))).to     eq(12)
+        expect(a.rindex(slice("f"), 12)).to eq(12)
+        expect(a.rindex(slice("f"), 11)).to eq(5)
+      end
+
+      it "doesn't match outside of slice bounds" do
+        expect(a.take(5).rindex(slice("f"))).to be_nil
+        expect(a.drop(8).rindex(slice(" "))).to be_nil
+      end
+    end
+
+    context "when argument is something else" do
+      specify{ expect{ a.rindex(:no) }.to raise_error(TypeError) }
+    end
   end
 
   describe "#count" do
-    specify { expect(pointer(lower).count("b")).to eq(1) }
+    specify { expect(slice(lower).count("b")).to eq(1) }
 
-    context "when match starts before pointer" do
-      specify { expect(pointer(lower).drop(3).count("c")).to eq(0) }
+    context "when match starts before slice" do
+      specify { expect(slice(lower).drop(3).count("c")).to eq(0) }
     end
 
-    context "when match starts past pointer" do
-      specify { expect(pointer(lower).take(3).count("d")).to eq(0) }
+    context "when match starts past slice" do
+      specify { expect(slice(lower).take(3).count("d")).to eq(0) }
     end
 
-    context "when match extends past pointer" do
-      specify { expect(pointer(lower).take(3).count("cd")).to eq(0) }
+    context "when match extends past slice" do
+      specify { expect(slice(lower).take(3).count("cd")).to eq(0) }
     end
 
     allocation do
-      a  = pointer(lower)
+      a  = slice(lower)
       b  = "b"
       bc = "bc"
       expect{ a.count(b)  }.to allocate(String: 0)
@@ -1099,8 +1218,8 @@ describe Stupidedi::Reader::Substring do
   end
 
   describe "#rstrip" do
-    let(:sb) { pointer("  abc  ") }
-    let(:mb) { pointer("  💃🏽🕺🏻  ") }
+    let(:sb) { slice("  abc  ") }
+    let(:mb) { slice("  💃🏽🕺🏻  ") }
 
     context "when string is empty" do
       specify { expect(sb.take(0).rstrip).to eq("") }
@@ -1108,7 +1227,7 @@ describe Stupidedi::Reader::Substring do
 
     context "when string doesn't end with whitespace" do
       it "returns self" do
-        p = pointer(lower)
+        p = slice(lower)
         expect(p.rstrip).to equal(p)
       end
     end
@@ -1128,8 +1247,8 @@ describe Stupidedi::Reader::Substring do
   end
 
   describe "#lstrip" do
-    let(:sb) { pointer("  abc  ") }
-    let(:mb) { pointer("  💃🏽🕺🏻  ") }
+    let(:sb) { slice("  abc  ") }
+    let(:mb) { slice("  💃🏽🕺🏻  ") }
 
     context "when string is empty" do
       specify { expect(sb.take(0).lstrip).to eq("") }
@@ -1137,7 +1256,7 @@ describe Stupidedi::Reader::Substring do
 
     context "when string doesn't begin with whitespace" do
       it "returns self" do
-        p = pointer(lower)
+        p = slice(lower)
         expect(p.lstrip).to equal(p)
       end
     end
@@ -1158,39 +1277,36 @@ describe Stupidedi::Reader::Substring do
 
   describe "#min_graphic_index" do
     context "when string begins with a graphic character" do
-      specify { expect(pointer(" abc ").min_graphic_index(0)).to eq(0) }
-      specify { expect(pointer(" abc ").min_graphic_index(1)).to eq(1) }
-      specify { expect(pointer("  💃🏽🕺🏻  ").min_graphic_index(0)).to eq(0) }
-      specify { expect(pointer("  💃🏽🕺🏻  ").min_graphic_index(1)).to eq(1) }
+      specify { expect(slice(" abc ").min_graphic_index(0)).to eq(0) }
+      specify { expect(slice(" abc ").min_graphic_index(1)).to eq(1) }
+      specify { expect(slice("  💃🏽🕺🏻  ").min_graphic_index(0)).to eq(0) }
+      specify { expect(slice("  💃🏽🕺🏻  ").min_graphic_index(1)).to eq(1) }
     end
 
     context "when string doesn't begin with a graphic character" do
-      specify { expect(pointer("\r\nabc ").min_graphic_index(0)).to eq(2) }
-      specify { expect(pointer("\r\nabc ").min_graphic_index(1)).to eq(2) }
-      specify { expect(pointer("\r\n 💃🏽🕺🏻  ").min_graphic_index(0)).to eq(2) }
-      specify { expect(pointer("\r\n 💃🏽🕺🏻  ").min_graphic_index(1)).to eq(2) }
+      specify { expect(slice("\r\nabc ").min_graphic_index(0)).to eq(2) }
+      specify { expect(slice("\r\nabc ").min_graphic_index(1)).to eq(2) }
+      specify { expect(slice("\r\n 💃🏽🕺🏻  ").min_graphic_index(0)).to eq(2) }
+      specify { expect(slice("\r\n 💃🏽🕺🏻  ").min_graphic_index(1)).to eq(2) }
     end
 
     context "when string doesn't contain a graphic character" do
-      specify { expect(pointer("").min_graphic_index(0)).to eq(0) }
-      specify { expect(pointer("\r\n").min_graphic_index(0)).to eq(2) }
-      specify { expect(pointer("abc\r\n").min_graphic_index(3)).to eq(5) }
+      specify { expect(slice("").min_graphic_index(0)).to eq(0) }
+      specify { expect(slice("\r\n").min_graphic_index(0)).to eq(2) }
+      specify { expect(slice("abc\r\n").min_graphic_index(3)).to eq(5) }
     end
   end
 
-  todo "#min_whitespace_index"
-
-  todo "#max_whitespace_index"
 
   describe "#clean" do
     context "when no control characters present" do
-      let(:sb) { pointer("*A^B~C:D*A:B~C*D^") }
-      let(:mb) { pointer("  💃🏽🕺🏻  ") }
+      let(:sb) { slice("*A^B~C:D*A:B~C*D^") }
+      let(:mb) { slice("  💃🏽🕺🏻  ") }
 
       allocation do
         sb; mb # pre-allocate Substring
-        expect { sb.clean }.to allocate(String: 0)
-        expect { mb.clean }.to allocate(String: 0)
+        expect { sb.clean }.to allocate(String: 1)
+        expect { mb.clean }.to allocate(String: 1)
       end
 
       specify { expect(sb.clean).to eq(sb) }
@@ -1198,8 +1314,8 @@ describe Stupidedi::Reader::Substring do
     end
 
     context "when some control characters present" do
-      let(:sb) { pointer("*A^B\r\nC:D*A:B\r\nC*D^") }
-      let(:mb) { pointer("\r\n💃🏽🕺🏻\r\n") }
+      let(:sb) { slice("*A^B\r\nC:D*A:B\r\nC*D^") }
+      let(:mb) { slice("\r\n💃🏽🕺🏻\r\n") }
 
       allocation do
         sb; mb # pre-allocate Substring
@@ -1210,5 +1326,12 @@ describe Stupidedi::Reader::Substring do
       specify { expect(sb.clean).to eq(sb.storage.gsub(/[\r\n]/, "")) }
       specify { expect(mb.clean).to eq(mb.storage.gsub(/[\r\n]/, "")) }
     end
+  end
+
+  todo "#min_whitespace_index"
+  todo "#max_whitespace_index"
+
+  describe "#[]" do
+    todo "when regexp is given"
   end
 end

@@ -71,7 +71,6 @@ static int ENCIDX_UTF_32 = -1;
 static int ENCIDX_UTF_32BE = -1;
 static int ENCIDX_UTF_32LE = -1;
 */
-
 static int ENCIDX_UTF_8 = -1;
 
 /*
@@ -149,71 +148,71 @@ update_encdb(int encidx) {
   return true; \
 }
 
-    TESTENC("US-ASCII",         US_ASCII)
+    TESTENC("US-ASCII",     US_ASCII)
 
     /*
-    TESTENC("CP850",            CP850)  // US-ASCII+ https://en.wikipedia.org/wiki/Code_page_850
-    TESTENC("CP852",            CP852)  // CP850+ https://en.wikipedia.org/wiki/Code_page_852
-    TESTENC("CP855",            CP855)  // CP850+ https://en.wikipedia.org/wiki/Code_page_855
+    TESTENC("CP850",        CP850)  // US-ASCII+ https://en.wikipedia.org/wiki/Code_page_850
+    TESTENC("CP852",        CP852)  // CP850+ https://en.wikipedia.org/wiki/Code_page_852
+    TESTENC("CP855",        CP855)  // CP850+ https://en.wikipedia.org/wiki/Code_page_855
 
-    TESTENC("IBM037",           IBM037) // EBCDIC https://en.wikipedia.org/wiki/Code_page_037
-    TESTENC("IBM437",           IBM437) // ASCII+ https://en.wikipedia.org/wiki/Code_page_437
-    TESTENC("IBM737",           IBM737) // IBM437+ https://en.wikipedia.org/wiki/Code_page_737
-    TESTENC("IBM775",           IBM775) // IBM437+ https://en.wikipedia.org/wiki/Code_page_775
-    TESTENC("IBM852",           IBM852) // IBM437+ https://en.wikipedia.org/wiki/Code_page_852
-    TESTENC("IBM855",           IBM855) // IBM437+ https://en.wikipedia.org/wiki/Code_page_855
-    TESTENC("IBM857",           IBM857) // IBM437+ https://en.wikipedia.org/wiki/Code_page_857
-    TESTENC("IBM860",           IBM860) // IBM437+ https://en.wikipedia.org/wiki/Code_page_860
-    TESTENC("IBM861",           IBM861) // IBM437+ https://en.wikipedia.org/wiki/Code_page_861
-    TESTENC("IBM862",           IBM862) // IBM437+ https://en.wikipedia.org/wiki/Code_page_862
-    TESTENC("IBM863",           IBM863) // IBM437+ https://en.wikipedia.org/wiki/Code_page_863
-    TESTENC("IBM864",           IBM864) // IBM437+? https://en.wikipedia.org/wiki/Code_page_864
-    TESTENC("IBM865",           IBM865) // IBM437+ https://en.wikipedia.org/wiki/Code_page_865
-    TESTENC("IBM866",           IBM866) // IBM437+ https://en.wikipedia.org/wiki/Code_page_866
-    TESTENC("IBM869",           IBM869) // IBM437+ https://en.wikipedia.org/wiki/Code_page_869
+    TESTENC("IBM037",       IBM037) // EBCDIC https://en.wikipedia.org/wiki/Code_page_037
+    TESTENC("IBM437",       IBM437) // ASCII+ https://en.wikipedia.org/wiki/Code_page_437
+    TESTENC("IBM737",       IBM737) // IBM437+ https://en.wikipedia.org/wiki/Code_page_737
+    TESTENC("IBM775",       IBM775) // IBM437+ https://en.wikipedia.org/wiki/Code_page_775
+    TESTENC("IBM852",       IBM852) // IBM437+ https://en.wikipedia.org/wiki/Code_page_852
+    TESTENC("IBM855",       IBM855) // IBM437+ https://en.wikipedia.org/wiki/Code_page_855
+    TESTENC("IBM857",       IBM857) // IBM437+ https://en.wikipedia.org/wiki/Code_page_857
+    TESTENC("IBM860",       IBM860) // IBM437+ https://en.wikipedia.org/wiki/Code_page_860
+    TESTENC("IBM861",       IBM861) // IBM437+ https://en.wikipedia.org/wiki/Code_page_861
+    TESTENC("IBM862",       IBM862) // IBM437+ https://en.wikipedia.org/wiki/Code_page_862
+    TESTENC("IBM863",       IBM863) // IBM437+ https://en.wikipedia.org/wiki/Code_page_863
+    TESTENC("IBM864",       IBM864) // IBM437+? https://en.wikipedia.org/wiki/Code_page_864
+    TESTENC("IBM865",       IBM865) // IBM437+ https://en.wikipedia.org/wiki/Code_page_865
+    TESTENC("IBM866",       IBM866) // IBM437+ https://en.wikipedia.org/wiki/Code_page_866
+    TESTENC("IBM869",       IBM869) // IBM437+ https://en.wikipedia.org/wiki/Code_page_869
     */
 
-    TESTENC("ISO-8859-1",       ISO_8859_1)
-    TESTENC("ISO-8859-2",       ISO_8859_2)
-    TESTENC("ISO-8859-3",       ISO_8859_3)
-    TESTENC("ISO-8859-4",       ISO_8859_4)
-    TESTENC("ISO-8859-5",       ISO_8859_5)
-    TESTENC("ISO-8859-6",       ISO_8859_6)
-    TESTENC("ISO-8859-7",       ISO_8859_7)
-    TESTENC("ISO-8859-8",       ISO_8859_8)
-    TESTENC("ISO-8859-9",       ISO_8859_9)
-    TESTENC("ISO-8859-10",      ISO_8859_10)
-    TESTENC("ISO-8859-11",      ISO_8859_11)
-    TESTENC("ISO-8859-13",      ISO_8859_13)
-    TESTENC("ISO-8859-14",      ISO_8859_14)
-    TESTENC("ISO-8859-15",      ISO_8859_15)
-    TESTENC("ISO-8859-16",      ISO_8859_16)
+    TESTENC("ISO-8859-1",   ISO_8859_1)
+    TESTENC("ISO-8859-2",   ISO_8859_2)
+    TESTENC("ISO-8859-3",   ISO_8859_3)
+    TESTENC("ISO-8859-4",   ISO_8859_4)
+    TESTENC("ISO-8859-5",   ISO_8859_5)
+    TESTENC("ISO-8859-6",   ISO_8859_6)
+    TESTENC("ISO-8859-7",   ISO_8859_7)
+    TESTENC("ISO-8859-8",   ISO_8859_8)
+    TESTENC("ISO-8859-9",   ISO_8859_9)
+    TESTENC("ISO-8859-10",  ISO_8859_10)
+    TESTENC("ISO-8859-11",  ISO_8859_11)
+    TESTENC("ISO-8859-13",  ISO_8859_13)
+    TESTENC("ISO-8859-14",  ISO_8859_14)
+    TESTENC("ISO-8859-15",  ISO_8859_15)
+    TESTENC("ISO-8859-16",  ISO_8859_16)
 
     /*
-    TESTENC("TIS-620",          TIS_620) // https://en.wikipedia.org/wiki/ISO/IEC_8859-11
+    TESTENC("TIS-620",      TIS_620) // https://en.wikipedia.org/wiki/ISO/IEC_8859-11
     */
 
-    TESTENC("UTF-8",            UTF_8)
+    TESTENC("UTF-8",        UTF_8)
 
     /*
-    TESTENC("UTF-16",           UTF_16)
-    TESTENC("UTF-16BE",         UTF_16BE)
-    TESTENC("UTF-16LE",         UTF_16LE)
-    TESTENC("UTF-32",           UTF_32)
-    TESTENC("UTF-32BE",         UTF_32BE)
-    TESTENC("UTF-32LE",         UTF_32LE)
+    TESTENC("UTF-16",       UTF_16)
+    TESTENC("UTF-16BE",     UTF_16BE)
+    TESTENC("UTF-16LE",     UTF_16LE)
+    TESTENC("UTF-32",       UTF_32)
+    TESTENC("UTF-32BE",     UTF_32BE)
+    TESTENC("UTF-32LE",     UTF_32LE)
     */
 
     /*
-    TESTENC("Windows-1250",     Windows_1250)
-    TESTENC("Windows-1251",     Windows_1251)
-    TESTENC("Windows-1252",     Windows_1252)
-    TESTENC("Windows-1253",     Windows_1253)
-    TESTENC("Windows-1254",     Windows_1254)
-    TESTENC("Windows-1255",     Windows_1255)
-    TESTENC("Windows-1256",     Windows_1256)
-    TESTENC("Windows-1257",     Windows_1257)
-    TESTENC("Windows-1258",     Windows_1258)
+    TESTENC("Windows-1250", Windows_1250)
+    TESTENC("Windows-1251", Windows_1251)
+    TESTENC("Windows-1252", Windows_1252)
+    TESTENC("Windows-1253", Windows_1253)
+    TESTENC("Windows-1254", Windows_1254)
+    TESTENC("Windows-1255", Windows_1255)
+    TESTENC("Windows-1256", Windows_1256)
+    TESTENC("Windows-1257", Windows_1257)
+    TESTENC("Windows-1258", Windows_1258)
     */
 
     return false;
@@ -225,14 +224,23 @@ update_encdb(int encidx) {
  * interval's min). First it finds the largest min that's no larger than the
  * point; then it checks that point doesn't exceed that interval's max.
  *
- * Most queries will require descending all the way to a leaf, even if the
+ * Many queries will require descending all the way to a leaf, even if the
  * matching interval is further up the tree. That is because once a `min` is
  * found that is less than the point, we need to find the next smallest `min`.
  * Doing so amounts to descending to the leftmost leaf of the right subtree
  * of the current `min`.
  *
- * This means for around 700 intervals (the number of codepoint ranges that
- * cover Unicode graphical characters), about 10 iterations are required.
+ *           .---------62----------.
+ *      .---14---.           .-----85...
+ *   .-08-.    .-31-.     .-70-.
+ *  04    10  20    40   67    71
+ *
+ * For example, if `min` is the tree above and we have a point query for 33,
+ * we'll start at 62 and move to 14. While there might be an interval 14..x
+ * that contains 33, there could also be 31..x or 20..x.
+ *
+ * For around 700 intervals (the number of codepoint ranges that cover Unicode
+ * graphical characters), about 10 iterations may be required.
  *
  * TODO: Using an optimal binary tree might reduce the average number of
  * iterations, but it would increase the complexity -- using a contiguous region
@@ -255,13 +263,13 @@ has_matching_interval(const unsigned int point,
     for (l = 0, r = size - 1, z = -1; k = (l + r) / 2, l <= r;) {
         if (UNLIKELY(min[k] < point))
             if (point <= max[k])
-                return true;      // min[k] < point[k] <= max[k]
+                return true;      // min[k] < point <= max[k]
             else
                 l = (z = k) + 1;  // descend right
         else if (point < min[k])
             r = k - 1;            // descend left
         else
-            break;                // min[k] == point[k] <= max[k]
+            break;                // min[k] == point <= max[k]
     }
 
     if (point < min[k])
@@ -384,10 +392,10 @@ single_byte_optimizable(VALUE str, rb_encoding *enc)
  * call-seq:
  *   substr_eq?(s1, n1, s2, n2, length) -> bool
  *
- * Returns true if the substring of s1[n1, length] is equal to the
- * substring s2[n2, length]. This is more efficient than doing
- * `s1[...] == s2[...]` because it doesn't allocate a new String for
- * each substring before performing the comparison.
+ * Returns true if the substring of s1[n1, length] is equal to the substring
+ * s2[n2, length]. This is more efficient than doing `s1[...] == s2[...]`
+ * because it doesn't allocate a new String for each substring before performing
+ * the comparison.
  *
  *   substr_eq?("abc ", 0, "xyz abc", 4, 2)  #=> true
  *   substr_eq?(" abc", 1, "xyz abc", 3, 2)  #=> true

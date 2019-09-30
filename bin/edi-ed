@@ -17,10 +17,12 @@ end
 parser = Stupidedi::Parser.build(config)
 start  = Time.now
 
+p = Struct.new(:name, :line, :column, :offset)
+p.include(Stupidedi::Position)
+
 ARGV.each do |path|
-  File.open(path) do |io|
-    parser, = parser.read(Stupidedi::Reader.build(io))
-  end
+  parser, result = parser.read(Stupidedi::Reader.file(path, position: p))
+  puts result if result.fatal?
 end
 
 envelope_ed = Stupidedi::Editor::TransmissionEd.new(config, Time.now)

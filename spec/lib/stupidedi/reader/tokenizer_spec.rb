@@ -229,9 +229,11 @@ describe Stupidedi::Reader::Tokenizer do
     end
   end
 
-  todo "#next_isa_segment"
+  describe "#next_isa_segment" do
+    # More details in _next_isa_segment_id and _read_isa_elements specs
+  end
 
-  todo "#next_segment" do
+  describe "#next_segment" do
     todo "when separators are blank"
     todo "when segment is found is SegmentDict"
     todo "when segment is not found in SegmentDict"
@@ -254,7 +256,7 @@ describe Stupidedi::Reader::Tokenizer do
     todo "when character after 'A' is not a valid separator"
   end
 
-  todo "#_read_isa_elements" do
+  describe "#_read_isa_elements" do
     todo "when component separator (ISA16) is ':'"
     todo "when segment terminator is '\r\n'"
     todo "when segment terminator is '\n'"
