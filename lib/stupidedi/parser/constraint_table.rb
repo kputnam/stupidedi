@@ -51,7 +51,7 @@ module Stupidedi
       end
 
       # Performs no filtering of the {Instruction} list. This is used when there
-      # already is a single {Instruction} or when a {Reader::SegmentTok} doesn't
+      # already is a single {Instruction} or when a {Tokens::SegmentTok} doesn't
       # provide any more information to filter the list.
       #
       class Stub < ConstraintTable
@@ -89,24 +89,6 @@ module Stupidedi
         end
       end
 
-      # Chooses the {Instruction} that pops the greatest number of states.
-      #
-      class Deepest < ConstraintTable
-      #   def initialize(instructions)
-      #     @instructions = instructions
-      #   end
-
-      #   # @return [Array<Instruction>]
-      #   def matches(segment_tok, strict, mode)
-      #     @__matches ||= begin
-      #       deepest = @instructions.map(&:pop_count).max
-      #       @instructions.select{|i| i.pop_count == deepest }.tap do |xs|
-      #         critique(segment_tok, xs.map(&:segment_use)) if strict
-      #       end
-      #     end
-      #   end
-      end
-
       # Chooses the subset of {Instruction} values based on the distinguishing
       # values allowed by each {Schema::SegmentUse}. For instance, there are
       # often several loops that begin with `NM1`, which are distinguished by
@@ -134,7 +116,7 @@ module Stupidedi
             when nil, :not_used, :default
               # value wasn't present in segment_tok, can't use it to decide
             else
-              singleton = map.at(value)
+              singleton = map.at(value.to_s)
               present   = true
 
               unless singleton.nil?
@@ -420,7 +402,7 @@ module Stupidedi
         # the value of the `n`-th component from the `n`-th element. When the
         # value is blank, the function returns `nil`.
         #
-        # @param [Array<Reader::SimpleElementTok, Reader::CompositeElementTok>] element_toks
+        # @param [Array<Tokens::SimpleElementTok, Tokens::CompositeElementTok>] element_toks
         # @param [Integer] m
         # @param [Integer, nil] n
         #

@@ -69,6 +69,10 @@ module Stupidedi
         #   end
         # end
 
+        st03 = st03.to_s
+        gs01 = gs01.to_s
+        st01 = st01.to_s
+
         unless config.transaction_set.defined_at?(st03, gs01, st01)
           context = "#{st03.inspect} #{gs01.inspect} #{st01.inspect}"
 

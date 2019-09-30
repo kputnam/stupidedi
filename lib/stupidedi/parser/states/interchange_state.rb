@@ -42,7 +42,8 @@ module Stupidedi
       # @return [Zipper::AbstractCursor]
       def push(zipper, parent, segment_tok, segment_use, config)
         # ISA12: Interchange Control Version Number
-        version = segment_tok.element_toks.at(11).try(:value)
+        version = segment_tok.element_toks.at(11)
+        version = version.value.to_s if version
 
         unless config.interchange.defined_at?(version)
           return FailureState.push(
