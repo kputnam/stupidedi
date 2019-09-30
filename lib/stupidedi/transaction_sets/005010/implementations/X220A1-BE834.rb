@@ -86,7 +86,7 @@ module Stupidedi
                   b::Element(e::Required,    "Member Indicator", b::Values("N", "Y")),
                   b::Element(e::Required,    "Individual Relationship Code", b::Values("01", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "23", "24", "25", "26", "31", "38", "53", "60", "D2", "G8", "G9")),
                   b::Element(e::Required,    "Maintenance Type Code", b::Values("001", "021", "024", "025", "030")),
-                  b::Element(e::Situational, "Maintenance Reason Code", b::Values("01", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "20", "21", "22", "25", "26", "27", "28", "29", "31", "32", "33", "37", "38", "39", "40", "41", "43", "59", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AL", "EC", "XN", "XT")),
+                  b::Element(e::Situational, "Maintenance Reason Code", b::Values("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "20", "21", "22", "25", "26", "27", "28", "29", "31", "32", "33", "37", "38", "39", "40", "41", "43", "59", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AL", "EC", "XN", "XT")),
                   b::Element(e::Required,    "Benefit Status Code", b::Values("A", "C", "S", "T")),
                   b::Element(e::Situational, "MEDICARE STATUS CODE",
                     b::Element(e::Required,    "Medicare Plan Code", b::Values("A", "B", "C", "D", "E")),
