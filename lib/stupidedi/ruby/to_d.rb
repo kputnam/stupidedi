@@ -11,12 +11,13 @@ module Stupidedi
       end
     end
 
+    # @private
     BIGDECIMAL = /\A[+-]?            (?# optional leading sign            )
                   (?:
                     (?:\d+\.?\d*)  | (?# whole with optional decimal or ..)
                     (?:\d*?\.?\d+) ) (?# optional whole with decimal      )
                   (?:E[+-]?\d+)?     (?# optional exponent                )
-                 \Z/ix
+                 \Z/ix.freeze
 
     refine String do
       # Converts the string to a BigDecimal after validating the format. If the
@@ -28,7 +29,7 @@ module Stupidedi
       #
       # @return [BigDecimal]
       def to_d
-        if BIGDECIMAL =~ self
+        if BIGDECIMAL.match?(self)
           BigDecimal(to_s)
         else
           raise ArgumentError, "#{inspect} is not a valid number"

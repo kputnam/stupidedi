@@ -14,7 +14,7 @@ module Stupidedi
       #
       # @return [Array]
       def cons(array = [])
-        [self] + array
+        [self].concat(array)
       end
 
       # Append the item to rear of a new list
@@ -38,8 +38,10 @@ module Stupidedi
       #   nil.bind{|a| a.nil? }   #=> true
       #   100.bind{|a| a.nil? }   #=> false
       #
-      def bind
-        yield self
+      unless nil.respond_to?(:then)
+        def then
+          yield self
+        end
       end
 
       # @endgroup

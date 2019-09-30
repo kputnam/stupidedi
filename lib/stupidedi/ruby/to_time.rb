@@ -8,6 +8,7 @@ module Stupidedi
       end
     end
 
+    # @private
     class << Time
       public :parse
     end

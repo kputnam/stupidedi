@@ -70,7 +70,7 @@ module Stupidedi
       # @return [Array]
       def drop(n)
         raise ArgumentError, "n cannot be negative" if n < 0
-        slice(n..-1) or []
+        slice(n, length) or []
       end
 
       # Select the first `n` elements.
@@ -174,7 +174,7 @@ module Stupidedi
       # The concatenation of the result is equal to the original argument.
       #
       # @example
-      #   "abba".split(//).group_seq(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
+      #   "yabba".split(//).group_seq(&:==) #=> [["y"], ["a"], ["b", "b"], ["a"]]
       #
       # @return [[Array]]
       def runs(&block)
