@@ -19,10 +19,11 @@ module Stupidedi
       attr_reader :table_defs
 
       def initialize(functional_group, id, name, table_defs)
-        @functional_group, @id, @name, @table_defs =
-          functional_group, id, name, table_defs
-
-        @table_defs = table_defs.map{|x| x.copy(:parent => self) }
+        @functional_group = functional_group
+        @id               = id
+        @name             = name
+        @table_defs       = table_defs
+        @table_defs       = table_defs.map{|x| x.copy(:parent => self) }
       end
 
       def copy(changes = {})
@@ -73,6 +74,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("TransactionSetDef[#{@functional_group}#{@id}]")
         q.group(2, "(", ")") do
@@ -86,6 +88,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
     end
 
     class << TransactionSetDef

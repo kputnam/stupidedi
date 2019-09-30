@@ -18,8 +18,8 @@ module Stupidedi
       def_delegators :@usage, :definition, :descriptor
 
       def initialize(children, usage)
-        @children, @usage =
-          children, usage
+        @children = children
+        @usage    = usage
       end
 
       # @return [CompositeElementVal]
@@ -34,7 +34,7 @@ module Stupidedi
           @children.head.position
         else
           # GH-194
-          "<position unknown>"
+          Position::NoPosition
         end
       end
 
@@ -60,9 +60,10 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
-        id = definition.bind do |d|
-          "[#{d.id}: #{d.name}]".bind do |s|
+        id = definition.then do |d|
+          "[#{d.id}: #{d.name}]".then do |s|
             if usage.forbidden?
               ansi.forbidden(s)
             elsif usage.required?
@@ -90,6 +91,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)

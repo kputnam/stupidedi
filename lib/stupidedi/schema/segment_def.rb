@@ -28,8 +28,12 @@ module Stupidedi
       attr_reader :parent
 
       def initialize(id, name, purpose, element_uses, syntax_notes, parent)
-        @id, @name, @purpose, @element_uses, @syntax_notes, @parent =
-          id, name, purpose.join, element_uses, syntax_notes, parent
+        @id           = id
+        @name         = name
+        @purpose      = purpose.join
+        @element_uses = element_uses
+        @syntax_notes = syntax_notes
+        @parent       = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -78,6 +82,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text "SegmentDef[#{@id}]"
 
@@ -92,6 +97,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
     end
 
     class << SegmentDef

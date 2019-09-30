@@ -13,8 +13,9 @@ module Stupidedi
       def_delegators :@segment_tok, :position
 
       def initialize(reason, segment_tok, separators)
-        @reason, @segment_tok, @separators =
-          reason, segment_tok, separators
+        @reason       = reason
+        @segment_tok  = segment_tok
+        @separators   = separators
       end
 
       # @return [SegmentVal]
@@ -69,16 +70,20 @@ module Stupidedi
         nil
       end
 
+      # :nocov:
       # @return [void]
       def pretty_print(q)
         id = ansi.invalid("[#{@segment_tok.to_x12(@separators)}]")
         q.text(ansi.segment("InvalidSegmentVal#{id}"))
       end
+      # :nocov:
 
+      # :nocov:
       # @return [String]
       def inspect
         ansi.invalid(@segment_tok.id.to_s)
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)

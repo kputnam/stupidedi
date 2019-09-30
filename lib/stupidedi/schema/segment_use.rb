@@ -36,8 +36,11 @@ module Stupidedi
       attr_reader :parent
 
       def initialize(definition, position, requirement, repeat_count, parent)
-        @definition, @position, @requirement, @repeat_count, @parent =
-          definition, position, requirement, repeat_count, parent
+        @definition   = definition
+        @position     = position
+        @requirement  = requirement
+        @repeat_count = repeat_count
+        @parent       = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -75,6 +78,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text "SegmentUse"
         q.group(2, "(", ")") do
@@ -94,6 +98,7 @@ module Stupidedi
           q.pp @repeat_count
         end
       end
+      # :nocov:
     end
   end
 end

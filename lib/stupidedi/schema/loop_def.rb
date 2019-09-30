@@ -33,8 +33,12 @@ module Stupidedi
       def_delegators :requirement, :required?, :optional?
 
       def initialize(id, repeat_count, header_segment_uses, loop_defs, trailer_segment_uses, parent)
-        @id, @repeat_count, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
-          id, repeat_count, header_segment_uses, loop_defs, trailer_segment_uses, parent
+        @id                   = id
+        @repeat_count         = repeat_count
+        @header_segment_uses  = header_segment_uses
+        @loop_defs            = loop_defs
+        @trailer_segment_uses = trailer_segment_uses
+        @parent               = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -102,6 +106,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("LoopDef[#{@id}]")
         q.group(2, "(", ")") do
@@ -129,6 +134,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
     end
 
     class << LoopDef

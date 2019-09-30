@@ -22,8 +22,11 @@ module Stupidedi
       attr_reader :parent
 
       def initialize(definition, requirement, repeat_count, allowed_values, parent)
-        @definition, @requirement, @repeat_count, @allowed_values, @parent =
-          definition, requirement, repeat_count, allowed_values, parent
+        @definition     = definition
+        @requirement    = requirement
+        @repeat_count   = repeat_count
+        @allowed_values = allowed_values
+        @parent         = parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -49,7 +52,7 @@ module Stupidedi
       end
 
       def repeatable?
-        @repeat_count.try{|r| r.include?(2) }
+        @repeat_count and @repeat_count.include?(2)
       end
 
       # @return true
@@ -63,6 +66,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text("SimpleElementUse")
         q.group(2, "(", ")") do
@@ -78,6 +82,7 @@ module Stupidedi
           q.pp @repeat_count
         end
       end
+      # :nocov:
     end
   end
 end

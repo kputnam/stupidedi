@@ -21,8 +21,9 @@ module Stupidedi
       def_delegators "@children.head", :position
 
       def initialize(definition, children, separators)
-        @definition, @children, @separators =
-          definition, children, separators
+        @definition = definition
+        @children   = children
+        @separators = separators
       end
 
       # @return [InterchangeVal]
@@ -68,6 +69,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         id = @definition.try do |d|
           ansi.bold("[#{d.id.to_s}]")
@@ -85,6 +87,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
       def inspect

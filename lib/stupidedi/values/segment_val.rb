@@ -20,8 +20,9 @@ module Stupidedi
       attr_reader :position
 
       def initialize(children, usage, position)
-        @children, @usage, @position =
-          children, usage, position
+        @children = children
+        @usage    = usage
+        @position = position
       end
 
       # @return [SegmentVal]

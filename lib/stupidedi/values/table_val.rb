@@ -17,8 +17,8 @@ module Stupidedi
       def_delegators "@children.head", :position
 
       def initialize(definition, children)
-        @definition, @children =
-          definition, children
+        @definition = definition
+        @children   = children
       end
 
       # @return [TableVal]
@@ -34,6 +34,7 @@ module Stupidedi
         true
       end
 
+      # :nocov:
       # @return [void]
       def pretty_print(q)
         id = @definition.try do |d|
@@ -52,11 +53,14 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
+      # :nocov:
       # @return [String]
       def inspect
         ansi.table("Table") + "(#{@children.map(&:inspect).join(", ")})"
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)

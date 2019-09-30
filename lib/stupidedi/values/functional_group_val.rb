@@ -21,8 +21,8 @@ module Stupidedi
       def_delegators "@children.head", :position
 
       def initialize(definition, children)
-        @definition, @children =
-          definition, children
+        @definition = definition
+        @children   = children
       end
 
       # @return [FunctionalGroupVal]
@@ -72,6 +72,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         id = @definition.try do |d|
           ansi.bold("[#{d.id.to_s}]")
@@ -89,11 +90,14 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
+      # :nocov:
       def inspect
         ansi.envelope("Group") + "(#{@children.map(&:inspect).join(", ")})"
       end
+      # :nocov:
 
       def ==(other)
         eql?(other) or

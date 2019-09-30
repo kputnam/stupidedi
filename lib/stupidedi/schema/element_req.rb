@@ -24,8 +24,9 @@ module Stupidedi
     #
     class ElementReq
       def initialize(required, forbidden, to_s)
-        @required, @forbidden, @to_s =
-          required, forbidden, to_s
+        @required  = required
+        @forbidden = forbidden
+        @to_s      = to_s
       end
 
       # True if the element's presence is unconditionally required
