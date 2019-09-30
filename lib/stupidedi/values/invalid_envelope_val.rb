@@ -33,12 +33,15 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text(ansi.segment("InvalidEnvelopeVal"))
         q.group(2, "(", ")") do
-          q.breakable ""
-          q.text @children.first.reason
-          q.text ","
+          if @children.present?
+            q.breakable ""
+            q.text @children.first.reason
+            q.text ","
+          end
           q.breakable
 
           @children.each do |e|
@@ -50,6 +53,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
       def inspect

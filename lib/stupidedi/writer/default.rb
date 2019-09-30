@@ -51,10 +51,13 @@ module Stupidedi
             separators = value.separators
 
             raise Exceptions::OutputError,
-              "separators.segment cannot be blank" if separators.segment.blank?
+              "separators.segment cannot be blank" if separators.segment.nil? or separators.segment.empty?
 
             raise Exceptions::OutputError,
-              "separators.element cannot be blank" if separators.element.blank?
+              "separators.element cannot be blank" if separators.element.nil? or separators.element.empty?
+
+            raise Exceptions::OutputError,
+              "separators.component cannot be blank" if separators.component.nil? or separators.component.empty?
           end
 
           value.children.each{|c| recurse(c, separators, out) }

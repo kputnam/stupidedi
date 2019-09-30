@@ -298,7 +298,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
 
   describe "on tables" do
     context "when start segment repeats" do
-      context "but is not repeatable" do
+      context "but is non-repeatable" do
         it "raises an exception" do
           b = strict(
             Detail("2",
@@ -427,7 +427,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         # It's possible that X12 standards and implementation guides are
         # designed to sidestep this question, by making all detail tables begin
         # at the same position.
-        todo "enforces order of tables" do
+        it "enforces order of tables" do
+          pending "not implemented, see comment"
           b.NNB(3)
           expect { b.NNA(2) }.to raise_error(/todo/)
         end
@@ -512,7 +513,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
           end.to raise_error(/required table 2A is missing/)
         end
 
-        todo "raises an exception, immediately" do
+        it "raises an exception, immediately" do
+          pending "not implemented"
           expect do
             b.NNB(0)
           end.to raise_error(/required table 2A is missing/)
@@ -532,7 +534,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         end.to raise_error(/required table 2 is missing/)
       end
 
-      todo "raises an exception immediately" do
+      it "raises an exception immediately" do
+        pending "not implemented"
         b = strict(
           Detail("2",
             Segment(10, NNA(), s_mandatory, bounded(1))))
@@ -554,7 +557,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         end.to raise_error(/required table 2 is missing/)
       end
 
-      todo "raises an exception immediately" do
+      it "raises an exception immediately" do
+        pending "not implemented"
         b = strict(
           Detail("2",
             Loop("2000", bounded(2),
@@ -580,14 +584,15 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         end.to raise_error(/table 2a occurs too many times/)
       end
 
-      todo "raises an exception immediately" do
+      it "raises an exception immediately" do
+        pending "not implemented"
         expect { b.NNB(0) }.to raise_error(/table 2a occurs too many times/)
       end
     end
   end
 
   describe "on loops" do
-    todo
+    todo "see comment"
     # NM1*A
     # NM1*A
     # NM1*B
@@ -677,7 +682,8 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         end.to raise_error(/loop 2000 occurs too many times/)
       end
 
-      todo "raises an exception immediately" do
+      it "raises an exception immediately" do
+        pending "not implemented"
         b = strict(
           Detail("2",
             Loop("2000", bounded(2),
@@ -743,12 +749,11 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
         end.to raise_error(/segment NNA .+? is missing/)
       end
 
-      pending "raises an exception immediately" do
-        # This validation is delayed until this loop is "closed". It would be
-        # an improvement for the error to happen immediately, like this:
+      it "raises an exception immediately" do
+        pending "not implemented"
         expect do
           b.ANA("123 MAIN")
-        end.raise_error(/segment NNA .+? is missing/)
+        end.to raise_error(/segment NNA .+? is missing/)
       end
     end
 
@@ -1416,7 +1421,7 @@ describe Stupidedi::Parser::BuilderDsl, "strict validation" do
       end
     end
 
-    fcontext "composite" do
+    context "composite" do
       context "when element is missing" do
         let(:b) do
           strict(Detail("2", Segment(10, COS(), s_mandatory, bounded(1))))

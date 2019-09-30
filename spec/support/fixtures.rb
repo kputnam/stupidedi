@@ -36,13 +36,22 @@ Fixtures = Class.new do
     Dir["#{@root}/*/*/skip/**/*.edi"].sort.flat_map{|path| all_configs(path) }
   end
 
+  # @return [Pathname]
+  def filepath(path)
+    @root.join(path)
+  end
+
   # @return [String]
-  def read(path)
-    File.open(File.join(@root, path), "rb", &:read)
+  def read(path, *args)
+    filepath(path).open(*args, &:read)
+  end
+
+  def position
+    @position ||= Struct.new(:name, :line, :column, :offset).include(Stupidedi::Position)
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
-  def parse(path, config = nil)
+  def parse(path, config:nil, encoding:nil)
     if path.is_a?(String)
       path = Pathname.new(path)
     end
@@ -51,12 +60,13 @@ Fixtures = Class.new do
       _, config, _ = mkconfig(*parts(path))
     end
 
-    Stupidedi::Parser.build(config).read(Stupidedi::Reader.build(read(path)))
+    tokenizer = Stupidedi::Reader.build(filepath(path), position: position, encoding: encoding)
+    Stupidedi::Parser.build(config).read(tokenizer)
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
-  def parse!(path, config = nil)
-    machine, result = parse(path, config)
+  def parse!(path, *args)
+    machine, result = parse(path, *args)
 
     if result.fatal?
       result.explain{|msg| raise Stupidedi::Exceptions::ParseError, "#{msg} at #{result.position.inspect}" }

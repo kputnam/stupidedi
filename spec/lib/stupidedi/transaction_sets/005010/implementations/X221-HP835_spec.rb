@@ -160,7 +160,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835" 
 
     context "with issues in Table 3 (Summary)" do
       context "with missing PLB" do
-        let(:parser) { Fixtures.parse!("#{fixdir}/2.edi").head }
+        let(:parser) { Fixtures.parse!("#{fixdir}/2.edi", encoding: "ISO-8859-1").head }
 
         it "is handled" do
           expect(parser).to be_deterministic

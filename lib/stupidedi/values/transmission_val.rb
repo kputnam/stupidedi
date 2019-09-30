@@ -33,6 +33,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         q.text(ansi.envelope("TransmissionVal"))
         q.group(2, "(", ")") do
@@ -46,6 +47,7 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [String]
       def inspect

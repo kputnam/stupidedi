@@ -186,7 +186,7 @@ describe Stupidedi::Reader::NativeExt do
     end
   end
 
-  fdescribe ".whitespace?" do
+  describe ".whitespace?" do
     encodings.each do |e|
       context "when encoding is #{e}" do
         it "identifies whitespace characters" do

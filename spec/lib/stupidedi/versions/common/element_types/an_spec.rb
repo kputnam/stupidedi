@@ -10,7 +10,7 @@ describe Stupidedi::Versions::Common::ElementTypes::AN do
     t::AN.new(:DE1, "String Element", 4, 10).simple_use(r::Mandatory, d.bounded(1))
   end
 
-  let(:position) { Stupidedi::Reader::Position.new(100, 4, 19, "test.x12") }
+  let(:position) { Stupidedi::Position::NoPosition }
 
   let(:invalid_str) do
     "i'm angry!!".tap do |invalid|

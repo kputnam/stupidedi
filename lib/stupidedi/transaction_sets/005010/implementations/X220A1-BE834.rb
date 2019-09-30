@@ -21,7 +21,7 @@ module Stupidedi
                 b::Element(e::Required,    "Transaction Set Reference Number", b::MaxLength(50)),
                 b::Element(e::Required,    "Transaction Set Creation Date"),
                 b::Element(e::Required,    "Transaction Set Creation Time"),
-                b::Element(e::Situational, "Time Zone Code"),
+                b::Element(e::NotUsed,     "Time Zone Code"),
                 b::Element(e::Situational, "Original Transaction Set Reference Number"),
                 b::Element(e::NotUsed,     "Transaction Type Code"),
                 b::Element(e::Required,    "Action Code", b::Values("2", "4", "RX")),

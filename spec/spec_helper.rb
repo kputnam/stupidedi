@@ -1,43 +1,55 @@
+# NOTE: If you want change RSpec options for your own use, please create .rspec
+# and add CLI options to it. That file is in .gitignore, so it will remain out
+# of the repository. For starters, you probably want to add:
+#
+#   --require spec_helper
+#   --require stupidedi
+
+Bundler.setup(:default, :development, :test)
+
 begin
-  # This will load configuration from .simplecov
   require "simplecov"
 rescue LoadError
 end
 
-require File.expand_path("../../lib/stupidedi", __FILE__)
-require "pp"
+require "stupidedi"
+require "tempfile"
 require "ostruct"
+require "pp"
 
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |file|
-  require file
-end
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each(&method(:require))
 
 RSpec.configure do |config|
   config.include(EitherMatchers)
-  config.include(Quickcheck::Macro)
-  config.extend(RSpecHelpers)
+  config.include(AllocationMatchers)
+  config.include(SmallcheckMatchers)
+  config.include(Quickcheck::Macro) # @todo deprecate
 
-  config.expect_with :rspec do |c|
-    c.syntax = :expect
-  end
+  # Use --tag "~mem" to skip these specs
+  config.alias_example_to :allocation, mem: true
 
-  # Use either of these to run only specs marked 'focus: true'
-  #   config.filter_run(:focus  => true)
-  #   $ rspec -I lib -t focus spec
+  # Use --tag "~todo" to skip these specs
+  config.alias_example_to :todo, todo: true, skip: "TODO"
 
-  # Use either of these to run only randomized specs:
-  #   config.filter_run(:random => true)
-  #   $ rspec -I lib -t random spec
+  config.expect_with(:rspec){|c| c.syntax = :expect }
 
-  # When a randomized test fails, it will print a seed value you
-  # can use to repeat the test with the same generated inputs:
-  #   srand 44182052595481443184625304627718313206
+  # Skip platform-specific examples unless our platform matches (exclude non-matches)
+  #   ruby: "2.3."               # excludes Ruby 2.3.*
+  #   ruby: /^2.[12]./           # excludes Ruby 2.1.*, 2.2.*
+  #   ruby:->(v){|v| v < "2.3" } # excludes Ruby < 2.3
+  config.filter_run_excluding(ruby: lambda do |expected|
+    case expected
+    when String
+      not RUBY_VERSION.start_with?(expected)
+    when Regexp
+      expected !~ RUBY_VERSION
+    when Proc
+      not expected.call(RUBY_VERSION)
+    end
+  end)
 
-  # Use either of these to skip running randomized specs:
-  #   config.filter_run_excluding(:random => true)
-  #   $ rspec -I lib -t ~random spec
-
-  # Skip platform-specific examples unless our platform matches
-  config.filter_run_excluding(:ruby => lambda{|n| RUBY_VERSION !~ /^#{n}/ })
-  config.filter_run_excluding(:skip)
+  # This only applies if examples exist with :focus tag; then only :focus is
+  # run. You can mark examples with :focus by using "fdescribe", "fcontext",
+  # and "fit" instead of the normal RSpec syntax.
+  config.filter_run_when_matching :focus
 end

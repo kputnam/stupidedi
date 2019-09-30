@@ -82,7 +82,7 @@ module Stupidedi
         false
       end
 
-      # Is this a {AbstractElementVal}?
+      # Is this an {AbstractElementVal}?
       def element?
         false
       end
@@ -117,7 +117,7 @@ module Stupidedi
       # including the separator (delimiter) elements found in the ISA segment.
       #
       # @return [AbstractSet<String>]
-      def characters(result = Sets.absolute([], Reader::C_BYTES.split(//)))
+      def characters(result = Set.new)
         if leaf?
           if present? and not separator?
             result | to_x12.split(//)
