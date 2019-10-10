@@ -1,3 +1,5 @@
+require File.expand_path("../../lib/stupidedi", __FILE__)
+require 'pathname'
 begin
   # This will load configuration from .simplecov
   require "simplecov"

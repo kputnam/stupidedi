@@ -1,0 +1,23 @@
+v.1.2.14 - June 19, 2017
+  - Gemfile Updates
+  - use BigDecimal string refinement only on ruby versions < 2.4
+  - remove rake from gemspec
+  - Add Ruby 2.4.x support
+
+v 1.2.12 - July 29, 2016
+  - Fix a few issues with immutable strings
+
+v 1.2.2 - July 8, 2014
+  - Remove definition of module Enumerable::blank? and present?
+  - Add blank?, present? to Array class
+
+v 1.2.1 - July 7, 2014
+  - Don't redefine 'blank?' for Enumerable, if an implementation already (rails support)
+
+v 1.2.0 - July 7, 2014
+  - Don't redefine try, if active_support provides an implementation already (better rails support)
+
+v 1.1.0 - June 24, 2014
+  - Rspec 3.x support
+  - Drop Ruby 1.8.7 support
+  - Add Ruby 2.1.2 support
