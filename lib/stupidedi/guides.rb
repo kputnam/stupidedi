@@ -1,8 +1,12 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Guides
-    autoload :FortyTen, "stupidedi/guides/004010"
-    autoload :FiftyTen, "stupidedi/guides/005010"
+    warn "DEPRECATION WARNING: #{self} is deprecated, use Stupidedi::TransactionSets::*::Implementations"
+
+    # @deprecated Use Stupidedi::TransactionSets::FiftyTen::Implementations
+    FiftyTen = Stupidedi::TransactionSets::FiftyTen::Implementations
+
+    # @deprecated Use Stupidedi::TransactionSets::FortyTen::Implementations
+    FortyTen = Stupidedi::TransactionSets::FortyTen::Implementations
   end
 end

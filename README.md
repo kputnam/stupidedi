@@ -1,12 +1,12 @@
 # Stupidedi
-[![Build Status](https://secure.travis-ci.org/kputnam/stupidedi.png?branch=master)](http://travis-ci.org/kputnam/stupidedi) [![Dependency Status](https://gemnasium.com/irobayna/stupidedi.svg)](https://gemnasium.com/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/gh/kputnam%2Fstupidedi.svg)](http://badge.fury.io/gh/kputnam%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/kputnam/stupidedi.png)](https://codeclimate.com/github/kputnam/stupidedi) [![Inline docs](http://inch-ci.org/github/kputnam/stupidedi.png?branch=master)](http://inch-ci.org/github/kputnam/stupidedi)
+[![Build Status](https://secure.travis-ci.org/irobayna/stupidedi.png?branch=master)](http://travis-ci.org/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/rb/stupidedi.svg)](http://badge.fury.io/gh/irobayna%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/irobayna/stupidedi.png)](https://codeclimate.com/github/irobayna/stupidedi) [![Inline docs](http://inch-ci.org/github/irobayna/stupidedi.png?branch=master)](http://inch-ci.org/github/irobayna/stupidedi)
 
-![Screenshot](https://raw.github.com/kputnam/stupidedi/master/doc/images/edi-pp.png)
+![Screenshot](https://raw.github.com/irobayna/stupidedi/master/doc/images/edi-pp.png)
 
 
-* [GitHub project](http://github.com/kputnam/stupidedi)
-* [Human Documentation](https://github.com/kputnam/stupidedi/tree/master/doc)
-* [API Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
+* [GitHub project](http://github.com/irobayna/stupidedi)
+* [Human Documentation](https://github.com/irobayna/stupidedi/tree/master/doc)
+* [API Documentation](http://rubydoc.info/github/irobayna/stupidedi/master/frames)
 
 Stupidedi is a high-quality library for parsing, generating, validating,
 and manipulating ASC X12 EDI documents. Very roughly, it's jQuery for
@@ -81,7 +81,7 @@ immutability places higher demand on garbage collection, this has been
 mitigated with careful optimization. Input can be streamed incrementally, so
 very large files aren't read into memory all at once.
 
-![Benchmark](https://raw.github.com/kputnam/stupidedi/master/notes/benchmark/throughput.png)
+![Benchmark](https://raw.github.com/irobayna/stupidedi/master/notes/benchmark/throughput.png)
 
 <table>
   <tr>
@@ -143,8 +143,8 @@ memory allocation. The steady increase in throughput on JRuby and Rubinus is
 probably attributable optimizations performed by the JIT compiler.
 
 Lastly, these results should approximate the performance of document generation
-with BuilderDSL, except BuilderDSL API should have less overhead, as it skips
-the tokenizer. On the other hand, BuilderDSL frequently queries the call stack
+with BuilderDsl, except BuilderdsL API should have less overhead, as it skips
+the tokenizer. On the other hand, BuilderDsl frequently queries the call stack
 to track provenance of elements in the parse tree. In common real-world use,
 custom application logic and database access are going to bottleneck performance,
 rather than Stupidedi.
@@ -233,13 +233,15 @@ Perform validation on a file
 
 ### Generating, Writing
 
+#### X12 Writer
+
 ```ruby
 require "stupidedi"
 
 # You can customize this to delegate to your own grammar definitions, if needed.
 config = Stupidedi::Config.hipaa
 
-b = Stupidedi::Builder::BuilderDsl.build(config)
+b = Stupidedi::Parser::BuilderDsl.build(config)
 
 # These methods perform error checking: number of elements, element types, min/max
 # length requirements, conditionally required elements, valid segments, number of
@@ -301,13 +303,37 @@ b.machine.zipper.tap do |z|
 end
 ```
 
+#### HTML writer
+
+ As shown above `Stupidedi::Writer::Default` will output data encoded in plain x12 format. While `Stupidedi::Writer::Claredi` will output a formatted HTML string.
+
+`Stupidedi::Writer::Claredi#write` operates on `StringIO`.
+
+```ruby
+b.machine.zipper.tap do |z|
+  w = Stupidedi::Writer::Claredi.new(z.root)
+
+  File.open('output.html', 'w') { |f| f.write w.write }
+end
+```
+
+#### Json (Hash)  Writer
+
+Converting the tree to a JSON document is intentionally not included in the library. However this still may be implemented utilizing the stupidedi API.
+
+[Here](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json.rb) is one of the possible ways to implement this.
+
+The shown approach allows to define custom traversing logic for the nodes with ability to change hash keys and values to whatever is needed.
+
+Please refer to [this readme](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json.MD) and [these nodes implementation](https://github.com/irobayna/stupidedi/blob/master/notes/json_writer/json/) for more information.
+
 ### Reading, Traversing
 
 ```ruby
 require "stupidedi"
 
 config = Stupidedi::Config.hipaa
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 
 input  = if RUBY_VERSION > "1.8"
            File.open("spec/fixtures/X221-HP835/1-good.txt", :encoding => "ISO-8859-1")

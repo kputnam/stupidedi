@@ -2,28 +2,24 @@
 require "pathname"
 $:.unshift(File.expand_path("../../lib", Pathname.new(__FILE__).realpath))
 
-# Short-lived processes should win some peformance gains here
-GC.disable
-
 require "stupidedi"
 require "pp"
 
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
 
-# config = Stupidedi::Config.default
-# config = Stupidedi::Config.contrib
 config = Stupidedi::Config.hipaa
 config.editor.tap do |c|
-  c.register(Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
-  c.register(Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
-  c.register(Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
-  c.register(Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
-  c.register(Stupidedi::Guides::FiftyTen::X222::HC837P) { Stupidedi::Editor::X222 }
-  c.register(Stupidedi::Guides::FiftyTen::X222A1::HC837P) { Stupidedi::Editor::X222 }
+  c.register(Stupidedi::Interchanges::FourOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
+  c.register(Stupidedi::Interchanges::FiveOhOne::InterchangeDef) { Stupidedi::Editor::FiveOhOneEd }
+
+  c.register(Stupidedi::Versions::FortyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
+  c.register(Stupidedi::Versions::FiftyTen::FunctionalGroupDef) { Stupidedi::Editor::FiftyTenEd }
+
+  c.register(Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837) { Stupidedi::Editor::X222 }
 end
 
-parser = Stupidedi::Builder::StateMachine.build(config)
+parser = Stupidedi::Parser.build(config)
 start  = Time.now
 
 ARGV.each do |path|

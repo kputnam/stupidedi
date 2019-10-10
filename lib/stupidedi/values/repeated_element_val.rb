@@ -1,18 +1,14 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X222.pdf B.1.1.3.2 Repeating Data Elements
     #
     class RepeatedElementVal < AbstractElementVal
-
       # @return [CompositeElementDef, SimpleElementDef]
-
-      def_delegators :@usage, :definition
+      def_delegators :usage, :definition, :descriptor
 
       # @return [Array<AbstractElementVal>]
       attr_reader :children
@@ -21,7 +17,8 @@ module Stupidedi
       # @return [Schema::SimpleElementUse, Schema::CompositeElementUse
       attr_reader :usage
 
-      def_delegators :@children, :defined_at?, :length
+      def_delegators :children, :defined_at?, :length
+      def_delegators "children.first", :position
 
       def initialize(children, usage)
         @children, @usage =
@@ -64,6 +61,7 @@ module Stupidedi
       end
 
       # @return [void]
+      # :nocov:
       def pretty_print(q)
         if @children.empty?
           id = definition.try do |d|
@@ -84,10 +82,11 @@ module Stupidedi
           end
         end
       end
+      # :nocov:
 
       # @return [Boolean]
       def ==(other)
-        eql?(other)
+        eql?(other) or \
          (other.definition == definition and
           other.children   == @children)
       end
@@ -110,6 +109,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

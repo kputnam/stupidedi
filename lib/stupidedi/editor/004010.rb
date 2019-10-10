@@ -3,14 +3,12 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     #
     # Critiques (edits) a "004010" functional groups (GS/GE), then selects the
     # appropriate editor, according to the config, and edits each transaction
     # set (ST/SE)
     #
     class FortyTenEd < AbstractEd
-
       # @return [Config]
       attr_reader :config
 
@@ -143,22 +141,22 @@ module Stupidedi
         st, st02s = gs.find!(:ST), Hash.new{|h,k| h[k] = [] }
         # Collect all the ST02 elements within this functional group
         while st.defined?
-          st = st.flatmap do |st|
-            critique_st(st, acc)
+          st = st.flatmap do |st_|
+            critique_st(st_, acc)
 
-            st.element(2).
+            st_.element(2).
               tap{|e| st02s[e.node.to_s] << e }.
               explain do
                 # The #element method failed because this was an invalid ST
                 # segment. To workaround that, we can get the SegmentTok and
                 # select the ST02 ElementTok (zero-based index)
-                st.segment.tap do |s|
+                st_.segment.tap do |s|
                   elements = s.node.segment_tok.element_toks
                   st02s[elements.at(1).value] << s
                 end
               end
 
-            st.find!(:ST)
+            st_.find!(:ST)
           end
         end
 
@@ -448,8 +446,6 @@ module Stupidedi
           end
         end
       end
-
     end
-
   end
 end

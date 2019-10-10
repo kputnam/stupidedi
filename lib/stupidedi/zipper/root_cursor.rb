@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class RootCursor < AbstractCursor
-
       # @return [AbstractNode]
       attr_reader :node
 
@@ -18,7 +15,7 @@ module Stupidedi
           node, Root
       end
 
-      # @group Query the Tree Location
+      # @group Querying the Tree Location
       #########################################################################
 
       # (see AbstractCursor#depth)
@@ -119,6 +116,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

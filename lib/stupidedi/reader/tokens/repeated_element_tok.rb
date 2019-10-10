@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class RepeatedElementTok
       include Inspect
 
@@ -48,6 +47,15 @@ module Stupidedi
       def composite?
         false
       end
+
+      def to_x12(separators)
+        if blank?
+          ""
+        else
+          rs = @element_toks.map{|x| x.to_x12(separators) }
+          rs.join(separators.repetition || "^")
+        end
+      end
     end
 
     class << RepeatedElementTok
@@ -62,6 +70,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

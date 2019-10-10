@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X222.pdf B.1.1.3.12.5 Data Segments in a Transaction Set
     #
@@ -19,10 +17,14 @@ module Stupidedi
       # @return [SegmentDef]
       attr_reader :definition
 
+      def_delegators :definition, :id, :name, :descriptor, :code_lists
+
       # @see X222 B.1.1.3.12.6 Data Segment Requirement Designators
       #
       # @return [SegmentReq]
       attr_reader :requirement
+
+      def_delegators :requirement, :required?, :optional?
 
       # @see X222 B.1.3.12.3 Repeated Occurrences of Single Data Segments
       # @see X222 B.1.3.12.8 Data Segment Occurrence
@@ -32,10 +34,6 @@ module Stupidedi
 
       # @return [LoopDef, TableDef]
       attr_reader :parent
-
-      def_delegators :definition, :id, :code_lists
-
-      def_delegators :requirement, :required?, :optional?
 
       def initialize(definition, position, requirement, repeat_count, parent)
         @definition, @position, @requirement, @repeat_count, @parent =
@@ -97,6 +95,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

@@ -1,4 +1,2 @@
-.yardoc
-doc/generated
-coverage
+build/generated
 .bundle

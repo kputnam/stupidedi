@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class SimpleElementTok
       include Inspect
 
@@ -19,6 +18,14 @@ module Stupidedi
       def initialize(value, position, remainder)
         @value, @position, @remainder =
           value, position, remainder
+      end
+
+      # @return [SimpleElementTok]
+      def copy(changes = {})
+        SimpleElementTok.new \
+          changes.fetch(:value, @value),
+          changes.fetch(:position, @position),
+          changes.fetch(:remainder, @remainder)
       end
 
       def pretty_print(q)
@@ -48,6 +55,10 @@ module Stupidedi
       def composite?
         false
       end
+
+      def to_x12(separators)
+        @value.to_s
+      end
     end
 
     class << SimpleElementTok
@@ -61,6 +72,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

@@ -25,7 +25,7 @@ class Node
     if @children.empty?
       @label.to_s
     else
-      "#{@label}(#{@children.map(&:inspect).join(', ')})"
+      "#{@label}(#{@children.map(&:inspect).join(", ")})"
     end
   end
 end

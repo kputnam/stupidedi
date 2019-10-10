@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   class Either
-
     # @return [Boolean]
     abstract :defined?
 
@@ -42,7 +40,6 @@ module Stupidedi
     ###########################################################################
 
     class Success < Either
-
       def initialize(value)
         @value = value
       end
@@ -131,7 +128,7 @@ module Stupidedi
 
       # @return [Boolean]
       def ==(other)
-        other.is_a?(Either) and other.select{|x| x == @value }.defined?
+        other.is_a?(self.class) and other.select{|x| x == @value }.defined?
       end
 
       # @return [void]
@@ -160,7 +157,6 @@ module Stupidedi
     end
 
     class Failure < Either
-
       attr_reader :reason
 
       def initialize(reason)
@@ -263,7 +259,6 @@ module Stupidedi
         block.call(@reason)
       end
     end
-
   end
 
   class << Either

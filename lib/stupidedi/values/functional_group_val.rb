@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X222.pdf B.1.1.3.13 Functional Group
     # @see X222.pdf B.1.1.4.2 Functional Groups
@@ -14,6 +12,8 @@ module Stupidedi
 
       # @return [FunctionalGroupDef]
       attr_reader :definition
+
+      def_delegators :definition, :descriptor
 
       # @return [Array<SegmentVal, TransactionSetVal>]
       attr_reader :children
@@ -92,7 +92,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("Group") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("Group") + "(#{@children.map(&:inspect).join(", ")})"
       end
 
       def ==(other)
@@ -101,6 +101,5 @@ module Stupidedi
            other.children   == @children)
       end
     end
-
   end
 end

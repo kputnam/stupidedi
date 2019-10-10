@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class MemoizedCursor < AbstractCursor
-
       # @return [#leaf?, #children, #copy]
       attr_reader :node
 
@@ -25,10 +22,12 @@ module Stupidedi
       # @group Querying the Tree Location
       #########################################################################
 
+      # (see AbstractCursor#leaf?)
       def leaf?
         @node.leaf? or @node.children.empty?
       end
 
+      # (see AbstractCursor#root?)
       def root?
         false
       end
@@ -130,6 +129,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

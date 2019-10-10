@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine Time do
       # @return [Time]
       def to_time
@@ -19,6 +17,5 @@ module Stupidedi
         Time.parse(self)
       end
     end
-
   end
 end

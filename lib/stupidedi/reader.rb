@@ -58,7 +58,6 @@ module Stupidedi
     #_CONTROL  = Regexp.new("[^#{Regexp.quote(H_EITHER.keys.join)}]")
 
     class << self
-
       # @group Constructors
       #########################################################################
 
@@ -118,6 +117,5 @@ module Stupidedi
         C_BYTES.split(//) - H_EITHER.keys
       end
     end
-
   end
 end

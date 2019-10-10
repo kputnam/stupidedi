@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X222.pdf B.1.1.3.4 Data Segment
     #
@@ -31,7 +29,7 @@ module Stupidedi
 
       def initialize(id, name, purpose, element_uses, syntax_notes, parent)
         @id, @name, @purpose, @element_uses, @syntax_notes, @parent =
-          id, name, purpose, element_uses, syntax_notes, parent
+          id, name, purpose.join, element_uses, syntax_notes, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -49,6 +47,11 @@ module Stupidedi
           changes.fetch(:element_uses, @element_uses),
           changes.fetch(:syntax_notes, @syntax_notes),
           changes.fetch(:parent, @parent)
+      end
+
+      # @return [String]
+      def descriptor
+        "segment #{id} #{name}"
       end
 
       # @return [SegmentUse]
@@ -115,6 +118,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

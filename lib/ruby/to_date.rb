@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine Time do
       def to_date
         Date.civil(year, month, day)
@@ -24,6 +22,5 @@ module Stupidedi
     class << Date
       public :parse
     end
-
   end
 end

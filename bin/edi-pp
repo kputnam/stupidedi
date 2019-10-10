@@ -2,59 +2,50 @@
 require File.expand_path("../../lib/stupidedi", __FILE__)
 require "pp"
 
-# Short-lived processes should win some peformance gains here
-GC.disable
-
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
 require "term/ansicolor" if ARGV.delete("-C")
-
-# config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
-config = Stupidedi::Config.new
-
-config.interchange.tap do |c|
-  c.register("00400") { Stupidedi::Versions::Interchanges::FourHundred::InterchangeDef }
-  c.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
+if idx = ARGV.index("--format")
+  ARGV.delete("--format")
+  format = ARGV.delete_at(idx)
+else
+  format = "tree"
 end
 
-config.functional_group.tap do |c|
-  c.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+unless %w(html tree x12).include?(format)
+  $stderr.puts "unrecognized format (expected html, tree, or x12)"
+  exit(1)
 end
 
-config.transaction_set.tap do |c|
-  c.register("004010", "SM", "204", Stupidedi::Contrib::FortyTen::Guides::SM204)
-end
-
-parser = Stupidedi::Builder::StateMachine.build(config)
+config = Stupidedi::Config.contrib(Stupidedi::Config.hipaa(Stupidedi::Config.default))
+parser = Stupidedi::Parser.build(config)
 start  = Time.now
-nondet = ARGV.delete('-N')
 
 ARGV.each do |path|
   # Reading the entire input at once is slightly faster than streaming
   # from a file handle.
+  #
   # content   = File.read(path, :encoding => "ISO-8859-1")
   # parser, r = parser.read(Stupidedi::Reader.build(content))
-
-  File.open(path) do |io|
-    parser, _result = parser.read(Stupidedi::Reader.build(io))
-  end
+  #
+  reader  = Stupidedi::Reader.build(File.read(path))
+  parser, = parser.read(reader)
 end
 
 stop = Time.now
 
-parser.zipper.map{|z| pp z.root.node }.explain do
-  # Multiple parse trees (non-deterministic state)
-  unless nondet
-    puts "Non-deterministic state"
-  else
-    puts "Non-deterministic states (#{parser.active.length}):"
-    puts "#{"-" * 70}\n\n"
+case format
+when "tree"
+  parser.zipper.tap{|z| pp z.root.node }
+when "html"
+  Stupidedi::Writer::Claredi.new(parser.zipper.fetch.root.node).write($stdout)
+when "x12"
+  separators = Stupidedi::Reader::Separators.build \
+    :segment    => "~\n",
+    :element    => "*",
+    :component  => ":",
+    :repetition => "^"
 
-    parser.active.each do |state|
-      zipper = state.node.zipper
-      pp zipper.root.node
-      puts "\n#{"-" * 70}\n\n"
-    end
-  end
+  Stupidedi::Writer::Default.new(parser.zipper.fetch.root, separators).write($stdout)
 end
 
 begin
@@ -62,7 +53,7 @@ begin
   b = parser.last
 
   a.flatmap{|a1| b.flatmap{|b1| a1.distance(b1) }}.
-    tap{|d| puts "#{d + 1} segments" }
+    tap{|d| $stderr.puts "#{d + 1} segments" }
 end
 
-puts "%0.3f seconds" % (stop - start)
+$stderr.puts "%0.3f seconds" % (stop - start)

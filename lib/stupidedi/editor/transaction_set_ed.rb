@@ -3,9 +3,7 @@ module Stupidedi
   using Refinements
 
   module Editor
-
     class TransactionSetEd < AbstractEd
-
       # @return [Config]
       attr_reader :config
 
@@ -33,20 +31,22 @@ module Stupidedi
 
       # Performs validations using the definition of the given ISA segment
       def critique_isa(isa, acc)
-        isa.segment.tap do |x|
-          envelope_def = x.node.definition.parent.parent
-
-          # ...
-        end
+        # @todo
+        # isa.segment.tap do |x|
+        #   envelope_def = x.node.definition.parent.parent
+        #
+        #   # ...
+        # end
       end
 
       # Performs validations using the definition of the given GS segment
       def critique_gs(gs, acc)
-        gs.segment.tap do |x|
-          envelope_def = x.node.definition.parent.parent
-
-          # ...
-        end
+        # @todo
+        # gs.segment.tap do |x|
+        #   envelope_def = x.node.definition.parent.parent
+        #
+        #   # ...
+        # end
       end
 
       # Performs validations using the definition of the given ST segment
@@ -145,7 +145,7 @@ module Stupidedi
 
               d = zipper.node.definition
               d.syntax_notes.each do |s|
-                zs = s.errors(zipper)
+                zs = syntax_note_errors(s, zipper)
                 ex = s.reason(zipper) if zs.present?
                 zs.each{|c| acc.ik403(c, "R", "2", ex) }
               end
@@ -161,9 +161,9 @@ module Stupidedi
               recurse(element, acc)
             end
 
-            zipper.node.definition.tap do |d|
-              d.syntax_notes.each do |s|
-                es = s.errors(zipper)
+            zipper.node.definition.tap do |d_|
+              d_.syntax_notes.each do |s|
+                es = syntax_note_errors(s, zipper)
                 ex = s.reason(zipper) if es.present?
                 es.each{|c| acc.ik403(c, "R", "2", ex) }
               end
@@ -262,8 +262,8 @@ module Stupidedi
             group[table.node.definition] << table
           end
 
-          zipper.node.definition.tap do |d|
-            d.table_defs.each do |table|
+          zipper.node.definition.tap do |d_|
+            d_.table_defs.each do |table|
               # @todo: How do we know which tables are required? It isn't
               # obvious because some tables have more than one entry segment,
               # and perhaps each has a different requirement designator.
@@ -271,7 +271,11 @@ module Stupidedi
           end
         end
       end
-    end
 
+      def syntax_note_errors(syntax_note, zipper)
+        syntax_note.forbidden(zipper).select{|c| c.node.present? } +
+          syntax_note.required(zipper).reject{|c| c.node.present? }
+      end
+    end
   end
 end

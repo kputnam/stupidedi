@@ -5,12 +5,15 @@
 --default-return  ''
 --hide-void-return
 --no-private
---output-dir      doc/generated
---asset           doc/images:images
---load            ./yard/rspec-plugin/lib/yard-rspec.rb
---load            ./yard/meta-plugin/lib/yard-meta.rb
+--db build/generated/.yardoc
+--output-dir build/generated/doc
+--load ./build/doc/lib/rspec-plugin/lib/yard-rspec.rb
+--load ./build/doc/lib/meta-plugin/lib/yard-meta.rb
+--asset doc/images:images
+--files doc/**/*.md
+--exclude 'element_defs\.rb'
+--exclude 'segment_defs\.rb'
+--exclude 'segment_defs\/'
 
 lib/**/*.rb
-spec/examples/**/*.example
-
-- doc/*.md
+spec/examples/**/*_spec.rb

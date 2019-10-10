@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class TableVal < AbstractVal
       include SegmentValGroup
 
       # @return [TableDef]
       attr_reader :definition
+
+      def_delegators :definition, :descriptor
 
       # @return [Array<SegmentVal, LoopVal>]
       attr_reader :children
@@ -55,7 +55,7 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.table("Table") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.table("Table") + "(#{@children.map(&:inspect).join(", ")})"
       end
 
       # @return [Boolean]
@@ -65,6 +65,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

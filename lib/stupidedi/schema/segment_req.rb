@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
+    #
     # The 5010 X12 "data segment requirement designator"s include
     #   M - Mandatory
     #   O - Optional
@@ -14,6 +13,7 @@ module Stupidedi
     # The HIPAA implementation guides "industry usage" include
     #   SITUATIONAL
     #   REQUIRED
+    #
     class SegmentReq
       def initialize(required, forbidden, to_s)
         @required, @forbidden, @to_s =
@@ -42,6 +42,5 @@ module Stupidedi
         @to_s
       end
     end
-
   end
 end

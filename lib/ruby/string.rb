@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine String do
       # Return the one-character string at the given index
       #
@@ -74,7 +72,18 @@ module Stupidedi
       def position
         nil
       end
-    end
 
+      # Join multi-line string into a single line, removing leading whitespace
+      # from the beginning of each line
+      #
+      # @example
+      #   "this is a
+      #   multiline string".join #=> "this is a multiline string"
+      #
+      # @return [String]
+      def join
+        gsub(/\n[ \t]+/, " ")
+      end
+    end
   end
 end

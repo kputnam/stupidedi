@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     class TableDef < AbstractDef
       # @return [String]
       attr_reader :id
@@ -24,9 +22,9 @@ module Stupidedi
       # @return [Integer]
       attr_reader :position
 
-      def initialize(id, position, repeatable, header_segment_uses, loop_defs, trailer_segment_uses, parent)
-        @id, @position, @repeatable, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
-          id, position, repeatable, header_segment_uses, loop_defs, trailer_segment_uses, parent
+      def initialize(id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent)
+        @id, @position, @header_segment_uses, @loop_defs, @trailer_segment_uses, @parent =
+          id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
@@ -42,27 +40,52 @@ module Stupidedi
         TableDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:position, @position),
-          changes.fetch(:repeatable, @repeatable),
           changes.fetch(:header_segment_uses, @header_segment_uses),
           changes.fetch(:loop_defs, @loop_defs),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
           changes.fetch(:parent, @parent)
       end
 
+      # @return [String]
+      def descriptor
+        "table #{id}"
+      end
+
       def repeatable?
-        @repeatable
+        @header_segment_uses.empty? and
+          @loop_defs.present?       and
+          @loop_defs.head.repeatable?
+      end
+
+      def repeat_count
+        if repeatable?
+          RepeatCount.unbounded
+        else
+          RepeatCount.bounded(1)
+        end
+      end
+
+      def required?
+        entry_segment_uses.any?(&:required?)
       end
 
       # @return [Array<SegmentUse>]
       def entry_segment_uses
-        uses = []
-        uses.concat(@header_segment_uses)
-        uses.concat(@loop_defs.map{|l| l.entry_segment_use })
-        uses.concat(@trailer_segment_uses)
+        uses = @header_segment_uses \
+             + @loop_defs.map{|l| l.entry_segment_use } \
+             + @trailer_segment_uses
 
         # Up to and including the first required segment
-        opt, req = uses.split_until(&:optional?)
-        opt.concat(req.take(1))
+        suffix = uses.drop_while(&:optional?)
+
+        if suffix.present?
+          # Some segment(s) is required, so table can't start without it
+          position = suffix.map(&:position).min
+          uses.take_while{|u| u.position <= position }
+        else
+          # Nothing is required, table can begin at any of these
+          uses
+        end
       end
 
       # @return [Array<SegmentUse, LoopDef>]
@@ -120,28 +143,42 @@ module Stupidedi
 
       # @return [TableDef]
       def header(id, *children)
+        unless id.is_a?(String)
+          raise Exceptions::InvalidSchemaError,
+            "first argument to TableDef.header must be a String but got #{id.inspect}"
+        end
+
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 1, false, header, loop_defs, trailer, nil)
+        new(id, 1, header, loop_defs, trailer, nil)
       end
 
       # @return [TableDef]
-      def detail(id, *children, repeatable: true)
+      def detail(id, *children)
+        unless id.is_a?(String)
+          raise Exceptions::InvalidSchemaError,
+            "first argument to TableDef.detail must be a String but got #{id.inspect}"
+        end
+
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 2, repeatable, header, loop_defs, trailer, nil)
+        new(id, 2, header, loop_defs, trailer, nil)
       end
 
       # @return [TableDef]
       def summary(id, *children)
+        unless id.is_a?(String)
+          raise Exceptions::InvalidSchemaError,
+            "first argument to TableDef.summary must be a String but got #{id.inspect}"
+        end
+
         header, children   = children.split_when{|x| x.is_a?(LoopDef) }
         loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 3, false, header, loop_defs, trailer, nil)
+        new(id, 3, header, loop_defs, trailer, nil)
       end
 
       # @endgroup
       #########################################################################
     end
-
   end
 end

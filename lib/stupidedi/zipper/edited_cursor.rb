@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Zipper
-
     class EditedCursor < AbstractCursor
-
       # (see AbstractCursor#node)
       attr_reader :node
 
@@ -156,6 +153,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

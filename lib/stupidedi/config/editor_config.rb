@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   class Config
-
     class EditorConfig
       include Inspect
 
@@ -50,6 +49,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

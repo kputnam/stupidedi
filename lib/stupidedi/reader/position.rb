@@ -1,13 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Reader
-
     class Position
-      include Inspect
-
       # @return [Integer]
       attr_reader :offset
 
@@ -33,13 +29,23 @@ module Stupidedi
           changes.fetch(:path, @path)
       end
 
+      def to_s
+        inspect
+      end
+
       # @return [String]
       def inspect
         if @path.present?
-          "file #{@path}, line #{@line}, column #{@column}"
+          parts = ["file #{@path}", "line #{@line}"]
         else
-          "line #{@line}, column #{@column}"
+          parts = ["line #{@line}"]
         end
+
+        if @column.present?
+          parts << "column #{@column}"
+        end
+
+        parts.join(", ")
       end
 
       # @return [void]
@@ -64,10 +70,9 @@ module Stupidedi
 
     class << Position
       def caller(offset = 1)
-        path, line, method = Stupidedi.caller(offset + 1)
+        path, line, = Stupidedi.caller(offset + 1)
         new(nil, line, nil, path)
       end
     end
-
   end
 end

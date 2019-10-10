@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class ComponentElementTok
       include Inspect
 
@@ -21,9 +20,19 @@ module Stupidedi
           value, position, remainder
       end
 
+      # @return [CompositeElementTok]
+      def copy(changes = {})
+        ComponentElementTok.new \
+          changes.fetch(:value, @value),
+          changes.fetch(:position, @position),
+          changes.fetch(:remainder, @remainder)
+      end
+
+      # :nocov:
       def pretty_print(q)
         q.pp(:component.cons(@value.cons))
       end
+      # :nocov:
 
       def blank?
         @value.blank?
@@ -40,6 +49,10 @@ module Stupidedi
       def composite?
         false
       end
+
+      def to_x12(separators)
+        @value.to_s
+      end
     end
 
     class << ComponentElementTok
@@ -54,6 +67,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

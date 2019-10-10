@@ -1,12 +1,9 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     class TransmissionVal < AbstractVal
-
       # @return [Array<InterchangeVal>]
       attr_reader :children
 
@@ -16,6 +13,10 @@ module Stupidedi
 
       def copy(changes = {})
         TransmissionVal.new(changes.fetch(:children, @children))
+      end
+
+      def descriptor
+        "root"
       end
 
       def leaf?
@@ -48,9 +49,8 @@ module Stupidedi
 
       # @return [String]
       def inspect
-        ansi.envelope("TransmissionVal") << "(#{@children.map(&:inspect).join(', ')})"
+        ansi.envelope("TransmissionVal") + "(#{@children.map(&:inspect).join(", ")})"
       end
     end
-
   end
 end

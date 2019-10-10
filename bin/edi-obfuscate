@@ -1,0 +1,111 @@
+#!/usr/bin/env ruby
+#
+# This is a utility that will strip all free-form text (elements of type AN),
+# dates, and times from an X12 file. Strings are replaced with underscores,
+# dates are replaced with 2015-12-30, and times are replaced with 00:00:00.
+#
+# When -s is given, then unrecognized elements and segments will be suppressed
+# from the output.
+#
+# Otherwise, unrecognized segments or elements will cause an exception since it
+# is not possible to know if these should be obfuscated or not (they are invalid).
+#
+require File.expand_path("../../lib/stupidedi", __FILE__)
+
+require "stupidedi"
+require "pp"
+
+# Short-lived processes should win some peformance gains here
+GC.disable
+
+def main(argv)
+  strict = !argv.delete("-s")
+  config = Stupidedi::Config.default
+  reader = Stupidedi::Reader.build(File.open(argv[0]))
+
+  # First segment (ISA) specifies separators, used for parsing
+  result = reader.read_segment
+
+  result.tap do
+    lookup = result.remainder.segment_dict.push(
+      config.interchange.at(result.fetch.element_toks[11].value).segment_dict)
+
+    reader = result.remainder.copy(segment_dict: lookup)
+    delims = result.remainder.separators.copy(component: result.fetch.element_toks[15].value)
+    reader = reader.copy(separators: delims)
+
+    while result.defined?
+      result.tap do |token|
+        if token.id == :GS
+          gs08   = result.fetch.element_toks[7].value.slice(0, 6)
+          lookup = lookup.push(config.functional_group.at(gs08).segment_dict)
+          reader = reader.copy(segment_dict: lookup)
+        end
+
+        if lookup.defined_at?(token.id)
+          segment_def  = lookup.at(token.id)
+          element_toks = token.element_toks.zip(segment_def.element_uses).map.each_with_index do |(e, u), n|
+            if u.nil?
+              raise "unrecognized element: #{token.id}-#{"%02d" % n}" if strict
+
+              # This won't terminate the inner loop immediately, but if this
+              # element is unknown, it's because there were too many elements
+              # for the given segment. So all the extra elements at the end
+              # will still be skipped
+              next
+            elsif u.simple?
+              simple(e, u)
+            else
+              composite(e, u)
+            end
+          end.compact
+
+          puts token.copy(element_toks: element_toks).to_x12(delims)
+        else
+          raise "unknown segment: #{token.id}" if strict
+          next
+        end
+      end
+
+      result = reader.read_segment
+      reader = result.remainder
+    end
+
+    result.explain{|msg| raise msg } if result.fatal?
+  end
+end
+
+def simple(e, u)
+  type = u.definition.class.name
+  type = (type || "?").split("::").last
+
+  # GS-08 and ST-03 are preserved, since these have special meaning to the parser
+  if e.blank? or [:E1705, :E480].include?(u.definition.id)
+    return e
+  end
+
+  case type
+  when /AN$/
+    e.copy(value: "_" * u.definition.min_length)
+  when "TM"
+    e.copy(value: "0" * u.definition.min_length)
+  when "DT"
+    e.copy(value: "0" * u.definition.min_length)
+  when "Nn", "R"
+    e.copy(value: "0" * u.definition.min_length)
+  else
+    e
+  end
+end
+
+def composite(e, u)
+  component_toks = []
+
+  e.component_toks.zip(u.definition.component_uses) do |ce, cu|
+    component_toks.push(simple(ce, cu))
+  end
+
+  e.copy(component_toks: component_toks)
+end
+
+main(ARGV)

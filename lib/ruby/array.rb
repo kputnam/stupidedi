@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Refinements
-
     refine Array do
       def blank?
         empty?
@@ -18,7 +16,7 @@ module Stupidedi
       #   [1, 2, 3].head  #=> 1
       #
       def head
-        raise IndexError, "head of empty list" if empty?
+        raise IndexError, "head of empty array" if empty?
         x, = self
         x
       end
@@ -224,6 +222,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

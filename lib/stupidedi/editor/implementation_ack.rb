@@ -3,10 +3,10 @@ module Stupidedi
   using Refinements
 
   module Editor
-
+    #
     # Generates an FA 999 acknowledgement
+    #
     class ImplementationAck
-
       def initialize(zipper, builder)
         @builder = builder
         @zipper  = zipper
@@ -211,6 +211,5 @@ module Stupidedi
         end
       end
     end
-
   end
 end

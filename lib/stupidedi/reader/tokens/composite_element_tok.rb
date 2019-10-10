@@ -3,7 +3,6 @@ module Stupidedi
   using Refinements
 
   module Reader
-
     class CompositeElementTok
       include Inspect
 
@@ -21,9 +20,19 @@ module Stupidedi
           component_toks, position, remainder
       end
 
+      # @return [CompositeElementTok]
+      def copy(changes = {})
+        CompositeElementTok.new \
+          changes.fetch(:component_toks, @component_toks),
+          changes.fetch(:position, @position),
+          changes.fetch(:remainder, @remainder)
+      end
+
+      # :nocov:
       def pretty_print(q)
         q.pp(:composite.cons(@component_toks))
       end
+      # :nocov:
 
       def repeated
         RepeatedElementTok.new(self.cons, @position)
@@ -48,6 +57,16 @@ module Stupidedi
       def composite?
         true
       end
+
+      def to_x12(separators)
+        if blank?
+          ""
+        else
+          cs  = @component_toks.map{|x| x.to_x12(separators) }
+          sep = separators.component || ":"
+          cs.join(sep).gsub(/#{Regexp.escape(sep)}+$/, "")
+        end
+      end
     end
 
     class << CompositeElementTok
@@ -62,6 +81,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end

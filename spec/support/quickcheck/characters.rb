@@ -1,4 +1,4 @@
-class QuickCheck
+class Quickcheck
   module Characters
     class << self
       ASCII = (0..127).inject(""){|string, n| string << n }

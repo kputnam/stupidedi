@@ -1,8 +1,6 @@
 # frozen_string_literal: true
-
 module Stupidedi
   module Editor
-
     autoload :Result,       "stupidedi/editor/result"
     autoload :TA105,        "stupidedi/editor/result"
     autoload :AK905,        "stupidedi/editor/result"
@@ -36,6 +34,5 @@ module Stupidedi
     # HN 277CA
     autoload :ClaimAck,
       "stupidedi/editor/claim_ack"
-
   end
 end

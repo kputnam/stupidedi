@@ -1,27 +1,21 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Values
-
     #
     # @see X222.pdf B.1.1.3.3 Composite Data Structure
     #
     class CompositeElementVal < AbstractElementVal
-
-      # @return [CompositeElementDef]
-
-      def_delegators :@usage, :definition
-
       # @return [Array<SimpleElementVal>]
       attr_reader :children
+
       alias component_vals children
 
       # @return [CompositeElementUse]
       attr_reader :usage
 
-      def_delegators "@children.head", :position
+      def_delegators :@usage, :definition, :descriptor
 
       def initialize(children, usage)
         @children, @usage =
@@ -33,6 +27,15 @@ module Stupidedi
         CompositeElementVal.new \
           changes.fetch(:children, @children),
           changes.fetch(:usage, @usage)
+      end
+
+      def position
+        if @children.present?
+          @children.head.position
+        else
+          # GH-194
+          "<position unknown>"
+        end
       end
 
       # @return false
@@ -95,6 +98,5 @@ module Stupidedi
           other.children   == @children)
       end
     end
-
   end
 end

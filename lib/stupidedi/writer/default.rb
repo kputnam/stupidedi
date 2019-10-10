@@ -2,9 +2,7 @@ module Stupidedi
   using Refinements
 
   module Writer
-
     class Default
-
       # @return [Reader::Separators]
       attr_reader :separators
 
@@ -13,19 +11,19 @@ module Stupidedi
           zipper, separators
       end
 
-      #
       # @return out
-      def write
-        common  = @separators.characters & @zipper.node.characters
-        message = common.to_a.map(&:inspect).join(", ")
+      def write(out = "")
+        unless @zipper.node.transmission? or @zipper.node.interchange?
+          common  = @separators.characters & @zipper.node.characters
+          message = common.to_a.map(&:inspect).join(", ")
 
-        if common.present?
-          raise Exceptions::OutputError,
-            "separators #{message} occur as data"
+          if common.present?
+            raise Exceptions::OutputError,
+              "separator characters #{message} occur as data"
+          end
         end
-        out = ""
-        recurse(@zipper.node, @separators, out)
-        return out
+
+        out.tap { recurse(@zipper.node, @separators, out) }
       end
 
     private
@@ -37,30 +35,26 @@ module Stupidedi
           segment(value, separators, out)
         else
           if value.interchange?
-            value      = value.replace_separators(@separators)
-            separators = value.separators#merge(@separators)
-
-            raise Exceptions::OutputError,
-              "separators.segment cannot be blank" if separators.segment.blank?
-
-            raise Exceptions::OutputError,
-              "separators.element cannot be blank" if separators.element.blank?
-
-            unless separators == @separators
-              # We've inherited some separators from the interchange,
-              # so we need to re-check this condition. Note that we
-              # can't optimize this by caching @zipper.node.characters
-              # the first time (in #write), because we're only interested
-              # in conflicts between _this_ subtree (value) and the
-              # separators... not the entire tree (@zipper.node)
-              common  = separators.characters & @zipper.node.characters
+            unless separators.merge(value.separators) == separators
+              common  = separators.characters & value.characters
               message = common.to_a.map(&:inspect).join(", ")
 
               if common.present?
                 raise Exceptions::OutputError,
                   "separator characters #{message} occur as data"
               end
+
+              # Change ISA11 and ISA16
+              value = value.replace_separators(separators)
             end
+
+            separators = value.separators
+
+            raise Exceptions::OutputError,
+              "separators.segment cannot be blank" if separators.segment.blank?
+
+            raise Exceptions::OutputError,
+              "separators.element cannot be blank" if separators.element.blank?
           end
 
           value.children.each{|c| recurse(c, separators, out) }
@@ -120,8 +114,6 @@ module Stupidedi
           end
         end
       end
-
     end
-
   end
 end

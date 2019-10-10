@@ -1,10 +1,8 @@
 # frozen_string_literal: true
-
 module Stupidedi
   using Refinements
 
   module Schema
-
     #
     # @see X222.pdf 2.2.2 Loops
     # @see X222.pdf B.1.3.12.4 Loops of Data Segments
@@ -56,6 +54,11 @@ module Stupidedi
           changes.fetch(:loop_defs, @loop_defs),
           changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
           changes.fetch(:parent, @parent)
+      end
+
+      # @return [String]
+      def descriptor
+        "loop #{id}"
       end
 
       def repeatable?
@@ -142,7 +145,24 @@ module Stupidedi
           raise Exceptions::InvalidSchemaError,
             "first child must be a SegmentUse"
         elsif header.head.repeat_count.include?(2)
-          "first child must have RepeatCount.bounded(1)"
+          raise Exceptions::InvalidSchemaError,
+            "first child must have RepeatCount.bounded(1)"
+        end
+
+        trailer.each.with_index do |s, k|
+          unless s.segment?
+            if s.respond_to?(:pretty_inspect)
+              raise Exceptions::InvalidSchemaError,
+                "arguments after last child LoopDef (#{loop_defs.last.id})
+                must be segments, but #{k+1} arguments later is not a
+                SegmentUse: #{s.pretty_inspect}".join
+            else
+              raise Exceptions::InvalidSchemaError,
+                "arguments after last child LoopDef (#{loop_defs.last.id})
+                must be segments, but #{k+1} arguments later is not a
+                SegmentUse: #{s.inspect}".join
+            end
+          end
         end
 
         new(id, repeat_count, header, loop_defs, trailer, nil)
@@ -151,6 +171,5 @@ module Stupidedi
       # @endgroup
       #########################################################################
     end
-
   end
 end
