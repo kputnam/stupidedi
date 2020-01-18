@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+require "stupidedi"
+require "pp"
 #
 # This is a utility that will strip all free-form text (elements of type AN),
 # dates, and times from an X12 file. Strings are replaced with underscores,
@@ -10,10 +12,6 @@
 # Otherwise, unrecognized segments or elements will cause an exception since it
 # is not possible to know if these should be obfuscated or not (they are invalid).
 #
-require File.expand_path("../../lib/stupidedi", __FILE__)
-
-require "stupidedi"
-require "pp"
 
 # Short-lived processes should win some peformance gains here
 GC.disable
