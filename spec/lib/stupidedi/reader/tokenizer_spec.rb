@@ -289,7 +289,10 @@ describe Stupidedi::Reader::Tokenizer do
         t = Stupidedi::Reader.build(str, position: Stupidedi::Position::OffsetPosition)
         t.separators = Stupidedi::Reader::Separators.default
 
-        r = t.send(:_next_segment_id, t.instance_variable_get(:@input))
+        input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
+
+        r = t.send(:_next_segment_id, input)
         expect(r).to_not            be_fail
         expect(r.value).to          eq(expected)
         expect(r.position).to       eq(pos[0])
@@ -303,7 +306,10 @@ describe Stupidedi::Reader::Tokenizer do
         t = Stupidedi::Reader.build(input, position: Stupidedi::Position::OffsetPosition)
         t.separators = Stupidedi::Reader::Separators.default
 
-        r = t.send(:_next_segment_id, t.instance_variable_get(:@input))
+        input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
+
+        r = t.send(:_next_segment_id, input)
         expect(r).to          be_fail
         expect(r.position).to eq(0)
         expect(r.error).to    match(reason)
@@ -337,6 +343,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         if expected.is_a?(Array)
           r = t.send(:_read_simple_element, input, true, :XYZ, 4)
@@ -373,6 +380,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         if expected.is_a?(Array)
           r = t.send(:_read_simple_element, input, true, :XYZ, 4)
@@ -407,6 +415,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         r = t.send(:_read_simple_element, input, false, :XYZ, 4)
         expect(r).to          be_fail
@@ -521,6 +530,7 @@ describe Stupidedi::Reader::Tokenizer do
         t.separators = Stupidedi::Reader::Separators.default
 
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         if expected.is_a?(Array)
           r = t.send(:_read_component_element, input, true, parent_repeatable, :XYZ, 5, 6)
@@ -556,6 +566,7 @@ describe Stupidedi::Reader::Tokenizer do
         t.separators = Stupidedi::Reader::Separators.default
 
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         if expected.is_a?(Array)
           r = t.send(:_read_component_element, input, true, parent_repeatable, :XYZ, 5, 6)
@@ -590,6 +601,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         r = t.send(:_read_component_element, input, repeatable, parent_repeatable, :XYZ, 5, 6)
         expect(r).to          be_fail
@@ -730,6 +742,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         if repeatable
           r = t.send(:_read_composite_element, input, true, :XYZ, 7)
@@ -766,6 +779,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         if repeatable
           r = t.send(:_read_composite_element, input, true, :XYZ, 7)
@@ -800,6 +814,7 @@ describe Stupidedi::Reader::Tokenizer do
 
         # This is Stupidedi::Reader::Input
         input = t.instance_variable_get(:@input)
+        input.reindex(t.separators.characters.to_a.join)
 
         r = t.send(:_read_composite_element, input, repeatable, :XYZ, 7)
         expect(r).to          be_fail

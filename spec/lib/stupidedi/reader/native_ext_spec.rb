@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 # encoding: utf-8
-describe Stupidedi::Reader::NativeExt do
+fdescribe Stupidedi::Reader::NativeExt do
   using Stupidedi::Refinements
   include ReaderExtMatchers
 
@@ -8,11 +8,11 @@ describe Stupidedi::Reader::NativeExt do
   let(:basic_letters)   { "ABCDEFGHIJKLMNOPQRSTUVWXYZ" }
   let(:basic_digits)    { "0123456789" }
   let(:basic_symbols)   { " !\"&'()*+,-./:;?=" }
-  let(:basic_control)   { [0x07, *0x09..0x0d, *0x1c..0x1f].map(&:chr).join }
+  let(:basic_control)   { [0x07, *0x09..0x0d, *0x1c..0x1f].pack("C*") }
 
   let(:extend_letters)  { "abcdefghijklmnopqrstuvwxyz" }
   let(:extend_symbols)  { "%@[]_{}\\|<>~^`$#" }
-  let(:extend_control)  { [*0x01..0x06, *0x11..0x17].map(&:chr).join }
+  let(:extend_control)  { [*0x01..0x06, *0x11..0x17, 0x7f].pack("C*") }
   let(:extend_language) { "ÀÁÂÄàáâäÈÉÊèéêëÌÍÎìíîïÒÓÔÖòóôöÙÚÛÜùúûüÇçÑñ¿¡Øø" }
 
   let(:whitespace)      { "\t\n\v\f\r " }
@@ -172,13 +172,13 @@ describe Stupidedi::Reader::NativeExt do
         if n = e[/iso-8859-(\d+)/, 1].try{|m| Integer(m) }
           it "identifies all graphic characters" do
             bytes  = iso_8859_table.reject{|_, no| no.include?(n) }.keys
-            string = bytes.sort.map(&:chr).join.force_encoding(e)
+            string = bytes.sort.pack("C*").force_encoding(e)
             expect(string).to be_graphic
           end
 
           it "excludes all non-graphic characters" do
             bytes  = iso_8859_table.select{|_, no| no.include?(n) }.keys
-            string = bytes.sort.map(&:chr).join.force_encoding(e)
+            string = bytes.sort.pack("C*").force_encoding(e)
             expect(string).to_not be_graphic
           end
         end
@@ -227,8 +227,8 @@ describe Stupidedi::Reader::NativeExt do
 
         if n = e[/iso-8859-(\d+)/, 1].try{|m| Integer(m) }
           it "excludes all extended characters (except 0xa0)" do
-            bytes  = 0xa1..0xff
-            string = bytes.map(&:chr).join.force_encoding(e)
+            bytes  = [*0xa1..0xff]
+            string = bytes.pack("C*").force_encoding(e)
             expect(string).to_not be_whitespace
           end
         end
