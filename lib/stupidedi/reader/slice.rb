@@ -22,6 +22,7 @@ module Stupidedi
     # * `Slice<Array, Integer>` represents an array of integers
     # * `Slice<String, String>` represents a string (single chars have type String)
     #
+    # @private
     class Slice
       # When this object is not `#frozen?`, only one slice references it.  In
       # that case, some operations can be optimized by destructively updating

@@ -1,7 +1,11 @@
+#include <stdbool.h>
 #include "ruby.h"
 #include "ruby/encoding.h"
+
+#include "builtins.h"
+#include "bit_vector.h"
 #include "codepoints.h"
-#include <stdbool.h>
+#include "interval_tree.h"
 
 /* Related documentation and specifications:
  *    https://github.com/ruby/ruby/blob/master/spec/ruby/optional/capi/string_spec.rb
@@ -9,18 +13,6 @@
  */
 
 extern VALUE rb_str_length(VALUE str);
-
-#define LIKELY(x)   (x)
-#define UNLIKELY(x) (x)
-
-#ifdef __GNUC__
-#if __GNUC__ >= 3
-#undef LIKELY
-#undef UNLIKELY
-#define LIKELY(x)   (__builtin_expect(!!(x), 1))
-#define UNLIKELY(x) (__builtin_expect(!!(x), 0))
-#endif
-#endif
 
 /*
 static int ENCIDX_CP850 = -1;
@@ -84,31 +76,11 @@ static int ENCIDX_Windows_1258 = -1;
 */
 
 /* This keeps track of which which encidx-es we have seen */
-static unsigned char encdb[32];
-
-static inline bool
-bitmask_test(unsigned char *bitmask, int bitidx, int bitmask_size) {
-    int last = (bitmask_size - 1) / 8;
-    int  idx = last - bitidx / 8;
-    int  bit = bitidx % 8;
-
-    if (bitidx < 0 || bitmask_size <= bitidx)
-        return false;
-
-    return (bitmask[idx] >> bit) & 0x1;
-}
-
-static void
-bitmask_set(unsigned char *bitmask, int bitidx, int bitmask_size) {
-    int last = (bitmask_size - 1) / 8;
-    int  idx = last - bitidx / 8;
-    int  bit = bitidx % 8;
-
-    if (bitidx < 0 || bitmask_size <= bitidx)
-        return;
-
-    bitmask[idx] |= (1 << bit);
-}
+static bit_vector_t encdb = {
+  .size = 256,
+  .data = (uint64_t[]){0x0000000000000000ULL,0x0000000000000000ULL,
+                       0x0000000000000000ULL,0x0000000000000000ULL}
+};
 
 /*
  * Ideally we could write a switch(encidx) { ... } statement to handle each
@@ -135,15 +107,16 @@ update_encdb(int encidx) {
     const char *encname;
 
     /* We've already assigned the encidx to an ENCIDX_xx global */
-    if (bitmask_test(encdb, encidx, 256))
+    if ((encidx > 0 && (unsigned)encidx >= encdb.size) || bit_vector_test(&encdb, encidx))
         return false;
 
     /* Otherwise, match the "NAME" to the ENCIDX_NAME constant */
     encname = rb_enc_name(rb_enc_from_index(encidx));
 
-#define TESTENC(name, id) if (0 == strncmp(name,encname,64)) {\
+#define TESTENC(name, id) \
+if (0 == strncmp(name, encname, 64)) {\
   ENCIDX_##id = encidx;\
-  bitmask_set(encdb, encidx, 256); \
+  bit_vector_set(&encdb, encidx); \
   return true; \
 }
 
@@ -217,68 +190,6 @@ update_encdb(int encidx) {
     return false;
 }
 
-
-/*
- * This performs a binary search on sorted disjoint intervals (sorted by each
- * interval's min). First it finds the largest min that's no larger than the
- * point; then it checks that point doesn't exceed that interval's max.
- *
- * Many queries will require descending all the way to a leaf.  That is because
- * once a `min` is found that is less than the point, we need to find the next
- * smallest `min`.  Doing so amounts to descending to the leftmost leaf of the
- * right subtree of the current `min`.
- *
- *           .---------62----------.
- *      .---14---.           .-----85...
- *   .-08-.    .-31-.     .-70-.
- *  04    10  20    40   67    71
- *
- * For example, if `min` is the tree above and we have a point query for 33,
- * we'll start at 62 and move to 14. While there might be an interval 14..x
- * that contains 33, there could also be 31..x or 20..x.
- *
- * For around 700 intervals (the number of codepoint ranges that cover Unicode
- * graphical characters), about 10 iterations may be required.
- *
- * TODO: Using an optimal binary tree might reduce the average number of
- * iterations, but it would increase the complexity -- using a contiguous region
- * of memory like an array provides good data locality, but some scheme would be
- * needed to represent a non-complete binary tree. The best approach might be to
- * allocate a contiguous block of memory and then use a linked representation.
- * But reducing most queries from 10 iterations to 1-2 might not improve much?
- */
-static inline int
-has_matching_interval(const unsigned int point,
-                      const unsigned int *min,
-                      const unsigned int *max,
-                      const unsigned int size)
-{
-    int k,
-        l = 0,
-        r = size - 1,
-        z = -1;
-
-    for (l = 0, r = size - 1, z = -1; k = (l + r) / 2, l <= r;) {
-        if (UNLIKELY(min[k] < point))
-            if (point <= max[k])
-                return true;      // min[k] < point <= max[k]
-            else
-                l = (z = k) + 1;  // descend right
-        else if (point < min[k])
-            r = k - 1;            // descend left
-        else
-            break;                // min[k] == point <= max[k]
-    }
-
-    if (point < min[k])
-        k = z;
-
-    if (0 <= k && point <= max[k])
-        return true;
-
-    return false;
-}
-
 static inline bool
 is_whitespace(const unsigned int c, const int encidx)
 {
@@ -286,10 +197,7 @@ is_whitespace(const unsigned int c, const int encidx)
         return (0x08 <= c && c <= 0x0d) || c == 0x20;
 
     else if (encidx == ENCIDX_UTF_8)
-        return has_matching_interval(c,
-            ucs_codepoints_whitespace_min,
-            ucs_codepoints_whitespace_max,
-            ucs_codepoints_whitespace_count);
+        return interval_tree_test(c, ucs_codepoints_whitespace);
 
     else if (encidx == ENCIDX_ISO_8859_1  ||
              encidx == ENCIDX_ISO_8859_2  ||
@@ -327,13 +235,10 @@ is_graphic(const unsigned int c, const int encidx)
     // https://en.wikipedia.org/wiki/ISO/IEC_8859#Table
 
     if (encidx == ENCIDX_UTF_8)
-        return has_matching_interval(c,
-            ucs_codepoints_graphic_min,
-            ucs_codepoints_graphic_max,
-            ucs_codepoints_graphic_count);
+        return interval_tree_test(c, ucs_codepoints_graphic);
 
     if (encidx == ENCIDX_US_ASCII)
-        return (0x20 <= c && c <= 0x7f);
+        return (0x20 <= c && c < 0x7f);
 
     if (encidx == ENCIDX_ISO_8859_1  ||
         encidx == ENCIDX_ISO_8859_2  ||
@@ -350,24 +255,24 @@ is_graphic(const unsigned int c, const int encidx)
         encidx == ENCIDX_ISO_8859_14 ||
         encidx == ENCIDX_ISO_8859_15 ||
         encidx == ENCIDX_ISO_8859_16)
-        if (0x20 <= c && c <= 0x7f)
-            return true;
+        if (c < 0xa0)
+            return (0x20 <= c && c < 0x7f);
 
-    if      (encidx == ENCIDX_ISO_8859_1)  return bitmask_test(iso_8859_graphic[0],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_2)  return bitmask_test(iso_8859_graphic[1],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_3)  return bitmask_test(iso_8859_graphic[2],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_4)  return bitmask_test(iso_8859_graphic[3],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_5)  return bitmask_test(iso_8859_graphic[4],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_6)  return bitmask_test(iso_8859_graphic[5],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_7)  return bitmask_test(iso_8859_graphic[6],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_8)  return bitmask_test(iso_8859_graphic[7],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_9)  return bitmask_test(iso_8859_graphic[8],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_10) return bitmask_test(iso_8859_graphic[9],  c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_11) return bitmask_test(iso_8859_graphic[10], c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_13) return bitmask_test(iso_8859_graphic[12], c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_14) return bitmask_test(iso_8859_graphic[13], c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_15) return bitmask_test(iso_8859_graphic[14], c-0xa0, 96);
-    else if (encidx == ENCIDX_ISO_8859_16) return bitmask_test(iso_8859_graphic[15], c-0xa0, 96);
+    if      (encidx == ENCIDX_ISO_8859_1)  return bit_vector_test(iso_8859_graphic + 0,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_2)  return bit_vector_test(iso_8859_graphic + 1,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_3)  return bit_vector_test(iso_8859_graphic + 2,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_4)  return bit_vector_test(iso_8859_graphic + 3,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_5)  return bit_vector_test(iso_8859_graphic + 4,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_6)  return bit_vector_test(iso_8859_graphic + 5,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_7)  return bit_vector_test(iso_8859_graphic + 6,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_8)  return bit_vector_test(iso_8859_graphic + 7,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_9)  return bit_vector_test(iso_8859_graphic + 8,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_10) return bit_vector_test(iso_8859_graphic + 9,  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_11) return bit_vector_test(iso_8859_graphic + 10, c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_13) return bit_vector_test(iso_8859_graphic + 12, c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_14) return bit_vector_test(iso_8859_graphic + 13, c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_15) return bit_vector_test(iso_8859_graphic + 14, c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_16) return bit_vector_test(iso_8859_graphic + 15, c-0xa0);
 
     /* If nothing matched, it could be the first time we've seen this encoding
      * and we haven't assigned ENCIDX_XX yet. If so, update and retry */
@@ -843,9 +748,6 @@ rb_max_nonspace_index(int argc, VALUE *argv, VALUE self)
 }
 
 void Init_native_ext(void) {
-    for (int n = 0; n < 32; n++)
-        encdb[n] = 0;
-
     VALUE rb_mStupidedi = rb_define_module("Stupidedi");
     VALUE rb_mReader    = rb_define_module_under(rb_mStupidedi, "Reader");
     VALUE rb_m          = rb_define_module_under(rb_mReader,    "NativeExt");

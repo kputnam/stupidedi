@@ -10,6 +10,7 @@ module Stupidedi
     # operation). Many optimizations related to comparing substrings or trimming
     # nongraphic or whitespace characters rely on `NativeExt`.
     #
+    # @private
     class Substring < Slice
       # @group Conversion Methods
       #########################################################################
