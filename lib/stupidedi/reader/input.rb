@@ -4,7 +4,11 @@ module Stupidedi
   using Refinements
 
   module Reader
-
+    #
+    # This class maintains the current position within the input stream as its
+    # consumed, and it also maintains an index (wavelet tree) that is used to
+    # efficiently locate particular characters of interest, like X12 separators.
+    #
     # @private
     class Input
       include Inspect
@@ -21,10 +25,30 @@ module Stupidedi
       def initialize(pointer, position)
         @pointer  = pointer
         @position = position
+        @index    = nil
       end
 
       # @endgroup
       #########################################################################
+
+      def reindex(alphabet)
+        @index = WaveletTree.build(@pointer, alphabet)
+      end
+
+      def deindex
+        @index = nil
+      end
+
+      def _index(symbol, offset = 0)
+        return index(symbol, offset) if @index.nil?
+
+        # How many times does symbol occur *before* offset?
+        n = @index.rank(symbol, @pointer.offset + offset)
+
+        # Get location of n+1'th occurence of symbol
+        m = @index.select(symbol, n)
+        m and m - @pointer.offset
+      end
 
       # @return self
       def drop!(n)

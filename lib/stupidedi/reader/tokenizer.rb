@@ -260,7 +260,9 @@ module Stupidedi
         return fail("segment terminator and component separator are both %s" %
           tr.inspect) if us == tr
 
-        @separators.segment = tr
+        @separators.segment   = tr
+        @separators.component = us
+
         done(element_toks, nil, input.drop!(3))
       end
 
@@ -271,8 +273,8 @@ module Stupidedi
         start_pos  = input.position_at(offset)
 
         # Whichever occurs first
-        gs = input.index(@separators.element, offset)
-        tr = input.index(@separators.segment, offset)
+        gs = input._index(@separators.element, offset)
+        tr = input._index(@separators.segment, offset)
         xx = if gs and tr and gs < tr; then gs end || tr || gs
         return eof("segment identifier", input.position) unless xx
 
@@ -376,7 +378,7 @@ module Stupidedi
         end
 
         eof("element %s or segment separator %s after %s%02d" % [
-          @separator.element.inspect, @separator.segment.inspect, segment_id,
+          @separators.element.inspect, @separators.segment.inspect, segment_id,
           element_idx], builder.position)
       end
 
@@ -389,11 +391,11 @@ module Stupidedi
 
         while input.defined_at?(offset)
           # Whichever occurs first
-          tr = input.index(@separators.segment, offset)   if @separators.segment
-          gs = input.index(@separators.element, offset)   if @separators.element
+          tr = input._index(@separators.segment, offset)   if @separators.segment
+          gs = input._index(@separators.element, offset)   if @separators.element
           xx = if gs and tr and gs < tr; then gs end || tr || gs
 
-          us = input.index(@separators.component, offset) if @separators.component
+          us = input._index(@separators.component, offset) if @separators.component
           xx = if xx and us and xx < us; then xx end || us || xx
 
           # Because repetition separators are unlikely to occur at all, it could
@@ -404,7 +406,7 @@ module Stupidedi
           # also rare for the parent composite to be repeatable. So we will only
           # search for it in those rare cases. When it occurs otherwise, we will
           # read it as plain data instead of halting tokenization with an error.
-          rs = input.index(@separators.repetition, offset) \
+          rs = input._index(@separators.repetition, offset) \
             if @separators.repetition and (repeatable or parent_repeatable)
 
           if rs and rs < xx
@@ -445,8 +447,8 @@ module Stupidedi
 
         while input.defined_at?(offset)
           # Whichever occurs first
-          tr = input.index(@separators.segment, offset) if @separators.segment
-          gs = input.index(@separators.element, offset) if @separators.element
+          tr = input._index(@separators.segment, offset) if @separators.segment
+          gs = input._index(@separators.element, offset) if @separators.element
           xx = if gs and tr and gs < tr; then gs end || tr || gs
           break unless xx
 
@@ -454,7 +456,7 @@ module Stupidedi
           # become costly to repeatedly linearly search the remaining input when
           # reading every simple element. However only few elements are allowed
           # to repeat, so we will only search in those cases.
-          rs = input.index(@separators.repetition, offset) \
+          rs = input._index(@separators.repetition, offset) \
             if @separators.repetition and repeatable
 
           if rs and rs < xx
@@ -507,7 +509,7 @@ module Stupidedi
         expected("#{error}, found eof", position)
       end
 
-      def _update_state(segment_tok, config)
+      def _update_state(segment_tok, config, input)
         case segment_tok.id
         when :ISA
           version = segment_tok.element_toks.at(11)
@@ -519,6 +521,11 @@ module Stupidedi
             ver_separators = envelope_def.separators(segment_tok)
             @separators    = @separators.merge(ver_separators)
           end
+
+          # Update index
+          input.reindex(@separators.characters.to_a.join)
+        when :ISE
+          input.deindex
         when :GS
           # GS08: Version / Release / Industry Identifier Code
           version = segment_tok.element_toks.at(7).try(:value).try(:to_s)

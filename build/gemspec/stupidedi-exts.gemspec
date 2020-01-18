@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary = "Native extensions to accelerate stupidedi"
   s.authors = ["Kyle Putnam", "Isi Robayna"]
   s.version = Stupidedi::VERSION
-  s.files   = [__FILE__]
+  s.files  += [__FILE__]
 
   # Recommended attributes
   if Gem.win_platform?

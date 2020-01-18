@@ -10,6 +10,7 @@ module Stupidedi
     autoload :Slice,        "stupidedi/reader/slice"
     autoload :Substring,    "stupidedi/reader/substring"
     autoload :NativeExt,    "stupidedi/reader/native_ext"
+    autoload :WaveletTree,  "stupidedi/reader/wavelet_tree"
   end
 
   class << Reader

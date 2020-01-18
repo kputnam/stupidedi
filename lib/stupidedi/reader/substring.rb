@@ -16,7 +16,7 @@ module Stupidedi
       #########################################################################
 
       def_delegators :reify, :to_d
-      def_delegators :reify, :to_sym, :intern, :to_i, :split, type: String
+      def_delegators :reify, :to_sym, :intern, :to_i, :split, :chars, type: String
       def_delegators :@storage, :encoding, :valid_encoding?, type: String
 
       alias_method :to_s,   :reify

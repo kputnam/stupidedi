@@ -3,11 +3,11 @@ require_relative "../../lib/stupidedi/version"
 Gem::Specification.new do |s|
   # Required attributes
   s.name    = "stupidedi-defs"
-  s.summary = "Parse, generate, validate ASC X12 EDI"
+  s.summary = "Definitions and X12 specifications for stupidedi"
   s.authors = ["Kyle Putnam", "Isi Robayna"]
   s.version = Stupidedi::VERSION
-  s.files  += Dir[*%w(*.md lib/**/*.rb)]
   s.files  += [__FILE__]
+  s.files  += Dir[*%w(*.md lib/**/*.rb)]
   s.files.select! do |x|
     x =~ %r(lib/stupidedi/versions/\d) or
     x =~ %r(lib/stupidedi/interchanges/\d) or

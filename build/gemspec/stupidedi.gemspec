@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.summary = "Parse, generate, validate ASC X12 EDI"
   s.authors = ["Kyle Putnam", "Isi Robayna"]
   s.version = Stupidedi::VERSION
-  s.files   = Dir[*%w(*.md)]
   s.files  += [__FILE__]
+  s.files  += Dir[*%w(*.md)]
 
   # Recommended attributes
   s.platform    = Gem::Platform::RUBY

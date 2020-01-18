@@ -249,7 +249,7 @@ module Stupidedi
 
               hh =   @hour.try{|h| "%02d" % h }  || "hh"
               mm = @minute.try{|m| "%02d" % m }  || "mm"
-              ss = @second.try{|s| s.to_s("F") } || "ss"
+              ss = @second.try{|s| s.to_s("F").rjust(2, "0") } || "ss"
               ss = ss.gsub(/^0*\.|\.0*$/, "")
 
               ansi.element("TM.value#{id}") + "(#{hh}:#{mm}:#{ss})"

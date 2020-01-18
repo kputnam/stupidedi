@@ -3,11 +3,11 @@ require_relative "../../lib/stupidedi/version"
 Gem::Specification.new do |s|
   # Required attributes
   s.name    = "stupidedi-core"
-  s.summary = "Parse, generate, validate ASC X12 EDI"
+  s.summary = "Basic foundation and CLI tools for stupidedi"
   s.authors = ["Kyle Putnam", "Isi Robayna"]
   s.version = Stupidedi::VERSION
-  s.files   = Dir[*%w(*.md lib/**/*.rb)]
   s.files  += [__FILE__]
+  s.files  += Dir[*%w(*.md lib/**/*.rb)]
   s.files.reject!{|x| x =~ %r(lib/stupidedi/versions/\d) }
   s.files.reject!{|x| x =~ %r(lib/stupidedi/interchanges/\d) }
   s.files.reject!{|x| x =~ %r(lib/stupidedi/transaction_sets/\d) }
