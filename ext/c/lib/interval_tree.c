@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include "builtins.h"
+#include "malloc.h"
 #include "interval_tree.h"
 
 /*
@@ -31,9 +31,12 @@ interval_tree_test(const unsigned int point, interval_tree_t tree)
 {
     int k, l, r, z;
 
-    /* This will first test for ASCII, then the lower ranges of Unicode. This
-     * is an optimization if most queries are for ASCII characters, and won't
-     * otherwise cost anything to check */
+    /* This hack speeds up searches that fall in the range covered by the first
+     * few intervals. We first try a short linear search, but if the answer
+     * isn't found we'll fallback to a binary search on the remaining intervals.
+     *
+     * Most queries are expected to be checking if ASCII-range values are
+     * graphical or whitespace, which will benefit from this optimization */
     for (k = 0; k < 3 && 3 <= tree.length; k++) {
         if (point <  tree.min[k]) return false;
         if (point <= tree.max[k]) return true;
