@@ -2,7 +2,7 @@
 #define STUPIDEDI_INTERVAL_TREE_
 
 typedef struct interval_tree_t {
-    unsigned int length;
+    unsigned int size;
     unsigned int* min;
     unsigned int* max;
 } interval_tree_t;

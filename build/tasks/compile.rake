@@ -1,13 +1,13 @@
 require "rake/extensiontask"
 require "rake/extensioncompiler"
 
-spec_ext = Gem::Specification.load("build/gemspec/stupidedi-exts.gemspec")
+spec = Gem::Specification.load("build/gemspec/stupidedi-native.gemspec")
 
 # rake compile
-Rake::ExtensionTask.new("native_ext", spec_ext) do |t|
-  t.ext_dir = "ext/c/stupidedi/reader"  # Where source is located
-  t.lib_dir = "lib/stupidedi/reader"    # Where binaries will go
-  t.tmp_dir = "build/generated/ext"
+Rake::ExtensionTask.new("native", spec) do |t|
+  t.ext_dir = "ext/c/"                # Where source is located
+  t.lib_dir = "lib/stupidedi/native"  # Where binaries will go
+  t.tmp_dir = "build/generated/native"
 
   if (Rake::ExtensionCompiler.mingw_host rescue nil)
     t.cross_compile         = true

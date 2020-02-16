@@ -52,7 +52,7 @@ VALUE rb_rrr_access(VALUE self, VALUE _i) {
     if (i < 0 || i > BIT_IDX_MAX)
         rb_raise(rb_eArgError, "index out of range: %lld", i);
 
-    if (i >= rrr->nbits)
+    if (i >= rrr->size)
         return Qnil;
 
     return UINT2NUM(rrr_access(rrr, (bit_idx_t)i));

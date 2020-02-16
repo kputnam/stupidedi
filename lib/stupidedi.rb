@@ -37,6 +37,7 @@ module Stupidedi
   autoload :Exceptions,       "stupidedi/exceptions"
   autoload :Inspect,          "stupidedi/inspect"
   autoload :Interchanges,     "stupidedi/interchanges"
+  autoload :Native,           "stupidedi/native"
   autoload :Parser,           "stupidedi/parser"
   autoload :Position,         "stupidedi/position"
   autoload :Reader,           "stupidedi/reader"

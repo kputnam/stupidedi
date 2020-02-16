@@ -57,14 +57,14 @@ VALUE rb_bit_vector_get(int argc, VALUE* argv, VALUE self) {
 
     if (bits->width)
         /* Width is implied */
-        return (i * bits->width >= bits->nbits) ? Qnil :
+        return (i * bits->width >= bits->size) ? Qnil :
             ULL2NUM(bit_vector_read_record(bits, (bit_idx_t)i));
 
     width = NUM2LL(argv[1]);
     if (width <= 0 || 64 < width)
         rb_raise(rb_eArgError, "width out of range: %lld", width);
 
-    return (width + i >= bits->nbits) ? Qnil :
+    return (width + i >= bits->size) ? Qnil :
         ULL2NUM(bit_vector_read(bits, (bit_idx_t)i, (uint8_t)width));
 }
 
@@ -82,14 +82,14 @@ VALUE rb_bit_vector_set(int argc, VALUE* argv, VALUE self) {
 
     if (bits->width)
         /* Width is implied */
-        return (i * bits->width >= bits->nbits) ? Qnil :
+        return (i * bits->width >= bits->size) ? Qnil :
             ULL2NUM(bit_vector_write_record(bits, (bit_idx_t)i, NUM2ULL(argv[1])));
 
     width = NUM2LL(argv[1]);
     if (width <= 0 || 64 < width)
         rb_raise(rb_eArgError, "width out of range: %lld", width);
 
-    return (width + i >= bits->nbits) ? Qnil :
+    return (width + i >= bits->size) ? Qnil :
         ULL2NUM(bit_vector_write(bits, (bit_idx_t)i, (uint8_t)width, NUM2ULL(argv[2])));
 }
 

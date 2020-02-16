@@ -8,9 +8,12 @@
 /* A bit vector that supports fixed and variable width read/write */
 typedef struct bit_vector_t {
     uint64_t* data; /* sequence of bits */
-    uint32_t nbits; /* total number of bits */
+    uint32_t size; /* total number of bits */
     uint16_t width;
 } bit_vector_t;
+
+#define BIT_VECTOR_WIDTH_MIN 1
+#define BIT_VECTOR_WIDTH_MAX 64
 
 typedef uint32_t bit_idx_t;
 #define BIT_IDX_MIN 0
