@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
 
   s.files       = Dir[*%w(*.md)]
   s.files      += [__FILE__]
-  s.files      += Dir[*%w(ext/**/*.{c,h,rb})]
   s.files      += Dir[*%w(lib/**/*.rb)]
-  s.extensions += Dir[*%w(ext/c/**/extconf.rb)]
+  s.files      += Dir[*%w(native/**/*.{c,h,rb})]
+  s.extensions += Dir[*%w(native/**/extconf.rb)]
 
   s.add_runtime_dependency "cantor",         "~> 1.2"
   s.add_runtime_dependency "term-ansicolor", "~> 1.3"

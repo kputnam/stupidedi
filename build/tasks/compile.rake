@@ -5,7 +5,7 @@ spec = Gem::Specification.load("build/gemspec/stupidedi-native.gemspec")
 
 # rake compile
 Rake::ExtensionTask.new("native", spec) do |t|
-  t.ext_dir = "ext/c/"                # Where source is located
+  t.ext_dir = "native"                # Where source is located
   t.lib_dir = "lib/stupidedi/native"  # Where binaries will go
   t.tmp_dir = "build/generated/native"
 
@@ -16,7 +16,7 @@ Rake::ExtensionTask.new("native", spec) do |t|
 
     t.cross_compiling do |s|
       # Modify gemspec for Windows binary
-      s.files     -= Dir[*%w(ext/c/**/*)]
+      s.files     -= Dir[*%w(native/**/*)]
       s.files     += Dir[*%w(lib/**.dll)]
       s.extensions = []
     end

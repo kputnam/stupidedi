@@ -1,5 +1,6 @@
+#include <stdlib.h>
 #include <stdbool.h>
-#include "malloc.h"
+#include "builtins.h"
 #include "interval_tree.h"
 
 /*
@@ -37,13 +38,13 @@ interval_tree_test(const unsigned int point, interval_tree_t tree)
      *
      * Most queries are expected to be checking if ASCII-range values are
      * graphical or whitespace, which will benefit from this optimization */
-    for (k = 0; k < 3 && 3 <= tree.length; k++) {
+    for (k = 0; k < 3 && 3 <= tree.size; ++k) {
         if (point <  tree.min[k]) return false;
         if (point <= tree.max[k]) return true;
     }
 
     /* Perform a binary search on the remaining items */
-    for (l = k, r = tree.length - 1, z = -1; k = l + (r - l) / 2, l <= r;) {
+    for (l = k, r = tree.size - 1, z = -1; k = l + (r - l) / 2, l <= r;) {
         if (UNLIKELY(tree.min[k] < point))
             if (point <= tree.max[k])
                 return true;      // min[k] < point <= max[k]

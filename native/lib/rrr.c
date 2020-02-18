@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "rrr.h"
+#include "builtins.h"
 #include "bit_vector.h"
 
 /* This implementation is based on "Fast, Small, Simple Rank/Select on Bitmaps",
@@ -55,18 +57,19 @@
 static uint64_t **binomial = NULL;
 
 static void rrr_precompute_binomials(void);
-static inline uint8_t popcount(uint64_t);
-static inline uint8_t clz(uint64_t);
-static inline uint8_t ctz(uint64_t);
-static inline uint8_t nbits(uint64_t);
 static inline uint8_t offset_nbits(uint64_t, uint64_t);
 static inline uint64_t rrr_encode_block(uint64_t, uint64_t, uint64_t);
 static inline uint64_t rrr_decode_block(uint64_t, uint64_t, uint64_t);
 
+#define RRR_READ_CLASS(rrr, k) \
+    bit_vector_read_record((rrr)->classes, (k))
+
 #define RRR_READ_OFFSET(rrr, offset_at, width) \
     (rrr)->offsets->size == 0 ? 0 : bit_vector_read((rrr)->offsets, (offset_at), (width))
 
-rrr_builder_t* rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, bit_idx_t size, rrr_builder_t* builder, rrr_t* rrr) {
+/* TODO */
+rrr_builder_t*
+rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, uint32_t size, rrr_builder_t* builder, rrr_t* rrr) {
     assert(size > 0);
     assert(block_size >= RRR_BLOCK_SIZE_MIN);
     assert(block_size <= RRR_BLOCK_SIZE_MAX);
@@ -120,7 +123,9 @@ rrr_builder_t* rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, bit_i
     return builder;
 }
 
-void rrr_builder_append(rrr_builder_t* builder, uint8_t width, uint64_t value) {
+/* TODO */
+void
+rrr_builder_append(rrr_builder_t* builder, uint8_t width, uint64_t value) {
     assert(builder != NULL);
     assert(builder->rrr != NULL);
     assert(width <= RRR_BLOCK_SIZE_MAX);
@@ -150,7 +155,7 @@ void rrr_builder_append(rrr_builder_t* builder, uint8_t width, uint64_t value) {
 
         /* Write marker if we have enough data. We know there is no more
          * than one marker because block_size <= sblock_nbits */
-        int64_t marker_extra = rrr->block_size - builder->marker_need;
+        int16_t marker_extra = rrr->block_size - builder->marker_need;
 
         if (marker_extra >= 0) {
             /* We might need only first few bits from `block` */
@@ -160,7 +165,7 @@ void rrr_builder_append(rrr_builder_t* builder, uint8_t width, uint64_t value) {
 
             bit_vector_write_record(rrr->marked_ranks,   builder->marker_at, rrr->rank + popcount(prefix));
             bit_vector_write_record(rrr->marked_offsets, builder->marker_at, builder->offset_at);
-            builder->marker_at ++;
+            ++builder->marker_at;
 
             /* Next marker counts the bits not used in last marker */
             builder->marker_need = rrr->marker_size - marker_extra;
@@ -187,7 +192,24 @@ void rrr_builder_append(rrr_builder_t* builder, uint8_t width, uint64_t value) {
     builder->block_need -= width;
 }
 
-rrr_t* rrr_builder_finish(rrr_builder_t* builder) {
+/* TODO */
+uint32_t
+rrr_builder_written(rrr_builder_t* builder) {
+    assert(builder != NULL);
+    assert(builder->rrr != NULL);
+
+    rrr_t* rrr;
+    rrr = builder->rrr;
+
+    uint32_t uncommitted;
+    uncommitted = (uint32_t)rrr->block_size - builder->block_need;
+
+    return uncommitted + builder->written;
+}
+
+/* TODO */
+rrr_t*
+rrr_builder_finish(rrr_builder_t* builder) {
     assert(builder != NULL);
     assert(builder->rrr != NULL);
 
@@ -220,20 +242,45 @@ rrr_t* rrr_builder_finish(rrr_builder_t* builder) {
     return rrr;
 }
 
-void rrr_builder_free(rrr_builder_t* builder) {
+/* TODO */
+void
+rrr_builder_free(rrr_builder_t* builder) {
     if (builder != NULL) free(builder);
 }
 
+/* TODO */
+uint32_t
+rrr_builder_size(const rrr_builder_t* builder) {
+    return builder == NULL || builder->rrr == NULL ? 0 :
+        builder->rrr->size;
+}
+
+/* TODO */
+size_t
+rrr_builder_sizeof(const rrr_builder_t* builder) {
+    return builder == NULL ? 0 :
+        sizeof(rrr_builder_t) + rrr_sizeof(builder->rrr);
+
+}
+
+/* TODO */
+uint64_t
+rrr_builder_size_bits(const rrr_builder_t* builder) {
+    return builder == NULL ? 0 :
+        8 * sizeof(*builder) + rrr_size_bits(builder->rrr);
+}
+
+/* TODO */
 rrr_t*
 rrr_alloc(bit_vector_t* bits, uint8_t block_size, uint16_t marker_size, rrr_t* rrr) {
     rrr_builder_t builder;
     rrr_builder_alloc(block_size, marker_size, bits->size, &builder, rrr);
 
-    uint64_t nblocks, remainder;
+    uint32_t nblocks, remainder;
 
     /* This counts full blocks, but may exclude the last block if it's partial */
     nblocks = bits->size / RRR_BLOCK_SIZE_MAX;
-    for (uint64_t k = 0; k < nblocks; k ++)
+    for (bit_idx_t k = 0; k < nblocks; ++k)
         rrr_builder_append(&builder, RRR_BLOCK_SIZE_MAX,
                 bit_vector_read(bits, k * RRR_BLOCK_SIZE_MAX, RRR_BLOCK_SIZE_MAX));
 
@@ -244,117 +291,12 @@ rrr_alloc(bit_vector_t* bits, uint8_t block_size, uint16_t marker_size, rrr_t* r
                 bit_vector_read(bits, nblocks * RRR_BLOCK_SIZE_MAX, remainder));
 
     return rrr_builder_finish(&builder);
-
-    /*
-    assert(bits->size > 0);
-    assert(block_size >= RRR_BLOCK_SIZE_MIN);
-    assert(block_size <= RRR_BLOCK_SIZE_MAX);
-    assert(block_size <= marker_size);
-    assert(marker_size >= RRR_MARKER_SIZE_MIN);
-    assert(marker_size <= RRR_MARKER_SIZE_MAX);
-
-    // One-time initialization of global variables //
-    rrr_precompute_binomials();
-
-    if (rrr == NULL)
-        rrr = malloc(sizeof(rrr_t));
-    assert(rrr != NULL);
-
-    rrr->size         = bits->size;
-    rrr->rank         = 0;
-    rrr->nblocks      = (bits->size + block_size - 1) / block_size;
-    rrr->nmarkers     = (bits->size + block_size - 1) / marker_size;
-    rrr->block_size   = block_size;
-    rrr->marker_size  = marker_size;
-
-    uint8_t  offset_nbits_max;
-    uint16_t orig_width;
-    uint64_t marker_need;
-
-    // These are where the _next_ write will be //
-    bit_idx_t class_at, offset_at, marker_at;
-
-    // The most bits needed to store any offset. While offsets are stored
-     * in variable number of bits, this is used to estimate how much space
-     * to allocate for the whole vector of offsets. We will give back any
-     * unused bits. //
-    offset_nbits_max = offset_nbits(block_size, block_size / 2);
-
-    // These two vectors are enough to represent the original bit vector. The
-     * additional vectors allocated below are the o(n) atop nH₀, and are used
-     * for making rank and select operations fast. //
-    rrr->classes = bit_vector_alloc_record(rrr->nblocks, nbits(block_size + 1), NULL);
-    rrr->offsets = bit_vector_alloc((bit_idx_t)(rrr->nblocks * offset_nbits_max), NULL);
-
-    class_at  = 0;
-    offset_at = 0;
-
-    if (rrr->nmarkers > 0) {
-        rrr->marked_ranks   = bit_vector_alloc_record(rrr->nmarkers, nbits(bits->size + 1), NULL);
-        rrr->marked_offsets = bit_vector_alloc_record(rrr->nmarkers, nbits(rrr->offsets->size), NULL);
-    } else {
-        rrr->marked_ranks   = NULL;
-        rrr->marked_offsets = NULL;
-    }
-
-    marker_at   = 0;
-    marker_need = marker_size;
-
-    // Read and encode input one block at a time //
-    orig_width  = bits->width;
-    bits->width = block_size;
-
-    for (bit_idx_t k = 0; k < rrr->nblocks; k ++) {
-        uint64_t block, class, offset;
-        block  = bit_vector_read_record(bits, k);
-        class  = popcount(block);
-        offset = rrr_encode_block(block_size, class, block);
-
-        // Write marker if we have enough data. We know there is no more
-         * than one marker because block_size <= sblock_nbits //
-        int64_t marker_extra = block_size - marker_need;
-
-
-        if (marker_extra >= 0) {
-            // We might need only first few bits from `block` //
-            uint64_t want, prefix;
-            want   = block_size - marker_extra;
-            prefix = (want >= 64) ? block : block & ((1ull << want) - 1);
-
-            bit_vector_write_record(rrr->marked_offsets, marker_at, offset_at);
-            bit_vector_write_record(rrr->marked_ranks, marker_at, rrr->rank + popcount(prefix));
-            marker_at ++;
-
-            // Next marker counts the bits not used in last marker //
-            marker_need = marker_size - marker_extra;
-        } else {
-            marker_need -= block_size;
-        }
-
-        class_at  = bit_vector_write_record(rrr->classes, class_at, class);
-        offset_at = bit_vector_write(rrr->offsets, offset_at, offset_nbits(block_size, class), offset);
-
-        rrr->rank += class;
-    }
-
-    if (marker_need < marker_size && marker_at < rrr->nmarkers) {
-        bit_vector_write_record(rrr->marked_offsets, marker_at, offset_at);
-        bit_vector_write_record(rrr->marked_ranks, marker_at, rrr->rank);
-    }
-
-    bits->width = orig_width;
-
-    // Truncate unused space //
-    bit_vector_resize(rrr->offsets, offset_at);
-
-    return rrr;
-    */
 }
 
+/* TODO */
 void
 rrr_free(rrr_t* rrr) {
     if (rrr == NULL) return;
-
     if (rrr->classes) free(rrr->classes);
     if (rrr->offsets) free(rrr->offsets);
     if (rrr->marked_ranks) free(rrr->marked_ranks);
@@ -362,47 +304,96 @@ rrr_free(rrr_t* rrr) {
     free(rrr);
 }
 
-#define RRR_PRINT_RECORDS(bits, n) \
-    for (bit_idx_t k = 0; k < (n); k ++) { \
-        printf("%llu", bit_vector_read_record((bits), k)); \
-        if (k + 1 < n) \
-            printf(","); \
-    }
+/* TODO */
+char*
+rrr_to_string(const rrr_t* rrr) {
+    if (rrr == NULL)
+        return strdup("NULL");
 
-void
-rrr_print(const rrr_t* rrr) {
-    if (rrr == NULL) {
-        printf("NULL");
-        return;
-    }
+    char *s, *offsets, *classes, *marked_ranks, *marked_offsets, *decoded;
+    offsets         = bit_vector_to_string(rrr->offsets);
+    classes         = bit_vector_to_string_record(rrr->classes);
+    marked_ranks    = bit_vector_to_string_record(rrr->marked_ranks);
+    marked_offsets  = bit_vector_to_string_record(rrr->marked_offsets);
 
-    printf("<rrr size=%u rank=%u t=%u s=%u\n", rrr->size, rrr->rank, rrr->block_size, rrr->marker_size);
-    printf("  classes="); RRR_PRINT_RECORDS(rrr->classes, rrr->nblocks); printf("\n");
-    printf("  offsets="); bit_vector_print(rrr->offsets); printf("\n");
-    printf("  marked_ranks="); RRR_PRINT_RECORDS(rrr->marked_ranks, rrr->nmarkers); printf("\n");
-    printf("  marked_offsets="); RRR_PRINT_RECORDS(rrr->marked_offsets, rrr->nmarkers); printf("\n");
+    decoded = malloc(rrr->size + 1);
+    decoded[rrr->size] = '\0';
+
+    asprintf(&s, "size=%u rank=%u block_size=%u nblocks=%u marker_size=%u nmarkers=%u "
+            "offsets=%s classes=[%s] marked_ranks=[%s] marked_offsets=[%s]",
+            rrr->size,
+            rrr->rank,
+            rrr->block_size,
+            rrr->nblocks,
+            rrr->marker_size,
+            rrr->nmarkers,
+            offsets,
+            classes,
+            marked_ranks,
+            marked_offsets);
+
+    free(offsets);
+    free(classes);
+    free(marked_ranks);
+    free(marked_offsets);
+
+    return s;
 }
 
-bit_idx_t
+/* Decodes entire RRR vector. */
+bit_vector_t*
+rrr_to_bit_vector(const rrr_t* rrr) {
+    if (rrr == NULL)
+        return NULL;
+
+    bit_vector_t* bits;
+    bits = bit_vector_alloc_record(rrr->nblocks, rrr->block_size, NULL);
+
+    for (uint32_t offset_at=0, class_at=0; class_at < rrr->nblocks; ++class_at) {
+        uint64_t block, class, offset, width;
+        class  = RRR_READ_CLASS(rrr, class_at);
+        width  = offset_nbits(rrr->block_size, class);
+        offset = RRR_READ_OFFSET(rrr, offset_at, width);
+        block  = rrr_decode_block(rrr->block_size, class, offset);
+        offset_at += width;
+
+        bit_vector_write_record(bits, class_at, block);
+    }
+
+    bits->width = 0;
+
+    return bits;
+}
+
+/* Returns number of bits represented by this RRR vector */
+uint32_t
 rrr_size(const rrr_t* rrr) {
-    return rrr == NULL ? 0 : rrr->size;
+    return rrr == NULL ? 0 :
+        rrr->size;
 }
 
+/* Returns number of bytes occupied in memory by this RRR vector, not counting
+ * the pointer to the RRR vector itself */
 size_t
 rrr_sizeof(const rrr_t* rrr) {
-    return sizeof(rrr) + ((rrr_size_bits(rrr) + 7) >> 3);
+    return rrr == NULL ? 0 :
+        sizeof(*rrr) + ((rrr_size_bits(rrr) + 7) >> 3);
 }
 
+/* Returns number of bits occupied in memory by this RRR vector, not counting
+ * the pointer to the RRR vector itself */
 uint64_t
 rrr_size_bits(const rrr_t* rrr) {
-    return (rrr == NULL ? 0 : 8 * sizeof(*rrr)
-            + bit_vector_size_bits(rrr->classes)
-            + bit_vector_size_bits(rrr->offsets)
-            + bit_vector_size_bits(rrr->marked_ranks)
-            + bit_vector_size_bits(rrr->marked_offsets));
+    return rrr == NULL ? 0 :
+        8 * sizeof(*rrr)
+        + bit_vector_size_bits(rrr->classes)
+        + bit_vector_size_bits(rrr->offsets)
+        + bit_vector_size_bits(rrr->marked_ranks)
+        + bit_vector_size_bits(rrr->marked_offsets);
 }
 
-uint8_t /* access(B, i) = B[i] */
+/* access(B, i) = B[i] */
+uint8_t
 rrr_access(const rrr_t* rrr, bit_idx_t i) {
     assert(rrr != NULL);
     assert(i < rrr->size);
@@ -418,7 +409,7 @@ rrr_access(const rrr_t* rrr, bit_idx_t i) {
         offset_at = 0;
     } else {
         i_        = (marker_at + 1) * rrr->marker_size - 1;
-        class_at  = i_ / rrr->block_size;
+        class_at  = (bit_idx_t)i_ / rrr->block_size;
         offset_at = (bit_idx_t)bit_vector_read_record(rrr->marked_offsets, marker_at);
     }
 
@@ -426,13 +417,13 @@ rrr_access(const rrr_t* rrr, bit_idx_t i) {
     for ( i -= class_at * rrr->block_size
         ; i >= rrr->block_size
         ; i -= rrr->block_size ) {
-        class = bit_vector_read_record(rrr->classes, class_at);
+        class = RRR_READ_CLASS(rrr, class_at);
         width = offset_nbits(rrr->block_size, class);
         offset_at += width;
-        class_at  ++;
+        ++class_at;
     }
 
-    class  = bit_vector_read_record(rrr->classes, class_at);
+    class  = RRR_READ_CLASS(rrr, class_at);
     width  = offset_nbits(rrr->block_size, class);
     offset = RRR_READ_OFFSET(rrr, offset_at, width);
     block  = rrr_decode_block(rrr->block_size, class, offset);
@@ -440,12 +431,14 @@ rrr_access(const rrr_t* rrr, bit_idx_t i) {
     return (block & (1 << i)) >> i;
 }
 
-bit_idx_t /* rank0(B, i) = |{j ∈ [0, i) : B[j] = 0}| */
+/* rank0(B, i) = |{j ∈ [0, i) : B[j] = 0}| */
+bit_idx_t
 rrr_rank0(const rrr_t* rrr, bit_idx_t i) {
     return i - rrr_rank1(rrr, i);
 }
 
-bit_idx_t /* rank0(B, i) = |{j ∈ [0, i) : B[j] = 1}| */
+/* rank0(B, i) = |{j ∈ [0, i) : B[j] = 1}| */
+bit_idx_t
 rrr_rank1(const rrr_t* rrr, bit_idx_t i) {
     assert(rrr != NULL);
 
@@ -453,8 +446,8 @@ rrr_rank1(const rrr_t* rrr, bit_idx_t i) {
         return rrr->rank;
 
     int64_t twice, extra, n;
-    uint64_t i_, rank, class, width, offset, block, mask;
-    bit_idx_t marker_at, class_at, offset_at;
+    uint64_t i_, class, width, offset, block, mask;
+    uint32_t rank, marker_at, class_at, offset_at;
 
     /* Find nearest sample so we can skip forward in rrr->offsets */
     marker_at = i / rrr->marker_size - 1;
@@ -465,16 +458,16 @@ rrr_rank1(const rrr_t* rrr, bit_idx_t i) {
         i_        = 0;
         class_at  = 0;
     } else {
-        rank      = bit_vector_read_record(rrr->marked_ranks, marker_at);
+        rank      = (bit_idx_t)bit_vector_read_record(rrr->marked_ranks, marker_at);
         offset_at = (bit_idx_t)bit_vector_read_record(rrr->marked_offsets, marker_at);
 
         /* The last bit index counted within the marker */
         i_        = (marker_at + 1) * rrr->marker_size - 1;
-        class_at  = i_ / rrr->block_size;
+        class_at  = (bit_idx_t)i_ / rrr->block_size;
     }
 
     /* This first block needs special handling to mask out unwanted bits */
-    class  = bit_vector_read_record(rrr->classes, class_at);
+    class  = RRR_READ_CLASS(rrr, class_at);
     width  = offset_nbits(rrr->block_size, class);
     offset = RRR_READ_OFFSET(rrr, offset_at, width);
     block  = rrr_decode_block(rrr->block_size, class, offset);
@@ -500,7 +493,7 @@ rrr_rank1(const rrr_t* rrr, bit_idx_t i) {
     if (n <= 0)
         return rank;
 
-    class_at  ++;
+    ++class_at;
     offset_at += width;
 
     /* Process one block at a time */
@@ -509,11 +502,11 @@ rrr_rank1(const rrr_t* rrr, bit_idx_t i) {
         width = offset_nbits(rrr->block_size, class);
         rank += class;
         offset_at += width;
-        class_at  ++;
+        ++class_at;
     }
 
     /* There's one last block, we may need only part of it */
-    class  = bit_vector_read_record(rrr->classes, class_at);
+    class  = RRR_READ_CLASS(rrr, class_at);
     width  = offset_nbits(rrr->block_size, class);
     offset = RRR_READ_OFFSET(rrr, offset_at, width);
     block  = rrr_decode_block(rrr->block_size, class, offset);
@@ -524,6 +517,7 @@ rrr_rank1(const rrr_t* rrr, bit_idx_t i) {
     return (uint32_t) (rank + popcount(block & mask));
 }
 
+/* TODO */
 static bit_idx_t
 rrr_find_marker0(const rrr_t* rrr, bit_idx_t r) {
     assert(rrr != NULL);
@@ -537,8 +531,8 @@ rrr_find_marker0(const rrr_t* rrr, bit_idx_t r) {
     return 0ull;
 }
 
-/* select0(B, r) = max{j ∈ [0, n) | rank0(j) = r}.
- * NOTE: When there are fewer than r 0-bits, return value will be 0.
+/* select0(B, r) = max{j ∈ [0, n) | rank0(j) = r}. NOTE: When there are fewer
+ * than r 0-bits, return value will be 0.
  */
 bit_idx_t
 rrr_select0(const rrr_t* rrr, bit_idx_t r) {
@@ -576,8 +570,8 @@ rrr_find_marker1(const rrr_t* rrr, bit_idx_t r) {
     return k + 1;
 }
 
-/* select1(B, r) = max{j ∈ [0, n) | rank1(j) = r}.
- * NOTE: When there are fewer than r 1-bits, return value will be 0.
+/* select1(B, r) = max{j ∈ [0, n) | rank1(j) = r}. NOTE: When there are fewer
+ * than r 1-bits, return value will be 0.
  */
 bit_idx_t
 rrr_select1(const rrr_t* rrr, bit_idx_t r) {
@@ -601,8 +595,8 @@ rrr_select1(const rrr_t* rrr, bit_idx_t r) {
     }
 
     /* Scan past blocks one at a time */
-    for (; class_at < rrr->nblocks; class_at ++) {
-        class = bit_vector_read_record(rrr->classes, class_at);
+    for (; class_at < rrr->nblocks; ++class_at) {
+        class = RRR_READ_CLASS(rrr, class_at);
         width = offset_nbits(rrr->block_size, class);
 
         if (rank + class >= r)
@@ -619,7 +613,7 @@ rrr_select1(const rrr_t* rrr, bit_idx_t r) {
     assert(r - rank <= popcount(block));
 
     /* Need to locate the (r - rank)-th 1-bit of block */
-    for (i = -1; rank < r; rank ++) {
+    for (i = -1; rank < r; ++rank) {
         i      = ctz(block);
         block &= ~(1ull << i);
     }
@@ -627,42 +621,11 @@ rrr_select1(const rrr_t* rrr, bit_idx_t r) {
     return 1 + i + class_at * rrr->block_size;
 }
 
-/* Number of 1-bits */
+/* TODO */
 static inline uint8_t
-popcount(uint64_t x) {
-    return __builtin_popcountll(x);
-    /*
-    register uint64_t v = x - ((x & 0xaaaaaaaaaaaaaaaa) >> 1);
-    v = (v & 0x3333333333333333) + ((v >> 2) & 0x3333333333333333);
-    v = (v + (v >> 4)) & 0x0f0f0f0f0f0f0f0f;
-    return v * 0x0101010101010101 >> 56;
-    */
-}
+offset_nbits(uint64_t block_size, uint64_t class) { return nbits(binomial[block_size][class]); }
 
-/* Count leading zeros */
-static inline uint8_t
-clz(uint64_t x) {
-    return __builtin_clzll(x);
-}
-
-/* Count trailing zeros */
-static inline uint8_t
-ctz(uint64_t x) {
-    return __builtin_ctzll(x);
-    /* (x == 0) ? 64 : 63 - clz((x ^ -x)); */
-}
-
-/* Minimum number of bits needed to represent x */
-static inline uint8_t
-nbits(uint64_t x) {
-    return (x < 2) ? 0 : 64 - clz(x - 1);
-}
-
-static inline uint8_t
-offset_nbits(uint64_t block_size, uint64_t class) {
-    return nbits(binomial[block_size][class]);
-}
-
+/* TODO */
 static void
 rrr_precompute_binomials(void) {
     if (binomial == NULL) {
@@ -670,20 +633,21 @@ rrr_precompute_binomials(void) {
         assert(binomial != NULL);
 
         /* (n choose k) = binomial[n][k] */
-        for (uint8_t n = 0; n <= RRR_BLOCK_SIZE_MAX; n ++) {
+        for (uint8_t n = 0; n <= RRR_BLOCK_SIZE_MAX; ++n) {
             binomial[n] = malloc(sizeof(uint64_t) * (n + 1));
             assert(binomial[n] != NULL);
 
             binomial[n][0] = 1;
             binomial[n][n] = 1;
 
-            for (uint8_t k = 1; k < n; k ++)
+            for (uint8_t k = 1; k < n; ++k)
                 binomial[n][k] = binomial[n - 1][k - 1] + binomial[n - 1][k];
         }
     }
 }
 
-static inline uint64_t
+/* TODO */
+static uint64_t
 rrr_encode_block(uint64_t block_size, uint64_t class, uint64_t value) {
     assert(block_size > 0);
     assert(binomial != NULL);
@@ -730,7 +694,8 @@ rrr_encode_block(uint64_t block_size, uint64_t class, uint64_t value) {
     return offset;
 }
 
-static inline uint64_t
+/* TODO */
+static uint64_t
 rrr_decode_block(uint64_t block_size, uint64_t class, uint64_t offset) {
     assert(block_size > 0);
     assert(binomial != NULL);

@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "malloc.h"
 #include "wavelet_tree.h"
 
 /* Peter_Piper_picked_a_peck_of_pickled_peppers$
@@ -116,26 +115,32 @@
  * Computer Science and Information Systems. 9. 10.2298/CSIS110606004M.
  */
 
+/* TODO */
 wavelet_tree_t* wavelet_tree_alloc(bit_vector_t* v, wavelet_tree_t* tree) {
     return tree;
 }
 
+/* TODO */
 void wavelet_tree_free(wavelet_tree_t* tree) {
     return;
 }
 
+/* TODO */
 void wavelet_tree_print(const wavelet_tree_t* tree) {
     return;
 }
 
+/* TODO */
 wavelet_tree_idx_t wavelet_tree_size(const wavelet_tree_t* tree) {
     return 0UL;
 }
 
+/* TODO */
 size_t wavelet_tree_sizeof(const wavelet_tree_t* tree) {
     return sizeof(tree) + ((wavelet_tree_size_bits(tree) + 7) >> 3);
 }
 
+/* TODO */
 uint64_t wavelet_tree_size_bits(const wavelet_tree_t* tree) {
     return 0ULL;
 }

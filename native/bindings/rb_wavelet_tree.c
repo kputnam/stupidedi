@@ -1,4 +1,5 @@
 #include <ruby.h>
+#include "bindings/rb_types.h"
 #include "lib/wavelet_tree.h"
 
 const rb_data_type_t rb_wavelet_tree_t = {
@@ -12,10 +13,12 @@ const rb_data_type_t rb_wavelet_tree_t = {
     },
 };
 
+/* TODO */
 VALUE rb_wavelet_tree_alloc(VALUE class) {
     return TypedData_Wrap_Struct(class, &rb_wavelet_tree_t, ALLOC(wavelet_tree_t));
 }
 
+/* TODO */
 VALUE rb_wavelet_tree_initialize(VALUE self, VALUE _bits) {
     wavelet_tree_t* tree;
     TypedData_Get_Struct(self, wavelet_tree_t, &rb_wavelet_tree_t, tree);
@@ -28,6 +31,7 @@ VALUE rb_wavelet_tree_initialize(VALUE self, VALUE _bits) {
     return self;
 }
 
+/* TODO */
 VALUE rb_wavelet_tree_access(VALUE self, VALUE _i) {
     wavelet_tree_t* tree;
     TypedData_Get_Struct(self, wavelet_tree_t, &rb_wavelet_tree_t, tree);
@@ -44,6 +48,7 @@ VALUE rb_wavelet_tree_access(VALUE self, VALUE _i) {
     return ULL2NUM(wavelet_tree_access(tree, (wavelet_tree_idx_t)i));
 }
 
+/* TODO */
 VALUE rb_wavelet_tree_rank(VALUE self, VALUE _c, VALUE _i) {
     wavelet_tree_t* tree;
     TypedData_Get_Struct(self, wavelet_tree_t, &rb_wavelet_tree_t, tree);
@@ -64,6 +69,7 @@ VALUE rb_wavelet_tree_rank(VALUE self, VALUE _c, VALUE _i) {
     return ULONG2NUM(wavelet_tree_rank(tree, (wavelet_tree_sym_t)c, (wavelet_tree_idx_t)i));
 }
 
+/* TODO */
 VALUE rb_wavelet_tree_select(VALUE self, VALUE _c, VALUE _r) {
     wavelet_tree_t* tree;
     TypedData_Get_Struct(self, wavelet_tree_t, &rb_wavelet_tree_t, tree);
@@ -84,14 +90,24 @@ VALUE rb_wavelet_tree_select(VALUE self, VALUE _c, VALUE _r) {
     return ULONG2NUM(wavelet_tree_select(tree, (wavelet_tree_sym_t)c, (wavelet_tree_idx_t)r));
 }
 
+/* TODO */
 VALUE rb_wavelet_tree_size(VALUE self, VALUE _c, VALUE _r) {
     wavelet_tree_t* tree;
     TypedData_Get_Struct(self, wavelet_tree_t, &rb_wavelet_tree_t, tree);
     return ULONG2NUM(wavelet_tree_size(tree));
 }
 
+/* TODO */
 VALUE rb_wavelet_tree_memsize_bits(VALUE self, VALUE _c, VALUE _r) {
     wavelet_tree_t* tree;
     TypedData_Get_Struct(self, wavelet_tree_t, &rb_wavelet_tree_t, tree);
     return ULONG2NUM(wavelet_tree_size_bits(tree));
+}
+
+/* TODO */
+VALUE rb_wavelet_tree_inspect(VALUE self) {
+    VALUE str = rb_str_new2("#<");
+    rb_str_append(str, rb_class_path(rb_obj_class(self)));
+    rb_str_cat2(str, ":...>");
+    return str;
 }

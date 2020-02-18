@@ -1,8 +1,8 @@
+#include <assert.h>
+#include <string.h>
 #include <ruby.h>
+#include "bindings/rb_types.h"
 #include "lib/bit_vector.h"
-
-typedef void (*dfree_t)(void*);
-typedef size_t (*dsize_t)(const void*);
 
 const rb_data_type_t rb_bit_vector_t = {
     .data = NULL,
@@ -15,13 +15,17 @@ const rb_data_type_t rb_bit_vector_t = {
     },
 };
 
-VALUE rb_bit_vector_alloc(VALUE class) {
-    return TypedData_Wrap_Struct(class, &rb_bit_vector_t, ALLOC(bit_vector_t));
+/* TODO */
+VALUE rb_bit_vector_alloc(VALUE _class) {
+    return TypedData_Wrap_Struct(_class, &rb_bit_vector_t, ALLOC(bit_vector_t));
 }
 
+/* TODO */
 VALUE rb_bit_vector_initialize(int argc, VALUE* argv, VALUE self) {
     bit_vector_t* bits;
     TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
 
     rb_check_arity(argc, 1, 2);
     long long length, width;
@@ -43,9 +47,12 @@ VALUE rb_bit_vector_initialize(int argc, VALUE* argv, VALUE self) {
     return self;
 }
 
+/* TODO */
 VALUE rb_bit_vector_get(int argc, VALUE* argv, VALUE self) {
     bit_vector_t* bits;
     TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
 
     /* User needs to provide a width if it's not part of the bit_vector */
     rb_check_arity(argc, bits->width?1:2, bits->width?1:2);
@@ -68,10 +75,13 @@ VALUE rb_bit_vector_get(int argc, VALUE* argv, VALUE self) {
         ULL2NUM(bit_vector_read(bits, (bit_idx_t)i, (uint8_t)width));
 }
 
+/* TODO */
 VALUE rb_bit_vector_set(int argc, VALUE* argv, VALUE self) {
     long long i, width;
     bit_vector_t* bits;
     TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
 
     /* User needs to provide a width if it's not part of the bit_vector */
     rb_check_arity(argc, bits->width?2:3, bits->width?2:3);
@@ -93,20 +103,52 @@ VALUE rb_bit_vector_set(int argc, VALUE* argv, VALUE self) {
         ULL2NUM(bit_vector_write(bits, (bit_idx_t)i, (uint8_t)width, NUM2ULL(argv[2])));
 }
 
+/* TODO */
 VALUE rb_bit_vector_width(VALUE self) {
     bit_vector_t* bits;
     TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
     return bits->width ? ULONG2NUM(bits->width) : Qnil;
 }
 
+/* TODO */
 VALUE rb_bit_vector_size(VALUE self) {
     bit_vector_t* bits;
     TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
     return ULONG2NUM(bit_vector_size(bits));
 }
 
+/* TODO */
 VALUE rb_bit_vector_memsize_bits(VALUE self) {
     bit_vector_t* bits;
     TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
     return ULONG2NUM(bit_vector_size_bits(bits));
+}
+
+/* TODO */
+VALUE rb_bit_vector_inspect(VALUE self) {
+    bit_vector_t* bits;
+    TypedData_Get_Struct(self, bit_vector_t, &rb_bit_vector_t, bits);
+
+    assert(bits != NULL);
+
+    char* tmp;
+    tmp = bits->width == 0 ?
+        bit_vector_to_string(bits) : bit_vector_to_string_record(bits);
+
+    VALUE _str;
+    _str = rb_sprintf(bits->width == 0 ?
+                "#<%"PRIsVALUE":%p %s>" :
+                "#<%"PRIsVALUE":%p [%s]>",
+            rb_class_path(rb_obj_class(self)),
+            (void*)self,
+            tmp);
+
+    free(tmp);
+    return _str;
 }

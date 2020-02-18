@@ -33,21 +33,27 @@ typedef struct rrr_t {
 
 typedef struct rrr_builder_t {
     rrr_t* rrr;
-    uint8_t  offset_nbits_max;
-    uint32_t written;
-    uint64_t block, block_need, marker_need;
-    bit_idx_t class_at, offset_at, marker_at;
+    uint8_t  offset_nbits_max, block_need;
+    uint16_t marker_need;
+    uint32_t written, class_at, offset_at, marker_at;
+    uint64_t block;
 } rrr_builder_t;
 
-rrr_builder_t* rrr_builder_alloc(uint8_t, uint16_t, bit_idx_t, rrr_builder_t*, rrr_t*);
+rrr_builder_t* rrr_builder_alloc(uint8_t, uint16_t, uint32_t, rrr_builder_t*, rrr_t*);
 void rrr_builder_append(rrr_builder_t*, uint8_t, uint64_t);
+uint32_t rrr_builder_written(rrr_builder_t*);
 rrr_t* rrr_builder_finish(rrr_builder_t*);
+void rrr_builder_free(rrr_builder_t*);
+uint32_t rrr_builder_size(const rrr_builder_t*);
+size_t rrr_builder_sizeof(const rrr_builder_t*);
+uint64_t rrr_builder_size_bits(const rrr_builder_t*);
 
 rrr_t* rrr_alloc(bit_vector_t*, uint8_t, uint16_t, rrr_t*);
 void rrr_free(rrr_t*);
-void rrr_print(const rrr_t*);
+char* rrr_to_string(const rrr_t*);
+bit_vector_t* rrr_to_bit_vector(const rrr_t*);
 
-bit_idx_t rrr_size(const rrr_t*);
+uint32_t rrr_size(const rrr_t*);
 size_t rrr_sizeof(const rrr_t*);
 uint64_t rrr_size_bits(const rrr_t*);
 

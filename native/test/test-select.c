@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
         bit_vector_write_record(&bits, k, value);
 
     rrr_alloc(&bits, 5, 8, &rrr);
-    for (uint32_t k = 0; k < bits.size + 4; k ++) {
+    for (uint32_t k = 0; k < bits.size + 4; ++k) {
         if (k < bits.size)
             printf("%u: %llu rank(%u)=%u select(%u)=%u\n",
                     k, bit_vector_read(&bits, k, 1),

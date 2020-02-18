@@ -20,7 +20,7 @@ typedef uint32_t bit_idx_t;
 #define BIT_IDX_MAX UINT32_MAX
 
 void bit_vector_free(bit_vector_t*);
-void bit_vector_print(const bit_vector_t*);
+char* bit_vector_to_string(const bit_vector_t*);
 
 bit_idx_t bit_vector_size(const bit_vector_t*);
 size_t bit_vector_sizeof(const bit_vector_t*);
@@ -37,6 +37,7 @@ bit_idx_t bit_vector_write(const bit_vector_t*, bit_idx_t, uint8_t, uint64_t);
 
 /* These operations are for operating on fixed-width records */
 bit_vector_t* bit_vector_alloc_record(bit_idx_t, uint16_t, bit_vector_t*);
+char* bit_vector_to_string_record(const bit_vector_t*);
 void bit_vector_resize_record(bit_vector_t*, bit_idx_t);
 uint64_t bit_vector_read_record(const bit_vector_t*, bit_idx_t);
 uint32_t bit_vector_write_record(const bit_vector_t*, bit_idx_t, uint64_t);

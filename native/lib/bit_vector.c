@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "bit_vector.h"
 
 static const uint64_t WORD_SIZE    = 64;
@@ -15,6 +17,7 @@ static inline uint64_t div_nbits(uint64_t x) { return x >> LG_WORD_SIZE; }
 /* This is ceil(x / 64.0) */
 static inline uint64_t cdiv_nbits(uint64_t x) { return div_nbits(x + WORD_SIZE - 1); }
 
+/* TODO */
 void
 bit_vector_free(bit_vector_t* bits) {
     if (bits == NULL) return;
@@ -22,35 +25,7 @@ bit_vector_free(bit_vector_t* bits) {
     free(bits);
 }
 
-void
-bit_vector_print(const bit_vector_t* bits) {
-    if (bits == NULL) {
-        printf("NULL");
-        return;
-    }
-
-    if (bits->width > 0) {
-        for (uint32_t k = 0; k < bits->size; k ++) {
-            if (k > 0 && k % bits->width == 0)
-                printf(",");
-
-            uint64_t block, index;
-            block = div_nbits(k);
-            index = mod_nbits(k);
-
-            printf("%u", (bits->data[block] >> index) & 1 ? 1 : 0);
-        }
-    } else {
-        for (uint32_t k = 0; k < bits->size; k ++) {
-            uint64_t block, index;
-            block = div_nbits(k);
-            index = mod_nbits(k);
-
-            printf("%u", (bits->data[block] >> index) & 1 ? 1 : 0);
-        }
-    }
-}
-
+/* TODO */
 bit_idx_t
 bit_vector_size(const bit_vector_t* bits) {
     if (bits == NULL)
@@ -59,11 +34,13 @@ bit_vector_size(const bit_vector_t* bits) {
     return bits->width ? (bits->size + bits->width - 1) / bits->width : bits->size;
 }
 
+/* TODO */
 size_t
 bit_vector_sizeof(const bit_vector_t* bits) {
     return sizeof(bits) + ((bit_vector_size_bits(bits) + 7) >> 3);
 }
 
+/* TODO */
 uint64_t
 bit_vector_size_bits(const bit_vector_t* bits) {
     return bits == NULL ? 0 : 8 * sizeof(*bits) + bits->size;
@@ -72,6 +49,7 @@ bit_vector_size_bits(const bit_vector_t* bits) {
 /* Variable-width operations
  *****************************************************************************/
 
+/* TODO */
 bit_vector_t*
 bit_vector_alloc(bit_idx_t size, bit_vector_t* bits) {
     if (bits == NULL)
@@ -86,20 +64,65 @@ bit_vector_alloc(bit_idx_t size, bit_vector_t* bits) {
     bits->data = malloc(sizeof(uint64_t) * cdiv_nbits(size));
     assert(bits->data != NULL);
 
-    for (uint64_t k = 0; k < cdiv_nbits(size); k ++)
+    for (uint64_t k = 0; k < cdiv_nbits(size); ++k)
         bits->data[k] = 0ull;
 
     return bits;
 }
 
+/* TODO */
+char*
+bit_vector_to_string(const bit_vector_t* bits) {
+    if (bits == NULL)
+        return strdup("NULL");
+
+    char* str;
+
+    if (bits->width > 0) {
+        int n, nrecords;
+        n        = -1;
+        nrecords = (bits->size + bits->width - 1) / bits->width;
+
+        str = malloc(bits->size + nrecords);
+        str[bits->size + nrecords] = '\0';
+
+        for (uint32_t k = 0; k < bits->size; ++k) {
+            if (k > 0 && k % bits->width == 0)
+                str[++n] = ',';
+
+            uint64_t block, index;
+            block = div_nbits(k);
+            index = mod_nbits(k);
+
+            str[++n] = (bits->data[block] >> index) & 1 ? '1' : '0';
+        }
+    } else {
+        str = malloc(bits->size + 1);
+        str[bits->size] = '\0';
+
+        for (uint32_t k = 0; k < bits->size; ++k) {
+            uint64_t block, index;
+            block = div_nbits(k);
+            index = mod_nbits(k);
+
+            str[k] = (bits->data[block] >> index) & 1 ? '1' : '0';
+        }
+    }
+
+    return str;
+}
+
+/* TODO */
 void
 bit_vector_resize(bit_vector_t* bits, bit_idx_t size) {
     assert(bits != NULL);
     bits->data = realloc(bits->data, sizeof(uint64_t) * cdiv_nbits(size));
+
     assert(bits->data != NULL);
     bits->size = size;
 }
 
+/* TODO */
 void
 bit_vector_set(const bit_vector_t* bits, bit_idx_t i) {
     assert(bits != NULL);
@@ -111,6 +134,7 @@ bit_vector_set(const bit_vector_t* bits, bit_idx_t i) {
     bits->data[block] |= (1ull << index);
 }
 
+/* TODO */
 bool
 bit_vector_test(const bit_vector_t* bits, bit_idx_t i) {
     assert(bits != NULL);
@@ -122,6 +146,7 @@ bit_vector_test(const bit_vector_t* bits, bit_idx_t i) {
     return (bits->data[block] >> index) & 1;
 }
 
+/* TODO */
 void
 bit_vector_clear(const bit_vector_t* bits, bit_idx_t i) {
     assert(bits != NULL);
@@ -133,6 +158,7 @@ bit_vector_clear(const bit_vector_t* bits, bit_idx_t i) {
     bits->data[block] &= ~(1ull << index);
 }
 
+/* TODO */
 uint64_t
 bit_vector_read(const bit_vector_t* bits, bit_idx_t i, uint8_t width) {
     if (width == 0)
@@ -169,6 +195,7 @@ bit_vector_read(const bit_vector_t* bits, bit_idx_t i, uint8_t width) {
     return value;
 }
 
+/* TODO */
 bit_idx_t
 bit_vector_write(const bit_vector_t* bits, bit_idx_t i, uint8_t width, uint64_t value) {
     assert(bits != NULL);
@@ -204,6 +231,7 @@ bit_vector_write(const bit_vector_t* bits, bit_idx_t i, uint8_t width, uint64_t 
 /* Fixed-width record operations
  *****************************************************************************/
 
+/* TODO */
 bit_vector_t*
 bit_vector_alloc_record(bit_idx_t count, uint16_t width, bit_vector_t* bits) {
     assert(count > 0);
@@ -216,6 +244,43 @@ bit_vector_alloc_record(bit_idx_t count, uint16_t width, bit_vector_t* bits) {
     return bits;
 }
 
+/* TODO */
+char*
+bit_vector_to_string_record(const bit_vector_t* bits) {
+    if (bits == NULL)
+        return strdup("NULL");
+
+    assert(bits->width > 0);
+
+    int n;
+    n = 0;
+
+    uint32_t count, width, size;
+    count = (bits->size + bits->width - 1) / bits->width;
+
+    /* Maximum number of decimal digits per record */
+    width = ceil(log10(1ull << bits->width));
+
+    /* Include commas and \0 terminator */
+    size  = count * width + count;
+
+    char *str;
+    str = malloc(size);
+
+    for (uint32_t k = 0; k < count; ++k) {
+        if (k > 0)
+            str[n++] = ',';
+
+        n += snprintf(str+n, size-n, "%llu", bit_vector_read_record(bits, k));
+    }
+
+    str    = realloc(str, n + 1);
+    str[n] = '\0';
+
+    return str;
+}
+
+/* TODO */
 void
 bit_vector_resize_record(bit_vector_t* bits, bit_idx_t size) {
     assert(bits != NULL);
@@ -224,6 +289,7 @@ bit_vector_resize_record(bit_vector_t* bits, bit_idx_t size) {
     bit_vector_resize(bits, bits->width * size);
 }
 
+/* TODO */
 uint64_t
 bit_vector_read_record(const bit_vector_t* bits, bit_idx_t i) {
     assert(bits != NULL);
@@ -231,6 +297,7 @@ bit_vector_read_record(const bit_vector_t* bits, bit_idx_t i) {
     return bit_vector_read(bits, i * bits->width, bits->width);
 }
 
+/* TODO */
 uint32_t 
 bit_vector_write_record(const bit_vector_t* bits, bit_idx_t i, uint64_t value) {
     assert(bits != NULL);

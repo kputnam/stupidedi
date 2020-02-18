@@ -7,6 +7,7 @@ case "$1" in
     s) X=test-select ;;
     r) X=test-rank   ;;
     b) X=test-builder;;
+    p) X=test-print  ;;
     *) echo "what."; exit 1 ;;
 esac
 

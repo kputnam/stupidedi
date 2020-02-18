@@ -14,8 +14,8 @@ Gem::Specification.new do |s|
     s.files      += Dir[*%w(*.md lib/**/*.dll)]
   else
     s.platform    = Gem::Platform::RUBY
-    s.files      += Dir[*%w(*.md ext/**/*.{c,h,rb})]
-    s.extensions += Dir[*%w(ext/c/**/extconf.rb)]
+    s.files      += Dir[*%w(*.md native/**/*.{c,h,rb})]
+    s.extensions += Dir[*%w(native/**/extconf.rb)]
   end
 
   s.description = "Ruby API for parsing and generating ASC X12 EDI transactions"

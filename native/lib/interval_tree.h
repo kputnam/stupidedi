@@ -1,6 +1,8 @@
 #ifndef STUPIDEDI_INTERVAL_TREE_
 #define STUPIDEDI_INTERVAL_TREE_
 
+#include <stdbool.h>
+
 typedef struct interval_tree_t {
     unsigned int size;
     unsigned int* min;
