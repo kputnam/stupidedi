@@ -5,7 +5,7 @@ GEM
     diff-lcs (1.3)
     docile (1.3.1)
     json (2.1.0)
-    rake (12.3.2)
+    rake (13.0.1)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -38,7 +38,7 @@ PLATFORMS
 
 DEPENDENCIES
   cantor (~> 1.2.1)
-  rake
+  rake (>= 12.3.3)
   rspec (= 3.8.0)
   rspec-collection_matchers
   simplecov
@@ -47,4 +47,4 @@ DEPENDENCIES
   yard (~> 0.9.20)
 
 BUNDLED WITH
-   1.17.2
+   1.17.3
