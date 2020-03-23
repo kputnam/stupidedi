@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
-#include "builtins.h"
-#include "interval_tree.h"
+#include "stupidedi/include/builtins.h"
+#include "stupidedi/include/interval.h"
 
 /*
  * This performs a binary search on sorted disjoint intervals (sorted by each
@@ -28,9 +28,9 @@
  * Something to revisit: http://repnop.org/pd/slides/bsearch.pdf
  */
 bool
-interval_tree_test(const unsigned int point, interval_tree_t tree)
+stupidedi_interval_list_test(const uint32_t point, stupidedi_interval_list_t* tree)
 {
-    int k, l, r, z;
+    int32_t k, l, r, z;
 
     /* This hack speeds up searches that fall in the range covered by the first
      * few intervals. We first try a short linear search, but if the answer
@@ -38,28 +38,30 @@ interval_tree_test(const unsigned int point, interval_tree_t tree)
      *
      * Most queries are expected to be checking if ASCII-range values are
      * graphical or whitespace, which will benefit from this optimization */
-    for (k = 0; k < 3 && 3 <= tree.size; ++k) {
-        if (point <  tree.min[k]) return false;
-        if (point <= tree.max[k]) return true;
+    for (k = 0; k < 3 && 3 <= tree->size; ++k)
+    {
+        if (point <  tree->min[k]) return false;
+        if (point <= tree->max[k]) return true;
     }
 
     /* Perform a binary search on the remaining items */
-    for (l = k, r = tree.size - 1, z = -1; k = l + (r - l) / 2, l <= r;) {
-        if (UNLIKELY(tree.min[k] < point))
-            if (point <= tree.max[k])
+    for (l = k, r = tree->size - 1, z = -1; k = l + (r - l) / 2, l <= r;)
+    {
+        if (UNLIKELY(tree->min[k] < point))
+            if (point <= tree->max[k])
                 return true;      // min[k] < point <= max[k]
             else
                 l = (z = k) + 1;  // descend right
-        else if (point < tree.min[k])
+        else if (point < tree->min[k])
             r = k - 1;            // descend left
         else
             break;                // min[k] == point <= max[k]
     }
 
-    if (point < tree.min[k])
+    if (point < tree->min[k])
         k = z;
 
-    if (0 <= k && point <= tree.max[k])
+    if (0 <= k && point <= tree->max[k])
         return true;
 
     return false;

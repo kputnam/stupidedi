@@ -2,14 +2,14 @@ require "mkmf"
 
 $warnflags.gsub!(/-Wdeclaration-after-statement/, "")
 
-srcdir    = File.dirname(__FILE__)
+srcdir    = File.join(File.dirname(__FILE__), "stupidedi")
 $srcs     = Dir["#{srcdir}/*.c",
                 "#{srcdir}/lib/**/*.c",
                 "#{srcdir}/bindings/**/*.c"]
 
 $CFLAGS   << " -std=c99 -Wpedantic -Werror=implicit-function-declaration"
-$VPATH    << " ${srcdir}/lib ${srcdir}/bindings"
-$INCFLAGS << " -I${srcdir}/lib -I${srcdir}/bindings"
+$VPATH    << ":#{srcdir}:#{srcdir}/lib:#{srcdir}/bindings"
+$INCFLAGS << " -I."
 
 extension_name = "stupidedi/native/native"
 dir_config      extension_name

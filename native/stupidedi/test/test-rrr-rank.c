@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
-#include "rrr.h"
-#include "bit_vector.h"
+#include "stupidedi/include/rrr.h"
+#include "stupidedi/include/bitmap.h"
 
-int main(int argc, char **argv) {
-    bit_vector_t bits;
-    rrr_t rrr;
+int main(int argc, char **argv)
+{
+    stupidedi_bitmap_t bits;
+    stupidedi_rrr_t rrr;
 
     uint8_t  width = 8;
     uint16_t size  = 8;
-    uint64_t value = 0xaaaaaaaaaaaaaaaa & ((1ULL << width) - 1);
+
+    uint64_t value = 0xaaaaaaaaaaaaaaaa;
+    value          = -1;
+    value         &= (1ULL << width) - 1;
 
     /*
      *           4         6         8        12        13        16
@@ -25,21 +29,26 @@ int main(int argc, char **argv) {
      *          4        5        8       10       12       15       16
      */
 
-    bit_vector_alloc_record(size, width, &bits);
-    for (int k = 0; k < size; k += 2)
-        bit_vector_write_record(&bits, k, 0xaa);
+    stupidedi_bitmap_alloc_record(size, width, &bits);
+    for (int k = 0; k < size; k += 1)
+        stupidedi_bitmap_write_record(&bits, k, value);
 
-    rrr_alloc(&bits, 5, 8, &rrr);
+    stupidedi_rrr_alloc(&bits, 13, 88, &rrr);
     for (uint32_t k = 0; k <= bits.size + 3; k += 1) {
         if (k < bits.size)
-            printf("%u: %llu rank(%u)=%u\n",
-                    k, bit_vector_read(&bits, k, 1),
-                    k, rrr_rank1(&rrr, k));
+            printf("%u: %llu rank₁(%u)=%u rank₀(%u)=%u\n",
+                    k, stupidedi_bitmap_read(&bits, k, 1),
+                    k, stupidedi_rrr_rank1(&rrr, k),
+                    k, stupidedi_rrr_rank0(&rrr, k));
         else
-            printf("%u: ? rank(%u)=%u\n", k, k, rrr_rank1(&rrr, k));
+            printf("%u: ? rank₁(%u)=%u rank₀(%u)=%u\n",
+                    k,
+                    k, stupidedi_rrr_rank1(&rrr, k),
+                    k, stupidedi_rrr_rank0(&rrr, k));
     }
 
-    printf("\n\n"); bit_vector_print(&bits); printf("\n");
+    printf("\n%s\n", stupidedi_bitmap_to_string(&bits));
+    printf("\n%s\n", stupidedi_rrr_to_string(&rrr));
 
     /*
     class Array;def cumsum; s=0; self.map{|x| s+=x }; end;end
