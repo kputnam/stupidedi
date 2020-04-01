@@ -1,8 +1,9 @@
+#if FALSE
 #ifndef STUPIDEDI_PERMUTATION_H_
 #define STUPIDEDI_PERMUTATION_H_
 
 #include "stupidedi/include/rrr.h"
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/wavelet.h"
 
 typedef struct stupidedi_permutation_t
@@ -16,15 +17,15 @@ typedef struct stupidedi_permutation_t
      * see: Jeremy Barbay, Gonzalo Navarro. Compressed Representations of
      * Permutations, and Applications. In Proc 26th STACS, pages 111-122, 2009.
      */
-    stupidedi_bitmap_t* forward;
-    stupidedi_bitmap_t* reverse;
+    stupidedi_bitstring_t* forward;
+    stupidedi_bitstring_t* reverse;
 } stupidedi_permutation_t;
 
-typedef uint_fast32_t stupidedi_permutation_idx_t;
+typedef uint32_t stupidedi_permutation_idx_t;
 
 /* */
 stupidedi_permutation_t*
-stupidedi_permutation_alloc(stupidedi_bitmap_t*, stupidedi_permutation_t*);
+stupidedi_permutation_alloc(stupidedi_bitstring_t*, stupidedi_permutation_t*);
 
 /* */
 void
@@ -47,8 +48,8 @@ char*
 stupidedi_permutation_to_string(const stupidedi_permutation_t*);
 
 /* */
-stupidedi_bitmap_t*
-stupidedi_permutation_to_bitmap(const stupidedi_permutation_t*);
+stupidedi_bitstring_t*
+stupidedi_permutation_to_bitstring(const stupidedi_permutation_t*);
 
 /* */
 stupidedi_permutation_idx_t
@@ -58,4 +59,5 @@ stupidedi_permutation_apply(const stupidedi_permutation_t*, stupidedi_permutatio
 stupidedi_permutation_idx_t
 stupidedi_permutation_inverse(const stupidedi_permutation_t*, stupidedi_permutation_idx_t i);
 
+#endif
 #endif

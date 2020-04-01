@@ -1,7 +1,9 @@
 https://stannum.io/blog/0MXgB0
 
 ## TODO
-- Don't store a partial marker at the end of RRR
+- Ensure length assert(x != NULL)
+- Ensure sizeof(NULL) == 0
+- Flatten `**binomial` to `*binomial`
 
 ## Wavelet Tree
 

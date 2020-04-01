@@ -2,31 +2,33 @@
 #include <stdint.h>
 #include <assert.h>
 #include "stupidedi/include/rrr.h"
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
-    stupidedi_bitmap_t bits;
+    stupidedi_bitstr_t b;
     stupidedi_rrr_t rrr;
 
-    uint8_t  width = 8;
-    uint16_t size  = 8;
+    uint8_t  width  = 8;
+    uint16_t length = 8;
 
     uint64_t value = 0xaaaaaaaaaaaaaaaa;
     value         &= (1ULL << width) - 1;
 
-    stupidedi_bitmap_alloc_record(size, width, &bits);
-    for (int k = 1; k < size; k += 2)
-        stupidedi_bitmap_write_record(&bits, k, value);
+    stupidedi_bitstr_init(length * width, &b);
+    for (size_t k = 1; k + width <= stupidedi_bitstr_length(&b); k += width)
+        stupidedi_bitstr_write(&b, k, width, value);
 
-    stupidedi_rrr_alloc(&bits, 5, 8, &rrr);
-    for (uint32_t k = 0; k < rrr.rank + 4; ++k)
-            printf("select₁(%u)=%u\n", k, stupidedi_rrr_select1(&rrr, k));
-    printf("\n\n");
+    stupidedi_rrr_init(&b, 5, 8, &rrr);
+    for (size_t k = 0; k < rrr.rank + 4; ++k)
+            printf("select₁(%zu)=%zu\n", k, stupidedi_rrr_select1(&rrr, k));
 
-    for (uint32_t k = 0; k < rrr.size - rrr.rank + 4; ++k)
-            printf("select₀(%u)=%u\n", k, stupidedi_rrr_select0(&rrr, k));
-    printf("%s\n\n", stupidedi_bitmap_to_string(&bits));
+    printf("\n");
+    for (size_t k = 0; k < stupidedi_rrr_length(&rrr) - rrr.rank + 4; ++k)
+            printf("select₀(%zu)=%zu\n", k, stupidedi_rrr_select0(&rrr, k));
+
+    printf("%s\n\n", stupidedi_bitstr_to_string(&b));
 
     /*
      *                                                                        *

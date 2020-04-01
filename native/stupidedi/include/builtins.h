@@ -26,6 +26,6 @@ ctz(uint64_t x) { return __builtin_ctzll(x); }
 /* Returns the minimum number of bits needed to represent the given value.
  * nbits(x) = ceil(log2(x)) */
 static inline uint8_t
-nbits(uint64_t x) { return (x < 2) ? 0 : 64 - clz(x - 1); }
+nbits(uint64_t x) { return (x <= 1) ? 0 : 64 - clz(x); }
 
 #endif

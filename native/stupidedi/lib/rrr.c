@@ -3,77 +3,86 @@
 #include <string.h>
 #include <stdio.h>
 #include "stupidedi/include/rrr.h"
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
+#include "stupidedi/include/packed.h"
 #include "stupidedi/include/builtins.h"
 
-/* (b choose r) = binomial[b][r] */
 static uint64_t **binomial = NULL;
 
-/* Helper functions are defined at the end of the file */
-static void precompute_binomials(void);
-static inline uint8_t offset_nbits(uint64_t, uint64_t);
-static inline uint64_t encode_block(uint8_t, uint8_t, uint64_t);
-static inline uint64_t decode_block(uint8_t, uint8_t, uint64_t);
-static inline stupidedi_bit_idx_t class_bit_idx(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static inline stupidedi_bit_idx_t marker_bit_idx(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static inline stupidedi_bit_idx_t read_class(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static inline stupidedi_bit_idx_t read_offset(const stupidedi_rrr_t*, stupidedi_bit_idx_t, uint8_t);
-static inline stupidedi_bit_idx_t read_marked_rank0(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static inline stupidedi_bit_idx_t read_marked_rank1(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static inline stupidedi_bit_idx_t read_marked_offset(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static stupidedi_bit_idx_t stupidedi_rrr_find_marker0(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
-static stupidedi_bit_idx_t stupidedi_rrr_find_marker1(const stupidedi_rrr_t*, stupidedi_bit_idx_t);
+static          void        precompute_binomials(void);
+static inline   uint8_t     offset_nbits(uint64_t block_size, uint64_t class);
+static          uint64_t    encode_block(uint8_t block_size, uint8_t class, uint64_t value);
+static inline   uint64_t    decode_block(uint8_t, uint8_t, uint64_t);
+static inline   size_t      class_bit_idx(const stupidedi_rrr_t*, size_t);
+static inline   size_t      marker_bit_idx(const stupidedi_rrr_t*, size_t);
+static inline   size_t      read_class(const stupidedi_rrr_t*, size_t);
+static inline   size_t      read_offset(const stupidedi_rrr_t*, size_t, uint8_t);
+static inline   size_t      read_marked_rank0(const stupidedi_rrr_t*, size_t);
+static inline   size_t      read_marked_rank1(const stupidedi_rrr_t*, size_t);
+static inline   size_t      read_marked_offset(const stupidedi_rrr_t*, size_t);
+static          size_t      stupidedi_rrr_find_marker0(const stupidedi_rrr_t*, size_t);
+static          size_t      stupidedi_rrr_find_marker1(const stupidedi_rrr_t*, size_t);
 
-/* TODO */
+/*****************************************************************************/
+
 stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, stupidedi_bit_idx_t size, stupidedi_rrr_builder_t* builder, stupidedi_rrr_t* rrr)
+stupidedi_rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, size_t length)
 {
-    assert(size > 0);
+    return stupidedi_rrr_builder_init(malloc(sizeof(stupidedi_rrr_builder_t)), block_size, marker_size, length);
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_dealloc(stupidedi_rrr_builder_t* rrrb)
+{
+    if (rrrb != NULL)
+        free(stupidedi_rrr_builder_deinit(rrrb));
+
+    return NULL;
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_init(stupidedi_rrr_builder_t* rrrb, uint8_t block_size, uint16_t marker_size, size_t length)
+{
+    assert(rrrb != NULL);
+    assert(length > 0);
     assert(block_size >= STUPIDEDI_RRR_BLOCK_SIZE_MIN);
     assert(block_size <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
     assert(block_size <= marker_size);
     assert(marker_size >= STUPIDEDI_RRR_MARKER_SIZE_MIN);
     assert(marker_size <= STUPIDEDI_RRR_MARKER_SIZE_MAX);
 
-    /* One-time initialization of global variables */
-    precompute_binomials();
-
-    if (builder == NULL)
-        builder = malloc(sizeof(stupidedi_rrr_builder_t));
-    assert(builder != NULL);
-
-    if (rrr == NULL)
-        rrr = malloc(sizeof(stupidedi_rrr_t));
-
-    builder->rrr = rrr;
+    stupidedi_rrr_t* rrr;
+    rrr = malloc(sizeof(stupidedi_rrr_t));
     assert(rrr != NULL);
+    rrrb->rrr = rrr;
 
-    rrr->size         = size;
-    rrr->rank         = STUPIDEDI_BIT_IDX_C(0);
-    rrr->nblocks      = (size + block_size - 1) / block_size;
-    rrr->nmarkers     = (size + marker_size - 1) / marker_size - 1;
+    rrr->length       = length;
+    rrr->rank         = 0;
+    rrr->nblocks      = (length + block_size - 1) / block_size;
+    rrr->nmarkers     = (length + marker_size - 1) / marker_size - 1;
     rrr->block_size   = block_size;
     rrr->marker_size  = marker_size;
 
-    builder->offset_nbits_max = offset_nbits(block_size, block_size / 2);
-    builder->block       = UINT64_C(0);
-    builder->written     = STUPIDEDI_BIT_IDX_C(0);
-    builder->class_at    = STUPIDEDI_BIT_IDX_C(0);
-    builder->offset_at   = STUPIDEDI_BIT_IDX_C(0);
-    builder->marker_at   = STUPIDEDI_BIT_IDX_C(0);
-    builder->marker_need = marker_size;
-    builder->block_need  = block_size;
+    rrrb->offset_nbits_max = offset_nbits(block_size, block_size / 2);
+    rrrb->block       = 0;
+    rrrb->written     = 0;
+    rrrb->class_at    = 0;
+    rrrb->offset_at   = 0;
+    rrrb->marker_at   = 0;
+    rrrb->marker_need = marker_size;
+    rrrb->block_need  = block_size;
+    rrrb->is_done     = false;
 
     /* These two vectors are sufficient to encode the original bit vector. The
      * additional vectors allocated below are the o(n) atop nH₀, and are used
      * for making rank and select operations fast. */
-    rrr->classes = stupidedi_bitmap_alloc_record(rrr->nblocks, nbits(block_size + 1), NULL);
-    rrr->offsets = stupidedi_bitmap_alloc((uint32_t)(rrr->nblocks * builder->offset_nbits_max), NULL);
+    rrr->classes = stupidedi_packed_alloc(rrr->nblocks, nbits(block_size + 1));
+    rrr->offsets = stupidedi_bitstr_alloc((uint32_t)(rrr->nblocks * rrrb->offset_nbits_max));
 
-    if (rrr->nmarkers > STUPIDEDI_BIT_IDX_C(0))
+    if (rrr->nmarkers > 0)
     {
-        rrr->marked_ranks   = stupidedi_bitmap_alloc_record(rrr->nmarkers, nbits(size + 1), NULL);
-        rrr->marked_offsets = stupidedi_bitmap_alloc_record(rrr->nmarkers, nbits(rrr->offsets->size), NULL);
+        rrr->marked_ranks   = stupidedi_packed_alloc(rrr->nmarkers, nbits(length + 1));
+        rrr->marked_offsets = stupidedi_packed_alloc(rrr->nmarkers, nbits(rrr->offsets->length));
     }
     else
     {
@@ -81,36 +90,80 @@ stupidedi_rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, stupidedi_
         rrr->marked_offsets = NULL;
     }
 
-    return builder;
+    return rrrb;
 }
 
-/* TODO */
-void
-stupidedi_rrr_builder_append(stupidedi_rrr_builder_t* builder, uint8_t width, uint64_t value)
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_deinit(stupidedi_rrr_builder_t* rrrb)
 {
-    assert(builder != NULL);
-    assert(builder->rrr != NULL);
-    assert(width <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
-    assert(value <= (width < 64 ? (UINT64_C(1) << width) - 1 : UINT64_MAX));
+    if (rrrb == NULL)
+        return rrrb;
+
+    if (rrrb->rrr != NULL && !rrrb->is_done)
+        rrrb->rrr = stupidedi_rrr_dealloc(rrrb->rrr);
+
+    return rrrb;
+}
+
+/*****************************************************************************/
+
+size_t
+stupidedi_rrr_builder_sizeof(const stupidedi_rrr_builder_t* rrrb)
+{
+    return rrrb == NULL ? 0 : sizeof(*rrrb) + stupidedi_rrr_sizeof(rrrb->rrr);
+}
+
+size_t
+stupidedi_rrr_builder_length(const stupidedi_rrr_builder_t* rrrb)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
+    return stupidedi_rrr_length(rrrb->rrr);
+}
+
+/*****************************************************************************/
+
+size_t
+stupidedi_rrr_builder_written(const stupidedi_rrr_builder_t* rrrb)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
 
     stupidedi_rrr_t* rrr;
-    rrr = builder->rrr;
+    rrr = rrrb->rrr;
+
+    uint8_t uncommitted;
+    uncommitted = rrr->block_size - rrrb->block_need;
+
+    return (size_t)uncommitted + rrrb->written;
+}
+
+size_t
+stupidedi_rrr_builder_write(stupidedi_rrr_builder_t* rrrb, uint8_t width, uint64_t value)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
+    assert(width <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
+    assert(value <= (width < 64 ? (1 << width) - 1 : UINT64_MAX));
+
+    stupidedi_rrr_t* rrr;
+    rrr = rrrb->rrr;
 
     uint64_t block, mask, uncommitted;
-    uncommitted = rrr->block_size - builder->block_need;
-    assert(builder->written + uncommitted + width <= rrr->size);
+    uncommitted = rrr->block_size - rrrb->block_need;
+    assert(rrrb->written + uncommitted + width <= rrr->length);
 
-    while (builder->block_need <= width)
+    while (rrrb->block_need <= width)
     {
         /* Select only bits needed to finish filling this block, then append to
          * the end of the current block*/
-        mask   = (UINT64_C(1) << builder->block_need) - 1;
-        block  = builder->block;
-        block |= (value & mask) << (rrr->block_size - builder->block_need);
+        mask   = (1 << rrrb->block_need) - 1;
+        block  = rrrb->block;
+        block |= (value & mask) << (rrr->block_size - rrrb->block_need);
 
         /* Discard the used bits */
-        value  = value >> builder->block_need;
-        width -= builder->block_need;
+        value  = value >> rrrb->block_need;
+        width -= rrrb->block_need;
 
         uint64_t class, offset;
         class  = popcount(block);
@@ -118,175 +171,194 @@ stupidedi_rrr_builder_append(stupidedi_rrr_builder_t* builder, uint8_t width, ui
 
         /* Write marker if we have enough data. We know there is no more
          * than one marker because block_size <= sblock_nbits */
-        int16_t marker_extra = rrr->block_size - builder->marker_need;
+        int16_t marker_extra = rrr->block_size - rrrb->marker_need;
 
         if (marker_extra >= 0)
         {
             /* We might need only first few bits from the current `block` */
             uint64_t want, prefix;
             want   = rrr->block_size - marker_extra;
-            prefix = want >= 64 ? block : block & ((UINT64_C(1) << want) - 1);
+            prefix = want >= 64 ? block : block & ((1 << want) - 1);
 
-            stupidedi_bitmap_write_record(rrr->marked_ranks,   builder->marker_at, rrr->rank + popcount(prefix));
-            stupidedi_bitmap_write_record(rrr->marked_offsets, builder->marker_at, builder->offset_at);
-            ++builder->marker_at;
+            stupidedi_packed_write(rrr->marked_ranks,   rrrb->marker_at, rrr->rank + popcount(prefix));
+            stupidedi_packed_write(rrr->marked_offsets, rrrb->marker_at, rrrb->offset_at);
+            ++rrrb->marker_at;
 
             /* Next marker counts the bits not used in last marker */
-            builder->marker_need = rrr->marker_size - marker_extra;
+            rrrb->marker_need = rrr->marker_size - marker_extra;
         }
         else
         {
-            builder->marker_need -= rrr->block_size;
+            rrrb->marker_need -= rrr->block_size;
         }
 
-        builder->class_at  = stupidedi_bitmap_write_record(rrr->classes, builder->class_at, class);
-        builder->offset_at = stupidedi_bitmap_write(rrr->offsets, builder->offset_at, offset_nbits(rrr->block_size, class), offset);
-        builder->written  += rrr->block_size;
+        rrrb->class_at  = stupidedi_packed_write(rrr->classes, rrrb->class_at, class);
+        rrrb->offset_at = stupidedi_bitstr_write(rrr->offsets, rrrb->offset_at, offset_nbits(rrr->block_size, class), offset);
+        rrrb->written  += rrr->block_size;
 
         /* Next time we'll need a full block */
-        builder->block      = UINT64_C(0);
-        builder->block_need = rrr->block_size;
+        rrrb->block      = 0;
+        rrrb->block_need = rrr->block_size;
 
         rrr->rank += class;
     }
 
     /* Remaining value is guaranteed to be shorter than block_need */
-    mask   = (UINT64_C(1) << builder->block_need) - 1;
-    block  = builder->block;
-    block |= (value & mask) << (rrr->block_size - builder->block_need);
-    builder->block = block;
-    builder->block_need -= width;
+    mask   = (1 << rrrb->block_need) - 1;
+    block  = rrrb->block;
+    block |= (value & mask) << (rrr->block_size - rrrb->block_need);
+    rrrb->block = block;
+    rrrb->block_need -= width;
+
+    return rrrb->written + (rrr->block_size - rrrb->block_need);
 }
 
-/* Number of bits already written */
-stupidedi_bit_idx_t
-stupidedi_rrr_builder_written(const stupidedi_rrr_builder_t* builder)
-{
-    assert(builder != NULL);
-    assert(builder->rrr != NULL);
-
-    stupidedi_rrr_t* rrr;
-    rrr = builder->rrr;
-
-    uint8_t uncommitted;
-    uncommitted = rrr->block_size - builder->block_need;
-
-    return (stupidedi_bit_idx_t)uncommitted + builder->written;
-}
-
-/* TODO */
 stupidedi_rrr_t*
-stupidedi_rrr_builder_build(stupidedi_rrr_builder_t* builder)
+stupidedi_rrr_builder_to_rrr(stupidedi_rrr_builder_t* rrrb, stupidedi_rrr_t* rrr)
 {
-    assert(builder != NULL);
-    assert(builder->rrr != NULL);
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
 
-    stupidedi_rrr_t* rrr;
-    rrr = builder->rrr;
+    if (rrr == NULL || rrr == rrrb->rrr)
+        rrr = rrrb->rrr;
+    else
+    {
+        rrr->length         = rrrb->rrr->length;
+        rrr->rank           = rrrb->rrr->rank;
+        rrr->block_size     = rrrb->rrr->block_size;
+        rrr->nblocks        = rrrb->rrr->nblocks;
+        rrr->classes        = rrrb->rrr->classes;
+        rrr->offsets        = rrrb->rrr->offsets;
+        rrr->marker_size    = rrrb->rrr->marker_size;
+        rrr->nmarkers       = rrrb->rrr->nmarkers;
+        rrr->marked_ranks   = rrrb->rrr->marked_ranks;
+        rrr->marked_offsets = rrrb->rrr->marked_offsets;
+    }
 
     uint8_t uncommitted;
-    uncommitted = rrr->block_size - builder->block_need;
-    assert(builder->written + (stupidedi_bit_idx_t)uncommitted == rrr->size);
+    uncommitted = rrr->block_size - rrrb->block_need;
+    assert(rrrb->written + (size_t)uncommitted == rrr->length);
 
-    if (/*builder->marker_need < rrr->marker_size &&*/ builder->marker_at < rrr->nmarkers)
+    if (rrrb->marker_at < rrr->nmarkers)
     {
         /* Last marker wasn't written yet because of EOF. We may only need some
          * of the bits that haven't yet been written. */
         uint64_t mask, marked_rank;
-        mask        = (UINT64_C(1) << builder->marker_need) - 1;
-        marked_rank = rrr->rank + popcount(builder->block & mask);
+        mask        = (1 << rrrb->marker_need) - 1;
+        marked_rank = rrr->rank + popcount(rrrb->block & mask);
 
-        stupidedi_bitmap_write_record(rrr->marked_ranks,   builder->marker_at, marked_rank);
-        stupidedi_bitmap_write_record(rrr->marked_offsets, builder->marker_at, builder->offset_at);
+        stupidedi_packed_write(rrr->marked_ranks,   rrrb->marker_at, marked_rank);
+        stupidedi_packed_write(rrr->marked_offsets, rrrb->marker_at, rrrb->offset_at);
     }
 
     if (uncommitted > 0)
     {
         /* Haven't yet written the last block */
         uint64_t class, offset;
-        class  = popcount(builder->block);
-        offset = encode_block(rrr->block_size, class, builder->block);
+        class  = popcount(rrrb->block);
+        offset = encode_block(rrr->block_size, class, rrrb->block);
         rrr->rank += class;
 
-        builder->class_at  = stupidedi_bitmap_write_record(rrr->classes, builder->class_at, class);
-        builder->offset_at = stupidedi_bitmap_write(rrr->offsets, builder->offset_at, offset_nbits(rrr->block_size, class), offset);
+        rrrb->class_at  = stupidedi_packed_write(rrr->classes, rrrb->class_at, class);
+        rrrb->offset_at = stupidedi_bitstr_write(rrr->offsets, rrrb->offset_at, offset_nbits(rrr->block_size, class), offset);
     }
 
     /* Truncate unused space */
-    stupidedi_bitmap_resize(rrr->offsets, builder->offset_at);
+    stupidedi_bitstr_resize(rrr->offsets, rrrb->offset_at);
+
+    rrrb->is_done = true;
     return rrr;
 }
 
-/* TODO */
-void
-stupidedi_rrr_builder_free(stupidedi_rrr_builder_t* builder)
-{
-    if (builder != NULL) free(builder);
-}
+/*****************************************************************************/
 
-/* TODO */
-uint32_t
-stupidedi_rrr_builder_size(const stupidedi_rrr_builder_t* builder)
-{
-    return builder == NULL || builder->rrr == NULL ? 0 :
-        builder->rrr->size;
-}
-
-/* TODO */
-size_t
-stupidedi_rrr_builder_sizeof(const stupidedi_rrr_builder_t* builder)
-{
-    return builder == NULL ? 0 :
-        sizeof(*builder) + stupidedi_rrr_sizeof(builder->rrr);
-}
-
-/* TODO */
-uint64_t
-stupidedi_rrr_builder_size_bits(const stupidedi_rrr_builder_t* builder)
-{
-    return builder == NULL ? 0 :
-        8 * sizeof(*builder) + stupidedi_rrr_sizeof_bits(builder->rrr);
-}
-
-/* TODO */
 stupidedi_rrr_t*
-stupidedi_rrr_alloc(const stupidedi_bitmap_t* bits, uint8_t block_size, uint16_t marker_size, stupidedi_rrr_t* rrr)
+stupidedi_rrr_alloc(const stupidedi_bitstr_t* bs, uint8_t block_size, uint16_t marker_size)
 {
-    stupidedi_rrr_builder_t builder;
-    stupidedi_rrr_builder_alloc(block_size, marker_size, bits->size, &builder, rrr);
+    return stupidedi_rrr_init(malloc(sizeof(stupidedi_rrr_t)), bs, block_size, marker_size);
+}
+
+stupidedi_rrr_t*
+stupidedi_rrr_dealloc(stupidedi_rrr_t* rrr)
+{
+    if (rrr != NULL)
+        free(stupidedi_rrr_deinit(rrr));
+
+    return NULL;
+}
+
+stupidedi_rrr_t*
+stupidedi_rrr_init(stupidedi_rrr_t* rrr, const stupidedi_bitstr_t* bs, uint8_t block_size, uint16_t marker_size)
+{
+    assert(rrr != NULL);
+
+    stupidedi_rrr_builder_t rrrb;
+    stupidedi_rrr_builder_init(&rrrb, block_size, marker_size, stupidedi_bitstr_length(bs));
 
     /* This counts full blocks, but may exclude the last block if it's partial */
-    uint32_t nblocks;
-    nblocks = bits->size / STUPIDEDI_RRR_BLOCK_SIZE_MAX;
+    size_t nblocks;
+    nblocks = stupidedi_bitstr_length(bs) / STUPIDEDI_RRR_BLOCK_SIZE_MAX;
 
-    for (uint32_t k = 0; k < nblocks; ++k)
-        stupidedi_rrr_builder_append(&builder, STUPIDEDI_RRR_BLOCK_SIZE_MAX,
-                stupidedi_bitmap_read(bits, k * STUPIDEDI_RRR_BLOCK_SIZE_MAX, STUPIDEDI_RRR_BLOCK_SIZE_MAX));
+    for (size_t k = 0; k < nblocks; ++k)
+        stupidedi_rrr_builder_write(&rrrb, STUPIDEDI_RRR_BLOCK_SIZE_MAX,
+                stupidedi_bitstr_read(bs, k * STUPIDEDI_RRR_BLOCK_SIZE_MAX, STUPIDEDI_RRR_BLOCK_SIZE_MAX));
 
     /* The last block could be smaller than a full block, so we handle it separately */
     uint8_t remainder;
-    remainder = bits->size - (nblocks * STUPIDEDI_RRR_BLOCK_SIZE_MAX);
+    remainder = stupidedi_bitstr_length(bs) - (nblocks * STUPIDEDI_RRR_BLOCK_SIZE_MAX);
 
     if (remainder > 0)
-        stupidedi_rrr_builder_append(&builder, remainder,
-                stupidedi_bitmap_read(bits, nblocks * STUPIDEDI_RRR_BLOCK_SIZE_MAX, remainder));
+        stupidedi_rrr_builder_write(&rrrb, remainder,
+                stupidedi_bitstr_read(bs, nblocks * STUPIDEDI_RRR_BLOCK_SIZE_MAX, remainder));
 
-    return stupidedi_rrr_builder_build(&builder);
+    stupidedi_rrr_builder_to_rrr(&rrrb, rrr);
+    stupidedi_rrr_builder_deinit(&rrrb);
+    return rrr;
 }
 
-/* TODO */
-void
-stupidedi_rrr_free(stupidedi_rrr_t* rrr)
+stupidedi_rrr_t*
+stupidedi_rrr_deinit(stupidedi_rrr_t* rrr)
 {
-    if (rrr == NULL) return;
-    if (rrr->classes) free(rrr->classes);
-    if (rrr->offsets) free(rrr->offsets);
-    if (rrr->marked_ranks) free(rrr->marked_ranks);
-    if (rrr->marked_offsets) free(rrr->marked_offsets);
-    free(rrr);
+    if (rrr == NULL)
+        return NULL;
+
+    if (rrr->classes)
+        rrr->classes = stupidedi_packed_dealloc(rrr->classes);
+
+    if (rrr->offsets)
+        rrr->offsets = stupidedi_bitstr_dealloc(rrr->offsets);
+
+    if (rrr->marked_ranks)
+        rrr->marked_ranks = stupidedi_packed_dealloc(rrr->marked_ranks);
+
+    if (rrr->marked_offsets)
+        rrr->marked_offsets = stupidedi_packed_dealloc(rrr->marked_offsets);
+
+    return rrr;
 }
 
-/* TODO */
+/*****************************************************************************/
+
+size_t
+stupidedi_rrr_sizeof(const stupidedi_rrr_t* rrr)
+{
+    return (rrr == NULL) ? 0 :
+        sizeof(*rrr) +
+        stupidedi_packed_sizeof(rrr->classes) +
+        stupidedi_bitstr_sizeof(rrr->offsets) +
+        stupidedi_packed_sizeof(rrr->marked_ranks) +
+        stupidedi_packed_sizeof(rrr->marked_offsets);
+}
+
+size_t
+stupidedi_rrr_length(const stupidedi_rrr_t* rrr)
+{
+    assert(rrr != NULL);
+    return rrr->length;
+}
+
+/*****************************************************************************/
+
 char*
 stupidedi_rrr_to_string(const stupidedi_rrr_t* rrr)
 {
@@ -294,23 +366,18 @@ stupidedi_rrr_to_string(const stupidedi_rrr_t* rrr)
         return strdup("NULL");
 
     char *s, *offsets, *classes, *marked_ranks, *marked_offsets;
-    offsets         = stupidedi_bitmap_to_string(rrr->offsets);
-    classes         = stupidedi_bitmap_to_string_record(rrr->classes);
-    marked_ranks    = stupidedi_bitmap_to_string_record(rrr->marked_ranks);
-    marked_offsets  = stupidedi_bitmap_to_string_record(rrr->marked_offsets);
-
-    asprintf(&s, "size=%u rank=%u block_size=%u nblocks=%u marker_size=%u nmarkers=%u "
+    asprintf(&s, "size=%zu rank=%zu block_size=%u nblocks=%zu marker_size=%u nmarkers=%zu "
             "offsets=%s classes=%s marked_ranks=%s marked_offsets=%s",
-            rrr->size,
+            rrr->length,
             rrr->rank,
             rrr->block_size,
             rrr->nblocks,
             rrr->marker_size,
             rrr->nmarkers,
-            offsets,
-            classes,
-            marked_ranks,
-            marked_offsets);
+            offsets = stupidedi_bitstr_to_string(rrr->offsets),
+            classes = stupidedi_packed_to_string(rrr->classes),
+            marked_ranks = stupidedi_packed_to_string(rrr->marked_ranks),
+            marked_offsets = stupidedi_packed_to_string(rrr->marked_offsets));
 
     free(offsets);
     free(classes);
@@ -320,75 +387,60 @@ stupidedi_rrr_to_string(const stupidedi_rrr_t* rrr)
     return s;
 }
 
-/* Decodes entire RRR vector. */
-stupidedi_bitmap_t*
-stupidedi_rrr_to_bitmap(const stupidedi_rrr_t* rrr)
+stupidedi_bitstr_t*
+stupidedi_rrr_to_bitstr(const stupidedi_rrr_t* rrr, stupidedi_bitstr_t* b)
 {
     if (rrr == NULL)
         return NULL;
 
-    stupidedi_bitmap_t* bits;
-    bits = stupidedi_bitmap_alloc(rrr->size, NULL);
+    b = (b == NULL) ?
+        stupidedi_bitstr_alloc(rrr->length) :
+        stupidedi_bitstr_init(stupidedi_bitstr_deinit(b), rrr->length);
 
-    for (stupidedi_bit_idx_t offset_at = 0, class_at = 0; class_at < rrr->nblocks; ++class_at)
+    size_t offset_at, class_at;
+    offset_at = 0;
+    class_at  = 0;
+
+    for (; class_at < rrr->nblocks - 1; ++class_at)
     {
         uint64_t block, class, offset;
-        class  = read_class(rrr, class_at);
+        class = read_class(rrr, class_at);
 
         uint8_t width;
-        width  = offset_nbits(rrr->block_size, class);
+        width = offset_nbits(rrr->block_size, class);
 
         offset = read_offset(rrr, offset_at, width);
         block  = decode_block(rrr->block_size, class, offset);
         offset_at += width;
-
-        /* Careful not to write past the end of the bitmap on the last (partial) block */
-        stupidedi_bitmap_write(bits, class_at*rrr->block_size, class_at < rrr->nblocks - 1 ?
-                rrr->block_size : rrr->size - class_at*rrr->block_size, block);
+        stupidedi_bitstr_write(b, class_at*rrr->block_size, rrr->block_size, block);
     }
 
-    bits->width = 0;
+    /* Last block might be partial, so avoid writing more bits than we have */
+    uint64_t block, class, offset;
+    class = read_class(rrr, class_at);
 
-    return bits;
+    uint8_t width;
+    width = offset_nbits(rrr->block_size, class);
+
+    offset = read_offset(rrr, offset_at, width);
+    block  = decode_block(rrr->block_size, class, offset);
+
+    uint8_t block_size;
+    block_size = rrr->length - class_at*rrr->block_size;
+    stupidedi_bitstr_write(b, class_at*rrr->block_size, block_size, block);
+
+    return b;
 }
 
-/* Number of bits the RRR vector represents */
-uint32_t
-stupidedi_rrr_size(const stupidedi_rrr_t* rrr)
-{
-    return rrr == NULL ? 0 : rrr->size;
-}
+/*****************************************************************************/
 
-/* Number of bytes occupied in memory, not counting the pointer itself */
-size_t
-stupidedi_rrr_sizeof(const stupidedi_rrr_t* rrr)
-{
-    return rrr == NULL ? 0 :
-        sizeof(*rrr) + ((stupidedi_rrr_sizeof_bits(rrr) + 7) >> 3);
-}
-
-/* Number of bits occupied in memory not counting the pointer itself */
-uint64_t
-stupidedi_rrr_sizeof_bits(const stupidedi_rrr_t* rrr)
-{
-    return rrr == NULL ? 0 :
-        8 * sizeof(*rrr)
-        + stupidedi_bitmap_sizeof_bits(rrr->classes)
-        + stupidedi_bitmap_sizeof_bits(rrr->offsets)
-        + stupidedi_bitmap_sizeof_bits(rrr->marked_ranks)
-        + stupidedi_bitmap_sizeof_bits(rrr->marked_offsets);
-}
-
-/* The i-th bit (using zero-based indexing)
- *
- * access(B, i) = B[i] */
 uint8_t
-stupidedi_rrr_access(const stupidedi_rrr_t* rrr, uint32_t i)
+stupidedi_rrr_access(const stupidedi_rrr_t* rrr, size_t i)
 {
     assert(rrr != NULL);
-    assert(i < rrr->size);
+    assert(i < rrr->length);
 
-    stupidedi_bit_idx_t marker_at, class_at, offset_at, i_;
+    size_t marker_at, class_at, offset_at, i_;
     uint64_t class, width, offset, block;
 
     /* Find nearest marker so we can skip forward in rrr->offsets */
@@ -425,27 +477,21 @@ stupidedi_rrr_access(const stupidedi_rrr_t* rrr, uint32_t i)
     return (block & (1 << i)) >> i;
 }
 
-/* Number of 0s bits in the i-bit prefix of B
- *
- * rank0(B, i) = |{j ∈ [0..i) : B[j] = 0}| */
-stupidedi_bit_idx_t
-stupidedi_rrr_rank0(const stupidedi_rrr_t* rrr, uint32_t i)
+size_t
+stupidedi_rrr_rank0(const stupidedi_rrr_t* rrr, size_t i)
 {
-    return (i < rrr->size ? i + 1 : rrr->size) - stupidedi_rrr_rank1(rrr, i);
+    return ((i < rrr->length) ? i + 1 : rrr->length) - stupidedi_rrr_rank1(rrr, i);
 }
 
-/* Number of 1s bits up to and including position i
- *
- * rank1(B, i) = |{j ∈ [0..i] : B[j] = 1}| */
-stupidedi_bit_idx_t
-stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, uint32_t i)
+size_t
+stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, size_t i)
 {
     assert(rrr != NULL);
 
-    if (i + 1 >= rrr->size)
+    if (i + 1 >= rrr->length)
         return rrr->rank;
 
-    stupidedi_bit_idx_t i_, rank, marker_at, class_at, offset_at;
+    size_t i_, rank, marker_at, class_at, offset_at;
     uint64_t class, width, offset, block, mask;
     int64_t twice, extra, n;
 
@@ -490,7 +536,7 @@ stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, uint32_t i)
     assert(twice + extra <= rrr->block_size);
 
     mask  = rrr->block_size - twice - extra;
-    mask  = mask < 64 ? (UINT64_C(1) << mask) - 1 : UINT64_MAX;
+    mask  = mask < 64 ? (1 << mask) - 1 : UINT64_MAX;
     mask  = mask << twice;
     rank += popcount(block & mask);
 
@@ -521,25 +567,21 @@ stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, uint32_t i)
     block  = decode_block(rrr->block_size, class, offset);
 
     assert(n > 0);
-    mask   = n < 64 ? (UINT64_C(1) << n) - 1 : UINT64_MAX;
+    mask   = n < 64 ? (1 << n) - 1 : UINT64_MAX;
 
-    return (stupidedi_bit_idx_t) (rank + popcount(block & mask));
+    return (size_t) (rank + popcount(block & mask));
 }
 
-/* Position of the j-th 0-bit in B (using zero-based indexing), or 0 when j
- * exceeds the number of 0s bits in B
- *
- * select0(B, j) = min{i ∈ [0..n] | rank0(i) = j} */
-stupidedi_bit_idx_t
-stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
+size_t
+stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, size_t r)
 {
-    if (r == 0 || r > rrr->size - rrr->rank)
+    if (r == 0 || r > rrr->length - rrr->rank)
         return 0;
 
     uint8_t twice;
     int16_t i;
     uint64_t class, width, block, offset;
-    stupidedi_bit_idx_t marker_i, rank, class_at, offset_at, marker_at;
+    size_t marker_i, rank, class_at, offset_at, marker_at;
 
     /* Start at marker before rank₀ = r */
     marker_at = stupidedi_rrr_find_marker0(rrr, r);
@@ -564,7 +606,7 @@ stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
         class_at = (marker_i - 1) / rrr->block_size;
 
         /* Index of first bit after that block */
-        stupidedi_bit_idx_t class_i;
+        size_t class_i;
         class_i  = class_bit_idx(rrr, class_at + 1);
 
         /* Number of lower bits that have already been counted by the marker. */
@@ -589,7 +631,7 @@ stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
         for (i = -1, block = block >> twice; rank < r; ++rank)
         {
             i      = ctz(block);
-            block &= ~(UINT64_C(1) << i);
+            block &= ~(1 << i);
         }
 
         return marker_i + i;
@@ -634,25 +676,21 @@ stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
     for (n = -1; rank < r; ++rank)
     {
         n      = ctz(block);
-        block &= ~(1ull << n);
+        block &= ~(1 << n);
     }
 
     return n + class_at * rrr->block_size;
 }
 
-/* Position of the r-th 1-bit in B (using zero-based indexing), or 0 when j
- * exceeds the number of 1s bits in B
- *
- * select1(B, j) = min{i ∈ [0..n) | rank1(i) = j} */
-uint32_t
-stupidedi_rrr_select1(const stupidedi_rrr_t* rrr, uint32_t r)
+size_t
+stupidedi_rrr_select1(const stupidedi_rrr_t* rrr, size_t r)
 {
     if (r > rrr->rank)
         return 0;
 
     int16_t i;
     uint64_t class, width, rank, block, offset;
-    uint32_t class_at, offset_at, marker_at;
+    size_t class_at, offset_at, marker_at;
 
     /* Start at marker before rank₁ = r */
     marker_at = stupidedi_rrr_find_marker1(rrr, r);
@@ -665,8 +703,8 @@ stupidedi_rrr_select1(const stupidedi_rrr_t* rrr, uint32_t r)
     }
     else
     {
-        rank      = stupidedi_bitmap_read_record(rrr->marked_ranks, marker_at - 1);
-        offset_at = (uint32_t)stupidedi_bitmap_read_record(rrr->marked_offsets, marker_at - 1);
+        rank      = read_marked_rank1(rrr, marker_at - 1);
+        offset_at = read_marked_offset(rrr, marker_at - 1);
     }
 
     /* Scan past blocks one at a time */
@@ -692,48 +730,37 @@ stupidedi_rrr_select1(const stupidedi_rrr_t* rrr, uint32_t r)
     for (i = 0; rank < r; ++rank)
     {
         i      = ctz(block);
-        block &= ~(1ull << i);
+        block &= ~(1 << i);
     }
 
     return i + class_at * rrr->block_size;
 }
 
-/* Position of nearest the 0-bit before position i */
-uint32_t
-stupidedi_rrr_prev0(const stupidedi_rrr_t* rrr, uint32_t i)
+size_t
+stupidedi_rrr_prev0(const stupidedi_rrr_t* rrr, size_t i)
 {
     return 0; /* TODO */
 }
 
-/* Position of the nearest 1-bit before position i */
-uint32_t
-stupidedi_rrr_prev1(const stupidedi_rrr_t* rrr, uint32_t i)
+size_t
+stupidedi_rrr_prev1(const stupidedi_rrr_t* rrr, size_t i)
 {
     return 0; /* TODO */
 }
 
-/* Position of the nearest 0-bit after position i */
-uint32_t
-stupidedi_rrr_next0(const stupidedi_rrr_t* rrr, uint32_t i)
+size_t
+stupidedi_rrr_next0(const stupidedi_rrr_t* rrr, size_t i)
 {
     return 0; /* TODO */
 }
 
-/* Position of the nearest 1-bit after position i */
-uint32_t
-stupidedi_rrr_next1(const stupidedi_rrr_t* rrr, uint32_t i)
+size_t
+stupidedi_rrr_next1(const stupidedi_rrr_t* rrr, size_t i)
 {
     return 0; /* TODO */
 }
 
 /*****************************************************************************/
-
-/* Number of bits required to represent block_size bits with class 1s bits */
-static inline uint8_t
-offset_nbits(uint64_t block_size, uint64_t class)
-{
-    return nbits(binomial[block_size][class]);
-}
 
 static void
 precompute_binomials(void)
@@ -756,6 +783,15 @@ precompute_binomials(void)
                 binomial[n][k] = binomial[n - 1][k - 1] + binomial[n - 1][k];
         }
     }
+}
+
+inline uint8_t
+offset_nbits(uint64_t block_size, uint64_t class)
+{
+    precompute_binomials();
+    uint64_t count;
+    count = binomial[block_size][class];
+    return nbits(count == 0 ? 0 : count - 1);
 }
 
 static uint64_t
@@ -845,69 +881,66 @@ decode_block(uint8_t block_size, uint8_t class, uint64_t offset)
 
         if (before <= offset)
         {
-            value  |= (1ull << n);
+            value  |= (1 << n);
             offset -= before;
             class  --;
         }
     }
 
     if (class > 0)
-        value |= (1ull << class) - 1;
+        value |= (1 << class) - 1;
 
     return value;
 }
 
-/* Returns the bit index where the given class begins. */
-static inline stupidedi_bit_idx_t
-class_bit_idx(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t k)
+static inline size_t
+class_bit_idx(const stupidedi_rrr_t* rrr, size_t k)
 {
     return k * rrr->block_size;
 }
 
-/* Returns the length of the prefix counted by the marker. */
-static inline stupidedi_bit_idx_t
-marker_bit_idx(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t k)
+static inline size_t
+marker_bit_idx(const stupidedi_rrr_t* rrr, size_t k)
 {
     return (k + 1) * rrr->marker_size;
 }
 
-static inline stupidedi_bit_idx_t
-read_class(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t class_at)
+static inline size_t
+read_class(const stupidedi_rrr_t* rrr, size_t class_at)
 {
-    return (stupidedi_bit_idx_t)stupidedi_bitmap_read_record(rrr->classes, class_at);
+    return (size_t)stupidedi_packed_read(rrr->classes, class_at);
 }
 
-static inline stupidedi_bit_idx_t
-read_offset(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t offset_at, uint8_t width)
+static inline size_t
+read_offset(const stupidedi_rrr_t* rrr, size_t offset_at, uint8_t width)
 {
-    return rrr->offsets == NULL || rrr->offsets->size == 0 ?
-        0 : (stupidedi_bit_idx_t)stupidedi_bitmap_read(rrr->offsets, offset_at, width);
+    return (rrr->offsets == NULL || stupidedi_bitstr_length(rrr->offsets) == 0) ?
+        0 : (size_t)stupidedi_bitstr_read(rrr->offsets, offset_at, width);
 }
 
-static inline stupidedi_bit_idx_t
-read_marked_rank0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t marker_at)
+static inline size_t
+read_marked_rank0(const stupidedi_rrr_t* rrr, size_t marker_at)
 {
     return marker_bit_idx(rrr, marker_at) - read_marked_rank1(rrr, marker_at);
 }
 
-static inline stupidedi_bit_idx_t
-read_marked_rank1(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t marker_at)
+static inline size_t
+read_marked_rank1(const stupidedi_rrr_t* rrr, size_t marker_at)
 {
-    return (stupidedi_bit_idx_t)stupidedi_bitmap_read_record(rrr->marked_ranks, marker_at);
+    return (size_t)stupidedi_packed_read(rrr->marked_ranks, marker_at);
 }
 
-static inline stupidedi_bit_idx_t
-read_marked_offset(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t marker_at)
+static inline size_t
+read_marked_offset(const stupidedi_rrr_t* rrr, size_t marker_at)
 {
-    return (stupidedi_bit_idx_t)stupidedi_bitmap_read_record(rrr->marked_offsets, marker_at);
+    return (size_t)stupidedi_packed_read(rrr->marked_offsets, marker_at);
 }
-/* Helper function that returns 1 + the position of the nearest marker before
- * the r-th 0-bit. Returns 0 when the r-th 0-bit occurs before the first marker. */
-static stupidedi_bit_idx_t
-stupidedi_rrr_find_marker0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
+
+static size_t
+stupidedi_rrr_find_marker0(const stupidedi_rrr_t* rrr, size_t r)
 {
     assert(rrr != NULL);
-    assert(r <= rrr->size - rrr->rank);
+    assert(r <= rrr->length - rrr->rank);
 
     /* The key here is to use marked_ranks[k], which counts 1s bits that occur
      * in the first i=(k+1)*rrr->marker_size bits. Since each bit is 0 or 1, we
@@ -915,9 +948,9 @@ stupidedi_rrr_find_marker0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
      */
 
     if (rrr->nmarkers == 0)
-        return STUPIDEDI_BIT_IDX_C(0);
+        return 0;
 
-    stupidedi_bit_idx_t lo, hi, save, k, r_;
+    size_t lo, hi, save, k, r_;
     lo = 0;
     hi = rrr->nmarkers - 1;
     save = -1;
@@ -939,18 +972,16 @@ stupidedi_rrr_find_marker0(const stupidedi_rrr_t* rrr, stupidedi_bit_idx_t r)
     return k + 1;
 }
 
-/* Helper function that returns 1 + the position of the nearest marker before
- * the r-th 1-bit. Returns 0 when the r-th 1-bit occurs before the first marker. */
-static stupidedi_bit_idx_t
-stupidedi_rrr_find_marker1(const stupidedi_rrr_t* rrr, uint32_t r)
+static size_t
+stupidedi_rrr_find_marker1(const stupidedi_rrr_t* rrr, size_t r)
 {
     assert(rrr != NULL);
     assert(r <= rrr->rank);
 
     if (rrr->nmarkers == 0)
-        return STUPIDEDI_BIT_IDX_C(0);
+        return 0;
 
-    stupidedi_bit_idx_t lo, hi, save, k, r_;
+    size_t lo, hi, save, k, r_;
     lo = 0;
     hi = rrr->nmarkers - 1;
     save = -1;
@@ -958,7 +989,7 @@ stupidedi_rrr_find_marker1(const stupidedi_rrr_t* rrr, uint32_t r)
     do
     {
         k  = lo + (hi - lo) / 2;
-        r_ = stupidedi_bitmap_read_record(rrr->marked_ranks, k);
+        r_ = read_marked_rank1(rrr, k);
 
         if (r_ < r)
             lo = (save = k) + 1;
@@ -972,4 +1003,3 @@ stupidedi_rrr_find_marker1(const stupidedi_rrr_t* rrr, uint32_t r)
 
     return k + 1;
 }
-

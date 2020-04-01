@@ -30,7 +30,7 @@
 bool
 stupidedi_interval_list_test(const uint32_t point, stupidedi_interval_list_t* tree)
 {
-    int32_t k, l, r, z;
+    size_t k, l, r, z;
 
     /* This hack speeds up searches that fall in the range covered by the first
      * few intervals. We first try a short linear search, but if the answer

@@ -2,19 +2,20 @@
 #include <stdint.h>
 #include <assert.h>
 #include "stupidedi/include/rrr.h"
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
-    stupidedi_bitmap_t bits;
+    stupidedi_bitstr_t b;
     stupidedi_rrr_t rrr;
 
     uint8_t  width = 8;
     uint16_t size  = 8;
 
     uint64_t value = 0xaaaaaaaaaaaaaaaa;
-    value          = -1;
-    value         &= (1ULL << width) - 1;
+    value  = -1;
+    value &= (1ULL << width) - 1;
 
     /*
      *           4         6         8        12        13        16
@@ -29,25 +30,26 @@ int main(int argc, char **argv)
      *          4        5        8       10       12       15       16
      */
 
-    stupidedi_bitmap_alloc_record(size, width, &bits);
-    for (int k = 0; k < size; k += 1)
-        stupidedi_bitmap_write_record(&bits, k, value);
+    stupidedi_bitstr_init(size * width, &b);
+    for (int k = 0; k + width <= stupidedi_bitstr_length(&b); k += width)
+        stupidedi_bitstr_write(&b, k, width, value);
 
-    stupidedi_rrr_alloc(&bits, 13, 88, &rrr);
-    for (uint32_t k = 0; k <= bits.size + 3; k += 1) {
-        if (k < bits.size)
-            printf("%u: %llu rank₁(%u)=%u rank₀(%u)=%u\n",
-                    k, stupidedi_bitmap_read(&bits, k, 1),
+    stupidedi_rrr_init(&b, 13, 88, &rrr);
+    for (size_t k = 0; k <= stupidedi_bitstr_length(&b) + 3; ++k)
+    {
+        if (k < stupidedi_bitstr_length(&b))
+            printf("%zu: %llu rank₁(%zu)=%zu rank₀(%zu)=%zu\n",
+                    k, stupidedi_bitstr_read(&b, k, 1),
                     k, stupidedi_rrr_rank1(&rrr, k),
                     k, stupidedi_rrr_rank0(&rrr, k));
         else
-            printf("%u: ? rank₁(%u)=%u rank₀(%u)=%u\n",
+            printf("%zu: ? rank₁(%zu)=%zu rank₀(%zu)=%zu\n",
                     k,
                     k, stupidedi_rrr_rank1(&rrr, k),
                     k, stupidedi_rrr_rank0(&rrr, k));
     }
 
-    printf("\n%s\n", stupidedi_bitmap_to_string(&bits));
+    printf("\n%s\n", stupidedi_bitstr_to_string(&b));
     printf("\n%s\n", stupidedi_rrr_to_string(&rrr));
 
     /*

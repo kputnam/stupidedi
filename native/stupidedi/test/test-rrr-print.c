@@ -2,23 +2,26 @@
 #include <stdint.h>
 #include <assert.h>
 #include "stupidedi/include/rrr.h"
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
 
-int main(int argc, char **argv) {
-    stupidedi_bitmap_t bits;
+int
+main(int argc, char **argv)
+{
+    stupidedi_bitstr_t b;
     stupidedi_rrr_t rrr;
 
-    uint8_t width = 8;
-    uint16_t size = 57;
+    uint8_t width   = 8;
+    uint16_t length = 57;
 
-    stupidedi_bitmap_alloc_record(size, width, &bits);
-    for (int k = 0; k + 1 < size; k += 2)
-        stupidedi_bitmap_write_record(&bits, k, 0xaa & ((1ULL << width) - 1));
-    printf("%s\n\n", stupidedi_bitmap_to_string_record(&bits));
+    stupidedi_bitstr_init(length*width, &b);
+    for (size_t k = 0; k + width <= stupidedi_bitstr_length(&b); k += width)
+        stupidedi_bitstr_write(&b, k, width, (0xaa & ((1ULL << width) - 1)));
 
-    stupidedi_rrr_alloc(&bits, 9, 10, &rrr);
+    printf("%s\n\n", stupidedi_bitstr_to_string(&b));
+
+    stupidedi_rrr_init(&b, 9, 10, &rrr);
     printf("%s\n", stupidedi_rrr_to_string(&rrr));
-    printf("%s\n", stupidedi_bitmap_to_string(stupidedi_rrr_to_bitmap(&rrr)));
+    printf("%s\n", stupidedi_bitstr_to_string(stupidedi_rrr_to_bitstr(&rrr, NULL)));
 
     printf("\n");
 }

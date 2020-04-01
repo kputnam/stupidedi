@@ -2,42 +2,40 @@
 #include <stdint.h>
 #include <assert.h>
 #include "stupidedi/include/rrr.h"
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
 
-int main(int argc, char **argv) {
-    uint8_t width = 6;
-    uint16_t size = 15;
+int
+main(int argc, char **argv)
+{
+    uint8_t width   = 6;
+    uint16_t length = 15;
 
-    stupidedi_bitmap_t bits;
-    stupidedi_bitmap_alloc_record(size, width, &bits);
-    for (int k = 0; k < size; k += 2) {
-        stupidedi_bitmap_write_record(&bits, k+0, 0xaa & ((1 << width) - 1));
-        if (k + 1 < size) stupidedi_bitmap_write_record(&bits, k+1, 0x00);
-    }
+    stupidedi_bitstr_t b;
+    stupidedi_bitstr_init(length*width, &b);
+    for (size_t k = 0; k + width <= stupidedi_bitstr_length(&b); k += width)
+        stupidedi_bitstr_write(&b, k+0, width, (0xaa & ((1 << width) - 1)));
 
-    /* NOTE: Should free the pointer returned by stupidedi_bitmap_to_string. */
-    printf("%s\n\n", stupidedi_bitmap_to_string(&bits));
+    printf("%s\n\n", stupidedi_bitstr_to_string(&b));
 
     stupidedi_rrr_builder_t builder;
-    stupidedi_rrr_builder_alloc(15, 64, width * size, &builder, NULL);
+    stupidedi_rrr_builder_init(15, 64, length*width, &builder);
 
-    for (int k = 0; k < size; k += 2) {
-        stupidedi_rrr_builder_append(&builder, width, 0xaa & ((1 << width) - 1));
-        if (k + 1 < size) stupidedi_rrr_builder_append(&builder, width, 0x00);
-    }
+    for (size_t k = 0; k + width <= stupidedi_bitstr_length(&b); k += width)
+        stupidedi_rrr_builder_write(&builder, width, (0xaa & ((1 << width) - 1)));
 
-    stupidedi_rrr_t* rrr;
-    rrr = stupidedi_rrr_builder_build(&builder);
+    stupidedi_rrr_t rrr;
+    stupidedi_rrr_builder_to_rrr(&builder, &rrr);
 
-    /* NOTE: Should free the pointer returned by stupidedi_rrr_to_string. */
-    printf("%s\n\n", stupidedi_rrr_to_string(rrr));
+    printf("%s\n\n", stupidedi_rrr_to_string(&rrr));
 
-    for (uint32_t k = 0; k < bits.size; k += 1) {
-        uint8_t r = stupidedi_rrr_access(rrr, k);
-        uint8_t b = stupidedi_bitmap_read(&bits, k, 1);
+    for (size_t k = 0; k < stupidedi_bitstr_length(&b); ++k)
+    {
+        uint8_t x = stupidedi_rrr_access(&rrr, k);
+        uint8_t y = stupidedi_bitstr_read(&b, k, 1);
 
-        (r == b) ? printf("%u", r) : printf("*");
-        if (((k + 1) % width) == 0 && k + 1 < bits.size)
+        (x == y) ? printf("%u", x) : printf("*");
+
+        if (((k + 1) % width) == 0 && k + 1 < stupidedi_bitstr_length(&b))
             printf(",");
     }
 

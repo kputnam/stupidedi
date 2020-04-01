@@ -1,20 +1,21 @@
+#if FALSE
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "stupidedi/include/bitmap.h"
+#include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/builtins.h"
 #include "stupidedi/include/permutation.h"
 
 /* TODO */
 stupidedi_permutation_t*
-stupidedi_permutation_alloc(stupidedi_bitmap_t* permute, stupidedi_permutation_t* dst)
+stupidedi_permutation_alloc(stupidedi_bitstr_t* permute, stupidedi_permutation_t* dst)
 {
     assert(permute != NULL);
     assert(permute->width > 0);
 
     stupidedi_bit_idx_t size;
-    size = stupidedi_bitmap_size(permute);
+    size = stupidedi_bitstr_size(permute);
 
     /* Permutation of size n must have unique elements [0..n) */
     assert(size > 0);
@@ -26,19 +27,19 @@ stupidedi_permutation_alloc(stupidedi_bitmap_t* permute, stupidedi_permutation_t
     assert(p != NULL);
 
     p->forward = permute;
-    p->reverse = stupidedi_bitmap_reverse(permute);
+    p->reverse = stupidedi_bitstr_reverse(permute);
 
     return p;
 
     /*
-    stupidedi_bitmap_t *inverse, *collapse;
+    stupidedi_bitstr_t *inverse, *collapse;
     stupidedi_rrr_t *runs, *rinv;
     stupidedi_rrr_builder_t *runs_, *rinv_;
 
-    inverse = stupidedi_bitmap_alloc_record(size, permute->width, NULL);
+    inverse = stupidedi_bitstr_alloc_record(size, permute->width, NULL);
     for (stupidedi_bit_idx_t k = 0; k < size; ++k)
-        stupidedi_bitmap_write_record(inverse,
-                stupidedi_bitmap_read_record(permute, k), k);
+        stupidedi_bitstr_write_record(inverse,
+                stupidedi_bitstr_read_record(permute, k), k);
 
     // Mark the position where an increasing run in `permute` begins
     runs_ = stupidedi_rrr_builder_alloc(31, 256, size, NULL, NULL);
@@ -46,14 +47,14 @@ stupidedi_permutation_alloc(stupidedi_bitmap_t* permute, stupidedi_permutation_t
     stupidedi_rrr_builder_append(runs_, 1, 0);
 
     uint64_t prev, nruns;
-    prev  = stupidedi_bitmap_read_record(permute, 0);
+    prev  = stupidedi_bitstr_read_record(permute, 0);
     nruns = 0;
 
     // Mark the beginning of each increasing run
     for (stupidedi_bit_idx_t k = 1; k < size; ++k)
     {
         uint64_t current;
-        current = stupidedi_bitmap_read_record(permute, k);
+        current = stupidedi_bitstr_read_record(permute, k);
 
         if (prev + 1 == current)
             stupidedi_rrr_builder_append(runs_, 1, 0);
@@ -71,7 +72,7 @@ stupidedi_permutation_alloc(stupidedi_bitmap_t* permute, stupidedi_permutation_t
     // rinv(i) = r(inverse(i))
     for (stupidedi_bit_idx_t k = 0; k < size; ++k)
     {
-        uint64_t k_ = stupidedi_bitmap_read_record(inverse, k);
+        uint64_t k_ = stupidedi_bitstr_read_record(inverse, k);
         stupidedi_rrr_builder_append(rinv_, 1,
                 stupidedi_rrr_access(runs, k_) == 0 ? 0 : 1);
     }
@@ -80,11 +81,11 @@ stupidedi_permutation_alloc(stupidedi_bitmap_t* permute, stupidedi_permutation_t
 
     // Now create a new permutation of [nruns] that collapses the runs, such
     // that collapse(i) = rank1(rinv, permute(select1(R, i)))
-    collapse = stupidedi_bitmap_alloc_record(nruns, nbits(nruns), NULL);
+    collapse = stupidedi_bitstr_alloc_record(nruns, nbits(nruns), NULL);
     for (stupidedi_bit_idx_t k = 0; k < nruns; ++k)
-        stupidedi_bitmap_write_record(collapse, k,
+        stupidedi_bitstr_write_record(collapse, k,
                 stupidedi_rrr_rank1(rinv,
-                    stupidedi_bitmap_read_record(permute,
+                    stupidedi_bitstr_read_record(permute,
                         stupidedi_rrr_select1(runs, k))));
 
     // π, R, π', (π')⁻¹, Rinv
@@ -141,11 +142,11 @@ stupidedi_permutation_to_string(const stupidedi_permutation_t* p)
 }
 
 /* */
-stupidedi_bitmap_t*
-stupidedi_permutation_to_bitmap(const stupidedi_permutation_t* p)
+stupidedi_bitstr_t*
+stupidedi_permutation_to_bitstr(const stupidedi_permutation_t* p)
 {
     assert(p != NULL);
-    return stupidedi_bitmap_copy(p->forward);
+    return stupidedi_bitstr_copy(p->forward);
 }
 
 /* */
@@ -155,13 +156,13 @@ stupidedi_permutation_apply(const stupidedi_permutation_t* p, stupidedi_permutat
     assert(p != NULL);
     assert(p->forward != NULL);
 
-    return (stupidedi_permutation_idx_t)stupidedi_bitmap_read_record(p->forward, i);
+    return (stupidedi_permutation_idx_t)stupidedi_bitstr_read_record(p->forward, i);
     /*
     stupidedi_bit_idx_t i_;
     i_ = stupidedi_rrr_rank1(R, i);
 
     uint64_t j_;
-    j_ = stupidedi_bitmap_read_record(collapse, i_);
+    j_ = stupidedi_bitstr_read_record(collapse, i_);
 
     return stupidedi_rrr_select1(Rinv, j_) + i - stupidedi_rrr_select1(R, i_);
     */
@@ -174,7 +175,7 @@ stupidedi_permutation_inverse(const stupidedi_permutation_t* p, stupidedi_permut
     assert(p != NULL);
     assert(p->reverse != NULL);
 
-    return (stupidedi_permutation_idx_t)stupidedi_bitmap_read_record(p->reverse, i);
+    return (stupidedi_permutation_idx_t)stupidedi_bitstring_read_record(p->reverse, i);
 
     /*
     stupidedi_bit_idx_t i_;
@@ -186,3 +187,4 @@ stupidedi_permutation_inverse(const stupidedi_permutation_t* p, stupidedi_permut
     return stupidedi_rrr_select1(R, j_) + i - stupidedi_rrr_select1(Rinv, i_);
     */
 }
+#endif
