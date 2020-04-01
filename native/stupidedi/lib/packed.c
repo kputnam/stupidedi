@@ -100,7 +100,7 @@ stupidedi_packed_to_string(const stupidedi_packed_t* a)
     assert(a->width != 0);
 
     char* str;
-    str = malloc(a->data->length + a->length + 1);
+    str = malloc(a->data->length + a->length);
 
     int64_t n;
     n = -1;
@@ -116,7 +116,7 @@ stupidedi_packed_to_string(const stupidedi_packed_t* a)
         str[++n] = ',';
     }
 
-    str[a->data->length + a->length] = '\0';
+    str[n] = '\0';
     return str;
 }
 

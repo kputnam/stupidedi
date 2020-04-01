@@ -10,14 +10,15 @@ main(int argc, char **argv)
     stupidedi_bitstr_t b;
     stupidedi_rrr_t rrr;
 
-    size_t width = 8;
-    size_t size = 57;
+    size_t length, width;
+    width  = 8;
+    length = 57;
 
-    stupidedi_bitstr_init(size * width, &b);
-    for (int k = 0; k < size; k += width)
+    stupidedi_bitstr_init(&b, length * width);
+    for (size_t k = 0; k < stupidedi_bitstr_length(&b); k += width)
         stupidedi_bitstr_write(&b, k, width, (0xaa & ((1ULL << width) - 1)));
 
-    stupidedi_rrr_init(&b, 9, 10, &rrr);
+    stupidedi_rrr_init(&rrr, &b, 9, 10);
     for (size_t k = 0; k < stupidedi_bitstr_length(&b); ++k)
     {
         bool x, y;

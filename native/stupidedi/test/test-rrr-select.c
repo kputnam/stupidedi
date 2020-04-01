@@ -10,17 +10,18 @@ main(int argc, char **argv)
     stupidedi_bitstr_t b;
     stupidedi_rrr_t rrr;
 
-    uint8_t  width  = 8;
-    uint16_t length = 8;
+    size_t length, width;
+    width  = 8;
+    length = 8;
 
     uint64_t value = 0xaaaaaaaaaaaaaaaa;
     value         &= (1ULL << width) - 1;
 
-    stupidedi_bitstr_init(length * width, &b);
+    stupidedi_bitstr_init(&b, length * width);
     for (size_t k = 1; k + width <= stupidedi_bitstr_length(&b); k += width)
         stupidedi_bitstr_write(&b, k, width, value);
 
-    stupidedi_rrr_init(&b, 5, 8, &rrr);
+    stupidedi_rrr_init(&rrr, &b, 5, 8);
     for (size_t k = 0; k < rrr.rank + 4; ++k)
             printf("select₁(%zu)=%zu\n", k, stupidedi_rrr_select1(&rrr, k));
 

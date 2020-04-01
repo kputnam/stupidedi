@@ -30,14 +30,13 @@ main(int argc, char **argv)
     stupidedi_wavelet_init(&w, &a, width);
     printf("OK\n");
 
-    for (size_t k = 0; k < stupidedi_packed_length(&a); ++k)
+    for(uint64_t c = 0; c <= 6; ++c)
     {
-        uint64_t ab, aw;
-        ab = stupidedi_packed_read(&a, k);
-        aw = stupidedi_wavelet_access(&w, k);
+        printf("\n\n%llu ==============================================\n", c);
 
-        //assert(r == b);
-        (aw == ab) ? printf("%llu,\n", aw) : printf("b:%llu w:%llu,\n", ab, aw);
+        for (size_t r = 1; r < stupidedi_packed_length(&a); ++r)
+            printf("select(%llu, %zu) = %zu\n",
+                    c, r, stupidedi_wavelet_select(&w, c, r));
     }
 
     printf("\n");

@@ -10,8 +10,9 @@ main(int argc, char **argv)
     stupidedi_bitstr_t b;
     stupidedi_rrr_t rrr;
 
-    uint8_t  width = 8;
-    uint16_t size  = 8;
+    size_t length, width;
+    width  = 8;
+    length = 8;
 
     uint64_t value = 0xaaaaaaaaaaaaaaaa;
     value  = -1;
@@ -30,11 +31,11 @@ main(int argc, char **argv)
      *          4        5        8       10       12       15       16
      */
 
-    stupidedi_bitstr_init(size * width, &b);
+    stupidedi_bitstr_init(&b, length * width);
     for (int k = 0; k + width <= stupidedi_bitstr_length(&b); k += width)
         stupidedi_bitstr_write(&b, k, width, value);
 
-    stupidedi_rrr_init(&b, 13, 88, &rrr);
+    stupidedi_rrr_init(&rrr, &b, 13, 88);
     for (size_t k = 0; k <= stupidedi_bitstr_length(&b) + 3; ++k)
     {
         if (k < stupidedi_bitstr_length(&b))

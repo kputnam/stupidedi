@@ -6,17 +6,12 @@
 
 typedef struct stupidedi_interval_list_t
 {
-    /* TODO */
-    uint32_t size;
-
-    /* TODO */
-    uint32_t* min;
-
-    /* TODO */
-    uint32_t* max;
+    size_t length;
+    uint64_t* min;
+    uint64_t* max;
 } stupidedi_interval_list_t;
 
 bool
-stupidedi_interval_list_test(const uint32_t point, stupidedi_interval_list_t* tree);
+stupidedi_interval_test(stupidedi_interval_list_t* tree, const uint64_t point);
 
 #endif

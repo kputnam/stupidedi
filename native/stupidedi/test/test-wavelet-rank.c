@@ -26,22 +26,4 @@ main(int argc, char **argv)
     stupidedi_packed_write(&a, 8, 3);
     stupidedi_packed_write(&a, 9, 1);
 
-    stupidedi_wavelet_t w;
-    stupidedi_wavelet_init(&w, &a, width);
-    printf("OK\n");
-
-    for (size_t k = 0; k < stupidedi_packed_length(&a); ++k)
-    {
-        uint64_t ab, aw;
-        ab = stupidedi_packed_read(&a, k);
-        aw = stupidedi_wavelet_access(&w, k);
-
-        //assert(r == b);
-        (aw == ab) ? printf("%llu,\n", aw) : printf("b:%llu w:%llu,\n", ab, aw);
-    }
-
-    printf("\n");
-
-    stupidedi_packed_deinit(&a);
-    stupidedi_wavelet_deinit(&w);
 }

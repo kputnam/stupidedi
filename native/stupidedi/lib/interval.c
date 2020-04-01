@@ -28,7 +28,7 @@
  * Something to revisit: http://repnop.org/pd/slides/bsearch.pdf
  */
 bool
-stupidedi_interval_list_test(const uint32_t point, stupidedi_interval_list_t* tree)
+stupidedi_interval_test(stupidedi_interval_list_t* tree, const uint64_t point)
 {
     size_t k, l, r, z;
 
@@ -38,14 +38,14 @@ stupidedi_interval_list_test(const uint32_t point, stupidedi_interval_list_t* tr
      *
      * Most queries are expected to be checking if ASCII-range values are
      * graphical or whitespace, which will benefit from this optimization */
-    for (k = 0; k < 3 && 3 <= tree->size; ++k)
+    for (k = 0; k < 3 && 3 <= tree->length; ++k)
     {
         if (point <  tree->min[k]) return false;
         if (point <= tree->max[k]) return true;
     }
 
     /* Perform a binary search on the remaining items */
-    for (l = k, r = tree->size - 1, z = -1; k = l + (r - l) / 2, l <= r;)
+    for (l = k, r = tree->length - 1, z = -1; k = l + (r - l) / 2, l <= r;)
     {
         if (UNLIKELY(tree->min[k] < point))
             if (point <= tree->max[k])

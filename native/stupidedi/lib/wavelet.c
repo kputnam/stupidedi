@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "stupidedi/include/builtins.h"
-#include "stupidedi/include/uthash.h"
 #include "stupidedi/include/wavelet.h"
-#include "stupidedi/include/permutation.h"
 
 /*
  * In this particular application, the alphabet typically contains six symbols.
@@ -92,6 +90,7 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* a, uint8_t he
 
     assert(a != NULL);
     assert(w != NULL);
+    w->height = height;
 
     if (height == 1)
     {
@@ -322,18 +321,32 @@ stupidedi_wavelet_rank(const stupidedi_wavelet_t* w, uint64_t c, size_t i)
 static size_t
 stupidedi_wavelet_select_aux(const stupidedi_wavelet_t* w, uint64_t c, size_t r, uint64_t mask)
 {
-    if (w == NULL || mask == 0)
-        return r;
+    if (w == NULL)
+        return r - 1;
 
-    return (c & mask) == 0 ?
-        stupidedi_rrr_select0(w->rrr, stupidedi_wavelet_select_aux(w->l, c, r, mask >> 1)) :
-        stupidedi_rrr_select1(w->rrr, stupidedi_wavelet_select_aux(w->r, c, r, mask >> 1));
+    size_t i, j;
+
+    if ((c & mask) == 0)
+    {
+        i = stupidedi_wavelet_select_aux(w->l, c, r, mask >> 1);
+        j = (i == SIZE_MAX) ? SIZE_MAX : stupidedi_rrr_select0(w->rrr, i + 1);
+    }
+    else
+    {
+        i = stupidedi_wavelet_select_aux(w->r, c, r, mask >> 1);
+        j = (i == SIZE_MAX) ? SIZE_MAX : stupidedi_rrr_select1(w->rrr, i + 1);
+    }
+
+    return j;
 }
 
 size_t
 stupidedi_wavelet_select(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
-    return stupidedi_wavelet_select_aux(w, c, r, UINT64_C(-1));
+    assert(w != NULL);
+    // assert(r != 0);
+
+    return stupidedi_wavelet_select_aux(w, c, r, (1ull << (w->height - 1)));
 }
 
 /* Return position of previous occurrence of symbol c from position i. */

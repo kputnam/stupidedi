@@ -575,8 +575,10 @@ stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, size_t i)
 size_t
 stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, size_t r)
 {
+    assert(rrr != NULL);
+
     if (r == 0 || r > rrr->length - rrr->rank)
-        return 0;
+        return SIZE_MAX;
 
     uint8_t twice;
     int16_t i;
@@ -685,8 +687,10 @@ stupidedi_rrr_select0(const stupidedi_rrr_t* rrr, size_t r)
 size_t
 stupidedi_rrr_select1(const stupidedi_rrr_t* rrr, size_t r)
 {
-    if (r > rrr->rank)
-        return 0;
+    assert(rrr != NULL);
+
+    if (r == 0 || r > rrr->rank)
+        return SIZE_MAX;
 
     int16_t i;
     uint64_t class, width, rank, block, offset;

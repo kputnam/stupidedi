@@ -11,6 +11,7 @@ typedef struct stupidedi_wavelet_t
 {
   stupidedi_rrr_t* rrr;
   struct stupidedi_wavelet_t *l, *r;
+  uint8_t height;
 } stupidedi_wavelet_t;
 
 stupidedi_wavelet_t*
