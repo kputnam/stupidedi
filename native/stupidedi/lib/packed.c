@@ -77,6 +77,56 @@ stupidedi_packed_resize(stupidedi_packed_t* a, size_t length)
 
 /*****************************************************************************/
 
+stupidedi_packed_t*
+stupidedi_packed_from_array8(size_t length, uint8_t* src)
+{
+    stupidedi_packed_t* a;
+    a = stupidedi_packed_alloc(length, 8);
+
+    for (size_t k = 0; k < length; ++k)
+        stupidedi_packed_write(a, k, src[k]);
+
+    return a;
+}
+
+stupidedi_packed_t*
+stupidedi_packed_from_array16(size_t length, uint16_t* src)
+{
+    stupidedi_packed_t* a;
+    a = stupidedi_packed_alloc(length, 16);
+
+    for (size_t k = 0; k < length; ++k)
+        stupidedi_packed_write(a, k, src[k]);
+
+    return a;
+}
+
+stupidedi_packed_t*
+stupidedi_packed_from_array32(size_t length, uint32_t* src)
+{
+    stupidedi_packed_t* a;
+    a = stupidedi_packed_alloc(length, 32);
+
+    for (size_t k = 0; k < length; ++k)
+        stupidedi_packed_write(a, k, src[k]);
+
+    return a;
+}
+
+stupidedi_packed_t*
+stupidedi_packed_from_array64(size_t length, uint64_t* src)
+{
+    stupidedi_packed_t* a;
+    a = stupidedi_packed_alloc(length, 64);
+
+    for (size_t k = 0; k < length; ++k)
+        stupidedi_packed_write(a, k, src[k]);
+
+    return a;
+}
+
+/*****************************************************************************/
+
 size_t
 stupidedi_packed_sizeof(const stupidedi_packed_t* a)
 {
@@ -88,6 +138,13 @@ stupidedi_packed_length(const stupidedi_packed_t* a)
 {
     assert(a != NULL);
     return a->length;
+}
+
+uint8_t
+stupidedi_packed_width(const stupidedi_packed_t* a)
+{
+    assert(a != NULL);
+    return a->width;
 }
 
 char*
@@ -110,7 +167,7 @@ stupidedi_packed_to_string(const stupidedi_packed_t* a)
         uint64_t item;
         item = stupidedi_packed_read(a, k);
 
-        for(uint8_t i = a->width-1; i; --i)
+        for (uint8_t i = a->width; i--; )
             str[++n] = (item & (1 << i)) == 0 ? '0' : '1';
 
         str[++n] = ',';

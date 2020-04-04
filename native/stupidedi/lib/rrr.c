@@ -488,7 +488,7 @@ stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, size_t i)
 {
     assert(rrr != NULL);
 
-    if (i + 1 >= rrr->length)
+    if (i >= rrr->length)
         return rrr->rank;
 
     size_t i_, rank, marker_at, class_at, offset_at;

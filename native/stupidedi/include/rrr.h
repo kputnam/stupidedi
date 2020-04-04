@@ -85,15 +85,19 @@ stupidedi_rrr_select0(const stupidedi_rrr_t*, size_t r);
 size_t
 stupidedi_rrr_select1(const stupidedi_rrr_t*, size_t r);
 
+/* Return position of previous occurrence of 0-bit from position i. */
 size_t
 stupidedi_rrr_prev0(const stupidedi_rrr_t*, size_t i);
 
+/* Return position of previous occurrence of 0-bit from position i. */
 size_t
 stupidedi_rrr_prev1(const stupidedi_rrr_t*, size_t i);
 
+/* Return position of next occurrence of 1-bit from position i. */
 size_t
 stupidedi_rrr_next0(const stupidedi_rrr_t*, size_t i);
 
+/* Return position of next occurrence of 1-bit position i. */
 size_t
 stupidedi_rrr_next1(const stupidedi_rrr_t*, size_t i);
 

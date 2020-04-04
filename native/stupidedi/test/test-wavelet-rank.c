@@ -12,7 +12,7 @@ main(int argc, char **argv)
 
     size_t length, width;
     length = 14;
-    width  = ceil(log2(length * 2));
+    width  = 3; // ceil(log2(length * 2));
 
     stupidedi_packed_init(&a, 10, 3);
     stupidedi_packed_write(&a, 0, 1);
@@ -26,4 +26,21 @@ main(int argc, char **argv)
     stupidedi_packed_write(&a, 8, 3);
     stupidedi_packed_write(&a, 9, 1);
 
+    stupidedi_wavelet_t w;
+    stupidedi_wavelet_init(&w, &a, width);
+    printf("OK\n");
+
+    for(uint64_t c = 0; c <= 6; ++c)
+    {
+        printf("\n\n%llu ==============================================\n", c);
+
+        for (size_t r = 0; r <= stupidedi_packed_length(&a); ++r)
+            printf("rank(%llu, %zu) = %zu\n",
+                    c, r, stupidedi_wavelet_rank(&w, c, r));
+    }
+
+    printf("\n");
+
+    stupidedi_packed_deinit(&a);
+    stupidedi_wavelet_deinit(&w);
 }

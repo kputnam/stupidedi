@@ -37,11 +37,28 @@ stupidedi_packed_resize(stupidedi_packed_t*, size_t);
 
 /*****************************************************************************/
 
+stupidedi_packed_t*
+stupidedi_packed_from_array8(size_t length, uint8_t* a); 
+
+stupidedi_packed_t*
+stupidedi_packed_from_array16(size_t length, uint16_t* a); 
+
+stupidedi_packed_t*
+stupidedi_packed_from_array32(size_t length, uint32_t* a); 
+
+stupidedi_packed_t*
+stupidedi_packed_from_array64(size_t length, uint64_t* a); 
+
+/*****************************************************************************/
+
 size_t
 stupidedi_packed_sizeof(const stupidedi_packed_t*);
 
 size_t
 stupidedi_packed_length(const stupidedi_packed_t*);
+
+uint8_t
+stupidedi_packed_width(const stupidedi_packed_t*);
 
 char*
 stupidedi_packed_to_string(const stupidedi_packed_t*);

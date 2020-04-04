@@ -51,9 +51,11 @@ stupidedi_wavelet_rank(const stupidedi_wavelet_t*, uint64_t, size_t);
 size_t
 stupidedi_wavelet_select(const stupidedi_wavelet_t*, uint64_t, size_t);
 
+/* Return position of previous occurrence of symbol c from position i. */
 size_t
 stupidedi_wavelet_prev(const stupidedi_wavelet_t* w, uint64_t, size_t);
 
+/* Return position of next occurrence of symbol c from position i. */
 size_t
 stupidedi_wavelet_next(const stupidedi_wavelet_t* w, uint64_t, size_t);
 

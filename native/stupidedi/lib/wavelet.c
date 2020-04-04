@@ -200,122 +200,64 @@ stupidedi_wavelet_to_packed(const stupidedi_wavelet_t* w)
 
 /*****************************************************************************/
 
+static inline bool
+choose_branch(uint64_t c, uint64_t mask)
+{
+    return (c & mask) == 0;
+}
+
 uint64_t
 stupidedi_wavelet_access(const stupidedi_wavelet_t* w, size_t i)
 {
     uint64_t c;
     c = 0;
 
-    while (w != NULL)
+    for (uint64_t mask = 1ull << (w->height - 1); mask != 0; mask = mask >> 1)
     {
         if (stupidedi_rrr_access(w->rrr, i) == 0)
         {
-            /* Its position in the left subtree is its position among 1s bits;
-             * for example if this is the 4th 1-bit, then it will be the 4th
-             * bit in the left subtree, index 3.since we start from zero.  */
-            c = (c << 1) | 0;
             i = stupidedi_rrr_rank0(w->rrr, i) - 1;
+            c = (c << 1) | 0;
             w = w->l;
         }
         else
         {
-            /* Its position in the right subtree is its position among 0s bits;
-             * for example if this is the 4th 0-bit, then it will be the 4th
-             * bit in the right subtree, index 3 since we start from zero. */
-            c = (c << 1) | 1;
             i = stupidedi_rrr_rank1(w->rrr, i) - 1;
+            c = (c << 1) | 1;
             w = w->r;
         }
     }
 
     return c;
-
-    /* acc(l, i)
-     *      if wv - av = 1 then
-     *          return av
-     *      end if
-     *      if Bl[i] = 0 then
-     *          i <- rank0(Bl, i)
-     *      else
-     *          i <- rank1(Bl, i)
-     *      end if
-     *      return acc(l+1, i)
-     */
-
-    /*
-    while (w[v] - a[v] != 1)
-    {
-        if (rrr_access(B[l], i) == 0)
-            i = rrr_rank0(B[l], i);
-        else
-            i = rrr_rank1(B[l], i);
-
-        ++l;
-    }
-
-    return a[v];
-    */
 }
 
 size_t
 stupidedi_wavelet_rank(const stupidedi_wavelet_t* w, uint64_t c, size_t i)
 {
-    /*
-    stupidedi_wavelet_symbol_t min, max;
-    min = tree->min;
-    max = tree->max;
+    assert(w != NULL);
 
-    uint64_t width, msb;
-    width = ceil(log2(STUPIDEDI_WAVELET_SYMBOL_MAX));
-    msb   = 1 << (width - 1);
-
-    while (min != max)
+    for (uint64_t mask = 1ull << (w->height - 1); mask != 0; mask = mask >> 1)
     {
-        if ((a & msb) == 0)
+        size_t r;
+
+        if ((c & mask) == 0)
         {
-            i    = stupidedi_rrr_rank0(tree->rrr, i);
-            max  = min + (max - min) / 2 - 1;
-            tree = tree->l;
+            r = stupidedi_rrr_rank0(w->rrr, i);
+            w = w->l;
         }
         else
         {
-            i    = stupidedi_rrr_rank1(tree->rrr, i);
-            min  = min + (max - min) / 2;
-            tree = tree->r;
+            r = stupidedi_rrr_rank1(w->rrr, i);
+            w = w->l;
         }
 
-        a = a << 1;
+        if (r == 0)
+            return 0;
+
+        i = r - 1;
     }
 
-    return i;
-    */
-    return 0;
-
-    /* rnk(l, a, i, p)
-     *      if wv - av = 1 then
-     *          return i - C[a]
-     *      end if
-     *      if a < 2**(ceil(lg(wv-av)) - 1) then
-     *          i <- rank0(Bl, i)
-     *      else
-     *          i <- zl + rank1(Bl, i)
-     *      end if
-     *      return rnk(l+1, a, i)
-     */
-
-    /*
-    while (w[v] - a[v] != 1)
-    {
-        if (a < 2**(nbits(w[v] - a[v]) - 1))
-            i = rrr_rank0(B[l], i);
-        else
-            i = z[l] + rrr_rank1(B[l], i);
-
-        ++l;
-    }
-
-    return i - C[a];
-    */
+    return i + 1;
 }
 
 static size_t
@@ -344,19 +286,19 @@ size_t
 stupidedi_wavelet_select(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
     assert(w != NULL);
-    // assert(r != 0);
 
+    /* TODO: Replace recursion with iteration. Note we need to maintain a stack
+     * because after determining the leaf where c belongs, we need to traverse
+     * back up to the root and report c's position relative to the whole */
     return stupidedi_wavelet_select_aux(w, c, r, (1ull << (w->height - 1)));
 }
 
-/* Return position of previous occurrence of symbol c from position i. */
 size_t
 stupidedi_wavelet_prev(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
     return 0; /* TODO */
 }
 
-/* Return position of next occurrence of symbol c from position i. */
 size_t
 stupidedi_wavelet_next(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
