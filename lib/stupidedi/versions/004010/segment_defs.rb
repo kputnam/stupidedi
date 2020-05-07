@@ -3,6 +3,7 @@ module Stupidedi
   module Versions
     module FortyTen
       module SegmentDefs
+        autoload :ACK, "stupidedi/versions/004010/segment_defs/ACK"
         autoload :AK1, "stupidedi/versions/004010/segment_defs/AK1"
         autoload :AK2, "stupidedi/versions/004010/segment_defs/AK2"
         autoload :AK3, "stupidedi/versions/004010/segment_defs/AK3"

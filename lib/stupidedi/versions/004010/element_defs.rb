@@ -4045,6 +4045,7 @@ module Stupidedi
             "BL" => "Brand/Label",
             "CB" => "Buyer's Part Number",
             "ER" => "Jurisdiction Specific Procedure and Supply Codes",
+            "EN" => "European Article Number (EAN)",
             "HC" => "Health Care Financing Administration Common Procedural Coding System (HCPCS) Codes",
             "ID" => "International Classification of Diseases Clinical Modification (ICD-9-CM) - Procedure",
             "IV" => "Home Infusion EDI Coalition (HIEC) Product/Service Code",
@@ -4678,6 +4679,7 @@ module Stupidedi
         E310  = t::AN.new(:E310 , "Location Identifier"                  , 1, 30)
         E319  = t::AN.new(:E319 , "Temperature Control"                  , 3, 6)
         E324  = t::AN.new(:E324 , "Purchase Order Number"                , 1, 22)
+        E326  = t::AN.new(:E326 , "Request Reference Number"             , 1, 45)
         E328  = t::AN.new(:E328 , "Release Number"                       , 1, 30)
         E329  = t::ID.new(:E329 , "Transaction Set Control Number"       , 4, 9)
         E330  = t:: R.new(:E330 , "Quantity Ordered"                     , 1, 15)

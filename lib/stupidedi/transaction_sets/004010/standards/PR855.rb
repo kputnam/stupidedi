@@ -21,7 +21,8 @@ module Stupidedi
 
           d::TableDef.detail("2 - Detail",
             d::LoopDef.build("PO1", d::RepeatCount.bounded(10000),
-              s::PO1.use( 10, r::Mandatory, d::RepeatCount.bounded(1)))),
+              s::PO1.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
+              s::ACK.use( 10, r::Mandatory, d::RepeatCount.bounded(1)))),
 
           d::TableDef.summary("3 - Summary",
             d::LoopDef.build("CTT", d::RepeatCount.bounded(1),
