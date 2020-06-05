@@ -4046,6 +4046,7 @@ module Stupidedi
             "CB" => "Buyer's Part Number",
             "ER" => "Jurisdiction Specific Procedure and Supply Codes",
             "EN" => "European Article Number (EAN)",
+            "GC" => "Grade Code",
             "HC" => "Health Care Financing Administration Common Procedural Coding System (HCPCS) Codes",
             "ID" => "International Classification of Diseases Clinical Modification (ICD-9-CM) - Procedure",
             "IV" => "Home Infusion EDI Coalition (HIEC) Product/Service Code",
