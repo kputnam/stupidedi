@@ -13,7 +13,7 @@ group :development do
 # gem "redcarpet","~> 3.4.0", :platforms => [:mri]
 
   # https://github.com/colszowka/simplecov#ruby-version-compatibility
-  gem "simplecov",              :platforms => [:ruby_24, :ruby_25]
+  gem "simplecov", ">= 0.16.1", :platforms => [:ruby_24, :ruby_25]
   gem "simplecov-inline-html",  :platforms => [:ruby_24, :ruby_25]
 
   # gem "stackprof"
