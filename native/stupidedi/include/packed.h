@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "bitstr.h"
+#include "stupidedi/include/bitstr.h"
 
 #define STUPIDEDI_PACKED_WIDTH_MIN 1
 #define STUPIDEDI_PACKED_WIDTH_MAX 64
@@ -38,16 +38,16 @@ stupidedi_packed_resize(stupidedi_packed_t*, size_t);
 /*****************************************************************************/
 
 stupidedi_packed_t*
-stupidedi_packed_from_array8(size_t length, uint8_t* a); 
+stupidedi_packed_from_array8(size_t length, uint8_t* a);
 
 stupidedi_packed_t*
-stupidedi_packed_from_array16(size_t length, uint16_t* a); 
+stupidedi_packed_from_array16(size_t length, uint16_t* a);
 
 stupidedi_packed_t*
-stupidedi_packed_from_array32(size_t length, uint32_t* a); 
+stupidedi_packed_from_array32(size_t length, uint32_t* a);
 
 stupidedi_packed_t*
-stupidedi_packed_from_array64(size_t length, uint64_t* a); 
+stupidedi_packed_from_array64(size_t length, uint64_t* a);
 
 /*****************************************************************************/
 

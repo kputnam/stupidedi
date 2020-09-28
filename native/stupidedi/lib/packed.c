@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include "stupidedi/include/builtins.h"
 #include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/packed.h"
 
@@ -225,4 +226,13 @@ stupidedi_packed_write(const stupidedi_packed_t* a, size_t i, uint64_t value)
     assert(a->width != 0);
     stupidedi_bitstr_write(a->data, i * a->width, a->width, value);
     return i + 1;
+}
+
+stupidedi_packed_t*
+stupidedi_packed_argsort(const stupidedi_packed_t* a)
+{
+    stupidedi_packed_t* p;
+    p = stupidedi_packed_alloc(stupidedi_packed_length(a), nbits(stupidedi_packed_length(a)));
+
+    return p;
 }

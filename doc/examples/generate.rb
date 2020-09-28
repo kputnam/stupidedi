@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require File.expand_path("../../lib/stupidedi", __FILE__)
+require "stupidedi"
 require "pp"
 
 # See https://github.com/irobayna/stupidedi/issues/160

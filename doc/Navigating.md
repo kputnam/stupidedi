@@ -207,8 +207,9 @@ is not reachable will cause [`#find`][14] to raise an exception. To be clear,
 
 #### Sibling Segments
 
-<iframe src="images/837P-siblings.png" frameborder="no" scrolling="yes" height="430" width="100%"></iframe>
-<a href="images/837P-siblings.png">View diagram</a>
+<!--<iframe src="images/837P-siblings.png" frameborder="no" scrolling="yes" height="430" width="100%"></iframe>
+<a href="images/837P-siblings.png">View diagram</a>-->
+![](images/837P-siblings.png)
 
 Segments connected directly by a horizontal dashed black line are siblings and
 are reachable using [`#find`][14]. For instance, from the third `NM1`, the `N3`,
@@ -249,8 +250,9 @@ there are no segments in Loop 2000A that follow the child loops.
 
 #### Nephew Segments
 
-<iframe src="images/837P-nephews.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
-<a href="images/837P-nephews.png">View diagram</a>
+<!--<iframe src="images/837P-nephews.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
+<a href="images/837P-nephews.png">View diagram</a>-->
+![](images/837P-nephews.png)
 
 Segments that occur as the _first_ direct child of a sibling node are nephews.
 The siblings that _follow_ the first child are not directly reachable, but they
@@ -282,8 +284,9 @@ problems.
 
 #### Cousin Segments
 
-<iframe src="images/837P-cousins.png" frameborder="no" scrolling="yes" height="470" width="100%"></iframe>
-<a href="images/837P-cousins.png">View diagram</a>
+<!--<iframe src="images/837P-cousins.png" frameborder="no" scrolling="yes" height="470" width="100%"></iframe>
+<a href="images/837P-cousins.png">View diagram</a>-->
+![](images/837P-cousins.png)
 
 Segments that occurr as the _first_ child of a sibling of the parent node are
 cousins of the current segment. Similar to the restriction on nephew segments,
@@ -307,8 +310,9 @@ See [Element Constraints](#Element_Constraints) for information on how to find a
 
 #### Parent Segments
 
-<iframe src="images/837P-parents.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
-<a href="images/837P-parents.png">View diagram</a>
+<!--<iframe src="images/837P-parents.png" frameborder="no" scrolling="yes" height="450" width="100%"></iframe>
+<a href="images/837P-parents.png">View diagram</a>-->
+![](images/837P-parents.png)
 
 Internal knowledge of the underlying tree structure makes it possible to
 *rewind* to the first segment of a parent structure, using the [`#parent`][15]
@@ -621,29 +625,29 @@ all have the same element values, but have a different meaning.
 
 ### Resolution
 
-  [1]: Stupidedi/Builder/StateMachine.html
+  [1]: Stupidedi/Parser/StateMachine.html
   [2]: Stupidedi/Values/LoopVal.html
   [3]: Stupidedi/Values/TableVal.html
-  [4]: Stupidedi/Builder/BuilderDsl.html#machine-instance_method
+  [4]: Stupidedi/Parser/BuilderDsl.html#machine-instance_method
   [5]: Stupidedi/Values/SegmentVal.html
-  [6]: Stupidedi/Builder/Navigation.html#segment-instance_method
+  [6]: Stupidedi/Parser/Navigation.html#segment-instance_method
   [7]: Stupidedi/Zipper/AbstractCursor.html
   [8]: Stupidedi/Either.html
-  [9]: Stupidedi/Builder/Navigation.html#next-instance_method
-  [10]: Stupidedi/Builder/Navigation.html#prev-instance_method
-  [11]: Stupidedi/Builder/Navigation.html#element-instance_method
-  [12]: Stupidedi/Builder/Navigation.html#first-instance_method
-  [13]: Stupidedi/Builder/Navigation.html#last-instance_method
-  [14]: Stupidedi/Builder/Navigation.html#find-instance_method
-  [15]: Stupidedi/Builder/Navigation.html#parent-instance_method
+  [9]: Stupidedi/Parser/Navigation.html#next-instance_method
+  [10]: Stupidedi/Parser/Navigation.html#prev-instance_method
+  [11]: Stupidedi/Parser/Navigation.html#element-instance_method
+  [12]: Stupidedi/Parser/Navigation.html#first-instance_method
+  [13]: Stupidedi/Parser/Navigation.html#last-instance_method
+  [14]: Stupidedi/Parser/Navigation.html#find-instance_method
+  [15]: Stupidedi/Parser/Navigation.html#parent-instance_method
   [16]: Stupidedi/Either.html#map-instance_method
   [17]: Stupidedi/Either.html#flatmap-instance_method
   [18]: Stupidedi/Either.html#or-instance_method
   [19]: Stupidedi/Either.html#tap-instance_method
   [20]: Object.html#try-instance_method
   [21]: Object.html#tap-instance_method
-  [22]: Stupidedi/Builder/InstructionTable.html
-  [23]: Stupidedi/Builder/StateMachine.html#successors-instance_method
-  [24]: Stupidedi/Builder/StateMachine.html#deterministic%3F-instance_method
-  [25]: Stupidedi/Builder/Navigation.html#iterate-instance_method
+  [22]: Stupidedi/Parser/InstructionTable.html
+  [23]: Stupidedi/Parser/StateMachine.html#successors-instance_method
+  [24]: Stupidedi/Parser/StateMachine.html#deterministic%3F-instance_method
+  [25]: Stupidedi/Parser/Navigation.html#iterate-instance_method
 

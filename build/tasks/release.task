@@ -1,0 +1,10 @@
+require_relative "../../lib/stupidedi/version"
+
+# Want: updating/pushing a new tag will build and release gem
+#   https://github.com/simp/simp-core/blob/master/.travis.yml
+#   https://simp.readthedocs.io/en/master/contributors_guide/maintenance/Tagging_and_Releasing_Components.html
+
+# Tags pointing to current commit
+#   `git tag -l --points-at HEAD`
+
+#
