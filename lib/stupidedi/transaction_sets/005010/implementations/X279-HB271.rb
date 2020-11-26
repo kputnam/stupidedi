@@ -346,8 +346,8 @@ module Stupidedi
                       b::Element(e::NotUsed,     "Printer Carriage Control Code"),
                       b::Element(e::NotUsed,     "Number")),
 
-                    d::LoopDef.build("2115C SUBSCRIBER ELEGIBILITY OR BENEFIT ADDITIONAL INFORMATION", d::RepeatCount.bounded(10),
-                      b::Segment(2600, s::III, "Subscriber Elegibility or Benefit Additional Information", r::Situational, d::RepeatCount.bounded(1),
+                    d::LoopDef.build("2115C SUBSCRIBER ELIGIBILITY OR BENEFIT ADDITIONAL INFORMATION", d::RepeatCount.bounded(10),
+                      b::Segment(2600, s::III, "Subscriber Eligibility or Benefit Additional Information", r::Situational, d::RepeatCount.bounded(1),
                         b::Element(e::Situational, "Code List Qualifier Code", b::Values("GR", "NI", "ZZ")),
                         b::Element(e::Situational, "Industry Code"),
                         b::Element(e::Situational, "Code Category", b::Values("44")),
