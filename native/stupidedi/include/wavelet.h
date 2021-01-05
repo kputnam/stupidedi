@@ -7,6 +7,8 @@
 #include "stupidedi/include/rrr.h"
 #include "stupidedi/include/bitstr.h"
 
+/* This costs sizeof(stupidedi_wavelet_t) * (2σ - 1) = TODO, just for the tree
+ * shape. This overhead is added to the overead for (2σ - 1) RRR's: */
 typedef struct stupidedi_wavelet_t
 {
   stupidedi_rrr_t* rrr;

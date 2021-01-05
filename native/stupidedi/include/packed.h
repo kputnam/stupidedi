@@ -77,4 +77,15 @@ stupidedi_packed_read(const stupidedi_packed_t*, size_t);
 size_t
 stupidedi_packed_write(const stupidedi_packed_t*, size_t, uint64_t value);
 
+/*
+stupidedi_packed_t*
+stupidedi_packed_reverse(const stupidedi_packed_t*, stupidedi_packed_t*);
+*/
+
+stupidedi_packed_t*
+stupidedi_packed_sort(const stupidedi_packed_t*);
+
+stupidedi_packed_t*
+stupidedi_packed_argsort(const stupidedi_packed_t*);
+
 #endif

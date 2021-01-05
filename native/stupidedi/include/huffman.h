@@ -4,22 +4,25 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include "stupidedi/include/intmap.h"
+#include "stupidedi/include/packed.h"
 
 typedef struct stupidedi_huffman_t
 {
+    long double l_avg;
+    long double K;
+    stupidedi_packed_t* levels;
 } stupidedi_huffman_t;
 
 /*****************************************************************************/
 
 stupidedi_huffman_t*
-stupidedi_huffman_alloc(stupidedi_intmap_t*);
+stupidedi_huffman_alloc(stupidedi_packed_t*);
 
 stupidedi_huffman_t*
 stupidedi_huffman_dealloc(stupidedi_huffman_t*);
 
 stupidedi_huffman_t*
-stupidedi_huffman_init(stupidedi_huffman_t*, stupidedi_intmap_t*);
+stupidedi_huffman_init(stupidedi_huffman_t*, stupidedi_packed_t*);
 
 stupidedi_huffman_t*
 stupidedi_huffman_deinit(stupidedi_huffman_t*);

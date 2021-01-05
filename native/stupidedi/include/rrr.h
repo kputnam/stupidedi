@@ -11,6 +11,8 @@
 #define STUPIDEDI_RRR_MARKER_SIZE_MIN 3
 #define STUPIDEDI_RRR_MARKER_SIZE_MAX 2048
 
+/* Each RRR costs at least sizeof(stupidedi_rrr_t) = TODO bytes, which is then
+ * added to the cost of the bitstr and three packed vectors */
 typedef struct stupidedi_rrr_t
 {
     /* Total number of bits in input */

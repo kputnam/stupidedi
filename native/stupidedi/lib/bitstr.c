@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "stupidedi/include/bitstr.h"
 
-#define WORD_NBITS 6
+#define WORD_NBITS 6 /* log2(64) */
 #define WORD_SIZE (1 << WORD_NBITS)
 
 static inline uint8_t mod_word_size(size_t x);
