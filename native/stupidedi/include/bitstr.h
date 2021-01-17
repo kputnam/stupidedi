@@ -5,19 +5,18 @@
 #include <stdint.h>
 #include <stddef.h>
 
-typedef struct stupidedi_bitstr_t
-{
-    uint64_t* data;
-    size_t length;
-} stupidedi_bitstr_t;
+typedef struct stupidedi_bitstr_t stupidedi_bitstr_t;
 
 /*****************************************************************************/
 
 stupidedi_bitstr_t*
-stupidedi_bitstr_alloc(size_t);
+stupidedi_bitstr_alloc(void);
 
 stupidedi_bitstr_t*
 stupidedi_bitstr_dealloc(stupidedi_bitstr_t*);
+
+stupidedi_bitstr_t*
+stupidedi_bitstr_new(size_t);
 
 stupidedi_bitstr_t*
 stupidedi_bitstr_init(stupidedi_bitstr_t*, size_t);

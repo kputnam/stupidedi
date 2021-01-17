@@ -8,20 +8,18 @@
 #define STUPIDEDI_PACKED_WIDTH_MIN 1
 #define STUPIDEDI_PACKED_WIDTH_MAX 64
 
-typedef struct stupidedi_packed_t
-{
-    stupidedi_bitstr_t* data;
-    uint8_t width;
-    size_t length;
-} stupidedi_packed_t;
+typedef struct stupidedi_packed_t stupidedi_packed_t;
 
 /*****************************************************************************/
 
 stupidedi_packed_t*
-stupidedi_packed_alloc(size_t length, size_t width);
+stupidedi_packed_alloc(void);
 
 stupidedi_packed_t*
 stupidedi_packed_dealloc(stupidedi_packed_t*);
+
+stupidedi_packed_t*
+stupidedi_packed_new(size_t length, size_t width);
 
 stupidedi_packed_t*
 stupidedi_packed_init(stupidedi_packed_t*, size_t length, size_t width);
@@ -64,7 +62,7 @@ char*
 stupidedi_packed_to_string(const stupidedi_packed_t*);
 
 stupidedi_bitstr_t*
-stupidedi_packed_as_bitstr(const stupidedi_packed_t*, stupidedi_bitstr_t*);
+stupidedi_packed_as_bitstr(const stupidedi_packed_t*);
 
 stupidedi_packed_t*
 stupidedi_bitstr_as_packed(stupidedi_bitstr_t*, size_t width, stupidedi_packed_t*);

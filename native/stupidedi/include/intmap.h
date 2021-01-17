@@ -6,23 +6,27 @@
 #include <stddef.h>
 #include "stupidedi/include/intmap.h"
 
-typedef struct stupidedi_intmap_t
-{
-} stupidedi_intmap_t;
+typedef struct stupidedi_intmap_t stupidedi_intmap_t;
 
 /*****************************************************************************/
 
 stupidedi_intmap_t*
-stupidedi_intmap_alloc(size_t);
+stupidedi_intmap_alloc(void);
 
 stupidedi_intmap_t*
 stupidedi_intmap_dealloc(stupidedi_intmap_t*);
+
+stupidedi_intmap_t*
+stupidedi_intmap_new(size_t);
 
 stupidedi_intmap_t*
 stupidedi_intmap_init(stupidedi_intmap_t*, size_t);
 
 stupidedi_intmap_t*
 stupidedi_intmap_deinit(stupidedi_intmap_t*);
+
+stupidedi_intmap_t*
+stupidedi_intmap_copy(stupidedi_intmap_t*);
 
 /*****************************************************************************/
 

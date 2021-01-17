@@ -5,10 +5,19 @@
 #include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/packed.h"
 
-stupidedi_packed_t*
-stupidedi_packed_alloc(size_t length, size_t width)
+typedef struct stupidedi_packed_t
 {
-    return stupidedi_packed_init(malloc(sizeof(stupidedi_packed_t)), length, width);
+    stupidedi_bitstr_t* data;
+    uint8_t width;
+    size_t length;
+} stupidedi_packed_t;
+
+/*****************************************************************************/
+
+stupidedi_packed_t*
+stupidedi_packed_alloc(void)
+{
+    return malloc(sizeof(stupidedi_packed_t));
 }
 
 stupidedi_packed_t*
@@ -17,6 +26,12 @@ stupidedi_packed_dealloc(stupidedi_packed_t* a)
     if (a != NULL)
         free(stupidedi_packed_deinit(a));
     return NULL;
+}
+
+stupidedi_packed_t*
+stupidedi_packed_new(size_t length, size_t width)
+{
+    return stupidedi_packed_init(stupidedi_packed_alloc(), length, width);
 }
 
 stupidedi_packed_t*
@@ -29,7 +44,7 @@ stupidedi_packed_init(stupidedi_packed_t* a, size_t length, size_t width)
 
     a->length = length;
     a->width  = width;
-    a->data   = stupidedi_bitstr_alloc(width * length);
+    a->data   = stupidedi_bitstr_new(width * length);
 
     return a;
 }
@@ -53,7 +68,7 @@ stupidedi_packed_copy(const stupidedi_packed_t* src, stupidedi_packed_t* dst)
         stupidedi_packed_deinit(dst);
     else
     {
-        dst = malloc(sizeof(stupidedi_packed_t));
+        dst = stupidedi_packed_alloc();
         assert(dst != NULL);
     }
 
@@ -70,6 +85,9 @@ stupidedi_packed_resize(stupidedi_packed_t* a, size_t length)
 {
     assert(a != NULL);
 
+    if (stupidedi_packed_length(a) == length)
+        return a;
+
     a->length = length;
     a->data   = stupidedi_bitstr_resize(a->data, a->width * length);
 
@@ -82,7 +100,7 @@ stupidedi_packed_t*
 stupidedi_packed_from_array8(size_t length, uint8_t* src)
 {
     stupidedi_packed_t* a;
-    a = stupidedi_packed_alloc(length, 8);
+    a = stupidedi_packed_new(length, 8);
 
     for (size_t k = 0; k < length; ++k)
         stupidedi_packed_write(a, k, src[k]);
@@ -94,7 +112,7 @@ stupidedi_packed_t*
 stupidedi_packed_from_array16(size_t length, uint16_t* src)
 {
     stupidedi_packed_t* a;
-    a = stupidedi_packed_alloc(length, 16);
+    a = stupidedi_packed_new(length, 16);
 
     for (size_t k = 0; k < length; ++k)
         stupidedi_packed_write(a, k, src[k]);
@@ -106,7 +124,7 @@ stupidedi_packed_t*
 stupidedi_packed_from_array32(size_t length, uint32_t* src)
 {
     stupidedi_packed_t* a;
-    a = stupidedi_packed_alloc(length, 32);
+    a = stupidedi_packed_new(length, 32);
 
     for (size_t k = 0; k < length; ++k)
         stupidedi_packed_write(a, k, src[k]);
@@ -118,7 +136,7 @@ stupidedi_packed_t*
 stupidedi_packed_from_array64(size_t length, uint64_t* src)
 {
     stupidedi_packed_t* a;
-    a = stupidedi_packed_alloc(length, 64);
+    a = stupidedi_packed_new(length, 64);
 
     for (size_t k = 0; k < length; ++k)
         stupidedi_packed_write(a, k, src[k]);
@@ -158,7 +176,7 @@ stupidedi_packed_to_string(const stupidedi_packed_t* a)
     assert(a->width != 0);
 
     char* str;
-    str = malloc(a->data->length + a->length);
+    str = malloc(stupidedi_bitstr_length(a->data) + a->length);
 
     int64_t n;
     n = -1;
@@ -179,17 +197,10 @@ stupidedi_packed_to_string(const stupidedi_packed_t* a)
 }
 
 stupidedi_bitstr_t*
-stupidedi_packed_as_bitstr(const stupidedi_packed_t* a, stupidedi_bitstr_t* b)
+stupidedi_packed_as_bitstr(const stupidedi_packed_t* a)
 {
     assert(a != NULL);
     assert(a->data != NULL);
-
-    if (b != NULL)
-    {
-        b->data   = a->data->data;
-        b->length = a->length * a->width;
-        return b;
-    }
 
     return a->data;
 }
@@ -198,7 +209,7 @@ stupidedi_packed_t*
 stupidedi_bitstr_as_packed(stupidedi_bitstr_t* b, size_t width, stupidedi_packed_t* a)
 {
     assert(b != NULL);
-    assert(b->data != NULL);
+    //assert(b->data != NULL);
     assert(a != NULL);
 
     a->width  = width;
@@ -299,7 +310,7 @@ stupidedi_packed_argsort(const stupidedi_packed_t* a)
     /* TODO: Less conversion back and forth between packed and unpacked arrays */
 
     stupidedi_packed_t *j;
-    j = stupidedi_packed_alloc(length, nbits(length));
+    j = stupidedi_packed_new(length, nbits(length));
 
     for (size_t k = 0; k < length; ++k)
         stupidedi_packed_write(a, k, i[k]);
@@ -328,7 +339,7 @@ stupidedi_packed_sort(const stupidedi_packed_t* a)
     /* TODO: Less conversion back and forth between packed and unpacked arrays */
 
     stupidedi_packed_t *b;
-    b = stupidedi_packed_alloc(length, stupidedi_packed_width(a));
+    b = stupidedi_packed_new(length, stupidedi_packed_width(a));
 
     for (size_t k = 0; k < length; ++k)
         stupidedi_packed_write(b, k, stupidedi_packed_read(a, i[k]));

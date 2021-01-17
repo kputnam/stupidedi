@@ -4,73 +4,19 @@
 #include "stupidedi/include/builtins.h"
 #include "stupidedi/include/wavelet.h"
 
-/*
- * In this particular application, the alphabet typically contains six symbols.
- * Using the files in spec/fixtures as a sample, the relative frequences of each
- * symbol are approximately:
- *
- *   I  the letter I
- *   S  the letter S
- *   A  the letter A
- *   α  graphical character
- *   *  element separator
- *   ~  segment terminator
- *   _  non-graphical character
- *   :  component separator
- *   ^  repetition separator
- *
- *   p(sᵢ = a) = 0.77332 graphical character
- *   p(sᵢ = *) = 0.17135 element separator
- *   p(sᵢ = ~) = 0.03651 segment terminator
- *   p(sᵢ = _) = 0.01284 non-graphical character (\r, \n, etc)
- *   p(sᵢ = :) = 0.00475 component separator
- *   p(sᵢ = ^) = 0.00120 repetition separator
- *
- * The Shannon entropy (H₀) of this distribution is 1.02636 compared to 2.58496,
- * which is the entropy of a uniformly random distribution of six symbols. So
- * we expect RRR sequences to provide some compression. The lower bound on
- * space required is
- *
- * Taking advantage of the fact these symbols are not i.i.d. could make higher
- * compression possible but the conditional probabilities of the next character
- * given the previous match the marginal probabilities above, at least for the
- * most common conditions.
- *
- *     p(sᵢ = a | sᵢ₋₁ = a) = 0.766936     p(sᵢ = a | sᵢ₋₁ = ~) = 0.977200
- *     p(sᵢ = * | sᵢ₋₁ = a) = 0.176897     p(sᵢ = a | sᵢ₋₁ = *) = 0.803176
- *     p(sᵢ = ~ | sᵢ₋₁ = a) = 0.036207     p(sᵢ = a | sᵢ₋₁ = :) = 0.787348
- *     p(sᵢ = _ | sᵢ₋₁ = a) = 0.014608     p(sᵢ = a | sᵢ₋₁ = a) = 0.766936
- *     p(sᵢ = : | sᵢ₋₁ = a) = 0.004844     p(sᵢ = a | sᵢ₋₁ = ^) = 0.329787
- *     p(sᵢ = ^ | sᵢ₋₁ = a) = 0.000496     p(sᵢ = a | sᵢ₋₁ = _) = 0.216350
- *
- *     p(sᵢ = a | sᵢ₋₁ = *) = 0.803176     p(sᵢ = * | sᵢ₋₁ = ^) = 0.638297
- *     p(sᵢ = * | sᵢ₋₁ = *) = 0.192412     p(sᵢ = * | sᵢ₋₁ = *) = 0.192412
- *     p(sᵢ = _ | sᵢ₋₁ = *) = 0.000074     p(sᵢ = * | sᵢ₋₁ = a) = 0.176897
- *     p(sᵢ = ^ | sᵢ₋₁ = *) = 0.004335     p(sᵢ = * | sᵢ₋₁ = :) = 0.170928
- *
- *     p(sᵢ = a | sᵢ₋₁ = ~) = 0.977200     p(sᵢ = ~ | sᵢ₋₁ = _) = 0.662512
- *     p(sᵢ = : | sᵢ₋₁ = ~) = 0.022272     p(sᵢ = ~ | sᵢ₋₁ = a) = 0.036207
- *     p(sᵢ = ^ | sᵢ₋₁ = ~) = 0.000526
- *                                         p(sᵢ = _ | sᵢ₋₁ = _) = 0.119641
- *     p(sᵢ = ~ | sᵢ₋₁ = _) = 0.662512     p(sᵢ = _ | sᵢ₋₁ = a) = 0.014608
- *     p(sᵢ = a | sᵢ₋₁ = _) = 0.216350     p(sᵢ = _ | sᵢ₋₁ = *) = 0.000074
- *     p(sᵢ = _ | sᵢ₋₁ = _) = 0.119641
- *     p(sᵢ = ^ | sᵢ₋₁ = _) = 0.001495     p(sᵢ = : | sᵢ₋₁ = :) = 0.041722
- *                                         p(sᵢ = : | sᵢ₋₁ = ~) = 0.022272
- *     p(sᵢ = a | sᵢ₋₁ = :) = 0.787348     p(sᵢ = : | sᵢ₋₁ = a) = 0.004844
- *     p(sᵢ = * | sᵢ₋₁ = :) = 0.170928
- *     p(sᵢ = : | sᵢ₋₁ = :) = 0.041722     p(sᵢ = ^ | sᵢ₋₁ = ^) = 0.031914
- *                                         p(sᵢ = ^ | sᵢ₋₁ = *) = 0.004335
- *     p(sᵢ = * | sᵢ₋₁ = ^) = 0.638297     p(sᵢ = ^ | sᵢ₋₁ = _) = 0.001495
- *     p(sᵢ = a | sᵢ₋₁ = ^) = 0.329787     p(sᵢ = ^ | sᵢ₋₁ = ~) = 0.000526
- *     p(sᵢ = ^ | sᵢ₋₁ = ^) = 0.031914     p(sᵢ = ^ | sᵢ₋₁ = a) = 0.000496
- *
- */
+typedef struct stupidedi_wavelet_t
+{
+  struct stupidedi_wavelet_t *l, *r;
+  stupidedi_rrr_t* rrr;
+  uint8_t height;
+} stupidedi_wavelet_t;
+
+/*****************************************************************************/
 
 stupidedi_wavelet_t*
-stupidedi_wavelet_alloc(stupidedi_packed_t* a, uint8_t height)
+stupidedi_wavelet_alloc(void)
 {
-    return stupidedi_wavelet_init(malloc(sizeof(stupidedi_wavelet_t)), a, height);
+    return malloc(sizeof(stupidedi_wavelet_t));
 }
 
 stupidedi_wavelet_t*
@@ -80,6 +26,12 @@ stupidedi_wavelet_dealloc(stupidedi_wavelet_t* w)
         free(stupidedi_wavelet_deinit(w));
 
     return NULL;
+}
+
+stupidedi_wavelet_t*
+stupidedi_wavelet_new(stupidedi_packed_t* a, uint8_t height)
+{
+    return stupidedi_wavelet_init(stupidedi_wavelet_alloc(), a, height);
 }
 
 stupidedi_wavelet_t*
@@ -94,7 +46,7 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* a, uint8_t he
 
     if (height == 1)
     {
-        w->rrr = stupidedi_rrr_alloc(stupidedi_packed_as_bitstr(a, NULL), 63, 512);
+        w->rrr = stupidedi_rrr_new(stupidedi_packed_as_bitstr(a), 63, 512);
         w->l   = NULL;
         w->r   = NULL;
         return w;
@@ -104,11 +56,11 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* a, uint8_t he
         = stupidedi_packed_length(a);
 
     stupidedi_rrr_builder_t* rrr_;
-    rrr_ = stupidedi_rrr_builder_alloc(63, 512, length);
+    rrr_ = stupidedi_rrr_builder_new(63, 512, length);
 
     stupidedi_packed_t *lb, *rb;
-    lb = stupidedi_packed_alloc(length, height - 1);
-    rb = stupidedi_packed_alloc(length, height - 1);
+    lb = stupidedi_packed_new(length, height - 1);
+    rb = stupidedi_packed_new(length, height - 1);
 
     /* Number of symbols belonging to left and right subtree */
     size_t nl, nr;
@@ -148,8 +100,8 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* a, uint8_t he
     w->rrr = stupidedi_rrr_builder_to_rrr(rrr_, NULL);
     stupidedi_rrr_builder_dealloc(rrr_);
 
-    w->l = (lb == 0) ? NULL : stupidedi_wavelet_alloc(lb, height - 1);
-    w->r = (rb == 0) ? NULL : stupidedi_wavelet_alloc(rb, height - 1);
+    w->l = (lb == 0) ? NULL : stupidedi_wavelet_new(lb, height - 1);
+    w->r = (rb == 0) ? NULL : stupidedi_wavelet_new(rb, height - 1);
 
     return w;
 }

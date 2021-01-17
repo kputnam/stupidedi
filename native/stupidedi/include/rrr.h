@@ -11,50 +11,27 @@
 #define STUPIDEDI_RRR_MARKER_SIZE_MIN 3
 #define STUPIDEDI_RRR_MARKER_SIZE_MAX 2048
 
-/* Each RRR costs at least sizeof(stupidedi_rrr_t) = TODO bytes, which is then
- * added to the cost of the bitstr and three packed vectors */
-typedef struct stupidedi_rrr_t
-{
-    /* Total number of bits in input */
-    size_t length;
-
-    /* Number of 1-bits in input */
-    size_t rank;
-
-    /* Number of input bits per block */
-    uint8_t block_size;
-    size_t nblocks;
-
-    /* classes[k] is number of 1s bits in kth block. */
-    stupidedi_packed_t* classes;
-
-    /* Variable width, offsets[k] points to one of the values with classes[k] 1s bits. */
-    stupidedi_bitstr_t* offsets;
-
-    /* Number of input bits per marker */
-    uint16_t marker_size;
-    size_t nmarkers;
-
-    /* Each marker counts how many 1-bits occured in the first (1+k)*marker_size bits. */
-    stupidedi_packed_t* marked_ranks;
-
-    /* Points to the offset for the block with the (1+k)*marker_size-1 th bit. */
-    stupidedi_packed_t* marked_offsets;
-} stupidedi_rrr_t;
+typedef struct stupidedi_rrr_t stupidedi_rrr_t;
 
 /*****************************************************************************/
 
 stupidedi_rrr_t*
-stupidedi_rrr_alloc(const stupidedi_bitstr_t*, uint8_t block_size, uint16_t marker_size);
+stupidedi_rrr_alloc(void);
 
 stupidedi_rrr_t*
 stupidedi_rrr_dealloc(stupidedi_rrr_t*);
+
+stupidedi_rrr_t*
+stupidedi_rrr_new(const stupidedi_bitstr_t*, uint8_t block_size, uint16_t marker_size);
 
 stupidedi_rrr_t*
 stupidedi_rrr_init(stupidedi_rrr_t*, const stupidedi_bitstr_t*, uint8_t block_size, uint16_t marker_size);
 
 stupidedi_rrr_t*
 stupidedi_rrr_deinit(stupidedi_rrr_t*);
+
+stupidedi_rrr_t*
+stupidedi_rrr_copy(stupidedi_rrr_t*);
 
 /*****************************************************************************/
 
@@ -118,16 +95,19 @@ typedef struct stupidedi_rrr_builder_t
 /*****************************************************************************/
 
 stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, size_t length);
+stupidedi_rrr_builder_alloc(void);
 
 stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_dealloc(stupidedi_rrr_builder_t*);
+stupidedi_rrr_builder_new(uint8_t block_size, uint16_t marker_size, size_t length);
 
 stupidedi_rrr_builder_t*
 stupidedi_rrr_builder_init(stupidedi_rrr_builder_t*, uint8_t block_size, uint16_t marker_size, size_t length);
 
 stupidedi_rrr_builder_t*
 stupidedi_rrr_builder_deinit(stupidedi_rrr_builder_t*);
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_dealloc(stupidedi_rrr_builder_t*);
 
 /*****************************************************************************/
 

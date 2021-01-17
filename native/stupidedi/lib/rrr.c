@@ -7,6 +7,35 @@
 #include "stupidedi/include/packed.h"
 #include "stupidedi/include/builtins.h"
 
+typedef struct stupidedi_rrr_t
+{
+    /* Total number of bits in input */
+    size_t length;
+
+    /* Number of 1-bits in input */
+    size_t rank;
+
+    /* Number of input bits per block */
+    uint8_t block_size;
+    size_t nblocks;
+
+    /* classes[k] is number of 1s bits in kth block. */
+    stupidedi_packed_t* classes;
+
+    /* Variable width, offsets[k] points to one of the values with classes[k] 1s bits. */
+    stupidedi_bitstr_t* offsets;
+
+    /* Number of input bits per marker */
+    uint16_t marker_size;
+    size_t nmarkers;
+
+    /* Each marker counts how many 1-bits occured in the first (1+k)*marker_size bits. */
+    stupidedi_packed_t* marked_ranks;
+
+    /* Points to the offset for the block with the (1+k)*marker_size-1 th bit. */
+    stupidedi_packed_t* marked_offsets;
+} stupidedi_rrr_t;
+
 static uint64_t **binomial = NULL;
 
 static          void        precompute_binomials(void);
@@ -26,9 +55,9 @@ static          size_t      stupidedi_rrr_find_marker1(const stupidedi_rrr_t*, s
 /*****************************************************************************/
 
 stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_alloc(uint8_t block_size, uint16_t marker_size, size_t length)
+stupidedi_rrr_builder_alloc(void)
 {
-    return stupidedi_rrr_builder_init(malloc(sizeof(stupidedi_rrr_builder_t)), block_size, marker_size, length);
+    return malloc(sizeof(stupidedi_rrr_builder_t));
 }
 
 stupidedi_rrr_builder_t*
@@ -38,6 +67,12 @@ stupidedi_rrr_builder_dealloc(stupidedi_rrr_builder_t* rrrb)
         free(stupidedi_rrr_builder_deinit(rrrb));
 
     return NULL;
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_new(uint8_t block_size, uint16_t marker_size, size_t length)
+{
+    return stupidedi_rrr_builder_init(stupidedi_rrr_builder_alloc(), block_size, marker_size, length);
 }
 
 stupidedi_rrr_builder_t*
@@ -52,7 +87,7 @@ stupidedi_rrr_builder_init(stupidedi_rrr_builder_t* rrrb, uint8_t block_size, ui
     assert(marker_size <= STUPIDEDI_RRR_MARKER_SIZE_MAX);
 
     stupidedi_rrr_t* rrr;
-    rrr = malloc(sizeof(stupidedi_rrr_t));
+    rrr = stupidedi_rrr_alloc();
     assert(rrr != NULL);
     rrrb->rrr = rrr;
 
@@ -76,13 +111,13 @@ stupidedi_rrr_builder_init(stupidedi_rrr_builder_t* rrrb, uint8_t block_size, ui
     /* These two vectors are sufficient to encode the original bit vector. The
      * additional vectors allocated below are the o(n) atop nH₀, and are used
      * for making rank and select operations fast. */
-    rrr->classes = stupidedi_packed_alloc(rrr->nblocks, nbits(block_size + 1));
-    rrr->offsets = stupidedi_bitstr_alloc((uint32_t)(rrr->nblocks * rrrb->offset_nbits_max));
+    rrr->classes = stupidedi_packed_new(rrr->nblocks, nbits(block_size + 1));
+    rrr->offsets = stupidedi_bitstr_new((uint32_t)(rrr->nblocks * rrrb->offset_nbits_max));
 
     if (rrr->nmarkers > 0)
     {
-        rrr->marked_ranks   = stupidedi_packed_alloc(rrr->nmarkers, nbits(length + 1));
-        rrr->marked_offsets = stupidedi_packed_alloc(rrr->nmarkers, nbits(rrr->offsets->length));
+        rrr->marked_ranks   = stupidedi_packed_new(rrr->nmarkers, nbits(length + 1));
+        rrr->marked_offsets = stupidedi_packed_new(rrr->nmarkers, nbits(stupidedi_bitstr_length(rrr->offsets)));
     }
     else
     {
@@ -99,7 +134,7 @@ stupidedi_rrr_builder_deinit(stupidedi_rrr_builder_t* rrrb)
     if (rrrb == NULL)
         return rrrb;
 
-    if (rrrb->rrr != NULL && !rrrb->is_done)
+    if (rrrb->rrr != NULL && !rrrb->is_done) /* TODO hmm? */
         rrrb->rrr = stupidedi_rrr_dealloc(rrrb->rrr);
 
     return rrrb;
@@ -271,11 +306,13 @@ stupidedi_rrr_builder_to_rrr(stupidedi_rrr_builder_t* rrrb, stupidedi_rrr_t* rrr
 }
 
 /*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
 
 stupidedi_rrr_t*
-stupidedi_rrr_alloc(const stupidedi_bitstr_t* bs, uint8_t block_size, uint16_t marker_size)
+stupidedi_rrr_alloc(void)
 {
-    return stupidedi_rrr_init(malloc(sizeof(stupidedi_rrr_t)), bs, block_size, marker_size);
+    return malloc(sizeof(stupidedi_rrr_t));
 }
 
 stupidedi_rrr_t*
@@ -285,6 +322,12 @@ stupidedi_rrr_dealloc(stupidedi_rrr_t* rrr)
         free(stupidedi_rrr_deinit(rrr));
 
     return NULL;
+}
+
+stupidedi_rrr_t*
+stupidedi_rrr_new(const stupidedi_bitstr_t* bs, uint8_t block_size, uint16_t marker_size)
+{
+    return stupidedi_rrr_init(stupidedi_rrr_alloc(), bs, block_size, marker_size);
 }
 
 stupidedi_rrr_t*
@@ -394,7 +437,7 @@ stupidedi_rrr_to_bitstr(const stupidedi_rrr_t* rrr, stupidedi_bitstr_t* b)
         return NULL;
 
     b = (b == NULL) ?
-        stupidedi_bitstr_alloc(rrr->length) :
+        stupidedi_bitstr_new(rrr->length) :
         stupidedi_bitstr_init(stupidedi_bitstr_deinit(b), rrr->length);
 
     size_t offset_at, class_at;

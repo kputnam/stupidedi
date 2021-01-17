@@ -164,10 +164,51 @@ def coder(_l, p)
     c[l]     -= 1
     c[l + 1] += 1
     k        -= 2.0 ** -(l + 1)
+    raise unless k == kraft(c)
   end
 
   c
 end
+
+###############################################################################
+def coder_(_l, p)
+  raise unless p.sorted?
+
+  # initial guess
+  c = Array.new(_l + 1, 0)
+  p.each do |p|
+    l = (-Math.log2(p)).ceil - 1
+    raise unless l <= _l
+    c[l] += 1
+  end
+
+  # find longest codeword and kraft sum
+  k     = 0
+  max_l = 0
+
+  c.each.with_index do |n, l|
+    k    += n * 2.0**-l
+    max_l = l if n > 0
+  end
+
+  max_l.downto(0).each do |l|
+    delta = k - 1
+    break if delta <= 0
+
+    unit  = 2.0 ** -(l + 1)
+    count = (delta / unit).ceil
+    count = c[l] if (count > c[l])
+
+    c[l]     -= count
+    c[l + 1] += count
+    k        -= count * unit
+    raise unless k == kraft(c)
+  end
+
+  c
+end
+
+###############################################################################
 
 # shorten some codewords to by filling unused space
 #   TODO: [0,0,1,3] becomes [0,0,2,2], why not [0,0,4]?
@@ -218,14 +259,17 @@ end
 # assigns codewords for use in a wavelet matrix
 def generate_(c)
   q = [0, 1]
+  x = 0
+  y = c.each.with_index.sum{|v,l| v }
 
   (1..c.length-1).map do |l|
     c[l].times.map{ C.new(l, q.shift) }.tap do
       z = q.map{|x| (x << 1) | 0 }
       o = q.map{|x| (x << 1) | 1 }
       q = z.concat(o)
+      x = [x, q.size].max
     end
-  end
+  end.tap{ $stderr.puts "NUMBER OF SYMBOLS: #{y}\nMAX QUEUE SIZE: #{x}\n" }
 end
 
 # s[i] is the i-th least probable symbol
@@ -272,16 +316,18 @@ def draw(q)
 end
 
 def main(_l, huffman=true)
-  x    = File.read("test.txt")
-  s, f = tally(x)     #tap{|x| $stderr.puts "tally: #{x.inspect}\n\n" }
+  x    = (STDIN.tty?) ? File.read("test.txt") : STDIN.read
+  s, f = tally(x)     .tap{|x| $stderr.puts "tally: #{x.inspect}\n\n" }
   p    = prob(f)      #tap{|x| $stderr.puts "prob:  #{x.inspect}\n\n" }
   p    = scale(_l, p) #tap{|x| $stderr.puts "scale: #{x.inspect}\n\n" }
-  c    = coder(_l, p) #tap{|x| $stderr.puts "coder: #{x.inspect}\n\n" }
+
+  c    = huffman ? :coder : :coder_
+  c    = send(c, _l, p) #tap{|x| $stderr.puts "coder: #{x.inspect}\n\n" }
   c    = fill(c)      #tap{|x| $stderr.puts "fill:  #{x.inspect}\n\n" }
   m    = huffman ? :generate : :generate_
-  m    = send(m, c)   #tap{|x| $stderr.puts "gen:   #{x.inspect}\n\n" }
-  q    = assign(s, m) #tap{|x| $stderr.puts "assign:#{x.inspect}\n\n" }
-  puts draw(q)
+  m    = send(m, c)   .tap{|x| $stderr.puts "gen:   #{x.inspect}\n\n" }
+  q    = assign(s, m) .tap{|x| $stderr.puts "assign:#{x.inspect}\n\n" }
+  #puts draw(q)
 
   $stderr.puts "lavg=#{lavg(p, s.map{|x| q.fetch(x).length})}, K=#{kraft(c)}"
 end

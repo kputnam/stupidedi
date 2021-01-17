@@ -6,14 +6,22 @@
 #define WORD_NBITS 6 /* log2(64) */
 #define WORD_SIZE (1 << WORD_NBITS)
 
+typedef struct stupidedi_bitstr_t
+{
+    uint64_t* data;
+    size_t length;
+} stupidedi_bitstr_t;
+
 static inline uint8_t mod_word_size(size_t x);
 static inline size_t div_word_size(size_t x);
 static inline size_t cdiv_word_size(size_t x);
 
+/*****************************************************************************/
+
 stupidedi_bitstr_t*
-stupidedi_bitstr_alloc(size_t length)
+stupidedi_bitstr_alloc(void)
 {
-    return stupidedi_bitstr_init(malloc(sizeof(stupidedi_bitstr_t)), length);
+    return malloc(sizeof(stupidedi_bitstr_t));
 }
 
 stupidedi_bitstr_t*
@@ -23,6 +31,12 @@ stupidedi_bitstr_dealloc(stupidedi_bitstr_t* b)
         free(stupidedi_bitstr_deinit(b));
 
     return NULL;
+}
+
+stupidedi_bitstr_t*
+stupidedi_bitstr_new(size_t length)
+{
+    return stupidedi_bitstr_init(stupidedi_bitstr_alloc(), length);
 }
 
 stupidedi_bitstr_t*
@@ -57,7 +71,7 @@ stupidedi_bitstr_copy(const stupidedi_bitstr_t* src, stupidedi_bitstr_t* dst)
         stupidedi_bitstr_deinit(dst);
     else
     {
-        dst = malloc(sizeof(stupidedi_bitstr_t));
+        dst = stupidedi_bitstr_alloc();
         assert(dst != NULL);
     }
 
@@ -78,6 +92,9 @@ stupidedi_bitstr_resize(stupidedi_bitstr_t* b, size_t length)
 {
     assert(b != NULL);
     assert(b->data != NULL);
+
+    if (b->length == length)
+        return b;
 
     size_t nwords;
     nwords = cdiv_word_size(length);
