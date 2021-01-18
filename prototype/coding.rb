@@ -227,7 +227,7 @@ def fill(c)
 
       c[m] += 1
       c[j] -= 1
-      k += w - 2**-j
+      k    += w - 2**-j
     end
   end
 
@@ -316,14 +316,14 @@ def draw(q)
 end
 
 def main(_l, huffman=true)
-  x    = (STDIN.tty?) ? File.read("test.txt") : STDIN.read
+  x    = (STDIN.tty?) ? File.read(File.dirname(__FILE__) + "/test.txt") : STDIN.read
   s, f = tally(x)     .tap{|x| $stderr.puts "tally: #{x.inspect}\n\n" }
   p    = prob(f)      #tap{|x| $stderr.puts "prob:  #{x.inspect}\n\n" }
-  p    = scale(_l, p) #tap{|x| $stderr.puts "scale: #{x.inspect}\n\n" }
+  p    = scale(_l, p) .tap{|x| $stderr.puts "scale: #{x.inspect}\n\n" }
 
   c    = huffman ? :coder : :coder_
-  c    = send(c, _l, p) #tap{|x| $stderr.puts "coder: #{x.inspect}\n\n" }
-  c    = fill(c)      #tap{|x| $stderr.puts "fill:  #{x.inspect}\n\n" }
+  c    = send(c, _l, p) .tap{|x| $stderr.puts "coder: #{x.inspect}\n\n" }
+  c    = fill(c)      .tap{|x| $stderr.puts "fill:  #{x.inspect}\n\n" }
   m    = huffman ? :generate : :generate_
   m    = send(m, c)   .tap{|x| $stderr.puts "gen:   #{x.inspect}\n\n" }
   q    = assign(s, m) .tap{|x| $stderr.puts "assign:#{x.inspect}\n\n" }

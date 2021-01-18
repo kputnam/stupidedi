@@ -99,12 +99,12 @@ stupidedi_bitstr_resize(stupidedi_bitstr_t* b, size_t length)
     size_t nwords;
     nwords = cdiv_word_size(length);
 
+    size_t k;
+    k = cdiv_word_size(b->length + 1);
+
     b->length = length;
     b->data   = realloc(b->data, nwords * sizeof(uint64_t));
     assert(b->data != NULL);
-
-    size_t k;
-    k = cdiv_word_size(b->length + 1);
 
     /* Zero-fill any additional memory */
     for (; k < nwords; ++k)

@@ -91,7 +91,10 @@ stupidedi_ringbuf_t*
 stupidedi_ringbuf_resize(stupidedi_ringbuf_t* q, const size_t new_capacity)
 {
     const size_t old_capacity =
-        stupidedi_ringbuf_capacity(q) - 1;
+        stupidedi_ringbuf_capacity(q);
+
+    if (new_capacity == old_capacity)
+        return q;
 
     if (new_capacity > old_capacity)
     {
@@ -103,9 +106,16 @@ stupidedi_ringbuf_resize(stupidedi_ringbuf_t* q, const size_t new_capacity)
 
         if (q->enq_at < q->deq_at)
         {
+            /*  [FGHIJ ... ABCDE] => [IJ ... ABCDEFGH]
+             *        ^e   ^d           ^e   ^d
+             *
+             *  [FGHIJ ... ABCDE] => [ ...   ABCDEFGHIJ ... ]
+             *        ^e   ^d                ^d        ^e
+             */
+
             /* Move items at front of W into Z until Z is full */
             for (size_t k = 0; k < q->enq_at && k < delta; ++k)
-                stupidedi_packed_write(q->data, k + old_capacity + 1,
+                stupidedi_packed_write(q->data, old_capacity + k + 1,
                         stupidedi_packed_read(q->data, k));
 
             /* Move remaining items at back of W to the front of W */
@@ -113,7 +123,10 @@ stupidedi_ringbuf_resize(stupidedi_ringbuf_t* q, const size_t new_capacity)
                 stupidedi_packed_write(q->data, k - delta,
                         stupidedi_packed_read(q->data, k));
 
-            q->enq_at -= delta;
+            if (delta <= q->enq_at)
+                q->enq_at -= delta;
+            else
+                q->enq_at += old_capacity + 1;
         }
     }
     else if (new_capacity < old_capacity)
@@ -246,8 +259,14 @@ stupidedi_ringbuf_to_string(const stupidedi_ringbuf_t* q)
     char *data, *str;
     data = stupidedi_packed_to_string(q->data);
 
-    size_t len;
-    len = 128 + strlen(data);
+    size_t e, d, len;
+    d = q->deq_at * (stupidedi_packed_width(q->data) + 1);
+    e = q->enq_at * (stupidedi_packed_width(q->data) + 1);
+
+    if (d > 0) --d; data[d] = '<';
+    if (e > 0) --e; data[e] = '>';
+
+    len = strlen(data) + 128;
     str = malloc(len);
 
     int n;
@@ -338,11 +357,13 @@ stupidedi_ringbuf_enqueue(stupidedi_ringbuf_t* q, uint64_t value)
         switch (q->mode)
         {
             case FAIL:
-                return 0;
+                assert(false);
+                //return 0;
             case EXPAND:
-                stupidedi_packed_write(q->data, q->enq_at, value);
-                q->enq_at = stupidedi_ringbuf_capacity(q) + 1;
                 stupidedi_ringbuf_resize(q, 2 * stupidedi_ringbuf_capacity(q));
+                stupidedi_packed_write(q->data, q->enq_at, value);
+                if (++q->enq_at >= stupidedi_packed_length(q->data))
+                    q->enq_at = 0;
                 break;
             case OVERWRITE:
                 stupidedi_packed_write(q->data, q->enq_at, value);

@@ -187,7 +187,7 @@ stupidedi_packed_to_string(const stupidedi_packed_t* a)
         item = stupidedi_packed_read(a, k);
 
         for (uint8_t i = a->width; i--; )
-            str[++n] = (item & (1 << i)) == 0 ? '0' : '1';
+            str[++n] = (item & (UINT64_C(1) << i)) == 0 ? '0' : '1';
 
         str[++n] = ',';
     }
@@ -280,7 +280,7 @@ stupidedi_packed_reverse(const stupidedi_packed_t* a, stupidedi_packed_t* b)
 }
 */
 
-int
+static int
 argsort_compare(void* a, const void* j, const void* k)
 {
     stupidedi_packed_t* a_;
@@ -309,15 +309,15 @@ stupidedi_packed_argsort(const stupidedi_packed_t* a)
 
     /* TODO: Less conversion back and forth between packed and unpacked arrays */
 
-    stupidedi_packed_t *j;
-    j = stupidedi_packed_new(length, nbits(length));
+    stupidedi_packed_t *b;
+    b = stupidedi_packed_new(length, nbits(length));
 
     for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(a, k, i[k]);
+        stupidedi_packed_write(b, k, i[k]);
 
     free(i);
 
-    return j;
+    return b;
 }
 
 stupidedi_packed_t*

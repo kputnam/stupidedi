@@ -15,9 +15,29 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-rrr-rank.c -o ./stupidedi/test/test-rrr-rank.c.o"
   },
   {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-ringbuf-queue.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-ringbuf-queue.c -o ./stupidedi/test/test-ringbuf-queue.c.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-wavelet-select.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-wavelet-select.c -o ./stupidedi/test/test-wavelet-select.c.o"
+  },
+  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-rrr-print.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-rrr-print.c -o ./stupidedi/test/test-rrr-print.c.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-ringbuf-resize.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-ringbuf-resize.c -o ./stupidedi/test/test-ringbuf-resize.c.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-wavelet-rank.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-wavelet-rank.c -o ./stupidedi/test/test-wavelet-rank.c.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-rrr-select.c",
@@ -35,9 +55,14 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-rrr-access.c -o ./stupidedi/test/test-rrr-access.c.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/bitstring.h",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/test-huffman.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/test-huffman.c -o ./stupidedi/test/test-huffman.c.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/packed.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/bitstring.h -o ./stupidedi/test/tmp/stupidedi/include/bitstring.h.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/packed.h -o ./stupidedi/test/tmp/stupidedi/include/packed.h.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/rrr.h",
@@ -45,9 +70,19 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/rrr.h -o ./stupidedi/test/tmp/stupidedi/include/rrr.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/permutation.h",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/ringbuf.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/permutation.h -o ./stupidedi/test/tmp/stupidedi/include/permutation.h.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/ringbuf.h -o ./stupidedi/test/tmp/stupidedi/include/ringbuf.h.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/bitstr.h",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/bitstr.h -o ./stupidedi/test/tmp/stupidedi/include/bitstr.h.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/intmap.h",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/intmap.h -o ./stupidedi/test/tmp/stupidedi/include/intmap.h.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/wavelet.h",
@@ -55,19 +90,14 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/wavelet.h -o ./stupidedi/test/tmp/stupidedi/include/wavelet.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/uthash.h",
-    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/uthash.h -o ./stupidedi/test/tmp/stupidedi/include/uthash.h.o"
-  },
-  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/builtins.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/builtins.h -o ./stupidedi/test/tmp/stupidedi/include/builtins.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/codepoints.h",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/huffman.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/codepoints.h -o ./stupidedi/test/tmp/stupidedi/include/codepoints.h.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/include/huffman.h -o ./stupidedi/test/tmp/stupidedi/include/huffman.h.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/include/interval.h",
@@ -80,19 +110,29 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/interval.c -o ./stupidedi/test/tmp/stupidedi/lib/interval.c.o"
   },
   {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/huffman.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/huffman.c -o ./stupidedi/test/tmp/stupidedi/lib/huffman.c.o"
+  },
+  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/rrr.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/rrr.c -o ./stupidedi/test/tmp/stupidedi/lib/rrr.c.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/bitstring.c",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/packed.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/bitstring.c -o ./stupidedi/test/tmp/stupidedi/lib/bitstring.c.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/packed.c -o ./stupidedi/test/tmp/stupidedi/lib/packed.c.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/permutation.c",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/bitstr.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/permutation.c -o ./stupidedi/test/tmp/stupidedi/lib/permutation.c.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/bitstr.c -o ./stupidedi/test/tmp/stupidedi/lib/bitstr.c.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/ringbuf.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/lib/ringbuf.c -o ./stupidedi/test/tmp/stupidedi/lib/ringbuf.c.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/lib/wavelet.c",
@@ -115,6 +155,11 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/bindings/rb_types.h -o ./stupidedi/test/tmp/stupidedi/bindings/rb_types.h.o"
   },
   {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/bindings/codepoints.h",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/bindings",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/bindings/codepoints.h -o ./stupidedi/test/tmp/stupidedi/bindings/codepoints.h.o"
+  },
+  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/bindings/rb_bitmap.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/stupidedi/bindings",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/bindings/rb_bitmap.c -o ./stupidedi/test/tmp/stupidedi/bindings/rb_bitmap.c.o"
@@ -125,9 +170,9 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/stupidedi/bindings/rb_string.c -o ./stupidedi/test/tmp/stupidedi/bindings/rb_string.c.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/test-wavelet-access.c",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp/test-ringbuf-queue.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/test/tmp",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/test-wavelet-access.c -o ./stupidedi/test/tmp/test-wavelet-access.c.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/test/tmp/test-ringbuf-queue.c -o ./stupidedi/test/tmp/test-ringbuf-queue.c.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/packed.h",
@@ -140,14 +185,19 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/rrr.h -o ./stupidedi/include/rrr.h.o"
   },
   {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/ringbuf.h",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/ringbuf.h -o ./stupidedi/include/ringbuf.h.o"
+  },
+  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/bitstr.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/bitstr.h -o ./stupidedi/include/bitstr.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/permutation.h",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/intmap.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/permutation.h -o ./stupidedi/include/permutation.h.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/intmap.h -o ./stupidedi/include/intmap.h.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/wavelet.h",
@@ -155,24 +205,14 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/wavelet.h -o ./stupidedi/include/wavelet.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/uthash.h",
-    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/uthash.h -o ./stupidedi/include/uthash.h.o"
-  },
-  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/builtins.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/builtins.h -o ./stupidedi/include/builtins.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/rrr_builder.h",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/huffman.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/rrr_builder.h -o ./stupidedi/include/rrr_builder.h.o"
-  },
-  {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/codepoints.h",
-    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/include",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/codepoints.h -o ./stupidedi/include/codepoints.h.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/huffman.h -o ./stupidedi/include/huffman.h.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/include/interval.h",
@@ -180,14 +220,14 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/include/interval.h -o ./stupidedi/include/interval.h.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/rrr_builder.c",
-    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/lib",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/lib/rrr_builder.c -o ./stupidedi/lib/rrr_builder.c.o"
-  },
-  {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/interval.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/lib",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/lib/interval.c -o ./stupidedi/lib/interval.c.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/huffman.c",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/lib",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/lib/huffman.c -o ./stupidedi/lib/huffman.c.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/rrr.c",
@@ -205,9 +245,9 @@
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/lib/bitstr.c -o ./stupidedi/lib/bitstr.c.o"
   },
   {
-    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/permutation.c",
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/ringbuf.c",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/lib",
-    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/lib/permutation.c -o ./stupidedi/lib/permutation.c.o"
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/lib/ringbuf.c -o ./stupidedi/lib/ringbuf.c.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/lib/wavelet.c",
@@ -228,6 +268,11 @@
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/bindings/rb_types.h",
     "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/bindings",
     "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/bindings/rb_types.h -o ./stupidedi/bindings/rb_types.h.o"
+  },
+  {
+    "file": "/Users/mr/wd/stupidedi_/native/stupidedi/bindings/codepoints.h",
+    "directory": "/Users/mr/wd/stupidedi_/native/stupidedi/bindings",
+    "command": "gcc  -Wall -Wno-deprecated-register -std=c99 -I/Users/mr/wd/stupidedi_/native -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0 -I/Users/mr/.rvm/rubies/ruby-2.6.3/include/ruby-2.6.0/x86_64-darwin18 -c ./stupidedi/bindings/codepoints.h -o ./stupidedi/bindings/codepoints.h.o"
   },
   {
     "file": "/Users/mr/wd/stupidedi_/native/stupidedi/bindings/rb_bitmap.c",

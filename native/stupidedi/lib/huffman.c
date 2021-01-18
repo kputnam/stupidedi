@@ -155,7 +155,7 @@ init_normalize_frequencies(size_t count, stupidedi_packed_t* f, stupidedi_packed
 
     /* Here we are doing p = sort(f).map{|x| x / total } */
     for (size_t k = 0; k < count; ++k)
-        p[k] = stupidedi_packed_read(f, stupidedi_packed_read(pi, k)) / total;
+        p[k] = (long double) stupidedi_packed_read(f, stupidedi_packed_read(pi, k)) / total;
 
     return p;
 }
@@ -178,7 +178,7 @@ init_adjust_frequencies(size_t L, size_t count, long double* p)
      * all symbols to at least 2^-L. However, we need to decrease the others to
      * maintain the property that all probabilities sum to 1. */
     long double s, min_p, numerator, denominator;
-    min_p       = powl(2.0, -L);
+    min_p       = powl((long double) 2, -(long double) L);
     numerator   = 1;
     denominator = 1.0;
 
@@ -222,7 +222,7 @@ init_compute_kraft_sum(size_t L, size_t* c)
     {
         size_t n;
         n  = c[l];
-        K += n * powl(2, -l);
+        K += n * powl((long double) 2, -(long double) l);
     }
 
     return K;
@@ -233,15 +233,15 @@ static size_t*
 init_compute_codeword_lengths(size_t L, size_t count, const long double* p)
 {
     size_t *c;
-    c = malloc((L + 1) * sizeof(size_t));
+    c = calloc(L + 1, sizeof(size_t));
 
     for (size_t i = 0; i < count; ++i)
     {
         long double l;
-        l = ceil(-log2l(p[i])) - 1;
+        l = ceil(-log2l((long double) p[i])) - 1;
 
         assert(l <= L);
-        c[(size_t) l] ++;
+        ++ c[(size_t) l];
     }
 
     /* The codeword with the highest "value", which is the ratio of how much the
@@ -296,7 +296,7 @@ init_compute_codeword_lengths(size_t L, size_t count, const long double* p)
             break;
 
         long double unit;
-        unit = powl(2, -(l + 1));
+        unit = powl((long double) 2, -(long double) (l + 1));
 
         size_t n;
         n = ceil(delta / unit);
@@ -323,22 +323,22 @@ init_fill_unused_space(size_t L, size_t* c)
     /* Find largest codeword length in use */
     size_t max_l; for (max_l = L; max_l > 0 && c[max_l] == 0; --max_l);
 
-    for (size_t l = 1; l <= max_l; ++l)
+    for (size_t l = 1; l < max_l; ++l)
     {
         const long double w =
-            powl(2, -l);
+            powl((long double) 2, -(long double) l);
 
         /* While there is unused space at level l */
         while (K < 1 - w)
         {
             /* Find a leaf at a lower level to move up to level l */
-            size_t j; for (j = l + 1; j <= max_l && c[l] == 0; ++j);
+            size_t j; for (j = l + 1; j <= max_l && c[j] == 0; ++j);
 
             /* Move leaf from level j up to level l */
             ++ c[l];
             -- c[j];
 
-            K += w - powl(2, -j);
+            K += w - powl((long double) 2, -(long double) j);
         }
     }
 
@@ -376,17 +376,20 @@ init_generate_codewords(size_t L, const size_t* c)
     stupidedi_ringbuf_enqueue(q, UINT64_C(0));
     stupidedi_ringbuf_enqueue(q, UINT64_C(1));
 
-    for (size_t l = 1; l < L; ++l)
+    /* Find the longest codeword that was assigned */
+    size_t max_l; for (max_l = L; max_l >= 0 && c[max_l] == 0; --max_l);
+
+    /* Codewords are generated in increasing length, so we assign them to
+     * decreasingly frequent symbols, starting at the end of the array. */
+    for (size_t l = 1; l <= max_l ; ++l)
     {
-        /* Codewords are generated in increasing length, so we assign them to
-         * decreasingly frequent symbols, starting at the end of the array */
         for (size_t k = c[l]; k > 0; --k)
             w[--n] = pack_codeword(l, stupidedi_ringbuf_dequeue(q));
 
         const size_t qsize
             = stupidedi_ringbuf_length(q);
 
-        if (l < L - 1) /* No need to do this at the last iteration */
+        if (l < max_l - 1) /* No need to do this at the last iteration */
         {
             /* Increase the length of codes in the queue. If the queue looks like
              * A,B,C then the result should look like A0,B0,C0,A1,B1,C1. */
@@ -409,8 +412,8 @@ pack_codeword(size_t l, uint64_t w)
     /* The maximum code length that can be supported is described by WORDSIZE =
      * ceil(log2(x)) + x. On a 64-bit machine, x = 58 bits.
      */
-    assert(l < (UINT64_C(1) << CODEWORD_SIZE_MAX));
-    assert(w < (UINT64_C(1) << LENGTH_SIZE_MAX));
+    assert(l < (UINT64_C(1) << LENGTH_SIZE_MAX));
+    assert(w < (UINT64_C(1) << CODEWORD_SIZE_MAX));
 
     return (l << CODEWORD_SIZE_MAX) | w;
 }

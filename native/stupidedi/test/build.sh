@@ -4,6 +4,7 @@ LIBS="stupidedi/lib/*.c"
 INCS="-I."
 
 case "$1" in
+  test-huffman)           X=test-huffman ;;
   test-ringbuf-queue*)    X=test-ringbuf-queue ;;
   test-ringbuf-resize*)   X=test-ringbuf-resize ;;
   test-rrr-access*)       X=test-rrr-access ;;
