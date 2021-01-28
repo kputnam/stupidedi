@@ -16,7 +16,7 @@ stupidedi_packed_t*
 stupidedi_packed_alloc(void);
 
 stupidedi_packed_t*
-stupidedi_packed_dealloc(stupidedi_packed_t*);
+stupidedi_packed_free(stupidedi_packed_t*);
 
 stupidedi_packed_t*
 stupidedi_packed_new(size_t length, size_t width);
@@ -32,20 +32,6 @@ stupidedi_packed_copy(const stupidedi_packed_t*, stupidedi_packed_t*);
 
 stupidedi_packed_t*
 stupidedi_packed_resize(stupidedi_packed_t*, size_t);
-
-/*****************************************************************************/
-
-stupidedi_packed_t*
-stupidedi_packed_from_array8(size_t length, uint8_t* a);
-
-stupidedi_packed_t*
-stupidedi_packed_from_array16(size_t length, uint16_t* a);
-
-stupidedi_packed_t*
-stupidedi_packed_from_array32(size_t length, uint32_t* a);
-
-stupidedi_packed_t*
-stupidedi_packed_from_array64(size_t length, uint64_t* a);
 
 /*****************************************************************************/
 
@@ -75,15 +61,10 @@ stupidedi_packed_read(const stupidedi_packed_t*, size_t);
 size_t
 stupidedi_packed_write(const stupidedi_packed_t*, size_t, uint64_t value);
 
-/*
-stupidedi_packed_t*
-stupidedi_packed_reverse(const stupidedi_packed_t*, stupidedi_packed_t*);
-*/
-
-stupidedi_packed_t*
-stupidedi_packed_sort(const stupidedi_packed_t*);
-
-stupidedi_packed_t*
+size_t*
 stupidedi_packed_argsort(const stupidedi_packed_t*);
+
+size_t*
+stupidedi_packed_argsort_range(const stupidedi_packed_t*, size_t, size_t);
 
 #endif

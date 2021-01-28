@@ -30,7 +30,7 @@
 bool
 stupidedi_interval_test(stupidedi_interval_list_t* tree, const uint64_t point)
 {
-    size_t k, l, r, z;
+    size_t k, lo, hi, z;
 
     /* This hack speeds up searches that fall in the range covered by the first
      * few intervals. We first try a short linear search, but if the answer
@@ -45,15 +45,15 @@ stupidedi_interval_test(stupidedi_interval_list_t* tree, const uint64_t point)
     }
 
     /* Perform a binary search on the remaining items */
-    for (l = k, r = tree->length - 1, z = -1; k = l + (r - l) / 2, l <= r;)
+    for (lo = k, hi = tree->length - 1, z = -1; k = lo + (hi - lo) / 2, lo <= hi;)
     {
-        if (UNLIKELY(tree->min[k] < point))
+        if (tree->min[k] < point)
             if (point <= tree->max[k])
                 return true;      // min[k] < point <= max[k]
             else
-                l = (z = k) + 1;  // descend right
+                lo = (z = k) + 1;  // descend right
         else if (point < tree->min[k])
-            r = k - 1;            // descend left
+            hi = k - 1;            // descend left
         else
             break;                // min[k] == point <= max[k]
     }

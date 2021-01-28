@@ -18,6 +18,8 @@ static inline size_t cdiv_word_size(size_t x);
 
 /*****************************************************************************/
 
+/* TODO: Zero-length bitstr has b->data == NULL. */
+
 stupidedi_bitstr_t*
 stupidedi_bitstr_alloc(void)
 {
@@ -25,7 +27,7 @@ stupidedi_bitstr_alloc(void)
 }
 
 stupidedi_bitstr_t*
-stupidedi_bitstr_dealloc(stupidedi_bitstr_t* b)
+stupidedi_bitstr_free(stupidedi_bitstr_t* b)
 {
     if (b != NULL)
         free(stupidedi_bitstr_deinit(b));
@@ -42,12 +44,16 @@ stupidedi_bitstr_new(size_t length)
 stupidedi_bitstr_t*
 stupidedi_bitstr_init(stupidedi_bitstr_t* b, size_t length)
 {
-    assert(length > 0);
     assert(b != NULL);
-
     b->length = length;
-    b->data   = calloc(cdiv_word_size(length), sizeof(uint64_t));
-    assert(b->data != NULL);
+
+    if (length == 0)
+        b->data = NULL;
+    else
+    {
+        b->data = calloc(cdiv_word_size(length), sizeof(uint64_t));
+        assert(b->data != NULL);
+    }
 
     return b;
 }
@@ -55,7 +61,7 @@ stupidedi_bitstr_init(stupidedi_bitstr_t* b, size_t length)
 stupidedi_bitstr_t*
 stupidedi_bitstr_deinit(stupidedi_bitstr_t* b)
 {
-    if (b != NULL && b->data)
+    if (b != NULL && b->data != NULL)
         free(b->data);
 
     return b;

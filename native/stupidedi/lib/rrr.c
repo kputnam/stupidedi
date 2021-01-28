@@ -26,8 +26,8 @@ typedef struct stupidedi_rrr_t
     stupidedi_bitstr_t* offsets;
 
     /* Number of input bits per marker */
-    uint16_t marker_size;
     size_t nmarkers;
+    uint16_t marker_size;
 
     /* Each marker counts how many 1-bits occured in the first (1+k)*marker_size bits. */
     stupidedi_packed_t* marked_ranks;
@@ -35,6 +35,18 @@ typedef struct stupidedi_rrr_t
     /* Points to the offset for the block with the (1+k)*marker_size-1 th bit. */
     stupidedi_packed_t* marked_offsets;
 } stupidedi_rrr_t;
+
+typedef struct stupidedi_rrr_builder_t
+{
+    stupidedi_rrr_t* rrr;
+    uint8_t  offset_nbits_max, block_need;
+    uint16_t marker_need;
+    size_t written, class_at, offset_at, marker_at;
+    uint64_t block;
+    bool is_done;
+} stupidedi_rrr_builder_t;
+
+/*****************************************************************************/
 
 static uint64_t **binomial = NULL;
 
@@ -54,261 +66,6 @@ static          size_t      stupidedi_rrr_find_marker1(const stupidedi_rrr_t*, s
 
 /*****************************************************************************/
 
-stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_alloc(void)
-{
-    return malloc(sizeof(stupidedi_rrr_builder_t));
-}
-
-stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_dealloc(stupidedi_rrr_builder_t* rrrb)
-{
-    if (rrrb != NULL)
-        free(stupidedi_rrr_builder_deinit(rrrb));
-
-    return NULL;
-}
-
-stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_new(uint8_t block_size, uint16_t marker_size, size_t length)
-{
-    return stupidedi_rrr_builder_init(stupidedi_rrr_builder_alloc(), block_size, marker_size, length);
-}
-
-stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_init(stupidedi_rrr_builder_t* rrrb, uint8_t block_size, uint16_t marker_size, size_t length)
-{
-    assert(rrrb != NULL);
-    assert(length > 0);
-    assert(block_size >= STUPIDEDI_RRR_BLOCK_SIZE_MIN);
-    assert(block_size <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
-    assert(block_size <= marker_size);
-    assert(marker_size >= STUPIDEDI_RRR_MARKER_SIZE_MIN);
-    assert(marker_size <= STUPIDEDI_RRR_MARKER_SIZE_MAX);
-
-    stupidedi_rrr_t* rrr;
-    rrr = stupidedi_rrr_alloc();
-    assert(rrr != NULL);
-    rrrb->rrr = rrr;
-
-    rrr->length       = length;
-    rrr->rank         = 0;
-    rrr->nblocks      = (length + block_size - 1) / block_size;
-    rrr->nmarkers     = (length + marker_size - 1) / marker_size - 1;
-    rrr->block_size   = block_size;
-    rrr->marker_size  = marker_size;
-
-    rrrb->offset_nbits_max = offset_nbits(block_size, block_size / 2);
-    rrrb->block       = 0;
-    rrrb->written     = 0;
-    rrrb->class_at    = 0;
-    rrrb->offset_at   = 0;
-    rrrb->marker_at   = 0;
-    rrrb->marker_need = marker_size;
-    rrrb->block_need  = block_size;
-    rrrb->is_done     = false;
-
-    /* These two vectors are sufficient to encode the original bit vector. The
-     * additional vectors allocated below are the o(n) atop nH₀, and are used
-     * for making rank and select operations fast. */
-    rrr->classes = stupidedi_packed_new(rrr->nblocks, nbits(block_size + 1));
-    rrr->offsets = stupidedi_bitstr_new((uint32_t)(rrr->nblocks * rrrb->offset_nbits_max));
-
-    if (rrr->nmarkers > 0)
-    {
-        rrr->marked_ranks   = stupidedi_packed_new(rrr->nmarkers, nbits(length + 1));
-        rrr->marked_offsets = stupidedi_packed_new(rrr->nmarkers, nbits(stupidedi_bitstr_length(rrr->offsets)));
-    }
-    else
-    {
-        rrr->marked_ranks   = NULL;
-        rrr->marked_offsets = NULL;
-    }
-
-    return rrrb;
-}
-
-stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_deinit(stupidedi_rrr_builder_t* rrrb)
-{
-    if (rrrb == NULL)
-        return rrrb;
-
-    if (rrrb->rrr != NULL && !rrrb->is_done) /* TODO hmm? */
-        rrrb->rrr = stupidedi_rrr_dealloc(rrrb->rrr);
-
-    return rrrb;
-}
-
-/*****************************************************************************/
-
-size_t
-stupidedi_rrr_builder_sizeof(const stupidedi_rrr_builder_t* rrrb)
-{
-    return rrrb == NULL ? 0 : sizeof(*rrrb) + stupidedi_rrr_sizeof(rrrb->rrr);
-}
-
-size_t
-stupidedi_rrr_builder_length(const stupidedi_rrr_builder_t* rrrb)
-{
-    assert(rrrb != NULL);
-    assert(rrrb->rrr != NULL);
-    return stupidedi_rrr_length(rrrb->rrr);
-}
-
-/*****************************************************************************/
-
-size_t
-stupidedi_rrr_builder_written(const stupidedi_rrr_builder_t* rrrb)
-{
-    assert(rrrb != NULL);
-    assert(rrrb->rrr != NULL);
-
-    stupidedi_rrr_t* rrr;
-    rrr = rrrb->rrr;
-
-    uint8_t uncommitted;
-    uncommitted = rrr->block_size - rrrb->block_need;
-
-    return (size_t)uncommitted + rrrb->written;
-}
-
-size_t
-stupidedi_rrr_builder_write(stupidedi_rrr_builder_t* rrrb, uint8_t width, uint64_t value)
-{
-    assert(rrrb != NULL);
-    assert(rrrb->rrr != NULL);
-    assert(width <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
-    assert(value <= (width < 64 ? (1 << width) - 1 : UINT64_MAX));
-
-    stupidedi_rrr_t* rrr;
-    rrr = rrrb->rrr;
-
-    uint64_t block, mask, uncommitted;
-    uncommitted = rrr->block_size - rrrb->block_need;
-    assert(rrrb->written + uncommitted + width <= rrr->length);
-
-    while (rrrb->block_need <= width)
-    {
-        /* Select only bits needed to finish filling this block, then append to
-         * the end of the current block*/
-        mask   = (1 << rrrb->block_need) - 1;
-        block  = rrrb->block;
-        block |= (value & mask) << (rrr->block_size - rrrb->block_need);
-
-        /* Discard the used bits */
-        value  = value >> rrrb->block_need;
-        width -= rrrb->block_need;
-
-        uint64_t class, offset;
-        class  = popcount(block);
-        offset = encode_block(rrr->block_size, class, block);
-
-        /* Write marker if we have enough data. We know there is no more
-         * than one marker because block_size <= sblock_nbits */
-        int16_t marker_extra = rrr->block_size - rrrb->marker_need;
-
-        if (marker_extra >= 0)
-        {
-            /* We might need only first few bits from the current `block` */
-            uint64_t want, prefix;
-            want   = rrr->block_size - marker_extra;
-            prefix = want >= 64 ? block : block & ((1 << want) - 1);
-
-            stupidedi_packed_write(rrr->marked_ranks,   rrrb->marker_at, rrr->rank + popcount(prefix));
-            stupidedi_packed_write(rrr->marked_offsets, rrrb->marker_at, rrrb->offset_at);
-            ++rrrb->marker_at;
-
-            /* Next marker counts the bits not used in last marker */
-            rrrb->marker_need = rrr->marker_size - marker_extra;
-        }
-        else
-        {
-            rrrb->marker_need -= rrr->block_size;
-        }
-
-        rrrb->class_at  = stupidedi_packed_write(rrr->classes, rrrb->class_at, class);
-        rrrb->offset_at = stupidedi_bitstr_write(rrr->offsets, rrrb->offset_at, offset_nbits(rrr->block_size, class), offset);
-        rrrb->written  += rrr->block_size;
-
-        /* Next time we'll need a full block */
-        rrrb->block      = 0;
-        rrrb->block_need = rrr->block_size;
-
-        rrr->rank += class;
-    }
-
-    /* Remaining value is guaranteed to be shorter than block_need */
-    mask   = (1 << rrrb->block_need) - 1;
-    block  = rrrb->block;
-    block |= (value & mask) << (rrr->block_size - rrrb->block_need);
-    rrrb->block = block;
-    rrrb->block_need -= width;
-
-    return rrrb->written + (rrr->block_size - rrrb->block_need);
-}
-
-stupidedi_rrr_t*
-stupidedi_rrr_builder_to_rrr(stupidedi_rrr_builder_t* rrrb, stupidedi_rrr_t* rrr)
-{
-    assert(rrrb != NULL);
-    assert(rrrb->rrr != NULL);
-
-    if (rrr == NULL || rrr == rrrb->rrr)
-        rrr = rrrb->rrr;
-    else
-    {
-        rrr->length         = rrrb->rrr->length;
-        rrr->rank           = rrrb->rrr->rank;
-        rrr->block_size     = rrrb->rrr->block_size;
-        rrr->nblocks        = rrrb->rrr->nblocks;
-        rrr->classes        = rrrb->rrr->classes;
-        rrr->offsets        = rrrb->rrr->offsets;
-        rrr->marker_size    = rrrb->rrr->marker_size;
-        rrr->nmarkers       = rrrb->rrr->nmarkers;
-        rrr->marked_ranks   = rrrb->rrr->marked_ranks;
-        rrr->marked_offsets = rrrb->rrr->marked_offsets;
-    }
-
-    uint8_t uncommitted;
-    uncommitted = rrr->block_size - rrrb->block_need;
-    assert(rrrb->written + (size_t)uncommitted == rrr->length);
-
-    if (rrrb->marker_at < rrr->nmarkers)
-    {
-        /* Last marker wasn't written yet because of EOF. We may only need some
-         * of the bits that haven't yet been written. */
-        uint64_t mask, marked_rank;
-        mask        = (1 << rrrb->marker_need) - 1;
-        marked_rank = rrr->rank + popcount(rrrb->block & mask);
-
-        stupidedi_packed_write(rrr->marked_ranks,   rrrb->marker_at, marked_rank);
-        stupidedi_packed_write(rrr->marked_offsets, rrrb->marker_at, rrrb->offset_at);
-    }
-
-    if (uncommitted > 0)
-    {
-        /* Haven't yet written the last block */
-        uint64_t class, offset;
-        class  = popcount(rrrb->block);
-        offset = encode_block(rrr->block_size, class, rrrb->block);
-        rrr->rank += class;
-
-        rrrb->class_at  = stupidedi_packed_write(rrr->classes, rrrb->class_at, class);
-        rrrb->offset_at = stupidedi_bitstr_write(rrr->offsets, rrrb->offset_at, offset_nbits(rrr->block_size, class), offset);
-    }
-
-    /* Truncate unused space */
-    stupidedi_bitstr_resize(rrr->offsets, rrrb->offset_at);
-
-    rrrb->is_done = true;
-    return rrr;
-}
-
-/*****************************************************************************/
-/*****************************************************************************/
-/*****************************************************************************/
-
 stupidedi_rrr_t*
 stupidedi_rrr_alloc(void)
 {
@@ -316,7 +73,7 @@ stupidedi_rrr_alloc(void)
 }
 
 stupidedi_rrr_t*
-stupidedi_rrr_dealloc(stupidedi_rrr_t* rrr)
+stupidedi_rrr_free(stupidedi_rrr_t* rrr)
 {
     if (rrr != NULL)
         free(stupidedi_rrr_deinit(rrr));
@@ -366,16 +123,16 @@ stupidedi_rrr_deinit(stupidedi_rrr_t* rrr)
         return NULL;
 
     if (rrr->classes)
-        rrr->classes = stupidedi_packed_dealloc(rrr->classes);
+        rrr->classes = stupidedi_packed_free(rrr->classes);
 
     if (rrr->offsets)
-        rrr->offsets = stupidedi_bitstr_dealloc(rrr->offsets);
+        rrr->offsets = stupidedi_bitstr_free(rrr->offsets);
 
     if (rrr->marked_ranks)
-        rrr->marked_ranks = stupidedi_packed_dealloc(rrr->marked_ranks);
+        rrr->marked_ranks = stupidedi_packed_free(rrr->marked_ranks);
 
     if (rrr->marked_offsets)
-        rrr->marked_offsets = stupidedi_packed_dealloc(rrr->marked_offsets);
+        rrr->marked_offsets = stupidedi_packed_free(rrr->marked_offsets);
 
     return rrr;
 }
@@ -1049,4 +806,259 @@ stupidedi_rrr_find_marker1(const stupidedi_rrr_t* rrr, size_t r)
         k = save;
 
     return k + 1;
+}
+
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_alloc(void)
+{
+    return malloc(sizeof(stupidedi_rrr_builder_t));
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_free(stupidedi_rrr_builder_t* rrrb)
+{
+    if (rrrb != NULL)
+        free(stupidedi_rrr_builder_deinit(rrrb));
+
+    return NULL;
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_new(uint8_t block_size, uint16_t marker_size, size_t length)
+{
+    return stupidedi_rrr_builder_init(stupidedi_rrr_builder_alloc(), block_size, marker_size, length);
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_init(stupidedi_rrr_builder_t* rrrb, uint8_t block_size, uint16_t marker_size, size_t length)
+{
+    assert(rrrb != NULL);
+    assert(length > 0);
+    assert(block_size >= STUPIDEDI_RRR_BLOCK_SIZE_MIN);
+    assert(block_size <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
+    assert(block_size <= marker_size);
+    assert(marker_size >= STUPIDEDI_RRR_MARKER_SIZE_MIN);
+    assert(marker_size <= STUPIDEDI_RRR_MARKER_SIZE_MAX);
+
+    stupidedi_rrr_t* rrr;
+    rrr = stupidedi_rrr_alloc();
+    assert(rrr != NULL);
+    rrrb->rrr = rrr;
+
+    rrr->length       = length;
+    rrr->rank         = 0;
+    rrr->nblocks      = (length + block_size - 1) / block_size;
+    rrr->nmarkers     = (length + marker_size - 1) / marker_size - 1;
+    rrr->block_size   = block_size;
+    rrr->marker_size  = marker_size;
+
+    rrrb->offset_nbits_max = offset_nbits(block_size, block_size / 2);
+    rrrb->block       = 0;
+    rrrb->written     = 0;
+    rrrb->class_at    = 0;
+    rrrb->offset_at   = 0;
+    rrrb->marker_at   = 0;
+    rrrb->marker_need = marker_size;
+    rrrb->block_need  = block_size;
+    rrrb->is_done     = false;
+
+    /* These two vectors are sufficient to encode the original bit vector. The
+     * additional vectors allocated below are the o(n) atop nH₀, and are used
+     * for making rank and select operations fast. */
+    rrr->classes = stupidedi_packed_new(rrr->nblocks, nbits(block_size + 1));
+    rrr->offsets = stupidedi_bitstr_new((uint32_t)(rrr->nblocks * rrrb->offset_nbits_max));
+
+    if (rrr->nmarkers > 0)
+    {
+        rrr->marked_ranks   = stupidedi_packed_new(rrr->nmarkers, nbits(length + 1));
+        rrr->marked_offsets = stupidedi_packed_new(rrr->nmarkers, nbits(stupidedi_bitstr_length(rrr->offsets)));
+    }
+    else
+    {
+        rrr->marked_ranks   = NULL;
+        rrr->marked_offsets = NULL;
+    }
+
+    return rrrb;
+}
+
+stupidedi_rrr_builder_t*
+stupidedi_rrr_builder_deinit(stupidedi_rrr_builder_t* rrrb)
+{
+    if (rrrb == NULL)
+        return rrrb;
+
+    if (rrrb->rrr != NULL && !rrrb->is_done) /* TODO hmm? */
+        rrrb->rrr = stupidedi_rrr_free(rrrb->rrr);
+
+    return rrrb;
+}
+
+/*****************************************************************************/
+
+size_t
+stupidedi_rrr_builder_sizeof(const stupidedi_rrr_builder_t* rrrb)
+{
+    return rrrb == NULL ? 0 : sizeof(*rrrb) + stupidedi_rrr_sizeof(rrrb->rrr);
+}
+
+size_t
+stupidedi_rrr_builder_length(const stupidedi_rrr_builder_t* rrrb)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
+    return stupidedi_rrr_length(rrrb->rrr);
+}
+
+/*****************************************************************************/
+
+size_t
+stupidedi_rrr_builder_written(const stupidedi_rrr_builder_t* rrrb)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
+
+    stupidedi_rrr_t* rrr;
+    rrr = rrrb->rrr;
+
+    uint8_t uncommitted;
+    uncommitted = rrr->block_size - rrrb->block_need;
+
+    return (size_t)uncommitted + rrrb->written;
+}
+
+size_t
+stupidedi_rrr_builder_write(stupidedi_rrr_builder_t* rrrb, uint8_t width, uint64_t value)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
+    assert(width <= STUPIDEDI_RRR_BLOCK_SIZE_MAX);
+    assert(value <= (width < 64 ? (1 << width) - 1 : UINT64_MAX));
+
+    stupidedi_rrr_t* rrr;
+    rrr = rrrb->rrr;
+
+    uint64_t block, mask, uncommitted;
+    uncommitted = rrr->block_size - rrrb->block_need;
+    assert(rrrb->written + uncommitted + width <= rrr->length);
+
+    while (rrrb->block_need <= width)
+    {
+        /* Select only bits needed to finish filling this block, then append to
+         * the end of the current block*/
+        mask   = (1 << rrrb->block_need) - 1;
+        block  = rrrb->block;
+        block |= (value & mask) << (rrr->block_size - rrrb->block_need);
+
+        /* Discard the used bits */
+        value  = value >> rrrb->block_need;
+        width -= rrrb->block_need;
+
+        uint64_t class, offset;
+        class  = popcount(block);
+        offset = encode_block(rrr->block_size, class, block);
+
+        /* Write marker if we have enough data. We know there is no more
+         * than one marker because block_size <= sblock_nbits */
+        int16_t marker_extra = rrr->block_size - rrrb->marker_need;
+
+        if (marker_extra >= 0)
+        {
+            /* We might need only first few bits from the current `block` */
+            uint64_t want, prefix;
+            want   = rrr->block_size - marker_extra;
+            prefix = want >= 64 ? block : block & ((1 << want) - 1);
+
+            stupidedi_packed_write(rrr->marked_ranks,   rrrb->marker_at, rrr->rank + popcount(prefix));
+            stupidedi_packed_write(rrr->marked_offsets, rrrb->marker_at, rrrb->offset_at);
+            ++rrrb->marker_at;
+
+            /* Next marker counts the bits not used in last marker */
+            rrrb->marker_need = rrr->marker_size - marker_extra;
+        }
+        else
+        {
+            rrrb->marker_need -= rrr->block_size;
+        }
+
+        rrrb->class_at  = stupidedi_packed_write(rrr->classes, rrrb->class_at, class);
+        rrrb->offset_at = stupidedi_bitstr_write(rrr->offsets, rrrb->offset_at, offset_nbits(rrr->block_size, class), offset);
+        rrrb->written  += rrr->block_size;
+
+        /* Next time we'll need a full block */
+        rrrb->block      = 0;
+        rrrb->block_need = rrr->block_size;
+
+        rrr->rank += class;
+    }
+
+    /* Remaining value is guaranteed to be shorter than block_need */
+    mask   = (1 << rrrb->block_need) - 1;
+    block  = rrrb->block;
+    block |= (value & mask) << (rrr->block_size - rrrb->block_need);
+    rrrb->block = block;
+    rrrb->block_need -= width;
+
+    return rrrb->written + (rrr->block_size - rrrb->block_need);
+}
+
+stupidedi_rrr_t*
+stupidedi_rrr_builder_to_rrr(stupidedi_rrr_builder_t* rrrb, stupidedi_rrr_t* rrr)
+{
+    assert(rrrb != NULL);
+    assert(rrrb->rrr != NULL);
+
+    if (rrr == NULL || rrr == rrrb->rrr)
+        rrr = rrrb->rrr;
+    else
+    {
+        rrr->length         = rrrb->rrr->length;
+        rrr->rank           = rrrb->rrr->rank;
+        rrr->block_size     = rrrb->rrr->block_size;
+        rrr->nblocks        = rrrb->rrr->nblocks;
+        rrr->classes        = rrrb->rrr->classes;
+        rrr->offsets        = rrrb->rrr->offsets;
+        rrr->marker_size    = rrrb->rrr->marker_size;
+        rrr->nmarkers       = rrrb->rrr->nmarkers;
+        rrr->marked_ranks   = rrrb->rrr->marked_ranks;
+        rrr->marked_offsets = rrrb->rrr->marked_offsets;
+    }
+
+    uint8_t uncommitted;
+    uncommitted = rrr->block_size - rrrb->block_need;
+    assert(rrrb->written + (size_t)uncommitted == rrr->length);
+
+    if (rrrb->marker_at < rrr->nmarkers)
+    {
+        /* Last marker wasn't written yet because of EOF. We may only need some
+         * of the bits that haven't yet been written. */
+        uint64_t mask, marked_rank;
+        mask        = (1 << rrrb->marker_need) - 1;
+        marked_rank = rrr->rank + popcount(rrrb->block & mask);
+
+        stupidedi_packed_write(rrr->marked_ranks,   rrrb->marker_at, marked_rank);
+        stupidedi_packed_write(rrr->marked_offsets, rrrb->marker_at, rrrb->offset_at);
+    }
+
+    if (uncommitted > 0)
+    {
+        /* Haven't yet written the last block */
+        uint64_t class, offset;
+        class  = popcount(rrrb->block);
+        offset = encode_block(rrr->block_size, class, rrrb->block);
+        rrr->rank += class;
+
+        rrrb->class_at  = stupidedi_packed_write(rrr->classes, rrrb->class_at, class);
+        rrrb->offset_at = stupidedi_bitstr_write(rrr->offsets, rrrb->offset_at, offset_nbits(rrr->block_size, class), offset);
+    }
+
+    /* Truncate unused space */
+    stupidedi_bitstr_resize(rrr->offsets, rrrb->offset_at);
+
+    rrrb->is_done = true;
+    return rrr;
 }

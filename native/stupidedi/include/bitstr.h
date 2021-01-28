@@ -13,7 +13,7 @@ stupidedi_bitstr_t*
 stupidedi_bitstr_alloc(void);
 
 stupidedi_bitstr_t*
-stupidedi_bitstr_dealloc(stupidedi_bitstr_t*);
+stupidedi_bitstr_free(stupidedi_bitstr_t*);
 
 stupidedi_bitstr_t*
 stupidedi_bitstr_new(size_t);

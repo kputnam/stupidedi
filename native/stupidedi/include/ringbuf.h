@@ -19,7 +19,7 @@ stupidedi_ringbuf_t*
 stupidedi_ringbuf_alloc(void);
 
 stupidedi_ringbuf_t*
-stupidedi_ringbuf_dealloc(stupidedi_ringbuf_t*);
+stupidedi_ringbuf_free(stupidedi_ringbuf_t*);
 
 stupidedi_ringbuf_t*
 stupidedi_ringbuf_new(size_t capacity, size_t width, write_mode);

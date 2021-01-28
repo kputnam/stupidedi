@@ -26,7 +26,7 @@ stupidedi_ringbuf_alloc(void)
 }
 
 stupidedi_ringbuf_t*
-stupidedi_ringbuf_dealloc(stupidedi_ringbuf_t* q)
+stupidedi_ringbuf_free(stupidedi_ringbuf_t* q)
 {
     if (q != NULL)
         free(stupidedi_ringbuf_deinit(q));
@@ -59,7 +59,7 @@ stupidedi_ringbuf_deinit(stupidedi_ringbuf_t* q)
         return q;
 
     if (q->data != NULL)
-        q->data = stupidedi_packed_dealloc(q->data);
+        q->data = stupidedi_packed_free(q->data);
 
     return q;
 }
@@ -198,7 +198,7 @@ stupidedi_ringbuf_resize(stupidedi_ringbuf_t* q, const size_t new_capacity)
                     stupidedi_packed_write(data, k,
                             stupidedi_packed_read(q->data, 0/*TODO*/));
 
-                q->data = stupidedi_packed_dealloc(q->data);
+                q->data = stupidedi_packed_free(q->data);
                 q->data = data;
             }
 

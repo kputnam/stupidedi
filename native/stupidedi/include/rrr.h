@@ -11,7 +11,8 @@
 #define STUPIDEDI_RRR_MARKER_SIZE_MIN 3
 #define STUPIDEDI_RRR_MARKER_SIZE_MAX 2048
 
-typedef struct stupidedi_rrr_t stupidedi_rrr_t;
+typedef struct stupidedi_rrr_t          stupidedi_rrr_t;
+typedef struct stupidedi_rrr_builder_t  stupidedi_rrr_builder_t;
 
 /*****************************************************************************/
 
@@ -19,7 +20,7 @@ stupidedi_rrr_t*
 stupidedi_rrr_alloc(void);
 
 stupidedi_rrr_t*
-stupidedi_rrr_dealloc(stupidedi_rrr_t*);
+stupidedi_rrr_free(stupidedi_rrr_t*);
 
 stupidedi_rrr_t*
 stupidedi_rrr_new(const stupidedi_bitstr_t*, uint8_t block_size, uint16_t marker_size);
@@ -81,17 +82,7 @@ size_t
 stupidedi_rrr_next1(const stupidedi_rrr_t*, size_t i);
 
 /*****************************************************************************/
-
-typedef struct stupidedi_rrr_builder_t
-{
-    stupidedi_rrr_t* rrr;
-    uint8_t  offset_nbits_max, block_need;
-    uint16_t marker_need;
-    size_t written, class_at, offset_at, marker_at;
-    uint64_t block;
-    bool is_done;
-} stupidedi_rrr_builder_t;
-
+/*****************************************************************************/
 /*****************************************************************************/
 
 stupidedi_rrr_builder_t*
@@ -107,7 +98,7 @@ stupidedi_rrr_builder_t*
 stupidedi_rrr_builder_deinit(stupidedi_rrr_builder_t*);
 
 stupidedi_rrr_builder_t*
-stupidedi_rrr_builder_dealloc(stupidedi_rrr_builder_t*);
+stupidedi_rrr_builder_free(stupidedi_rrr_builder_t*);
 
 /*****************************************************************************/
 

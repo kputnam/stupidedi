@@ -12,6 +12,8 @@ typedef struct stupidedi_packed_t
     size_t length;
 } stupidedi_packed_t;
 
+static int compare_at(void*, const void*, const void*);
+
 /*****************************************************************************/
 
 stupidedi_packed_t*
@@ -21,7 +23,7 @@ stupidedi_packed_alloc(void)
 }
 
 stupidedi_packed_t*
-stupidedi_packed_dealloc(stupidedi_packed_t* a)
+stupidedi_packed_free(stupidedi_packed_t* a)
 {
     if (a != NULL)
         free(stupidedi_packed_deinit(a));
@@ -39,7 +41,6 @@ stupidedi_packed_init(stupidedi_packed_t* a, size_t length, size_t width)
 {
     assert(width >= STUPIDEDI_PACKED_WIDTH_MIN);
     assert(width <= STUPIDEDI_PACKED_WIDTH_MAX);
-    assert(length > 0);
     assert(a != NULL);
 
     a->length = length;
@@ -53,7 +54,7 @@ stupidedi_packed_t*
 stupidedi_packed_deinit(stupidedi_packed_t* a)
 {
     if (a != NULL)
-        a->data = stupidedi_bitstr_dealloc(a->data);
+        a->data = stupidedi_bitstr_free(a->data);
 
     return a;
 }
@@ -74,7 +75,7 @@ stupidedi_packed_copy(const stupidedi_packed_t* src, stupidedi_packed_t* dst)
 
     dst->width  = src->width;
     dst->length = src->length;
-    dst->data   = NULL;
+    dst->data   = NULL; /* TODO: free old bitstr? */
     stupidedi_bitstr_copy(src->data, dst->data);
 
     return dst;
@@ -90,56 +91,6 @@ stupidedi_packed_resize(stupidedi_packed_t* a, size_t length)
 
     a->length = length;
     a->data   = stupidedi_bitstr_resize(a->data, a->width * length);
-
-    return a;
-}
-
-/*****************************************************************************/
-
-stupidedi_packed_t*
-stupidedi_packed_from_array8(size_t length, uint8_t* src)
-{
-    stupidedi_packed_t* a;
-    a = stupidedi_packed_new(length, 8);
-
-    for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(a, k, src[k]);
-
-    return a;
-}
-
-stupidedi_packed_t*
-stupidedi_packed_from_array16(size_t length, uint16_t* src)
-{
-    stupidedi_packed_t* a;
-    a = stupidedi_packed_new(length, 16);
-
-    for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(a, k, src[k]);
-
-    return a;
-}
-
-stupidedi_packed_t*
-stupidedi_packed_from_array32(size_t length, uint32_t* src)
-{
-    stupidedi_packed_t* a;
-    a = stupidedi_packed_new(length, 32);
-
-    for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(a, k, src[k]);
-
-    return a;
-}
-
-stupidedi_packed_t*
-stupidedi_packed_from_array64(size_t length, uint64_t* src)
-{
-    stupidedi_packed_t* a;
-    a = stupidedi_packed_new(length, 64);
-
-    for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(a, k, src[k]);
 
     return a;
 }
@@ -280,8 +231,36 @@ stupidedi_packed_reverse(const stupidedi_packed_t* a, stupidedi_packed_t* b)
 }
 */
 
+size_t*
+stupidedi_packed_argsort(const stupidedi_packed_t* a)
+{
+    assert(a != NULL);
+    return stupidedi_packed_argsort_range(a, 0, stupidedi_packed_length(a) - 1);
+}
+
+size_t*
+stupidedi_packed_argsort_range(const stupidedi_packed_t* a, const size_t start, const size_t length)
+{
+    assert(a != NULL);
+    assert(start < stupidedi_packed_length(a));
+    assert(start + length <= stupidedi_packed_length(a));
+
+    size_t *b;
+    b = malloc(length * sizeof(size_t));
+
+    for (size_t i = 0; i < length; ++i)
+        b[i] = start + i;
+
+    qsort_r(b, length, sizeof(size_t), (void*) a, &compare_at);
+
+    for (size_t i = 0; i < length; ++i)
+        b[i] -= start;
+
+    return b;
+}
+
 static int
-argsort_compare(void* a, const void* j, const void* k)
+compare_at(void* a, const void* j, const void* k)
 {
     stupidedi_packed_t* a_;
     size_t j_, k_;
@@ -291,60 +270,4 @@ argsort_compare(void* a, const void* j, const void* k)
     k_ = *(size_t*) k;
 
     return stupidedi_packed_read(a_, j_) - stupidedi_packed_read(a_, k_);
-}
-
-stupidedi_packed_t*
-stupidedi_packed_argsort(const stupidedi_packed_t* a)
-{
-    size_t length;
-    length = stupidedi_packed_length(a);
-
-    size_t *i;
-    i = malloc(length * sizeof(size_t));
-
-    for (size_t k = 0; k < length; ++k)
-        i[k] = k;
-
-    qsort_r(i, length, sizeof(size_t), (void*) a, &argsort_compare);
-
-    /* TODO: Less conversion back and forth between packed and unpacked arrays */
-
-    stupidedi_packed_t *b;
-    b = stupidedi_packed_new(length, nbits(length));
-
-    for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(b, k, i[k]);
-
-    free(i);
-
-    return b;
-}
-
-stupidedi_packed_t*
-stupidedi_packed_sort(const stupidedi_packed_t* a)
-{
-    /* TODO: Less conversion back and forth between packed and unpacked arrays */
-
-    size_t length;
-    length = stupidedi_packed_length(a);
-
-    size_t *i;
-    i = malloc(length * sizeof(size_t));
-
-    for (size_t k = 0; k < length; ++k)
-        i[k] = k;
-
-    qsort_r(i, length, sizeof(size_t), (void*) a, &argsort_compare);
-
-    /* TODO: Less conversion back and forth between packed and unpacked arrays */
-
-    stupidedi_packed_t *b;
-    b = stupidedi_packed_new(length, stupidedi_packed_width(a));
-
-    for (size_t k = 0; k < length; ++k)
-        stupidedi_packed_write(b, k, stupidedi_packed_read(a, i[k]));
-
-    free(i);
-
-    return b;
 }

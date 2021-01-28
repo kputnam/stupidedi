@@ -14,7 +14,7 @@ stupidedi_intmap_t*
 stupidedi_intmap_alloc(void);
 
 stupidedi_intmap_t*
-stupidedi_intmap_dealloc(stupidedi_intmap_t*);
+stupidedi_intmap_free(stupidedi_intmap_t*);
 
 stupidedi_intmap_t*
 stupidedi_intmap_new(size_t);
