@@ -2,7 +2,7 @@
 // layout for binary trees. It was written by Emden R. Gansner. Save this as
 // "tree.gv", and run
 //
-//    dot binary-tree.gv | gvpr -c -ftree.gv | neato -n -Tpng -o binarytree.png
+//    dot tree.gv | gvpr -c -fhuffman.gv | neato -n -Tpng -o tree.png
 
 BEGIN {
     double tw[node_t];          // width of tree rooted at node

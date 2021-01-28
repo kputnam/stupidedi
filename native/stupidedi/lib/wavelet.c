@@ -1,15 +1,18 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "stupidedi/include/builtins.h"
+#include "stupidedi/include/huffman.h"
 #include "stupidedi/include/wavelet.h"
+#include "stupidedi/include/builtins.h"
 
-typedef struct stupidedi_wavelet_t
+struct stupidedi_wavelet_t
 {
-  struct stupidedi_wavelet_t *l, *r;
-  stupidedi_rrr_t* rrr;
-  uint8_t height;
-} stupidedi_wavelet_t;
+    size_t              length;
+    size_t              *nzeros;
+    size_t              *levels;
+    stupidedi_rrr_t     *matrix;
+    stupidedi_huffman_t *codec;
+};
 
 /*****************************************************************************/
 
@@ -20,7 +23,7 @@ stupidedi_wavelet_alloc(void)
 }
 
 stupidedi_wavelet_t*
-stupidedi_wavelet_dealloc(stupidedi_wavelet_t* w)
+stupidedi_wavelet_free(stupidedi_wavelet_t* w)
 {
     if (w != NULL)
         free(stupidedi_wavelet_deinit(w));
@@ -34,74 +37,146 @@ stupidedi_wavelet_new(stupidedi_packed_t* a, uint8_t height)
     return stupidedi_wavelet_init(stupidedi_wavelet_alloc(), a, height);
 }
 
+/* S is a sequence over the alphabet 𝝨 = {0, ..., σ-1}.
+ *
+ * In a wavelet tree, each symbol in 𝝨 can be represented by ⌈log σ⌉ bits. The
+ * bits representing a symbol corresponds to a path in a binary tree where the
+ * symbol is a leaf. This results in a complete binary tree with height σ.
+ *
+ * Each internal node stores a bit sequence obtained as follows. Partition the
+ * alphabet in two, 𝝨₀ and 𝝨₁. Let S₀ and S₁ denote the subsequences of S
+ * induced by the alphabets 𝝨₀ and 𝝨₁. Then the i-th bit indicates if the symbol
+ * S[i] belongs to S₀ or S₁. The left and right subtrees are built recursively
+ * from S₀ and S₁. Common methods of partitioning the alphabet dividing the
+ * alphabet range in half, {0..(σ-1)/2} and {(σ-1)/2..σ}, or using the l-th bit
+ * of the binary representation of the symbol (where l is the internal node's
+ * depth in the tree).
+ *
+ * In a Huffman wavelet matrix, each symbol is represented by a codeword of
+ * variable length. Unlike the wavelet tree, there is only one contiguous bit
+ * sequence per level. Each level is arranged with all the 0-children are placed
+ * to the right of the 1-children. The alphabet is partitioned using the l-th
+ * bit of the binary Huffman codeword.
+ */
 stupidedi_wavelet_t*
-stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* a, uint8_t height)
+stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* s, uint8_t height)
 {
-    if (height == 0)
-        return NULL;
-
-    assert(a != NULL);
+    assert(s != NULL);
     assert(w != NULL);
-    w->height = height;
 
-    if (height == 1)
-    {
-        w->rrr = stupidedi_rrr_new(stupidedi_packed_as_bitstr(a), 63, 512);
-        w->l   = NULL;
-        w->r   = NULL;
-        return w;
-    }
+    /* TODO: Count how many times each character occurs */
+    stupidedi_packed_t *symbols, *histogram;
+    symbols   = stupidedi_packed_new(10, 32);
+    histogram = stupidedi_packed_new(10, 32);
 
-    const size_t length \
-        = stupidedi_packed_length(a);
+    stupidedi_huffman_t* codec;
+    codec = stupidedi_huffman_new(58, histogram, PACKED);
 
-    stupidedi_rrr_builder_t* rrr_;
-    rrr_ = stupidedi_rrr_builder_new(63, 512, length);
+    const size_t length
+        = stupidedi_packed_length(s);
 
-    stupidedi_packed_t *lb, *rb;
-    lb = stupidedi_packed_new(length, height - 1);
-    rb = stupidedi_packed_new(length, height - 1);
+    const size_t depth
+        = stupidedi_huffman_max_codeword_length(codec);
 
-    /* Number of symbols belonging to left and right subtree */
-    size_t nl, nr;
-    nl = 0;
-    nr = 0;
+    /* nzeros[l]: Number of 0-bits on level l. If B[l], the bitmap for level l,
+     * has a 0-bit at position i, the corresponding position at level l+1 will
+     * be rank0(B[l], i). If instead there is a 1-bit, the position at level
+     * l+1 will be nzeros[l] + rank1(B[l], i) */
+    size_t* nzeros;
+    nzeros    = calloc(depth, sizeof(size_t));
+    nzeros[0] = 0;
 
-    /* Remove one high bit at each level of the tree */
-    uint64_t head, rest;
-    head = 1 << (height - 1);
-    rest = head - 1;
+    size_t* levels;
+    levels = calloc(depth, sizeof(size_t));
+
+    /* Calculate the size of the input string if it was Huffman coded */
+    size_t encoded_length;
+    encoded_length = 0;
 
     for (size_t k = 0; k < length; ++k)
+        encoded_length += stupidedi_huffman_encode(codec, stupidedi_packed_read(s, k), NULL);
+
+    /* The wavelet matrix contains one bit for every bit in the Huffman-coded
+     * sequence that it represents. The bits are rearranged and stored in a
+     * compressed RRR bitmap. */
+    stupidedi_rrr_builder_t* rrr_;
+    rrr_ = stupidedi_rrr_builder_new(53, 512, encoded_length);
+
+    /* Ones on the left, zeros on the right */
+    stupidedi_packed_t *lo, *rz;
+    lo = stupidedi_packed_new(length, nbits(length));
+    rz = stupidedi_packed_new(0,      nbits(length));
+
+    /* lo and rz contain integer offsets i that refer to S[i] */
+    for (size_t k = 0; k < length; ++k)
+        stupidedi_packed_write(lo, k, k);
+
+    /*
+    for (size_t l = 0; l < depth; ++l)
     {
-        const uint64_t c \
-            = stupidedi_packed_read(a, k);
+        // Remember where this level begins //
+        levels[l] = stupidedi_rrr_builder_written(rrr_);
 
-        if ((c & head) == 0)
+        // The variables suffixed with _ are related to the matrix row being
+         * built in this iteration, and will be read from in the next one. //
+        stupidedi_packed_t *lo_, *rz_;
+        lo_ = stupidedi_packed_new(length, nbits(length));
+        rz_ = stupidedi_packed_new(length, nbits(length));
+
+        size_t nl_, nr_;
+        nl_ = 0;
+        nr_ = 0;
+
+        // First left (ones), then right (zeros) //
+        for (size_t j = 0; j < 2; ++j)
         {
-            stupidedi_rrr_builder_write(rrr_, 1, 0);
-            stupidedi_packed_write(lb, nl++, (c & rest));
+            const stupidedi_packed_t *v
+                = (j == 0) ? lo : rz;
+
+            const size_t nv =
+                stupidedi_packed_length(v);
+
+            for (size_t k = 0; k < nv; ++k)
+            {
+                size_t i;
+                i = stupidedi_packed_read(v, k);
+
+                // We want to know the l-th bit of the Huffman code //
+                uint64_t c;
+                l = stupidedi_huffman_encode(codec, i, &c);
+
+                if (l < stupidedi_codeword_length(codec, c))
+                {
+                    if ((c & (UINT64_C(1) << l)) == 0)
+                    {
+                        stupidedi_rrr_builder_write(rrr_, 1, 0);
+                        stupidedi_packed_write(lo_, nl_ ++, i);
+                    }
+                    else
+                    {
+                        stupidedi_rrr_builder_write(rrr_, 1, 0);
+                        stupidedi_packed_write(rz_, nr_ ++, i);
+                    }
+                }
+            }
         }
-        else
-        {
-            stupidedi_rrr_builder_write(rrr_, 1, 1);
-            stupidedi_packed_write(rb, nr++, (c & rest));
-        }
+
+        if (l < depth - 1)
+            nzeros[l+1] = nl_;
+
+        free(lo); lo = lo_;
+        free(rz); rz = rz_;
     }
+    */
 
-    lb = (nl == 0) ?
-        stupidedi_packed_dealloc(lb) :
-        stupidedi_packed_resize(lb, nl);
 
-    rb = (nr == 0) ?
-        stupidedi_packed_dealloc(rb) :
-        stupidedi_packed_resize(rb, nr);
+    w->levels   = levels;
+    w->length   = length;
+    w->matrix   = stupidedi_rrr_builder_to_rrr(rrr_, NULL);
+    w->nzeros   = nzeros;
+    w->codec    = codec;
 
-    w->rrr = stupidedi_rrr_builder_to_rrr(rrr_, NULL);
-    stupidedi_rrr_builder_dealloc(rrr_);
-
-    w->l = (lb == 0) ? NULL : stupidedi_wavelet_new(lb, height - 1);
-    w->r = (rb == 0) ? NULL : stupidedi_wavelet_new(rb, height - 1);
+    stupidedi_rrr_builder_free(rrr_);
 
     return w;
 }
@@ -112,9 +187,7 @@ stupidedi_wavelet_deinit(stupidedi_wavelet_t* w)
     if (w == NULL)
         return NULL;
 
-    if (w->rrr) w->rrr = stupidedi_rrr_dealloc(w->rrr);
-    if (w->l)   w->l   = stupidedi_wavelet_dealloc(w->l);
-    if (w->r)   w->r   = stupidedi_wavelet_dealloc(w->r);
+    /* TODO */
 
     return w;
 }
@@ -124,18 +197,14 @@ stupidedi_wavelet_deinit(stupidedi_wavelet_t* w)
 size_t
 stupidedi_wavelet_sizeof(const stupidedi_wavelet_t* w)
 {
-    return (w == NULL) ? 0 : sizeof(*w) +
-        (w->rrr == NULL ? 0 : stupidedi_rrr_sizeof(w->rrr)) +
-        (w->l == NULL ? 0 : stupidedi_wavelet_sizeof(w->l)) +
-        (w->r == NULL ? 0 : stupidedi_wavelet_sizeof(w->l));
+    return (w == NULL) ? 0 : sizeof(*w) /* + TODO */;
 }
 
 size_t
 stupidedi_wavelet_length(const stupidedi_wavelet_t* w)
 {
     assert(w != NULL);
-    assert(w->rrr != NULL);
-    return stupidedi_rrr_length(w->rrr);
+    return 0; /* TODO */
 }
 
 char*
@@ -152,107 +221,109 @@ stupidedi_wavelet_to_packed(const stupidedi_wavelet_t* w)
 
 /*****************************************************************************/
 
-static inline bool
-choose_branch(uint64_t c, uint64_t mask)
-{
-    return (c & mask) == 0;
-}
-
 uint64_t
 stupidedi_wavelet_access(const stupidedi_wavelet_t* w, size_t i)
 {
-    uint64_t c;
-    c = 0;
-
-    for (uint64_t mask = 1ull << (w->height - 1); mask != 0; mask = mask >> 1)
-    {
-        if (stupidedi_rrr_access(w->rrr, i) == 0)
-        {
-            i = stupidedi_rrr_rank0(w->rrr, i) - 1;
-            c = (c << 1) | 0;
-            w = w->l;
-        }
-        else
-        {
-            i = stupidedi_rrr_rank1(w->rrr, i) - 1;
-            c = (c << 1) | 1;
-            w = w->r;
-        }
-    }
-
-    return c;
+    assert(w != NULL);
+    return 0; /* TODO */
 }
 
 size_t
 stupidedi_wavelet_rank(const stupidedi_wavelet_t* w, uint64_t c, size_t i)
 {
     assert(w != NULL);
-
-    for (uint64_t mask = 1ull << (w->height - 1); mask != 0; mask = mask >> 1)
-    {
-        size_t r;
-
-        if ((c & mask) == 0)
-        {
-            r = stupidedi_rrr_rank0(w->rrr, i);
-            w = w->l;
-        }
-        else
-        {
-            r = stupidedi_rrr_rank1(w->rrr, i);
-            w = w->l;
-        }
-
-        if (r == 0)
-            return 0;
-
-        i = r - 1;
-    }
-
-    return i + 1;
-}
-
-static size_t
-stupidedi_wavelet_select_aux(const stupidedi_wavelet_t* w, uint64_t c, size_t r, uint64_t mask)
-{
-    if (w == NULL)
-        return r - 1;
-
-    size_t i, j;
-
-    if ((c & mask) == 0)
-    {
-        i = stupidedi_wavelet_select_aux(w->l, c, r, mask >> 1);
-        j = (i == SIZE_MAX) ? SIZE_MAX : stupidedi_rrr_select0(w->rrr, i + 1);
-    }
-    else
-    {
-        i = stupidedi_wavelet_select_aux(w->r, c, r, mask >> 1);
-        j = (i == SIZE_MAX) ? SIZE_MAX : stupidedi_rrr_select1(w->rrr, i + 1);
-    }
-
-    return j;
+    return 0; /* TODO */
 }
 
 size_t
 stupidedi_wavelet_select(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
     assert(w != NULL);
-
-    /* TODO: Replace recursion with iteration. Note we need to maintain a stack
-     * because after determining the leaf where c belongs, we need to traverse
-     * back up to the root and report c's position relative to the whole */
-    return stupidedi_wavelet_select_aux(w, c, r, (1ull << (w->height - 1)));
+    return 0; /* TODO */
 }
 
 size_t
 stupidedi_wavelet_prev(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
+    assert(w != NULL);
     return 0; /* TODO */
 }
 
 size_t
 stupidedi_wavelet_next(const stupidedi_wavelet_t* w, uint64_t c, size_t r)
 {
+    assert(w != NULL);
     return 0; /* TODO */
+}
+
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+
+struct stupidedi_wavelet_builder_t
+{
+};
+
+stupidedi_wavelet_builder_t*
+stupidedi_wavelet_builder_alloc(void)
+{
+    return NULL;
+}
+
+stupidedi_wavelet_builder_t*
+stupidedi_wavelet_builder_new(size_t length, uint8_t width)
+{
+    return NULL;
+}
+
+stupidedi_wavelet_builder_t*
+stupidedi_wavelet_builder_init(stupidedi_wavelet_builder_t* b, size_t length, uint8_t width)
+{
+    return NULL;
+}
+
+stupidedi_wavelet_builder_t*
+stupidedi_wavelet_builder_deinit(stupidedi_wavelet_builder_t* b)
+{
+    return NULL;
+}
+
+stupidedi_wavelet_builder_t*
+stupidedi_wavelet_builder_free(stupidedi_wavelet_builder_t* b)
+{
+    return NULL;
+}
+
+/*****************************************************************************/
+
+size_t
+stupidedi_wavelet_builder_sizeof(const stupidedi_wavelet_builder_t* b)
+{
+    return 0;
+}
+
+size_t
+stupidedi_wavelet_builder_length(const stupidedi_wavelet_builder_t* b)
+{
+    return 0;
+}
+
+/*****************************************************************************/
+
+size_t
+stupidedi_wavelet_builder_written(const stupidedi_wavelet_builder_t* b)
+{
+    return 0;
+}
+
+size_t
+stupidedi_wavelet_builder_write(stupidedi_wavelet_builder_t* b, uint64_t value)
+{
+    return 0;
+}
+
+stupidedi_wavelet_t*
+stupidedi_wavelet_builder_to_wavelet(stupidedi_wavelet_builder_t* b, stupidedi_wavelet_t* w)
+{
+    return NULL;
 }

@@ -5,6 +5,12 @@ require "pp"
 C ||= Struct.new(:length, :bits)
 E ||= Struct.new(:parent, :child)
 
+class String
+  def draw
+    inspect[1..-2].gsub("\\", "\\\\\\")
+  end
+end
+
 class C
   def inv
     @inv ^= true
@@ -37,18 +43,20 @@ class C
     end
   end
 
-  def attrs(**more)
-    "[%s]" % ({shape:"box"}.update(more).map{|x|'%s="%s"' % x }.join(","))
-  end
-
   def inspect
     to_s
+  end
+
+  def attrs(**more)
+    attrs = {shape:"box"}.update(more)
+    "[%s]" % (attrs.sort.map{|k,v|'%s="%s"' % [k,v.to_s.draw]}.join(","))
   end
 end
 
 class I < C
   def attrs(**more)
-    "[%s]" % ({label:" ", shape:"circle"}.update(more).map{|x| '%s="%s"' % x }.join(","))
+    attrs = {label:length.to_s, shape:"circle"}.update(more)
+    "[%s]" % (attrs.sort.map{|k,v|'%s="%s"' % [k,v.to_s.draw]}.join(","))
   end
 end
 
@@ -57,9 +65,14 @@ class E
     "%s -- %s" % [parent, child]
   end
 
+  def inspect
+    to_s
+  end
+
   def attrs(**more)
     label = (child.bits.even?) ? "0" : "1"
-    "[%s]" % ({label:label}.update(more).map{|x| '%s="%s"' % x }.join(","))
+    attrs = {label:label}.update(more)
+    "[%s]" % (attrs.map{|k,v|'%s="%s"' % [k,v.to_s.draw]}.join(","))
   end
 end
 
@@ -217,14 +230,18 @@ def fill(c)
   k = kraft(c)
 
   # look for unused space starting at top level
-  n.times do |m|
+  (0..n).each do |m|
     w = 2**-m
 
     # there's unused space at level m
-    while k < 1 - w
+    while k <= 1 - w
+      $stderr.puts "%0.10f <= 1 - 2^%s = %0.10f" % [k, m, 1 - w]
+
       # find a node at a lower level to move up
       j = (m+1..n).find{|i| c[i] > 0 }
+      break unless j
 
+      $stderr.puts "#{j} => #{m}"
       c[m] += 1
       c[j] -= 1
       k    += w - 2**-j
@@ -234,23 +251,22 @@ def fill(c)
   c
 end
 
-# def sort(s, c)
-#   c.reverse.inject([[], s.length - 1]) do |(s_, i), n|
-#     [s_.concat(s[i-n+1..i].sort), i-n]
-#   end.first
-# end
-
 # c[i] is number of codewords with length i
 # traditional canonical huffman codeword assignment
 def generate(c)
-  code  = 0
-  prev  = 1
+  w = 0
 
   c.map.with_index do |n, l|
-    n.times.map do
-      code <<= (l - prev)
-      prev = l
-      C.new(l, code).tap { code +=  1 }
+    # Next length
+    l_ = (l+1..c.length-1).find{|k| c[k] > 0 } || l
+
+    n.times.map do |n_|
+      m = n_ < n - 1 ? l : l_
+
+      C.new(l, w).tap do
+        w  += 1
+        w <<= m - l
+      end
     end
   end
 end
@@ -260,16 +276,35 @@ end
 def generate_(c)
   q = [0, 1]
   x = 0
-  y = c.each.with_index.sum{|v,l| v }
 
-  (1..c.length-1).map do |l|
+  max_l = (c.length-1).downto(1).find{|l| c[l] > 0 }
+  nodes = [1]
+  leafs = [0]
+
+  (1..max_l).map do |l|
+    nodes[l] = q.size
+    leafs[l] = c[l]
+
     c[l].times.map{ C.new(l, q.shift) }.tap do
       z = q.map{|x| (x << 1) | 0 }
       o = q.map{|x| (x << 1) | 1 }
       q = z.concat(o)
       x = [x, q.size].max
     end
-  end.tap{ $stderr.puts "NUMBER OF SYMBOLS: #{y}\nMAX QUEUE SIZE: #{x}\n" }
+  end.tap do
+    nodes[max_l] = leafs[max_l]
+
+    $stderr.puts "leafs: #{leafs.inspect}"
+    $stderr.puts "nodes: #{nodes.inspect}"
+  end
+end
+
+def argsort(xs, &block)
+  xs.zip(0..).sort_by{|x, k| if block_given? then yield x else x end }.map{|x, k| k }
+end
+
+def sortarg(ks, xs)
+  ks.map{|k| xs[k] }
 end
 
 # s[i] is the i-th least probable symbol
@@ -282,58 +317,47 @@ def assign(s, m)
   end.first
 end
 
-# q[s] is the codeword assigned to the symbol s
-def draw(q)
-  q      = q.invert
-  inner  = Set.new
-  edges  = Set.new
-  leaves = q.keys.sort_by!{|l| [l.length, -l.bits] }
+# s[i] is the i-th least probable symbol
+# m[i] is the list of codewords of length i
+def assign_(s, m)
+  m.inject([{}, s.size - 1]) do |(h,i), cs|
+    ck = i - cs.size + 1
+    cj = i
+    ss = argsort(s[ck..cj])
+
+    cs.inject([h, i]) do |(h,i), c|
+      [h.update(s[ck + ss[cj-i]] => c), i - 1]
+    end
+  end.first
+end
+
+# w[s] is the codeword assigned to the symbol s
+def draw(w)
+  w      = w.invert
+  leaves = w.keys.sort_by!{|l| [l.length, l.bits] }
   family = leaves.inject(Set.new){|s,o| o.ancestors(s) }
 
   out = ["graph G {",
          "    nodesep=0.3;",
          "    ranksep=1;",
          "    margin=0.1;",
-         '    node [fontname="Andale-Mono, Bold", fontsize=18];',
-         '    edge [fontname="Andale-Mono", fontsize=12, arrowsize=0.8];',
+         '    node [fontname="saucecodepro nerd font", fontsize=18];',
+         '    edge [fontname="saucecodepro nerd font", fontsize=12, arrowsize=0.8];',
          ""]
 
-  out << '    r [label=" ", shape=circle];'
-  inner = family.select{|x| x.class == I }
-  inner.sort_by!{|i| [i.length, -i.bits] }
-  inner.each{|i| out << "    #{i} #{i.attrs};" }
+  out << '    r [label="0", shape=circle];'
+
+  out.concat \
+    leaves.map{|l| "    #{l} #{l.attrs(label:w.fetch(l))};" }.concat(
+      family.select{|x| I === x }.map{|i| "    #{i} #{i.attrs};" }).sort!
 
   out << ""
-  leaves.each{|l| out << "    #{l} #{l.attrs(label:q.fetch(l))};" }
-
-  out << ""
-  edges = family.select{|x| x.class == E }
-  edges.sort_by!{|e| [e.parent.length, -e.parent.bits] }
+  edges = family.select{|x| E === x }
+  edges.sort_by!{|e| [e.parent.length, e.parent.bits, e.child.bits] }
   edges.each{|e| out << "    #{e} #{e.attrs};" }
 
   out << "}"
   out.join("\n")
-end
-
-def main(_l, huffman=true)
-  x    = (STDIN.tty?) ? File.read(File.dirname(__FILE__) + "/test.txt") : STDIN.read
-  s, f = tally(x)     .tap{|x| $stderr.puts "tally: #{x.inspect}\n\n" }
-  p    = prob(f)      #tap{|x| $stderr.puts "prob:  #{x.inspect}\n\n" }
-  p    = scale(_l, p) .tap{|x| $stderr.puts "scale: #{x.inspect}\n\n" }
-
-  c    = huffman ? :coder : :coder_
-  c    = send(c, _l, p) .tap{|x| $stderr.puts "coder: #{x.inspect}\n\n" }
-  c    = fill(c)      .tap{|x| $stderr.puts "fill:  #{x.inspect}\n\n" }
-  m    = huffman ? :generate : :generate_
-  m    = send(m, c)   .tap{|x| $stderr.puts "gen:   #{x.inspect}\n\n" }
-  q    = assign(s, m) .tap{|x| $stderr.puts "assign:#{x.inspect}\n\n" }
-  #puts draw(q)
-
-  $stderr.puts "lavg=#{lavg(p, s.map{|x| q.fetch(x).length})}, K=#{kraft(c)}"
-end
-
-if __FILE__ == $0
-  main((ARGV[0] || 16).to_i, ARGV[1].nil?)
 end
 
 # This demonstrates the problem described in section 5 of "The Wavelet Matrix -
@@ -352,9 +376,9 @@ end
 # internal node 48 between the two leaves (8) and (12). The wavelet matrix
 # requires all leaves are all the way to the left.
 #
-# m[i] is list of codewords with length i
+# w[i] is list of codewords with length i
 def table(m)
-  fmt      = lambda{|l,o| (l == o.length - 1 ? "(%s)" : "%s") % o }
+  fmt      = lambda{|l,o| (l == o.length - 1 ? "\e[36m%s\e[0m" : "\e[30m%s\e[0m") % o }
   leaves = m.flatten
 
   (leaves.max_by(&:length).length).times.map do |l|
@@ -362,6 +386,68 @@ def table(m)
     ze, on = leaves.partition{|x| x.bits[x.length - 1 - l].zero? }
     leaves = ze + on
 
-    "l=%d: %s <|> %s" % [l+1, ze.map{|z|fmt[l,z]}.join("  "), on.map{|o|fmt[l,o]}.join(" ")]
+    "l=%d: %s <|> %s" % [l+1, ze.map{|z| fmt[l,z]}.join("  "), on.map{|o| fmt[l,o]}.join(" ")]
   end
+end
+
+
+def traverse(codes, leaves, nodes, bits)
+  decoded = []
+
+  r, l = bits.inject([1,0]) do |(r,l),b|
+    puts "depth(u)=#{l}, r[u]=#{r}"
+
+    if r <= leaves[l]
+    # decoded << symbols[wavelet.select(l, r)]
+      decoded << codes[l][r-1]
+      r = 1
+      l = 0
+    end
+
+    case b
+    when 0
+      # left
+      [r - leaves[l], l+1]
+    when 1
+      # right
+      [r - leaves[l] + nodes[l+1]/2, l+1]
+    end
+  end
+
+  if r <= leaves[l]
+  # decoded << symbols[wavelet.select(l, r)]
+    decoded << codes[l][r-1]
+  else
+    decoded << "extra #{l} bits"
+  end
+
+  decoded
+end
+
+def main(_l, huffman=true)
+  c    = huffman ? :coder : :coder_
+  m    = huffman ? :generate : :generate_
+
+  x    = (STDIN.tty?) ? File.read(File.dirname(__FILE__) + "/test.txt") : STDIN.read
+  s, f = tally(x)       #tap{|x| $stderr.puts "tally: #{x.inspect}\n\n" }
+  p    = prob(f)        #tap{|x| $stderr.puts "prob:  #{x.inspect}\n\n" }
+  p    = scale(_l, p)   .tap{|x| $stderr.puts "scale: #{x.inspect}\n\n" }
+  c    = send(c, _l, p) .tap{|x| $stderr.puts "coder: #{x.inspect}\n\n" }
+  c    = fill(c)        .tap{|x| $stderr.puts "fill:  #{x.inspect}\n\n" }
+  m    = send(m, c)     #tap{|x| $stderr.puts "gen:   #{x.inspect}\n\n" }
+  w    = assign_(s, m)  .tap{|x| $stderr.puts "assign:#{x.inspect}\n\n" }
+  w_   = w.invert
+
+  m.flatten.reverse_each.with_index do |_, k|
+    bits = _.bits.to_s(2).rjust(_.length, "0")
+    $stderr.puts "%02u: %2u %#{_l}s %s %s" % [k, _.length, bits, w_[_].inspect, bits.reverse]
+  end
+
+  #$stderr.puts table(m)
+  $stdout.puts draw(w)
+  $stderr.puts "lavg=#{lavg(p, s.map{|x| w.fetch(x).length})}, K=#{kraft(c)}"
+end
+
+if __FILE__ == $0
+  main((ARGV[0] || 16).to_i, ARGV[1].nil?)
 end
