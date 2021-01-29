@@ -12,30 +12,53 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define CODEWORD_LENGTH_MAX 64
 
-/* Used to represent a compressed code */
+/* Compressed representation of a codebook */
 typedef struct stupidedi_huffman_wavelet_t
 {
-    stupidedi_packed_t*     nodes;      /* nodes[l]:   Total number of nodes in code tree at level l */
+    /* O(L log σ) */
+    stupidedi_packed_t*     nodes;      /* nodes[l]:   Number of nodes in code tree at level l */
+
+    /* O(L log σ) */
     stupidedi_packed_t*     leaves;     /* leaves[l]:  Number of leaves in code tree at level l */
+
+    /* O(TODO) */
     stupidedi_wavelet_t*    lengths;    /* lengths[i]: Length of codeword for i-th most common symbol */
 } stupidedi_huffman_wavelet_t;
 
-/* Used to represent a non-compressed code */
+/* Uncompressed representation of a codebook */
 typedef struct stupidedi_huffman_packed_t
 {
-    stupidedi_packed_t* encode;     /* encode[i]:  The codeword for the i-th most common symbol */
-    stupidedi_packed_t* lengths;    /* lengths[i]: Length of codeword for i-th most common symbol */
-    stupidedi_packed_t* offsets;    /* offsets[l]: Number of codewords shorter than l bits */
-    stupidedi_packed_t* decode;     /* decode:     Codewords sorted in ascending lexicographic order */
-    stupidedi_packed_t* symbols;    /* symbols[k]: The symbol corresponding to decode[k] */
+    /* O(σL), encode[i]:  The codeword for the i-th most common symbol */
+    stupidedi_packed_t* encode;
+
+    /* O(oL), Codewords sorted in ascending lexicographic order
+     * TODO: This could be O(σ log σ) */
+    stupidedi_packed_t* decode;
+
+    /* O(σ log σ), lengths[i]: Length of codeword for i-th most common symbol */
+    stupidedi_packed_t* lengths;
+
+    /* O(σ log σ), symbols[k]: The symbol corresponding to decode[k] */
+    stupidedi_packed_t* symbols;
+
+    /* O(L log σ), offsets[l]: Number of codewords shorter than l bits */
+    stupidedi_packed_t* offsets;
 } stupidedi_huffman_packed_t;
 
 struct stupidedi_huffman_t
 {
-    uint8_t     max_l;              /* Length of longest codeword */
-    long double avg_l;              /* Average codeword length, weighted by their frequencies */
-    long double K;                  /* Kraft sum. When K=1, the code tree has unused space */
+    /* σ, Number of symbols */
     size_t      count;
+
+    /* L, Length of longest codeword */
+    uint8_t     max_l;
+
+    /* Average codeword length, weighted by their frequencies */
+    long double avg_l;
+
+    /* Kraft sum. When K=1, the code tree has unused space */
+    long double K;
+
     enum type   type;
     union
     {
@@ -144,7 +167,7 @@ stupidedi_huffman_deinit(stupidedi_huffman_t* h)
         if (h->packed.symbols != NULL)  h->packed.symbols = stupidedi_packed_free(h->packed.symbols);
     }
 
-    return h; /* TODO */
+    return h;
 }
 
 /*****************************************************************************/
@@ -152,19 +175,15 @@ stupidedi_huffman_deinit(stupidedi_huffman_t* h)
 size_t
 stupidedi_huffman_sizeof(const stupidedi_huffman_t* h)
 {
-    return 0;
+    return (h == NULL) ? 0 : sizeof(*h) /*+ TODO */;
 }
 
 /* Returns number of symbols in the codebook */
 size_t
-stupidedi_huffman_length(const stupidedi_huffman_t* h)
+stupidedi_huffman_count(const stupidedi_huffman_t* h)
 {
     assert(h != NULL);
-
-    if (h->type == WAVELET)
-        return stupidedi_wavelet_length(h->wavelet.lengths);
-
-    return stupidedi_packed_length(h->packed.lengths);
+    return h->count;
 }
 
 char*
@@ -331,7 +350,9 @@ stupidedi_huffman_decode_packed(const stupidedi_huffman_t* h, uint64_t bits, uin
      * requires O(l + (l-1) + (l-2) + ... + 1) = O(l²) time.
      *
      * If `l` is known in advance and `bits` contains a valid codeword, this
-     * only requires O(l) time. */
+     * only requires O(l) time.
+     *
+     * TODO: This makes decoding bit streams infeasible! */
     for (size_t _l = MIN(l, h->max_l); _l > 0; --_l)
     {
         uint64_t mask;
@@ -390,6 +411,12 @@ stupidedi_huffman_decode(const stupidedi_huffman_t* h, uint64_t w, uint8_t l, si
     return (h->type == WAVELET) ?
         stupidedi_huffman_decode_wavelet(h, w, l, i) :
         stupidedi_huffman_decode_packed(h, w, l, i);
+}
+
+uint8_t
+stupidedi_huffman_decode_next(const stupidedi_huffman_t* h, const stupidedi_bitstr_t* b, size_t i)
+{
+    return 0; /* TODO */
 }
 
 /*****************************************************************************/
@@ -790,15 +817,13 @@ init_generate_codewords_wavelet(stupidedi_huffman_t* h, size_t L, const size_t* 
     for (size_t l = 1; l < L; ++l)
         count += c[l];
 
-    stupidedi_wavelet_builder_t* wb;
-    wb = stupidedi_wavelet_builder_new(count, nbits(L));
-
     /* Find the longest codeword that was assigned. */
     size_t max_l; for (max_l = L; max_l >= 0 && c[max_l] == 0; --max_l);
 
-    stupidedi_packed_t *nodes, *leaves;
-    nodes  = stupidedi_packed_new(max_l + 1, nbits(count));
-    leaves = stupidedi_packed_new(max_l + 1, nbits(count));
+    stupidedi_packed_t *nodes, *leaves, *lengths;
+    nodes   = stupidedi_packed_new(max_l + 1, nbits(count));
+    leaves  = stupidedi_packed_new(max_l + 1, nbits(count));
+    lengths = stupidedi_packed_new(h->count, max_l);
 
     /* Root node at level 0 */
     stupidedi_packed_write(nodes,  0, 1);
@@ -813,7 +838,7 @@ init_generate_codewords_wavelet(stupidedi_huffman_t* h, size_t L, const size_t* 
         stupidedi_packed_write(nodes,  l, qsize);
 
         for (size_t k = c[l]; --k; )
-            stupidedi_wavelet_builder_write(wb, l);
+            stupidedi_packed_write(lengths, l, c[l]);
 
         qsize -= c[l];
         qsize *= 2;
@@ -827,7 +852,7 @@ init_generate_codewords_wavelet(stupidedi_huffman_t* h, size_t L, const size_t* 
     h->max_l           = max_l;
     h->wavelet.nodes   = nodes;
     h->wavelet.leaves  = leaves;
-    h->wavelet.lengths = stupidedi_wavelet_builder_to_wavelet(wb, NULL);
+    h->wavelet.lengths = stupidedi_wavelet_new(lengths, NULL);
 
-    stupidedi_wavelet_builder_free(wb);
+    stupidedi_packed_free(lengths);
 }

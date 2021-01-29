@@ -11,9 +11,15 @@
 
 typedef struct stupidedi_ringbuf_t
 {
-    size_t enq_at; /* location of next write */
-    size_t deq_at; /* location of next read  */
+    /* Location of next write */
+    size_t enq_at;
+
+    /* Location of next read  */
+    size_t deq_at;
+
     write_mode mode;
+
+    /* O(n) */
     stupidedi_packed_t* data;
 } stupidedi_ringbuf_t;
 
@@ -47,7 +53,7 @@ stupidedi_ringbuf_init(stupidedi_ringbuf_t* q, size_t capacity, size_t width, wr
     q->enq_at = 0;
     q->deq_at = 0;
     q->mode = mode;
-    q->data = stupidedi_packed_new(capacity + 1, width);
+    q->data = stupidedi_packed_new(capacity + 1, width); /* TODO: No need to initialize elements */
 
     return q;
 }

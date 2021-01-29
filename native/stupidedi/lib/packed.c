@@ -5,11 +5,18 @@
 #include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/packed.h"
 
+/* TODO: Special case for width = 1? */
+
 typedef struct stupidedi_packed_t
 {
+    /* O(wn) = O(n) */
     stupidedi_bitstr_t* data;
+
+    /* w */
     uint8_t width;
-    size_t length;
+
+    /* n */
+    size_t length; /* TODO: Should we eliminate this redundancy? */
 } stupidedi_packed_t;
 
 static int compare_at(void*, const void*, const void*);
@@ -189,47 +196,6 @@ stupidedi_packed_write(const stupidedi_packed_t* a, size_t i, uint64_t value)
     stupidedi_bitstr_write(a->data, i * a->width, a->width, value);
     return i + 1;
 }
-
-/*
-stupidedi_packed_t*
-stupidedi_packed_reverse(const stupidedi_packed_t* a, stupidedi_packed_t* b)
-{
-    assert(a != NULL);
-
-    size_t length;
-    length = stupidedi_packed_length(a);
-
-    if (a == b)
-    {
-        for (size_t k = 0; k < (length + 1)/ 2 - 1; ++k)
-        {
-            uint64_t x, y;
-            x = stupidedi_packed_read(b, k);
-            y = stupidedi_packed_read(b, length - 1 - k);
-
-            stupidedi_packed_write(b, k, y);
-            stupidedi_packed_write(b, k, y);
-        }
-    }
-    else
-    {
-        uint8_t  width;
-        width  = stupidedi_packed_width(a);
-
-        if (b == NULL)
-            b = stupidedi_packed_alloc(length, width);
-
-        assert(length == stupidedi_packed_length(b));
-        assert(width  == stupidedi_packed_width(b));
-
-        for (size_t k = 0; k < length; ++k)
-            stupidedi_packed_write(b, length - 1 - k,
-                    stupidedi_packed_read(a, k));
-    }
-
-    return b;
-}
-*/
 
 size_t*
 stupidedi_packed_argsort(const stupidedi_packed_t* a)

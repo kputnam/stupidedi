@@ -5,6 +5,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
+/* TODO
+ *
+ * Space complexity:  O(n)
+ * Variable overhead: none
+ * Constant overhead: 16 bytes */
 typedef struct stupidedi_bitstr_t stupidedi_bitstr_t;
 
 /*****************************************************************************/

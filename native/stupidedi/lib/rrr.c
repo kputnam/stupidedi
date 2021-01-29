@@ -7,43 +7,51 @@
 #include "stupidedi/include/packed.h"
 #include "stupidedi/include/builtins.h"
 
+/* TODO: What happens when H₀(B) = -∞ because B={1,1,1,.....1}? */
+
 typedef struct stupidedi_rrr_t
 {
-    /* Total number of bits in input */
+    /* n, Total number of bits in input */
     size_t length;
 
-    /* Number of 1-bits in input */
+    /* r, Number of 1-bits in input */
     size_t rank;
 
-    /* Number of input bits per block */
+    /* t, Number of input bits per block */
     uint8_t block_size;
     size_t nblocks;
 
-    /* classes[k] is number of 1s bits in kth block. */
+    /* O(n ⌈log(t+1)/t⌉) = o(n), classes[k] is number of 1-bits in kth block. */
     stupidedi_packed_t* classes;
 
-    /* Variable width, offsets[k] points to one of the values with classes[k] 1s bits. */
+    /* O(n H₀(B)) = o(n), Variable width, offsets[k] points to one of the values with classes[k] 1-bits. */
     stupidedi_bitstr_t* offsets;
 
     /* Number of input bits per marker */
     size_t nmarkers;
     uint16_t marker_size;
 
-    /* Each marker counts how many 1-bits occured in the first (1+k)*marker_size bits. */
+    /* O(n/t) = o(n), Each marker counts how many 1-bits occured in the first (1+k)*marker_size bits. */
     stupidedi_packed_t* marked_ranks;
 
-    /* Points to the offset for the block with the (1+k)*marker_size-1 th bit. */
+    /* o(n), Points to the offset for the block with the (1+k)*marker_size-1 th bit. */
     stupidedi_packed_t* marked_offsets;
 } stupidedi_rrr_t;
 
 typedef struct stupidedi_rrr_builder_t
 {
     stupidedi_rrr_t* rrr;
-    uint8_t  offset_nbits_max, block_need;
+
+    /* This is all O(1) overhead */
+    uint8_t  offset_nbits_max;
+    uint8_t  block_need;
     uint16_t marker_need;
-    size_t written, class_at, offset_at, marker_at;
+    size_t   written;
+    size_t   class_at;
+    size_t   offset_at;
+    size_t   marker_at;
     uint64_t block;
-    bool is_done;
+    bool     is_done;
 } stupidedi_rrr_builder_t;
 
 /*****************************************************************************/
@@ -174,9 +182,9 @@ stupidedi_rrr_to_string(const stupidedi_rrr_t* rrr)
             rrr->nblocks,
             rrr->marker_size,
             rrr->nmarkers,
-            offsets = stupidedi_bitstr_to_string(rrr->offsets),
-            classes = stupidedi_packed_to_string(rrr->classes),
-            marked_ranks = stupidedi_packed_to_string(rrr->marked_ranks),
+            offsets        = stupidedi_bitstr_to_string(rrr->offsets),
+            classes        = stupidedi_packed_to_string(rrr->classes),
+            marked_ranks   = stupidedi_packed_to_string(rrr->marked_ranks),
             marked_offsets = stupidedi_packed_to_string(rrr->marked_offsets));
 
     free(offsets);
@@ -316,7 +324,7 @@ stupidedi_rrr_rank1(const stupidedi_rrr_t* rrr, size_t i)
         class_at  = i_ / rrr->block_size;
 
         /* Because the marker may not point to the start of a block, we have to take
-         * some care to not double-count the 1s bits before the marker. The term
+         * some care to not double-count the 1-bits before the marker. The term
          * being subtracted is the last bit index in the nearest block. */
         twice = i_ < class_bit_idx(rrr, class_at) ? 0 :
                 i_ - class_bit_idx(rrr, class_at) + 1;
@@ -626,7 +634,7 @@ encode_block(uint8_t block_size, uint8_t class, uint64_t value)
      * We can determine the offset of a value from this set by first inspecting
      * its 5th bit. If it's 0, we know it's one of the first 6 values. If it's
      * 1, we know offset >= 6 because 6 values precede it. We next look at the
-     * 4th bit and so on, until we've accounted for all the 1s in the given
+     * 4th bit and so on, until we've accounted for all the 1-bits in the given
      * value.
      */
 
@@ -672,8 +680,8 @@ decode_block(uint8_t block_size, uint8_t class, uint64_t offset)
      * We can determine the value at an offset by first comparing the offset to
      * binomial(5-1, 2) = 6. If it's less, then the first bit must be zero, else
      * it is 1. The next bit is determined by comparing either binomial(4, 2)
-     * or binomial(4, 1) depending on how many 1s bits have been accounted for.
-     * This continues until two 1s bits have been generated.
+     * or binomial(4, 1) depending on how many 1-bits have been accounted for.
+     * This continues until two 1-bits have been generated.
      */
 
     uint64_t value = 0;
@@ -746,10 +754,9 @@ stupidedi_rrr_find_marker0(const stupidedi_rrr_t* rrr, size_t r)
     assert(rrr != NULL);
     assert(r <= rrr->length - rrr->rank);
 
-    /* The key here is to use marked_ranks[k], which counts 1s bits that occur
+    /* The key here is to use marked_ranks[k], which counts 1-bits that occur
      * in the first i=(k+1)*rrr->marker_size bits. Since each bit is 0 or 1, we
-     * can work out the number of 0s from the number of 1s.
-     */
+     * can work out the number of 0-bits from the number of 1-bits. */
 
     if (rrr->nmarkers == 0)
         return 0;

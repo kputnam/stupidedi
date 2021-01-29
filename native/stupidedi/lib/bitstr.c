@@ -6,9 +6,14 @@
 #define WORD_NBITS 6 /* log2(64) */
 #define WORD_SIZE (1 << WORD_NBITS)
 
+/* TODO: Reduce overhead to 8 bytes by locating length immediately before data?  */
+
 typedef struct stupidedi_bitstr_t
 {
+    /* O(n) */
     uint64_t* data;
+
+    /* n */
     size_t length;
 } stupidedi_bitstr_t;
 

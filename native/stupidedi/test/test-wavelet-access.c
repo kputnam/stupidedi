@@ -26,8 +26,8 @@ main(int argc, char **argv)
     stupidedi_packed_write(&a, 8, 3);
     stupidedi_packed_write(&a, 9, 1);
 
-    stupidedi_wavelet_t w;
-    stupidedi_wavelet_init(&w, &a, width);
+    stupidedi_wavelet_t* w;
+    stupidedi_wavelet_new(&w, &a, width);
     printf("OK\n");
 
     for (size_t k = 0; k < stupidedi_packed_length(&a); ++k)
