@@ -1,11 +1,22 @@
 v master / unreleased
 
   **Bug Fixes**
-  
+
+  * Fix missing method delegations in SimpleElementUse, ComponentElementUse, and CompositeElementUse #185
+  * Fix regression in edi-obfuscate
   * Fix copy-pasted StringVal -> IdentifierVal #187
-  * call find! on StateMachine not Either wrapper #188
-  * Fix error message when required composite is missing #194
-  
+  * Fix crash in 4010 editor, wrong method called #188
+  * Fix bug in RepeatedElementVal#==, incorrect comparison #190
+  * Fix error message when required composite element is missing #194
+  * Fix various typos in comments and descriptor strings #230 and #233
+
+  **Added**
+
+  * Add DSL for defining X12 grammars TransactionSets::Builder::Dsl #200
+  * Add support for 5010 X12-HN277 Health Care Information Status Notification
+  * Add support for 5010 X220A1-BE834 BGN05 Time Code #205
+  * Add support for "02 - Birth" maintenance reason code #209
+
 v 1.4.0
 
   **Bug fixes**
@@ -20,8 +31,8 @@ v 1.4.0
 
   **Added**
 
-  * Added `Stupidedi::Parser.build` as a shortcut for `Stupidedi::Parser::StateMachine.build`
-  * Added many stub definitions of segments, just the segment name and no elements, which are referred to by `RA820` and others.
+  * Add `Stupidedi::Parser.build` as a shortcut for `Stupidedi::Parser::StateMachine.build`
+  * Add many stub definitions of segments, just the segment name and no elements, which are referred to by `RA820` and others.
   * `edi-pp` can now print different formats with `--format html`, `--format x12`, and `--format tree` (default)
 
   **Deprecation notices**
@@ -42,7 +53,7 @@ v 1.4.0
     * Each version now has `::Standards` and `::Implementations`
   * `Stupidedi::Schema::Auditor` is renamed to `Stupidedi::TransactionSets::Validation::Ambiguity`
 
-  Most of these renames aren't breaking changes (yet), but using the old name will print a warning:
+  Most of these renames are not breaking changes (yet), but using the old name will print a warning:
 
   ```
   Stupidedi::Contrib is deprecated, use Stupidedi::TransactionSets
@@ -56,7 +67,7 @@ v 1.4.0
 
   **Specs**
 
-  * Grammar specs automatically created when a fixture is added to `spec/fixtures/<version>/<name>/pass/*.x12`
+  * Grammar specs automatically created when a fixture is added to spec/fixtures/<version>/<name>/pass/*.x12
   * Remove support for `rcov`. Use only `simplecov` now
   * Update all specs to use `expect(value).to matcher` syntax, instead of `value.should matcher`
   * New specs to ensure element names match their `id` (eg, `E123.id == :E123`)
