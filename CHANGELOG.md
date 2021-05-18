@@ -1,4 +1,4 @@
-v master / unreleased
+v 1.4.1
 
   **Bug Fixes**
 
@@ -83,19 +83,19 @@ v 1.4.0
   * `Stupidedi::TransactionSets::Builder.build` no longer requires a `TransactionSetDef` argument
   * Fix Travis CI to build older versions of Ruby < 2.3
   * Ignore large definition files in Code Climate
-  
-v 1.3.24 
+
+v 1.3.24
   - Fix repeatability test in Navigation#iterate
   - Adds implementation of June 2014 005010X223A3 (837I)
   - Fixes misplaced 2330H and 2330I loops. Fixes names for 2310 Occurrenc…
-  
+
 v 1.3.23 - Jan 10, 2019
   - Fix decimal values for TimeVal being coerced incorrectly https://github.com/irobayna/stupidedi/pull/151
   - Detect ambiguous grammar automatically https://github.com/irobayna/stupidedi/pull/153
-  
+
 v 1.3.22
   - Re-enable EC Segment on FifyTen group
-  
+
 v 1.3.21 - Dec 9, 2018 ** Breaking Changes **
   - Throw exception from #iterate if segment is not repeatable (fix #126) https://github.com/irobayna/stupidedi/pull/146
   - Configurable limit of non-determinism (fixes #129) https://github.com/irobayna/stupidedi/pull/145
