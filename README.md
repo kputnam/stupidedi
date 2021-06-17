@@ -84,7 +84,8 @@ optimization.
 files can consume excessive memory to the point all CPU time is spent in garbage
 collection. In more than ten years since this library was put into production, this
 seems to rarely happen in practice (as X12 files are most often very small), but until
-these improvements are merged, it can be difficult to work around.
+  these improvements are merged, it can be difficult to work around. See [#65](https://github.com/irobayna/stupidedi/issues/65) for
+    more discussion. The current work in progress is in the [`gh-65.3`](https://github.com/irobayna/stupidedi/tree/gh-65.3) branch.
 
 ![Benchmark](https://raw.github.com/irobayna/stupidedi/master/notes/benchmark/throughput.png)
 
