@@ -76,10 +76,15 @@ to understand, assuming a reasonable familiarity with EDI.
 ### Efficient parsing and traversing
 
 The parser is designed using immutable data structures, making it thread-safe
-for runtimes that can utilize multiple cores. While in certain cases,
-immutability places higher demand on garbage collection, this has been
-mitigated with careful optimization. Input can be streamed incrementally, so
-very large files aren't read into memory all at once.
+for runtimes that can utilize multiple cores. In some cases, immutability places
+higher demand on garbage collection, this has been somewhat mitigated with careful
+optimization.
+
+**Note:** Further optimizations are planned for late 2021. Until then, modestly large
+files can consume excessive memory to the point all CPU time is spent in garbage
+collection. In more than ten years since this library was put into production, this
+seems to rarely happen in practice (as X12 files are most often very small), but until
+these improvements are merged, it can be difficult to work around.
 
 ![Benchmark](https://raw.github.com/irobayna/stupidedi/master/notes/benchmark/throughput.png)
 
