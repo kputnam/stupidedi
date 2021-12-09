@@ -13,7 +13,7 @@ require "set"
 $:.unshift(File.expand_path("..", __FILE__))
 
 require "ruby/array"
-require "ruby/blank"
+#require "ruby/blank"
 require "ruby/exception"
 require "ruby/hash"
 require "ruby/module"
@@ -22,7 +22,7 @@ require "ruby/string"
 require "ruby/to_d"
 require "ruby/to_date"
 require "ruby/to_time"
-require "ruby/try"
+#require "ruby/try"
 
 module Stupidedi
   # @todo deprecated
