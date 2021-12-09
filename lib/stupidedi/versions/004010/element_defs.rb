@@ -30,7 +30,7 @@ module Stupidedi
             "RC" => "Refrigerated (Reefer) Car",
             "RT" => "Controlled Temperature Trailer (Reefer)",
             "SU" => "Supplier/Manufacturer",
-            "TF" => "Trailer, Try Freight",
+            "TF" => "Trailer, Dry Freight",
             "TL" => "Trailer (not otherwise specified)",
             "TV" => "Truck, Van"))
         E46   = t::AN.new(:E46  , "Ex Parte"                             , 4, 4)

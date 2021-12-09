@@ -106,6 +106,7 @@ module Stupidedi
           x.register("005010",       "FA", "999") { Stupidedi::TransactionSets::FiftyTen::Standards::FA999 }
           x.register("005010",       "RA", "820") { Stupidedi::TransactionSets::FiftyTen::Standards::RA820 }
           x.register("005010X212",   "HR", "276") { Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276 }
+          x.register("005010X212",   "HN", "277") { Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HN277 }
           x.register("005010X214",   "HN", "277") { Stupidedi::TransactionSets::FiftyTen::Implementations::X214::HN277 }
           x.register("005010X220",   "BE", "834") { Stupidedi::TransactionSets::FiftyTen::Implementations::X220::BE834 }
           x.register("005010X221",   "HP", "835") { Stupidedi::TransactionSets::FiftyTen::Implementations::X221::HP835 }
