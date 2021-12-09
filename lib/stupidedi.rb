@@ -22,7 +22,7 @@ require "ruby/string"
 require "ruby/to_d"
 require "ruby/to_date"
 require "ruby/to_time"
-#require "ruby/try"
+require "ruby/try"
 
 module Stupidedi
   # @todo deprecated
