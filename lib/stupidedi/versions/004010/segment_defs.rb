@@ -3,6 +3,7 @@ module Stupidedi
   module Versions
     module FortyTen
       module SegmentDefs
+        autoload :ACK, "stupidedi/versions/004010/segment_defs/ACK"
         autoload :AK1, "stupidedi/versions/004010/segment_defs/AK1"
         autoload :AK2, "stupidedi/versions/004010/segment_defs/AK2"
         autoload :AK3, "stupidedi/versions/004010/segment_defs/AK3"
@@ -20,6 +21,12 @@ module Stupidedi
         autoload :BAK, "stupidedi/versions/004010/segment_defs/BAK"
         autoload :BCT, "stupidedi/versions/004010/segment_defs/BCT"
         autoload :BEG, "stupidedi/versions/004010/segment_defs/BEG"
+        autoload :BIG, "stupidedi/versions/004010/segment_defs/BIG"
+        autoload :ITD, "stupidedi/versions/004010/segment_defs/ITD"
+        autoload :IT1, "stupidedi/versions/004010/segment_defs/IT1"
+        autoload :TXI, "stupidedi/versions/004010/segment_defs/TXI"
+        autoload :TDS, "stupidedi/versions/004010/segment_defs/TDS"
+        autoload :SAC, "stupidedi/versions/004010/segment_defs/SAC"
         autoload :BFR, "stupidedi/versions/004010/segment_defs/BFR"
         autoload :BPR, "stupidedi/versions/004010/segment_defs/BPR"
         autoload :BSN, "stupidedi/versions/004010/segment_defs/BSN"
