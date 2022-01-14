@@ -318,7 +318,7 @@ module Stupidedi
             "S3"  => "Custodial Parent",
             "SEP" => "Secondary Payer",
             "SJ"  => "Service Provider",
-            "SU"  => "Suppplier/Manufacturer",
+            "SU"  => "Supplier/Manufacturer",
             # Used to identify the geographic location where a patient is transferred or diverted
             "T4"  => "Transfer Point",
             "TL"  => "Testing Laboratory",
@@ -2178,7 +2178,7 @@ module Stupidedi
             "24" => "Dependent of a Minor Dependent",
             "25" => "Ex-spouse",
             "26" => "Guardian",
-            "29" => "Signficant Other",
+            "29" => "Significant Other",
             "31" => "Court Appointed Guardian",
             "32" => "Mother",
             "33" => "Father",
