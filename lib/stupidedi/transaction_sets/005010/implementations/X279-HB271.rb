@@ -657,7 +657,7 @@ module Stupidedi
 
                     d::LoopDef.build("2115D DEPENDENT ELIGIBILITY OR BENEFIT ADDITIONAL INFORMATION", d::RepeatCount.bounded(10),
                       b::Segment(2600, s::III, "Dependent Eligibility or Benefit Additional Information", r::Situational, d::RepeatCount.bounded(1),
-                        b::Element(e::Situational,     "Code List Qualifier", b::Values("GR", "NI", "ZZ")),
+                        b::Element(e::Situational,     "Code List Qualifier Code", b::Values("GR", "NI", "ZZ")),
                         b::Element(e::Situational,     "Industry Code"),
                         b::Element(e::Situational,     "Code Category", b::Values("44")),
                         b::Element(e::Situational,     "Injured Body Part Name"),
