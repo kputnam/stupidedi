@@ -12,6 +12,8 @@ module Stupidedi
           d::TableDef.header("1 - Header",
             s:: ST.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
             s::BAK.use( 20, r::Mandatory, d::RepeatCount.bounded(1)),
+            s::PER.use( 30, r::Optional, d::RepeatCount.bounded(1)),
+            s::DTM.use( 40, r::Optional, d::RepeatCount.bounded(1)),
 
             d::LoopDef.build("N1", d::RepeatCount.bounded(200),
               s:: N1.use( 310, r::Optional,  d::RepeatCount.bounded(1)),
@@ -22,6 +24,7 @@ module Stupidedi
           d::TableDef.detail("2 - Detail",
             d::LoopDef.build("PO1", d::RepeatCount.bounded(10000),
               s::PO1.use( 10, r::Mandatory, d::RepeatCount.bounded(1)),
+              s::PID.use( 10, r::Optional, d::RepeatCount.bounded(1)),
               s::ACK.use( 10, r::Optional, d::RepeatCount.bounded(1)))),
 
           d::TableDef.summary("3 - Summary",
