@@ -58,7 +58,7 @@ module Stupidedi
               b::Segment(10, s::PO1, "Baseline Item Data", r::Required, d::RepeatCount.bounded(1),
                 b::Element(e::Situational, "Assigned Identification"),
                 b::Element(e::Situational, "Quantity Ordered"),
-                b::Element(e::Situational, "Unit or Basis for Measurement Code", b::Values("CA", "EA", "LB")),
+                b::Element(e::Situational, "Unit or Basis for Measurement Code", b::Values("BG", "BT", "BX", "CA", "CN", "CS", "EA", "JR", "LB", "PK", "RL", "TB")),
                 b::Element(e::Situational, "Unit Price"),
                 b::Element(e::Situational, "Basis of Unit Price Code", b::values("PE","PP","UM")),
                 b::Element(e::Situational, "Product/Service ID Qualifier", b::Values("VN", "VC")),
