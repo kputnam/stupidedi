@@ -4707,15 +4707,23 @@ module Stupidedi
         E354 = t::Nn.new(:E354 , "Number of Line Items"                  , 1, 6, 0)
         E355 = t::ID.new(:E355 , "Unit or Basis for Measurement Code"    , 2, 2,
           s::CodeList.build(
-            "FA" => "Fahrenheit",
+            "BG" => "Bag",
+            "BT" => "Belt",
+            "BX" => "Box",
             "CA" => "Case",
+            "CS" => "Case Pack of %",
+            "CT" => "Carton",
             "EA" => "Each",
+            "FA" => "Fahrenheit",
+            "IP" => "Master Pack of %",
+            "JR" => "Jar",
             "LB" => "Pound",
             "PC" => "Piece",
+            "PK" => "Package",
             "PL" => "Pallet/Unit Load",
+            "RL" => "Roll",
+            "TB" => "Tube",
             "TK" => "Tank",
-            "IP" => "Master Pack of %",
-            "CS" => "Case Pack of %",
             "ZZ" => "Mutually Defined"))
         E356  = t:: R.new(:E356   , "Case/Inner Pack"                    , 1, 6)
         E357  = t:: R.new(:E357   , "Outer Pack"                         , 1, 8)
