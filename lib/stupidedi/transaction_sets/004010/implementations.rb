@@ -29,6 +29,7 @@ module Stupidedi
         autoload :SS862, "stupidedi/transaction_sets/004010/implementations/SS862"
         #utoload :SW945, "stupidedi/transaction_sets/004010/implementations/SW945"
         autoload :IN810, "stupidedi/transaction_sets/004010/implementations/IN810"
+        autoload :LB823, "stupidedi/transaction_sets/004010/implementations/LB823"
 
         module X091A1
           autoload :HP835, "stupidedi/transaction_sets/004010/implementations/X091A1-HP835"

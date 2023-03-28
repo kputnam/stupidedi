@@ -23,6 +23,7 @@ module Stupidedi
         autoload :SQ866, "stupidedi/transaction_sets/004010/standards/SQ866"
         autoload :SS862, "stupidedi/transaction_sets/004010/standards/SS862"
         autoload :SW945, "stupidedi/transaction_sets/004010/standards/SW945"
+        autoload :LB823, "stupidedi/transaction_sets/004010/standards/LB823"
       end
     end
   end
