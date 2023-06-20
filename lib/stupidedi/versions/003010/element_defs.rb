@@ -2664,7 +2664,9 @@ module Stupidedi
         E301  = t::ID.new(:E301 , "Car Type Code"                        , 1, 4)
         E305 = t::ID.new(:E305, "Transaction Handling Code"           , 1, 1,
           s::CodeList.build(
-            "I" => "Remittance Information Only"))
+            "I" => "Remittance Information Only",
+            "C" => "Payment Accompanies Remittance Advice",
+            "X" => "Make Payment and Send Remittance Advice"))
         E306  = t::ID.new(:E306 , "Action Code"                          , 1, 2,
           s::CodeList.build(
             "0"  => "Authorize",
@@ -4704,7 +4706,8 @@ module Stupidedi
             "ZZ" => "Mutually Defined"))
         E591 = t::ID.new(:E591, "Payment Method Code"                 , 3, 3,
           s::CodeList.build(
-            "PBC" => "Pay by Check"))
+            "PBC" => "Pay by Check",
+            "ZZZ" => "Mutually Defined"))
         E595  = t::ID.new(:E595 , "Compartment ID Code"                  , 1, 1,
           s::CodeList.build(
             "1" => "Brake End",
