@@ -2349,6 +2349,8 @@ module Stupidedi
         E1204 = t::AN.new(:E1204, "Plan Coverage Description"            , 1, 50)
         E1205 = t::ID.new(:E1205, "Insurance Line Code"                  , 2, 3,
           s::CodeList.build(
+            "AC"  => "Basic Life",
+            "ADD" => "Accidental Death and Dismemberment",
             "AG"  => "Preventative Care/Wellness",
             "AH"  => "24 Hour Care",
             "AJ"  => "Medicare Risk",
