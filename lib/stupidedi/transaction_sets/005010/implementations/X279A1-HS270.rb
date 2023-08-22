@@ -146,7 +146,7 @@ module Stupidedi
                     b::Segment(1000, s::DMG, "Subscriber Demographic Information", r::Situational, d::RepeatCount.bounded(1),
                       b::Element(e::Situational, "Date Time Period Format Qualifier"),
                       b::Element(e::Situational, "Subscriber Birth Date"),
-                      b::Element(e::Situational, "Subscriber Gender Code", b::Values("F", "M")),
+                      b::Element(e::Situational, "Subscriber Gender Code", b::Values("F", "M", "U")),
                       b::Element(e::NotUsed,     "Marital Status Code"),
                       b::Element(e::NotUsed,     "COMPOSITE RACE OR ETHNICITY INFORMATION"),
                       b::Element(e::NotUsed,     "Citizenship Status Code"),
