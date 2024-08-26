@@ -10,8 +10,8 @@ require "term/ansicolor" if ARGV.delete("-C")
 
 config = Stupidedi::Config.new
 config.interchange.tap do |c|
-  c.register("00401") { Stupidedi::Versions::Interchanges::FourOhOne::InterchangeDef }
-  c.register("00501") { Stupidedi::Versions::Interchanges::FiveOhOne::InterchangeDef }
+  c.register("00401") { Stupidedi::Interchanges::FourOhOne::InterchangeDef }
+  c.register("00501") { Stupidedi::Interchanges::FiveOhOne::InterchangeDef }
 end
 
 config.functional_group.tap do |c|
@@ -23,30 +23,29 @@ config.functional_group.tap do |c|
   # same set of segment definitions. There might be a good place to detect this
   # mismatch, but it's not yet implemented.
   #
-  # c.register("004010") { Stupidedi::Versions::FunctionalGroups::FortyTen::FunctionalGroupDef }
+  # c.register("004010") { Stupidedi::Versions::FortyTen::FunctionalGroupDef }
 
-  c.register("004010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
-  c.register("005010") { Stupidedi::Versions::FunctionalGroups::FiftyTen::FunctionalGroupDef }
+  c.register("004010") { Stupidedi::Versions::FiftyTen::FunctionalGroupDef }
+  c.register("005010") { Stupidedi::Versions::FiftyTen::FunctionalGroupDef }
 end
 
 config.transaction_set.tap do |c|
-  c.register("005010", "HN", "277") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HN277 }
-  c.register("005010", "BE", "834") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::BE834 }
-  c.register("005010", "HP", "835") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HP835 }
-  c.register("005010", "HC", "837") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::HC837 }
-  c.register("005010", "FA", "999") { Stupidedi::Versions::FunctionalGroups::FiftyTen::TransactionSetDefs::FA999 }
+  c.register("005010", "HN", "277") { Stupidedi::TransactionSets::FiftyTen::Standards::HN277 }
+  c.register("005010", "BE", "834") { Stupidedi::TransactionSets::FiftyTen::Standards::BE834 }
+  c.register("005010", "HP", "835") { Stupidedi::TransactionSets::FiftyTen::Standards::HP835 }
+  c.register("005010", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Standards::HC837 }
+  c.register("005010", "FA", "999") { Stupidedi::TransactionSets::FiftyTen::Standards::FA999 }
 
-  c.register("005010X214", "HN", "277", Stupidedi::Guides::FiftyTen::X214::HN277)
-  c.register("005010X220", "BE", "834", Stupidedi::Guides::FiftyTen::X220::BE834)
-  c.register("005010X221", "HP", "835", Stupidedi::Guides::FiftyTen::X221::HP835)
-  c.register("005010X222", "HC", "837", Stupidedi::Guides::FiftyTen::X222::HC837P)
-  c.register("005010X231", "FA", "999", Stupidedi::Guides::FiftyTen::X231::FA999)
-
-  c.register("005010X220A1", "BE", "834", Stupidedi::Guides::FiftyTen::X220A1::BE834)
-  c.register("005010X221A1", "HP", "835", Stupidedi::Guides::FiftyTen::X221A1::HP835)
-  c.register("004010X098A1", "HC", "837", Stupidedi::Guides::FiftyTen::X222A1::HC837P)
-  c.register("005010X222A1", "HC", "837", Stupidedi::Guides::FiftyTen::X222A1::HC837P)
-  c.register("005010X231A1", "FA", "999", Stupidedi::Guides::FiftyTen::X231A1::FA999)
+  c.register("005010X214",   "HN", "277") { Stupidedi::TransactionSets::FiftyTen::Implementations::X214::HN277 }
+  c.register("005010X220",   "BE", "834") { Stupidedi::TransactionSets::FiftyTen::Implementations::X220::BE834 }
+  c.register("005010X221",   "HP", "835") { Stupidedi::TransactionSets::FiftyTen::Implementations::X221::HP835 }
+  c.register("005010X222",   "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Implementations::X222::HC837 }
+  c.register("005010X231",   "FA", "999") { Stupidedi::TransactionSets::FiftyTen::Implementations::X231::FA999 }
+  c.register("005010X220A1", "BE", "834") { Stupidedi::TransactionSets::FiftyTen::Implementations::X220A1::BE834 }
+  c.register("005010X221A1", "HP", "835") { Stupidedi::TransactionSets::FiftyTen::Implementations::X221A1::HP835 }
+  c.register("004010X098A1", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837 }
+  c.register("005010X222A1", "HC", "837") { Stupidedi::TransactionSets::FiftyTen::Implementations::X222A1::HC837 }
+  c.register("005010X231A1", "FA", "999") { Stupidedi::TransactionSets::FiftyTen::Implementations::X231A1::FA999 }
 end
 
 parser = Stupidedi::Parser.build(config)
