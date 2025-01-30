@@ -54,7 +54,7 @@ module Stupidedi
             "RD" => "Ramp to Door",
             "RE" => "Ramp to Ramp",
             "RR" => "Roll-on Roll-off"))
-        E58   = t:: R.new(:E58  , "Charge"                               , 1, 12)
+        E58   = t:: Nn.new(:E58 , "Charge"                               , 1, 12, 2)
         E59   = t::AN.new(:E59  , "Freight Class Code"                   , 2, 5)
         E60   = t:: R.new(:E60  , "Freight Rate"                         , 1, 9)
         E61   = t::AN.new(:E61  , "Free-Form Message"                    , 1, 30)
