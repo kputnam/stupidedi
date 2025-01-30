@@ -5140,7 +5140,7 @@ module Stupidedi
             "1" => "Current Transaction Trace Numbers",
             "2" => "Referenced Transaction Trace Numbers"))
         E499  = t::AN.new(:E499 , "Condition Value"                      , 1, 10)
-        E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
+        E501  = t::ID.new(:E501 , "Customs Documentation Handling Code"      , 2, 2)
         E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
           s::CodeList.build(
             "01" => s::CodeList.external("4"),
