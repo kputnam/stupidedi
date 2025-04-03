@@ -54,7 +54,7 @@ module Stupidedi
             "RD" => "Ramp to Door",
             "RE" => "Ramp to Ramp",
             "RR" => "Roll-on Roll-off"))
-        E58   = t:: R.new(:E58  , "Charge"                               , 1, 12)
+        E58   = t:: Nn.new(:E58 , "Charge"                               , 1, 12, 2)
         E59   = t::AN.new(:E59  , "Freight Class Code"                   , 2, 5)
         E60   = t:: R.new(:E60  , "Freight Rate"                         , 1, 9)
         E61   = t::AN.new(:E61  , "Free-Form Message"                    , 1, 30)
@@ -5140,7 +5140,7 @@ module Stupidedi
             "1" => "Current Transaction Trace Numbers",
             "2" => "Referenced Transaction Trace Numbers"))
         E499  = t::AN.new(:E499 , "Condition Value"                      , 1, 10)
-        E501  = t::ID.new(:E501 , "Customes Document Handling Code"      , 2, 2)
+        E501  = t::ID.new(:E501 , "Customs Documentation Handling Code"      , 2, 2)
         E506  = t::ID.new(:E506 , "DFI Identification Number Qualifier"  , 2, 2,
           s::CodeList.build(
             "01" => s::CodeList.external("4"),
