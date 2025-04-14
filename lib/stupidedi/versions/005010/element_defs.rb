@@ -2362,6 +2362,7 @@ module Stupidedi
             "HE"  => "Hearing",
             "HLT" => "Health",
             "HMO" => "Health Maintenance Organization",
+            "LIF" => "Life",
             "LTC" => "Long-Term Care",
             "LTD" => "Long-Term Disability",
             "MM"  => "Major Medical",
