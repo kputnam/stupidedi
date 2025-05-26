@@ -4878,6 +4878,7 @@ module Stupidedi
           s::CodeList.build(
             "T" => "Transportation Data Coordinating Committee (TDCC)",
             "X" => "Accredited Standards Committee X12"))
+        E458  = t::AN.new(:E458, "Dunnage Description"                   , 2, 25)
         E460  = t::ID.new(:E460 , "Shipment Weight Code"                 , 1, 1)
         E472  = t::AN.new(:E472 , "Link Sequence Number"                 , 6, 6)
         E473  = t::ID.new(:E473 , "Order Status Code"                    , 1, 1,
