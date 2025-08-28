@@ -198,7 +198,7 @@ module Stupidedi
                   b::Element(e::NotUsed,     "REFERENCE IDENTIFIER")),
                 b::Segment(1800, s::REF, "Claim Identifier for Transmission Intermediaries", r::Situational, d::RepeatCount.bounded(1),
                   b::Element(e::Required,    "Reference Identification Qualifier", b::Values("D9")),
-                  b::Element(e::Required,    "Value Added Network Trace Number", b::MaxLength(20)),
+                  b::Element(e::Required,    "Value Added Network Trace Number", b::MaxLength(50)),
                   b::Element(e::NotUsed,     "Description"),
                   b::Element(e::NotUsed,     "REFERENCE IDENTIFIER")),
                 b::Segment(1800, s::REF, "Medical Record Number", r::Situational, d::RepeatCount.bounded(1),
