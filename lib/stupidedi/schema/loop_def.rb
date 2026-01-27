@@ -46,22 +46,24 @@ module Stupidedi
           changes.fetch(:parent, @parent)
       end
 
-      # Computed accessor for backward compatibility.
       # Returns segments before the first LoopDef.
+      # @deprecated Use {#children} instead. This method does not include
+      #   segments that appear between child loops in interleaved structures.
       # @return [Array<SegmentUse>]
       def header_segment_uses
         @children.take_while{|x| x.is_a?(SegmentUse) }
       end
 
-      # Computed accessor for backward compatibility.
       # Returns all LoopDef children.
+      # @deprecated Use {#children} instead and filter with `select{|x| x.is_a?(LoopDef)}`.
       # @return [Array<LoopDef>]
       def loop_defs
         @children.select{|x| x.is_a?(LoopDef) }
       end
 
-      # Computed accessor for backward compatibility.
       # Returns segments after the last LoopDef.
+      # @deprecated Use {#children} instead. This method does not include
+      #   segments that appear between child loops in interleaved structures.
       # @return [Array<SegmentUse>]
       def trailer_segment_uses
         last_loop_idx = @children.rindex{|x| x.is_a?(LoopDef) }

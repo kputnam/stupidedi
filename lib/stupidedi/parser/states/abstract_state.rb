@@ -225,6 +225,8 @@ module Stupidedi
       # Builds a sequence of {Instruction} values that corresponds to the given
       # sequence of `loop_defs`
       #
+      # @deprecated Use {#interleaved_sequence} instead, which handles mixed
+      #   SegmentUse and LoopDef children.
       # @return [Array<Instruction>]
       def lsequence(loop_defs, offset = 0)
         instructions = []
