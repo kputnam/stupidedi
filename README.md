@@ -1,15 +1,12 @@
-# Stupidedi
-
-[![Build Status](https://github.com/kputnam/stupidedi/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/kputnam/stupidedi/actions?query=branch%3Amaster) [![GitHub version](https://badge.fury.io/rb/stupidedi.svg)](http://badge.fury.io/gh/irobayna%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/irobayna/stupidedi.png)](https://codeclimate.com/github/irobayna/stupidedi) [![Inline docs](http://inch-ci.org/github/irobayna/stupidedi.png?branch=master)](http://inch-ci.org/github/irobayna/stupidedi)
+# Tediparse
 
 ![Screenshot](https://raw.github.com/irobayna/stupidedi/master/doc/images/edi-pp.png)
 
 
-* [GitHub project](http://github.com/irobayna/stupidedi)
-* [Human Documentation](https://github.com/irobayna/stupidedi/tree/master/doc)
-* [API Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
+* [GitHub project](https://github.com/Tediware/tediparse)
+* [Human Documentation](https://github.com/Tediware/tediparse/tree/master/doc)
 
-Stupidedi is a high-quality library for parsing, generating, validating,
+Tediparse is a high-quality library for parsing, generating, validating,
 and manipulating ASC X12 EDI documents. Very roughly, it's jQuery for
 EDI.
 
@@ -19,10 +16,19 @@ notices, and health care claims. It is similar to XML in some ways,
 but precedes it by about 15 years; so if you think XML sucks, you
 will love to hate EDI.
 
+### Attribution
+
+This product includes software from stupidedi by Kyle Putnam, available at https://github.com/kputnam/stupidedi.
+
+### Fork relationship
+
+Tediparse is a fork of [stupidedi](https://github.com/kputnam/stupidedi), maintained by [Adrian Duyzer](https://github.com/aduyzer) at [Tediware](https://github.com/Tediware). The fork was created to accelerate development and support a broader set of X12 documents. The internal Ruby module name remains `Stupidedi` for backward compatibility; `require "tediparse"` and `require "stupidedi"` both work.
+
 ### Credits
 
-* __Author__: [Kyle Putnam](https://github.com/kputnam)
-* __Maintainer__: [Isi Robayna](https://github.com/irobayna)
+* __Original author__: [Kyle Putnam](https://github.com/kputnam)
+* __Upstream maintainer__: [Isi Robayna](https://github.com/irobayna)
+* __Tediparse maintainer__: [Adrian Duyzer](https://github.com/aduyzer)
 
 ## What problem does it solve?
 
