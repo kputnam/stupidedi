@@ -18,7 +18,7 @@ module Stupidedi
     #
     class ConstraintTable
       # @return [Array<Instruction>]
-      abstract :matches, :args => %w(segment_tok strict mode)
+      abstract :matches, :args => %w(segment_tok strict mode state)
 
       # @return [Array<Instruction>]
       attr_reader :instructions
@@ -60,7 +60,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict, mode)
+        def matches(segment_tok, strict, mode, state = nil)
           @instructions.tap do |xs|
             critique(segment_tok, xs.map(&:segment_use)) if strict
           end
@@ -79,7 +79,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict, mode)
+        def matches(segment_tok, strict, mode, state = nil)
           @__matches ||= begin
             shallowest = @instructions.map(&:pop_count).min
             @instructions.select{|i| i.pop_count == shallowest }.tap do |xs|
@@ -119,7 +119,7 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict, mode)
+        def matches(segment_tok, strict, mode, state = nil)
           invalid = true  # Were all present possibly distinguishing elements invalid?
           present = false # Were any possibly distinguishing elements present?
 
@@ -201,13 +201,21 @@ module Stupidedi
             # Some elements were present and none were invalid, but it was not
             # possible to narrow the set of matches to a single instruction.
             #
-            # It seems wrong to mark the segment invalid. The worst thing you
-            # could say about the input is that it may have been missing a
-            # required element that could have resolved the ambiguity; but it's
-            # also possible all required elements were present and the grammar
-            # is the problem (not the input). So here we return the remaining
-            # search space, which will cause non-determinism in the parser.
-            space
+            # When the survivors are sibling slots in the same loop sharing a
+            # segment id (e.g. two N3 slots in a partner-customised 4010 PO850
+            # N1 loop), use the parser's current parse tree to pick the slot
+            # whose preceding-sibling structure has actually been entered
+            # (Variant A — structural reachability). The :insert gate skips
+            # disambiguation during :find navigation, where the caller wants
+            # the full set of candidates a segment could be bound to. For
+            # genuinely ambiguous cases (different parent loops, or different
+            # segment ids) the helper bails out to the full search space,
+            # which will cause non-determinism in the parser.
+            if mode == :insert
+              disambiguate_sibling_slots(space, state)
+            else
+              space
+            end
           end
         end
 
@@ -222,6 +230,76 @@ module Stupidedi
             shallowest = is.map(&:pop_count).min
             is.select{|i| i.pop_count == shallowest }
           end
+        end
+
+        # When ValueBased filtering leaves multiple Instructions whose
+        # SegmentUses are sibling slots in the same parent loop sharing a
+        # segment id, pick the slot whose ancestor structure has actually
+        # been entered in the current parse tree. Concretely: among the
+        # candidate sibling positions, keep only those greater than the
+        # highest-position segment already consumed in the parent loop;
+        # then pick the earliest among those. If `state` (and thus the
+        # parse tree) is not available, fall back to picking the earliest
+        # position outright (Variant B). Falls back to the input unchanged
+        # when the precondition fails, preserving the existing non-
+        # determinism error for genuinely ambiguous cases (e.g. survivors
+        # in different parent loops).
+        #
+        # All survivors share a segment id by construction (instructions
+        # are grouped by segment_id in InstructionTable#constraints before
+        # ConstraintTable.build is called).
+        #
+        # @return [Array<Instruction>]
+        def disambiguate_sibling_slots(instructions, state = nil)
+          return instructions if instructions.length <= 1
+
+          collapsed = shallowest(instructions)
+          return collapsed if collapsed.length <= 1
+
+          uses = collapsed.map(&:segment_use)
+          parent = uses.first.parent
+          return instructions if parent.nil?
+          return instructions unless uses.all?{|u| u.parent.equal?(parent) }
+
+          reachable = collapsed
+          highest   = highest_consumed_position(state, parent) if state
+          if highest
+            # Strict `>` assumes non-repeating sibling slots: a candidate
+            # whose position equals `highest` is excluded because that
+            # slot has already been consumed. If a partner grammar exposes
+            # repeating sibling slots, this may need to relax to `>=`.
+            ahead = collapsed.select{|i| i.segment_use.position > highest }
+            reachable = ahead unless ahead.empty?
+          end
+
+          min_pos = reachable.map{|i| i.segment_use.position }.min
+          reachable.select{|i| i.segment_use.position == min_pos }
+        end
+
+        # Walks up from the state's value-tree zipper to find the LoopVal/
+        # TableVal whose definition matches `parent` (object identity), then
+        # returns the highest `usage.position` among its already-consumed
+        # segment children. Returns nil when the matching container can't be
+        # found (e.g. the loop hasn't been opened yet) or has no consumed
+        # segments — both of which mean we have no structural signal to use.
+        #
+        # @return [Integer, nil]
+        def highest_consumed_position(state, parent)
+          return nil if state.nil?
+          z = state.zipper
+          while z
+            node = z.node
+            if (node.loop? or node.table?) and node.definition.equal?(parent)
+              positions = node.children
+                .select{|c| c.segment? and c.usage }
+                .map{|c| c.usage.position }
+              return positions.max if positions.any?
+              return nil
+            end
+            break if z.root?
+            z = z.up
+          end
+          nil
         end
 
         # @return [Array(Array<(Integer, Integer, Map)>, Array<(Integer, Integer, Map)>)]

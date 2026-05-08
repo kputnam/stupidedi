@@ -80,14 +80,10 @@ module Stupidedi
 
     private
 
-      # @return [Array<Instruction]
+      # @return [Array<Instruction>]
       def instructions(table_def)
         @__instructions ||= Hash.new
-        @__instructions[table_def] ||= begin
-          is = sequence(table_def.header_segment_uses)
-          is.concat(lsequence(table_def.loop_defs, is.length))
-          is.concat(sequence(table_def.trailer_segment_uses, is.length))
-        end
+        @__instructions[table_def] ||= interleaved_sequence(table_def.children)
       end
     end
   end

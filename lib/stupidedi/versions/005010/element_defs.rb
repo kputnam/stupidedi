@@ -9,10 +9,16 @@ module Stupidedi
 
         E2    = t::Nn.new(:E2   , "Number of Accepted Transaction Sets"  , 1, 6, 0)
         E19   = t::AN.new(:E19  , "City Name"                            , 2, 30)
+        E22   = t::AN.new(:E22  , "Commodity Code"                       , 1, 30)
+        E23   = t::ID.new(:E23  , "Commodity Code Qualifier"             , 1, 1)
         E26   = t::ID.new(:E26  , "Country Code"                         , 2, 3,
           s::CodeList.external("5"))
         E28   = t::Nn.new(:E28  , "Group Control Number"                 , 1, 9, 0)
+        E56   = t::ID.new(:E56  , "Type of Service Code"                 , 2, 2)
         E61   = t::AN.new(:E61  , "Free-form Information"                , 1, 30)
+        E62   = t::AN.new(:E62  , "Hazardous Material Code"              , 4, 10)
+        E63   = t::AN.new(:E63  , "Hazardous Material Contact"           , 1, 24)
+        E64   = t::AN.new(:E64  , "Hazardous Material Description"       , 2, 30)
         E65   = t:: R.new(:E65  , "Height"                               , 1, 8)
         E66   = t::ID.new(:E66  , "Identification Code Qualifier"        , 1, 2,
           s::CodeList.build(
@@ -56,7 +62,13 @@ module Stupidedi
             "XX" => s::CodeList.external("537"),
             "ZZ" => "Mutually Defined"))
         E67   = t::AN.new(:E67  , "Identification Code"                  , 2, 80)
+        E77   = t::Nn.new(:E77  , "Flashpoint Temperature"               , 1, 3, 0)
+        E79   = t::AN.new(:E79  , "Lading Description"                   , 1, 50)
+        E80   = t::Nn.new(:E80  , "Lading Quantity"                      , 1, 7, 0)
         E81   = t:: R.new(:E81  , "Weight"                               , 1, 10)
+        E87   = t::AN.new(:E87  , "Marks and Numbers"                    , 1, 48)
+        E88   = t::ID.new(:E88  , "Marks and Numbers Qualifier"          , 1, 2)
+        E91   = t::ID.new(:E91  , "Transportation Method/Type Code"      , 1, 2)
         E93   = t::AN.new(:E93  , "Name"                                 , 1, 60)
         E96   = t::Nn.new(:E96  , "Number of Included Segments"          , 1, 10, 0)
         E97   = t::Nn.new(:E97  , "Number of Transaction Sets Included"  , 1, 6, 0)
@@ -344,6 +356,7 @@ module Stupidedi
             "ZZ"  => "Mutually Defined"))
         E100  = t::ID.new(:E100 , "Currency Code"                        , 3, 3,
           s::CodeList.external("5"))
+        E103  = t::AN.new(:E103 , "Packaging Code"                       , 3, 5)
         E107  = t::ID.new(:E107 , "Payment Method Type Code"             , 1, 2)
         E116  = t::ID.new(:E116 , "Postal Code"                          , 3, 15,
           s::CodeList.external("51"))
@@ -496,6 +509,7 @@ module Stupidedi
             "ZH"  => "Carrier Assigned Reference Number",
             "ZX"  => "County Code",
             "ZZ"  => "Mutually Defined"))
+        E133  = t::ID.new(:E133 , "Routing Sequence Code"                , 1, 2)
         E142  = t::AN.new(:E142 , "Application's Sender Code"            , 2, 15)
         E143  = t::ID.new(:E143 , "Transaction Set Identifier Number"    , 3, 3,
           # http://www.x12.org/x12org/docs/editransactions.pdf
@@ -833,7 +847,20 @@ module Stupidedi
         E156  = t::ID.new(:E156 , "State or Province Code"               , 2, 2,
           s::CodeList.external("22"))
         E166  = t::AN.new(:E166 , "Address Information"                  , 1, 55)
+        E176  = t::ID.new(:E176 , "Time Qualifier"                       , 1, 2)
+        E183  = t:: R.new(:E183 , "Volume"                               , 1, 8)
+        E184  = t::ID.new(:E184 , "Volume Unit Qualifier"                , 1, 1)
+        E187  = t::ID.new(:E187 , "Weight Qualifier"                     , 1, 2)
+        E188  = t::ID.new(:E188 , "Weight Unit Code"                     , 1, 1)
+        E200  = t::AN.new(:E200 , "Hazardous Materials Page"             , 1, 6)
+        E208  = t::ID.new(:E208 , "Hazardous Material Code Qualifier"    , 1, 1)
+        E209  = t::AN.new(:E209 , "Hazardous Material Class Code"        , 1, 4)
+        E211  = t::ID.new(:E211 , "Packaging Form Code"                  , 3, 3)
         E212  = t:: R.new(:E212 , "Unit Price"                           , 1, 17)
+        E213  = t::Nn.new(:E213 , "Lading Line Item Number"              , 1, 3, 0)
+        E220  = t:: R.new(:E220 , "Billed/Rated-as Quantity"             , 1, 11)
+        E221  = t::ID.new(:E221 , "Billed/Rated-as Qualifier"            , 2, 2)
+        E254  = t::ID.new(:E254 , "Packing Group Code"                   , 1, 3)
         E234  = t::AN.new(:E234 , "Product/Service ID"                   , 1, 48)
         E235  = t::ID.new(:E235 , "Product/Service ID Qualifier"         , 2, 2,
           s::CodeList.build(
@@ -869,6 +896,7 @@ module Stupidedi
             "WK" => s::CodeList.external("843"),
             "ZZ" => "Mutually Defined"))
         E236  = t::ID.new(:E236 , "Price Identifier Code"                , 3, 3)
+        E284  = t::ID.new(:E284 , "Service Level Code"                   , 2, 2)
         E280  = t:: R.new(:E280 , "Exchange Rate"                        , 4, 10)
         E289  = t::Nn.new(:E289 , "Multiple Price Quantity"              , 1, 2, 0)
         E305  = t::ID.new(:E305 , "Transaction Handling Code"            , 1, 2,
@@ -991,6 +1019,7 @@ module Stupidedi
             "RP" => "Responsible Person",
             "PQ" => "Parent or Guardian",
             "SK" => "School Clerk"))
+        E368  = t::ID.new(:E368 , "Shipment/Order Status Code"           , 2, 2)
         E373  = t::DT.new(:E373 , "Date"                                 , 8, 8)
         E374  = t::ID.new(:E374 , "Date/Time Qualifier"                  , 3, 3,
           s::CodeList.build(
@@ -1102,6 +1131,7 @@ module Stupidedi
             "AFC" => "Medicare Part D Coverage Effective Date",
             "AFD" => "Medicare Part D Termination Date"))
         E380  = t:: R.new(:E380 , "Quantity"                             , 1, 15)
+        E387  = t::AN.new(:E387 , "Routing"                              , 1, 35)
         E426  = t::ID.new(:E426 , "Adjustment Reason Code"               , 2, 2,
           s::CodeList.build(
             "50" => "Late Charge",
@@ -1146,7 +1176,9 @@ module Stupidedi
             "WO" => "Overpayment Recovery",
             "WU" => "Unspecified Recovery"))
         E429  = t::AN.new(:E429 , "Check Number"                         , 1, 16)
+        E432  = t::ID.new(:E432 , "Date Qualifier"                       , 2, 2)
         E443  = t::AN.new(:E443 , "Contract Inquiry Reference"           , 1, 20)
+        E458  = t::AN.new(:E458 , "Dunnage Description"                  , 2, 25)
         E447  = t::AN.new(:E447 , "Loop Identifier Code"                 , 1, 4)
         E449  = t::AN.new(:E449 , "Fixed Format Information"             , 1, 80)
         E478  = t::ID.new(:E478 , "Credit/Debit Flag Code"               , 1, 1,
@@ -1502,6 +1534,7 @@ module Stupidedi
             "Q" => "Quarterly",
             "S" => "Semiannual",
             "U" => "Unknown"))
+        E595  = t::ID.new(:E595 , "Compartment ID Code"                  , 1, 1)
         E609  = t::Nn.new(:E609 , "Count"                                , 1, 9, 0)
         E615  = t::ID.new(:E615 , "Time Period Qualifier"                , 1, 2,
           s::CodeList.build(
@@ -1823,6 +1856,9 @@ module Stupidedi
         E723  = t::ID.new(:E723 , "Data Element Syntax Error Code"       , 1, 3)
         E724  = t::AN.new(:E724 , "Copy of Bad Data Element"             , 1, 99)
         E725  = t::Nn.new(:E725 , "Data Element Reference Number"        , 1, 4, 0)
+        E731  = t::ID.new(:E731 , "Transit Direction Code"               , 2, 2)
+        E732  = t::ID.new(:E732 , "Transit Time Direction Qualifier"     , 2, 2)
+        E733  = t:: R.new(:E733 , "Transit Time"                         , 1, 4)
         E734  = t::AN.new(:E734 , "Hierarchical Parent ID Number"        , 1, 12)
         E735  = t::ID.new(:E735 , "Hierarchical Level Code"              , 1, 2,
           s::CodeList.build(

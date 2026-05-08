@@ -1,3 +1,20 @@
+v Unreleased
+
+  **Bug fixes**
+
+  * Fix `too much non-determinism` error when a `LoopDef` contains repeated
+    structurally-identical `SegmentUse` slots (same id, no qualifier element)
+    and only the earlier slot is filled — e.g. an N3 in the partner-customised
+    4010 PO850 N1 loop. `ConstraintTable::ValueBased` now consults the active
+    parser state's parse tree to pick the slot whose preceding sibling has
+    actually been consumed: the earliest position past the highest-consumed
+    sibling in the matching parent loop. This requires plumbing the active
+    `AbstractState` through `InstructionTable#matches` and the `ConstraintTable`
+    subclasses' `matches`. Behaviour is unchanged for qualifier-disambiguated
+    paths (e.g. N1 by N101) and for genuinely ambiguous cases across different
+    parent loops. During `find` navigation the `mode == :insert` gate skips
+    disambiguation entirely, so the full candidate set is preserved.
+
 v 1.4.1
 
   **Bug Fixes**
