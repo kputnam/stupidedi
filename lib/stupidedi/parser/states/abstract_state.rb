@@ -225,6 +225,8 @@ module Stupidedi
       # Builds a sequence of {Instruction} values that corresponds to the given
       # sequence of `loop_defs`
       #
+      # @deprecated Use {#interleaved_sequence} instead, which handles mixed
+      #   SegmentUse and LoopDef children.
       # @return [Array<Instruction>]
       def lsequence(loop_defs, offset = 0)
         instructions = []
@@ -262,6 +264,64 @@ module Stupidedi
 
           buffer.each do |u|
             instructions << Instruction.new(nil, u, 0, drop_count, LoopState)
+          end
+        end
+
+        instructions
+      end
+
+      # Builds a sequence of {Instruction} values that corresponds to a mixed
+      # sequence of SegmentUse and LoopDef children (supporting interleaved patterns).
+      #
+      # @param children [Array<Schema::SegmentUse, Schema::LoopDef>]
+      # @param offset [Integer]
+      # @param skip_first [Boolean] if true, skip the first child (for non-repeatable entry segments)
+      # @return [Array<Instruction>]
+      def interleaved_sequence(children, offset = 0, skip_first: false)
+        children = children.drop(1) if skip_first
+
+        instructions = []
+        buffer       = []
+        last_pos     = nil
+
+        children.each do |child|
+          current_pos = child.is_a?(Schema::SegmentUse) ? child.position : child.entry_segment_use.position
+          is_repeatable = child.is_a?(Schema::SegmentUse) ? child.repeatable? : child.repeatable?
+
+          unless last_pos.nil? or current_pos == last_pos
+            drop_count =
+              if buffer.length == 1 and not buffer.first[:repeatable]
+                offset
+              else
+                offset - buffer.length
+              end
+
+            buffer.each do |item|
+              instructions << Instruction.new(nil, item[:segment_use], 0, drop_count, item[:push])
+            end
+
+            buffer.clear
+          end
+
+          segment_use = child.is_a?(Schema::SegmentUse) ? child : child.entry_segment_use
+          push_state = child.is_a?(Schema::SegmentUse) ? nil : LoopState
+
+          buffer << { segment_use: segment_use, push: push_state, repeatable: is_repeatable }
+          last_pos = current_pos
+          offset  += 1
+        end
+
+        # Flush the buffer one last time
+        unless buffer.empty?
+          drop_count =
+            if buffer.length == 1 and not buffer.first[:repeatable]
+              offset
+            else
+              offset - buffer.length
+            end
+
+          buffer.each do |item|
+            instructions << Instruction.new(nil, item[:segment_use], 0, drop_count, item[:push])
           end
         end
 
