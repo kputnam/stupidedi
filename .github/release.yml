@@ -1,4 +1,4 @@
-# Group changes in release notes using PR tags
+# Group changes in release notes using PR labels
 changelog:
   categories:
     - title: Breaking Changes
@@ -8,6 +8,6 @@ changelog:
     - title: Bug Fixes
       labels: [bug, defect]
     - title: Maintenance
-      labels: [maintenance]
+      labels: [maintenance, dependencies]
     - title: Other Changes
       labels: ["*"]
