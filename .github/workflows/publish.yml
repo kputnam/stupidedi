@@ -14,6 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Verify tag is on main
+        run: |
+          git fetch origin ${{ github.event.repository.default_branch }}
+          if ! git merge-base --is-ancestor ${{ github.sha }} origin/${{ github.event.repository.default_branch }}; then
+            echo "Tagged commit is not on the default branch (${{ github.event.repository.default_branch }})"
+            exit 1
+          fi
+
       - run: echo "version=$(grep '^ruby ' .tool-versions | awk '{print $2}')" >> $GITHUB_OUTPUT
         id: ruby-version
 
