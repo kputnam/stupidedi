@@ -33,3 +33,12 @@ jobs:
 
       - run: gem build *.gemspec
       - run: gem push *.gem
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: context.ref.replace('refs/tags/', ''),
+              generate_release_notes: true,
+            });
