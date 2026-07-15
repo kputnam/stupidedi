@@ -22,7 +22,7 @@ module Stupidedi
         autoload :PO850, "stupidedi/transaction_sets/004010/implementations/PO850"
         #utoload :PS830, "stupidedi/transaction_sets/004010/implementations/PS830"
         autoload :QM214, "stupidedi/transaction_sets/004010/implementations/QM214"
-        #utoload :RE944, "stupidedi/transaction_sets/004010/implementations/RE944"
+        autoload :RE944, "stupidedi/transaction_sets/004010/implementations/RE944"
         #utoload :SH856, "stupidedi/transaction_sets/004010/implementations/SH856"
         #utoload :SM204, "stupidedi/transaction_sets/004010/implementations/SM204"
         #utoload :SQ866, "stupidedi/transaction_sets/004010/implementations/SQ866"
