@@ -15,7 +15,10 @@ module Stupidedi
         # its real position (a second Product/Service ID pair had been skipped), and
         # e::Mandatory (not a defined ElementReq) was corrected to e::Required.
         # Segment and element requirements are set to match the Standards 944 (an
-        # implementation may be more restrictive than the standard, never less).
+        # implementation may be more restrictive than the standard, never less). The
+        # one deliberate loosening is N101: its old Values("WH","DE") code list was
+        # removed because "DE" is not in the 4010 E98 code list (so it never parsed)
+        # and the Standards 944 does not restrict N101 to a code list.
         # See spec/fixtures/004010/RE944/.
         RE944 = b.build("RE", "944", "Warehouse Stock Transfer Receipt Advice",
           d::TableDef.header("Header",

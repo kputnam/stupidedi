@@ -16,7 +16,7 @@ module Stupidedi
         # shifting Equipment Initial/Number one slot early). Segment and element
         # requirements are set to match the Standards 943 (an implementation may be
         # more restrictive than the standard, never less). See spec/fixtures/004010/AR943/.
-        AR943 = b.build("AR", "943", "Warehouse Stock Transfer",
+        AR943 = b.build("AR", "943", "Warehouse Stock Transfer Shipment Advice",
           d::TableDef.header("Header",
             b::Segment(10, s:: ST, "Transaction Set Header", r::Required, d::RepeatCount.bounded(1),
               b::Element(e::Required,    "Transaction Set Identifier Code", b::Values("943")),
