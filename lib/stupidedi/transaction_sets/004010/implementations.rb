@@ -14,7 +14,7 @@ module Stupidedi
           NotUsed     = Common::Implementations::ElementReqs::NotUsed
         end
 
-        #utoload :AR943, "stupidedi/transaction_sets/004010/implementations/AR943"
+        autoload :AR943, "stupidedi/transaction_sets/004010/implementations/AR943"
         autoload :FA997, "stupidedi/transaction_sets/004010/implementations/FA997"
         autoload :GF990, "stupidedi/transaction_sets/004010/implementations/GF990"
         autoload :IM210, "stupidedi/transaction_sets/004010/implementations/IM210"
