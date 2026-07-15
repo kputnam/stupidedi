@@ -1,6 +1,5 @@
 require "base64"
 require "simplecov-inline-html"
-require "term/ansicolor"
 
 SimpleCov.start do
   coverage_dir "build/generated/coverage"
@@ -40,6 +39,9 @@ class SimpleCov::Formatter::SummaryFormatter
     print_group("SUMMARY", result.files, name_width, count_width)
   end
 
+  # ANSI SGR (Select Graphic Rendition) codes for the three colors used here
+  ANSI_CODES = { :green => 32, :yellow => 33, :red => 31 }
+
   def print_group(name, files, name_width, count_width)
     pct = files.covered_percent
     clr = case pct
@@ -47,11 +49,11 @@ class SimpleCov::Formatter::SummaryFormatter
           when 80..90  then :yellow
           else              :red
           end
-    puts Term::ANSIColor.send(clr,
-      ("  % #{name_width}s: % 5s%%      " +
+    text = ("  % #{name_width}s: % 5s%%      " +
        "% #{count_width}s missed lines, " +
        "% #{count_width + 2}s lines total") %
-       [name, pct.round(1), files.missed_lines.to_i, files.lines_of_code.to_i])
+       [name, pct.round(1), files.missed_lines.to_i, files.lines_of_code.to_i]
+    puts "\e[#{ANSI_CODES.fetch(clr)}m#{text}\e[0m"
   end
 end
 
