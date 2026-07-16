@@ -22,9 +22,11 @@ Gem::Specification.new do |s|
 
   # Optional attributes
   s.executables               = %w(edi-pp edi-ed edi-obfuscate)
-  s.required_ruby_version     = ">= 2.0.0"
-  s.required_rubygems_version = ">= 2.5.0"
-  s.requirements              # << ""
+  s.required_ruby_version     = ">= 3.2"
+  
+  s.add_dependency "base64"
+  s.add_dependency "bigdecimal"
+  s.add_dependency "ostruct"
 
   s.add_development_dependency "rake-compiler",       "~> 1.0"
   s.add_development_dependency "rake-compiler-dock",  "~> 0.7"
