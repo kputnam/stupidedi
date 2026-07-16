@@ -27,10 +27,16 @@ module Stupidedi
 
       # @return [void]
       def register(gs08, gs01, st01, definition = nil, &constructor)
+        key = Array[gs08, gs01, st01]
+
+        if @table.key?(key)
+          warn "Transaction set #{key.inspect} is already registered; replacing it"
+        end
+
         if block_given?
-          @table[Array[gs08, gs01, st01]] = constructor
+          @table[key] = constructor
         else
-          @table[Array[gs08, gs01, st01]] = definition
+          @table[key] = definition
         end
       end
 
