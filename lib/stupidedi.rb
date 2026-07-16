@@ -4,12 +4,6 @@ require "time"
 require "date"
 require "set"
 
-begin
-  require "term/ansicolor" if $stdout.tty?
-rescue LoadError
-  warn "terminal color disabled. gem install term-ansicolor to enable"
-end
-
 $:.unshift(File.expand_path("..", __FILE__))
 
 require "ruby/array"

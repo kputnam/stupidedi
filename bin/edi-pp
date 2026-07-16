@@ -3,7 +3,7 @@ require File.expand_path("../../lib/stupidedi", __FILE__)
 require "pp"
 
 # This will be auto-enabled when $stdout.tty?, but -C forces color output
-require "term/ansicolor" if ARGV.delete("-C")
+Stupidedi::Color.enabled = true if ARGV.delete("-C")
 if idx = ARGV.index("--format")
   ARGV.delete("--format")
   format = ARGV.delete_at(idx)
