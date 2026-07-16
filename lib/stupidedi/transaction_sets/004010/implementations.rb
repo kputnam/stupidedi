@@ -24,7 +24,7 @@ module Stupidedi
         autoload :QM214, "stupidedi/transaction_sets/004010/implementations/QM214"
         autoload :RE944, "stupidedi/transaction_sets/004010/implementations/RE944"
         #utoload :SH856, "stupidedi/transaction_sets/004010/implementations/SH856"
-        #utoload :SM204, "stupidedi/transaction_sets/004010/implementations/SM204"
+        autoload :SM204, "stupidedi/transaction_sets/004010/implementations/SM204"
         #utoload :SQ866, "stupidedi/transaction_sets/004010/implementations/SQ866"
         autoload :SS862, "stupidedi/transaction_sets/004010/implementations/SS862"
         #utoload :SW945, "stupidedi/transaction_sets/004010/implementations/SW945"
