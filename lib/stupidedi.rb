@@ -5,12 +5,6 @@ require "time"
 require "date"
 require "set"
 
-begin
-  require "term/ansicolor" if $stdout.tty?
-rescue LoadError
-  warn "terminal color disabled. gem install term-ansicolor to enable"
-end
-
 require_relative "stupidedi/ruby/regexp"
 require_relative "stupidedi/ruby/array"
 require_relative "stupidedi/ruby/blank"

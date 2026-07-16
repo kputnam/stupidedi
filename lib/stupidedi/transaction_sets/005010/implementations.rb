@@ -16,6 +16,7 @@ module Stupidedi
 
         module X212
           autoload :HR276,  "stupidedi/transaction_sets/005010/implementations/X212-HR276"
+          autoload :HN277,  "stupidedi/transaction_sets/005010/implementations/X212-HN277"
         end
 
         module X214

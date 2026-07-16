@@ -138,11 +138,11 @@ module Stupidedi
         # A: Accepted
         # E: Accepted, but errors were found
         # P: Partially accepted, at least one transaction set was rejected
-        # R: Rejecetd
+        # R: Rejected
         #
-        #  1: Funcitonal group not supported
+        #  1: Functional group not supported
         #  2: Functional group version not supported
-        #  3: Funcitonal group trailer missing
+        #  3: Functional group trailer missing
         #  4: Group control number in the functional group header and trailer do not agree
         #  5: Number of included transaction sets does not match actual count
         #  6: Group control number violates syntax

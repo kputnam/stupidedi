@@ -47,9 +47,9 @@ module Stupidedi
         end
 
         # @return [Array<Instruction>]
-        def matches(segment_tok, strict = false, mode = :insert)
+        def matches(segment_tok, strict = false, mode = :insert, state = nil)
           if constraints.defined_at?(segment_tok.id)
-            constraints.at(segment_tok.id).matches(segment_tok, strict, mode)
+            constraints.at(segment_tok.id).matches(segment_tok, strict, mode, state)
           else
             []
           end
@@ -173,7 +173,7 @@ module Stupidedi
           InstructionTable::NonEmpty.new(instructions, self)
         end
 
-        def matches(segment_tok, strict = false, mode = :insert)
+        def matches(segment_tok, strict = false, mode = :insert, state = nil)
           raise Exceptions::ParseError,
             "empty stack"
         end

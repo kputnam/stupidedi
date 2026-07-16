@@ -4,3 +4,5 @@ lib/**/*.bundle
 ext/**/Makefile
 ext/**/*.o
 ext/**/*.class
+.bundle
+.ruby-version

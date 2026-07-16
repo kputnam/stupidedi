@@ -500,7 +500,7 @@ module Stupidedi
                           b::Element(e::Situational, "Diagnosis Code Pointer"),
                           b::Element(e::Situational, "Diagnosis Code Pointer"))),
                       b::Segment(1700, s::III, "Dependent Eligibility or Benefit Additional Inquiry Information", r::Situational, d::RepeatCount.bounded(1),
-                        b::Element(e::Required,   "Code List Qualifier", b::Values("ZZ")),
+                        b::Element(e::Required,   "Code List Qualifier Code", b::Values("ZZ")),
                         b::Element(e::Required,   "Industry Code"),
                         b::Element(e::NotUsed,    "Code Category"),
                         b::Element(e::NotUsed,    "Free-form Message Text"),

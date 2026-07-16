@@ -16,6 +16,7 @@ module Stupidedi
         autoload :HR276, "stupidedi/transaction_sets/005010/standards/HR276"
         autoload :HS270, "stupidedi/transaction_sets/005010/standards/HS270"
         autoload :RA820, "stupidedi/transaction_sets/005010/standards/RA820"
+        autoload :SO317, "stupidedi/transaction_sets/005010/standards/SO317"
       end
     end
   end

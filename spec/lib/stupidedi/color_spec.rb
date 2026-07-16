@@ -24,10 +24,8 @@ describe Stupidedi::Color do
     include_examples "methods"
   end
 
-  if defined? Term::ANSIColor
-    describe "implementation" do
-      let(:wrapper) { Stupidedi::Color::Wrapper.new(Term::ANSIColor) }
-      include_examples "methods"
-    end
+  describe "implementation" do
+    let(:wrapper) { Stupidedi::Color::Wrapper.new(Stupidedi::Color::ANSI) }
+    include_examples "methods"
   end
 end

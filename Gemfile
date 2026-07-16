@@ -18,6 +18,5 @@ group :development do
   # gem "rspec-collection_matchers"  " "
   # gem "stackprof",                 "~> 0.2"
   # gem "benchmark-ips"#             ""
-  gem "simplecov"                  # ""
-  # gem "simplecov-inline-html"      if RUBY_VERSION >= "2.4"
+  gem "simplecov", ">= 0.22"
 end

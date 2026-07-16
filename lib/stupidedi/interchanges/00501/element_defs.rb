@@ -14,7 +14,7 @@ module Stupidedi
             "02" => "EDX Communications ID",
             "03" => "Additional Data Identification",
             "04" => "Rail Communication ID",
-            "05" => "Deparment of Defense (DoD) Communication Identifier",
+            "05" => "Department of Defense (DoD) Communication Identifier",
             "06" => "United States Federal Government Communication Identifier"))
         I02 = c::SpecialAN.new(:I02, "Authorization Information",        10, 10)
         I03 = t::ID.new(:I03, "Security Information Qualifier",           2,  2,
@@ -34,7 +34,7 @@ module Stupidedi
             "10" => s::CodeList.external("350"),
             "11" => "DEA (Drug Enforcement Administration)",
             "12" => "Phone (Telephone Companies)",
-            "13" => "UCS Code (The UCS Code is a Code Used for UCS Transmissions; it includes the Area Code and Telephone Number of a Modem; it Does Not Include Punctation, Blanks, or Access Code)",
+            "13" => "UCS Code (The UCS Code is a Code Used for UCS Transmissions; it includes the Area Code and Telephone Number of a Modem; it Does Not Include Punctuation, Blanks, or the Access Code)",
             "14" => "Duns Plus Suffix",
             "15" => "Petroleum Accountants Society of Canada Company Code",
             "16" => "Duns Number With 4-Character Suffix",
@@ -52,7 +52,7 @@ module Stupidedi
             "28" => "Fiscal Intermediary Identification Number as assigned by Health Care Financing Administration (HCFA)",
             "29" => "Medicare Provider and Supplier Identification Number as assigned by Health Care Financing Administration (HCFA)",
             "30" => "US Federal Tax Identification Number",
-            "31" => "Jurisdiction Identification Number Plus 4 as assigned by the Interational Association of Industrial Accident Boards and Commissions (IAIABC)",
+            "31" => "Jurisdiction Identification Number Plus 4 as assigned by the International Association of Industrial Accident Boards and Commissions (IAIABC)",
             "32" => "US Federal Employer Identification Number (FEIN)",
             "33" => "National Association of Insurance Commissioners Company Code (NAIC)",
             "34" => "Medicaid Provider and Supplier Identification Number as assigned by individual State Medicaid Agencies in conjunction with Health Care Financing Administration (HCFA)",

@@ -1,0 +1,56 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    name: Publish RubyGem
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify tag is on main
+        run: |
+          git fetch origin ${{ github.event.repository.default_branch }}
+          if ! git merge-base --is-ancestor ${{ github.sha }} origin/${{ github.event.repository.default_branch }}; then
+            echo "Tagged commit is not on the default branch (${{ github.event.repository.default_branch }})"
+            exit 1
+          fi
+      - run: echo "version=$(grep '^ruby ' .tool-versions | awk '{print $2}')" >> $GITHUB_OUTPUT
+        id: ruby-version
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ steps.ruby-version.outputs.version }}
+          bundler-cache: true
+      - name: Configure RubyGems credentials
+        run: |
+          mkdir -p ~/.gem
+          cat > ~/.gem/credentials << EOF
+          ---
+          :rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}
+          EOF
+          chmod 0600 ~/.gem/credentials
+      - run: gem build *.gemspec
+      - run: gem push *.gem
+
+  release:
+    needs: publish
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: context.ref.replace('refs/tags/', ''),
+              generate_release_notes: true,
+            });

@@ -26,8 +26,7 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/irobayna/stupidedi",
     "documentation_uri" => "http://rubydoc.info/gems/stupidedi-core/#{Stupidedi::VERSION}"]
 
-  s.add_runtime_dependency "cantor",         "~> 1.2"
-  s.add_runtime_dependency "term-ansicolor", "~> 1.3"
+  s.add_runtime_dependency "cantor", "~> 1.2"
 
   # Optional attributes
   s.executables               = %w(edi-pp edi-ed edi-obfuscate)

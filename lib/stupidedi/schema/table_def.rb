@@ -7,14 +7,8 @@ module Stupidedi
       # @return [String]
       attr_reader :id
 
-      # @return [Array<SegmentUse>]
-      attr_reader :header_segment_uses
-
-      # @return [Array<SegmentUse>]
-      attr_reader :trailer_segment_uses
-
-      # @return [Array<LoopDef>]
-      attr_reader :loop_defs
+      # @return [Array<SegmentUse, LoopDef>]
+      attr_reader :children
 
       # @return [TransactionSetDef]
       attr_reader :parent
@@ -22,20 +16,14 @@ module Stupidedi
       # @return [Integer]
       attr_reader :position
 
-      def initialize(id, position, header_segment_uses, loop_defs, trailer_segment_uses, parent)
-        @id                   = id
-        @position             = position
-        @header_segment_uses  = header_segment_uses
-        @loop_defs            = loop_defs
-        @trailer_segment_uses = trailer_segment_uses
-        @parent               = parent
+      def initialize(id, position, children, parent)
+        @id, @position, @children, @parent =
+          id, position, children, parent
 
         # Delay re-parenting until the entire definition tree has a root
         # to prevent unnecessarily copying objects
         unless parent.nil?
-          @header_segment_uses  = @header_segment_uses.map{|x| x.copy(:parent => self) }
-          @loop_defs            = @loop_defs.map{|x| x.copy(:parent => self) }
-          @trailer_segment_uses = @trailer_segment_uses.map{|x| x.copy(:parent => self) }
+          @children = @children.map{|x| x.copy(:parent => self) }
         end
       end
 
@@ -44,10 +32,33 @@ module Stupidedi
         TableDef.new \
           changes.fetch(:id, @id),
           changes.fetch(:position, @position),
-          changes.fetch(:header_segment_uses, @header_segment_uses),
-          changes.fetch(:loop_defs, @loop_defs),
-          changes.fetch(:trailer_segment_uses, @trailer_segment_uses),
+          changes.fetch(:children, @children),
           changes.fetch(:parent, @parent)
+      end
+
+      # Returns segments before the first LoopDef.
+      # @deprecated Use {#children} instead. This method does not include
+      #   segments that appear between child loops in interleaved structures.
+      # @return [Array<SegmentUse>]
+      def header_segment_uses
+        @children.take_while{|x| x.is_a?(SegmentUse) }
+      end
+
+      # Returns all LoopDef children.
+      # @deprecated Use {#children} instead and filter with `select{|x| x.is_a?(LoopDef)}`.
+      # @return [Array<LoopDef>]
+      def loop_defs
+        @children.select{|x| x.is_a?(LoopDef) }
+      end
+
+      # Returns segments after the last LoopDef.
+      # @deprecated Use {#children} instead. This method does not include
+      #   segments that appear between child loops in interleaved structures.
+      # @return [Array<SegmentUse>]
+      def trailer_segment_uses
+        last_loop_idx = @children.rindex{|x| x.is_a?(LoopDef) }
+        return [] if last_loop_idx.nil?
+        @children.drop(last_loop_idx + 1).select{|x| x.is_a?(SegmentUse) }
       end
 
       # @return [String]
@@ -56,9 +67,9 @@ module Stupidedi
       end
 
       def repeatable?
-        @header_segment_uses.empty? and
-          @loop_defs.present?       and
-          @loop_defs.head.repeatable?
+        header_segment_uses.empty? and
+          loop_defs.present?       and
+          loop_defs.head.repeatable?
       end
 
       def repeat_count
@@ -75,9 +86,13 @@ module Stupidedi
 
       # @return [Array<SegmentUse>]
       def entry_segment_uses
-        uses = @header_segment_uses \
-             + @loop_defs.map{|l| l.entry_segment_use } \
-             + @trailer_segment_uses
+        uses = @children.map do |child|
+          if child.is_a?(SegmentUse)
+            child
+          else
+            child.entry_segment_use
+          end
+        end
 
         # Up to and including the first required segment
         suffix = uses.drop_while(&:optional?)
@@ -92,11 +107,6 @@ module Stupidedi
         end
       end
 
-      # @return [Array<SegmentUse, LoopDef>]
-      def children
-        @header_segment_uses + @loop_defs + @trailer_segment_uses
-      end
-
       # @return [Values::TableVal]
       def empty
         Values::TableVal.new(self, [])
@@ -108,7 +118,7 @@ module Stupidedi
 
       # @return [AbstractSet<CodeList>]
       def code_lists
-        children.map(&:code_lists).inject(&:|)
+        @children.map(&:code_lists).inject(&:|)
       end
 
       # @return [void]
@@ -117,21 +127,7 @@ module Stupidedi
         q.text("TableDef[#{@id}]")
         q.group(2, "(", ")") do
           q.breakable ""
-          @header_segment_uses.each do |e|
-            unless q.current_group.first?
-              q.text ","
-              q.breakable
-            end
-            q.pp e
-          end
-          @loop_defs.each do |e|
-            unless q.current_group.first?
-              q.text ","
-              q.breakable
-            end
-            q.pp e
-          end
-          @trailer_segment_uses.each do |e|
+          @children.each do |e|
             unless q.current_group.first?
               q.text ","
               q.breakable
@@ -154,9 +150,7 @@ module Stupidedi
             "first argument to TableDef.header must be a String but got #{id.inspect}"
         end
 
-        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
-        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 1, header, loop_defs, trailer, nil)
+        new(id, 1, children, nil)
       end
 
       # @return [TableDef]
@@ -166,9 +160,7 @@ module Stupidedi
             "first argument to TableDef.detail must be a String but got #{id.inspect}"
         end
 
-        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
-        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 2, header, loop_defs, trailer, nil)
+        new(id, 2, children, nil)
       end
 
       # @return [TableDef]
@@ -178,9 +170,7 @@ module Stupidedi
             "first argument to TableDef.summary must be a String but got #{id.inspect}"
         end
 
-        header, children   = children.split_when{|x| x.is_a?(LoopDef) }
-        loop_defs, trailer = children.split_when{|x| x.is_a?(SegmentUse) }
-        new(id, 3, header, loop_defs, trailer, nil)
+        new(id, 3, children, nil)
       end
 
       # @endgroup

@@ -65,14 +65,8 @@ module Stupidedi
           # When first segment is repeatable, then `successors` should include
           # an {Instruction} for it; but when it's non-repeatable, there should
           # be no successor instruction for that segment.
-          is = if loop_def.header_segment_uses.head.repeatable?
-                sequence(loop_def.header_segment_uses)
-               else
-                 sequence(loop_def.header_segment_uses.tail)
-               end
-
-          is.concat(lsequence(loop_def.loop_defs, is.length))
-          is.concat(sequence(loop_def.trailer_segment_uses, is.length))
+          skip_first = !loop_def.entry_segment_use.repeatable?
+          interleaved_sequence(loop_def.children, 0, skip_first: skip_first)
         end
       end
     end

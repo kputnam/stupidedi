@@ -50,7 +50,7 @@ module Stupidedi
       def insert_(segment_tok, strict, tokenizer)
         @active.flat_map do |zipper|
           state        = zipper.node
-          instructions = state.instructions.matches(segment_tok, strict, :insert)
+          instructions = state.instructions.matches(segment_tok, strict, :insert, state)
 
           if instructions.empty?
             zipper.append(FailureState.mksegment(segment_tok, state)).cons

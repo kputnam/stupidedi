@@ -17,13 +17,12 @@ Gem::Specification.new do |s|
   s.files      += Dir[*%w(native/**/*.{c,h,rb})]
   s.extensions += Dir[*%w(native/**/extconf.rb)]
 
-  s.add_runtime_dependency "cantor",         "~> 1.2"
-  s.add_runtime_dependency "term-ansicolor", "~> 1.3"
+  s.add_runtime_dependency "cantor", "~> 1.2"
 
   # Optional attributes
   s.executables               = %w(edi-pp edi-ed edi-obfuscate)
   s.required_ruby_version     = ">= 3.2"
-  
+
   s.add_dependency "base64"
   s.add_dependency "bigdecimal"
   s.add_dependency "ostruct"

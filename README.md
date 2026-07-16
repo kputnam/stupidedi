@@ -1,12 +1,13 @@
 # Stupidedi
-[![Build Status](https://secure.travis-ci.org/irobayna/stupidedi.png?branch=master)](http://travis-ci.org/irobayna/stupidedi) [![GitHub version](https://badge.fury.io/rb/stupidedi.svg)](http://badge.fury.io/gh/irobayna%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/irobayna/stupidedi.png)](https://codeclimate.com/github/irobayna/stupidedi) [![Inline docs](http://inch-ci.org/github/irobayna/stupidedi.png?branch=master)](http://inch-ci.org/github/irobayna/stupidedi)
+
+[![Build Status](https://github.com/kputnam/stupidedi/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/kputnam/stupidedi/actions?query=branch%3Amaster) [![GitHub version](https://badge.fury.io/rb/stupidedi.svg)](http://badge.fury.io/gh/irobayna%2Fstupidedi) [![Code Climate](https://codeclimate.com/github/irobayna/stupidedi.png)](https://codeclimate.com/github/irobayna/stupidedi) [![Inline docs](http://inch-ci.org/github/irobayna/stupidedi.png?branch=master)](http://inch-ci.org/github/irobayna/stupidedi)
 
 ![Screenshot](https://raw.github.com/irobayna/stupidedi/master/doc/images/edi-pp.png)
 
 
 * [GitHub project](http://github.com/irobayna/stupidedi)
 * [Human Documentation](https://github.com/irobayna/stupidedi/tree/master/doc)
-* [API Documentation](http://rubydoc.info/github/irobayna/stupidedi/master/frames)
+* [API Documentation](http://rubydoc.info/github/kputnam/stupidedi/master/frames)
 
 Stupidedi is a high-quality library for parsing, generating, validating,
 and manipulating ASC X12 EDI documents. Very roughly, it's jQuery for
@@ -76,10 +77,16 @@ to understand, assuming a reasonable familiarity with EDI.
 ### Efficient parsing and traversing
 
 The parser is designed using immutable data structures, making it thread-safe
-for runtimes that can utilize multiple cores. While in certain cases,
-immutability places higher demand on garbage collection, this has been
-mitigated with careful optimization. Input can be streamed incrementally, so
-very large files aren't read into memory all at once.
+for runtimes that can utilize multiple cores. In some cases, immutability places
+higher demand on garbage collection, this has been somewhat mitigated with careful
+optimization.
+
+**Note:** Further optimizations are planned for late 2021. Until then, modestly large
+files can consume excessive memory to the point all CPU time is spent in garbage
+collection. In more than ten years since this library was put into production, this
+seems to rarely happen in practice (as X12 files are most often very small), but until
+  these improvements are merged, it can be difficult to work around. See [#65](https://github.com/irobayna/stupidedi/issues/65) for
+    more discussion. The current work in progress is in the [`gh-65.3`](https://github.com/irobayna/stupidedi/tree/gh-65.3) branch.
 
 ![Benchmark](https://raw.github.com/irobayna/stupidedi/master/notes/benchmark/throughput.png)
 
