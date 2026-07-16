@@ -82,8 +82,7 @@ stupidedi_packed_copy(const stupidedi_packed_t* src, stupidedi_packed_t* dst)
 
     dst->width  = src->width;
     dst->length = src->length;
-    dst->data   = NULL; /* TODO: free old bitstr? */
-    stupidedi_bitstr_copy(src->data, dst->data);
+    dst->data   = stupidedi_bitstr_copy(src->data, NULL);
 
     return dst;
 }

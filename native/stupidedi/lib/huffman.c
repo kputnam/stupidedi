@@ -276,8 +276,14 @@ stupidedi_huffman_encode_packed(const stupidedi_huffman_t* h, const size_t i, ui
 uint8_t
 stupidedi_huffman_encode(const stupidedi_huffman_t* h, const size_t i, uint64_t* w)
 {
-    assert(h != NULL);
     assert(w != NULL);
+
+    /* NULL codec means fixed-width encoding: leave *w as-is (the caller has
+     * already set it to the raw symbol) and return 0, which can never equal
+     * a real 1-based codeword length. */
+    if (h == NULL)
+        return 0;
+
     assert(i < h->count);
 
     return (h->type == WAVELET) ?

@@ -7,8 +7,8 @@
 int
 main(int argc, char **argv)
 {
-    stupidedi_bitstr_t b;
-    stupidedi_rrr_t rrr;
+    stupidedi_bitstr_t *b;
+    stupidedi_rrr_t *rrr;
 
     size_t length, width;
     width  = 8;
@@ -17,19 +17,24 @@ main(int argc, char **argv)
     uint64_t value = 0xaaaaaaaaaaaaaaaa;
     value         &= (1ULL << width) - 1;
 
-    stupidedi_bitstr_init(&b, length * width);
-    for (size_t k = 1; k + width <= stupidedi_bitstr_length(&b); k += width)
-        stupidedi_bitstr_write(&b, k, width, value);
+    b = stupidedi_bitstr_new(length * width);
+    for (size_t k = 1; k + width <= stupidedi_bitstr_length(b); k += width)
+        stupidedi_bitstr_write(b, k, width, value);
 
-    stupidedi_rrr_init(&rrr, &b, 5, 8);
-    for (size_t k = 0; k < rrr.rank + 4; ++k)
-            printf("select₁(%zu)=%zu\n", k, stupidedi_rrr_select1(&rrr, k));
+    rrr = stupidedi_rrr_new(b, 5, 8);
+    size_t total_rank = stupidedi_rrr_rank1(rrr, stupidedi_rrr_length(rrr));
+
+    for (size_t k = 0; k < total_rank + 4; ++k)
+            printf("select₁(%zu)=%zu\n", k, stupidedi_rrr_select1(rrr, k));
 
     printf("\n");
-    for (size_t k = 0; k < stupidedi_rrr_length(&rrr) - rrr.rank + 4; ++k)
-            printf("select₀(%zu)=%zu\n", k, stupidedi_rrr_select0(&rrr, k));
+    for (size_t k = 0; k < stupidedi_rrr_length(rrr) - total_rank + 4; ++k)
+            printf("select₀(%zu)=%zu\n", k, stupidedi_rrr_select0(rrr, k));
 
-    printf("%s\n\n", stupidedi_bitstr_to_string(&b));
+    printf("%s\n\n", stupidedi_bitstr_to_string(b));
+
+    stupidedi_rrr_free(rrr);
+    stupidedi_bitstr_free(b);
 
     /*
      *                                                                        *
@@ -58,4 +63,3 @@ main(int argc, char **argv)
     ms = mb.map{|b| b.count("1") }.cumsum
     */
 }
-

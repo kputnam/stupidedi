@@ -103,8 +103,8 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* s, stupidedi_
             const uint64_t c
                 = stupidedi_packed_read(s, i);
 
-            if (c > alphabet_size)
-                alphabet_size = c;
+            if (c + 1 > alphabet_size)
+                alphabet_size = c + 1;
         }
     }
     else
@@ -146,13 +146,18 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* s, stupidedi_
      * variable-length coding in the first place. */
     stupidedi_packed_t *s_curr, *s_next;
     s_curr = stupidedi_packed_copy(s, NULL);
-    s_next = stupidedi_packed_new(length, depth);
 
     size_t n_curr, n_next;
     n_curr = length;
 
     for (size_t l = 0; l < depth; ++l)
     {
+        /* s_next must be a distinct buffer from s_curr: this level's writes
+         * reorder symbols for the *next* level, while this level's reads
+         * (below) still need the *previous* level's ordering. Aliasing the
+         * two would let a write clobber a value not yet read this level. */
+        s_next = stupidedi_packed_new(length, depth);
+
         if (l > 0)
             stupidedi_packed_write(rows, l-1, stupidedi_rrr_builder_written(rb));
 
@@ -215,6 +220,7 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* s, stupidedi_
         if (l < depth - 1)
             stupidedi_packed_write(n_ones, l, n1);
 
+        stupidedi_packed_free(s_curr);
         n_curr = n_next;
         s_curr = s_next;
     }
@@ -228,7 +234,6 @@ stupidedi_wavelet_init(stupidedi_wavelet_t* w, stupidedi_packed_t* s, stupidedi_
 
     stupidedi_rrr_builder_free(rb);
     stupidedi_packed_free(s_curr);
-    stupidedi_packed_free(s_next);
 
     return w;
 }
@@ -404,7 +409,7 @@ row_location(const stupidedi_wavelet_t* w, uint8_t l)
     if (l >= w->depth)
         return stupidedi_rrr_length(w->matrix);
 
-    return stupidedi_packed_read(w->rows, l);
+    return stupidedi_packed_read(w->rows, l - 1);
 }
 
 static inline size_t
