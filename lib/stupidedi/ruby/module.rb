@@ -103,9 +103,9 @@ module Stupidedi
             RUBY
           else
             class_eval(<<-RUBY.tap{|s| puts s if debug }, file, line.to_i - 1)
-              def #{name}(*args, &block)
+              def #{name}(...)
                 #{emit_instrumentation(name) if debug}
-                #{receiver}.#{name}(*args, &block)
+                #{receiver}.#{name}(...)
               end
             RUBY
           end

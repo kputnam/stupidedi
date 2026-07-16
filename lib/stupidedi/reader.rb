@@ -23,12 +23,11 @@ module Stupidedi
       if args.last.is_a?(Hash)
         keywords = {}
         keywords[:config] = args.last.delete(:config) if args.last.include?(:config)
-        keywords[:strict] = args.last.delete(:config) if args.last.include?(:strict)
       else
         keywords = {}
       end
 
-      Reader::Tokenizer.build(Reader::Input.build(input, *args), *keywords)
+      Reader::Tokenizer.build(Reader::Input.build(input, *args), **keywords)
     end
 
     # @param  [String or Pathname or IO] path

@@ -65,8 +65,8 @@ Fixtures = Class.new do
   end
 
   # @return [Stupidedi::Parser::StateMachine, Stupidedi::Reader::Result]
-  def parse!(path, *args)
-    machine, result = parse(path, *args)
+  def parse!(path, **kwargs)
+    machine, result = parse(path, **kwargs)
 
     if result.fatal?
       result.explain{|msg| raise Stupidedi::Exceptions::ParseError, "#{msg} at #{result.position.inspect}" }

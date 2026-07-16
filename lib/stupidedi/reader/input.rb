@@ -157,12 +157,10 @@ module Stupidedi
       #   Input.file("example.edi", position: Position::NoPosition)
       #
       def file(path, *args)
-        position =
-          if args.last.is_a?(Hash)
-            args.last.delete(:position)
-          end || Position::NoPosition
+        opts = args.last.is_a?(Hash) ? args.pop : {}
+        position = opts.delete(:position) || Position::NoPosition
 
-        content = File.read(path, *args)
+        content = File.read(path, *args, **opts)
 
         # This will throw Encoding::InvalidByteSequenceErorr
         content.encode("binary") unless content.valid_encoding?
