@@ -1,24 +1,23 @@
-#include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/interval.h"
 
 /* Bit string indicating ISO-8859-x graphic characters starting from 0xff..0xa0 (lsb) */
-stupidedi_bitstr_t iso_8859_graphic[16] = {
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-1
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-2
-    {.length = 96, .data = (uint64_t[]){0xfffefff7bfffbfdf,0x00000000fffefff7}}, // iso-8859-3
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-4
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-5
-    {.length = 96, .data = (uint64_t[]){0x07fffffe88003011,0x000000000007ffff}}, // iso-8859-6
-    {.length = 96, .data = (uint64_t[]){0xfffbffffffffbfff,0x000000007fffffff}}, // iso-8859-7
-    {.length = 96, .data = (uint64_t[]){0x800000007ffffffd,0x0000000067ffffff}}, // iso-8859-8
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-9
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-10
-    {.length = 96, .data = (uint64_t[]){0x87ffffffffffffff,0x000000000fffffff}}, // iso-8859-11
-    {.length = 96, .data = (uint64_t[]){0x0000000000000000,0x0000000000000000}}, // iso-8859-12
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-13
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-14
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-15
-    {.length = 96, .data = (uint64_t[]){0xffffffffffffffff,0x00000000ffffffff}}, // iso-8859-16
+static const uint64_t iso_8859_graphic[16][2] = {
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-1
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-2
+    {0xfffefff7bfffbfdf,0x00000000fffefff7}, // iso-8859-3
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-4
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-5
+    {0x07fffffe88003011,0x000000000007ffff}, // iso-8859-6
+    {0xfffbffffffffbfff,0x000000007fffffff}, // iso-8859-7
+    {0x800000007ffffffd,0x0000000067ffffff}, // iso-8859-8
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-9
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-10
+    {0x87ffffffffffffff,0x000000000fffffff}, // iso-8859-11
+    {0x0000000000000000,0x0000000000000000}, // iso-8859-12
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-13
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-14
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-15
+    {0xffffffffffffffff,0x00000000ffffffff}, // iso-8859-16
 };
 
 /* List of intervals of indicating graphic Unicode codepoints */

@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 # encoding: utf-8
-
-# Stupidedi::Reader::NativeExt (rb_string.c's String bindings) targets the
-# pre-b0aec7d2 bitmap.h/bitmap.c API and isn't wired up in bindings.c right
-# now -- see the note there. Skipped until it's ported to bitstr_t/packed_t.
-return unless defined?(Stupidedi::Reader::NativeExt)
-
 describe Stupidedi::Reader::NativeExt do
   using Stupidedi::Refinements
   include ReaderExtMatchers

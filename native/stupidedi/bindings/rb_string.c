@@ -1,9 +1,8 @@
 #include <ruby.h>
 #include <ruby/encoding.h>
 #include <stdbool.h>
-#include "stupidedi/include/codepoints.h"
+#include "stupidedi/bindings/codepoints.h"
 #include "stupidedi/include/builtins.h"
-#include "stupidedi/include/bitmap.h"
 #include "stupidedi/include/interval.h"
 
 extern VALUE rb_str_length(VALUE _str);
@@ -67,12 +66,19 @@ static int ENCIDX_Windows_1258 = -1;
 */
 
 /* This keeps track of which which encidx values we've seen. */
-static stupidedi_bitmap_t known_encodings =
+static uint64_t known_encodings[4] = {0, 0, 0, 0};
+
+static inline bool
+bit_test(const uint64_t *words, unsigned bit)
 {
-  .size = 256,
-  .data = (uint64_t[]){0x0000000000000000ULL,0x0000000000000000ULL,
-                       0x0000000000000000ULL,0x0000000000000000ULL}
-};
+    return (words[bit / 64] >> (bit % 64)) & 1;
+}
+
+static inline void
+bit_set(uint64_t *words, unsigned bit)
+{
+    words[bit / 64] |= (1ULL << (bit % 64));
+}
 
 /*
  * Ideally we could write a switch(encidx) { ... } statement to handle each
@@ -98,7 +104,7 @@ static stupidedi_bitmap_t known_encodings =
 #define TESTENC(name, id) \
 if (strncmp(name, encname, 64) == 0) { \
   ENCIDX_##id = encidx; \
-  stupidedi_bitmap_set(&known_encodings, encidx); \
+  bit_set(known_encodings, encidx); \
   return true; \
 }
 
@@ -108,7 +114,7 @@ update_encdb(int encidx)
     const char *encname;
 
     /* We've already assigned the encidx to an ENCIDX_xx global */
-    if ((encidx > 0 && (unsigned)encidx >= known_encodings.size) || stupidedi_bitmap_test(&known_encodings, encidx))
+    if ((encidx > 0 && (unsigned)encidx >= 256) || bit_test(known_encodings, encidx))
         return false;
 
     /* Otherwise, match the "NAME" to the ENCIDX_NAME constant */
@@ -182,7 +188,7 @@ is_whitespace(const unsigned int c, const int encidx)
         return (0x08 <= c && c <= 0x0d) || c == 0x20;
 
     else if (encidx == ENCIDX_UTF_8)
-        return stupidedi_interval_list_test(c, &ucs_codepoints_whitespace);
+        return stupidedi_interval_test(&ucs_codepoints_whitespace, c);
 
     else if (encidx == ENCIDX_ISO_8859_1  ||
              encidx == ENCIDX_ISO_8859_2  ||
@@ -221,7 +227,7 @@ is_graphic(const unsigned int c, const int encidx)
     // https://en.wikipedia.org/wiki/ISO/IEC_8859#Table
 
     if (encidx == ENCIDX_UTF_8)
-        return stupidedi_interval_list_test(c, &ucs_codepoints_graphic);
+        return stupidedi_interval_test(&ucs_codepoints_graphic, c);
 
     if (encidx == ENCIDX_US_ASCII)
         return (0x20 <= c && c < 0x7f);
@@ -244,21 +250,21 @@ is_graphic(const unsigned int c, const int encidx)
         if (c < 0xa0)
             return (0x20 <= c && c < 0x7f);
 
-    if      (encidx == ENCIDX_ISO_8859_1)  return stupidedi_bitmap_test(iso_8859_graphic + 0,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_2)  return stupidedi_bitmap_test(iso_8859_graphic + 1,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_3)  return stupidedi_bitmap_test(iso_8859_graphic + 2,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_4)  return stupidedi_bitmap_test(iso_8859_graphic + 3,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_5)  return stupidedi_bitmap_test(iso_8859_graphic + 4,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_6)  return stupidedi_bitmap_test(iso_8859_graphic + 5,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_7)  return stupidedi_bitmap_test(iso_8859_graphic + 6,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_8)  return stupidedi_bitmap_test(iso_8859_graphic + 7,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_9)  return stupidedi_bitmap_test(iso_8859_graphic + 8,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_10) return stupidedi_bitmap_test(iso_8859_graphic + 9,  c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_11) return stupidedi_bitmap_test(iso_8859_graphic + 10, c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_13) return stupidedi_bitmap_test(iso_8859_graphic + 12, c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_14) return stupidedi_bitmap_test(iso_8859_graphic + 13, c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_15) return stupidedi_bitmap_test(iso_8859_graphic + 14, c-0xa0);
-    else if (encidx == ENCIDX_ISO_8859_16) return stupidedi_bitmap_test(iso_8859_graphic + 15, c-0xa0);
+    if      (encidx == ENCIDX_ISO_8859_1)  return bit_test(iso_8859_graphic[0],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_2)  return bit_test(iso_8859_graphic[1],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_3)  return bit_test(iso_8859_graphic[2],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_4)  return bit_test(iso_8859_graphic[3],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_5)  return bit_test(iso_8859_graphic[4],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_6)  return bit_test(iso_8859_graphic[5],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_7)  return bit_test(iso_8859_graphic[6],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_8)  return bit_test(iso_8859_graphic[7],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_9)  return bit_test(iso_8859_graphic[8],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_10) return bit_test(iso_8859_graphic[9],  c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_11) return bit_test(iso_8859_graphic[10], c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_13) return bit_test(iso_8859_graphic[12], c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_14) return bit_test(iso_8859_graphic[13], c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_15) return bit_test(iso_8859_graphic[14], c-0xa0);
+    else if (encidx == ENCIDX_ISO_8859_16) return bit_test(iso_8859_graphic[15], c-0xa0);
 
     /* If nothing matched, it could be the first time we've seen this encoding
      * and we haven't assigned ENCIDX_XX yet. If so, update and retry */

@@ -2,12 +2,11 @@
 #include "stupidedi/bindings/rb_types.h"
 #include "stupidedi/include/interval.h"
 
-/* Bitmap, RRR, WaveletTree, and String bindings below target the
- * pre-b0aec7d2 bitmap.h/bitmap.c API, which was split into bitstr.h and
- * packed.h. They haven't been ported to the current API yet, so they're
- * commented out (along with the matching
- * bindings/rb_{bitmap,rrr,wavelet,string}.c sources in extconf.rb) until
- * that's done. */
+/* Bitmap, RRR, and WaveletTree bindings below target the pre-b0aec7d2
+ * bitmap.h/bitmap.c API, which was split into bitstr.h and packed.h. They
+ * haven't been ported to the current API yet, so they're commented out
+ * (along with the matching bindings/rb_{bitmap,rrr,wavelet}.c sources in
+ * extconf.rb) until that's done. */
 
 //VALUE rb_cRRR;
 //VALUE rb_cBitVector;
@@ -49,13 +48,13 @@
 //extern VALUE rb_stupidedi_wavelet_memsize_bits(VALUE self);
 //extern VALUE rb_stupidedi_wavelet_inspect(VALUE self);
 
-//extern VALUE rb_string_substr_eq_p(VALUE self, VALUE _str1, VALUE _ind1, VALUE _str2, VALUE _idx2, VALUE _length);
-//extern VALUE rb_string_graphic_p(int argc, VALUE* argv, VALUE class);
-//extern VALUE rb_string_whitespace_p(int argc, VALUE* argv, VALUE class);
-//extern VALUE rb_string_min_graphic_index(int argc, VALUE* argv, VALUE class);
-//extern VALUE rb_string_min_nongraphic_index(int argc, VALUE* argv, VALUE class);
-//extern VALUE rb_string_min_nonspace_index(int argc, VALUE* argv, VALUE class);
-//extern VALUE rb_string_max_nonspace_index(int argc, VALUE* argv, VALUE class);
+extern VALUE rb_string_substr_eq_p(VALUE self, VALUE _str1, VALUE _ind1, VALUE _str2, VALUE _idx2, VALUE _length);
+extern VALUE rb_string_graphic_p(int argc, VALUE* argv, VALUE class);
+extern VALUE rb_string_whitespace_p(int argc, VALUE* argv, VALUE class);
+extern VALUE rb_string_min_graphic_idx(int argc, VALUE* argv, VALUE class);
+extern VALUE rb_string_min_nongraphic_idx(int argc, VALUE* argv, VALUE class);
+extern VALUE rb_string_min_nonspace_idx(int argc, VALUE* argv, VALUE class);
+extern VALUE rb_string_max_nonspace_idx(int argc, VALUE* argv, VALUE class);
 
 void Init_native(void)
 {
@@ -106,13 +105,13 @@ void Init_native(void)
     //rb_define_method(rb_cWaveletTree, "memsize_bits",   rb_stupidedi_wavelet_memsize_bits,   0);
     //rb_define_method(rb_cWaveletTree, "inspect",        rb_stupidedi_wavelet_inspect,        0);
 
-    //VALUE rb_cString = rb_define_class_under(rb_mNative, "String", rb_cObject);
-    //rb_undef_alloc_func(rb_cString);
-    //rb_define_singleton_method(rb_cString, "substr_eq?",            rb_string_substr_eq_p,          5);
-    //rb_define_singleton_method(rb_cString, "graphic?",              rb_string_graphic_p,    -       1);
-    //rb_define_singleton_method(rb_cString, "whitespace?",           rb_string_whitespace_p, -       1);
-    //rb_define_singleton_method(rb_cString, "min_graphic_index",     rb_string_min_graphic_index,   -1);
-    //rb_define_singleton_method(rb_cString, "min_nongraphic_index",  rb_string_min_nongraphic_index,-1);
-    //rb_define_singleton_method(rb_cString, "min_nonspace_index",    rb_string_min_nonspace_index,  -1);
-    //rb_define_singleton_method(rb_cString, "max_nonspace_index",    rb_string_max_nonspace_index,  -1);
+    VALUE rb_cString = rb_define_class_under(rb_mNative, "String", rb_cObject);
+    rb_undef_alloc_func(rb_cString);
+    rb_define_singleton_method(rb_cString, "substr_eq?",            rb_string_substr_eq_p,          5);
+    rb_define_singleton_method(rb_cString, "graphic?",              rb_string_graphic_p,    -       1);
+    rb_define_singleton_method(rb_cString, "whitespace?",           rb_string_whitespace_p, -       1);
+    rb_define_singleton_method(rb_cString, "min_graphic_index",     rb_string_min_graphic_idx,   -1);
+    rb_define_singleton_method(rb_cString, "min_nongraphic_index",  rb_string_min_nongraphic_idx,-1);
+    rb_define_singleton_method(rb_cString, "min_nonspace_index",    rb_string_min_nonspace_idx,  -1);
+    rb_define_singleton_method(rb_cString, "max_nonspace_index",    rb_string_max_nonspace_idx,  -1);
 }
