@@ -390,13 +390,15 @@ module Stupidedi
       # @param  [Boolean] always_allocate
       # @return [S]
       def reify(always_allocate = false)
-        if @storage.frozen? \
-        and @offset == 0 \
-        and @length == @storage.length \
-        and not always_allocate
-          @storage
+        if @offset == 0 and @length == @storage.length
+          if @storage.frozen? and not always_allocate
+            @storage
+          else
+            # String#[0, length] allocates an extra frozen shared copy when
+            # the slice covers the whole string; String#dup does not.
+            @storage.dup
+          end
         else
-          # $stderr.puts "reify: allocate[#@offset, #@length]"
           @storage[@offset, @length]
         end
       end

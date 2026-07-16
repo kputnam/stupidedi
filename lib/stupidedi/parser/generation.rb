@@ -8,23 +8,51 @@ module Stupidedi
       # {StateMachine} along with the result of the last attempt
       # to read a segment.
       #
+      # The `nondeterminism` option specifies a limit on how many parse trees
+      # can be built simultaneously due to ambiguity in the input and/or
+      # specification. This prevents runaway memory/CPU consumption, and will
+      # return a fatal {Reader::Tokenizer::Result::Fail} once exceeded.
+      #
+      # The default value is 1, resulting in an error if any input is
+      # ambiguous.
+      #
+      # NOTE: The error is detected *after* the ambiguous segment has already
+      # been consumed. The extra parse trees are returned (in memory) via the
+      # {StateMachine} to aide diagnosis.
+      #
       # @param  tokenizer [Tokens::Tokenizer]
       # @param  options
       #
       # @yield  [Tokens::IgnoredTok]
       # @return [(StateMachine, Tokens::Tokenizer::Result)]
       def read(tokenizer, options = {})
-        #imit   = options.fetch(:nondeterminism, 1)
+        limit   = options.fetch(:nondeterminism, 1)
         machine = self.dup
 
-        return machine, tokenizer.each do |token|
+        result = tokenizer.each do |token|
           case token
           when Tokens::SegmentTok
             machine.insert!(token, false, tokenizer)
+
+            if machine.active.length > limit
+              matches = machine.active.map do |zipper|
+                if usage = zipper.node.zipper.node.usage
+                  "SegmentUse(%d, %s, %s, %s)" % [usage.position, usage.id,
+                    usage.requirement.inspect, usage.repeat_count.inspect]
+                else
+                  zipper.node.zipper.node.inspect
+                end
+              end.join(", ")
+
+              break Reader::Tokenizer::Result::Fail.new(
+                "too much non-determinism: #{matches}", token.position, true)
+            end
           when Tokens::IgnoredTok
             yield token if block_given?
           end
         end
+
+        return machine, result
       end
 
       # NOTE: This may destructively update the `state` by reassigning its

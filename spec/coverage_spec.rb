@@ -7,6 +7,7 @@ describe Stupidedi, _trict: true do
       stupidedi/builder
       stupidedi/contrib
       stupidedi/guides
+      stupidedi/native
       stupidedi/parser
       stupidedi/schema
       stupidedi/sets
@@ -31,6 +32,8 @@ describe Stupidedi, _trict: true do
       stupidedi/ruby/to_date
       stupidedi/interchanges/common/element_types/special_an
       stupidedi/reader/array_ptr
+      stupidedi/reader/native_ext
+      stupidedi/reader/wavelet_tree
       stupidedi/position
       stupidedi/position/no_position
       stupidedi/position/offset_position
@@ -71,7 +74,6 @@ describe Stupidedi, _trict: true do
       stupidedi/schema/repeat_count
       stupidedi/schema/segment_def
       stupidedi/schema/segment_use
-      stupidedi/schema/loop_def
       stupidedi/schema/table_def
       stupidedi/schema/syntax_note
       stupidedi/transaction_sets/common/implementations/element_reqs
@@ -137,6 +139,15 @@ describe Stupidedi, _trict: true do
       stupidedi/reader/native_ext
       stupidedi/versions/element_defs
       stupidedi/versions/segment_defs)
+
+    # These are integration/reproducer specs, or cover transaction set grammars
+    # split across implementations/ and standards/ files rather than a single
+    # matching lib file
+    @no_libs.concat %w(
+      stupidedi/parser/duplicate_slot
+      stupidedi/transaction_sets/004010/IN810
+      stupidedi/transaction_sets/004010/SM204
+      stupidedi/transaction_sets/005010/SO317)
   end
 
   let(:libs) do
