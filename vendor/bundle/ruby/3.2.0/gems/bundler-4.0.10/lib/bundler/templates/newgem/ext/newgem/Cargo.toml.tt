@@ -1,0 +1,22 @@
+[package]
+name = <%= config[:name].inspect %>
+version = "0.1.0"
+edition = "2021"
+authors = ["<%= config[:author] %> <<%= config[:email] %>>"]
+<%- if config[:mit] -%>
+license = "MIT"
+<%- end -%>
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+magnus = { version = "0.8.2" }
+rb-sys = { version = "0.9", features = ["stable-api-compiled-fallback"] }
+
+[build-dependencies]
+rb-sys-env = "0.2.2"
+
+[dev-dependencies]
+rb-sys-test-helpers = { version = "0.2.2" }

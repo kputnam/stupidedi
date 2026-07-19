@@ -1,0 +1,13 @@
+# This Cargo.toml is here to let externals tools (IDEs, etc.) know that this is
+# a Rust project. Your extensions dependencies should be added to the Cargo.toml
+# in the ext/ directory.
+
+[workspace]
+members = ["./ext/<%= config[:name] %>"]
+resolver = "2"
+
+[profile.release]
+# By default, debug symbols are stripped from the final binary which makes it
+# harder to debug if something goes wrong. It's recommended to keep debug
+# symbols in the release build so that you can debug the final binary if needed.
+debug = true
