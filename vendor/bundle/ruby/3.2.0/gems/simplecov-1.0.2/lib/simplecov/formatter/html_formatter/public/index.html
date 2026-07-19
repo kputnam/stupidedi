@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Code Coverage</title>
+    <script src="application.js" defer></script>
+    <link href="application.css" rel="stylesheet">
+    <script>
+      // Apply the saved dark/light preference before paint to avoid a flash.
+      try {
+        const pref = localStorage.getItem('simplecov-dark-mode');
+        if (pref === 'dark' || pref === 'light') {
+          document.documentElement.classList.add(`${pref}-mode`);
+        }
+      } catch (_error) {
+        // localStorage can be unavailable in locked-down browser contexts.
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="loading" style="display: none">
+      <div id="loading-inner">
+        <div id="loading-bar-track">
+          <div id="loading-bar-fill"></div>
+        </div>
+        <div id="loading-text">Loading...</div>
+      </div>
+    </div>
+
+    <div id="wrapper" class="hide">
+      <div class="tab-bar">
+        <ul class="group_tabs" role="tablist"></ul>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
+      </div>
+
+      <div id="content"></div>
+
+      <div id="footer"></div>
+
+      <div class="source_files" style="display:none"></div>
+    </div>
+
+    <dialog id="source-dialog" class="source-dialog">
+      <div class="source-dialog__header">
+        <div class="source-dialog__title" id="source-dialog-title"></div>
+        <div class="source-legend" id="source-legend"></div>
+        <button class="source-dialog__close" aria-label="Close" title="Close">&times;</button>
+      </div>
+      <div class="source-dialog__body" id="source-dialog-body" tabindex="0"></div>
+    </dialog>
+
+    <script src="coverage_data.js" defer></script>
+  </body>
+</html>
