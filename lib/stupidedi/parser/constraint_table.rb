@@ -29,7 +29,6 @@ module Stupidedi
       end
 
       # @return [void]
-      # :nocov:
       def pretty_print(q)
         name = self.class.name.split("::").last
         q.text "#{name}.build"
@@ -44,7 +43,6 @@ module Stupidedi
           end
         end
       end
-      # :nocov:
 
       # @todo
       def critique(segment_tok, segment_uses)

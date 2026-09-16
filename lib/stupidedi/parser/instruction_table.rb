@@ -120,7 +120,6 @@ module Stupidedi
         end
 
         # @return [void]
-        # :nocov:
         def pretty_print(q)
           q.text("InstructionTable")
           q.group(2, "(", ")") do
@@ -139,7 +138,6 @@ module Stupidedi
             end
           end
         end
-        # :nocov:
 
       private
 
@@ -193,11 +191,9 @@ module Stupidedi
         end
 
         # @return [void]
-        # :nocov:
         def pretty_print(q)
           q.text "InstructionTable.empty"
         end
-        # :nocov:
       end.new
     end
 
