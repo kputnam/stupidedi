@@ -82,7 +82,6 @@ module Stupidedi
       end
 
       # @return [void]
-      # :nocov:
       def pretty_print(q)
         q.text "SegmentDef[#{@id}]"
 
@@ -97,7 +96,6 @@ module Stupidedi
           end
         end
       end
-      # :nocov:
     end
 
     class << SegmentDef

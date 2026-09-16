@@ -66,7 +66,6 @@ module Stupidedi
       end
 
       # @return [void]
-      # :nocov:
       def pretty_print(q)
         q.text("SimpleElementUse")
         q.group(2, "(", ")") do
@@ -82,7 +81,6 @@ module Stupidedi
           q.pp @repeat_count
         end
       end
-      # :nocov:
     end
   end
 end

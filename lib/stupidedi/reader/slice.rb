@@ -369,7 +369,6 @@ module Stupidedi
       # @endgroup
       #########################################################################
 
-      # :nocov:
       # @return [String]
       def inspect
         "#<%s %s@storage=0x%s @offset=%d @length=%d>" %
@@ -377,7 +376,6 @@ module Stupidedi
            @storage.frozen? ? "-" : "+",
            (@storage.object_id << 1).to_s(16), @offset, @length]
       end
-      # :nocov:
 
       # Converts this slice back into whatever the underlying storage type is.
       # This operation typically allocates memory and copies part of @storage,
