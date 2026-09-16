@@ -9,6 +9,32 @@ Bundler.setup(:default, :development, :test)
 
 begin
   require "simplecov"
+
+  SimpleCov.coverage_dir "build/generated/coverage"
+
+  SimpleCov.skip %r{/spec}
+  SimpleCov.skip %r{/segment_defs}
+  SimpleCov.skip %r{/element_defs}
+  SimpleCov.skip %r{/transaction_sets/[0-9]+/[A-Z0-9-]+\.rb}
+  SimpleCov.skip %r{/stupidedi/editor}
+
+  SimpleCov.group "Config",           "lib/stupidedi/config"
+  SimpleCov.group "Editor",           "lib/stupidedi/editor"
+  SimpleCov.group "Exceptions",       "lib/stupidedi/exceptions"
+  SimpleCov.group "Interchanges",     "lib/stupidedi/interchanges"
+  SimpleCov.group "Parser",           "lib/stupidedi/parser"
+  SimpleCov.group "Position",         "lib/stupidedi/position"
+  SimpleCov.group "Reader",           "lib/stupidedi/reader"
+  SimpleCov.group "Refinements",      "lib/stupidedi/ruby"
+  SimpleCov.group "Schema",           "lib/stupidedi/schema"
+  SimpleCov.group "Tokens",           "lib/stupidedi/tokens"
+  SimpleCov.group "TransactionSets",  "lib/stupidedi/transaction_sets"
+  SimpleCov.group "Values",           "lib/stupidedi/values"
+  SimpleCov.group "Versions",         "lib/stupidedi/versions"
+  SimpleCov.group "Writer",           "lib/stupidedi/writer"
+  SimpleCov.group "Zipper",           "lib/stupidedi/zipper"
+
+  SimpleCov.start
 rescue LoadError
 end
 
