@@ -4,6 +4,25 @@
 #include "stupidedi/include/rrr.h"
 #include "stupidedi/include/bitstr.h"
 
+/* Naive O(n) reference matching select0/1's documented contract: the length
+ * of the shortest prefix containing r 0-bits (or 1-bits), i.e. one past the
+ * r-th occurrence's position, or SIZE_MAX if there's no such prefix. */
+static size_t
+naive_select(const stupidedi_bitstr_t* b, int bit, size_t r)
+{
+    size_t count = 0;
+    for (size_t k = 0; k < stupidedi_bitstr_length(b); ++k)
+    {
+        if ((int)stupidedi_bitstr_read(b, k, 1) == bit)
+        {
+            ++count;
+            if (count == r)
+                return k + 1;
+        }
+    }
+    return SIZE_MAX;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -25,41 +44,28 @@ main(int argc, char **argv)
     size_t total_rank = stupidedi_rrr_rank1(rrr, stupidedi_rrr_length(rrr));
 
     for (size_t k = 0; k < total_rank + 4; ++k)
-            printf("select₁(%zu)=%zu\n", k, stupidedi_rrr_select1(rrr, k));
+    {
+        size_t expect, got;
+        expect = naive_select(b, 1, k);
+        got    = stupidedi_rrr_select1(rrr, k);
+        (expect == got) ?
+            printf("select1(%zu)=%zu\n", k, got) :
+            printf("select1(%zu): expect=%zu got=%zu ***MISMATCH***\n", k, expect, got);
+    }
 
     printf("\n");
     for (size_t k = 0; k < stupidedi_rrr_length(rrr) - total_rank + 4; ++k)
-            printf("select₀(%zu)=%zu\n", k, stupidedi_rrr_select0(rrr, k));
+    {
+        size_t expect, got;
+        expect = naive_select(b, 0, k);
+        got    = stupidedi_rrr_select0(rrr, k);
+        (expect == got) ?
+            printf("select0(%zu)=%zu\n", k, got) :
+            printf("select0(%zu): expect=%zu got=%zu ***MISMATCH***\n", k, expect, got);
+    }
 
     printf("%s\n\n", stupidedi_bitstr_to_string(b));
 
     stupidedi_rrr_free(rrr);
     stupidedi_bitstr_free(b);
-
-    /*
-     *                                                                        *
-    xs = "00000000,01010101,00000000,01010101,00000000,01010101,00000000,01010101"
-          =====......=====......======.....======......=====......=====......====
-            0     1    2     3     4     5    6     7    8    9     10   11   12
-        K   0     1    2     1     0     3    1     0    2    2     0    2    2
-        R         0        4        4        8        8        12       12       16
-
-
-    class Array;def cumsum; s=0; self.map{|x| s+=x }; end;end
-    xs = "00000000,01010101,00000000,01010101,00000000,01010101,00000000,01010101"
-    bs = xs.gsub(",","").scan(/.{1,5}/)
-    bx = bs.map{|b| Integer(b.reverse, 2) }
-
-    # Classes, ranks
-    cs = bs.map{|b| b.count("1") }
-    rs = cs.cumsum
-
-    # Widths
-    ws = cs.map{|r| (r.zero? && 0) || Math.log2([0,1+7,7+21,21+35,35+35,35+21,21+7,7+1][r]).ceil }
-    os = ws.cumsum
-
-    # Markers
-    mb = xs.gsub(",","").scan(/.{1,8}/)
-    ms = mb.map{|b| b.count("1") }.cumsum
-    */
 }

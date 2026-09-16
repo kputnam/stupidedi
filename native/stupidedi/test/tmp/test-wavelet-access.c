@@ -5,17 +5,6 @@
 #include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/wavelet.h"
 
-/* Naive O(n) reference: count occurrences of c in a[0..r) */
-static size_t
-naive_rank(const stupidedi_packed_t* a, uint64_t c, size_t r)
-{
-    size_t count = 0;
-    for (size_t k = 0; k < r; ++k)
-        if (stupidedi_packed_read(a, k) == c)
-            ++count;
-    return count;
-}
-
 int
 main(int argc, char **argv)
 {
@@ -38,20 +27,14 @@ main(int argc, char **argv)
     w = stupidedi_wavelet_new(a, NULL);
     printf("OK\n");
 
-    for (uint64_t c = 0; c <= 5; ++c)
+    for (size_t k = 0; k < stupidedi_packed_length(a); ++k)
     {
-        printf("\n%llu ==============================================\n", (unsigned long long)c);
+        uint64_t ab, aw;
+        ab = stupidedi_packed_read(a, k);
+        aw = stupidedi_wavelet_access(w, k);
 
-        for (size_t r = 0; r <= stupidedi_packed_length(a); ++r)
-        {
-            size_t expect, got;
-            expect = naive_rank(a, c, r);
-            got    = stupidedi_wavelet_rank(w, c, r);
-
-            (expect == got) ?
-                printf("rank(%llu, %zu) = %zu\n", (unsigned long long)c, r, got) :
-                printf("rank(%llu, %zu): expect=%zu got=%zu ***MISMATCH***\n", (unsigned long long)c, r, expect, got);
-        }
+        //assert(r == b);
+        (aw == ab) ? printf("%llu,\n", aw) : printf("b:%llu w:%llu,\n", ab, aw);
     }
 
     printf("\n");
