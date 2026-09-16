@@ -14,7 +14,7 @@ module Stupidedi
 
       def edit(id)
         if config.editor.enabled?(id)
-        # puts "#{self.class.name.split("::").last}.edit(#{id})"
+          # puts "#{self.class.name.split("::").last}.edit(#{id})"
           yield
         end
       end

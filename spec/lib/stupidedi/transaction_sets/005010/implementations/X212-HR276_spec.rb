@@ -71,7 +71,7 @@ describe "Stupidedi::TransactionSets::FiftyTen::Implementations::X212::HR276" do
                        # NM1*1P*2*HOME HOSPITAL*****XX*1666666668~
                        S(:NM1, "1P", "2", "HOME HOSPITAL", nil, nil, nil, nil, "XX", "1666666668"),
                        X(:BHT)),
-                    # HL*4*3*22*0~
+                     # HL*4*3*22*0~
                      S(:HL, "4", "3", "22", "0") => Ss(
                        # DMG*D8*19301210*M~
                        S(:DMG, "D8", "19301210", "M"),

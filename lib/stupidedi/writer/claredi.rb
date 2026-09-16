@@ -156,13 +156,13 @@ module Stupidedi
 
         elsif node.functional_group?
           out << %Q(<div class="functionalgr">)
-        # out << %Q(<div class="label">Functional Group (#{node.definition.id})</div>\n)
+          # out << %Q(<div class="label">Functional Group (#{node.definition.id})</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 
         elsif node.interchange?
           out << %Q(<div class="interchange">)
-        # out << %Q(<div class="label">Interchange (#{node.definition.id})</div>\n)
+          # out << %Q(<div class="label">Interchange (#{node.definition.id})</div>\n)
           node.children.each{|c| build(c, out) }
           out << "</div>\n"
 

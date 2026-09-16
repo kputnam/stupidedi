@@ -17,8 +17,8 @@ module Stupidedi
         class P < Schema::SyntaxNote
           def required(zipper)
             # if zipper.node.present?
-              xs = children(zipper)
-              xs.any?{|x| x.node.present? } ? xs : []
+            xs = children(zipper)
+            xs.any?{|x| x.node.present? } ? xs : []
             # else
             #   []
             # end
@@ -42,8 +42,8 @@ module Stupidedi
         class R < Schema::SyntaxNote
           def required(zipper)
             # if zipper.node.present?
-              xs = children(zipper)
-              xs.any?{|x| x.node.present? } ? [] : xs
+            xs = children(zipper)
+            xs.any?{|x| x.node.present? } ? [] : xs
             # else
             #   []
             # end
@@ -71,8 +71,8 @@ module Stupidedi
 
           def forbidden(zipper)
             # if zipper.node.present?
-              xs = children(zipper)
-              xs.count{|x| x.node.present? } <= 1 ? [] : xs
+            xs = children(zipper)
+            xs.count{|x| x.node.present? } <= 1 ? [] : xs
             # else
             #   []
             # end
@@ -91,11 +91,11 @@ module Stupidedi
         class C < Schema::SyntaxNote
           def required(zipper)
             # if zipper.node.present?
-              if zipper.child(indexes.head - 1).node.present?
-                children(zipper).tail
-              else
-                []
-              end
+            if zipper.child(indexes.head - 1).node.present?
+              children(zipper).tail
+            else
+              []
+            end
             # else
             #   []
             # end
@@ -117,12 +117,12 @@ module Stupidedi
         class L < Schema::SyntaxNote
           def required(zipper)
             # if zipper.node.present?
-              if zipper.child(indexes.head - 1).node.present?
-                xs = children(zipper).tail
-                xs.any?{|x| x.node.present? } ? [] : xs
-              else
-                []
-              end
+            if zipper.child(indexes.head - 1).node.present?
+              xs = children(zipper).tail
+              xs.any?{|x| x.node.present? } ? [] : xs
+            else
+              []
+            end
             # else
             #   []
             # end

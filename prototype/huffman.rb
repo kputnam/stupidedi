@@ -398,7 +398,7 @@ def traverse(codes, leaves, nodes, bits)
     puts "depth(u)=#{l}, r[u]=#{r}"
 
     if r <= leaves[l]
-    # decoded << symbols[wavelet.select(l, r)]
+      # decoded << symbols[wavelet.select(l, r)]
       decoded << codes[l][r-1]
       r = 1
       l = 0
@@ -415,7 +415,7 @@ def traverse(codes, leaves, nodes, bits)
   end
 
   if r <= leaves[l]
-  # decoded << symbols[wavelet.select(l, r)]
+    # decoded << symbols[wavelet.select(l, r)]
     decoded << codes[l][r-1]
   else
     decoded << "extra #{l} bits"
