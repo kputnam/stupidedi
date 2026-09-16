@@ -145,6 +145,7 @@ describe Stupidedi, _trict: true do
     # matching lib file
     @no_libs.concat %w(
       stupidedi/parser/duplicate_slot
+      stupidedi/pretty_print
       stupidedi/transaction_sets/004010/IN810
       stupidedi/transaction_sets/004010/SM204
       stupidedi/transaction_sets/005010/SO317)
