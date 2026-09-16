@@ -68,7 +68,6 @@ module Stupidedi
       end
 
       # @return [void]
-      # :nocov:
       def pretty_print(q)
         id = definition.try do |d|
           ansi.bold("[#{d.id}: #{d.name}]")
@@ -86,14 +85,11 @@ module Stupidedi
           end
         end
       end
-      # :nocov:
 
       # @return [String]
-      # :nocov:
       def inspect
         ansi.segment(ansi.bold(definition.id.to_s))
       end
-      # :nocov:
 
       # @return [Boolean]
       def ==(other)

@@ -38,7 +38,6 @@ module Stupidedi
         true
       end
 
-      # :nocov:
       # @return [void]
       def pretty_print(q)
         id = @definition.try do |d|
@@ -57,14 +56,11 @@ module Stupidedi
           end
         end
       end
-      # :nocov:
 
-      # :nocov:
       # @return [String]
       def inspect
         ansi.loop("Loop") + "(#{@children.map(&:inspect).join(", ")})"
       end
-      # :nocov:
 
       # @return [Boolean]
       def ==(other)

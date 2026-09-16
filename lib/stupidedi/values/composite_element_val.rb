@@ -60,7 +60,6 @@ module Stupidedi
       end
 
       # @return [void]
-      # :nocov:
       def pretty_print(q)
         id = definition.then do |d|
           "[#{d.id}: #{d.name}]".then do |s|
@@ -91,7 +90,6 @@ module Stupidedi
           end
         end
       end
-      # :nocov:
 
       # @return [Boolean]
       def ==(other)

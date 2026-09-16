@@ -61,7 +61,6 @@ module Stupidedi
       end
 
       # @return [void]
-      # :nocov:
       def pretty_print(q)
         if @children.empty?
           id = definition.try do |d|
@@ -82,7 +81,6 @@ module Stupidedi
           end
         end
       end
-      # :nocov:
 
       # @return [Boolean]
       def ==(other)

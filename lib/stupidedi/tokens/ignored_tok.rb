@@ -23,12 +23,9 @@ module Stupidedi
           changes.fetch(:value, @value),
           changes.fetch(:position, @position)
       end
-
-      # :nocov:
       def pretty_print(q)
         q.pp([:ignored, @value])
       end
-      # :nocov:
 
       def blank?
         @value.blank?
