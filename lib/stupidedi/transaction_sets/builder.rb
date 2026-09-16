@@ -154,7 +154,7 @@ module Stupidedi
         end
 
         allowed_values = arguments.select{|x| x.is_a?(Array) and x.head == :Values }
-        
+
         if allowed_values.length == 1
           begin
             changes[:allowed_values] = element_use.allowed_values.replace(allowed_values.head.last)

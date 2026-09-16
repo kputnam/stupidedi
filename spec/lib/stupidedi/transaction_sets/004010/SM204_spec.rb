@@ -31,7 +31,7 @@ describe "Stupidedi::TransactionSets::FortyTen::Implementations::SM204" do
         expect(parser).to have_sequence(%w(ISA GS ST B2 B2A L11 L11 L11 L11 L11 L11 G62 NTE NTE N7 S5 G62 PLD NTE NTE N1 N3 N4 G61 OID L5 AT8 G61 L11 L11 L11 OID L5 AT8 G61 L11 L11 L11 S5 G62 PLD NTE NTE N1 N3 N4 G61 OID L5 AT8 G61 L11 L11 L11 OID L5 AT8 G61 L11 L11 L11 L3 SE GE IEA))
       end
     end
-      
+
     describe "L3-05 charge" do
       it "is the correct 2-decimal number" do
         parser.first
