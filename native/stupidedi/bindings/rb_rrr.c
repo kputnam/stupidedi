@@ -1,9 +1,20 @@
 #include <ruby.h>
 #include "stupidedi/bindings/rb_types.h"
+#include "stupidedi/include/bitstr.h"
 #include "stupidedi/include/rrr.h"
 
 extern VALUE rb_cRRR;
 extern VALUE rb_cBitVector;
+
+typedef struct rb_bitmap_wrapper_t {
+    int is_packed;
+    union {
+        stupidedi_bitstr_t* bitstr;
+        stupidedi_packed_t* packed;
+    } data;
+} rb_bitmap_wrapper_t;
+
+extern const rb_data_type_t rb_stupidedi_bitmap_t;
 
 const rb_data_type_t rb_stupidedi_rrr_t =
 {
@@ -34,7 +45,7 @@ const rb_data_type_t rb_stupidedi_rrr_builder_t =
 /* TODO */
 VALUE rb_rrr_builder_alloc(VALUE class)
 {
-    return TypedData_Wrap_Struct(class, &rb_stupidedi_rrr_builder_t, ALLOC(stupidedi_rrr_builder_t));
+    return TypedData_Wrap_Struct(class, &rb_stupidedi_rrr_builder_t, stupidedi_rrr_builder_alloc());
 }
 
 /* call-seq:
@@ -67,10 +78,10 @@ VALUE rb_rrr_builder_initialize(VALUE self, VALUE _block_size, VALUE _marker_siz
         rb_raise(rb_eArgError, "marker size is not larger than block size: %lld <= %lld",
                 marker_size, block_size);
 
-    if (size < 0 || size > STUPIDEDI_BIT_IDX_MAX)
+    if (size < 0)
         rb_raise(rb_eArgError, "size is out of range: %lld", size);
 
-    stupidedi_rrr_builder_alloc(block_size, marker_size, (stupidedi_bit_idx_t)size, builder, NULL);
+    stupidedi_rrr_builder_init(builder, (uint8_t)block_size, (uint16_t)marker_size, (size_t)size);
     return self;
 }
 
@@ -101,13 +112,13 @@ VALUE rb_rrr_builder_append(VALUE self, VALUE _width, VALUE _value)
     if (value > (width < 64 ? (1ull << width) - 1 : -1))
         rb_raise(rb_eArgError, "value %llu exceeds given width %lld", value, width);
 
-    if (stupidedi_rrr_builder_written(builder) + width > stupidedi_rrr_builder_size(builder))
-        rb_raise(rb_eRuntimeError, "writing %lld bits would exceed size of %u (%u already written)",
-                width, stupidedi_rrr_builder_size(builder), stupidedi_rrr_builder_written(builder));
+    size_t written = stupidedi_rrr_builder_written(builder);
+    size_t size = stupidedi_rrr_builder_length(builder);
+    if (written + (size_t)width > size)
+        rb_raise(rb_eRuntimeError, "writing %lld bits would exceed size of %zu (%zu already written)",
+                width, size, written);
 
-    /* TODO: ensure write doesn't exceed size */
-
-    stupidedi_rrr_builder_append(builder, width, value);
+    stupidedi_rrr_builder_write(builder, (uint8_t)width, value);
     return self;
 }
 
@@ -126,27 +137,22 @@ VALUE rb_rrr_builder_finish(VALUE self)
     if (builder == NULL)
         rb_raise(rb_eRuntimeError, "builder is not allocated");
 
-    if (stupidedi_rrr_builder_written(builder) < stupidedi_rrr_builder_size(builder))
-        rb_raise(rb_eRuntimeError, "all %u bits must be written, only %u so far",
-                stupidedi_rrr_builder_size(builder), stupidedi_rrr_builder_written(builder));
+    size_t written = stupidedi_rrr_builder_written(builder);
+    size_t size = stupidedi_rrr_builder_length(builder);
+    if (written < size)
+        rb_raise(rb_eRuntimeError, "all %zu bits must be written, only %zu so far",
+                size, written);
 
     VALUE _rrr;
-    /* Instance variable is not accessible via Object#instance_variables or
-     * Object#instance_variable_get, because it isn't prefixed with @. */
     _rrr = rb_iv_get(self, "rrr");
 
     if (_rrr != Qnil)
         return _rrr;
 
-    /* This will NOT allocate a new RRR each time, it will return the same one
-     * on each call. If more than one Ruby object shares this struct, we will
-     * likely have a double-free error. So we ensure only one Ruby object can
-     * point to this stupidedi_rrr_t, and return the same object each time
-     * `#finish` is called. */
-    stupidedi_rrr_t* rrr;
-    rrr = stupidedi_rrr_builder_build(builder);
+    stupidedi_rrr_t* rrr = stupidedi_rrr_alloc();
+    stupidedi_rrr_builder_to_rrr(builder, rrr);
 
-    _rrr = TypedData_Wrap_Struct(rb_cRRR/*,CLASS_OF(self)*/, &rb_stupidedi_rrr_t, rrr);
+    _rrr = TypedData_Wrap_Struct(rb_cRRR, &rb_stupidedi_rrr_t, rrr);
 
     rb_iv_set(self, "rrr", _rrr);
     return _rrr;
@@ -199,15 +205,9 @@ VALUE rb_rrr_builder_size(VALUE self)
     if (builder == NULL)
         rb_raise(rb_eRuntimeError, "builder is not allocated");
 
-    return ULONG2NUM(stupidedi_rrr_builder_size(builder));
+    return ULONG2NUM(stupidedi_rrr_builder_length(builder));
 }
 
-/* call-seq:
- *  builder.memsize_bits    #=> int
- *
- * Returns the number of bits consumed in memory by this builder and the RRR
- * vector being built.
- */
 VALUE rb_rrr_builder_memsize_bits(VALUE self)
 {
     stupidedi_rrr_builder_t* builder;
@@ -216,12 +216,12 @@ VALUE rb_rrr_builder_memsize_bits(VALUE self)
     if (builder == NULL)
         rb_raise(rb_eRuntimeError, "builder is not allocated");
 
-    return ULONG2NUM(stupidedi_rrr_builder_sizeof_bits(builder));
+    return ULONG2NUM(stupidedi_rrr_builder_sizeof(builder) * 8);
 }
 
 VALUE rb_rrr_alloc(VALUE class)
 {
-    return TypedData_Wrap_Struct(class, &rb_stupidedi_rrr_t, ALLOC(stupidedi_rrr_t));
+    return TypedData_Wrap_Struct(class, &rb_stupidedi_rrr_t, stupidedi_rrr_alloc());
 }
 
 /* call-seq:
@@ -236,11 +236,14 @@ VALUE rb_rrr_alloc(VALUE class)
  */
 VALUE rb_rrr_initialize(VALUE self, VALUE _bits, VALUE _block_size, VALUE _marker_size)
 {
-    stupidedi_bitmap_t* bits;
-    TypedData_Get_Struct(_bits, stupidedi_bitmap_t, &rb_stupidedi_bitmap_t, bits);
+    rb_bitmap_wrapper_t* wrapper;
+    TypedData_Get_Struct(_bits, rb_bitmap_wrapper_t, &rb_stupidedi_bitmap_t, wrapper);
 
-    if (bits == NULL)
+    if (wrapper == NULL)
         rb_raise(rb_eRuntimeError, "bit vector is not allocated");
+
+    if (wrapper->is_packed)
+        rb_raise(rb_eTypeError, "bit vector must be a simple bitstring, not a packed array");
 
     stupidedi_rrr_t* rrr;
     TypedData_Get_Struct(self, stupidedi_rrr_t, &rb_stupidedi_rrr_t, rrr);
@@ -262,7 +265,7 @@ VALUE rb_rrr_initialize(VALUE self, VALUE _bits, VALUE _block_size, VALUE _marke
         rb_raise(rb_eArgError, "marker size is not larger than block size: %lld <= %lld",
                 marker_size, block_size);
 
-    stupidedi_rrr_alloc(bits, block_size, marker_size, rrr);
+    stupidedi_rrr_init(rrr, wrapper->data.bitstr, (uint8_t)block_size, (uint16_t)marker_size);
 
     return self;
 }
@@ -283,13 +286,14 @@ VALUE rb_rrr_access(VALUE self, VALUE _i)
     long long i;
     i = NUM2LL(_i);
 
-    if (i < 0 || i > STUPIDEDI_BIT_IDX_MAX)
+    if (i < 0)
         rb_raise(rb_eArgError, "index out of range: %lld", i);
 
-    if (i >= rrr->size)
+    size_t len = stupidedi_rrr_length(rrr);
+    if (i >= (long long)len)
         return Qnil;
 
-    return UINT2NUM(stupidedi_rrr_access(rrr, (stupidedi_bit_idx_t)i));
+    return UINT2NUM(stupidedi_rrr_access(rrr, (size_t)i));
 }
 
 /* call-seq:
@@ -316,10 +320,10 @@ VALUE rb_rrr_rank(VALUE self, VALUE _c, VALUE _i)
     if (c != 0 && c != 1)
         rb_raise(rb_eArgError, "first argument must be 0 or 1");
 
-    if (i < 0 || i > STUPIDEDI_BIT_IDX_MAX)
+    if (i < 0)
         rb_raise(rb_eArgError, "index out of range: %lld", i);
 
-    return ULONG2NUM(c == 0 ? stupidedi_rrr_rank0(rrr, (stupidedi_bit_idx_t)i) : stupidedi_rrr_rank1(rrr, (stupidedi_bit_idx_t)i));
+    return ULONG2NUM(c == 0 ? stupidedi_rrr_rank0(rrr, (size_t)i) : stupidedi_rrr_rank1(rrr, (size_t)i));
 }
 
 /* call-seq:
@@ -346,14 +350,14 @@ VALUE rb_rrr_select(VALUE self, VALUE _c, VALUE _r)
     if (c != 0 && c != 1)
         rb_raise(rb_eArgError, "first argument must be 0 or 1");
 
-    if (r < 0 || r > STUPIDEDI_BIT_IDX_MAX)
+    if (r < 0)
         rb_raise(rb_eArgError, "rank out of range: %lld", r);
 
-    stupidedi_bit_idx_t s = c == 0 ?
-        stupidedi_rrr_select0(rrr, (stupidedi_bit_idx_t)r) :
-        stupidedi_rrr_select1(rrr, (stupidedi_bit_idx_t)r);
+    size_t s = c == 0 ?
+        stupidedi_rrr_select0(rrr, (size_t)r) :
+        stupidedi_rrr_select1(rrr, (size_t)r);
 
-    return s < r ? Qnil : ULONG2NUM(s);
+    return s == (size_t)-1 ? Qnil : ULONG2NUM(s);
 }
 
 /* call-seq:
@@ -369,16 +373,9 @@ VALUE rb_rrr_size(VALUE self)
     if (rrr == NULL)
         rb_raise(rb_eRuntimeError, "rrr vector is not allocated");
 
-    return ULONG2NUM(stupidedi_rrr_size(rrr));
+    return ULONG2NUM(stupidedi_rrr_length(rrr));
 }
 
-/* call-seq:
- *  rrr.memsize_bits    #=> int
- *
- * Returns the number of bits consumed in memory by this RRR vector. Note this
- * is not the length of the vector, because RRR is a compressed representation
- * of a bit vector.
- */
 VALUE rb_rrr_memsize_bits(VALUE self)
 {
     stupidedi_rrr_t* rrr;
@@ -387,7 +384,7 @@ VALUE rb_rrr_memsize_bits(VALUE self)
     if (rrr == NULL)
         rb_raise(rb_eRuntimeError, "rrr vector is not allocated");
 
-    return ULONG2NUM(stupidedi_rrr_sizeof_bits(rrr));
+    return ULONG2NUM(stupidedi_rrr_sizeof(rrr) * 8);
 }
 
 /* call-seq:
@@ -406,10 +403,14 @@ VALUE rb_rrr_to_bit_vector(VALUE self)
     if (rrr == NULL)
         rb_raise(rb_eRuntimeError, "rrr vector is not allocated");
 
-    stupidedi_bitmap_t* bits;
-    bits = stupidedi_rrr_to_bitmap(rrr);
+    stupidedi_bitstr_t* bitstr = stupidedi_bitstr_new(stupidedi_rrr_length(rrr));
+    stupidedi_rrr_to_bitstr(rrr, bitstr);
 
-    return TypedData_Wrap_Struct(rb_cBitVector, &rb_stupidedi_bitmap_t, bits);
+    rb_bitmap_wrapper_t* wrapper = ALLOC(rb_bitmap_wrapper_t);
+    wrapper->is_packed = 0;
+    wrapper->data.bitstr = bitstr;
+
+    return TypedData_Wrap_Struct(rb_cBitVector, &rb_stupidedi_bitmap_t, wrapper);
 }
 
 /* call-seq:

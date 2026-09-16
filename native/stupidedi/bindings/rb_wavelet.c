@@ -1,6 +1,17 @@
 #include <ruby.h>
 #include "stupidedi/bindings/rb_types.h"
+#include "stupidedi/include/packed.h"
 #include "stupidedi/include/wavelet.h"
+
+typedef struct rb_bitmap_wrapper_t {
+    int is_packed;
+    union {
+        stupidedi_bitstr_t* bitstr;
+        stupidedi_packed_t* packed;
+    } data;
+} rb_bitmap_wrapper_t;
+
+extern const rb_data_type_t rb_stupidedi_bitmap_t;
 
 const rb_data_type_t rb_stupidedi_wavelet_t =
 {
@@ -15,27 +26,30 @@ const rb_data_type_t rb_stupidedi_wavelet_t =
     },
 };
 
-/* TODO */
 VALUE rb_stupidedi_wavelet_alloc(VALUE class)
 {
-    return TypedData_Wrap_Struct(class, &rb_stupidedi_wavelet_t, ALLOC(stupidedi_wavelet_t));
+    return TypedData_Wrap_Struct(class, &rb_stupidedi_wavelet_t, stupidedi_wavelet_alloc());
 }
 
-/* TODO */
 VALUE rb_stupidedi_wavelet_initialize(VALUE self, VALUE _bits)
 {
     stupidedi_wavelet_t* tree;
     TypedData_Get_Struct(self, stupidedi_wavelet_t, &rb_stupidedi_wavelet_t, tree);
 
-    stupidedi_bitmap_t * bits;
-    TypedData_Get_Struct(_bits, stupidedi_bitmap_t, &rb_stupidedi_bitmap_t, bits);
+    rb_bitmap_wrapper_t* wrapper;
+    TypedData_Get_Struct(_bits, rb_bitmap_wrapper_t, &rb_stupidedi_bitmap_t, wrapper);
 
-    stupidedi_wavelet_alloc(bits, tree);
+    if (wrapper == NULL)
+        rb_raise(rb_eRuntimeError, "bit vector is not allocated");
+
+    if (!wrapper->is_packed)
+        rb_raise(rb_eTypeError, "bit vector must be a packed array, not a simple bitstring");
+
+    stupidedi_wavelet_init(tree, wrapper->data.packed, NULL);
 
     return self;
 }
 
-/* TODO */
 VALUE rb_stupidedi_wavelet_access(VALUE self, VALUE _i)
 {
     stupidedi_wavelet_t* tree;
@@ -44,16 +58,15 @@ VALUE rb_stupidedi_wavelet_access(VALUE self, VALUE _i)
     long long i;
     i = NUM2LL(_i);
 
-    if (i < STUPIDEDI_WAVELET_IDX_MIN || i > STUPIDEDI_WAVELET_IDX_MAX)
-        rb_raise(rb_eArgError, "rank out of range: %lld", i);
+    if (i < 0)
+        rb_raise(rb_eArgError, "index out of range: %lld", i);
 
-    if (i >= (long long)stupidedi_wavelet_size(tree))
+    if (i >= (long long)stupidedi_wavelet_length(tree))
         return Qnil;
 
-    return ULL2NUM(stupidedi_wavelet_access(tree, (stupidedi_wavelet_idx_t)i));
+    return ULL2NUM(stupidedi_wavelet_access(tree, (size_t)i));
 }
 
-/* TODO */
 VALUE rb_stupidedi_wavelet_rank(VALUE self, VALUE _c, VALUE _i)
 {
     stupidedi_wavelet_t* tree;
@@ -63,19 +76,19 @@ VALUE rb_stupidedi_wavelet_rank(VALUE self, VALUE _c, VALUE _i)
     c = NUM2LL(_c);
     i = NUM2LL(_i);
 
-    if (c < STUPIDEDI_WAVELET_SYMBOL_MAX || c > STUPIDEDI_WAVELET_SYMBOL_MAX)
+    if (c < 0)
         rb_raise(rb_eArgError, "character out of range: %lld", c);
 
-    if (i < STUPIDEDI_WAVELET_IDX_MIN || i > STUPIDEDI_WAVELET_IDX_MAX)
-        rb_raise(rb_eArgError, "rank out of range: %lld", i);
+    if (i < 0)
+        rb_raise(rb_eArgError, "index out of range: %lld", i);
 
-    if (i > (long long)stupidedi_wavelet_size(tree))
-        i = stupidedi_wavelet_size(tree);
+    size_t len = stupidedi_wavelet_length(tree);
+    if (i > (long long)len)
+        i = len;
 
-    return ULONG2NUM(stupidedi_wavelet_rank(tree, (stupidedi_wavelet_symbol_t)c, (stupidedi_wavelet_idx_t)i));
+    return ULONG2NUM(stupidedi_wavelet_rank(tree, (uint64_t)c, (size_t)i));
 }
 
-/* TODO */
 VALUE rb_stupidedi_wavelet_select(VALUE self, VALUE _c, VALUE _r)
 {
     stupidedi_wavelet_t* tree;
@@ -85,32 +98,31 @@ VALUE rb_stupidedi_wavelet_select(VALUE self, VALUE _c, VALUE _r)
     c = NUM2LL(_c);
     r = NUM2LL(_r);
 
-    if (c < STUPIDEDI_WAVELET_SYMBOL_MAX || c > STUPIDEDI_WAVELET_SYMBOL_MAX)
+    if (c < 0)
         rb_raise(rb_eArgError, "character out of range: %lld", c);
 
-    if (r < STUPIDEDI_WAVELET_IDX_MIN || r > STUPIDEDI_WAVELET_IDX_MAX)
+    if (r < 0)
         rb_raise(rb_eArgError, "rank out of range: %lld", r);
 
-    if (r >= (long long)stupidedi_wavelet_size(tree))
+    size_t result = stupidedi_wavelet_select(tree, (size_t)r, (uint64_t)c);
+    if (result == (size_t)-1)
         return Qnil;
 
-    return ULONG2NUM(stupidedi_wavelet_select(tree, (stupidedi_wavelet_symbol_t)c, (stupidedi_wavelet_idx_t)r));
+    return ULONG2NUM(result);
 }
 
-/* TODO */
-VALUE rb_stupidedi_wavelet_size(VALUE self, VALUE _c, VALUE _r)
+VALUE rb_stupidedi_wavelet_size(VALUE self)
 {
     stupidedi_wavelet_t* tree;
     TypedData_Get_Struct(self, stupidedi_wavelet_t, &rb_stupidedi_wavelet_t, tree);
-    return ULONG2NUM(stupidedi_wavelet_size(tree));
+    return ULONG2NUM(stupidedi_wavelet_length(tree));
 }
 
-/* TODO */
-VALUE rb_stupidedi_wavelet_memsize_bits(VALUE self, VALUE _c, VALUE _r)
+VALUE rb_stupidedi_wavelet_memsize_bits(VALUE self)
 {
     stupidedi_wavelet_t* tree;
     TypedData_Get_Struct(self, stupidedi_wavelet_t, &rb_stupidedi_wavelet_t, tree);
-    return ULONG2NUM(stupidedi_wavelet_sizeof_bits(tree));
+    return ULONG2NUM(stupidedi_wavelet_sizeof(tree) * 8);
 }
 
 /* TODO */
