@@ -76,7 +76,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -92,7 +91,6 @@ module Stupidedi
 
               ansi.element("Nn.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
-            # :nocov:
 
             # @return [String]
             def to_s
@@ -157,7 +155,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -173,7 +170,6 @@ module Stupidedi
 
               ansi.element("Nn.empty#{id}")
             end
-            # :nocov:
 
             # @return [String]
             def to_s
@@ -228,7 +224,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -244,7 +239,6 @@ module Stupidedi
 
               ansi.element("Nn.value#{id}") + "(#{@value.to_s("F").gsub(/\.0+$/, "")})"
             end
-            # :nocov:
 
             # @return [String]
             def to_s

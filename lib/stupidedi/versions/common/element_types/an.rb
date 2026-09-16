@@ -169,7 +169,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -185,7 +184,6 @@ module Stupidedi
 
               ansi.element("AN.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
-            # :nocov:
 
             # @return [String]
             def to_s
@@ -268,7 +266,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -284,7 +281,6 @@ module Stupidedi
 
               ansi.element("AN.empty#{id}")
             end
-            # :nocov:
 
             # @return [String]
             def to_x12(truncate = true)
@@ -320,7 +316,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -336,7 +331,6 @@ module Stupidedi
 
               ansi.element("AN.value#{id}") + "(#{@value})"
             end
-            # :nocov:
 
             # (see AN.stpftime)
             def to_date(format)

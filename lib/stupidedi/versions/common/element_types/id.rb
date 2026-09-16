@@ -93,7 +93,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -109,7 +108,6 @@ module Stupidedi
 
               ansi.element("ID.invalid#{id}") + "(#{ansi.invalid(@value.inspect)})"
             end
-            # :nocov:
 
             # @return [String]
             def to_s
@@ -191,7 +189,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -207,7 +204,6 @@ module Stupidedi
 
               ansi.element("ID.empty#{id}")
             end
-            # :nocov:
 
             # @return [String]
             def to_x12(truncate = true)
@@ -239,7 +235,6 @@ module Stupidedi
             end
 
             # @return [String]
-            # :nocov:
             def inspect
               id = definition.then do |d|
                 "[#{"% 5s" % d.id}: #{d.name}]".then do |s|
@@ -267,8 +262,7 @@ module Stupidedi
 
               ansi.element("ID.value#{id}") + "(#{value})"
             end
-            # :nocov:
-          end
+                      end
         end
 
         class << IdentifierVal
