@@ -23,6 +23,7 @@ module Stupidedi
           changes.fetch(:value, @value),
           changes.fetch(:position, @position)
       end
+
       def pretty_print(q)
         q.pp([:ignored, @value])
       end

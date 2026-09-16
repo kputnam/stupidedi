@@ -23,6 +23,7 @@ module Stupidedi
           changes.fetch(:component_toks, @component_toks),
           changes.fetch(:position, @position)
       end
+
       def pretty_print(q)
         q.pp(:composite.cons(@component_toks))
       end

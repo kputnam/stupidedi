@@ -28,6 +28,7 @@ module Stupidedi
           changes.fetch(:element_toks, @element_toks),
           changes.fetch(:position, @position)
       end
+
       def pretty_print(q)
         q.pp(:segment.cons(@id.cons(@element_toks)))
       end

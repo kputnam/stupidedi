@@ -53,7 +53,7 @@ module Stupidedi
         end
       end
 
-            # @return [String]
+      # @return [String]
       def inspect
         ansi.table("Table") + "(#{@children.map(&:inspect).join(", ")})"
       end
