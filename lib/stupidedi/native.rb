@@ -1,23 +1,10 @@
 module Stupidedi
   module Native
 
-    # Silence deprecation warning about ::Data
-    if Warning.respond_to?(:[])
-      prev                 = Warning[:deprecated]
-      Warning[:deprecated] = false
-      Data                 = ::Data
-      Warning[:deprecated] = prev
-    else
-      prev = Warning.method(:warn)
-      Warning.define_method(:warn){|msg| }
-      Data = ::Data
-      Warning.define_method(:warn, &prev)
-    end
-
     #
     # https://github.com/lsegal/yard/issues/1281
     #
-    class BitVector < Data
+    class BitVector < Object
       include Enumerable
 
       def initialize(length, width=nil)
@@ -56,7 +43,7 @@ module Stupidedi
     #
     #
     #
-    class RRR < Data
+    class RRR < Object
       def initialize
       end
 
@@ -105,7 +92,7 @@ module Stupidedi
       end
     end
 
-    class RRR::Builder < Data
+    class RRR::Builder < Object
       #
       def initialize(block_size, marker_size, size)
       end
@@ -123,7 +110,7 @@ module Stupidedi
       end
     end
 
-    class WaveletTree < Data
+    class WaveletTree < Object
       #
       def initialize
       end
